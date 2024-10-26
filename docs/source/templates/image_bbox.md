@@ -28,7 +28,7 @@ If you rotate a bounding box using your mouse in the labeling interface, the rot
 
 ### Bounding box rotation in the Label Studio results
 
-If you rotate by directly editing the rotation angle under the **Info** panel of the labeling interface, the rotation anchor point is the **top left** of the rectangle. This is also how it is saved in the Label Studio `annotation.result[].value` (regardless of how you performed the rotation): 
+If you rotate by directly editing the rotation angle under the **Info** panel of the labeling interface, the rotation anchor point is the **top left** of the rectangle. This is also how it is saved in the Label Studio `annotation.result[]['value']` (regardless of how you performed the rotation): 
 
 ```
  { 
