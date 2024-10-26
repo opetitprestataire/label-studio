@@ -50,6 +50,9 @@ As an annotator, you can create a rotated bounding box with the "three point cli
   - Second point click - Define the rotation and width of the bounding box.
   - Third point click - Draw the height of the bounding box.
 
+!!! note
+ The three-point click action is only available when using the `<Rectangle>` tag. It is not available for `<RectangleLabels>`. 
+
 The origin anchor `0,0` is placed with the first click, similar to the basic bounding box. The second anchor will indicate the angle of the edge for `0,1` and the width of the bounding box. The third and final anchor `1,1` will determine the height or final dimension of the bounding box. Three clicks is required to create a rotated bounding box.
 
 1. **Starting point of the location to draw the bounding box**: With a tag selected and mouse on canvas, on-click to place first anchor `0,0` anywhere on the canvas.
