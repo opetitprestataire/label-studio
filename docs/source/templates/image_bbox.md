@@ -32,8 +32,8 @@ If you rotate by directly editing the rotation angle under the **Info** panel of
 
 ```
  { 
-  "x": 100,  # x-coordinate of the top left corner of the bounding box from 0 to 100% of the image width
-  "y": 100,  # y-coordinate of the top left corner of the bounding box from 0 to 100% of the image height
+  "x": 100,  # top left corner of the bounding box from 0 to 100% of the image width
+  "y": 100,  # top left corner of the bounding box from 0 to 100% of the image height
   "width": 200,  # width of the bounding box from 0 to 100% of the image width
   "height": 100,  # height of the bounding box from 0 to 100% of the image height
   "rotation": 45  # rotation angle in degrees around the top left corner of the bounding box
