@@ -176,13 +176,13 @@ The cost to run the prompt based on the number of tokens required.
 
 You can use **Enhance Prompt** to help you construct and auto-refine your prompts. 
 
-At minimum, you need to insert the text classes first. (Click the text class name to insert it into the prompt.) Then select the **Teacher Model** that you want to use to write your prompt. 
+At minimum, you need to insert the text classes first. (Click the text class name to insert it into the prompt. These appear above the prompts field). Click **Enhance Prompt**. 
 
-Click **Enhance Prompt**. 
+From the **Enhance Prompt** window you will need to select the **Teacher Model** that you want to use to write your prompt. As you auto-refine your prompt, you'll get the following:
 
 * A new prompt displayed next to the previous prompt. 
 * An explanation of the changes made. 
-* An estimated cost spent on auto-refining your prompt. 
+* The estimated cost spent auto-refining your prompt. 
 
 ![Screenshot of enhance prompt modal](../images/prompts/enhance.png)
 
@@ -190,7 +190,7 @@ Click **Enhance Prompt**.
 
 The **Task Subset** is used as the context when auto-refining the prompt. If you have ground truth data available, that will serve as the task subset. Otherwise, a sample of up to to 10 projected tasks are used. 
 
-Auto-refinement applies your initial prompt and tge Teacher Model to generate predictions on the task subset (which will be ground truth tasks or a sample dataset). If applicable, predictions are then compared to the ground truth for accuracy. 
+Auto-refinement applies your initial prompt and the Teacher Model to generate predictions on the task subset (which will be ground truth tasks or a sample dataset). If applicable, predictions are then compared to the ground truth for accuracy. 
 
 Your Teacher Model evaluates the initial prompt’s predictions against the ground truth (or sample task output) and identifies areas for improvement. It then suggests a refined prompt, aimed at achieving closer alignment with the desired outcomes.
 
