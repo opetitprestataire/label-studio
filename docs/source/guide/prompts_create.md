@@ -14,12 +14,12 @@ date: 2024-06-11 16:53:16
 
 ## Prerequisites
 
-* An OpenAI API key or an Azure OpenAI key. 
+* An API key for your LLM. 
 * A project that meets the [criteria noted below](#Create-a-Prompt). 
 
 ## Model provider API keys
 
-You can specify one OpenAI API key and/or multiple Azure OpenAI keys per organization. Keys only need to be added once. 
+You can specify one OpenAI API key and/or multiple custom and Azure OpenAI keys per organization. Keys only need to be added once. 
 
 Click **API Keys** in the top right of the Prompts page to open the **Model Provider API Keys** window:
 
@@ -119,11 +119,11 @@ From the Prompts page, click **Create Prompt** in the upper right and then compl
     * The labeling configuration for the project must be compatible with the **Type** you selected above:
         * For text classification, this means that the labeling configuration for the project must use `Choice` tags. 
         * For NER, this means that the labeling configuration for the project must use `Label` tags.  
-    * The project must have one output type (`Choice` or `Label`) and not a mix of both. 
+    * The project must have one output type (`Choice` or `Label`) and not a mix of both and not multiples (meaning you can not have multiple `Choices` or `Labels` within your labeling configuration). 
     * The project must include text data. While it can include other data types such as images or video, it must include `<Text>`.
     * You must have access to the project. If you are in the Manager role, you need to be added to the project to have access. 
     * The project cannot be located in your Personal Sandbox workspace. 
-    * While projects connected to an ML backend will still appear in the list of eligible projects, we do not recommend using Prompts with an ML backend. 
+    * While projects connected to an ML backend will still appear in the list of eligible projects, we do not recommend using Prompts with an ML backend as this can interfere with how accuracy and score are calculated when evaluating the prompt. 
 
 ## Types
 
