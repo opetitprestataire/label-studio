@@ -15,7 +15,6 @@ google_analytics: UA-129877673-4
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://labelstud.io/
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
