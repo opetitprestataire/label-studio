@@ -176,7 +176,7 @@ The cost to run the prompt based on the number of tokens required.
 
 You can use **Enhance Prompt** to help you construct and auto-refine your prompts. 
 
-At minimum, you need to insert the text classes first. (Click the text class name to insert it into the prompt. These appear above the prompts field). Click **Enhance Prompt**. 
+At minimum, you need to insert the text classes first. (Click the text class name to insert it into the prompt. These appear above the prompts field). 
 
 From the **Enhance Prompt** window you will need to select the **Teacher Model** that you want to use to write your prompt. As you auto-refine your prompt, you'll get the following:
 
