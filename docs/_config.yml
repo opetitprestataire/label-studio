@@ -102,7 +102,7 @@ theme: v2
 
 sitemap:
   path:
-    - sitemap-docs.xml
+    - guide/sitemap-docs.xml
 
 search:
   path: search.xml
