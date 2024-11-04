@@ -34,7 +34,7 @@ Video frame classification is the process of assigning labels to individual fram
 
 All labeling configurations must be wrapped in `<View>` tags.
 
-#### <Video>
+#### Video object tag
 
 Use the `<Video>` object tag to specify the video data. 
 
@@ -47,7 +47,7 @@ For more parameters, see the [Video tag page](/tags/video).
   <Video name="video" value="$video" framerate="25.0" timelineHeight="120"/>
 ```
 
-#### <TimelineLabels>
+#### TimelineLabels control tag
 
 Use the [TimelineLabels control tag](/tags/timelinelabels) to define labels that can be applied to specific frames of the video. Use `Label` tags within `TimelineLabels` to define the label you want to ascribe to video frames. 
 
