@@ -24,7 +24,7 @@ Video frame classification is the process of assigning labels to individual fram
      <Label value="Still" background="#1d81cd"/>
      <Label value="Slow Motion" background="#54d651"/>
    </TimelineLabels>
-   <Video name="video" value="$video" framerate="25.0" timelineHeight="120" />
+   <Video name="video" value="$video" frameRate="25.0" timelineHeight="120" />
 </View>
 ```
 
@@ -38,18 +38,20 @@ All labeling configurations must be wrapped in `<View>` tags.
 
 Use the `<Video>` object tag to specify the video data. 
 
-* The `framerate` parameter sets the frame rate of the video. Ensure this matches the video's framerate. If your video has defects or variable framerate, it might cause discrepancies. Transcoding the video to a constant framerate before uploading can help.
+* The `frameRate` parameter sets the frame rate of the video. Ensure this matches the video's framerate. If your video has defects or variable framerate, it might cause discrepancies. Transcoding the video to a constant framerate before uploading can help.
 * Use `timelineHeight` to control the height of your timeline where you are selecting frames. 
   
 For more parameters, see the [Video tag page](/tags/video). 
 
 ```xml
-  <Video name="video" value="$video" framerate="25.0" timelineHeight="120"/>
+  <Video name="video" value="$video" frameRate="25.0" timelineHeight="120"/>
 ```
 
 #### TimelineLabels control tag
 
-Use the [TimelineLabels control tag](/tags/timelinelabels) to define labels that can be applied to specific frames of the video. Use `Label` tags within `TimelineLabels` to define the label you want to ascribe to video frames. 
+Use the [TimelineLabels control tag](/tags/timelinelabels) to define labels that can be applied to specific frames of the video. 
+
+Use `Label` tags within `TimelineLabels` to define the labels that you want to use. 
 
 ```xml
 <TimelineLabels name="videoLabels" toName="video">
@@ -76,3 +78,4 @@ Prepare your input data with the video field pointing to your video URL. If you 
 - [TimelineLabels](/tags/timelinelabels.html)
 - [Video](/tags/video.html)
 - [Label](/tags/label.html)
+- [Example of ML Backend for Frame Classification](https://github.com/HumanSignal/label-studio-ml-backend/blob/master/label_studio_ml/examples/yolo/README_TIMELINE_LABELS.md)
