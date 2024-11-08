@@ -9,28 +9,49 @@ function getKey(collection: string) {
 
 export const loadLiveTipsCollection = async () => {
   try {
+    // Read from local storage if the collection is less than 1 hour old
+    if (localStorage.getItem("heidi_live_tips_collection") && ((Date.now() - Number.parseInt(localStorage.getItem("heidi_live_tips_collection_fetched_at") ?? "0")) < 1000 * 60 * 60)) {
+      return JSON.parse(localStorage.getItem("heidi_live_tips_collection") ?? "{}");
+    }
+
+    const abortController = new AbortController();
+    // Abort the request after 5 seconds to ensure we don't block for too long, something might be wrong with the network
+    const abortTimeout = setTimeout(abortController.abort, 5000);
     // Fetch from github raw liveContent.json
-    const response = await fetch("https://raw.githubusercontent.com/HumanSignal/label-studio/main/web/apps/labelstudio/src/components/HeidiTips/liveContent.json");
+    const response = await fetch("https://raw.githubusercontent.com/HumanSignal/label-studio/refs/heads/develop/web/apps/labelstudio/src/components/HeidiTips/liveContent.json", {
+      headers: {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json",
+      },
+      signal: abortController.signal,
+    });
+    // Cache the fetched content
     if (response.ok) {
       const data = await response.json();
+      // Wait until the content is fetched to clear the abort timeout
+      // The abort should consider the entire request not just the headers
+      clearTimeout(abortTimeout);
+      localStorage.setItem("heidi_live_tips_collection_fetched_at", String(Date.now()));
+      localStorage.setItem("heidi_live_tips_collection", JSON.stringify(data));
       return data;
     }
+    // Clear the abort timeout if the request failed
+    clearTimeout(abortTimeout);
   } catch (error) {
     console.warn("Failed to load live tips collection defaulting to local content", error);
   }
 
+  // Serve possibly stale cached content
+  if (localStorage.getItem("heidi_live_tips_collection")) {
+    return JSON.parse(localStorage.getItem("heidi_live_tips_collection") ?? "{}");
+  }
+
+  // Default local content
   return defaultTipsCollection;
 };
 
-export let tipsCollection: TipsCollection;
-
-export const initTipsCollection = async () => {
-  tipsCollection ??= await loadLiveTipsCollection();
-};
-
-
 export async function getRandomTip(collection: keyof TipsCollection): Promise<Tip | null> {
-  await initTipsCollection();
+  const tipsCollection = await loadLiveTipsCollection();
 
   if (isTipDismissed(collection)) return null;
 
