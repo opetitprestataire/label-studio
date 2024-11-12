@@ -4,7 +4,7 @@ import type { Tip, TipsCollection } from "./types";
 const STORE_KEY = "heidi_ignored_tips";
 const CACHE_KEY = "heidi_live_tips_collection";
 const CACHE_FETCHED_AT_KEY = "heidi_live_tips_collection_fetched_at";
-const CACHE_STALE_TIME = 1000 * 60 * 60 * 12; // 12 hours
+const CACHE_STALE_TIME = 1000 * 60 * 60; // 1 hour
 
 function getKey(collection: string) {
   return `${STORE_KEY}:${collection}`;
