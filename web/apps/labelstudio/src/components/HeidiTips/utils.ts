@@ -16,7 +16,7 @@ export const loadLiveTipsCollection = () => {
   const cachedData = localStorage.getItem(CACHE_KEY);
   const fetchedAt = localStorage.getItem(CACHE_FETCHED_AT_KEY);
 
-  // Read from local storage if the collection is less than CACHE_STALE_TIME milliseconds old
+  // Read from local storage if the cachedData is less than CACHE_STALE_TIME milliseconds old
   if (cachedData && fetchedAt && Date.now() - Number.parseInt(fetchedAt) < CACHE_STALE_TIME) {
     return JSON.parse(cachedData);
   }
