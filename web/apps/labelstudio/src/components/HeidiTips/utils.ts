@@ -5,6 +5,7 @@ const STORE_KEY = "heidi_ignored_tips";
 const CACHE_KEY = "heidi_live_tips_collection";
 const CACHE_FETCHED_AT_KEY = "heidi_live_tips_collection_fetched_at";
 const CACHE_STALE_TIME = 1000 * 60 * 60; // 1 hour
+const MAX_TIMEOUT = 5000; // 5 seconds
 
 function getKey(collection: string) {
   return `${STORE_KEY}:${collection}`;
@@ -21,11 +22,9 @@ export const loadLiveTipsCollection = () => {
   }
 
   const abortController = new AbortController();
-  // If we already have a collection, we can be more aggressive with the timeout
-  const maxTimeout = fetchedAt ? 2000 : 5000;
 
-  // Abort the request after maxTimeout milliseconds to ensure we don't block for too long, something might be wrong with the network
-  const abortTimeout = setTimeout(abortController.abort, maxTimeout);
+  // Abort the request after MAX_TIMEOUT milliseconds to ensure we don't block for too long, something might be wrong with the network
+  const abortTimeout = setTimeout(abortController.abort, MAX_TIMEOUT);
 
   // Fetch from github raw liveContent.json proxied through the server
   fetch("/heidi-tips/", {
