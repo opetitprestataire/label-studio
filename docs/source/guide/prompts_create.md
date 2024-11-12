@@ -108,7 +108,6 @@ From the Prompts page, click **Create Prompt** in the upper right and then compl
 | --- | --- |
 | Name | Enter a name for the Prompt. |
 | Description | Enter a description for the Prompt.  |
-| Type | Select the Prompt model type: [Text Classification](#Text-classification) or [Named Entity Recognition](#Named-entity-recognition-NER)  |
 | Target Project| Select the project you want to use. If you don't have any eligible projects, you will see an error message. <br><br>See the note below.  |
 | Classes | This list is automatically generated from the labeling configuration of the target project. |
 
@@ -116,11 +115,6 @@ From the Prompts page, click **Create Prompt** in the upper right and then compl
 
 !!! note Eligible projects
     Target projects must meet the following criteria:
-    * The labeling configuration for the project must be compatible with the **Type** you selected above:
-        * For text classification, this means that the labeling configuration for the project must use `Choice` tags. 
-        * For NER, this means that the labeling configuration for the project must use `Label` tags.  
-    * The project must have one output type (`Choice` or `Label`) and not a mix of both. 
-    * The project cannot include multiple `Choices` or `Labels` blocks in its labeling configuration. 
     * The project must include text data. While it can include other data types such as images or video, it must include `<Text>`.
     * You must have access to the project. If you are in the Manager role, you need to be added to the project to have access. 
     * The project cannot be located in your Personal Sandbox workspace. 
