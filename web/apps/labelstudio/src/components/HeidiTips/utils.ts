@@ -12,7 +12,7 @@ function getKey(collection: string) {
 }
 
 export const loadLiveTipsCollection = () => {
-  // stale while revalidate
+  // stale while revalidate - we will return the data present in the cache or the default data and fetch updated data to be put into the cache for the next time this function is called.
   const cachedData = localStorage.getItem(CACHE_KEY);
   const fetchedAt = localStorage.getItem(CACHE_FETCHED_AT_KEY);
 
