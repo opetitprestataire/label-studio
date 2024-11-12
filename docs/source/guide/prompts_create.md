@@ -108,8 +108,7 @@ From the Prompts page, click **Create Prompt** in the upper right and then compl
 | --- | --- |
 | Name | Enter a name for the Prompt. |
 | Description | Enter a description for the Prompt.  |
-| Target Project| Select the project you want to use. If you don't have any eligible projects, you will see an error message. <br><br>See the note below.  |
-| Classes | This list is automatically generated from the labeling configuration of the target project. |
+| Target Project| Select the project you want to use. If you don't have any eligible projects, you will see an error message. <br><br>See the note below. <br><br>When you select a project, additional information about the labeling config appears. This includes the classes that will be used when applying the prompt.  |
 
 </div>
 
