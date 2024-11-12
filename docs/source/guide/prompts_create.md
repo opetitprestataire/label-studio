@@ -126,7 +126,7 @@ From the Prompts page, click **Create Prompt** in the upper right and then compl
     * The project cannot be located in your Personal Sandbox workspace. 
     * While projects connected to an ML backend will still appear in the list of eligible projects, we do not recommend using Prompts with an ML backend as this can interfere with how accuracy and score are calculated when evaluating the prompt. 
 
-## Types
+## Example project types
 
 ### Text classification  
 
