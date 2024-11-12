@@ -174,7 +174,9 @@ def heidi_tips(request):
     """Fetch live tips from github raw liveContent.json to avoid caching and client side CORS issues"""
     url = 'https://raw.githubusercontent.com/HumanSignal/label-studio/refs/heads/develop/web/apps/labelstudio/src/components/HeidiTips/liveContent.json'
     response = requests.get(
-        url, headers={'Cache-Control': 'no-cache', 'Content-Type': 'application/json', 'Accept': 'application/json'}
+        url,
+        headers={'Cache-Control': 'no-cache', 'Content-Type': 'application/json', 'Accept': 'application/json'},
+        timeout=5,
     )
 
     # Raise an exception for bad status codes to avoid caching
