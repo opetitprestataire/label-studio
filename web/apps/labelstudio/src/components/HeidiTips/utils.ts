@@ -2,21 +2,33 @@ import { defaultTipsCollection } from "./content";
 import type { Tip, TipsCollection } from "./types";
 
 const STORE_KEY = "heidi_ignored_tips";
+const STALE_TIME = 1000 * 60 * 60 * 12; // 12 hours
 
 function getKey(collection: string) {
   return `${STORE_KEY}:${collection}`;
 }
 
 export const loadLiveTipsCollection = async () => {
+  let abortTimeout: any;
+  let cachedData: string | null = null;
+  let fetchedAt: string | null = null;
+
   try {
-    // Read from local storage if the collection is less than 1 hour old
-    if (localStorage.getItem("heidi_live_tips_collection") && ((Date.now() - Number.parseInt(localStorage.getItem("heidi_live_tips_collection_fetched_at") ?? "0")) < 1000 * 60 * 60)) {
-      return JSON.parse(localStorage.getItem("heidi_live_tips_collection") ?? "{}");
+    cachedData = localStorage.getItem("heidi_live_tips_collection");
+    fetchedAt = localStorage.getItem("heidi_live_tips_collection_fetched_at");
+
+    // Read from local storage if the collection is less than STALE_TIME milliseconds old
+    if (cachedData && fetchedAt && ((Date.now() - Number.parseInt(fetchedAt)) < STALE_TIME)) {
+      return JSON.parse(cachedData);
     }
 
     const abortController = new AbortController();
-    // Abort the request after 5 seconds to ensure we don't block for too long, something might be wrong with the network
-    const abortTimeout = setTimeout(abortController.abort, 5000);
+    // If we already have a collection, we can be more aggressive with the timeout
+    const maxTimeout = fetchedAt ? 2000 : 5000;
+
+    // Abort the request after maxTimeout milliseconds to ensure we don't block for too long, something might be wrong with the network
+    abortTimeout = setTimeout(abortController.abort, maxTimeout);
+
     // Fetch from github raw liveContent.json
     const response = await fetch("https://raw.githubusercontent.com/HumanSignal/label-studio/refs/heads/develop/web/apps/labelstudio/src/components/HeidiTips/liveContent.json", {
       headers: {
@@ -25,25 +37,25 @@ export const loadLiveTipsCollection = async () => {
       },
       signal: abortController.signal,
     });
+
     // Cache the fetched content
     if (response.ok) {
       const data = await response.json();
-      // Wait until the content is fetched to clear the abort timeout
-      // The abort should consider the entire request not just the headers
-      clearTimeout(abortTimeout);
       localStorage.setItem("heidi_live_tips_collection_fetched_at", String(Date.now()));
       localStorage.setItem("heidi_live_tips_collection", JSON.stringify(data));
       return data;
     }
-    // Clear the abort timeout if the request failed
-    clearTimeout(abortTimeout);
   } catch (error) {
     console.warn("Failed to load live tips collection defaulting to local content", error);
+  } finally {
+    // Wait until the content is fetched to clear the abort timeout
+    // The abort should consider the entire request not just the headers
+    clearTimeout(abortTimeout);
   }
 
   // Serve possibly stale cached content
-  if (localStorage.getItem("heidi_live_tips_collection")) {
-    return JSON.parse(localStorage.getItem("heidi_live_tips_collection") ?? "{}");
+  if (cachedData) {
+    return JSON.parse(cachedData);
   }
 
   // Default local content
