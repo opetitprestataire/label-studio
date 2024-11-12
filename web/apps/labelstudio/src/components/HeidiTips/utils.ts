@@ -2,56 +2,58 @@ import { defaultTipsCollection } from "./content";
 import type { Tip, TipsCollection } from "./types";
 
 const STORE_KEY = "heidi_ignored_tips";
-const STALE_TIME = 1000 * 60 * 60 * 12; // 12 hours
+const CACHE_KEY = "heidi_live_tips_collection";
+const CACHE_FETCHED_AT_KEY = "heidi_live_tips_collection_fetched_at";
+const CACHE_STALE_TIME = 1000 * 60 * 60 * 12; // 12 hours
 
 function getKey(collection: string) {
   return `${STORE_KEY}:${collection}`;
 }
 
-export const loadLiveTipsCollection = async () => {
-  let abortTimeout: any;
-  let cachedData: string | null = null;
-  let fetchedAt: string | null = null;
+export const loadLiveTipsCollection = () => {
+  // stale while revalidate
+  const cachedData = localStorage.getItem(CACHE_KEY);
+  const fetchedAt = localStorage.getItem(CACHE_FETCHED_AT_KEY);
 
-  try {
-    cachedData = localStorage.getItem("heidi_live_tips_collection");
-    fetchedAt = localStorage.getItem("heidi_live_tips_collection_fetched_at");
-
-    // Read from local storage if the collection is less than STALE_TIME milliseconds old
-    if (cachedData && fetchedAt && ((Date.now() - Number.parseInt(fetchedAt)) < STALE_TIME)) {
-      return JSON.parse(cachedData);
-    }
-
-    const abortController = new AbortController();
-    // If we already have a collection, we can be more aggressive with the timeout
-    const maxTimeout = fetchedAt ? 2000 : 5000;
-
-    // Abort the request after maxTimeout milliseconds to ensure we don't block for too long, something might be wrong with the network
-    abortTimeout = setTimeout(abortController.abort, maxTimeout);
-
-    // Fetch from github raw liveContent.json
-    const response = await fetch("https://raw.githubusercontent.com/HumanSignal/label-studio/refs/heads/develop/web/apps/labelstudio/src/components/HeidiTips/liveContent.json", {
-      headers: {
-        "Cache-Control": "no-cache",
-        "Content-Type": "application/json",
-      },
-      signal: abortController.signal,
-    });
-
-    // Cache the fetched content
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem("heidi_live_tips_collection_fetched_at", String(Date.now()));
-      localStorage.setItem("heidi_live_tips_collection", JSON.stringify(data));
-      return data;
-    }
-  } catch (error) {
-    console.warn("Failed to load live tips collection defaulting to local content", error);
-  } finally {
-    // Wait until the content is fetched to clear the abort timeout
-    // The abort should consider the entire request not just the headers
-    clearTimeout(abortTimeout);
+  // Read from local storage if the collection is less than CACHE_STALE_TIME milliseconds old
+  if (cachedData && fetchedAt && Date.now() - Number.parseInt(fetchedAt) < CACHE_STALE_TIME) {
+    return JSON.parse(cachedData);
   }
+
+  const abortController = new AbortController();
+  // If we already have a collection, we can be more aggressive with the timeout
+  const maxTimeout = fetchedAt ? 2000 : 5000;
+
+  // Abort the request after maxTimeout milliseconds to ensure we don't block for too long, something might be wrong with the network
+  const abortTimeout = setTimeout(abortController.abort, maxTimeout);
+
+  // Fetch from github raw liveContent.json proxied through the server
+  fetch("/heidi-tips/", {
+    headers: {
+      "Cache-Control": "no-cache",
+      "Content-Type": "application/json",
+    },
+    signal: abortController.signal,
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+    })
+    .then((data) => {
+      // Cache the fetched content
+      localStorage.setItem(CACHE_FETCHED_AT_KEY, String(Date.now()));
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      return data;
+    })
+    .catch((e) => {
+      console.warn("Failed to load live Heidi tips collection", e);
+    })
+    .finally(() => {
+      // Wait until the content is fetched to clear the abort timeout
+      // The abort should consider the entire request not just the headers
+      clearTimeout(abortTimeout);
+    });
 
   // Serve possibly stale cached content
   if (cachedData) {
@@ -62,8 +64,8 @@ export const loadLiveTipsCollection = async () => {
   return defaultTipsCollection;
 };
 
-export async function getRandomTip(collection: keyof TipsCollection): Promise<Tip | null> {
-  const tipsCollection = await loadLiveTipsCollection();
+export function getRandomTip(collection: keyof TipsCollection): Tip | null {
+  const tipsCollection = loadLiveTipsCollection();
 
   if (isTipDismissed(collection)) return null;
 

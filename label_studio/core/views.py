@@ -11,6 +11,7 @@ from pathlib import Path
 from wsgiref.util import FileWrapper
 
 import pandas as pd
+import requests
 from core import utils
 from core.feature_flags import all_flags, get_feature_file_path
 from core.label_config import generate_time_series_json
@@ -167,6 +168,19 @@ def samples_paragraphs(request):
         result.append({name_key: line['author'], text_key: line['text']})
 
     return HttpResponse(json.dumps(result), content_type='application/json')
+
+
+def heidi_tips(request):
+    """Fetch live tips from github raw liveContent.json to avoid caching and client side CORS issues"""
+    url = 'https://raw.githubusercontent.com/HumanSignal/label-studio/refs/heads/develop/web/apps/labelstudio/src/components/HeidiTips/liveContent.json'
+    response = requests.get(
+        url, headers={'Cache-Control': 'no-cache', 'Content-Type': 'application/json', 'Accept': 'application/json'}
+    )
+
+    # Raise an exception for bad status codes to avoid caching
+    response.raise_for_status()
+
+    return HttpResponse(response.content, content_type='application/json')
 
 
 @swagger_auto_schema(methods=['GET'], auto_schema=None)
