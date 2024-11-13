@@ -27,7 +27,7 @@ export const loadLiveTipsCollection = () => {
   const abortTimeout = setTimeout(abortController.abort, MAX_TIMEOUT);
 
   // Fetch from github raw liveContent.json proxied through the server
-  fetch("/heidi-tips/", {
+  fetch("/heidi-tips", {
     headers: {
       "Cache-Control": "no-cache",
       "Content-Type": "application/json",
