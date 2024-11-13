@@ -34,16 +34,14 @@ export const loadLiveTipsCollection = () => {
     },
     signal: abortController.signal,
   })
-    .then((response) => {
+    .then(async (response) => {
       if (response.ok) {
-        return response.json();
+        const data = await response.json();
+
+        // Cache the fetched content
+        localStorage.setItem(CACHE_FETCHED_AT_KEY, String(Date.now()));
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
       }
-    })
-    .then((data) => {
-      // Cache the fetched content
-      localStorage.setItem(CACHE_FETCHED_AT_KEY, String(Date.now()));
-      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-      return data;
     })
     .catch((e) => {
       console.warn("Failed to load live Heidi tips collection", e);
