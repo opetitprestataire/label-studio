@@ -355,6 +355,8 @@ class Project(ProjectMixin, models.Model):
         return (
             self.one_object_in_label_config
             and self.summary.common_data_columns
+            # you can use say "only undefined field in this project" when there is only one field
+            and len(self.summary.common_data_columns) == 1
             and self.summary.common_data_columns[0] == settings.DATA_UNDEFINED_NAME
         )
 
