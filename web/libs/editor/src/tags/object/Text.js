@@ -5,6 +5,9 @@
  * You can use `<Style>.htx-text{ white-space: pre-wrap; }</Style>` to preserve all spaces in the text, otherwise spaces are trimmed when displayed and saved in the results.
  * Every space in the text sample is counted when calculating result offsets, for example for NER labeling tasks.
  *
+ * ### \r\n
+ * We count \r\n as two different symbols, so you should either preprocess your files to replace \r\n with \n completely, or read the file in python with `newline=''` to not convert \r\n to \n.
+ *
  * Use with the following data types: text.
  * @example
  * <!--Labeling configuration to label text for NER tasks with a word-level granularity -->
