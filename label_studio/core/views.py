@@ -183,7 +183,7 @@ def heidi_tips(request):
         )
         # Raise an exception for bad status codes to avoid caching
         response.raise_for_status()
-    # Catch all statuses and return either the status code if there was a response, or default to 404 if there is network issues
+    # Catch all exceptions and return either the status code if there was a response, or default to 404 if there are network issues
     # This is done this way to catch thrown exceptions from the request itself which will occur for air-gapped environments
     except Exception:
         # Any other HTTP error will return the error code, and other errors like connection/timeout errors will be a 404
