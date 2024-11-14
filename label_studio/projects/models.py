@@ -352,11 +352,14 @@ class Project(ProjectMixin, models.Model):
 
     @property
     def only_undefined_field(self):
-        """This property is true when there is only one column - $undefined$ - in this project.
-        This is useful for cases when labeling config has one field only (e.g. `image` or `text`)
-        and task data does not contain any other columns.
-        E.g. it allows to use data manager filters with `image` (or `text`) in the filter expression,
-        however, in fact task data does not contain `image` (or `text`) columns, it contains `$undefined$` only.
+        """This property is true when
+        1. there is only one object tag in labeling config,
+        2. there is only one common column for all tasks and it's $undefined$,
+
+        This is useful for cases when the labeling configuration has only one field,
+        such as `image` or `text`. For example, it allows to force a data manager
+        to filter `image` as `$undefined$`, because the task data, in reality,
+        does not contain `image`; it contains only `$undefined$`.
         """
         return (
             self.one_object_in_label_config

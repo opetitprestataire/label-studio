@@ -357,7 +357,7 @@ def preprocess_filter(_filter, *_):
     return _filter
 
 
-def preprocess_field_name(raw_field_name, only_undefined_field=False) -> Tuple[str, bool]:
+def preprocess_field_name(raw_field_name, project) -> Tuple[str, bool]:
     """Transform a field name (as specified in the datamanager views endpoint) to
     a django ORM field name. Also handle dotted accesses to task.data.
 
@@ -389,7 +389,9 @@ def preprocess_field_name(raw_field_name, only_undefined_field=False) -> Tuple[s
         field_name = field_name[1:]
 
     if field_name.startswith('data.'):
-        if only_undefined_field:
+        # process as $undefined$ only if real_name is from labeling config, not from task.data
+        real_name = field_name.replace('data.', '')
+        if project.only_undefined_field and real_name not in project.data_types.keys():
             field_name = f'data__{settings.DATA_UNDEFINED_NAME}'
         else:
             field_name = field_name.replace('data.', 'data__')
