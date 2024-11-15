@@ -67,7 +67,7 @@ def test_views_filters_with_undefined(business_client, project_id):
             {
                 # data default name when label config is not yet set
                 # and a file is uploaded directly
-                'filter': 'filter:tasks:data',
+                'filter': 'filter:tasks:data.data',
                 'operator': 'contains',
                 'type': 'String',
                 'value': 'photo',
