@@ -149,9 +149,7 @@ def apply_ordering(queryset, ordering, project, request, view_data=None):
             and view_data['columnsDisplayType'][unsigned_field_name] == 'Number'
         ):
             numeric_ordering = True
-        field_name, ascending = preprocess_field_name(
-            raw_field_name, project=project
-        )
+        field_name, ascending = preprocess_field_name(raw_field_name, project=project)
 
         if field_name.startswith('data__'):
             # annotate task with data field for float/int/bool ordering support

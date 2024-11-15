@@ -391,7 +391,17 @@ def preprocess_field_name(raw_field_name, project) -> Tuple[str, bool]:
     if field_name.startswith('data.'):
         # process as $undefined$ only if real_name is from labeling config, not from task.data
         real_name = field_name.replace('data.', '')
-        if project.only_undefined_field and real_name not in project.data_types.keys():
+        common_data_columns = project.summary.common_data_columns
+        if (
+            # there is only one object tag in labeling config,
+            len(project.data_types.keys()) == 1
+            # requested filter name == value from object tag
+            and real_name in project.data_types.keys()
+            # common data columns are not None
+            and common_data_columns
+            # $undefined$ is in common data columns, in all tasks
+            and settings.DATA_UNDEFINED_NAME in common_data_columns
+        ):
             field_name = f'data__{settings.DATA_UNDEFINED_NAME}'
         else:
             field_name = field_name.replace('data.', 'data__')
