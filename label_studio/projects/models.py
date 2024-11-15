@@ -351,24 +351,6 @@ class Project(ProjectMixin, models.Model):
         return len(self.data_types) <= 1
 
     @property
-    def only_undefined_field(self):
-        """This property is true when
-        1. there is only one object tag in labeling config,
-        2. there is only one common column for all tasks and it's $undefined$,
-
-        This is useful for cases when the labeling configuration has only one field,
-        such as `image` or `text`. For example, it allows to force a data manager
-        to filter `image` as `$undefined$`, because the task data, in reality,
-        does not contain `image`; it contains only `$undefined$`.
-        """
-        return (
-            self.one_object_in_label_config
-            and self.summary.common_data_columns
-            and len(self.summary.common_data_columns) == 1
-            and self.summary.common_data_columns[0] == settings.DATA_UNDEFINED_NAME
-        )
-
-    @property
     def get_labeled_count(self):
         return self.tasks.filter(is_labeled=True).count()
 
