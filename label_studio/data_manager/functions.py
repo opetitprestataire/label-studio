@@ -395,9 +395,11 @@ def preprocess_field_name(raw_field_name, project) -> Tuple[str, bool]:
         real_name_suitable = (
             # there is only one object tag in labeling config
             # and requested filter name == value from object tag
-            len(project.data_types.keys()) == 1 and real_name in project.data_types.keys()
+            len(project.data_types.keys()) == 1
+            and real_name in project.data_types.keys()
             # file was uploaded before labeling config is set, `data.data` is system predefined name
-            or len(project.data_types.keys()) == 0 and real_name == 'data'
+            or len(project.data_types.keys()) == 0
+            and real_name == 'data'
         )
         if (
             real_name_suitable
