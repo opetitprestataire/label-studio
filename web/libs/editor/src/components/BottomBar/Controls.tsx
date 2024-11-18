@@ -60,7 +60,6 @@ const ControlButton = observer(({ button, disabled, onClick }: ControlButtonProp
 
 export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
   observer(({ store, history, annotation }) => {
-    const isNonEditableDraft = annotation.isNonEditableDraft;
     const isReview = store.hasInterface("review") || annotation.canBeReviewed;
     const isNotQuickView = store.hasInterface("topbar:prevnext");
     const historySelected = isDefined(store.annotationStore.selectedHistory);
