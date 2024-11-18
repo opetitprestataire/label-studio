@@ -1,6 +1,6 @@
 {
-  "message": "docs: LEAP-1657: Add a note to Text tag about \\r\\n (#6645)",
-  "commit": "525dd190bcb54dc96dccabccc5449620d56c5107",
-  "date": "2024-11-14T01:54:34.000Z",
+  "message": "chore: OPTIC-1313: Reducing Toast usage in django templates to get rid of toast.min.js (#6604)",
+  "commit": "ed1980f3f9f0d300111af743adcb2172b7228831",
+  "date": "2024-11-15T16:45:13.000Z",
   "branch": "develop"
 }
