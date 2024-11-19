@@ -46,10 +46,10 @@ Get data into Label Studio by importing files, referencing URLs, or syncing with
 
     Uploading data through the Label Studio UI works fine for proof of concept projects, but it is not recommended for larger projects. You will also face challenges when you want
 
-    * import tasks with predictions,
-    * export your data,
-    * move your data to another Label Studio instance 
-    * or even just redeploy Label Studio. 
+        * import tasks with predictions,
+        * export your data,
+        * move your data to another Label Studio instance 
+        * or even just redeploy Label Studio. 
 
     Finally, Label Studio is not designed as a hosting service at scale and does not have backups for imported media resources. 
 
