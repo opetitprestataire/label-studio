@@ -393,11 +393,15 @@ export const ImportPage = ({
                 </dl>
                 <b>
                   * – Support depends on the browser
-                  <br />* – Use{" "}
-                  <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
-                    Cloud Storages
+                  <br />* – Direct media uploads have{" "}
+                  <a href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI">
+                    limitations
                   </a>{" "}
-                  if you want to import a large number of files
+                  and we strongly recommend using{" "}
+                  <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
+                    Cloud Storage
+                  </a>{" "} 
+                  instead
                 </b>
               </div>
             </label>
