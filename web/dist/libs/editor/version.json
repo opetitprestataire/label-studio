@@ -1,6 +1,6 @@
 {
-  "message": "chore: OPTIC-1313: Reducing Toast usage in django templates to get rid of toast.min.js (#6604)",
-  "commit": "ed1980f3f9f0d300111af743adcb2172b7228831",
-  "date": "2024-11-15T16:45:13.000Z",
+  "message": "fix: Text for import dialog about uploads (#6682)",
+  "commit": "08d3299e753ba9240d26c46624cdf8267fefa969",
+  "date": "2024-11-19T03:16:48.000Z",
   "branch": "develop"
 }
