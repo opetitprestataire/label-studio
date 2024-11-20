@@ -133,7 +133,7 @@ This feedback loop allows you to iteratively fine-tune your prompts, optimizing 
 | --- | --- |
 | **Supported data types** | Text |
 | **Supported object tags** | `Text` <br>`HyperText` |
-| **Supported control tags** | `Choices` <br>`Labels` <br>`TextArea` <br>`Pairwise` |
+| **Supported control tags** | `Choices` <br>`Labels` <br>`TextArea` <br>`Pairwise` <br>`Number` <br>`Rating` |
 | **Class selection** | Multi-selection (the LLM can apply multiple labels per task)|
 | **Supported base models** | OpenAI gpt-3.5-turbo-16k* <br>OpenAI gpt-3.5-turbo* <br>OpenAI gpt-4 <br>OpenAI gpt-4-turbo <br>OpenAI gpt-4o <br>OpenAI gpt-4o-mini<br>[Azure OpenAI chat-based models](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)<br>[Custom LLM](prompts_create#Add-OpenAI-Azure-OpenAI-or-a-custom-model)<br><br>**Note:** We recommend against using GPT 3.5 models, as these can sometimes be prone to rate limit errors.  |
 | **Text compatibility** | Task text must be utf-8 compatible |
