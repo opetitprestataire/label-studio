@@ -944,6 +944,7 @@ export default observer(
                 totalPages={item.parsedValueList.length}
                 onChange={(n) => item.setCurrentImage(n - 1)}
                 pageSizeSelectable={false}
+                disabled={store.annotationStore.viewingAll}
               />
             </div>
           ) : null}
