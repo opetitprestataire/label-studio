@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1353: Make HeidiTips live for auth pages (#6665)",
-  "commit": "f86f208ad53b2b2ed7cbc8c8feec4a069f433650",
-  "date": "2024-11-19T14:43:26.000Z",
+  "message": "chore(deps): bump cross-spawn from 7.0.3 to 7.0.6 in /web/libs/editor/tests/e2e (#6712)",
+  "commit": "cffdabb0e61b649a2ede14f9f9dd6dba6a86b086",
+  "date": "2024-11-25T11:57:16.000Z",
   "branch": "develop"
 }
