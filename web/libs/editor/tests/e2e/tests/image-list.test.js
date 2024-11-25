@@ -188,7 +188,10 @@ Scenario("View All disables MIG pagination", async ({ I, AtImageView, LabelStudi
   const params = {
     config: rectConfig,
     data,
-    annotations: [{ id: 1, result: [] }, { id: 2, result: [] }],
+    annotations: [
+      { id: 1, result: [] },
+      { id: 2, result: [] },
+    ],
     additionalInterfaces: ["annotations:view-all"],
   };
 
