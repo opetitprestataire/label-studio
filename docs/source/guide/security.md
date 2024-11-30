@@ -92,7 +92,7 @@ Each project in Label Studio can be linked to various cloud storage options such
 
 Combine workspaces, projects, users, and roles. This approach helps configure and secure cloud storage access effectively.
 
-#### Source storages security
+#### Source storage logic and security
 
 Label Studio cloud storage integration performs two key operations: 
 * **task sync and import**, 
