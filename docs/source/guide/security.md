@@ -120,11 +120,20 @@ Once Label Studio tasks are created, users can view and edit tasks in their brow
 
 #### Cloud Storage Behind Your VPC
 
+!!! warning Google Cloud Storage
+    Google Cloud Storage does **not** support IP or VPN restrictions for pre-signed URLs, making this approach infeasible for GCS.
+
+
 To ensure maximum security and isolation of your data behind a VPC, allowing access only to users within your VPC, you can use the following technique — especially effective with Label Studio SaaS (Cloud, app.humansignal.com) and AWS S3:
 
 1. Set **IP restrictions** for your S3 storage to allow Label Studio to perform task synchronization and generate pre-signed URLs for media file serving. IP restrictions enhance security by ensuring that only trusted networks can access your storage. GET (`s3:GetObject`) and LIST (`s3:ListBucket`) permissions are required.
 
 2. Set up **your VPC** connection between your S3 storage and your users' browsers.
+
+
+!!! note IP Ranges for app.humansignal.com
+    The IP ranges for app.humansignal.com can be found in the documentation [here](https://deploy-preview-6738--heartex-docs.netlify.app/guide/saas#IP-range)
+
 
 <details>
 <summary>Bucket Policy Example for S3 storage</summary>
@@ -175,12 +184,6 @@ To ensure maximum security and isolation of your data behind a VPC, allowing acc
 }
 ```
 </details>
-
-!!! note IP Ranges for app.humansignal.com
-    The IP ranges for app.humansignal.com can be found in the documentation [here](https://deploy-preview-6738--heartex-docs.netlify.app/guide/saas#IP-range)
-
-!!! warning Google Cloud Storage
-    Google Cloud Storage does **not** support IP or VPN restrictions for pre-signed URLs, making this approach infeasible for GCS.
 
 <img src="/images/storages/cloud-storage-ip-restriction.jpg" alt="Label Studio + Cloud Storage IP Restriction" />
 
