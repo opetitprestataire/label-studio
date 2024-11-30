@@ -180,9 +180,9 @@ To ensure maximum security and isolation of your data behind a VPC, allowing acc
 ```
 </details>
 
-<img width="49%" style="float: left; margin-right: 5px;" src="/images/storages/cloud-storage-ip-restriction.jpg" alt="Label Studio + Cloud Storage IP Restriction" />
+<img width="49%" style="float: left; margin-right: 5px;" src="/images/storages/cloud-storage-ip-restriction.jpg" alt="Label Studio + Cloud Storage IP Restriction" class="make-intense-zoom" />
 
-<img width="49%" style="float: right;" src="/images/storages/cloud-storage-vpn.jpg" alt="Label Studio + Cloud Storage VPC" />
+<img width="49%" style="float: right;" src="/images/storages/cloud-storage-vpn.jpg" alt="Label Studio + Cloud Storage VPC" class="make-intense-zoom" />
 
 #### Additional Notes
 
