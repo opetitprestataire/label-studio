@@ -127,7 +127,13 @@ To ensure maximum security and isolation of your data behind a VPC, allowing acc
 
 1. Set **IP restrictions** for your S3 storage to allow Label Studio to perform task synchronization and generate pre-signed URLs for media file serving. IP restrictions enhance security by ensuring that only trusted networks can access your storage. GET (`s3:GetObject`) and LIST (`s3:ListBucket`) permissions are required. <span class="enterprise-only">The IP ranges for `app.humansignal.com` can be found in the documentation [here](https://deploy-preview-6738--heartex-docs.netlify.app/guide/saas#IP-range).</span>
 
-2. Set up **your VPC** connection between your S3 storage and your users' browsers.
+2. **Establish a VPC Connection between S3 Storage and Users' Browsers**:
+
+   Configure your network so that users' browsers can access the S3 bucket securely within your Virtual Private Cloud (VPC). This ensures that data transmission occurs over a private network, enhancing security by preventing exposure to the public internet. Administrators can set up this connection using AWS VPC endpoints or other networking configurations within their infrastructure.
+
+   > **Helpful Resources**:
+   > - [AWS Documentation: VPC Endpoints for Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html)
+   > - [AWS Documentation: How to Configure VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/endpoint-services-overview.html)
 
 <details>
 <summary>Bucket Policy Example for S3 storage</summary>
