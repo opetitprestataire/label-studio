@@ -192,9 +192,8 @@ To ensure maximum security and isolation of your data behind a VPC, allowing acc
 
 **Storage Regions**: To minimize latency and improve efficiency, store data in cloud storage buckets that are geographically closer to your team rather than near the Label Studio server.
 
-
-!!! warning Note on securing cloud data
-    If you need to secure your data in a way to ensure that it is not touched by Label Studio, see [Source storage Sync and URI resolving](storage#Source-storage-Sync-and-URI-resolving). 
+!!! note More details on Cloud Storages
+    See more details on [Source storage Sync and URI resolving](/guide/storage.html#Source-storage-Sync-and-URI-resolving). 
 
 ### Secure access to Redis storage
 
