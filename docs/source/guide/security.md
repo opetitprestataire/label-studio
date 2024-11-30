@@ -121,8 +121,10 @@ Once Label Studio tasks are created, users can view and edit tasks in their brow
 #### Cloud Storage Behind Your VPC
 
 !!! warning Google Cloud Storage
-    Google Cloud Storage does **not** support IP or VPN restrictions for pre-signed URLs, making this approach infeasible for GCS.
-
+    Google Cloud Storage does **not** support IP or VPN restrictions for pre-signed URLs, making this approach infeasible for GCS. Alternative Security Measures for GCS:
+      - **Signed URLs with Limited Lifetimes**: Use signed URLs that expire after a short period to limit the window of access. This reduces the risk of unauthorized access if the URL is exposed.
+      - **Additional Authentication Mechanisms**: Implement additional layers of authentication, such as OAuth 2.0, to ensure that only authorized users can generate or access signed URLs.
+      - **Service Accounts and IAM Policies**: Use service accounts with specific IAM roles to control access to your GCS buckets. Ensure that only necessary permissions are granted to minimize potential security risks.
 
 To ensure maximum security and isolation of your data behind a VPC, allowing access only to users within your VPC, you can use the following technique — especially effective with Label Studio SaaS (Cloud, app.humansignal.com) and AWS S3:
 
@@ -132,6 +134,8 @@ To ensure maximum security and isolation of your data behind a VPC, allowing acc
 
 <details>
 <summary>Bucket Policy Example for S3 storage</summary>
+
+Go to your S3 bucket -> Permissions -> Bucket Policy in the AWS console. And add the following policy:
 
 ```json
 {
