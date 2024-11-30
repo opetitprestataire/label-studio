@@ -94,7 +94,11 @@ Combine workspaces, projects, users, and roles. This approach helps configure an
 
 #### How Label Studio Handles Source Storage Security
 
-Label Studio cloud storage integration performs two key operations: **task sync and import** and **media file serving**. Below, both are explained from a security perspective.
+Label Studio cloud storage integration performs two key operations: 
+* **task sync and import** and 
+* **media file serving**. 
+
+Below, both are explained from a security perspective.
 
 ##### Task Synchronization and Import
 
@@ -114,7 +118,7 @@ Once Label Studio tasks are created, users can view and edit tasks in their brow
 
 2. **User Browser Downloads**: The user's browser downloads and displays the media when viewing or labeling tasks. This requires the user's browser to access the pre-signed URLs directly.
 
-### Cloud Storage Behind Your VPC
+#### Cloud Storage Behind Your VPC
 
 To ensure maximum security and isolation of your data behind a VPC, allowing access only to users within your VPC, you can use the following technique — especially effective with Label Studio SaaS (Cloud, app.humansignal.com) and AWS S3:
 
@@ -122,11 +126,8 @@ To ensure maximum security and isolation of your data behind a VPC, allowing acc
 
 2. Set up **your VPC** connection between your S3 storage and your users' browsers.
 
-!!! note IP Ranges for app.humansignal.com
-The IP ranges for app.humansignal.com can be found in the documentation [here](https://deploy-preview-6738--heartex-docs.netlify.app/guide/saas#IP-range)
-
 <details>
-<summary>Bucket Policy Example for S3</summary>
+<summary>Bucket Policy Example for S3 storage</summary>
 
 ```json
 {
@@ -149,6 +150,7 @@ The IP ranges for app.humansignal.com can be found in the documentation [here](h
             "Condition": {
                 "NotIpAddress": {
                     "aws:SourceIp": [
+                      //// IP ranges for app.humansignal.com from the documentation
                         "3.219.3.197/32",
                         "34.237.73.3/32",
                         "44.216.17.242/32"
@@ -174,14 +176,17 @@ The IP ranges for app.humansignal.com can be found in the documentation [here](h
 ```
 </details>
 
+!!! note IP Ranges for app.humansignal.com
+    The IP ranges for app.humansignal.com can be found in the documentation [here](https://deploy-preview-6738--heartex-docs.netlify.app/guide/saas#IP-range)
+
 !!! warning Google Cloud Storage
-Google Cloud Storage does **not** support IP or VPN restrictions for pre-signed URLs, making this approach infeasible for GCS.
+    Google Cloud Storage does **not** support IP or VPN restrictions for pre-signed URLs, making this approach infeasible for GCS.
 
 <img src="/images/storages/cloud-storage-ip-restriction.jpg" alt="Label Studio + Cloud Storage IP Restriction" />
 
 <img src="/images/storages/cloud-storage-vpn.jpg" alt="Label Studio + Cloud Storage VPC" />
 
-### Additional Notes
+#### Additional Notes
 
 **Google ADC**: If you use Label Studio on-premises with Google Cloud Storage, you can set up [Application Default Credentials](https://cloud.google.com/docs/authentication/provide-credentials-adc) to provide cloud storage authentication globally for all projects, so users do not need to configure credentials manually.
 
