@@ -118,7 +118,7 @@ Once Label Studio tasks are created, users can view and edit tasks in their brow
 
 2. **User Browser Downloads**: The user's browser downloads and displays the media when viewing or labeling tasks. This requires the user's browser to access the pre-signed URLs directly.
 
-#### Cloud Storage behind your VPC
+#### Source storage behind your VPC
 
 !!! warning Google Cloud Storage
     Google Cloud Storage does **not** support IP or VPN restrictions for pre-signed URLs, making this approach infeasible for GCS. As an alternative security measure for GCS, you can use **signed URLs with short lifetimes**.
