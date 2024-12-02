@@ -139,7 +139,7 @@ To ensure maximum security and isolation of your data behind a VPC, only allow a
 <summary>Bucket Policy Example for S3 storage</summary>
 
 !!! warning
-    These example bucket policies explicitly deny access to any requests outside the allowed IP addresses. Even the user that entered the bucket policy can be denied access to the bucket if the user doesn't meet the conditions. Therefore, make sure to review the bucket policy carefully before saving it. If you get accidentally locked out, see [How to regain access to an Amazon S3 bucket](https://repost.aws/knowledge-center/s3-accidentally-denied-access)
+    These example bucket policies explicitly deny access to any requests outside the allowed IP addresses. Even the user that entered the bucket policy can be denied access to the bucket if the user doesn't meet the conditions. Therefore, make sure to review the bucket policy carefully before saving it. If you get accidentally locked out, see [How to regain access to an Amazon S3 bucket](https://repost.aws/knowledge-center/s3-accidentally-denied-access).
 
 Go to your S3 bucket and then **Permissions > Bucket Policy** in the AWS management console. Add the following policy:
 
