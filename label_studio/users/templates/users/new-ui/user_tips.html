@@ -1,6 +1,10 @@
 {% load filters %}
 
 <script nonce="{{request.csp_nonce}}">
+
+  window.APP_SETTINGS = window.APP_SETTINGS ?? {};
+  window.APP_SETTINGS.collect_analytics = {{ settings.COLLECT_ANALYTICS|yesno:"true,false" }};
+
   // Log event to the server, if analytics are enabled
   // This is a fallback for when the __lsa global is not defined
   // Normally this is a part of our main bundle but these pages do not use the main bundle
@@ -219,7 +223,7 @@
     _container.addEventListener('click', (event) => {
       // If the clicked element is the link, log the click
       if (event.target.hasAttribute('data-heidi-tip-link')) {
-        __lsa(getTipEvent(TIP_COLLECTION_NAME, selectedTip, event), getTipMetadata(selectedTip));
+        __lsa(getTipEvent(TIP_COLLECTION_NAME, selectedTip, 'click'), getTipMetadata(selectedTip));
       }
     });
 
