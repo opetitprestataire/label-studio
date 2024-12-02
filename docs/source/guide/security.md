@@ -190,6 +190,8 @@ Go to your S3 bucket and then **Permissions > Bucket Policy** in the AWS managem
 ```
 </details>
 
+<i>This image shows how you can securely configure source cloud storages with Label Studio using your VPC and IP restrictions</i> 
+
 <img width="49%" style="display: inline-block; margin-right: 5px;" src="/images/storages/cloud-storage-ip-restriction.jpg" alt="Label Studio + Cloud Storage IP Restriction" class="make-intense-zoom" />
 
 <img width="49%" style="display: inline-block;" src="/images/storages/cloud-storage-vpn.jpg" alt="Label Studio + Cloud Storage VPC" class="make-intense-zoom" />
