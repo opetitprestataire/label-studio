@@ -30,17 +30,16 @@ export function getTipEvent(collection: string, tip: Tip, event: string) {
   return getTipCollectionEvent(collection, event);
 }
 
-
 export function getTipMetadata(tip: Tip) {
   // Everything except the experiment and treatment params as those are part of the event name
   const { experiment, treatment, ...rest } = tip.link.params ?? {};
   return {
     ...rest,
-    content: tip.description ?? tip.content ?? "" ,
+    content: tip.description ?? tip.content ?? "",
     title: tip.title,
     href: tip.link.url,
     label: tip.link.label,
-  }
+  };
 }
 
 export const loadLiveTipsCollection = () => {
