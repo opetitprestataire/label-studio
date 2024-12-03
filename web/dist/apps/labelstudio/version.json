@@ -1,6 +1,6 @@
 {
-  "message": "chore: OPTIC-1244: Tidy up CTAs (#6653)",
-  "commit": "53fcb79823352ff001c5398bbc48085f8b7510d6",
-  "date": "2024-11-21T17:07:24.000Z",
+  "message": "refactor: LEAP-1314: Remove Stale Feature Flag - fflag_feat_front_dev… (#6732)",
+  "commit": "ca2cd86e9096e29415470e66dece52d8e78a0d04",
+  "date": "2024-12-02T20:39:09.000Z",
   "branch": "develop"
 }
