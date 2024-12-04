@@ -319,9 +319,11 @@ const Result = types
         }
       }
 
-      // `meta` is used for lead_time which is stored in one result, while area's `meta` is used for meta text,
-      // and this text is duplicated in every connected result, so we should prefer area's `meta` for actual value.
-      data.meta = { ...meta, ...self.area.meta };
+      if (meta || (self.area.meta && Object.keys(self.area.meta).length)) {
+        // `meta` is used for lead_time which is stored in one result, while area's `meta` is used for meta text,
+        // and this text is duplicated in every connected result, so we should prefer area's `meta` for actual value.
+        data.meta = { ...meta, ...self.area.meta };
+      }
 
       if (self.area.parentID) {
         data.parentID = self.area.parentID.replace(/#.*/, "");
