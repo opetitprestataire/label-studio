@@ -280,7 +280,12 @@ class App extends Component {
           >
             {outlinerEnabled ? (
               newUIEnabled ? (
-                !isBulkMode ? (
+                isBulkMode ? (
+                  <>
+                    {mainContent}
+                    {store.hasInterface("topbar") && <BottomBar store={store} />}
+                  </>
+                ) : (
                   <SideTabsPanels
                     panelsHidden={viewingAll}
                     currentEntity={as.selectedHistory ?? as.selected}
@@ -291,13 +296,10 @@ class App extends Component {
                     {mainContent}
                     {store.hasInterface("topbar") && <BottomBar store={store} />}
                   </SideTabsPanels>
-                ) : (
-                  <>
-                    {mainContent}
-                    {store.hasInterface("topbar") && <BottomBar store={store} />}
-                  </>
                 )
-              ) : !isBulkMode ? (
+              ) : isBulkMode ? (
+                <>{mainContent}</>
+              ) : (
                 <SidePanels
                   panelsHidden={viewingAll}
                   currentEntity={as.selectedHistory ?? as.selected}
@@ -305,8 +307,6 @@ class App extends Component {
                 >
                   {mainContent}
                 </SidePanels>
-              ) : (
-                <>{mainContent}</>
               )
             ) : (
               <>
