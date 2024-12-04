@@ -65,7 +65,7 @@ If you installed Label Studio [using the source in Github](https://github.com/Hu
 <div class="code-tabs">
   <div data-name="Using Poetry (recommended)">
 
-  If you'r using Poetry ([see these instructions](install#Install-from-source)), upgrade with the following steps:
+  If you're using Poetry ([see these instructions](install#Install-from-source)), upgrade with the following steps:
   
   1. Navigate to your Label Studio directory (where you cloned the repository). 
   2. Fetch the latest changes from the repository:
