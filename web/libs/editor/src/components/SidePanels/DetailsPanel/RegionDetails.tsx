@@ -136,7 +136,8 @@ export const RegionDetailsMeta: FC<RegionDetailsMetaProps> = observer(
             ref={(el) => (input.current = el)}
             placeholder="Meta"
             className={bem.elem("meta-text").toClassName()}
-            defaultValue={region.meta.text}
+            value={region.meta.text}
+            onChange={(e) => saveMeta(e.target.value)}
             onBlur={(e) => {
               saveMeta(e.target.value);
               cancelEditMode?.();
