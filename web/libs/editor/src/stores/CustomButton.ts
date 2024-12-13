@@ -19,6 +19,7 @@ export const CustomButton = types
     tooltip: types.maybe(types.string),
     ariaLabel: types.maybe(types.string),
     disabled: types.maybe(types.boolean),
+    props: types.maybe(types.frozen()),
   })
   .actions((self) => ({
     updateState(newState: CustomButtonSnType) {
