@@ -1,0 +1,6 @@
+steps:
+  - target: .lsf-auto-labeling-button
+    placement: bottom
+    title: 'Scale Your Expertise with Prompts'
+    content: 'Harness the power of LLMs to automatically label your data with unmatched accuracy and consistency.'
+    disableBeacon: true
