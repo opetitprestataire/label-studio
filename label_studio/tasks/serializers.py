@@ -6,6 +6,7 @@ import ujson as json
 from core.feature_flags import flag_set
 from core.label_config import replace_task_data_undefined_with_config_field
 from core.utils.common import load_func, retry_database_locked
+from core.utils.db import fast_first
 from django.conf import settings
 from django.db import IntegrityError, transaction
 from drf_yasg import openapi
@@ -536,7 +537,7 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
         # Acquire a lock on the project to ensure atomicity when calculating inner_id
         project = Project.objects.select_for_update().get(id=self.project.id)
 
-        last_task = Task.objects.filter(project=project).order_by('-inner_id').first()
+        last_task = fast_first(Task.objects.filter(project=project).order_by('-inner_id'))
         prev_inner_id = last_task.inner_id if last_task else 0
         max_inner_id = (prev_inner_id + 1) if prev_inner_id else 1
 
