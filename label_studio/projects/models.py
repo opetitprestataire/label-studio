@@ -3,6 +3,7 @@
 import json
 import logging
 from typing import Any, Mapping, Optional
+
 from annoying.fields import AutoOneToOneField
 from core.feature_flags import flag_set
 from core.label_config import (
@@ -658,7 +659,7 @@ class Project(ProjectMixin, models.Model):
 
     def _label_config_has_changed(self):
         return self.label_config != self.__original_label_config
-    
+
     @property
     def label_config_is_not_default(self):
         return self.label_config != Project._meta.get_field('label_config').default
@@ -731,9 +732,11 @@ class Project(ProjectMixin, models.Model):
     def save(self, *args, update_fields=None, recalc=True, **kwargs):
         exists = True if self.pk else False
         project_with_config_just_created = not exists and self.label_config
-        
+
         label_config_has_changed = self._label_config_has_changed()
-        logger.debug(f'Label config has changed: {label_config_has_changed}, original: {self.__original_label_config}, new: {self.label_config}')
+        logger.debug(
+            f'Label config has changed: {label_config_has_changed}, original: {self.__original_label_config}, new: {self.label_config}'
+        )
 
         if label_config_has_changed or project_with_config_just_created:
             self.data_types = extract_data_types(self.label_config)
@@ -748,7 +751,7 @@ class Project(ProjectMixin, models.Model):
                 update_fields = {'control_weights'}.union(update_fields)
 
         super(Project, self).save(*args, update_fields=update_fields, **kwargs)
-        
+
         if label_config_has_changed:
             # save the new label config for future comparison
             self.__original_label_config = self.label_config

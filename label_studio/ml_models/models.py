@@ -114,7 +114,7 @@ class ThirdPartyModelVersion(ModelVersion):
     organization = models.ForeignKey(
         'organizations.Organization', on_delete=models.CASCADE, related_name='third_party_model_versions', null=True
     )
-    
+
     @property
     def project(self):
         # TODO: can it be just a property of the model version?

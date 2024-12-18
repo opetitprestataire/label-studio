@@ -786,8 +786,8 @@ class ProjectTaskListAPI(GetParentObjectMixin, generics.ListCreateAPIView, gener
             self.request.user.active_organization, project, WebhookAction.TASKS_CREATED, [instance]
         )
         return instance
-    
-    
+
+
 def read_templates_and_groups():
     annotation_templates_dir = find_dir('annotation_templates')
     configs = []

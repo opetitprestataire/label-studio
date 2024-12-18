@@ -586,9 +586,9 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
     @staticmethod
     def add_annotation_fields(body, user, action):
         return body
-    
+
     @staticmethod
-    def post_process_custom_callback(project_id):
+    def post_process_custom_callback(project_id, user):
         pass
 
     class Meta:

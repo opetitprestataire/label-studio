@@ -17,7 +17,6 @@ from rest_framework.views import APIView
 from users.functions import check_avatar
 from users.models import User
 from users.serializers import UserSerializer, UserSerializerUpdate
-from users.product_tours.api import ProductTourAPI
 
 logger = logging.getLogger(__name__)
 

@@ -16,7 +16,6 @@ from django.utils.translation import gettext_lazy as _
 from organizations.models import Organization
 from rest_framework.authtoken.models import Token
 from users.functions import hash_upload
-from users.product_tours.models import UserProductTour
 
 YEAR_START = 1980
 YEAR_CHOICES = []
