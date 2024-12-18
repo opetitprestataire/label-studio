@@ -857,23 +857,22 @@ test = ["django (>=1.8.0)", "pytest (>=3.0.5)", "pytest-cov (>=2.4.0)", "pytest-
 
 [[package]]
 name = "django-rq"
-version = "2.5.1"
+version = "3.0.0"
 description = "An app that provides django integration for RQ (Redis Queue)"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-rq-2.5.1.tar.gz", hash = "sha256:f08486602664d73a6e335872c868d79663e380247e6307496d01b8fa770fefd8"},
-    {file = "django_rq-2.5.1-py2.py3-none-any.whl", hash = "sha256:7be1e10e7091555f9f36edf100b0dbb205ea2b98683d74443d2bdf3c6649a03f"},
+    {file = "django-rq-3.0.0.tar.gz", hash = "sha256:7bdadb85d9909c118cf1ee1b9bdd1a74ebf141bf8f3c2de2409fcac6080f67ac"},
+    {file = "django_rq-3.0.0-py2.py3-none-any.whl", hash = "sha256:bd2ef287a28301f64c4282293648e4f8c6076dd895a545c9c6b98bde4a82a4ce"},
 ]
 
 [package.dependencies]
-django = ">=2.0"
-redis = ">=3"
-rq = ">=1.2"
+django = ">=3.2"
+redis = ">=3.5"
+rq = ">=2"
 
 [package.extras]
-sentry = ["raven (>=6.1.0)"]
-testing = ["mock (>=2.0.0)"]
+sentry = ["sentry-sdk (>=1.0.0)"]
 
 [[package]]
 name = "django-storages"
@@ -3881,18 +3880,18 @@ files = [
 
 [[package]]
 name = "rq"
-version = "1.10.1"
+version = "2.0.0"
 description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.8"
 files = [
-    {file = "rq-1.10.1-py2.py3-none-any.whl", hash = "sha256:92f4cf38b2364c1697b541e77c0fe62b7e5242fa864324f262be126ee2a07e3a"},
-    {file = "rq-1.10.1.tar.gz", hash = "sha256:62d06b44c3acfa5d1933c5a4ec3fbc2484144a8af60e318d0b8447c5236271e2"},
+    {file = "rq-2.0.0-py3-none-any.whl", hash = "sha256:a3a767876675dcc42683bac1869494c5020ba7fcf5c026d1f6d36a8ab98573a6"},
+    {file = "rq-2.0.0.tar.gz", hash = "sha256:76d2a4a27f8fd5c4cfa200cd442efe3c1fd73525c676af06f07fcc0b81bdb70d"},
 ]
 
 [package.dependencies]
-click = ">=5.0.0"
-redis = ">=3.5.0"
+click = ">=5"
+redis = ">=3.5"
 
 [[package]]
 name = "rsa"
@@ -4633,4 +4632,4 @@ uwsgi = ["pyuwsgi", "uwsgitop"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4"
-content-hash = "c3656998ba6d9776676dc2f99551f05dd0227ac0f1eb0905a34a15528ad3af04"
+content-hash = "851146e7b04cbb59e384126428e400fd8f8339ffc00c43663fe2502ffe9ae8ff"
