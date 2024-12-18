@@ -215,7 +215,7 @@ class InactivitySessionTimeoutMiddleWare(CommonMiddleware):
         # Check if this request is too far from when the login happened,
         # but only when last_login was set before
         if last_login and (current_time - last_login) > settings.MAX_SESSION_AGE:
-            logger.info(
+            logger.warn(
                 f'Request is too far from last login {current_time - last_login:.0f} > {settings.MAX_SESSION_AGE}; logout'
             )
             logout(request)
