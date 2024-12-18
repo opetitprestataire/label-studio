@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 class ProductTourAPI(generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserProductTourSerializer
+    swagger_schema = None
 
     def get_tour_name(self):
         name = self.request.query_params.get('name')
