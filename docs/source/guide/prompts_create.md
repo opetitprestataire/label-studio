@@ -117,3 +117,4 @@ From the Prompts page, click **Create Prompt** in the upper right and then compl
     * You must have access to the project. If you are in the Manager role, you need to be added to the project to have access. 
     * The project cannot be located in your Personal Sandbox workspace. 
     * While projects connected to an ML backend will still appear in the list of eligible projects, we do not recommend using Prompts with an ML backend as this can interfere with how accuracy and score are calculated when evaluating the prompt. 
+  

@@ -29,11 +29,11 @@ With Prompts, you can:
 
 | Feature | Support |
 | --- | --- |
-| **Supported data types** | Text <br>Image |
+| **Supported data types** | Text <br>Image<br><br>**Note:** Images are only supported when uploaded through cloud storage. |
 | **Supported object tags** | `Text` <br>`HyperText` <br>`Image` |
-| **Supported control tags** | `Choices` (Text and Image)<br>`Labels` (Text)<br>`TextArea` (Text and Image)<br>`Pairwise` (Text)<br>`Number` (Text)<br>`Rating` (Text) |
+| **Supported control tags** | `Choices` (Text and Image)<br>`Labels` (Text)<br>`TextArea` (Text and Image)<br>`Pairwise` (Text and Image)<br>`Number` (Text and Image)<br>`Rating` (Text and Image) |
 | **Class selection** | Multi-selection (the LLM can apply multiple labels per task)|
-| **Supported base models** | OpenAI gpt-3.5-turbo-16k* <br>OpenAI gpt-3.5-turbo* <br>OpenAI gpt-4 <br>OpenAI gpt-4-turbo <br>OpenAI gpt-4o <br>OpenAI gpt-4o-mini<br>[Azure OpenAI chat-based models](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)<br>[Custom LLM](prompts_create#Add-OpenAI-Azure-OpenAI-or-a-custom-model)<br><br>**Note:** We recommend against using GPT 3.5 models, as these can sometimes be prone to rate limit errors.  |
+| **Supported base models** | OpenAI gpt-3.5-turbo-16k* <br>OpenAI gpt-3.5-turbo* <br>OpenAI gpt-4 <br>OpenAI gpt-4-turbo <br>OpenAI gpt-4o <br>OpenAI gpt-4o-mini<br>[Azure OpenAI chat-based models](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)<br>[Custom LLM](prompts_create#Add-OpenAI-Azure-OpenAI-or-a-custom-model)<br><br>**Note:** We recommend against using GPT 3.5 models, as these can sometimes be prone to rate limit errors and are not compatible with Image data.   |
 | **Text compatibility** | Task text must be utf-8 compatible |
 | **Task size** | Total size of each task can be no more than 1MB (approximately 200-500 pages of text) |
 | **Network access** | If you are using a firewall or restricting network access to your OpenAI models, you will need to allow the following IPs: <br>3.219.3.197 <br>34.237.73.3 <br>4.216.17.242 |
