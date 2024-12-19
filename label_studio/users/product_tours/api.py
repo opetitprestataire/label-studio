@@ -35,9 +35,9 @@ class ProductTourAPI(generics.RetrieveUpdateAPIView):
         tour = UserProductTour.objects.filter(user=self.request.user, name=name).first()
         if not tour:
             logger.info(f'Product tour {name} not found for user {self.request.user.id}. Creating new tour.')
-            tour = self.get_serializer(data={'user': self.request.user.id, 'name': name})
-            tour.is_valid(raise_exception=True)
-            tour.save()
+            tour_serializer = self.get_serializer(data={'user': self.request.user.id, 'name': name})
+            tour_serializer.is_valid(raise_exception=True)
+            tour = tour_serializer.save()
         else:
             logger.info(f'Product tour {name} requested for user {self.request.user.id}.')
 
