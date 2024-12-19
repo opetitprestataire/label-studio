@@ -1,25 +1,23 @@
 steps:
 - target: body
   placement: center
-  title: '<div><img src="/static/images/prompts-tour-banner.svg" style="width: 100%; margin-bottom: 16px;"/><div style="font-size: 24px; color: var(--grape_500)">Scale Your Expertise with Prompts</div></div>'
-  content: '<div style="width: 100%">Achieve high accuracy and consistency labeling large datasets with the power of LLMs.<br/><br/>Let us show you how.</div>'
+  title: '<div><img src="/static/images/prompts-tour-banner.svg" style="width: 100%; margin-bottom: 16px;"/><div style="font-size: 24px; color: var(--grape_500)">Auto-Label with AI</div></div>'
+  content: '<div style="width: 100%">We’ve set up an initial prompt and supplied some OpenAI credits to help you get started with auto-labeling your project.<br/><br/>Let us show you around!</div>'
 
 - target: .cm-editor
   placement: right
-  title: '<div style="color: var(--sand_600)">Step 1 of 4</div>'
-  content: '<div style="width: 100%;">Type in your instructions <b>using natural language</b> in this text box. You may include variables names to refer to specific pieces of your data.</div>'
-
-- target: .lsf-data-table
-  placement: left
-  title: '<div style="color: var(--sand_600)">Step 2 of 4</div>'
-  content: 'On the right side, you can view the data to be labeled. This is where your predictions will be displayed.'
-
-- target: '[data-testid="save-model-version"]'
-  placement: bottom
-  title: '<div style="color: var(--sand_600)">Step 3 of 4</div>'
-  content: '<div style="width: 100%;">When you are satisfied with your prompt, press <b>Save</b> to ensure this version of your prompt is safely stored.</div>'
+  title: '<div style="color: var(--sand_600)">Step 1 of 3</div>'
+  content: '<div style="width: 100%;">We’ve gone ahead and generated a prompt for you based on your project’s labeling configuration.<br/><br/> Feel free to adjust it!</div>'
 
 - target: '[data-testid="evaluate-model-button"]'
   placement: top
-  title: '<div style="font-size: 24px">🎉</div>'
+  title: '<div style="color: var(--sand_600)">Step 2 of 3</div>'
   content: '<div style="width: 100%;">That''s it! After saving, just click on <b>Evaluate</b> to start getting predictions for your tasks.</div>'
+
+- target: body
+  placement: center
+  title: '<div>🎉 <br/><b> That’s it! </b></div>'
+  content: 'Now you may convert (or correct) the predictions to annotations by opening the tasks on your project.'
+  locale:
+    last: 'Go to Project'
+
