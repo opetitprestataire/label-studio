@@ -51,7 +51,7 @@ Label Studio is available to everyone as open source software (Label Studio Comm
     <td colspan="4" style="text-align:center"><b>Data Management</b></td>
   </tr>
   <tr>
-    <td><b>Data Management View</b><br/><a href="manage_data.html">View and manage datasets and tasks in a project through the Data Manager view.</a></td>
+    <td><b>Data management view</b><br/><a href="manage_data.html">View and manage datasets and tasks in a project through the Data Manager view.</a></td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
@@ -102,7 +102,7 @@ Label Studio is available to everyone as open source software (Label Studio Comm
     <td style="text-align:center">✅</td>
   </tr>
   <tr>
-    <td><b>Personal sandbox workspace</b><br/><a href="https://docs.humansignal.com/guide/workspaces">Personal Sandbox workspace for project testing and experimentation. </a></td>
+    <td><b>Personal sandbox workspace</b><br/><a href="https://docs.humansignal.com/guide/workspaces">Personal sandbox workspace for project testing and experimentation. </a></td>
     <td style="text-align:center">❌</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
@@ -153,12 +153,6 @@ Label Studio is available to everyone as open source software (Label Studio Comm
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
   </tr>
-  <tr>
-    <td><b>Overlap configuration</b><br/><a href="https://docs.humansignal.com/guide/project_settings_lse#Quality">Set how many annotators must label each sample.</a></td>
-    <td style="text-align:center">❌</td>
-    <td style="text-align:center">✅</td>
-    <td style="text-align:center">✅</td>
-  </tr>
    <tr>
     <td colspan="4" style="text-align:center"><b>Customization & Development</b></td>
   </tr>
@@ -181,7 +175,7 @@ Label Studio is available to everyone as open source software (Label Studio Comm
     <td style="text-align:center">✅</td>
   </tr>
   <tr>
-    <td><b>API/SDK & Webhooks</b><br/><a href = "https://labelstud.io/guide/api.html"> APIs, SDK, and webhooks for programmatically accessing and managing Label Studio.</a></td>
+    <td><b>API/SDK & webhooks</b><br/><a href = "https://labelstud.io/guide/api.html"> APIs, SDK, and webhooks for programmatically accessing and managing Label Studio.</a></td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
@@ -259,7 +253,13 @@ Label Studio is available to everyone as open source software (Label Studio Comm
     <td style="text-align:center">✅</td>
   </tr>
   <tr>
-    <td><b>Automatic Task Reassignment</b><br/><a href="https://docs.humansignal.com/guide/quality.html">Reassign tasks with low agreement scores to new annotators.</a></td>
+    <td><b>Automatic task reassignment</b><br/><a href="https://docs.humansignal.com/guide/quality.html">Reassign tasks with low agreement scores to new annotators.</a></td>
+    <td style="text-align:center">❌</td>
+    <td style="text-align:center">✅</td>
+    <td style="text-align:center">✅</td>
+  </tr>
+  <tr>
+    <td><b>Agreement metrics</b><br/><a href="https://docs.humansignal.com/guide/stats.html">Define how annotator consensus is calculated. You can choose from pre-defined metrics or customize your own.</a></td>
     <td style="text-align:center">❌</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
@@ -272,6 +272,12 @@ Label Studio is available to everyone as open source software (Label Studio Comm
   </tr>
   <tr>
     <td><b>Identify ground truths</b><br/><a href="https://docs.humansignal.com/guide/quality.html">Mark which annotations should be included in a Ground Truth dataset.</a></td>
+    <td style="text-align:center">❌</td>
+    <td style="text-align:center">✅</td>
+    <td style="text-align:center">✅</td>
+  </tr>
+  <tr>
+    <td><b>Overlap configuration</b><br/><a href="https://docs.humansignal.com/guide/project_settings_lse#Quality">Set how many annotators must label each sample.</a></td>
     <td style="text-align:center">❌</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
