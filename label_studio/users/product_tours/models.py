@@ -1,7 +1,7 @@
-from enum import Enum
 from typing import Any, Dict, Optional
-from django.utils.translation import gettext_lazy as _
+
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from pydantic import BaseModel, Field
 
 
@@ -31,9 +31,7 @@ class UserProductTour(models.Model):
     )
 
     name = models.CharField(
-        _('Name'),
-        max_length=256,
-        help_text='Unique identifier for the product tour. Name must match the config name.'
+        _('Name'), max_length=256, help_text='Unique identifier for the product tour. Name must match the config name.'
     )
 
     state = models.CharField(
@@ -46,8 +44,9 @@ class UserProductTour(models.Model):
 
     interaction_data = models.JSONField(
         _('Interaction Data'),
-        default=dict, blank=True,
-        help_text='Additional data about user interaction with the tour'
+        default=dict,
+        blank=True,
+        help_text='Additional data about user interaction with the tour',
     )
 
     created_at = models.DateTimeField(auto_now_add=True, help_text='When this tour record was created')
