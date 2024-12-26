@@ -1,5 +1,5 @@
 steps:
-  - target: .lsf-auto-labeling-button
+  - target: '[data-testid="auto-labeling-button"]'
     placement: bottom
     title: 'Great news!'
     content: >
