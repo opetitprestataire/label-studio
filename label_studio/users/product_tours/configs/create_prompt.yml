@@ -17,7 +17,6 @@ steps:
 - target: body
   placement: center
   title: '<div>🎉 <br/><b> That’s it! </b></div>'
-  content: 'Now you may convert (or correct) the predictions to annotations by opening the tasks on your project.'
+  content: 'Watch the outputs stream in, and click on any task to review the full prediction. <br/>Once you''re ready, run your prompt on <b>"All Project Tasks"</b> to get predictions for all your tasks!'
   locale:
-    last: 'Go to Project'
-
+    last: 'Finish'
