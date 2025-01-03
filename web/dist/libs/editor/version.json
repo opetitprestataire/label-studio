@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1178: Possible LS Memory Leak (#6704)",
-  "commit": "3818a9c386220d194869d608348ba4afd6794b64",
-  "date": "2024-12-18T11:21:53.000Z",
+  "message": "feat: OPTIC-1332: componetize Toggle and Label components (#6723)",
+  "commit": "281ef778e277bdf3d6cd06b1a75985acc51f2c8c",
+  "date": "2025-01-03T13:35:43.000Z",
   "branch": "develop"
 }
