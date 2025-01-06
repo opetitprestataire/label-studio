@@ -757,7 +757,12 @@ class Project(ProjectMixin, models.Model):
             self.__original_label_config = self.label_config
             # if tasks are already imported, emit signal that project is configured and ready for labeling
             if self.num_tasks > 0:
+                logger.debug(f'Sending post_label_config_and_import_tasks signal for project {self.id}')
                 ProjectSignals.post_label_config_and_import_tasks.send(sender=Project, project=self)
+            else:
+                logger.debug(
+                    f'No tasks imported for project {self.id}, skipping post_label_config_and_import_tasks signal'
+                )
 
         if not exists:
             steps = ProjectOnboardingSteps.objects.all()

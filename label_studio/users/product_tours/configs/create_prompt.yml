@@ -12,7 +12,7 @@ steps:
 - target: '[data-testid="evaluate-model-button"]'
   placement: top
   title: '<div style="color: var(--sand_600)">Step 2 of 3</div>'
-  content: '<div style="width: 100%;">That''s it! After saving, just click on <b>Evaluate</b> to start getting predictions for your tasks.</div>'
+  content: '<div style="width: 100%;">That''s it! After saving, just click here to start getting predictions for your tasks.</div>'
 
 - target: body
   placement: center
