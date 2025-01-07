@@ -147,6 +147,14 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
       waveform.current?.regions.clearSegments();
     });
 
+    hotkeys.addNamed(
+      "audio:playpause",
+      () => {
+        controls.setPlaying((playing) => !playing);
+      },
+      `${Hotkey.DEFAULT_SCOPE},${Hotkey.INPUT_SCOPE}`,
+    );
+
     return () => {
       hotkeys.unbindAll();
     };

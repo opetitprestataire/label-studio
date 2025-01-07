@@ -4,7 +4,11 @@
     "mac": "command+b",
     "description": "Back for one second"
   },
-  "audio:playpause": {},
+  "audio:playpause": {
+    "key": "ctrl+p",
+    "mac": "command+p",
+    "description": "Play/pause"
+  },
   "ts:grow-left": {
     "key": "left",
     "description": "Increase region to the left"
