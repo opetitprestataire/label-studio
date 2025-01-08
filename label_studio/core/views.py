@@ -27,7 +27,7 @@ from django.http import (
     HttpResponseServerError,
     JsonResponse,
 )
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, render, reverse
 from django.template import loader
 from django.utils._os import safe_join
 from django.views.decorators.csrf import csrf_exempt
@@ -55,7 +55,8 @@ def main(request):
             return redirect(reverse('user-login'))
 
         # business mode access
-        return redirect(reverse('projects:project-index'))
+        # return redirect(reverse('projects:project-index'))
+        return render(request, 'home/home.html')
 
     # not authenticated
     return redirect(reverse('user-login'))
