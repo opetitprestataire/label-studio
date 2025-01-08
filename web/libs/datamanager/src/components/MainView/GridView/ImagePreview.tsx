@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect, type CSSProperties } from "react";
-import { observer } from "mobx-react";
+import React, { type CSSProperties } from "react";
 import styles from "./GridPreview.module.scss";
 
 const MAX_ZOOM = 20;
@@ -15,36 +14,49 @@ type ImagePreviewProps = {
   field: string;
 };
 
-// @todo constrain the position of the image to the container
-const ImagePreview = observer(({ task, field }: ImagePreviewProps) => {
-  const src = task?.data?.[field ?? ""] ?? "";
+interface ImagePreviewState {
+  offset: { x: number; y: number };
+  isDragging: boolean;
+  scale: number;
+  coverScale: number;
+  imageLoaded: boolean;
+  imageSize: { width: number; height: number };
+  containerSize: { width: number; height: number };
+}
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
+class ImagePreview extends React.Component<ImagePreviewProps, ImagePreviewState> {
+  containerRef = React.createRef<HTMLDivElement>();
+  imageRef = React.createRef<HTMLImageElement>();
 
-  const [imageLoaded, setImageLoaded] = useState(false);
-  // visible container size
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
-  // scaled image size
-  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  // internal params for dragging state
+  dragAnchor = { x: 0, y: 0 };
+  startOffset = { x: 0, y: 0 };
 
-  // Zoom and position state
-  const [scale, setScale] = useState(1);
-  const [coverScale, setCoverScale] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragAnchor, setDragAnchor] = useState({ x: 0, y: 0 });
-  const [startOffset, setStartOffset] = useState({ x: 0, y: 0 });
+  constructor(props: ImagePreviewProps) {
+    super(props);
+    this.state = {
+      imageLoaded: false,
+      isDragging: false,
+      // Zoom and position state
+      scale: 1,
+      coverScale: 1,
+      offset: { x: 0, y: 0 },
+      // scaled image size
+      imageSize: { width: 0, height: 0 },
+      // visible container size
+      containerSize: { width: 0, height: 0 },
+    };
+  }
 
   // Reset on task change
-  // biome-ignore lint/correctness/useExhaustiveDependencies: those are setStates, not values
-  useEffect(() => {
-    setScale(1);
-    setIsDragging(false);
-  }, [task, src]);
+  componentDidUpdate(prevProps: ImagePreviewProps) {
+    if (prevProps.task !== this.props.task || prevProps.field !== this.props.field) {
+      this.setState({ scale: 1, isDragging: false });
+    }
+  }
 
-  const constrainOffset = (newOffset: { x: number; y: number }) => {
+  constrainOffset = (newOffset: { x: number; y: number }) => {
+    const { scale, imageSize, containerSize } = this.state;
     const { x, y } = newOffset;
     const { width, height } = imageSize;
     const { width: containerWidth, height: containerHeight } = containerSize;
@@ -60,17 +72,12 @@ const ImagePreview = observer(({ task, field }: ImagePreviewProps) => {
       x: Math.min(Math.max(x, -maxX), minX),
       y: Math.min(Math.max(y, -maxY), minY),
     };
-  };
+  }
 
-  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    if (containerRef.current) {
+  handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (this.containerRef.current) {
       const img = e.currentTarget;
-      const containerRect = containerRef.current.getBoundingClientRect();
-
-      setContainerSize({
-        width: containerRect.width,
-        height: containerRect.height,
-      });
+      const containerRect = this.containerRef.current.getBoundingClientRect();
 
       const coverScaleX = containerRect.width / img.naturalWidth;
       const coverScaleY = containerRect.height / img.naturalHeight;
@@ -83,30 +90,34 @@ const ImagePreview = observer(({ task, field }: ImagePreviewProps) => {
       // how much should we zoom image in to cover container
       const coverScale = Math.max(containerRect.width / scaledWidth, containerRect.height / scaledHeight);
 
-      setCoverScale(coverScale);
-      setImageSize({
-        width: scaledWidth,
-        height: scaledHeight,
-      });
-
       // Center the image initially
       const initialX = (containerRect.width - scaledWidth) / 2;
       const initialY = (containerRect.height - scaledHeight) / 2;
 
-      setOffset({ x: initialX, y: initialY });
-      setImageLoaded(true);
+      this.setState({
+        containerSize: {
+          width: containerRect.width,
+          height: containerRect.height,
+        },
+        coverScale,
+        imageSize: {
+          width: scaledWidth,
+          height: scaledHeight,
+        },
+        offset: { x: initialX, y: initialY },
+        imageLoaded: true,
+      });
     }
-  };
+  }
 
-  const handleWheel = (e: React.WheelEvent) => {
-    if (!containerRef.current || !imageLoaded) return;
+  handleWheel = (e: React.WheelEvent) => {
+    const container = this.containerRef.current;
+    const img = this.imageRef.current;
 
-    e.preventDefault();
+    if (!container || !img || !this.state.imageLoaded) return;
 
-    const container = containerRef.current;
     const rect = container.getBoundingClientRect();
-    const img = imageRef.current;
-    if (!img) return;
+    const { scale, offset } = this.state;
 
     // Calculate cursor position relative to center
     const cursorX = e.clientX - rect.left;
@@ -126,80 +137,106 @@ const ImagePreview = observer(({ task, field }: ImagePreviewProps) => {
     const newX = cursorX - (cursorX - offset.x) * scaleDelta;
     const newY = cursorY - (cursorY - offset.y) * scaleDelta;
 
-    setScale(newScale);
-    setOffset(constrainOffset({ x: newX, y: newY }));
+    this.setState({ scale: newScale, offset: this.constrainOffset({ x: newX, y: newY }) });
+  }
+
+  handleMouseDown = (e: React.MouseEvent) => {
+    if (!this.containerRef.current || this.state.scale <= 1) return;
+
+    this.setState({ isDragging: true });
+    this.dragAnchor = { x: e.clientX, y: e.clientY };
+    this.startOffset = { ...this.state.offset };
+
+    window.addEventListener("mousemove", this.handleMouseMove);
+    window.addEventListener("mouseup", this.handleMouseUp);
+    window.addEventListener("click", this.handleNoClickOutside, { capture: true, once: true });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("mousemove", this.handleMouseMove);
+    window.removeEventListener("mouseup", this.handleMouseUp);
+    window.removeEventListener("click", this.handleNoClickOutside);
+  }
+
+  // Prevent click outside from closing the modal while dragging
+  handleNoClickOutside = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  handleMouseMove = (e: MouseEvent) => {
+    if (!this.containerRef.current || !this.imageRef.current) return;
+
+    const { x: oldX, y: oldY } = this.dragAnchor;
+    const { x: offsetX, y: offsetY } = this.startOffset;
+    const newX = e.clientX - oldX;
+    const newY = e.clientY - oldY;
+
+    this.setState({ offset: this.constrainOffset({ x: offsetX + newX, y: offsetY + newY }) });
+  }
+
+  handleMouseUp = () => {
+    this.setState({ isDragging: false });
+
+    window.removeEventListener("mousemove", this.handleMouseMove);
+    window.removeEventListener("mouseup", this.handleMouseUp);
+  }
+
+  render() {
+    const src = this.props.task?.data?.[this.props.field ?? ""] ?? "";
+
+    if (!src) return null;
+
+    const { scale, offset, isDragging, imageLoaded, imageSize, containerSize } = this.state;
+
+    // Container styles
+    const containerStyle: CSSProperties = {
+      minHeight: "200px",
+      maxHeight: "calc(90vh - 120px)",
+      width: "100%",
+      position: "relative",
+      overflow: "hidden",
+      cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "default",
+      userSelect: "none",
+    };
+
+    // Image styles
+    const imageStyle: CSSProperties = imageLoaded
+      ? {
+          maxWidth: "100%",
+          maxHeight: "100%",
+          transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+          transformOrigin: "0 0",
+        }
+      : {
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+        };
+
+    return (
+      <div
+        ref={this.containerRef}
+        style={containerStyle}
+        className={styles.imageContainer}
+        // zoom on scroll
+        onWheel={this.handleWheel}
+        // start panning on drag
+        onMouseDown={this.handleMouseDown}
+      >
+        {src && (
+          <img
+            ref={this.imageRef}
+            src={src}
+            alt="Task Preview"
+            style={imageStyle}
+            className={styles.image}
+            onLoad={this.handleImageLoad}
+          />
+        )}
+      </div>
+    );
   };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!containerRef.current || scale <= 1) return;
-
-    setIsDragging(true);
-    setDragAnchor({ x: e.clientX, y: e.clientY });
-    setStartOffset({ x: offset.x, y: offset.y });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !containerRef.current || !imageRef.current) return;
-
-    const newX = e.clientX - dragAnchor.x;
-    const newY = e.clientY - dragAnchor.y;
-
-    setOffset(constrainOffset({ x: startOffset.x + newX, y: startOffset.y + newY }));
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  if (!task) return null;
-
-  // Container styles
-  const containerStyle: CSSProperties = {
-    minHeight: "200px",
-    maxHeight: "calc(90vh - 120px)",
-    width: "100%",
-    position: "relative",
-    overflow: "hidden",
-    cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "default",
-  };
-
-  // Image styles
-  const imageStyle: CSSProperties = imageLoaded
-    ? {
-        maxWidth: "100%",
-        maxHeight: "100%",
-        transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
-        transformOrigin: "0 0",
-      }
-    : {
-        width: "100%",
-        height: "100%",
-        objectFit: "contain",
-      };
-
-  return (
-    <div
-      ref={containerRef}
-      style={containerStyle}
-      className={styles.imageContainer}
-      onWheel={handleWheel}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-    >
-      {src && (
-        <img
-          ref={imageRef}
-          src={src}
-          alt="Task Preview"
-          style={imageStyle}
-          className={styles.image}
-          onLoad={handleImageLoad}
-        />
-      )}
-    </div>
-  );
-});
+};
 
 export { ImagePreview };
