@@ -72,7 +72,7 @@ class ImagePreview extends React.Component<ImagePreviewProps, ImagePreviewState>
       x: Math.min(Math.max(x, -maxX), minX),
       y: Math.min(Math.max(y, -maxY), minY),
     };
-  }
+  };
 
   handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     if (this.containerRef.current) {
@@ -108,7 +108,7 @@ class ImagePreview extends React.Component<ImagePreviewProps, ImagePreviewState>
         imageLoaded: true,
       });
     }
-  }
+  };
 
   handleWheel = (e: React.WheelEvent) => {
     const container = this.containerRef.current;
@@ -138,7 +138,7 @@ class ImagePreview extends React.Component<ImagePreviewProps, ImagePreviewState>
     const newY = cursorY - (cursorY - offset.y) * scaleDelta;
 
     this.setState({ scale: newScale, offset: this.constrainOffset({ x: newX, y: newY }) });
-  }
+  };
 
   handleMouseDown = (e: React.MouseEvent) => {
     if (!this.containerRef.current || this.state.scale <= 1) return;
@@ -150,7 +150,7 @@ class ImagePreview extends React.Component<ImagePreviewProps, ImagePreviewState>
     window.addEventListener("mousemove", this.handleMouseMove);
     window.addEventListener("mouseup", this.handleMouseUp);
     window.addEventListener("click", this.handleNoClickOutside, { capture: true, once: true });
-  }
+  };
 
   componentWillUnmount() {
     window.removeEventListener("mousemove", this.handleMouseMove);
@@ -162,7 +162,7 @@ class ImagePreview extends React.Component<ImagePreviewProps, ImagePreviewState>
   handleNoClickOutside = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-  }
+  };
 
   handleMouseMove = (e: MouseEvent) => {
     if (!this.containerRef.current || !this.imageRef.current) return;
@@ -173,14 +173,14 @@ class ImagePreview extends React.Component<ImagePreviewProps, ImagePreviewState>
     const newY = e.clientY - oldY;
 
     this.setState({ offset: this.constrainOffset({ x: offsetX + newX, y: offsetY + newY }) });
-  }
+  };
 
   handleMouseUp = () => {
     this.setState({ isDragging: false });
 
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
-  }
+  };
 
   render() {
     const src = this.props.task?.data?.[this.props.field ?? ""] ?? "";
@@ -236,7 +236,7 @@ class ImagePreview extends React.Component<ImagePreviewProps, ImagePreviewState>
         )}
       </div>
     );
-  };
-};
+  }
+}
 
 export { ImagePreview };
