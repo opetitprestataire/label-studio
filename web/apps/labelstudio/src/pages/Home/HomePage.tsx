@@ -1,10 +1,12 @@
 import type { Page } from "../types/Page";
 import { Button } from "@humansignal/shad/components/ui/button";
-import { IconExternal, Spinner } from "@humansignal/ui";
+import { IconExternal, IconFolderAdd, IconUserAdd, Spinner } from "@humansignal/ui";
 import { Card, CardContent, CardHeader, CardDescription, CardTitle } from "@humansignal/shad/components/ui/card";
 import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
 import { useQuery } from "@tanstack/react-query";
 import { useAPI } from "../../providers/ApiProvider";
+import { useState } from "react";
+import { CreateProject } from "../CreateProject/CreateProject";
 
 const resources = [
   {
@@ -28,14 +30,21 @@ const resources = [
 const actions = [
   {
     title: "Create Project",
+    icon: IconFolderAdd,
+    type: "createProject",
   },
   {
     title: "Invite People",
+    icon: IconUserAdd,
+    type: "invitePeople",
   },
-];
+] as const;
+
+type Action = (typeof actions)[number]["type"];
 
 export const HomePage: Page = () => {
   const api = useAPI();
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const { data, isFetching, isSuccess, isError } = useQuery({
     queryKey: ["projects"],
     async queryFn() {
@@ -44,6 +53,15 @@ export const HomePage: Page = () => {
       });
     },
   });
+  const handleActions = (action: Action) => {
+    return () => {
+      switch (action) {
+        case "createProject":
+          setModalIsOpen(true);
+          break;
+      }
+    };
+  };
   return (
     <main className="p-8">
       <div className="grid grid-cols-[minmax(0,1fr)_450px] gap-6">
@@ -55,7 +73,13 @@ export const HomePage: Page = () => {
           <div className="flex justify-between 2xl:justify-start gap-4">
             {actions.map((action) => {
               return (
-                <Button key={action.title} className="flex-1 2xl:max-w-48" variant="lsOutline">
+                <Button
+                  key={action.title}
+                  className="flex-1 2xl:flex-grow-0 text-lsLabelMedium text-lsPrimaryContent [&_svg]:w-6 [&_svg]:h-6"
+                  variant="lsOutline"
+                  onClick={handleActions(action.type)}
+                >
+                  <action.icon className="text-lsIcon" />
                   {action.title}
                 </Button>
               );
@@ -110,9 +134,14 @@ export const HomePage: Page = () => {
                 {resources.map((link) => {
                   return (
                     <li key={link.title}>
-                       <a href={link.url} className="py-2 px-1 flex justify-between items-center text-lsNeutralContent" target="_blank">
+                      <a
+                        href={link.url}
+                        className="py-2 px-1 flex justify-between items-center text-lsNeutralContent"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         {link.title}
-                        <IconExternal className="text-lsPrimaryIcon"/>
+                        <IconExternal className="text-lsPrimaryIcon" />
                       </a>
                     </li>
                   );
@@ -122,6 +151,7 @@ export const HomePage: Page = () => {
           </Card>
         </section>
       </div>
+      {modalIsOpen && <CreateProject redirect={false} onClose={() => setModalIsOpen(false)} />}
     </main>
   );
 };
@@ -142,7 +172,9 @@ function ProjectSimpleCard({
     <div className=" even:bg-lsPrimaryEmphasisSubtle rounded-sm overflow-hidden">
       <div className="grid grid-cols-[minmax(0,1fr)_150px] p-4 items-center border-l-2 border-lsNeutralBorderSubtle">
         <div className="flex flex-col gap-1">
-          <a href={`/projects/${project.id}`} className="text-lsNeutralContent">{project.title}</a>
+          <a href={`/projects/${project.id}`} className="text-lsNeutralContent">
+            {project.title}
+          </a>
           <div className="text-lsNeutralContentSubtler">
             {finished} / {total}
           </div>

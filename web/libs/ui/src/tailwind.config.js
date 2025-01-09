@@ -91,6 +91,11 @@ module.exports = {
         sectiontitle3: ["44px", "55px"],
         sectiontitle2: ["40px", "52px"],
         sectiontitle4: ["34px", "48px"],
+        // LS styles
+        lsLabelMedium: ["16px", "24px"],
+        lsLabelSmall: ["14px", "8px"],
+        lsLabelSmaller: ["12px", "16px"],
+        lsLabelSmallest: ["11px", "16px"]
       },
       spacing: {
         4.5: "1.125rem",
