@@ -124,6 +124,7 @@
   },
   "media:playpause": {
     "key": "alt+space",
+    "mac": "control+space",
     "description": "Play/pause"
   },
   "media:step-backward": {

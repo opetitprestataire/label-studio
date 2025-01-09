@@ -152,7 +152,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
       () => {
         controls.setPlaying((playing) => !playing);
       },
-      `${Hotkey.DEFAULT_SCOPE},${Hotkey.INPUT_SCOPE}`,
+      Hotkey.ALL_SCOPES,
     );
 
     return () => {
