@@ -1,0 +1,156 @@
+import type { Page } from "../types/Page";
+import { Button } from "@humansignal/shad/components/ui/button";
+import { IconExternal, Spinner } from "@humansignal/ui";
+import { Card, CardContent, CardHeader, CardDescription, CardTitle } from "@humansignal/shad/components/ui/card";
+import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
+import { useQuery } from "@tanstack/react-query";
+import { useAPI } from "../../providers/ApiProvider";
+
+const resources = [
+  {
+    title: "Documentation",
+    url: "https://labelstud.io/guide/",
+  },
+  {
+    title: "API Documentation",
+    url: "https://api.labelstud.io/api-reference/introduction/getting-started",
+  },
+  {
+    title: "LabelStud.io Blog",
+    url: "https://labelstud.io/blog/",
+  },
+  {
+    title: "Slack Community",
+    url: "https://slack.labelstud.io",
+  },
+];
+
+const actions = [
+  {
+    title: "Create Project",
+  },
+  {
+    title: "Invite People",
+  },
+];
+
+export const HomePage: Page = () => {
+  const api = useAPI();
+  const { data, isFetching, isSuccess, isError } = useQuery({
+    queryKey: ["projects"],
+    async queryFn() {
+      return api.callApi<{ results: APIProject[] }>("projects", {
+        params: { page_size: 10 },
+      });
+    },
+  });
+  return (
+    <main className="p-8">
+      <div className="grid grid-cols-[minmax(0,1fr)_450px] gap-6">
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1 ">
+            <h1 className="text-2xl">Welcome 👋</h1>
+            <p className="text-sm text-lsSubtitle">Let's get you started.</p>
+          </div>
+          <div className="flex justify-between 2xl:justify-start gap-4">
+            {actions.map((action) => {
+              return (
+                <Button key={action.title} className="flex-1 2xl:max-w-48" variant="lsOutline">
+                  {action.title}
+                </Button>
+              );
+            })}
+          </div>
+
+          <Card className="bg-transparent">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex justify-between font-normal">
+                Recent Projects
+                <a href="/projects" className="text-lg">
+                  View All
+                </a>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+              {isFetching ? (
+                <div className="h-24 flex justify-center items-center">
+                  <Spinner />
+                </div>
+              ) : isError ? (
+                "can't load projects"
+              ) : isSuccess && data.results.length === 0 ? (
+                <div className="flex flex-col justify-center items-center border border-lsBorderSubtle bg-lsBgMain rounded-lg py-80">
+                  <h2 className="text-2xl">Create your first project</h2>
+                  <sub className="text-sm text-lsSubtitle">
+                    Import your data and set up the labeling interface to start annotating
+                  </sub>
+                  <Button className="mt-4">Create Project</Button>
+                </div>
+              ) : isSuccess && data.results.length > 0 ? (
+                <div className="flex flex-col gap-1">
+                  {data.results.map((project) => {
+                    return <ProjectSimpleCard key={project.id} project={project} />;
+                  })}
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+        </section>
+        <section className="flex flex-col gap-6">
+          <div>
+            <HeidiTips collection="projectSettings" />
+          </div>
+          <Card className="bg-transparent">
+            <CardHeader>
+              <CardTitle className="font-normal">Resources</CardTitle>
+              <CardDescription>Learn, explore and get help</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul>
+                {resources.map((link) => {
+                  return (
+                    <li key={link.title}>
+                       <a href={link.url} className="py-2 px-1 flex justify-between items-center text-lsNeutralContent" target="_blank">
+                        {link.title}
+                        <IconExternal className="text-lsPrimaryIcon"/>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </CardContent>
+          </Card>
+        </section>
+      </div>
+    </main>
+  );
+};
+
+HomePage.title = "Home";
+HomePage.path = "/";
+HomePage.exact = true;
+
+function ProjectSimpleCard({
+  project,
+}: {
+  project: APIProject;
+}) {
+  const finished = project.finished_task_number ?? 0;
+  const total = project.task_number ?? 0;
+  const progress = (total > 0 ? finished / total : 0) * 100;
+  return (
+    <div className=" even:bg-lsPrimaryEmphasisSubtle rounded-sm overflow-hidden">
+      <div className="grid grid-cols-[minmax(0,1fr)_150px] p-4 items-center border-l-2 border-lsNeutralBorderSubtle">
+        <div className="flex flex-col gap-1">
+          <a href={`/projects/${project.id}`} className="text-lsNeutralContent">{project.title}</a>
+          <div className="text-lsNeutralContentSubtler">
+            {finished} / {total}
+          </div>
+        </div>
+        <div className="bg-lsBgMain rounded-full overflow-hidden w-full h-2 shadow-lsNeutralBorderSubtle shadow-border-1">
+          <div className="bg-lsPositiveSurfaceHover h-full min-w-1" style={{ maxWidth: `${progress}%` }}></div>
+        </div>
+      </div>
+    </div>
+  );
+}

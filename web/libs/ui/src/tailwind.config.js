@@ -21,7 +21,7 @@ module.exports = {
         black: "#181C31",
         blackho: "#2C3149",
         blacksection: "#1C2136",
-        primaryho: "#0063EC",
+        primaryho: "#37447A",
         meta: "#20C5A8",
         waterloo: "#757693",
         manatee: "#999AA1",
@@ -62,6 +62,21 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+        // LS color space
+        lsPrimaryIcon: "#617ADA",
+        lsPrimaryContent: "#4C5FA9",
+        lsSubtitle: "#6B6860",
+        lsPrimaryEmphasisSubtle: "#F0F3FE",
+        lsNeutralBorderSubtle: "#E1DED5",
+        lsNeutralContent: "#262522",
+        lsNeutralContentSubtler: "#6B6860",
+        lsBorderSubtle: "#617ADA",
+        lsBackgroundSubtle: "#F0F3FE",
+        lsBgMain: "#F0F3FE",
+        lsIcon: "#617ADA",
+        lsButtonBg: "#4C5FA9",
+        lsPositiveSurfaceHover: "#34988D",
       },
       fontSize: {
         metatitle: ["12px", "20px"],
@@ -154,6 +169,7 @@ module.exports = {
         "solid-11": "0px 6px 20px rgba(45, 74, 170, 0.05)",
         "solid-12": "0px 2px 10px rgba(0, 0, 0, 0.05)",
         "solid-13": "0px 2px 19px rgba(0, 0, 0, 0.05)",
+        "border-1": "inset 0 0 0 1px rgba(0,0,0,1)",
       },
       borderRadius: {
         lg: "var(--radius)",

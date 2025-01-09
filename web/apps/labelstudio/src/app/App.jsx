@@ -19,9 +19,17 @@ import { RootPage } from "./RootPage";
 import { FF_OPTIC_2, FF_UNSAVED_CHANGES, isFF } from "../utils/feature-flags";
 import { ToastProvider, ToastViewport } from "@humansignal/ui";
 import "@humansignal/ui/src/tailwind.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const baseURL = new URL(APP_SETTINGS.hostname || location.origin);
 export const UNBLOCK_HISTORY_MESSAGE = "UNBLOCK_HISTORY";
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const browserHistory = createBrowserHistory({
   basename: baseURL.pathname || "/",
@@ -56,6 +64,7 @@ const App = ({ content }) => {
       <Router history={browserHistory}>
         <MultiProvider
           providers={[
+            <QueryClientProvider key="query" client={queryClient} />,
             <AppStoreProvider key="app-store" />,
             <ApiProvider key="api" />,
             <ConfigProvider key="config" />,

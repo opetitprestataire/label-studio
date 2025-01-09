@@ -593,8 +593,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   App: () => (/* binding */ App)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/clsx/dist/clsx.mjs");
 /* harmony import */ var _providers_SDKProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/providers/SDKProvider.jsx");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
@@ -602,7 +602,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DataManager_DataManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/DataManager/DataManager.jsx");
 /* harmony import */ var _Label_Label__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Label/Label.jsx");
 /* harmony import */ var _App_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/App/App.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/App/App.jsx";
 
 
@@ -743,7 +743,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _Agreement_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/CellViews/Agreement/Agreement.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/CellViews/Agreement/Agreement.jsx";
 
 
@@ -796,7 +796,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Annotators: () => (/* binding */ Annotators)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/clsx/dist/clsx.mjs");
 /* harmony import */ var _assets_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/assets/icons/index.js");
 /* harmony import */ var _providers_SDKProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/providers/SDKProvider.jsx");
@@ -808,7 +808,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Filters_types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Filters/types/index.js");
 /* harmony import */ var _Filters_types_List__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../libs/datamanager/src/components/Filters/types/List.jsx");
 /* harmony import */ var _Annotators_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../libs/datamanager/src/components/CellViews/Annotators/Annotators.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/CellViews/Annotators/Annotators.jsx";
 
 
@@ -980,7 +980,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AudioPlusCell: () => (/* binding */ AudioPlusCell)
 /* harmony export */ });
 /* harmony import */ var _Common_MediaPlayer_MediaPlayer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/MediaPlayer/MediaPlayer.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/CellViews/AudioCell.jsx";
 
 
@@ -1026,7 +1026,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BooleanCell: () => (/* binding */ BooleanCell)
 /* harmony export */ });
 /* harmony import */ var _Common_Tag_Tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tag/Tag.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/CellViews/BooleanCell.jsx";
 
 
@@ -1073,9 +1073,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   DateTimeCell: () => (/* binding */ DateTimeCell),
 /* harmony export */   dateTimeFormat: () => (/* binding */ dateTimeFormat)
 /* harmony export */ });
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/isValid/index.js");
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/format/index.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/date-fns/esm/isValid/index.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/date-fns/esm/format/index.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/CellViews/DateTimeCell.jsx";
 
 
@@ -1105,11 +1105,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ImageCell: () => (/* binding */ ImageCell)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _Common_AnnotationPreview_AnnotationPreview__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/AnnotationPreview/AnnotationPreview.jsx");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/CellViews/ImageCell.jsx";
 
 
@@ -1176,9 +1176,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ProjectCell: () => (/* binding */ ProjectCell)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/CellViews/ProjectCell.jsx";
 
 
@@ -1245,10 +1245,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   StringCell: () => (/* binding */ StringCell),
 /* harmony export */   valueToString: () => (/* binding */ valueToString)
 /* harmony export */ });
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/isValid/index.js");
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/format/index.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/date-fns/esm/isValid/index.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/date-fns/esm/format/index.js");
 /* harmony import */ var _DateTimeCell__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/CellViews/DateTimeCell.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/CellViews/StringCell.jsx";
 
 
@@ -1295,7 +1295,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   VideoCell: () => (/* binding */ VideoCell)
 /* harmony export */ });
 /* harmony import */ var _Common_MediaPlayer_MediaPlayer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/MediaPlayer/MediaPlayer.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/CellViews/VideoCell.jsx";
 
 
@@ -1325,14 +1325,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AnnotationPreview: () => (/* binding */ AnnotationPreview)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _sdk_lsf_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/sdk/lsf-utils.ts");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _Spinner__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Spinner.jsx");
 /* harmony import */ var _AnnotationPreview_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/AnnotationPreview/AnnotationPreview.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["labelingConfig", "name", "task", "annotation", "style"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/AnnotationPreview/AnnotationPreview.jsx";
@@ -1512,7 +1512,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Badge_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Badge/Badge.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Badge/Badge.jsx";
 
 
@@ -1552,12 +1552,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Button: () => (/* binding */ Button)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _Button_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["children", "type", "extra", "className", "href", "size", "waiting", "icon", "tag", "look"],
   _excluded2 = ["className", "children", "collapsed"];
@@ -1682,14 +1682,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DatePicker: () => (/* binding */ DatePicker)
 /* harmony export */ });
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/isValid/index.js");
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/format/index.js");
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/isMatch/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_datepicker__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-datepicker/dist/react-datepicker.min.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../node_modules/date-fns/esm/isValid/index.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/date-fns/esm/format/index.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../node_modules/date-fns/esm/isMatch/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_datepicker__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../node_modules/react-datepicker/dist/react-datepicker.min.js");
 /* harmony import */ var react_datepicker__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(react_datepicker__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var react_datepicker_dist_react_datepicker_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-datepicker/dist/react-datepicker.css");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react_datepicker_dist_react_datepicker_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react-datepicker/dist/react-datepicker.css");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/Dropdown.js");
@@ -1697,7 +1697,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Input_Input__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Input/Input.jsx");
 /* harmony import */ var _DatePicker_global_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Common/DatePicker/DatePicker.global.scss");
 /* harmony import */ var _DatePicker_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../libs/datamanager/src/components/Common/DatePicker/DatePicker.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/DatePicker/DatePicker.jsx";
 
 
@@ -1868,8 +1868,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Dropdown: () => (/* binding */ Dropdown)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-dom/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react-dom/index.js");
 /* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../node_modules/clsx/dist/clsx.mjs");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../libs/datamanager/src/utils/dom.js");
@@ -1877,7 +1877,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Dropdown_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/Dropdown.scss");
 /* harmony import */ var _DropdownContext__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/DropdownContext.js");
 /* harmony import */ var _DropdownTrigger__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/DropdownTrigger.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["animated", "visible"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Dropdown/DropdownComponent.jsx";
@@ -2045,11 +2045,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   useDropdown: () => (/* binding */ useDropdown)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _DropdownComponent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/DropdownComponent.jsx");
 /* harmony import */ var _DropdownContext__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/DropdownContext.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["tag", "children", "dropdown", "content", "toggle", "closeOnClickOutside", "disabled"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Dropdown/DropdownTrigger.jsx";
@@ -2168,12 +2168,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ErrorBox: () => (/* binding */ ErrorBox)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react_icons_ri__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/ri/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react_icons_ri__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/react-icons/ri/index.esm.js");
 /* harmony import */ var _Button_Button__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/Dropdown.js");
 /* harmony import */ var _Menu_Menu__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Menu/Menu.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/ErrorBox.jsx";
 
 
@@ -2252,15 +2252,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FieldsButton: () => (/* binding */ FieldsButton)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _Button_Button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _humansignal_ui__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/ui/src/index.ts");
 /* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/Dropdown.js");
 /* harmony import */ var _Menu_Menu__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Menu/Menu.jsx");
 /* harmony import */ var _Tooltip_Tooltip__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tooltip/Tooltip.jsx");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/FieldsButton.jsx";
 
 
@@ -2450,15 +2450,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   FiltersPane: () => (/* binding */ FiltersPane)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _Filters_Filters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Filters/Filters.jsx");
 /* harmony import */ var _Badge_Badge__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Badge/Badge.jsx");
 /* harmony import */ var _Button_Button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/Dropdown.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["activeFiltersNumber", "size", "sidebarEnabled", "viewsStore"],
   _excluded2 = ["sidebarEnabled", "size"];
@@ -2593,8 +2593,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _Oneof_Oneof__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Oneof/Oneof.js");
@@ -2602,7 +2602,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Utils.ts");
 /* harmony import */ var _Label_Label__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Label/Label.jsx");
 /* harmony import */ var _Counter_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Counter/Counter.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["label", "className", "validate", "required", "skip", "labelProps", "style", "editable", "postfix", "defaultValue"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Form/Elements/Counter/Counter.jsx";
@@ -2890,7 +2890,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _FormField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/FormField.js");
 /* harmony import */ var _Label_Label__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Label/Label.jsx");
 /* harmony import */ var _Input_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Input/Input.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["label", "className", "validate", "required", "skip", "labelProps", "ghost"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Form/Elements/Input/Input.jsx";
@@ -2960,10 +2960,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Label_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Label/Label.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Form/Elements/Label/Label.jsx";
 
 
@@ -3046,12 +3046,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _Range_Range__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Range/Range.jsx");
 /* harmony import */ var _FormField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/FormField.js");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Utils.ts");
 /* harmony import */ var _Label_Label__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Label/Label.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["label", "className", "validate", "required", "skip", "labelProps", "description"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Form/Elements/Range/Range.jsx";
@@ -3134,7 +3134,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Utils.ts");
 /* harmony import */ var _Label_Label__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Label/Label.jsx");
 /* harmony import */ var _Select_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Select/Select.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["label", "className", "options", "validate", "required", "skip", "labelProps", "ghost", "size", "defaultValue"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Form/Elements/Select/Select.jsx";
@@ -3255,7 +3255,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _FormField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/FormField.js");
 /* harmony import */ var _Label_Label__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Label/Label.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["label", "className", "validate", "required", "skip", "labelProps"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Form/Elements/TextArea/TextArea.jsx";
@@ -3319,11 +3319,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _humansignal_ui__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/ui/src/index.ts");
 /* harmony import */ var _FormField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/FormField.js");
 /* harmony import */ var _Label_Label__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/Label/Label.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["className", "label", "labelProps", "description", "checked", "defaultChecked", "onChange", "validate", "required", "skip"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Form/Elements/Toggle/Toggle.jsx";
@@ -3440,7 +3440,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ Form)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var shallow_equal__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../node_modules/shallow-equal/dist/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/helpers.ts");
@@ -3454,7 +3454,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _providers_SDKProvider__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../libs/datamanager/src/providers/SDKProvider.jsx");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _providers_MultiProvider__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../libs/datamanager/src/providers/MultiProvider.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["fields", "formData", "fetchFields", "fetchFormData", "children", "formRowStyle", "onSubmit", "withActions", "triggerAction"],
   _excluded2 = ["trigger_form_update"];
@@ -4150,7 +4150,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   useValueTracker: () => (/* binding */ useValueTracker)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 
 const useValueTracker = (value, defaultValue) => {
   const initialValue = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
@@ -4175,10 +4175,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Icon: () => (/* binding */ Icon)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Icon_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Icon/Icon.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["icon"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Icon/Icon.jsx";
@@ -4213,10 +4213,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Input_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Input/Input.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["className", "size"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Input/Input.jsx";
@@ -4255,8 +4255,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   MediaPlayer: () => (/* binding */ MediaPlayer)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/helpers.ts");
 /* harmony import */ var _Space_Space__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Space/Space.jsx");
@@ -4265,7 +4265,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MediaSeeker__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Common/MediaPlayer/MediaSeeker.jsx");
 /* harmony import */ var _Duration__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../libs/datamanager/src/components/Common/MediaPlayer/Duration.js");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["type", "src"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/MediaPlayer/MediaPlayer.jsx";
@@ -4659,10 +4659,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MediaSeeker: () => (/* binding */ MediaSeeker)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _MediaSeeker_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/MediaPlayer/MediaSeeker.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/MediaPlayer/MediaSeeker.jsx";
 
 
@@ -4774,14 +4774,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Menu: () => (/* binding */ Menu)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/clsx/dist/clsx.mjs");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Dropdown_DropdownTrigger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/DropdownTrigger.jsx");
 /* harmony import */ var _Menu_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Menu/Menu.scss");
 /* harmony import */ var _MenuContext__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Menu/MenuContext.js");
 /* harmony import */ var _MenuItem__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Menu/MenuItem.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Menu/Menu.jsx";
 
 
@@ -4924,10 +4924,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   MenuItem: () => (/* binding */ MenuItem)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _MenuContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Menu/MenuContext.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["name", "children", "label", "icon", "to", "className", "href", "danger", "exact", "forceReload", "active", "onClick"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Menu/MenuItem.jsx";
@@ -5026,13 +5026,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   modal: () => (/* binding */ standaloneModal)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-dom/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react-dom/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Button_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Space_Space__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Space/Space.jsx");
 /* harmony import */ var _ModalPopup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Modal/ModalPopup.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["okText", "onOk", "cancelText", "onCancel", "buttonLook"],
   _excluded2 = ["okText", "onOkPress"];
@@ -5168,15 +5168,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Modal: () => (/* binding */ Modal)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-dom/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react-dom/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_transition__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../libs/datamanager/src/utils/transition.js");
 /* harmony import */ var _Button_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Icon_Icon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Icon/Icon.jsx");
 /* harmony import */ var _Modal_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Modal/Modal.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Modal/ModalPopup.jsx";
 
 
@@ -5437,14 +5437,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   usePageSize: () => (/* binding */ usePageSize)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/helpers.ts");
 /* harmony import */ var _Form_Utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Utils.ts");
 /* harmony import */ var _Pagination_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Pagination/Pagination.scss");
 /* harmony import */ var _hooks_useUpdateEffect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/hooks/useUpdateEffect.ts");
 /* harmony import */ var _Form_Elements__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Elements/index.ts");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["allowInput", "allowRewind", "disabled", "size", "pageSizeOptions", "alwaysVisible", "defaultPageSize", "showTitle", "showPageSize"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Pagination/Pagination.tsx";
@@ -5773,11 +5773,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   RadioGroup: () => (/* binding */ RadioGroup)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _RadioGroup_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/RadioGroup/RadioGroup.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["size", "value", "onChange", "children"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/RadioGroup/RadioGroup.jsx";
@@ -5877,13 +5877,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Range: () => (/* binding */ Range)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/helpers.ts");
 /* harmony import */ var _Form_Utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Utils.ts");
 /* harmony import */ var _Range_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Range/Range.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Range/Range.jsx";
 
 
@@ -6148,10 +6148,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Resizer: () => (/* binding */ Resizer)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Resizer_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Resizer/Resizer.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Resizer/Resizer.jsx";
 
 
@@ -6266,7 +6266,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
 /* harmony import */ var _providers_SDKProvider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/providers/SDKProvider.jsx");
 /* harmony import */ var _Button_Button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 
 const _excluded = ["eventName"];
@@ -6331,13 +6331,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Select: () => (/* binding */ Select)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var shallow_equal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/shallow-equal/dist/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/Dropdown.js");
 /* harmony import */ var _Select_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Select/Select.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Select/Select.jsx";
 
 
@@ -6607,7 +6607,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SkeletonGap: () => (/* binding */ SkeletonGap)
 /* harmony export */ });
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/SkeletonLoader/SkeletonGap.tsx";
 
 
@@ -6637,7 +6637,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SkeletonLine: () => (/* binding */ SkeletonLine)
 /* harmony export */ });
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/SkeletonLoader/SkeletonLine.tsx";
 
 
@@ -6680,7 +6680,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _SkeletonLine__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/SkeletonLoader/SkeletonLine.tsx");
 /* harmony import */ var _SkeletonGap__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/SkeletonLoader/SkeletonGap.tsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/SkeletonLoader/SkeletonLoader.tsx";
 
 
@@ -6766,7 +6766,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Space_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Space/Space.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["direction", "size", "className", "style", "children", "spread", "stretch", "align"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Space/Space.jsx";
@@ -6819,10 +6819,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Spinner: () => (/* binding */ Spinner)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _assets_running__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/assets/running.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["SDK", "visible"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Spinner.jsx";
@@ -6914,13 +6914,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Table: () => (/* binding */ Table)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
-/* harmony import */ var react_icons_ri__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/ri/index.esm.js");
-/* harmony import */ var react_virtualized_auto_sizer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-virtualized-auto-sizer/dist/react-virtualized-auto-sizer.esm.js");
-/* harmony import */ var react_window__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-window/dist/index.esm.js");
-/* harmony import */ var react_window_infinite_loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-window-infinite-loader/dist/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react_icons_ri__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("../../node_modules/react-icons/ri/index.esm.js");
+/* harmony import */ var react_virtualized_auto_sizer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react-virtualized-auto-sizer/dist/react-virtualized-auto-sizer.esm.js");
+/* harmony import */ var react_window__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("../../node_modules/react-window/dist/index.esm.js");
+/* harmony import */ var react_window_infinite_loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react-window-infinite-loader/dist/index.esm.js");
 /* harmony import */ var _providers_SDKProvider__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/providers/SDKProvider.jsx");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _Button_Button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
@@ -6937,7 +6937,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _FieldsButton__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../libs/datamanager/src/components/Common/FieldsButton.jsx");
 /* harmony import */ var _assets_icons__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("../../libs/datamanager/src/assets/icons/index.js");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["view", "data", "cellViews", "selectedItems", "focusedItem", "decoration", "stopInteractions", "onColumnResize", "onColumnReset", "headerExtra"],
   _excluded2 = ["children", "stickyComponent", "stickyItems", "stickyItemsHeight", "totalCount", "isItemLoaded", "loadMore", "initialScrollOffset"],
@@ -7502,7 +7502,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
 /* harmony import */ var _TableContext__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/Table/TableContext.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["mix", "mod"],
   _excluded2 = ["mix", "mod"];
@@ -7552,7 +7552,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
 /* harmony import */ var _humansignal_ui__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/ui/src/index.ts");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["checked", "indeterminate"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Table/TableCheckbox.jsx";
@@ -7603,10 +7603,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   TableHead: () => (/* binding */ TableHead)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react-lite/es/index.js");
-/* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx/lib/mobx.module.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("../../node_modules/mobx-react-lite/es/index.js");
+/* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/mobx/lib/mobx.module.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _stores_Tabs_tab_column__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/stores/Tabs/tab_column.jsx");
 /* harmony import */ var _Button_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/Dropdown.js");
@@ -7620,8 +7620,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("../../libs/datamanager/src/components/Common/Table/utils.js");
 /* harmony import */ var _TableHead_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../libs/datamanager/src/components/Common/Table/TableHead/TableHead.scss");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["Header", "Cell", "id"],
   _excluded2 = ["cellClassName", "headerClassName"];
@@ -7983,8 +7983,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   TableRow: () => (/* binding */ TableRow)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _CellViews__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/CellViews/index.js");
@@ -7992,7 +7992,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _TableRow_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Table/TableRow/TableRow.scss");
 /* harmony import */ var _TableContext__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Common/Table/TableContext.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../libs/datamanager/src/components/Common/Table/utils.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["Header", "Cell", "id"],
   _excluded2 = ["headerClassName", "cellClassName"];
@@ -8148,9 +8148,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   TabsItem: () => (/* binding */ TabsItem),
 /* harmony export */   tabsCN: () => (/* binding */ tabsCN)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_beautiful_dnd__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-beautiful-dnd/dist/react-beautiful-dnd.esm.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_beautiful_dnd__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/react-beautiful-dnd/dist/react-beautiful-dnd.esm.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Button_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Dropdown_DropdownComponent__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Dropdown/DropdownComponent.jsx");
@@ -8158,7 +8158,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Input_Input__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Input/Input.jsx");
 /* harmony import */ var _Tabs_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tabs/Tabs.scss");
 /* harmony import */ var _TabsMenu__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tabs/TabsMenu.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Tabs/Tabs.jsx";
 
 
@@ -8433,9 +8433,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TabsMenu: () => (/* binding */ TabsMenu)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _Menu_Menu__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Menu/Menu.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Tabs/TabsMenu.jsx";
 
 
@@ -8508,12 +8508,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Tag: () => (/* binding */ Tag)
 /* harmony export */ });
-/* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/chroma-js/chroma.js");
+/* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/chroma-js/chroma.js");
 /* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(chroma_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/colors.js");
 /* harmony import */ var _Tag_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tag/Tag.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Tag/Tag.jsx";
 
 
@@ -8572,13 +8572,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Tooltip: () => (/* binding */ Tooltip)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-dom/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react-dom/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/utils/dom.js");
 /* harmony import */ var _utils_transition__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/utils/transition.js");
 /* harmony import */ var _Tooltip_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tooltip/Tooltip.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Tooltip/Tooltip.jsx";
 
 
@@ -8707,11 +8707,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Userpic: () => (/* binding */ Userpic)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Tooltip_Tooltip__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tooltip/Tooltip.jsx");
 /* harmony import */ var _Userpic_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Userpic/Userpic.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["badge", "className", "faded", "showUsername", "size", "src", "style", "user", "username"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Common/Userpic/Userpic.jsx";
@@ -8856,7 +8856,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AudioDataGroup: () => (/* binding */ AudioDataGroup)
 /* harmony export */ });
 /* harmony import */ var _Common_MediaPlayer_MediaPlayer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/MediaPlayer/MediaPlayer.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataGroups/AudioDataGroup.jsx";
 
 
@@ -8895,10 +8895,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ImageDataGroup: () => (/* binding */ ImageDataGroup)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _Common_AnnotationPreview_AnnotationPreview__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/AnnotationPreview/AnnotationPreview.jsx");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataGroups/ImageDataGroup.jsx";
 
 
@@ -8957,10 +8957,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   TextDataGroup: () => (/* binding */ TextDataGroup),
 /* harmony export */   valueToString: () => (/* binding */ valueToString)
 /* harmony export */ });
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/isValid/index.js");
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/format/index.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/date-fns/esm/isValid/index.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/date-fns/esm/format/index.js");
 /* harmony import */ var _CellViews_DateTimeCell__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/CellViews/DateTimeCell.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataGroups/TextDataGroup.jsx";
 
 
@@ -9010,9 +9010,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DataManager: () => (/* binding */ DataManager)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_beautiful_dnd__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-beautiful-dnd/dist/react-beautiful-dnd.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_beautiful_dnd__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../node_modules/react-beautiful-dnd/dist/react-beautiful-dnd.esm.js");
 /* harmony import */ var _assets_icons__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/assets/icons/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Common_Interface__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Interface.js");
@@ -9023,7 +9023,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MainView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../libs/datamanager/src/components/MainView/index.js");
 /* harmony import */ var _DataManager_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../libs/datamanager/src/components/DataManager/DataManager.scss");
 /* harmony import */ var _Toolbar_Toolbar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../libs/datamanager/src/components/DataManager/Toolbar/Toolbar.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataManager/DataManager.jsx";
 
 
@@ -9286,9 +9286,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ActionsButton: () => (/* binding */ ActionsButton)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
@@ -9297,7 +9297,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Common_Menu_Menu__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Common/Menu/Menu.jsx");
 /* harmony import */ var _Common_Modal_ModalPopup__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../libs/datamanager/src/components/Common/Modal/ModalPopup.jsx");
 /* harmony import */ var _ActionsButton_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../libs/datamanager/src/components/DataManager/Toolbar/ActionsButton.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["store", "size", "hasSelected"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataManager/Toolbar/ActionsButton.jsx";
@@ -9599,13 +9599,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   GridWidthButton: () => (/* binding */ GridWidthButton)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Common_Icon_Icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Icon/Icon.jsx");
 /* harmony import */ var _Common_Space_Space__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Space/Space.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataManager/Toolbar/GridWidthButton.jsx";
 
 
@@ -9696,11 +9696,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   LabelButton: () => (/* binding */ LabelButton)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Common_Interface__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Interface.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataManager/Toolbar/LabelButton.jsx";
 
 
@@ -9901,9 +9901,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   LoadingPossum: () => (/* binding */ LoadingPossum)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var _Common_Spinner__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/Spinner.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataManager/Toolbar/LoadingPossum.jsx";
 
 
@@ -9943,12 +9943,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   OrderButton: () => (/* binding */ OrderButton)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Common_FieldsButton__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/FieldsButton.jsx");
 /* harmony import */ var _Common_Space_Space__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Space/Space.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["size", "ordering", "view"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataManager/Toolbar/OrderButton.jsx";
@@ -10070,11 +10070,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   RefreshButton: () => (/* binding */ RefreshButton)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var _assets_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/assets/icons/index.js");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["store", "needsDataFetch", "projectFetch", "size", "style"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataManager/Toolbar/RefreshButton.jsx";
@@ -10151,12 +10151,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Toolbar: () => (/* binding */ Toolbar)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _Common_Space_Space__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Space/Space.jsx");
 /* harmony import */ var _TabPanel_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/DataManager/Toolbar/TabPanel.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataManager/Toolbar/Toolbar.jsx";
 
 
@@ -10218,12 +10218,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ViewToggle: () => (/* binding */ ViewToggle)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var _assets_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/assets/icons/index.js");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _Common_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/RadioGroup/RadioGroup.jsx");
 /* harmony import */ var _Common_Tooltip_Tooltip__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tooltip/Tooltip.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["view", "size"],
   _excluded2 = ["view", "size"];
@@ -10350,7 +10350,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   instruments: () => (/* binding */ instruments)
 /* harmony export */ });
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _Common_ErrorBox__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/ErrorBox.jsx");
@@ -10367,7 +10367,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _OrderButton__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../libs/datamanager/src/components/DataManager/Toolbar/OrderButton.jsx");
 /* harmony import */ var _RefreshButton__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../libs/datamanager/src/components/DataManager/Toolbar/RefreshButton.jsx");
 /* harmony import */ var _ViewToggle__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("../../libs/datamanager/src/components/DataManager/Toolbar/ViewToggle.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/DataManager/Toolbar/instruments.jsx";
 
 
@@ -10633,12 +10633,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   FilterDropdown: () => (/* binding */ FilterDropdown)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _Common_Icon_Icon__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/Icon/Icon.jsx");
 /* harmony import */ var _Common_Select_Select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Select/Select.jsx");
 /* harmony import */ var _Common_Tag_Tag__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tag/Tag.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["label"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/FilterDropdown.jsx";
@@ -10772,9 +10772,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FilterInput: () => (/* binding */ FilterInput)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _Common_Input_Input__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Input/Input.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/FilterInput.jsx";
 
 
@@ -10818,9 +10818,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FilterLine: () => (/* binding */ FilterLine)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Common_Icon_Icon__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Icon/Icon.jsx");
@@ -10828,7 +10828,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _FilterDropdown__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterDropdown.jsx");
 /* harmony import */ var _FilterLine_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterLine/FilterLine.scss");
 /* harmony import */ var _FilterOperation__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterLine/FilterOperation.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/FilterLine/FilterLine.jsx";
 
 
@@ -11028,16 +11028,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FilterOperation: () => (/* binding */ FilterOperation)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_debounce__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../libs/datamanager/src/utils/debounce.js");
 /* harmony import */ var _FilterDropdown__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterDropdown.jsx");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Filters/types/index.js");
 /* harmony import */ var _types_Utility__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Filters/types/Utility.js");
 /* harmony import */ var _types_Common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Filters/types/Common.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/FilterLine/FilterOperation.jsx";
 
 
@@ -11156,16 +11156,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Filters: () => (/* binding */ Filters)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Common_Icon_Icon__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Icon/Icon.jsx");
 /* harmony import */ var _Common_Tooltip_Tooltip__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tooltip/Tooltip.jsx");
 /* harmony import */ var _FilterLine_FilterLine__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterLine/FilterLine.jsx");
 /* harmony import */ var _Filters_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/Filters/Filters.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/Filters.jsx";
 
 
@@ -11315,14 +11315,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FiltersSidebar: () => (/* binding */ FiltersSidebar)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
 /* harmony import */ var _Common_Icon_Icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Icon/Icon.jsx");
 /* harmony import */ var _Filters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Filters/Filters.jsx");
 /* harmony import */ var _FilterSidebar_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FiltersSidebar/FilterSidebar.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/FiltersSidebar/FilterSidebar.jsx";
 
 
@@ -11411,7 +11411,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BooleanFilter: () => (/* binding */ BooleanFilter)
 /* harmony export */ });
 /* harmony import */ var _FilterDropdown__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterDropdown.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/types/Boolean.jsx";
 
 
@@ -11450,7 +11450,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Common: () => (/* binding */ Common)
 /* harmony export */ });
 /* harmony import */ var _FilterDropdown__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterDropdown.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/types/Common.jsx";
 
 
@@ -11489,11 +11489,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   DateFilter: () => (/* binding */ DateFilter),
 /* harmony export */   DateTimeInput: () => (/* binding */ DateTimeInput)
 /* harmony export */ });
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/date-fns/esm/isValid/index.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/date-fns/esm/isValid/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _Common_DatePicker_DatePicker__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/DatePicker/DatePicker.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/types/Date.jsx";
 
 
@@ -11598,9 +11598,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ListFilter: () => (/* binding */ ListFilter),
 /* harmony export */   VariantSelect: () => (/* binding */ VariantSelect)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var _FilterDropdown__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterDropdown.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/types/List.jsx";
 
 
@@ -11678,10 +11678,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NumberFilter: () => (/* binding */ NumberFilter)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _FilterInput__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterInput.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["onChange"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/types/Number.jsx";
@@ -11863,9 +11863,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   StringFilter: () => (/* binding */ StringFilter)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var _FilterInput__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Filters/FilterInput.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Filters/types/String.jsx";
 
 
@@ -11946,10 +11946,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Labeling: () => (/* binding */ Labeling)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var mobx_react_lite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react-lite/es/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react_lite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/mobx-react-lite/es/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
@@ -11959,7 +11959,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Common_Space_Space__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../libs/datamanager/src/components/Common/Space/Space.jsx");
 /* harmony import */ var _MainView__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../libs/datamanager/src/components/MainView/index.js");
 /* harmony import */ var _Label_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../libs/datamanager/src/components/Label/Label.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/Label/Label.jsx";
 
 
@@ -12197,10 +12197,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   DataView: () => (/* binding */ DataView)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("../../node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _sdk_hotkeys__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/sdk/hotkeys.ts");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
@@ -12214,7 +12214,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _GridView_GridView__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../libs/datamanager/src/components/MainView/GridView/GridView.jsx");
 /* harmony import */ var _Table_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../libs/datamanager/src/components/MainView/DataView/Table.scss");
 /* harmony import */ var _Common_Button_Button__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../libs/datamanager/src/components/Common/Button/Button.jsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["store", "data", "columns", "view", "selectedItems", "dataStore", "viewType", "total", "isLoading", "isLabeling", "hiddenColumns", "hasData", "isLocked"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/MainView/DataView/Table.jsx";
@@ -12696,19 +12696,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   GridViewContext: () => (/* binding */ GridViewContext),
 /* harmony export */   GridViewProvider: () => (/* binding */ GridViewProvider)
 /* harmony export */ });
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/@ant-design/icons/es/icons/QuestionCircleOutlined.js");
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/@ant-design/icons/es/icons/CloseOutlined.js");
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/@ant-design/icons/es/icons/LeftCircleOutlined.js");
-/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/@ant-design/icons/es/icons/RightCircleOutlined.js");
+/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/@ant-design/icons/es/icons/QuestionCircleOutlined.js");
+/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../node_modules/@ant-design/icons/es/icons/CloseOutlined.js");
+/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/@ant-design/icons/es/icons/LeftCircleOutlined.js");
+/* harmony import */ var _ant_design_icons__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../node_modules/@ant-design/icons/es/icons/RightCircleOutlined.js");
 /* harmony import */ var _humansignal_ui__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/ui/src/index.ts");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _Common_Modal_Modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Modal/Modal.jsx");
 /* harmony import */ var _Common_Icon_Icon__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/components/Common/Icon/Icon.jsx");
 /* harmony import */ var _Common_Tooltip_Tooltip__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/components/Common/Tooltip/Tooltip.jsx");
 /* harmony import */ var _ImagePreview__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/MainView/GridView/ImagePreview.tsx");
 /* harmony import */ var _GridPreview_module_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../libs/datamanager/src/components/MainView/GridView/GridPreview.module.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/MainView/GridView/GridPreview.tsx";
 
 
@@ -12986,11 +12986,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   GridView: () => (/* binding */ GridView)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_virtualized_auto_sizer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-virtualized-auto-sizer/dist/react-virtualized-auto-sizer.esm.js");
-/* harmony import */ var react_window__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-window/dist/index.esm.js");
-/* harmony import */ var react_window_infinite_loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-window-infinite-loader/dist/index.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_virtualized_auto_sizer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react-virtualized-auto-sizer/dist/react-virtualized-auto-sizer.esm.js");
+/* harmony import */ var react_window__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("../../node_modules/react-window/dist/index.esm.js");
+/* harmony import */ var react_window_infinite_loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react-window-infinite-loader/dist/index.esm.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 /* harmony import */ var _humansignal_ui__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/ui/src/index.ts");
 /* harmony import */ var _Common_Space_Space__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/components/Common/Space/Space.jsx");
@@ -13000,7 +13000,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Common_SkeletonLoader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../libs/datamanager/src/components/Common/SkeletonLoader/index.tsx");
 /* harmony import */ var _GridPreview__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../libs/datamanager/src/components/MainView/GridView/GridPreview.tsx");
 /* harmony import */ var _GridView_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../libs/datamanager/src/components/MainView/GridView/GridView.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 
 const _excluded = ["view", "selected", "row", "fields", "onClick"];
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/MainView/GridView/GridView.jsx";
@@ -13320,10 +13320,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ImagePreview: () => (/* binding */ ImagePreview)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 /* harmony import */ var _GridPreview_module_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/MainView/GridView/GridPreview.module.scss");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/components/MainView/GridView/ImagePreview.tsx";
 
 
@@ -13548,7 +13548,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   useFirstMountState: () => (/* binding */ useFirstMountState)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 
 function useFirstMountState() {
   const isFirst = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(true);
@@ -13569,7 +13569,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   useUpdateEffect: () => (/* binding */ useUpdateEffect)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _useFirstMountState__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/hooks/useFirstMountState.ts");
 
 
@@ -13594,8 +13594,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SDKProvider: () => (/* binding */ SDKProvider),
 /* harmony export */   useSDK: () => (/* binding */ useSDK)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/providers/SDKProvider.jsx";
 
 
@@ -13628,12 +13628,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   createApp: () => (/* binding */ createApp)
 /* harmony export */ });
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react-dom/index.js");
 /* harmony import */ var _components_App_App__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/App/App.jsx");
 /* harmony import */ var _stores_AppStore__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/stores/AppStore.js");
 /* harmony import */ var _stores_DataStores__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/stores/DataStores/index.js");
 /* harmony import */ var _stores_DynamicModel__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/stores/DynamicModel.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/sdk/app-create.jsx";
 
 
@@ -13723,8 +13723,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   useShortcut: () => (/* binding */ useShortcut)
 /* harmony export */ });
-/* harmony import */ var react_hotkeys_hook__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-hotkeys-hook/dist/react-hotkeys-hook.esm.js");
-/* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/strman/lib/strman.js");
+/* harmony import */ var react_hotkeys_hook__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react-hotkeys-hook/dist/react-hotkeys-hook.esm.js");
+/* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/strman/lib/strman.js");
 /* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(strman__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _keymap__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/sdk/keymap.ts");
 
@@ -13927,12 +13927,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ViewColumnTypeName: () => (/* binding */ ViewColumnTypeName),
 /* harmony export */   ViewColumnTypeShort: () => (/* binding */ ViewColumnTypeShort)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _assets_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/assets/icons/index.js");
 /* harmony import */ var _components_CellViews__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/CellViews/index.js");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/stores/types.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/react/jsx-dev-runtime.js");
 var _jsxFileName = "/Users/nicholasrq/Git/label-studio/web/libs/datamanager/src/stores/Tabs/tab_column.jsx";
 
 
@@ -14228,7 +14228,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   cn: () => (/* binding */ cn)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _feature_flags__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 
 const _excluded = ["tag", "name", "mod", "mix"],
@@ -14431,7 +14431,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   objectToMap: () => (/* binding */ objectToMap),
 /* harmony export */   parseJson: () => (/* binding */ parseJson)
 /* harmony export */ });
-/* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/strman/lib/strman.js");
+/* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/strman/lib/strman.js");
 /* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(strman__WEBPACK_IMPORTED_MODULE_0__);
 
 const formDataToJPO = formData => {
@@ -14552,8 +14552,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   deserializeJsonFromUrl: () => (/* binding */ deserializeJsonFromUrl),
 /* harmony export */   serializeJsonForUrl: () => (/* binding */ serializeJsonForUrl)
 /* harmony export */ });
-/* harmony import */ var pako__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/pako/dist/pako.esm.mjs");
-/* harmony import */ var js_base64__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/js-base64/base64.mjs");
+/* harmony import */ var pako__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/pako/dist/pako.esm.mjs");
+/* harmony import */ var js_base64__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/js-base64/base64.mjs");
 /* harmony import */ var _packJSON__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/packJSON.js");
 /**
  * Library that serializes and deserializes JSON data to/from URL-safe strings
@@ -14800,7 +14800,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Video: () => (/* reexport safe */ _VideoCell__WEBPACK_IMPORTED_MODULE_9__.VideoCell),
 /* harmony export */   normalizeCellAlias: () => (/* binding */ normalizeCellAlias)
 /* harmony export */ });
-/* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/strman/lib/strman.js");
+/* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/strman/lib/strman.js");
 /* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(strman__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Agreement_Agreement__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/CellViews/Agreement/Agreement.jsx");
 /* harmony import */ var _Annotators_Annotators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/CellViews/Annotators/Annotators.jsx");
@@ -14857,7 +14857,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DropdownContext: () => (/* binding */ DropdownContext)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 
 const DropdownContext = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createContext();
 
@@ -14875,7 +14875,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   FormSubmissionContext: () => (/* binding */ FormSubmissionContext),
 /* harmony export */   FormValidationContext: () => (/* binding */ FormValidationContext)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 
 const FormContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)();
 FormContext.displayName = "FormContext";
@@ -14899,7 +14899,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   FormField: () => (/* binding */ FormField)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _FormContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/FormContext.js");
 /* harmony import */ var _Validation_Validators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Common/Form/Validation/Validators.js");
@@ -15061,7 +15061,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Interface: () => (/* binding */ Interface)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
 
 const injector = (0,mobx_react__WEBPACK_IMPORTED_MODULE_0__.inject)(({
   store
@@ -15120,7 +15120,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MenuContext: () => (/* binding */ MenuContext)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 
 const MenuContext = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createContext();
 
@@ -15134,7 +15134,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Oneof: () => (/* binding */ Oneof)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 
 const compareCase = (value, caseValue) => {
   if (Array.isArray(caseValue)) {
@@ -15171,7 +15171,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   TableContext: () => (/* binding */ TableContext),
 /* harmony export */   tableCN: () => (/* binding */ tableCN)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/bem.tsx");
 
 
@@ -15358,7 +15358,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DataStore: () => (/* binding */ DataStore)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/utils/random.js");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _components_Common_Pagination_Pagination__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/Pagination/Pagination.tsx");
@@ -15635,7 +15635,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DataStoreItem: () => (/* binding */ DataStoreItem)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/random.js");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 
@@ -15705,7 +15705,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MultiProvider: () => (/* binding */ MultiProvider)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 
 const MultiProvider = props => {
   var _props$providers;
@@ -15986,10 +15986,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DataManager: () => (/* binding */ DataManager)
 /* harmony export */ });
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react-dom/index.js");
-/* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/strman/lib/strman.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react-dom/index.js");
+/* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/strman/lib/strman.js");
 /* harmony import */ var strman__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(strman__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _components_DataManager_Toolbar_instruments__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/DataManager/Toolbar/instruments.jsx");
 /* harmony import */ var _utils_api_proxy__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/utils/api-proxy/index.js");
@@ -16481,7 +16481,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Common_Modal_Modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Common/Modal/Modal.jsx");
 /* harmony import */ var _comments_sdk__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/sdk/comments-sdk.js");
 /* harmony import */ var _lsf_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../libs/datamanager/src/sdk/lsf-utils.ts");
-/* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx/lib/mobx.module.js");
+/* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/mobx/lib/mobx.module.js");
 
 const _excluded = ["id"],
   _excluded2 = ["task", "preload", "isLabelStream", "annotation", "interfacesModifier", "isInteractivePreannotations", "user", "keymap", "messages"];
@@ -17444,7 +17444,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Action: () => (/* binding */ Action)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/stores/types.js");
 
@@ -17504,7 +17504,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AppStore: () => (/* binding */ AppStore)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _components_Common_Modal_Modal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/Common/Modal/Modal.jsx");
 /* harmony import */ var _utils_feature_flags__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/utils/feature-flags.js");
 /* harmony import */ var _utils_history__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/utils/history.js");
@@ -18151,7 +18151,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Assignee: () => (/* binding */ Assignee)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _Users__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/stores/Users.js");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/stores/types.js");
 
@@ -18224,7 +18224,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   create: () => (/* binding */ create)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _mixins_DataStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/mixins/DataStore/index.js");
 /* harmony import */ var _DynamicModel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/stores/DynamicModel.js");
 
@@ -18292,7 +18292,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   create: () => (/* binding */ create)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _mixins_DataStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/mixins/DataStore/index.js");
 /* harmony import */ var _sdk_lsf_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/sdk/lsf-utils.ts");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
@@ -18525,7 +18525,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   DynamicModel: () => (/* binding */ DynamicModel),
 /* harmony export */   registerModel: () => (/* binding */ registerModel)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/stores/types.js");
 
 
@@ -18593,7 +18593,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   TabStore: () => (/* binding */ TabStore)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _utils_history__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/history.js");
 /* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../libs/datamanager/src/utils/random.js");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
@@ -19092,9 +19092,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Tab: () => (/* binding */ Tab)
 /* harmony export */ });
 /* harmony import */ var _Users_nicholasrq_Git_label_studio_web_node_modules_babel_runtime_helpers_esm_objectWithoutPropertiesLoose_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
-/* harmony import */ var deep_equal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/deep-equal/index.js");
+/* harmony import */ var deep_equal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/deep-equal/index.js");
 /* harmony import */ var deep_equal__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(deep_equal__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("../../libs/datamanager/src/utils/random.js");
 /* harmony import */ var _filter_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/stores/Tabs/filter_utils.ts");
 /* harmony import */ var _tab_filter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/stores/Tabs/tab_filter.js");
@@ -19531,7 +19531,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TabFilter: () => (/* binding */ TabFilter)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _components_CellViews__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/components/CellViews/index.js");
 /* harmony import */ var _components_Filters_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/components/Filters/types/index.js");
 /* harmony import */ var _components_Filters_types_Utility__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../libs/datamanager/src/components/Filters/types/Utility.js");
@@ -19723,7 +19723,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   FilterValueType: () => (/* binding */ FilterValueType),
 /* harmony export */   TabFilterType: () => (/* binding */ TabFilterType)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/helpers.ts");
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("../../libs/datamanager/src/utils/utils.ts");
 /* harmony import */ var _tab_column__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/stores/Tabs/tab_column.jsx");
@@ -19822,7 +19822,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TabHiddenColumns: () => (/* binding */ TabHiddenColumns)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _tab_column__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/stores/Tabs/tab_column.jsx");
 
 
@@ -19877,7 +19877,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TabSelectedItems: () => (/* binding */ TabSelectedItems)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/stores/types.js");
 
 
@@ -19985,7 +19985,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   User: () => (/* binding */ User)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../libs/datamanager/src/utils/helpers.ts");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../libs/datamanager/src/stores/types.js");
 
@@ -20026,8 +20026,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   StringOrNumberID: () => (/* binding */ StringOrNumberID),
 /* harmony export */   ThresholdType: () => (/* binding */ ThresholdType)
 /* harmony export */ });
-/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("../../node_modules/mobx-state-tree/dist/mobx-state-tree.module.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 
 
 const CustomJSON = mobx_state_tree__WEBPACK_IMPORTED_MODULE_1__.types.custom({
@@ -21424,7 +21424,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   guidGenerator: () => (/* binding */ guidGenerator)
 /* harmony export */ });
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/nanoid/index.browser.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/nanoid/index.browser.js");
 
 
 /**
@@ -21497,7 +21497,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _rect, _rect2, _rect3, _rect4, _rect5, _rect6, _rect7;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -21585,7 +21585,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _rect, _mask, _g;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -21668,7 +21668,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _path;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -21712,7 +21712,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _rect, _path;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -21762,7 +21762,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _rect, _path;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -21810,7 +21810,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _path;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -21852,7 +21852,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _g;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -21954,7 +21954,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _path, _path2, _path3;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22005,7 +22005,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _path;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22047,7 +22047,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _path;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22089,7 +22089,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _path;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22131,7 +22131,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _path, _path2, _path3, _path4;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22180,7 +22180,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _path;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22222,7 +22222,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _rect, _path, _path2;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22273,7 +22273,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _rect, _path;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22321,7 +22321,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _rect, _path, _path2;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22372,7 +22372,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ReactComponent: () => (/* binding */ ForwardRef),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../../../label-studio-enterprise/web/node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("../../node_modules/react/index.js");
 var _rect, _path, _path2;
 var _excluded = ["title", "titleId"];
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -22498,7 +22498,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "?9211":
+/***/ "?ce98":
 /***/ (() => {
 
 /* (ignored) */
