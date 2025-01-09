@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAPI } from "../../providers/ApiProvider";
 import { useState } from "react";
 import { CreateProject } from "../CreateProject/CreateProject";
+import { InviteLink } from "../Organization/PeoplePage/InviteLink";
 
 const resources = [
   {
@@ -45,6 +46,7 @@ type Action = (typeof actions)[number]["type"];
 export const HomePage: Page = () => {
   const api = useAPI();
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [invitationOpen, setInvitationOpen] = useState(false);
   const { data, isFetching, isSuccess, isError } = useQuery({
     queryKey: ["projects"],
     async queryFn() {
@@ -58,6 +60,9 @@ export const HomePage: Page = () => {
       switch (action) {
         case "createProject":
           setModalIsOpen(true);
+          break;
+        case "invitePeople":
+          setInvitationOpen(true);
           break;
       }
     };
@@ -152,6 +157,7 @@ export const HomePage: Page = () => {
         </section>
       </div>
       {modalIsOpen && <CreateProject redirect={false} onClose={() => setModalIsOpen(false)} />}
+      <InviteLink opened={invitationOpen} onClosed={() => setInvitationOpen(false)} />
     </main>
   );
 };

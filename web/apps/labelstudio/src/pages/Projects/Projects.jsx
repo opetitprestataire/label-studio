@@ -109,6 +109,7 @@ export const ProjectsPage = () => {
     // there is a nice page with Create button when list is empty
     // so don't show the context button in that case
     setContextProps({ openModal, showButton: projectsList.length > 0 });
+    console.log(openModal, projectsList.length);
   }, [projectsList.length]);
 
   return (
@@ -156,6 +157,8 @@ ProjectsPage.routes = ({ store }) => [
   },
 ];
 ProjectsPage.context = ({ openModal, showButton }) => {
+  console.log("HELLO header");
+  console.log(showButton);
   if (!showButton) return null;
   return (
     <Button onClick={openModal} look="primary" size="compact">
