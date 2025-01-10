@@ -68,7 +68,7 @@ module.exports = {
         lsPrimaryContent: "#4C5FA9",
         lsSubtitle: "#6B6860",
         lsPrimaryEmphasisSubtle: "#F0F3FE",
-        lsNaturalSurface: "#F9F8F6",
+        lsNeutralSurface: "#F9F8F6",
         lsNeutralBorderSubtle: "#E1DED5",
         lsNeutralContent: "#262522",
         lsNeutralContentSubtler: "#6B6860",

@@ -2,7 +2,6 @@ import { Description } from "apps/labelstudio/src/components/Description/Descrip
 import { Block } from "apps/labelstudio/src/components/Menu/MenuContext";
 import { Input } from "../../../components/Form";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { copyText } from "apps/labelstudio/src/utils/helpers";
 import { Space } from "@humansignal/ui";
 import { Button } from "@humansignal/shad/components/ui/button";
 import { API } from "apps/labelstudio/src/providers/ApiProvider";
@@ -77,16 +76,8 @@ const InvitationModal = () => {
 };
 
 const InvitationFooter = () => {
-  const [copied, setCopied] = useState(false);
+  const { copyText, copied } = useTextCopy();
   const { refetch, data: link } = useAtomValue(linkAtom);
-  console.log(link);
-
-  const copyLink = useCallback(() => {
-    setCopied(true);
-    copyText(link ?? "");
-    setTimeout(() => setCopied(false), 1500);
-    __lsa("organization.add_people.copy_link");
-  }, []);
 
   return (
     <Space spread>
@@ -96,10 +87,22 @@ const InvitationFooter = () => {
         </Button>
       </Space>
       <Space>
-        <Button style={{ width: 170 }} onClick={copyLink}>
+        <Button style={{ width: 170 }} onClick={() => copyText(link!)}>
           {copied ? "Copied!" : "Copy link"}
         </Button>
       </Space>
     </Space>
   );
 };
+
+function useTextCopy() {
+  const [copied, setCopied] = useState(false);
+
+  const copyText = useCallback((value: string) => {
+    setCopied(true);
+    copyText(value ?? "");
+    setTimeout(() => setCopied(false), 1500);
+  }, []);
+
+  return { copied, copyText };
+}

@@ -168,7 +168,7 @@ function ProjectSimpleCard({
   const total = project.task_number ?? 0;
   const progress = (total > 0 ? finished / total : 0) * 100;
   return (
-    <div className=" even:bg-lsNaturalSurface rounded-sm overflow-hidden">
+    <div className=" even:bg-lsNeutralSurface rounded-sm overflow-hidden">
       <div className="grid grid-cols-[minmax(0,1fr)_150px] p-4 items-center border-l-2 border-lsNeutralBorderSubtle">
         <div className="flex flex-col gap-1">
           <a href={`/projects/${project.id}`} className="text-lsNeutralContent">
