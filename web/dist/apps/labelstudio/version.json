@@ -1,6 +1,6 @@
 {
-  "message": "feat: OPTIC-1332: componetize Toggle and Label components (#6723)",
-  "commit": "281ef778e277bdf3d6cd06b1a75985acc51f2c8c",
-  "date": "2025-01-03T13:35:43.000Z",
+  "message": "refactor: OPTIC-1510: remove a batch of ff (#6882)",
+  "commit": "3bd121028831a45d48daf12bed944d025053ba08",
+  "date": "2025-01-13T14:39:07.000Z",
   "branch": "develop"
 }

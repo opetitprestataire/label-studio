@@ -15,14 +15,6 @@ export const FF_DEV_1536 = "ff_front_dev_1536_taxonomy_user_labels_150222_long";
 // New Audio 2.0 UI
 export const FF_DEV_1713 = "ff_front_DEV_1713_audio_ui_150222_short";
 
-// Allow to use html inside <Label/> tags
-export const FF_DEV_2128 = "ff_dev_2128_html_in_labels_150422_short";
-
-// Show draft as the topmost item in annotation history
-export const FF_DEV_2290 = "ff_front_dev_2290_draft_in_annotation_history_short";
-
-export const FF_DEV_2431 = "ff_front_dev_2431_delete_polygon_points_080622_short";
-
 export const FF_DEV_2432 = "ff_front_dev_2432_auto_save_polygon_draft_210622_short";
 
 export const FF_DEV_2669 = "ff_front_dev_2669_paragraph_author_filter_210622_short";
@@ -48,13 +40,6 @@ export const FF_DEV_2918 = "fflag_fix_front_dev_2918_labeling_filtered_paragraph
 export const FF_DEV_3034 = "fflag-feat-dev-3034-comments-with-drafts-short";
 
 export const FF_DEV_3077 = "fflag_feat_front_dev_3077_repeater_tag_loading_performance_short";
-
-/**
- * Disallow drawing regions outside of the video canvas
- * Also disables offscreen zooming and panning
- * @link https://app.launchdarkly.com/default/production/features/fflag_fix_front_dev_3350_restrict_drawing_area_short
- */
-export const FF_DEV_3350 = "fflag_fix_front_dev_3350_restrict_drawing_area_short";
 
 /**
  * Correction of image and stage size. It also affects the zoom position restrictions.
@@ -83,20 +68,8 @@ export const FF_DEV_3666 = "fflag_fix_front_dev_3666_max_usages_on_region_creati
  */
 export const FF_DEV_3873 = "fflag_feat_front_dev_3873_labeling_ui_improvements_short";
 
-/**
- * Allow shourtcuts button to work with visible main textarea when there is no focus
- * @link https://app.launchdarkly.com/default/production/features/fflag_fix_front_dev_3730_shortcuts_initial_input_22122022_short
- */
-export const FF_DEV_3730 = "fflag_fix_front_dev_3730_shortcuts_initial_input_22122022_short";
-
 // Use only relative coords internally to improve performance and reduce bugs
 export const FF_DEV_3793 = "fflag_fix_front_dev_3793_relative_coords_short";
-
-/**
- * Fixing issue with overlapping taxonomy items during searching
- * @link https://app.launchdarkly.com/default/community/features/fflag_fix_front_dev_4075_taxonomy_overlap_281222_short
- */
-export const FF_DEV_4075 = "fflag_fix_front_dev_4075_taxonomy_overlap_281222_short";
 
 /**
  * Label stream ablation experiment for solving overlap issue
@@ -117,12 +90,6 @@ export const FF_LSDV_E_278 = "fflag_feat_front_lsdv_e_278_contextual_scrolling_s
 export const FF_LLM_EPIC = "fflag_feat_all_lsdv_e_294_llm_annotations_180723_long";
 
 /**
- * Fix logic of namespaces inside Hotkeys
- * @link https://app.launchdarkly.com/default/production/features/fflag_fix_font_lsdv_1148_hotkeys_namespaces_01022023_short
- */
-export const FF_LSDV_1148 = "fflag_fix_font_lsdv_1148_hotkeys_namespaces_01022023_short";
-
-/**
  * Multi-image segmentation support via `valueList`
  */
 export const FF_LSDV_4583 = "fflag_feat_front_lsdv_4583_multi_image_segmentation_short";
@@ -136,7 +103,7 @@ export const FF_LSDV_4583_6 = "fflag_feat_front_lsdv_4583_6_images_preloading_sh
  * Removing interrupting from the draft saving
  *
  * Without this flag we have a situation when changes in history leading to the empty results break functionality of adding comments and make the draft saving process indicator stay forever.
- * @link https://app.launchdarkly.com/default/production/features/fflag_fix_font_lsdv_1148_hotkeys_namespaces_01022023_short
+ * @link https://app.launchdarkly.com/default/production/features/fflag_fix_font_lsdv_3009_draft_saving_stuck_130223_short
  */
 export const FF_LSDV_3009 = "fflag_fix_font_lsdv_3009_draft_saving_stuck_130223_short";
 
@@ -145,12 +112,6 @@ export const FF_LSDV_3009 = "fflag_fix_font_lsdv_3009_draft_saving_stuck_130223_
  * @link https://app.launchdarkly.com/default/production/features/fflag_fix_front_lsdv_4600_lead_time_27072023_short
  */
 export const FF_LEAD_TIME = "fflag_fix_front_lsdv_4600_lead_time_27072023_short";
-
-/**
- * Adds "skipDuplicates" parameter for <TextArea /> to prevent adding duplicate entries
- * @link https://app.launchdarkly.com/default/production/features/fflag_feat_front_lsdv_4659_skipduplicates_060323_short
- */
-export const FF_LSDV_4659 = "fflag_feat_front_lsdv_4659_skipduplicates_060323_short";
 
 /**
  * Reworking of RichText to optimize its work with DOM and decrease response time with a large number of regions.
@@ -179,15 +140,6 @@ export const FF_OUTLINER_OPTIM = "fflag_feat_front_lsdv_4620_outliner_optimizati
  * Fixes how presigned urls are generated and accessed to remove possibility of CORS errors.
  */
 export const FF_LSDV_4711 = "fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short";
-
-/**
- * Preventing creating duplicates in TextArea results with "skipDuplicates" parameter during editing.
- * It also prevent creating new history steps on every change during editing textarea results.
- *
- * @see FF_LSDV_4659: To enable `skipDuplicates` parameter
- * @link https://app.launchdarkly.com/default/production/features/fflag_feat_front_lsdv_4712_skipduplicates_editing_110423_short
- */
-export const FF_LSDV_4712 = "fflag_feat_front_lsdv_4712_skipduplicates_editing_110423_short";
 
 /**
  * Fixing issue with missed steps in timeseries with optimized data and zoom
