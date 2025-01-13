@@ -1,6 +1,6 @@
 import type { Page } from "../types/Page";
 import { Button } from "@humansignal/shad/components/ui/button";
-import { SimpleCard, Spinner } from "@humansignal/ui";
+import { IconFolder, SimpleCard, Spinner } from "@humansignal/ui";
 import { IconExternal, IconFolderAdd, IconUserAdd } from "@humansignal/icons";
 import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
 import { useQuery } from "@tanstack/react-query";
@@ -111,6 +111,13 @@ export const HomePage: Page = () => {
               <div className="h-64 flex justify-center items-center">can't load projects</div>
             ) : isSuccess && data.results.length === 0 ? (
               <div className="flex flex-col justify-center items-center border border-lsBorderSubtle bg-lsPrimaryEmphasisSubtle rounded-lg h-64">
+                <div
+                  className={
+                    "rounded-full w-12 h-12 flex justify-center items-center bg-lsAccentMangoSubtle text-lsAccentMangoBold"
+                  }
+                >
+                  <IconFolder />
+                </div>
                 <h2 className="text-2xl">Create your first project</h2>
                 <sub className="text-sm text-lsSubtitle">
                   Import your data and set up the labeling interface to start annotating
