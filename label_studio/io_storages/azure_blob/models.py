@@ -3,7 +3,7 @@
 import json
 import logging
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Union
 from urllib.parse import urlparse
 
@@ -144,7 +144,7 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
         container = r.netloc
         blob = r.path.lstrip('/')
 
-        expiry = datetime.utcnow() + timedelta(minutes=self.presign_ttl)
+        expiry = datetime.now(timezone.utc) + timedelta(minutes=self.presign_ttl)
 
         sas_token = generate_blob_sas(
             account_name=self.get_account_name(),

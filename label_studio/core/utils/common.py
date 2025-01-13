@@ -14,7 +14,7 @@ import time
 import traceback as tb
 import uuid
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import wraps
 from typing import Any, Callable, Generator, Iterable, Mapping, Optional
 
@@ -261,7 +261,7 @@ def datetime_to_timestamp(dt):
 
 
 def timestamp_now():
-    return datetime_to_timestamp(datetime.utcnow())
+    return datetime_to_timestamp(datetime.now(timezone.utc))
 
 
 def find_first_one_to_one_related_field_by_prefix(instance, prefix):
