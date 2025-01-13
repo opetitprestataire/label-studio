@@ -66,18 +66,22 @@ module.exports = {
         // LS color space
         lsPrimaryIcon: "#617ADA",
         lsPrimaryContent: "#4C5FA9",
-        lsSubtitle: "#6B6860",
         lsPrimaryEmphasisSubtle: "#F0F3FE",
+        lsSubtitle: "#6B6860",
         lsNeutralSurface: "#F9F8F6",
+        lsNeutralBorder: "#E1DED5",
         lsNeutralBorderSubtle: "#E1DED5",
         lsNeutralContent: "#262522",
         lsNeutralContentSubtler: "#6B6860",
+        lsNeutralContentSubtlest: "#A49F95",
         lsBorderSubtle: "#617ADA",
-        lsBackgroundSubtle: "#F0F3FE",
-        lsBgMain: "#F0F3FE",
-        lsIcon: "#617ADA",
         lsButtonBg: "#4C5FA9",
         lsPositiveSurfaceHover: "#34988D",
+
+        // Accents
+        lsAccentMangoSubtle: "#FFEED0",
+        lsAccentMangoBold: "#EB9C14",
+        lsAccentGrapeSubtle: "#D4DBFB",
       },
       fontSize: {
         metatitle: ["12px", "20px"],

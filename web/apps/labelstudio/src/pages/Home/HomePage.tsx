@@ -86,7 +86,7 @@ export const HomePage: Page = () => {
                   variant="lsOutline"
                   onClick={handleActions(action.type)}
                 >
-                  <action.icon className="text-lsIcon" />
+                  <action.icon className="text-lsPrimaryIcon" />
                   {action.title}
                 </Button>
               );
@@ -104,13 +104,13 @@ export const HomePage: Page = () => {
             }
           >
             {isFetching ? (
-              <div className="h-24 flex justify-center items-center">
+              <div className="h-64 flex justify-center items-center">
                 <Spinner />
               </div>
             ) : isError ? (
-              <div className="h-24 flex justify-center items-center">can't load projects</div>
+              <div className="h-64 flex justify-center items-center">can't load projects</div>
             ) : isSuccess && data.results.length === 0 ? (
-              <div className="flex flex-col justify-center items-center border border-lsBorderSubtle bg-lsBgMain rounded-lg py-80">
+              <div className="flex flex-col justify-center items-center border border-lsBorderSubtle bg-lsPrimaryEmphasisSubtle rounded-lg h-64">
                 <h2 className="text-2xl">Create your first project</h2>
                 <sub className="text-sm text-lsSubtitle">
                   Import your data and set up the labeling interface to start annotating
@@ -178,7 +178,7 @@ function ProjectSimpleCard({
             {finished} / {total}
           </div>
         </div>
-        <div className="bg-lsBgMain rounded-full overflow-hidden w-full h-2 shadow-lsNeutralBorderSubtle shadow-border-1">
+        <div className="bg-lsPrimaryEmphasisSubtle rounded-full overflow-hidden w-full h-2 shadow-lsNeutralBorderSubtle shadow-border-1">
           <div className="bg-lsPositiveSurfaceHover h-full min-w-1" style={{ maxWidth: `${progress}%` }}></div>
         </div>
       </div>
