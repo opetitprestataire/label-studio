@@ -28,8 +28,7 @@ export const GeneralSettings = () => {
   return (
     <Block name="general-settings">
       <Elem name={"wrapper"}>
-        <h1>General Settings!</h1>
-
+        <h1>General Settings</h1>
         <Block name="settings-wrapper">
           <Form action="updateProject" formData={{ ...project }} params={{ pk: project.id }} onSubmit={updateProject}>
             <Form.Row columnCount={1} rowGap="16px">
