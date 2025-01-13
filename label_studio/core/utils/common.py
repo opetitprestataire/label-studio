@@ -39,7 +39,8 @@ from django.db.models.signals import (
     pre_migrate,
     pre_save,
 )
-from django.db.utils import OperationalError, timezone
+from django.db.utils import OperationalError
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.module_loading import import_string
 from django_filters.rest_framework import DjangoFilterBackend
