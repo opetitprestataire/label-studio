@@ -23,6 +23,10 @@ export const CustomButton = types
   })
   .actions((self) => ({
     updateState(newState: CustomButtonSnType) {
-      applySnapshot(self, Object.assign({}, getSnapshot(self), newState));
+      for (const key in newState) {
+        if (key in self) {
+          self[key] = newState[key];
+        }
+      }
     },
   }));
