@@ -4,7 +4,7 @@ type: templates
 category: Computer Vision
 cat: computer-vision
 order: 155
-meta_title: Medical Image Classification with Bounding BoxesTemplate
+meta_title: Medical Image Classification with Bounding Boxes Template
 meta_description: Template for classifying medical images and using bounding boxes for image segmentation.
 ---
 
