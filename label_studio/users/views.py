@@ -41,7 +41,7 @@ def user_signup(request):
 
     # checks if the URL is a safe redirection.
     if not next_page or not url_has_allowed_host_and_scheme(url=next_page, allowed_hosts=request.get_host()):
-        next_page = reverse('projects:project-index')
+        next_page = reverse('main')
 
     user_form = forms.UserSignupForm()
     organization_form = OrganizationSignupForm()
@@ -101,7 +101,7 @@ def user_login(request):
 
     # checks if the URL is a safe redirection.
     if not next_page or not url_has_allowed_host_and_scheme(url=next_page, allowed_hosts=request.get_host()):
-        next_page = reverse('projects:project-index')
+        next_page = reverse('main')
 
     login_form = load_func(settings.USER_LOGIN_FORM)
     form = login_form()
