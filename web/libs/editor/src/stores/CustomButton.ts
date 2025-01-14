@@ -1,4 +1,4 @@
-import { applySnapshot, getSnapshot, type Instance, type SnapshotIn, types } from "mobx-state-tree";
+import { type Instance, type SnapshotIn, types } from "mobx-state-tree";
 import { guidGenerator } from "../utils/unique";
 
 export type CustomButtonType = Instance<typeof CustomButton>;
