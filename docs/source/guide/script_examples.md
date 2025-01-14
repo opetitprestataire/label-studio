@@ -476,7 +476,7 @@ This is an example of a "hard" block, meaning that the user must resolve the iss
 
 This labeling configuration arranges three video players vertically, making it easier to view and annotate each video frame. 
 
-The script ensures the videos are synced, with one video showing one frame forward, and another one the previous frame. 
+The script ensures the videos are synced, with one player showing one frame forward, and another player the previous frame. 
 
 ![Screenshot of JSON error message](/images/project/video_sync.png)
 
@@ -552,8 +552,7 @@ adjustVideoSync(video0, 0);
 Each video is wrapped in a `<View>` tag with a width of 100% to ensure they stack on top of each other. The `Header` tag provides a title for 
 each video, indicating which frame is being displayed. 
 
-The `Video`  tags are used to load the video content, with the `name` attribute 
-uniquely identifying each video player. 
+The `Video` tags are used to load the video content, with the `name` attribute uniquely identifying each video player. 
 
 The `TimelineLabels` tag is connected to the second video (`video0`), allowing annotators to label specific segments of that video. The labels `class1` and `class2` can be used to categorize the content of the video, enhancing the  annotation process. 
 
