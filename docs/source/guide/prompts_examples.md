@@ -65,7 +65,7 @@ This example demonstrates how to set up Prompts to predict image captions.
 6. Accept the [predictions as annotations](prompts_predictions#Create-annotations-from-predictions).
 
 
-## Evaluating LLM outputs for toxicity
+## Evaluate LLM outputs for toxicity
 
 This example demonstrates how to set up Prompts to evaluate if the LLM-generated output text is classified as harmful, offensive, or inappropriate.
 
@@ -132,17 +132,23 @@ This example demonstrates how to set up Prompts to evaluate if the LLM-generated
 
 
 !!! note
-    Ensure you include `{comment_text}` in your instructions. Click `comment_text` above the instruction field to insert it. (See the screenshot in the [previous example](#Autolabel-image-captions).)
+    Ensure you include `{comment_text}` in your instructions. Click `comment_text` above the instruction field to insert it. 
+
+![Screenshot pointing to how to insert comment text into your instructions](/images/prompts/example_insert_comment_text.png)
 
 !!! info Tip
     You can also automatically generate the instructions using the [**Enhance Prompt** action](prompts_draft#Enhance-prompt). Before you can use this action, you must at least add the variable name `{comment_text}` and then click **Save**. 
+
+![Screenshot pointing to Enhance Prompt action](/images/prompts/example_enhance_prompt2.png)
 
 5. Run the prompt. View predictions to accept or correct.
 
     You can [read more about evaluation metrics](prompts_draft#Evaluation-results) and ways to assess your prompt performance. 
 
 !!! info Tip
-    Use the drop-down menu above the results field to change the subset of data being used (e.g. only data with Ground Truth annotations, or a small sample of records). (See the screenshot in the [previous example](#Autolabel-image-captions).)
+    Use the drop-down menu above the results field to change the subset of data being used (e.g. only data with Ground Truth annotations, or a small sample of records). 
+
+![Screenshot pointing to subset dropdown](/images/prompts/example_subset2.png)
 
 6. Accept the [predictions as annotations](prompts_predictions#Create-annotations-from-predictions). 
 
