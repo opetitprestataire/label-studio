@@ -113,7 +113,7 @@ export const HomePage: Page = () => {
               <div className="flex flex-col justify-center items-center border border-lsBorderSubtle bg-lsPrimaryEmphasisSubtle rounded-lg h-64">
                 <div
                   className={
-                    "rounded-full w-12 h-12 flex justify-center items-center bg-lsAccentMangoSubtle text-lsAccentMangoBold"
+                    "rounded-full w-12 h-12 flex justify-center items-center bg-lsAccentMangoSubtle text-lsPrimaryIcon"
                   }
                 >
                   <IconFolder />
@@ -122,7 +122,9 @@ export const HomePage: Page = () => {
                 <sub className="text-sm text-lsSubtitle">
                   Import your data and set up the labeling interface to start annotating
                 </sub>
-                <Button className="mt-4">Create Project</Button>
+                <Button className="mt-4" onClick={() => setModalIsOpen(true)}>
+                  Create Project
+                </Button>
               </div>
             ) : isSuccess && data.results.length > 0 ? (
               <div className="flex flex-col gap-1">
@@ -135,7 +137,7 @@ export const HomePage: Page = () => {
         </section>
         <section className="flex flex-col gap-6">
           <HeidiTips collection="projectSettings" />
-          <SimpleCard title="Resources" description="Learn, expole and get help">
+          <SimpleCard title="Resources" description="Learn, explore and get help">
             <ul>
               {resources.map((link) => {
                 return (
