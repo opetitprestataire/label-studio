@@ -3,7 +3,7 @@ name = "label-studio"
 version = "1.16.0.dev0"
 description = "Label Studio annotation tool"
 authors = [
-    { name = "Heartex", email = "hello@heartex.ai" },
+    { name = "HumanSignal", email = "support@humansignal.com" },
 ]
 readme = "README.md"
 license = "Apache-2.0"
