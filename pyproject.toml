@@ -12,8 +12,10 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
 ]
-urls.Repository = "https://github.com/HumanSignal/label-studio"
 requires-python = ">=3.10,<4"
+
+[project.urls]
+Repository = "https://github.com/HumanSignal/label-studio"
 
 [tool.ruff]
 # Enable the pycodestyle (`E`) and Pyflakes (`F`) rules by default.
