@@ -13,6 +13,7 @@ import { Controls } from "./Controls";
 import { CurrentTask } from "./CurrentTask";
 
 import "./TopBar.scss";
+import { isSelfServe } from "../../utils/billing";
 
 export const TopBar = observer(({ store }) => {
   const annotationStore = store.annotationStore;
@@ -20,7 +21,7 @@ export const TopBar = observer(({ store }) => {
   const isPrediction = entity?.type === "prediction";
 
   const isViewAll = annotationStore?.viewingAll === true;
-  const isBulkMode = isFF(FF_BULK_ANNOTATION) && store.hasInterface("annotation:bulk");
+  const isBulkMode = isFF(FF_BULK_ANNOTATION) && !isSelfServe() && store.hasInterface("annotation:bulk");
 
   if (isFF(FF_DEV_3873) && isBulkMode) return null;
 
