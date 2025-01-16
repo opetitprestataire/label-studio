@@ -1,13 +1,13 @@
 import { IconInfoOutline, LsSettingsAlt } from "../../assets/icons";
 import { Button } from "../../common/Button/Button";
 import { Elem } from "../../utils/bem";
+import { isSelfServe } from "../../utils/billing";
 import { FF_BULK_ANNOTATION } from "../../utils/feature-flags";
 import { EditingHistory } from "./HistoryActions";
 import { DynamicPreannotationsToggle } from "../AnnotationTab/DynamicPreannotationsToggle";
 import { AutoAcceptToggle } from "../AnnotationTab/AutoAcceptToggle";
 import { GroundTruth } from "../CurrentEntity/GroundTruth";
 import { Tooltip } from "../../common/Tooltip/Tooltip";
-import { isSelfServe } from "../../utils/billing";
 
 export const Actions = ({ store }) => {
   const annotationStore = store.annotationStore;
