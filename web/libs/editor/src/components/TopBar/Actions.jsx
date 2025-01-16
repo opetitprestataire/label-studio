@@ -2,12 +2,12 @@ import { IconCopy, IconInfo, IconViewAll, LsSettings, LsTrash } from "../../asse
 import { Button } from "../../common/Button/Button";
 import { Tooltip } from "../../common/Tooltip/Tooltip";
 import { Elem } from "../../utils/bem";
+import { isSelfServe } from "../../utils/billing";
 import { FF_BULK_ANNOTATION, isFF } from "../../utils/feature-flags";
 import { GroundTruth } from "../CurrentEntity/GroundTruth";
 import { EditingHistory } from "./HistoryActions";
 import { confirm } from "../../common/Modal/Modal";
 import { useCallback } from "react";
-import { isSelfServe } from "../../utils/billing";
 
 export const Actions = ({ store }) => {
   const annotationStore = store.annotationStore;

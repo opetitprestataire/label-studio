@@ -7,6 +7,7 @@ import Registry from "../../core/Registry";
 
 import Types from "../../core/Types";
 import Tree from "../../core/Tree";
+import { isSelfServe } from "../utils/billing";
 import { FF_BULK_ANNOTATION } from "../../utils/feature-flags";
 
 const { Panel } = Collapse;

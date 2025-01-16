@@ -3,8 +3,8 @@ import type { IAnyComplexType, IAnyStateTreeNode } from "mobx-state-tree/dist/in
 
 import Registry from "./Registry";
 import { parseValue } from "../utils/data";
-import { FF_BULK_ANNOTATION, FF_DEV_3391, isFF } from "../utils/feature-flags";
 import { isSelfServe } from "../utils/billing";
+import { FF_BULK_ANNOTATION, FF_DEV_3391, isFF } from "../utils/feature-flags";
 import { guidGenerator } from "../utils/unique";
 
 interface ConfigNodeBaseProps {

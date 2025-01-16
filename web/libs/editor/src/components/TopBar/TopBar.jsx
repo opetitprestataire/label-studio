@@ -4,6 +4,7 @@ import { IconViewAll, LsPlus } from "../../assets/icons";
 import { Button } from "../../common/Button/Button";
 import { Tooltip } from "../../common/Tooltip/Tooltip";
 import { Block, Elem } from "../../utils/bem";
+import { isSelfServe } from "../../utils/billing";
 import { FF_BULK_ANNOTATION, FF_DEV_3873, isFF } from "../../utils/feature-flags";
 import { AnnotationsCarousel } from "../AnnotationsCarousel/AnnotationsCarousel";
 import { DynamicPreannotationsToggle } from "../AnnotationTab/DynamicPreannotationsToggle";
@@ -13,7 +14,6 @@ import { Controls } from "./Controls";
 import { CurrentTask } from "./CurrentTask";
 
 import "./TopBar.scss";
-import { isSelfServe } from "../../utils/billing";
 
 export const TopBar = observer(({ store }) => {
   const annotationStore = store.annotationStore;
