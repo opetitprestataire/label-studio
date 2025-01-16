@@ -26,6 +26,7 @@ import "../../tags/visual";
 import { Space } from "../../common/Space/Space";
 import { Button } from "../../common/Button/Button";
 import { Block, Elem } from "../../utils/bem";
+import { isSelfServe } from "../../utils/billing";
 import {
   FF_BULK_ANNOTATION,
   FF_DEV_1170,
@@ -61,7 +62,6 @@ import { TopBar } from "../TopBar/TopBar";
  * Styles
  */
 import "./App.scss";
-import { isSelfServe } from "../../utils/billing";
 
 /**
  * App
