@@ -1,6 +1,6 @@
 {
-  "message": "refactor: OPTIC-1518: remove a batch of ff (#6892)",
-  "commit": "3c03818a813dfcd19fd5a0600a8933c84405507a",
-  "date": "2025-01-13T17:05:01.000Z",
+  "message": "ci: PLT-628: Update pyproject.toml (#6912)",
+  "commit": "574f0e5936da7a9a84271a9d04a8af66ab0d2212",
+  "date": "2025-01-16T12:30:42.000Z",
   "branch": "develop"
 }
