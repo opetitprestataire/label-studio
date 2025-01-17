@@ -135,7 +135,6 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
               <img
                 src={absoluteURL("/static/icons/logo.svg")}
                 alt="Label Studio Logo"
-                height="22"
                 style={{ height: 22 }}
               />
               <Hamburger opened={sidebarOpened} />
