@@ -255,7 +255,9 @@ module.exports = composePlugins(
       // Common dependencies across at least two sub-packages
       react: path.resolve(__dirname, "node_modules/react"),
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
+      "react-joyride": path.resolve(__dirname, "node_modules/react-joyride"),
       "@humansignal/ui": path.resolve(__dirname, "libs/ui"),
+      "@humansignal/core": path.resolve(__dirname, "libs/core"),
     };
 
     return merge(config, {
@@ -283,11 +285,14 @@ module.exports = composePlugins(
               allowedHosts: "all", // Allow access from Django's server
               proxy: [
                 {
-                  router: {
-                    "/api": `${DJANGO_HOSTNAME}/api`, // Proxy api requests to Django's server
-                  },
+                  context: ["/api"],
+                  target: DJANGO_HOSTNAME,
                 },
               ],
+              historyApiFallback: {
+                index: "/index.html",
+                disableDotRule: true,
+              },
             },
     });
   },
