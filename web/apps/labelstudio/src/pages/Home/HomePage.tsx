@@ -188,7 +188,7 @@ function ProjectSimpleCard({
           </div>
         </div>
         <div className="bg-lsPrimaryEmphasisSubtle rounded-full overflow-hidden w-full h-2 shadow-lsNeutralBorderSubtle shadow-border-1">
-          <div className="bg-lsPositiveSurfaceHover h-full min-w-1" style={{ maxWidth: `${progress}%` }}></div>
+          <div className="bg-lsPositiveSurfaceHover h-full min-w-1" style={{ maxWidth: `${progress}%` }} />
         </div>
       </div>
     </div>
