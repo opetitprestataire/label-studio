@@ -1,5 +1,5 @@
 {
-  "extends": ["stylelint-config-standard-scss", "stylelint-config-tailwindcss", "stylelint-config-tailwindcss/scss"],
+  "extends": ["stylelint-config-tailwindcss/scss", "stylelint-config-standard-scss"],
   "rules": {
     "selector-class-pattern": null,
     "custom-property-pattern": null,
