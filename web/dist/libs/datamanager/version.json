@@ -1,6 +1,6 @@
 {
-  "message": "feat: LEAP-1774: exclude starter cloud accounts from bulk labeling feature (#6919)",
-  "commit": "7f68061de57f4fc26690089c3969958459e3e328",
-  "date": "2025-01-17T22:15:21.000Z",
+  "message": "chore: LEAP-1717: update path-to-regexp to version 0.1.12 (#6927)",
+  "commit": "b5e2108467aa20a1f3c403a80e3b7771bb842bb6",
+  "date": "2025-01-20T17:19:02.000Z",
   "branch": "develop"
 }

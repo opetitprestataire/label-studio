@@ -19,7 +19,11 @@ from users import forms
 from users.functions import login, proceed_registration
 
 logger = logging.getLogger()
+home_page_enabled = flag_set("fflag_all_feat_dia_1777_ls_homepage_short")
+main_redirect = "projects:project-index"
 
+if home_page_enabled:
+    main_redirect = "main"
 
 @login_required
 def logout(request):
@@ -41,7 +45,7 @@ def user_signup(request):
 
     # checks if the URL is a safe redirection.
     if not next_page or not url_has_allowed_host_and_scheme(url=next_page, allowed_hosts=request.get_host()):
-        next_page = reverse('main')
+        next_page = reverse(main_redirect)
 
     user_form = forms.UserSignupForm()
     organization_form = OrganizationSignupForm()
@@ -101,7 +105,7 @@ def user_login(request):
 
     # checks if the URL is a safe redirection.
     if not next_page or not url_has_allowed_host_and_scheme(url=next_page, allowed_hosts=request.get_host()):
-        next_page = reverse('main')
+        next_page = reverse(main_redirect)
 
     login_form = load_func(settings.USER_LOGIN_FORM)
     form = login_form()
