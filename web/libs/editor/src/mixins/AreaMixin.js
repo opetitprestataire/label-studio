@@ -162,6 +162,12 @@ export const AreaMixinBase = types
     region_index: null,
   }))
   .actions((self) => ({
+    afterCreate() {
+      if (self.region_index === null && !self.classification) {
+        self.setRegionIndex(self.annotation.regionStore.sortedRegions.indexOf(self) + 1);
+      }
+    },
+
     setRegionIndex(index) {
       if (self.region_index !== index) {
         self.region_index = index;

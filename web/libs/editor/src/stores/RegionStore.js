@@ -242,6 +242,10 @@ export default types
 
         const sorted = sorts[self.sort](self.sortOrder === "desc");
 
+        sorted.forEach((region, index) => {
+          region.setRegionIndex(index + 1);
+        });
+
         return sorted;
       },
 
