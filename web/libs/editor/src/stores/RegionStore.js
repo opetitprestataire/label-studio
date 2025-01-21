@@ -242,10 +242,6 @@ export default types
 
         const sorted = sorts[self.sort](self.sortOrder === "desc");
 
-        sorted.forEach((region, index) => {
-          region.setRegionIndex(index + 1);
-        });
-
         return sorted;
       },
 
@@ -458,6 +454,7 @@ export default types
       window.localStorage.setItem(localStorageKeys.sortDirection, self.sortOrder);
 
       self.initHotkeys();
+      self.updateIndexes();
     },
 
     setGrouping(group) {
@@ -480,6 +477,11 @@ export default types
           else if (!region.hidden) region.toggleFiltered();
         });
       }
+      self.updateIndexes();
+    },
+
+    updateIndexes() {
+      self.sortedRegions.forEach((region, idx) => region.setRegionIndex(idx + 1));
     },
 
     /**

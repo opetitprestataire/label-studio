@@ -163,9 +163,7 @@ export const AreaMixinBase = types
   }))
   .actions((self) => ({
     afterCreate() {
-      if (self.region_index === null && !self.classification) {
-        self.setRegionIndex(self.annotation.regionStore.sortedRegions.indexOf(self) + 1);
-      }
+      self.annotation.regionStore.updateIndexes();
     },
 
     setRegionIndex(index) {
@@ -177,6 +175,7 @@ export const AreaMixinBase = types
     },
     beforeDestroy() {
       self.results.forEach((r) => destroy(r));
+      self.annotation.regionStore.updateIndexes();
     },
 
     setSelected(value) {
