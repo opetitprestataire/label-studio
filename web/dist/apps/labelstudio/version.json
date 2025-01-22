@@ -1,6 +1,6 @@
 {
-  "message": "feat: LEAP-1774: exclude starter cloud accounts from bulk labeling feature (#6919)",
-  "commit": "7f68061de57f4fc26690089c3969958459e3e328",
-  "date": "2025-01-17T22:15:21.000Z",
+  "message": "feat: DIA-1815: Add conditional dependencies in product tour (#6918)",
+  "commit": "fdd638de5bc63503920238b5ffed268a04b1b38f",
+  "date": "2025-01-22T02:02:53.000Z",
   "branch": "develop"
 }
