@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "importHelpers": true,
+    "jsx": "react",
     "target": "esnext",
     "module": "esnext",
     "lib": ["es2020", "dom"],

@@ -242,6 +242,23 @@ module.exports = composePlugins(
           "postcss-loader",
         ],
       },
+      {
+        test: /\.(ttf|woff|woff2)$/,
+        type: "asset/resource",
+        generator: {
+          filename: "fonts/[name][ext]",
+        },
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[name].[ext]",
+              outputPath: "fonts/",
+              publicPath: "../fonts/",
+            },
+          },
+        ],
+      },
     );
 
     if (isDevelopment) {
