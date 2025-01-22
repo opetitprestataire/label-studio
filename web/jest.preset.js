@@ -1,3 +1,22 @@
 const nxPreset = require("@nx/jest/preset").default;
+const { pathsToModuleNameMapper } = require("ts-jest");
 
-module.exports = { ...nxPreset };
+module.exports = {
+  ...nxPreset,
+  moduleNameMapper: {
+    ...nxPreset.moduleNameMapper,
+    ...pathsToModuleNameMapper(
+      {
+        "@humansignal/core": ["libs/core/src/index.ts"],
+        "@humansignal/datamanager": ["libs/datamanager/src/index.js"],
+        "@humansignal/editor": ["libs/editor/src/index.js"],
+        "@humansignal/frontend-test/*": ["libs/frontend-test/src/*"],
+        "@humansignal/ui": ["libs/ui/src/index.ts"],
+        "@humansignal/icons": ["libs/ui/src/assets/icons"],
+        "@humansignal/typography": ["libs/ui/src/typography"],
+        "@humansignal/shad/*": ["./libs/ui/src/shad/*"],
+      },
+      { prefix: "<rootDir>/../../" },
+    ),
+  },
+};
