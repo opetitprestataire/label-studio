@@ -2,27 +2,64 @@ import type { StorybookConfig } from "@storybook/react-webpack5";
 
 const config: StorybookConfig = {
   core: { builder: "@storybook/builder-webpack5" },
-  stories: ["../../../libs/**/*.stories.@(js|jsx|ts|tsx|mdx)", "../../../apps/**/*.stories.@(js|jsx|ts|tsx|mdx)"],
-  addons: ["@storybook/addon-essentials", "@storybook/addon-interactions", "@nx/react/plugins/storybook"],
+
+  stories: ["../../../libs/**/*.@(mdx|stories.@(js|jsx|ts|tsx))", "../../../apps/**/*.@(mdx|stories.@(js|jsx|ts|tsx))"],
+
+  addons: [
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
+    "@nx/react/plugins/storybook",
+    "@chromatic-com/storybook",
+  ],
+
+  webpackFinal(config) {
+    const rules = config.module?.rules ?? [];
+
+    for (const rule of rules) {
+      if (!rule || typeof rule === "string") continue;
+
+      const testString = rule.test?.toString() ?? "";
+      const isCss = testString.includes("\\.css");
+
+      if (isCss) {
+        rule.exclude = /tailwind\.css/;
+      }
+    }
+    return {
+      ...config,
+      module: {
+        ...(config.module ?? {}),
+        rules: [
+          {
+            test: /tailwind\.css/,
+            exclude: /node_modules/,
+            use: [
+              "style-loader",
+              {
+                loader: "css-loader",
+                options: {
+                  importLoaders: 1,
+                },
+              },
+              "postcss-loader",
+            ],
+          },
+
+          ...(config.module?.rules ?? []),
+        ],
+      },
+    };
+  },
+
   framework: {
     name: "@storybook/react-webpack5",
     options: {},
   },
 
-  webpackFinal: async (config) => {
-    config.module.rules.push({
-      test: /\.(woff|woff2|eot|ttf|otf)$/,
-      use: [
-        {
-          loader: "file-loader",
-          options: {
-            name: "[name].[ext]",
-            outputPath: "fonts/",
-          },
-        },
-      ],
-    });
-    return config;
+  docs: {},
+
+  typescript: {
+    reactDocgen: "react-docgen-typescript",
   },
 };
 
