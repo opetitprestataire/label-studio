@@ -42,7 +42,7 @@ This template displays text from your source data, and then allows an annotator 
 <Text name="text" value="$text"/>
 ```
 
-This displays the text that needs moderation. There are multiple ways to import text files. See the [Text tag documentation](/tags/text.html) and our [import documentation](tasks#Types-of-data-you-can-import-into-Label-Studio). 
+This displays the text that needs moderation. There are multiple ways to import text files. See the [Text tag documentation](/tags/text.html) and our [import documentation](/guide/tasks#Types-of-data-you-can-import-into-Label-Studio). 
 
 #### Choices
 
