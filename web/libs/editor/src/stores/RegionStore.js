@@ -245,6 +245,14 @@ export default types
         return sorted;
       },
 
+      get regionIndexMap() {
+        const map = {};
+        self.sortedRegions.forEach((region, idx) => {
+          map[region.id] = idx + 1;
+        });
+        return map;
+      },
+
       getRegionsTree(enrich) {
         if (self.group === null || self.group === "manual") {
           return self.asTree(enrich);
@@ -478,10 +486,6 @@ export default types
         });
       }
       self.updateIndexes();
-    },
-
-    updateIndexes() {
-      self.sortedRegions.forEach((region, idx) => region.setRegionIndex(idx + 1));
     },
 
     /**

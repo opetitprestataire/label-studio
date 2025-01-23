@@ -156,26 +156,16 @@ export const AreaMixinBase = types
     get supportSuggestions() {
       return self.object.supportSuggestions;
     },
-  }))
-  .volatile(() => ({
+
     // index of the region in the regions tree (Outliner); will be updated on any order change
-    region_index: null,
+    get region_index() {
+      return self.annotation.regionStore.regionIndexMap[self.id];
+    },
   }))
   .actions((self) => ({
-    afterCreate() {
-      self.annotation.regionStore.updateIndexes();
-    },
-
-    setRegionIndex(index) {
-      if (self.region_index !== index) {
-        self.region_index = index;
-        // update text regions
-        self.updateAppearenceFromState?.();
-      }
-    },
     beforeDestroy() {
       self.results.forEach((r) => destroy(r));
-      self.annotation.regionStore.updateIndexes();
+      self.annotation.updateAppearenceFromState?.();
     },
 
     setSelected(value) {
