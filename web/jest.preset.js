@@ -8,6 +8,6 @@ module.exports = {
   ...nxPreset,
   moduleNameMapper: {
     ...nxPreset.moduleNameMapper,
-    ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths),
+    ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: "<rootDir>/../../" }),
   },
 };
