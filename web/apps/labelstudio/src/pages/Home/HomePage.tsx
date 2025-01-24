@@ -46,7 +46,7 @@ type Action = (typeof actions)[number]["type"];
 
 export const HomePage: Page = () => {
   const api = useAPI();
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [creationDialogOpen, setCreationDialogOpen] = useState(false);
   const [invitationOpen, setInvitationOpen] = useState(false);
   const { data, isFetching, isSuccess, isError } = useQuery({
     queryKey: ["projects"],
@@ -60,7 +60,7 @@ export const HomePage: Page = () => {
     return () => {
       switch (action) {
         case "createProject":
-          setModalIsOpen(true);
+          setCreationDialogOpen(true);
           break;
         case "invitePeople":
           setInvitationOpen(true);
@@ -122,7 +122,7 @@ export const HomePage: Page = () => {
                 <sub className="text-sm text-lsSubtitle">
                   Import your data and set up the labeling interface to start annotating
                 </sub>
-                <Button className="mt-4" onClick={() => setModalIsOpen(true)}>
+                <Button className="mt-4" onClick={() => setCreationDialogOpen(true)}>
                   Create Project
                 </Button>
               </div>
@@ -158,7 +158,7 @@ export const HomePage: Page = () => {
           </SimpleCard>
         </section>
       </div>
-      {modalIsOpen && <CreateProject redirect={false} onClose={() => setModalIsOpen(false)} />}
+      {creationDialogOpen && <CreateProject redirect={false} onClose={() => setCreationDialogOpen(false)} />}
       <InviteLink opened={invitationOpen} onClosed={() => setInvitationOpen(false)} />
     </main>
   );
