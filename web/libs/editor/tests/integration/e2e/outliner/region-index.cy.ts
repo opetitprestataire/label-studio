@@ -107,6 +107,37 @@ describe("Region Index", () => {
     RichText.hasRegionWithLabel("3:Label 2");
   });
 
+  it("should be consistent on region delete / create with full list affected by change", () => {
+    LabelStudio.params()
+      .config(simpleConfig)
+      .data(simpleData)
+      .withResult(resultWithRelations)
+      .localStorageItems({
+        panelState,
+        "labelStudio:settings": labelStudio_settings,
+        "outliner:sort": "date",
+        "outliner:sort-direction": "desc",
+      })
+      .init();
+    LabelStudio.waitForObjectsReady();
+
+    RichText.hasRegionWithLabel("3:Label 1");
+    RichText.hasRegionWithLabel("2:Label 2");
+    RichText.hasRegionWithLabel("1:Label 3");
+
+    RichText.findRegionWithLabel("2:Label 2").trigger("click");
+    Hotkeys.deleteRegion();
+    RichText.hasRegionWithLabel("2:Label 1");
+    RichText.hasRegionWithLabel("1:Label 3");
+
+    Labels.select("Label 2");
+    RichText.selectText("is");
+
+    RichText.hasRegionWithLabel("3:Label 1");
+    RichText.hasRegionWithLabel("2:Label 3");
+    RichText.hasRegionWithLabel("1:Label 2");
+  });
+
   it("should work with history traveling", () => {
     LabelStudio.params()
       .config(simpleConfig)
