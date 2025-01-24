@@ -45,7 +45,7 @@ class LSParamsBuilder {
   init(beforeLoadCallback?: (win: Cypress.AUTWindow) => void) {
     this.ls.init(this.params, (win) => {
       Object.entries(this._localStorageItems).forEach(([key, value]) => {
-        win.localStorage.setItem(key, JSON.stringify(value));
+        win.localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value));
       });
       beforeLoadCallback?.(win);
     });
