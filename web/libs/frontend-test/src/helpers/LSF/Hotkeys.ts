@@ -5,11 +5,9 @@ function isMac(win) {
 function pressHotkey(hotkey: string, macHotkey?: string) {
   let key = hotkey;
   cy.window().then((win) => {
-    console.log("!> isMac(win)", isMac(win));
     if (macHotkey && isMac(win)) {
       key = macHotkey;
     }
-    console.log("!> key", key);
     cy.get("body").type(key);
   });
 }
