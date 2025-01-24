@@ -102,7 +102,7 @@ function useTextCopy() {
 
   const copyText = useCallback((value: string) => {
     setCopied(true);
-    copyText(value ?? "");
+    navigator.clipboard.writeText(value ?? "");
     setTimeout(() => setCopied(false), 1500);
   }, []);
 
