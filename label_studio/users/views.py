@@ -19,7 +19,6 @@ from users import forms
 from users.functions import login, proceed_registration
 
 logger = logging.getLogger()
-main_redirect = 'projects:project-index'
 
 @login_required
 def logout(request):
