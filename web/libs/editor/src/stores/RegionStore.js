@@ -462,7 +462,6 @@ export default types
       window.localStorage.setItem(localStorageKeys.sortDirection, self.sortOrder);
 
       self.initHotkeys();
-      self.updateIndexes();
     },
 
     setGrouping(group) {
@@ -485,7 +484,6 @@ export default types
           else if (!region.hidden) region.toggleFiltered();
         });
       }
-      self.updateIndexes();
     },
 
     /**

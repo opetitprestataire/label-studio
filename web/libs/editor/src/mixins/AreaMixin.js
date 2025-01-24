@@ -159,7 +159,10 @@ export const AreaMixinBase = types
 
     // index of the region in the regions tree (Outliner); will be updated on any order change
     get region_index() {
-      return self.annotation.regionStore.regionIndexMap[self.id];
+      if (!self.isRealRegion) {
+        return null;
+      }
+      return self.annotation?.regionStore.regionIndexMap[self.id] || null;
     },
   }))
   .actions((self) => ({
