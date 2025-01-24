@@ -19,9 +19,7 @@ from users import forms
 from users.functions import login, proceed_registration
 
 logger = logging.getLogger()
-home_page_enabled = flag_set('fflag_all_feat_dia_1777_ls_homepage_short')
 main_redirect = 'projects:project-index'
-
 
 @login_required
 def logout(request):
