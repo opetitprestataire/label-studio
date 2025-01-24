@@ -56,6 +56,7 @@ export const HomePage: Page = () => {
       });
     },
   });
+
   const handleActions = (action: Action) => {
     return () => {
       switch (action) {
@@ -118,10 +119,8 @@ export const HomePage: Page = () => {
                 >
                   <IconFolder />
                 </div>
-                <h2 className="text-2xl">Create your first project</h2>
-                <sub className="text-sm text-lsSubtitle">
-                  Import your data and set up the labeling interface to start annotating
-                </sub>
+                <Heading size={2}>Create your first project</Heading>
+                <Sub>Import your data and set up the labeling interface to start annotating</Sub>
                 <Button className="mt-4" onClick={() => setCreationDialogOpen(true)}>
                   Create Project
                 </Button>

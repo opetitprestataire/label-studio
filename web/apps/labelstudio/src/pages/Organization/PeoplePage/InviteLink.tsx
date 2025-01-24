@@ -12,6 +12,8 @@ import { Modal } from "apps/labelstudio/src/components/Modal/ModalPopup";
 const linkAtom = atomWithQuery(() => ({
   queryKey: ["invite-link"],
   async queryFn() {
+    // called only once when the component is rendered on page reload
+    // will also be reset when called `refetch()` on the Reset button
     const result = await API.resetInviteLink();
     return location.origin + result.invite_url;
   },
