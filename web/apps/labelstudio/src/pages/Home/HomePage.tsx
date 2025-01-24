@@ -49,7 +49,7 @@ export const HomePage: Page = () => {
   const [creationDialogOpen, setCreationDialogOpen] = useState(false);
   const [invitationOpen, setInvitationOpen] = useState(false);
   const { data, isFetching, isSuccess, isError } = useQuery({
-    queryKey: ["projects"],
+    queryKey: ["projects", { page_size: 10 }],
     async queryFn() {
       return api.callApi<{ results: APIProject[] }>("projects", {
         params: { page_size: 10 },
