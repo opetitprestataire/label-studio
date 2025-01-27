@@ -204,8 +204,8 @@ Modal.Header = ({ children, divided }) => (
   </Elem>
 );
 
-Modal.Footer = ({ children, bare, style }) => (
-  <Elem name="footer" mod={{ bare }} style={style}>
+Modal.Footer = ({ children, bare, style, className }) => (
+  <Elem name="footer" mod={{ bare }} mix={className} style={style}>
     {children}
   </Elem>
 );
