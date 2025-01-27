@@ -20,6 +20,7 @@ from users.functions import login, proceed_registration
 
 logger = logging.getLogger()
 
+
 @login_required
 def logout(request):
     auth.logout(request)
