@@ -75,7 +75,7 @@ function getFiles(files) {
 
 const Footer = () => {
   return (
-    <Modal.Footer className="import-footer-ls">
+    <Modal.Footer className="import-footer">
       <IconInfo className={importClass.elem("info-icon")} width="20" height="20" />
       See the&nbsp;documentation to{" "}
       <a target="_blank" href="https://labelstud.io/guide/predictions.html" rel="noreferrer">
