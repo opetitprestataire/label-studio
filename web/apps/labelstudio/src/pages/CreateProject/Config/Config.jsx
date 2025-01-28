@@ -164,7 +164,7 @@ const ConfigureSettings = ({ template }) => {
           <li key={key}>
             <label>
               {options.title}{" "}
-              <select value={value} onChange={onChange}>
+              <select className="border" value={value} onChange={onChange}>
                 {options.type.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -282,7 +282,7 @@ const ConfigureColumn = ({ template, obj, columns }) => {
       {template.objects > 1 && ` for ${obj.getAttribute("name")}`}
       {" from "}
       {columns?.length > 0 && columns[0] !== DEFAULT_COLUMN && "field "}
-      <select onChange={selectValue} value={isManual ? "-" : value}>
+      <select className="border" onChange={selectValue} value={isManual ? "-" : value}>
         {columns?.map((column) => (
           <option key={column} value={column}>
             {column === DEFAULT_COLUMN ? "<imported file>" : `$${column}`}
