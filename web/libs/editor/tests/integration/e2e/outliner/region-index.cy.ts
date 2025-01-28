@@ -33,6 +33,23 @@ describe("Region Index", () => {
     Sidebar.findByRegionIndex(3).should("contain", "Label 1");
   });
 
+  it("should affect the labels on region on changing order", () => {
+    LabelStudio.params()
+      .config(simpleConfig)
+      .data(simpleData)
+      .withResult(resultWithRelations)
+      .withLocalStorageItem("labelStudio:settings", labelStudio_settings)
+      .init();
+
+    LabelStudio.waitForObjectsReady();
+
+    Sidebar.toggleOrderByTime();
+
+    RichText.hasRegionWithLabel("1:Label 3");
+    RichText.hasRegionWithLabel("2:Label 2");
+    RichText.hasRegionWithLabel("3:Label 1");
+  });
+
   it("should be displayed in region's label", () => {
     LabelStudio.params()
       .config(simpleConfig)
