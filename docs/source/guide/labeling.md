@@ -137,13 +137,33 @@ To label tasks multiple times while the minimum annotations required is set to o
 
 Bulk labeling is useful when you have a large set of tasks that share a common label or annotation that you want to apply in one go. For example:
 
-* **Image classification**: Quickly label multiple images with the same category (e.g., “Cat” vs. “Dog”). 
+* **Data classification**: Quickly label multiple tasks with the same category. 
 * **Filtering and grouping**: Use filters to isolate tasks matching specific criteria (e.g., tasks you know are all “Approved”), then label them in bulk. 
 * **Speed and consistency**: Avoid repetitive labeling for items that can confidently share a label.
 
+#### Supported data types
+
+Bulk labeling supports all data types (e.g. images, text, audio, video). 
+
+#### Supported labeling tasks
+
+Bulk labeling supports classification tasks and text area input. You can use any combination of supported tags. 
+
+The following control tags can be assigned through the bulk labeling action:
+
+* [Choices](/tags/choices.html)
+* [DateTime](/tags/datetime.html)
+* [Number](/tags/number.html)
+* [Rating](/tags/rating.html)
+* [Taxonomy](/tags/taxonomy.html)
+* [TextArea](/tags/textarea.html)
+
+If your labeling configuration includes tags not listed above, the **Bulk labeling** action is not accessible. 
+ 
+
 !!! note Limitations
     Note the following:
-    * At this time, only global classification tasks are supported for bulk labeling. This means tasks that use the `<Choices>` control tag and which do not have `perItem` or `perRegion` enabled. 
+    * At this time, only global classification tasks are supported. This means that the control tag cannot have `perItem` or `perRegion` enabled. 
     * Lead time is not calculated for annotations performed through the bulk labeling option. 
 
 #### Bulk labeling panel 
@@ -170,8 +190,10 @@ To select tasks from the grid view, you can click the checkboxes next to them or
 
 ![Gif showing selecting images in grid view](/images/label/bulk-grid-navigating.gif)
 
+Once selected, click the drop-down menu next to **Label *n* Tasks**. Select **Bulk label**. This opens a panel with your labeling options (see [above](#Bulk-labeling-panel)).
+
 !!! info Tip
-    To see additional hotkeys, click the help icon above the task:
+    There are hotkeys for selecting the task, scrolling, zooming, and navigating between tasks. To see a list of the available hotkeys, click the help icon above the task:
 
     ![Screenshot highlighting help icon](/images/label/bulk-hotkeys.png)
 
