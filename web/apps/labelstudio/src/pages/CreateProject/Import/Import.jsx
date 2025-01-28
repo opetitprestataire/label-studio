@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { Modal } from "../../../components/Modal/Modal";
 import { cn } from "../../../utils/bem";
+import { cn as scn } from "@humansignal/shad/utils/utils";
 import { unique } from "../../../utils/helpers";
 import "./Import.scss";
 import { IconError, IconInfo, IconUpload } from "../../../assets/icons";
@@ -76,7 +77,7 @@ function getFiles(files) {
 const Footer = () => {
   return (
     <Modal.Footer className="import-footer">
-      <IconInfo className={importClass.elem("info-icon")} width="20" height="20" />
+      <IconInfo className={scn(importClass.elem("info-icon"), "mr-1")} width="20" height="20" />
       See the&nbsp;documentation to{" "}
       <a target="_blank" href="https://labelstud.io/guide/predictions.html" rel="noreferrer">
         import preannotated data
