@@ -105,8 +105,10 @@ const ConfigureControl = ({ control, template }) => {
       <form className={configClass.elem("add-labels")} action="">
         <h4>{tagname === "Choices" ? "Add choices" : "Add label names"}</h4>
         <span>Use new line as a separator to add multiple labels</span>
-        <textarea name="labels" id="" cols="30" rows="5" ref={refLabels} onKeyPress={onKeyPress} />
-        <input type="button" value="Add" onClick={onAddLabels} />
+        <textarea name="labels" id="" cols="50" rows="5" ref={refLabels} onKeyPress={onKeyPress} />
+        <Button type="button" size="compact" onClick={onAddLabels}>
+          Add
+        </Button>
       </form>
       <div className={configClass.elem("current-labels")}>
         <h3>
