@@ -78,15 +78,17 @@ const Footer = () => {
   return (
     <Modal.Footer className="import-footer">
       <IconInfo className={scn(importClass.elem("info-icon"), "mr-1")} width="20" height="20" />
-      See the&nbsp;documentation to{" "}
-      <a target="_blank" href="https://labelstud.io/guide/predictions.html" rel="noreferrer">
-        import preannotated data
-      </a>{" "}
-      or&nbsp;to{" "}
-      <a target="_blank" href="https://labelstud.io/guide/storage.html" rel="noreferrer">
-        sync data from a&nbsp;database or&nbsp;cloud storage
-      </a>
-      .
+      <span>
+        See the&nbsp;documentation to{" "}
+        <a target="_blank" href="https://labelstud.io/guide/predictions.html" rel="noreferrer">
+          import preannotated data
+        </a>{" "}
+        or&nbsp;to{" "}
+        <a target="_blank" href="https://labelstud.io/guide/storage.html" rel="noreferrer">
+          sync data from a&nbsp;database or&nbsp;cloud storage
+        </a>
+        .
+      </span>
     </Modal.Footer>
   );
 };
