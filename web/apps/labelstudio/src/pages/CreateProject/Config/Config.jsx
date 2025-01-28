@@ -468,9 +468,9 @@ const Configurator = ({
       <div className={configClass.elem("container")}>
         <h1>Labeling Interface{hasChanges ? " *" : ""}</h1>
         <header>
-          <button type="button" data-leave={true} onClick={onBrowse}>
+          <Button type="button" data-leave={true} onClick={onBrowse} size="compact">
             Browse Templates
-          </button>
+          </Button>
           <ToggleItems items={{ code: "Code", visual: "Visual" }} active={configure} onSelect={onSelect} />
         </header>
         <div className={configClass.elem("editor")}>
