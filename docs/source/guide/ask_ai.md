@@ -1,5 +1,5 @@
 ---
-title: About Ask AI
+title: About Ask AI - Beta 🧪
 short: Ask AI
 tier: enterprise
 type: guide
