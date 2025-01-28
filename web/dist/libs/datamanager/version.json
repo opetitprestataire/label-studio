@@ -1,6 +1,6 @@
 {
-  "message": "refactor: OPTIC-1540: Add stale ff new batch (#6922)",
-  "commit": "7cff2a8746644c7a74f2b206c5c00e87884d5751",
-  "date": "2025-01-23T20:53:02.000Z",
+  "message": "feat: OPTIC-1537: Update template images (#6972)",
+  "commit": "e50745e81ffed826bba963777e87b43b2cc7f841",
+  "date": "2025-01-27T16:28:17.000Z",
   "branch": "develop"
 }

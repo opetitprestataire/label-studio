@@ -665,7 +665,7 @@ const _Annotation = types
       }
     },
     updateAppearenceFromState() {
-      self.areas.forEach((area) => area.updateAppearenceFromState && area.updateAppearenceFromState());
+      self.areas.forEach((area) => area.updateAppearenceFromState?.());
     },
 
     setInitialValues() {
