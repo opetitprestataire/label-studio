@@ -147,7 +147,9 @@ Bulk labeling supports all data types (e.g. images, text, audio, video).
 
 #### Supported labeling tasks
 
-Bulk labeling supports classification tasks and text area input. You can use any combination of supported tags. 
+Bulk labeling supports classification tasks and text area input. 
+
+You can use any combination of supported control tags, and all object tags (e.g. `<Image>`, `<Text>`, `<Video`) are supported. 
 
 The following control tags can be assigned through the bulk labeling action:
 
@@ -158,7 +160,7 @@ The following control tags can be assigned through the bulk labeling action:
 * [Taxonomy](/tags/taxonomy.html)
 * [TextArea](/tags/textarea.html)
 
-If your labeling configuration includes tags not listed above, the **Bulk labeling** action is not accessible. 
+If your labeling configuration includes control tags not listed above, the **Bulk labeling** action is not accessible. 
  
 
 !!! note Limitations
