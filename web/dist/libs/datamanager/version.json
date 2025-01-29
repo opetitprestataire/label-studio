@@ -1,6 +1,6 @@
 {
-  "message": "feat: OPTIC-1537: Update template images (#6972)",
-  "commit": "e50745e81ffed826bba963777e87b43b2cc7f841",
-  "date": "2025-01-27T16:28:17.000Z",
+  "message": "fix: OPTIC-1585: Change Annotations => Submitted Annotations to match its real meaning (#6982)",
+  "commit": "552c27754142c27d9c6c336a97c276e62646fc31",
+  "date": "2025-01-28T22:26:31.000Z",
   "branch": "develop"
 }
