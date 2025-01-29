@@ -119,7 +119,7 @@ Subscription to listen to events related to the Label Studio Frontend. Handlers 
 For a list of all available events, see our [Frontend reference](frontend_reference#Available-events).
 
 !!! note
-    Top-level events such as `labelStudioLoad` and `storageInitialized` cannot be used with custom scripts, as they execute before the script loads.
+    Top-level events such as `labelStudioLoad` and `storageInitialized` cannot be used with custom scripts, as they execute before the script is initialized.
 
 | Parameter &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Type     | Description          |
 |--------------------------|--------------------|--------------------------|
