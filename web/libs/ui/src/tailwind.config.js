@@ -72,6 +72,7 @@ module.exports = {
         lsNeutralBorder: "#E1DED5",
         lsNeutralBorderSubtle: "#E1DED5",
         lsNeutralContent: "#262522",
+        lsNeutralContentSubtle: "#45433E",
         lsNeutralContentSubtler: "#6B6860",
         lsNeutralContentSubtlest: "#A49F95",
         lsBorderSubtle: "#617ADA",

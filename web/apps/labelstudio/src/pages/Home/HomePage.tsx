@@ -1,7 +1,7 @@
 import type { Page } from "../types/Page";
 import { Button } from "@humansignal/shad/components/ui/button";
 import { IconFolder, SimpleCard, Spinner } from "@humansignal/ui";
-import { IconExternal, IconFolderAdd, IconUserAdd } from "@humansignal/icons";
+import { IconExternal, IconFolderAdd, IconHumanSignal, IconUserAdd } from "@humansignal/icons";
 import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
 import { useQuery } from "@tanstack/react-query";
 import { useAPI } from "../../providers/ApiProvider";
@@ -9,6 +9,8 @@ import { useState } from "react";
 import { CreateProject } from "../CreateProject/CreateProject";
 import { InviteLink } from "../Organization/PeoplePage/InviteLink";
 import { Heading, Sub } from "@humansignal/typography";
+
+const PROJECTS_TO_SHOW = 10;
 
 const resources = [
   {
@@ -18,6 +20,10 @@ const resources = [
   {
     title: "API Documentation",
     url: "https://api.labelstud.io/api-reference/introduction/getting-started",
+  },
+  {
+    title: "Release Notes",
+    url: "https://labelstud.io/learn/categories/release-notes/",
   },
   {
     title: "LabelStud.io Blog",
@@ -51,8 +57,8 @@ export const HomePage: Page = () => {
   const { data, isFetching, isSuccess, isError } = useQuery({
     queryKey: ["projects", { page_size: 10 }],
     async queryFn() {
-      return api.callApi<{ results: APIProject[] }>("projects", {
-        params: { page_size: 10 },
+      return api.callApi<{ results: APIProject[]; count: number }>("projects", {
+        params: { page_size: PROJECTS_TO_SHOW },
       });
     },
   });
@@ -71,9 +77,9 @@ export const HomePage: Page = () => {
   };
 
   return (
-    <main className="p-8">
+    <main className="p-6">
       <div className="grid grid-cols-[minmax(0,1fr)_450px] gap-6">
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
             <Heading size={1}>Welcome 👋</Heading>
             <Sub>Let's get you started.</Sub>
@@ -96,12 +102,16 @@ export const HomePage: Page = () => {
 
           <SimpleCard
             title={
-              <>
-                Recent Projects{" "}
-                <a href="/projects" className="text-lg">
-                  View All
-                </a>
-              </>
+              data && data?.count > 0 ? (
+                <>
+                  Recent Projects{" "}
+                  {data && data.count > PROJECTS_TO_SHOW && (
+                    <a href="/projects" className="text-lg font-normal hover:underline">
+                      View All
+                    </a>
+                  )}
+                </>
+              ) : null
             }
           >
             {isFetching ? (
@@ -114,7 +124,7 @@ export const HomePage: Page = () => {
               <div className="flex flex-col justify-center items-center border border-lsBorderSubtle bg-lsPrimaryEmphasisSubtle rounded-lg h-64">
                 <div
                   className={
-                    "rounded-full w-12 h-12 flex justify-center items-center bg-lsAccentMangoSubtle text-lsPrimaryIcon"
+                    "rounded-full w-12 h-12 flex justify-center items-center bg-lsPrimaryIcon text-lsPrimaryIcon"
                   }
                 >
                   <IconFolder />
@@ -155,6 +165,10 @@ export const HomePage: Page = () => {
               })}
             </ul>
           </SimpleCard>
+          <div className="flex gap-2 items-center">
+            <IconHumanSignal />
+            <span className="text-lsNeutralContentSubtle">Label Studio Version: Community</span>
+          </div>
         </section>
       </div>
       {creationDialogOpen && <CreateProject redirect={false} onClose={() => setCreationDialogOpen(false)} />}
@@ -175,19 +189,25 @@ function ProjectSimpleCard({
   const finished = project.finished_task_number ?? 0;
   const total = project.task_number ?? 0;
   const progress = (total > 0 ? finished / total : 0) * 100;
+  const white = "#FFFFFF";
+  const color = project.color && project.color !== white ? project.color : "#E1DED5";
+
   return (
     <div className=" even:bg-lsNeutralSurface rounded-sm overflow-hidden">
-      <div className="grid grid-cols-[minmax(0,1fr)_150px] p-4 items-center border-l-2 border-lsNeutralBorderSubtle">
+      <div
+        className="grid grid-cols-[minmax(0,1fr)_150px] p-2 py-3 items-center border-l-[3px]"
+        style={{ borderLeftColor: color }}
+      >
         <div className="flex flex-col gap-1">
           <a href={`/projects/${project.id}`} className="text-lsNeutralContent">
             {project.title}
           </a>
           <div className="text-lsNeutralContentSubtler">
-            {finished} / {total}
+            {finished} / {total} Tasks ({total > 0 ? Math.round((finished / total) * 100) : 0}%)
           </div>
         </div>
-        <div className="bg-lsPrimaryEmphasisSubtle rounded-full overflow-hidden w-full h-2 shadow-lsNeutralBorderSubtle shadow-border-1">
-          <div className="bg-lsPositiveSurfaceHover h-full min-w-1" style={{ maxWidth: `${progress}%` }} />
+        <div className="bg-lsNeutralSurface rounded-full overflow-hidden w-full h-2 shadow-lsNeutralBorderSubtle shadow-border-1">
+          <div className="bg-lsPositiveSurfaceHover h-full" style={{ maxWidth: `${progress}%` }} />
         </div>
       </div>
     </div>

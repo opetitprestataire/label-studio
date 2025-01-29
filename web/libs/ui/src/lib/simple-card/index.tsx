@@ -17,11 +17,11 @@ export function SimpleCard({
   const className = cn("bg-transparent", cls);
   return (
     <Card className={className} {...rest}>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex justify-between font-normal">{title}</CardTitle>
+      <CardHeader className="p-4 pb-2">
+        <CardTitle className="flex justify-between font-medium">{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
-      <CardContent className="p-6 pt-0">{children}</CardContent>
+      <CardContent className="p-4 pt-0">{children}</CardContent>
     </Card>
   );
 }
