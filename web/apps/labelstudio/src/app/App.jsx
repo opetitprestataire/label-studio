@@ -21,6 +21,7 @@ import { TourProvider } from "@humansignal/core";
 import { ToastProvider, ToastViewport } from "@humansignal/ui";
 import "@humansignal/ui/src/tailwind.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { JotaiProvider, JotaiStore } from "../utils/jotai-store";
 
 const baseURL = new URL(APP_SETTINGS.hostname || location.origin);
 export const UNBLOCK_HISTORY_MESSAGE = "UNBLOCK_HISTORY";
@@ -65,6 +66,7 @@ const App = ({ content }) => {
       <Router history={browserHistory}>
         <MultiProvider
           providers={[
+            <JotaiProvider key="jotai" store={JotaiStore} />,
             <QueryClientProvider key="query" client={queryClient} />,
             <AppStoreProvider key="app-store" />,
             <ApiProvider key="api" />,
