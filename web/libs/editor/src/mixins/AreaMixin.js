@@ -168,7 +168,7 @@ export const AreaMixinBase = types
   .actions((self) => ({
     beforeDestroy() {
       self.results.forEach((r) => destroy(r));
-      self.annotation.updateAppearenceFromState?.();
+      self.annotation?.updateAppearenceFromState?.();
     },
 
     setSelected(value) {
