@@ -105,11 +105,9 @@ export const HomePage: Page = () => {
               data && data?.count > 0 ? (
                 <>
                   Recent Projects{" "}
-                  {data && data.count > PROJECTS_TO_SHOW && (
-                    <a href="/projects" className="text-lg font-normal hover:underline">
-                      View All
-                    </a>
-                  )}
+                  <a href="/projects" className="text-lg font-normal hover:underline">
+                    View All
+                  </a>
                 </>
               ) : null
             }
@@ -124,7 +122,7 @@ export const HomePage: Page = () => {
               <div className="flex flex-col justify-center items-center border border-lsBorderSubtle bg-lsPrimaryEmphasisSubtle rounded-lg h-64">
                 <div
                   className={
-                    "rounded-full w-12 h-12 flex justify-center items-center bg-lsPrimaryIcon text-lsPrimaryIcon"
+                    "rounded-full w-12 h-12 flex justify-center items-center bg-lsAccentGrapeSubtle text-lsPrimaryIcon"
                   }
                 >
                   <IconFolder />
@@ -203,7 +201,7 @@ function ProjectSimpleCard({
             {project.title}
           </a>
           <div className="text-lsNeutralContentSubtler">
-            {finished} / {total} Tasks ({total > 0 ? Math.round((finished / total) * 100) : 0}%)
+            {finished} of {total} Tasks ({total > 0 ? Math.round((finished / total) * 100) : 0}%)
           </div>
         </div>
         <div className="bg-lsNeutralSurface rounded-full overflow-hidden w-full h-2 shadow-lsNeutralBorderSubtle shadow-border-1">
