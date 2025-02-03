@@ -713,19 +713,22 @@ CSRF_TRUSTED_ORIGINS = get_env('CSRF_TRUSTED_ORIGINS', [])
 if CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS.split(',')
 
-S3_TRUSTED_STORAGE_DOMAINS = get_env_list('S3_STORAGE_TRUSTED_DOMAINS', [
-    'amazonaws.com',
-    'scw.cloud',
-    'yandexcloud.net',
-    'digitaloceanspaces.com',
-    'orange-business.com',
-    'computecanada.ca',
-    'cloudflarestorage.com',
-    'wasabisys.com',
-    'oracle.com',
-    'amazon.com',
-    'appdomain.cloud',
-])
+S3_TRUSTED_STORAGE_DOMAINS = get_env_list(
+    'S3_STORAGE_TRUSTED_DOMAINS',
+    [
+        'amazonaws.com',
+        'scw.cloud',
+        'yandexcloud.net',
+        'digitaloceanspaces.com',
+        'orange-business.com',
+        'computecanada.ca',
+        'cloudflarestorage.com',
+        'wasabisys.com',
+        'oracle.com',
+        'amazon.com',
+        'appdomain.cloud',
+    ],
+)
 
 REAL_HOSTNAME = os.getenv('HOSTNAME')  # we have to use getenv, because we don't use LABEL_STUDIO_ prefix
 GCS_CLOUD_STORAGE_FORCE_DEFAULT_CREDENTIALS = get_bool_env('GCS_CLOUD_STORAGE_FORCE_DEFAULT_CREDENTIALS', False)

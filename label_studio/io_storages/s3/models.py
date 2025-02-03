@@ -20,7 +20,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.s3.utils import get_client_and_resource, resolve_s3_url, catch_and_reraise_from_none
+from io_storages.s3.utils import catch_and_reraise_from_none, get_client_and_resource, resolve_s3_url
 from io_storages.utils import storage_can_resolve_bucket_url
 from tasks.models import Annotation
 from tasks.validation import ValidationError as TaskValidationError
