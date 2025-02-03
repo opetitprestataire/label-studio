@@ -714,7 +714,7 @@ if CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS.split(',')
 
 S3_TRUSTED_STORAGE_DOMAINS = get_env_list(
-    'S3_STORAGE_TRUSTED_DOMAINS',
+    'S3_TRUSTED_STORAGE_DOMAINS',
     [
         'amazonaws.com',
         'scw.cloud',
