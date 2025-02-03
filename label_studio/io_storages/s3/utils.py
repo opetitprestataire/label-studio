@@ -10,6 +10,7 @@ import boto3
 from botocore.exceptions import ClientError
 from core.utils.params import get_env
 from django.conf import settings
+from tldextract import TLDExtract
 
 logger = logging.getLogger(__name__)
 
@@ -135,3 +136,25 @@ class AWS(object):
                 logger.debug(key + ' matches file pattern')
                 return ''
         return 'No objects found matching the provided glob pattern'
+
+
+class S3StorageError(Exception):
+    pass
+
+
+extractor = TLDExtract(suffix_list_urls=())
+
+def catch_and_reraise_from_none(func):
+    def wrapper(self, *args, **kwargs):
+        try:
+            return func(self, *args, **kwargs)
+        except Exception as e:
+            if self.s3_endpoint:
+                extracted = extractor.extract_urllib(urlparse(self.s3_endpoint))
+                if extracted.registered_domain not in settings.S3_TRUSTED_STORAGE_DOMAINS:
+                    logger.error(f"Exception from unrecognized S3 domain: {e}", exc_info=True)
+                raise S3StorageError(f'Debugging info is not available for s3 endpoints on {extracted.registered_domain}.'
+                                     'Please contact your administrator if you require detailed debugging info for this domain.') from None
+            else:
+                raise e
+    return wrapper
