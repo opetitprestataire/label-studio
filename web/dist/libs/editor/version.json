@@ -1,6 +1,6 @@
 {
-  "message": "refactor: OPTIC-1542: remove a buch of stale feature flags (#6954)",
-  "commit": "884942e0a554e8d84a295b807e45ce848c19e886",
-  "date": "2025-01-29T18:21:55.000Z",
+  "message": "chore: Reverts tailwind and LSO Homepage (#7007)",
+  "commit": "61b9bbecd8d97f88863650fe777d129885c62421",
+  "date": "2025-01-31T21:09:28.000Z",
   "branch": "develop"
 }
