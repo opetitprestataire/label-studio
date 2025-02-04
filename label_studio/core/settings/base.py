@@ -713,6 +713,7 @@ CSRF_TRUSTED_ORIGINS = get_env('CSRF_TRUSTED_ORIGINS', [])
 if CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS.split(',')
 
+# Custom S3 endpoints on these domains will get detailed error reporting
 S3_TRUSTED_STORAGE_DOMAINS = get_env_list(
     'S3_TRUSTED_STORAGE_DOMAINS',
     [
