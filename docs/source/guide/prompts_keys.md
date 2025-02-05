@@ -62,7 +62,7 @@ Once added, all supported models will appear in the base model drop-down when yo
 
 Each Azure OpenAI key is tied to a specific deployment, and each deployment comprises a single OpenAI model. So if you want to use multiple models through Azure, you will need to create a deployment for each model and then add each key to Label Studio. 
 
-For a list of the Azure OpenAI models we support, see [Features, requirements, and constraints](prompts_overview#Features-requirements-and-constraints). 
+For a list of the Azure OpenAI models we support, see [Supported base models](prompts_overview#Supported-base-models). 
 
 To use Azure OpenAI, you must first create the Azure OpenAI resource and then a model deployment:
 
