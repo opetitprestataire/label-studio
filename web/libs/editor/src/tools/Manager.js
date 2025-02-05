@@ -74,8 +74,8 @@ class ToolsManager {
       if (tool.fullName === this.preservedTool && tool.setSelected) {
         this.unselectAll();
         this.selectTool(tool, true);
+        return;
       }
-      return;
     }
 
     if (this._default_tool && !this.hasSelected) {
