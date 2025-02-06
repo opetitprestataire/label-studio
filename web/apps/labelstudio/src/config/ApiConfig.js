@@ -3,10 +3,14 @@ export const API_CONFIG = {
   endpoints: {
     // Users
     users: "/users",
+    updateUser: "PATCH:/users/:pk",
+    updateUserAvatar: "POST:/users/:pk/avatar",
+    deleteUserAvatar: "DELETE:/users/:pk/avatar",
     me: "/current-user/whoami",
 
     // Organization
     memberships: "/organizations/:pk/memberships",
+    userMemberships: "/organizations/:pk/memberships/:userPk",
     inviteLink: "/invite",
     resetInviteLink: "POST:/invite/reset-token",
 

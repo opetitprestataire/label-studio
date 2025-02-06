@@ -139,7 +139,7 @@ def user_account(request):
         return redirect(reverse('main'))
 
     form = forms.UserProfileForm(instance=user)
-    token = Token.objects.get(user=user)
+    Token.objects.get(user=user)
 
     if request.method == 'POST':
         form = forms.UserProfileForm(request.POST, instance=user)
@@ -149,6 +149,5 @@ def user_account(request):
 
     return render(
         request,
-        'users/user_account.html',
-        {'settings': settings, 'user': user, 'user_profile_form': form, 'token': token},
+        'base.html',
     )
