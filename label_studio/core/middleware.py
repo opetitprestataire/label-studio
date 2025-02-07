@@ -205,6 +205,7 @@ class InactivitySessionTimeoutMiddleWare(CommonMiddleware):
             or
             # scim assign request.user implicitly, check CustomSCIMAuthCheckMiddleware
             (hasattr(request, 'is_scim') and request.is_scim)
+            or (hasattr(request, 'is_jwt') and request.is_jwt)
         ):
             return
 
@@ -248,3 +249,4 @@ class HumanSignalCspMiddleware(CSPMiddleware):
                 del response['Content-Security-Policy-Report-Only']
             delattr(response, '_override_report_only_csp')
         return response
+

@@ -214,6 +214,7 @@ INSTALLED_APPS = [
     'annoying',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_generators',
     'core',
     'users',
@@ -229,6 +230,7 @@ INSTALLED_APPS = [
     'labels_manager',
     'ml_models',
     'ml_model_providers',
+    'jwt_auth',
 ]
 
 MIDDLEWARE = [
@@ -247,12 +249,13 @@ MIDDLEWARE = [
     'core.middleware.ContextLogMiddleware',
     'core.middleware.DatabaseIsLockedRetryMiddleware',
     'core.current_request.ThreadLocalMiddleware',
+    'jwt_auth.middleware.JWTAuthenticationMiddleware',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
+        'jwt_auth.auth.TokenAuthenticationPhaseout',
         'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
@@ -806,3 +809,7 @@ if CI:
         'ignore_name': '0002_auto_20210304_1457',
         'sql-analyser': 'postgresql',
     }
+
+API_TOKEN_CREATE_SERIALIZER = get_env('LABEL_STUDIO_API_TOKEN_CREATE_SERIALIZER', 'jwt_auth.serializers.LSAPITokenCreateSerializer')
+API_TOKEN_LIST_SERIALIZER = get_env('LABEL_STUDIO_API_TOKEN_LIST_SERIALIZER', 'jwt_auth.serializers.LSAPITokenListSerializer')
+API_TOKEN_MODEL = get_env('LABEL_STUDIO_API_TOKEN_LIST_SERIALIZER', 'jwt_auth.models.LSAPIToken')
