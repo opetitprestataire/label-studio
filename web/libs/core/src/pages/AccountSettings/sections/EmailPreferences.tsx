@@ -30,10 +30,7 @@ export const EmailPreferences = () => {
   );
 
   return (
-    <div className="">
-      <a id="email-preferences" />
-      <h1>Email Preferences</h1>
-
+    <div id="email-preferences">
       {isLoading ? (
         <Spinner />
       ) : (

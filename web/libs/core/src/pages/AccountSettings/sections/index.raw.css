@@ -1,0 +1,29 @@
+/* FIXME: mimic tailwind classes until landed */
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.gap-2 {
+  gap:  0.75rem;
+}
+
+.gap-6 {
+  gap: 1rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.m-0 {
+  margin: 0
+}

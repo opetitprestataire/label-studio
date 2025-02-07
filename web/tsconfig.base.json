@@ -16,11 +16,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@humansignal/ls/*": ["apps/labelstudio/src/*"],
       "@humansignal/core": ["libs/core/src/index.ts"],
       "@humansignal/datamanager": ["libs/datamanager/src/index.js"],
       "@humansignal/editor": ["libs/editor/src/index.js"],
       "@humansignal/frontend-test/*": ["libs/frontend-test/src/*"],
-      "@humansignal/ui": ["libs/ui/src/index.ts"]
+      "@humansignal/ui": ["libs/ui/src/index.ts"],
+      "@humansignal/ui/*": ["libs/ui/src/*"]
     },
     "types": ["vite-plugin-svgr/client"]
   },

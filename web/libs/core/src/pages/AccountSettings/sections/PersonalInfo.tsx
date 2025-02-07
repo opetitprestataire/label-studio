@@ -20,7 +20,7 @@ export const PersonalInfo = () => {
   const userInfoForm = useRef();
   const userAvatarForm = useRef();
   const avatarRef = useRef();
-  const fileChangeHandler = (e) => userAvatarForm.current.requestSubmit();
+  const fileChangeHandler = () => userAvatarForm.current.requestSubmit();
   const avatarFormSubmitHandler = useCallback(
     async (e, isDelete = false) => {
       e.preventDefault();
@@ -83,7 +83,6 @@ export const PersonalInfo = () => {
     <div className={styles.section}>
       <a id="personal-info" />
       <div className={styles.sectionContent}>
-        <h1>Personal Info</h1>
         <div className={styles.flexRow}>
           <Userpic user={user} isInProgress={userInProgress} size={92} style={{ flex: "none" }} />
           <form ref={userAvatarForm} className={styles.flex1} onSubmit={(e) => avatarFormSubmitHandler(e)}>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ToastType, useToast } from "@humansignal/ui";
 import { format } from "date-fns";
 import styles from "./MembershipInfo.module.scss";
+
 export const MembershipInfo = () => {
   const api = useAPI();
   const toast = useToast();
@@ -36,11 +37,7 @@ export const MembershipInfo = () => {
   }, [user?.id]);
 
   return (
-    <div className={styles.membershipInfo}>
-      <h1>
-        Membership Info
-        <a id="membership-info" />
-      </h1>
+    <div className={styles.membershipInfo} id="membership-info">
       <div className="flex gap-2 w-full justify-between">
         <div>User ID</div>
         <div>{user?.id}</div>

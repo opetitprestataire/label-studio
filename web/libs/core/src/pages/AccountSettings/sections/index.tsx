@@ -3,6 +3,8 @@ import { EmailPreferences } from "./EmailPreferences";
 import type React from "react";
 import { PersonalAccessToken } from "./PersonalAccessToken";
 import { MembershipInfo } from "./MembershipInfo";
+import "./index.raw.css";
+
 type SectionType = {
   title: string;
   id: string;

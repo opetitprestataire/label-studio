@@ -1,9 +1,9 @@
+import { Card } from "@humansignal/ui/lib/card-new";
 import { useMemo } from "react";
 import { Redirect } from "react-router-dom";
-import { SidebarMenu } from "/apps/labelstudio/src/components/SidebarMenu/SidebarMenu";
 import styles from "./AccountSettings.module.scss";
 import { accountSettingsSections } from "./sections";
-import { Card } from "@humansignal/ui";
+import { SidebarMenu } from "/apps/labelstudio/src/components/SidebarMenu/SidebarMenu";
 
 export const AccountSettingsPage = () => {
   const menuItems = useMemo(
@@ -22,9 +22,14 @@ export const AccountSettingsPage = () => {
     <div className={styles.accountSettings}>
       <SidebarMenu menuItems={menuItems} path={AccountSettingsPage.path}>
         <div className={styles.accountSettings__content}>
-          {accountSettingsSections?.map(({ component: Section, id }: any) => (
-            <Card key={id}>
-              <Section />
+          {accountSettingsSections?.map(({ title, component: Section, id }: any) => (
+            <Card key={id} header={<h1>{title}</h1>} headerLine={false} noMargin={true}>
+              <CardHeader>
+                <CardTitle>{title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Section />
+              </CardContent>
             </Card>
           ))}
         </div>
