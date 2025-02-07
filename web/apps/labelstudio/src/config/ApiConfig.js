@@ -83,33 +83,10 @@ export const API_CONFIG = {
     updateProductTour: "PATCH:/current-user/product-tour",
 
     // Tokens
-    tokensList: {
-      path: "/tokens",
-      method: "GET",
-      forceMock: true,
-      mock: async () => {
-        return [
-          {
-            token: "1322165",
-            expires_at: new Date().toISOString(),
-          },
-        ];
-      },
-    },
-
-    createToken: {
-      path: "/token",
-      method: "POST",
-      forceMock: true,
-      mock() {
-        return {
-          body: {
-            token: "hello there",
-            expires_at: new Date().toISOString(),
-          },
-        };
-      },
-    },
+    tokensList: "GET:/tokens",
+    getRefreshToken: "POST:/token",
+    revokeToken: "POST:/token/blacklist",
+    createToken: "POST:/token/refresh",
   },
   alwaysExpectJSON: false,
 };

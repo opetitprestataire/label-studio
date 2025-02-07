@@ -25,15 +25,15 @@ export const accountSettingsSections: SectionType[] = [
     component: EmailPreferences,
   },
   {
+    title: "Membership Info",
+    id: "membership-info",
+    component: MembershipInfo,
+  },
+  {
     title: "Personal Access Token",
     id: "personal-access-token",
     // component: PersonalAccessToken,
     component: ff.isFF(ff.FF_AUTH_TOKENS) ? PersonalJWTToken : PersonalAccessToken,
     description: PersonalAccessTokenDescription,
-  },
-  {
-    title: "Membership Info",
-    id: "membership-info",
-    component: MembershipInfo,
   },
 ];

@@ -17,25 +17,36 @@ type Token = {
   expires_at: string;
 };
 
+const refreshTokenAtom = atomWithQuery(() => ({
+  queryKey: ["refresh-token"],
+  async queryFn() {
+    const token = await API.getRefreshToken();
+    console.log(token);
+  },
+}));
+
 const tokensListAtom = atomWithQuery(() => ({
   queryKey: ["access-tokens"],
   async queryFn() {
     const tokens = await API.tokensList();
-    console.log(tokens);
     return tokens as Token[];
   },
 }));
 
-const createTokenAtom = atomWithMutation(() => ({
-  mutationKey: ["create-token"],
-  async mutationFn() {
-    const token = await API.createToken();
-    return {
-      token: "hello",
-      expires_at: new Date().toISOString(),
-    };
-  },
-}));
+const createTokenAtom = atomWithMutation((get) => {
+  const refreshToken = get(refreshTokenAtom).data;
+  return {
+    mutationKey: ["create-token", refreshToken],
+    async mutationFn() {
+      const token = await API.createToken({
+        body: {
+          refresh: refreshToken,
+        },
+      });
+      return token;
+    },
+  };
+});
 
 const tokensAtom = atomWithQuery((get) => ({
   queryKey: ["tokens", get(tokensListAtom), get(createTokenAtom)],
