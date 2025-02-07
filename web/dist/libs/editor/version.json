@@ -1,6 +1,6 @@
 {
-  "message": "refactor: OPTIC-1557: Remove Stale Feature Flag - fflag_fix_front_lsd… (#6997)",
-  "commit": "d2ee3a28547ff200240de7599ebfd46882b38cf2",
-  "date": "2025-02-04T19:34:20.000Z",
+  "message": "chore(deps): bump nanoid from 3.3.7 to 3.3.8 in /web (#6774)",
+  "commit": "53e29e8692a010362f0c1af94e805353ce0e1f47",
+  "date": "2025-02-07T15:11:38.000Z",
   "branch": "develop"
 }
