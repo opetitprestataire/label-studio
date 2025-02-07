@@ -1,14 +1,17 @@
 import { PersonalInfo } from "./PersonalInfo";
 import { EmailPreferences } from "./EmailPreferences";
-import type React from "react";
-import { PersonalAccessToken } from "./PersonalAccessToken";
+import { PersonalAccessToken, PersonalAccessTokenDescription } from "./PersonalAccessToken";
 import { MembershipInfo } from "./MembershipInfo";
+import type React from "react";
+import { PersonalJWTToken } from "./PersonalJWTToken";
 import "./index.raw.css";
+import { ff } from "@humansignal/core";
 
 type SectionType = {
   title: string;
   id: string;
   component: React.FC;
+  description?: React.FC;
 };
 export const accountSettingsSections: SectionType[] = [
   {
@@ -24,7 +27,9 @@ export const accountSettingsSections: SectionType[] = [
   {
     title: "Personal Access Token",
     id: "personal-access-token",
-    component: PersonalAccessToken,
+    // component: PersonalAccessToken,
+    component: ff.isFF(ff.FF_AUTH_TOKENS) ? PersonalJWTToken : PersonalAccessToken,
+    description: PersonalAccessTokenDescription,
   },
   {
     title: "Membership Info",

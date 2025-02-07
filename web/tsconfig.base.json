@@ -15,12 +15,14 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {
-      "@humansignal/ls/*": ["apps/labelstudio/src/*"],
+    "paths":{
       "@humansignal/core": ["libs/core/src/index.ts"],
       "@humansignal/datamanager": ["libs/datamanager/src/index.js"],
       "@humansignal/editor": ["libs/editor/src/index.js"],
       "@humansignal/frontend-test/*": ["libs/frontend-test/src/*"],
+      "@humansignal/icons": ["libs/ui/src/assets/icons/index.ts"],
+      "@humansignal/shad/*": ["./libs/ui/src/shad/*"],
+      "@humansignal/typography": ["libs/ui/src/typography"],
       "@humansignal/ui": ["libs/ui/src/index.ts"],
       "@humansignal/ui/*": ["libs/ui/src/*"]
     },

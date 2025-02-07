@@ -11,6 +11,8 @@ export type WrappedResponse<T = unknown> = T & {
 
 export type Unwrap<P> = P extends WrappedResponse<infer T> ? T : never;
 
+export const API = any;
+
 export function useAPI(): {
   callApi: <T = unknown>(
     api: string,

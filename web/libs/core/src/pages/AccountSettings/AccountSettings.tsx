@@ -1,4 +1,4 @@
-import { Card } from "@humansignal/ui/lib/card-new";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@humansignal/ui/lib/card-new/card";
 import { useMemo } from "react";
 import { Redirect } from "react-router-dom";
 import styles from "./AccountSettings.module.scss";
@@ -22,10 +22,15 @@ export const AccountSettingsPage = () => {
     <div className={styles.accountSettings}>
       <SidebarMenu menuItems={menuItems} path={AccountSettingsPage.path}>
         <div className={styles.accountSettings__content}>
-          {accountSettingsSections?.map(({ title, component: Section, id }: any) => (
-            <Card key={id} header={<h1>{title}</h1>} headerLine={false} noMargin={true}>
+          {accountSettingsSections?.map(({ title, component: Section, description: Description, id }) => (
+            <Card key={id}>
               <CardHeader>
                 <CardTitle>{title}</CardTitle>
+                {Description && (
+                  <CardDescription>
+                    <Description />
+                  </CardDescription>
+                )}
               </CardHeader>
               <CardContent>
                 <Section />

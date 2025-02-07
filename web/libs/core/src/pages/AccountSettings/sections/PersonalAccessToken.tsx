@@ -47,26 +47,6 @@ export const PersonalAccessToken = () => {
 
   return (
     <div id="personal-access-token">
-      <p className="m-0">
-        Authenticate with our API using your personal access token.
-        {!APP_SETTINGS?.whitelabel_is_active && (
-          <>
-            {" "}
-            See{" "}
-            <a
-              href="https://labelstud.io/guide/api.html"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex gap-1"
-            >
-              Docs{" "}
-              <span>
-                <IconLaunch />
-              </span>
-            </a>
-          </>
-        )}
-      </p>
       <div className="flex flex-col gap-6">
         <div>
           <Label text="Access Token" className={styles.label} />
@@ -93,3 +73,23 @@ export const PersonalAccessToken = () => {
     </div>
   );
 };
+
+export function PersonalAccessTokenDescription() {
+  return (
+    <p className="m-0">
+      Authenticate with our API using your personal access token.
+      {!window.APP_SETTINGS?.whitelabel_is_active && (
+        <>
+          {" "}
+          See{" "}
+          <a href="https://labelstud.io/guide/api.html" target="_blank" rel="noreferrer" className="inline-flex gap-1">
+            Docs{" "}
+            <span>
+              <IconLaunch className="h-6 w-6" />
+            </span>
+          </a>
+        </>
+      )}
+    </p>
+  );
+}
