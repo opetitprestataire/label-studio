@@ -2,6 +2,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class JWTAuthenticationMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -16,9 +17,9 @@ class JWTAuthenticationMiddleware:
                 # annoyingly, this only returns one object on failure so have to unpack awkwardly
                 user_and_token = JWTAuthentication().authenticate(request)
                 user = user_and_token[0] if user_and_token else None
-                if user and user.active_organization.jwt.enabled:
+                if user and user.active_organization.jwt.api_tokens_enabled:
                     request.user = user
                     request.is_jwt = True
             except:
-                logger.info("Could not auth using jwt, falling back to other auth methods")
+                logger.info('Could not auth using jwt, falling back to other auth methods')
         return self.get_response(request)
