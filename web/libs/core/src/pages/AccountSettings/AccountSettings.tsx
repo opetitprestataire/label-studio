@@ -4,8 +4,14 @@ import { Redirect } from "react-router-dom";
 import styles from "./AccountSettings.module.scss";
 import { accountSettingsSections } from "./sections";
 import { SidebarMenu } from "/apps/labelstudio/src/components/SidebarMenu/SidebarMenu";
+import clsx from "clsx";
 
 export const AccountSettingsPage = () => {
+  const contentClassName = clsx(styles.accountSettings__content, {
+    [styles.accountSettingsPadding]: window.APP_SETTINGS.billing !== undefined,
+  });
+
+  console.log(window.APP_SETTINGS.billing);
   const menuItems = useMemo(
     () =>
       accountSettingsSections.map(({ title, id }) => ({
@@ -21,7 +27,7 @@ export const AccountSettingsPage = () => {
   return (
     <div className={styles.accountSettings}>
       <SidebarMenu menuItems={menuItems} path={AccountSettingsPage.path}>
-        <div className={styles.accountSettings__content}>
+        <div className={contentClassName}>
           {accountSettingsSections?.map(({ title, component: Section, description: Description, id }) => (
             <Card key={id}>
               <CardHeader>

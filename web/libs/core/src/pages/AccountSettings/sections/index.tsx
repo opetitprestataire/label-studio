@@ -5,7 +5,6 @@ import { MembershipInfo } from "./MembershipInfo";
 import type React from "react";
 import { PersonalJWTToken } from "./PersonalJWTToken";
 import "./index.raw.css";
-import { ff } from "@humansignal/core";
 
 type SectionType = {
   title: string;
@@ -13,6 +12,7 @@ type SectionType = {
   component: React.FC;
   description?: React.FC;
 };
+
 export const accountSettingsSections: SectionType[] = [
   {
     title: "Personal Info",
@@ -29,11 +29,19 @@ export const accountSettingsSections: SectionType[] = [
     id: "membership-info",
     component: MembershipInfo,
   },
+
+  {
+    title: "Legacy Tokens",
+    id: "personal-access-token",
+    // component: PersonalAccessToken,
+    component: PersonalAccessToken,
+    description: PersonalAccessTokenDescription,
+  },
   {
     title: "Personal Access Token",
     id: "personal-access-token",
     // component: PersonalAccessToken,
-    component: ff.isFF(ff.FF_AUTH_TOKENS) ? PersonalJWTToken : PersonalAccessToken,
+    component: PersonalJWTToken,
     description: PersonalAccessTokenDescription,
   },
 ];

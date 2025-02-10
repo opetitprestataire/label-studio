@@ -17,17 +17,7 @@ type Token = {
   expires_at: string;
 };
 
-const refreshTokenAtom = atomWithQuery(() => ({
-  queryKey: ["refresh-token"],
-  async queryFn() {
-    const token = await API.invoke("accessTokenGetRefreshToken");
-    if (!token.$meta.ok) {
-      throw new Error(token.error);
-    }
-    return token.token;
-  },
-}));
-
+// list all existing API tokens
 const tokensListAtom = atomWithQuery(() => ({
   queryKey: ["access-tokens"],
   async queryFn() {
@@ -41,36 +31,25 @@ const tokensListAtom = atomWithQuery(() => ({
   },
 }));
 
-const createTokenAtom = atomWithMutation((get) => {
-  const refreshToken = get(refreshTokenAtom).data;
-  return {
-    mutationKey: ["create-token", refreshToken],
-    async mutationFn() {
-      if (refreshToken) {
-        console.log(refreshToken);
-      }
-      const token = await API.invoke("accessTokenCreate", {
-        body: {
-          refresh: refreshToken,
-        },
-      });
-      if (!token.$meta.ok) {
-        throw new Error(token.error);
-      }
-      return token;
-    },
-  };
-});
+// despite the name, gets user's access token
+const refreshTokenAtom = atomWithMutation(() => ({
+  mutationKey: ["refresh-token"],
+  async mutationFn() {
+    const token = await API.invoke("accessTokenGetRefreshToken");
+    if (!token.$meta.ok) {
+      throw new Error(token.error);
+    }
+    return token.token;
+  },
+}));
 
 const revokeTokenAtom = atomWithMutation((get) => {
-  const refreshToken = get(refreshTokenAtom).data;
   return {
     mutationKey: ["revoke"],
     async mutationFn({ token }: { token: string }) {
-      if (!refreshToken) return;
-      await API.invoke("accessTokenRevoke", {
+      await API.invoke("accessTokenRevoke", null, {
         body: {
-          refresh: refreshToken,
+          refresh: token,
         },
       });
     },
@@ -143,11 +122,11 @@ export function PersonalJWTToken() {
 
 function CreateTokenForm() {
   const { data: tokens } = useAtomValue(tokensListAtom);
-  const { data, mutate } = useAtomValue(createTokenAtom);
+  const { data, mutate } = useAtomValue(refreshTokenAtom);
 
   useEffect(() => {
     if (!tokens) return;
-    mutate(tokens[0].token);
+    mutate();
   }, [data]);
 
   return (

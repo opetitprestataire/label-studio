@@ -15,6 +15,10 @@
   }
 }
 
+.accountSettingsPadding {
+  padding: var(--spacing-large);
+}
+
 .sectionContent {
   display: flex;
   flex-direction: column;
