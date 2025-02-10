@@ -21,6 +21,9 @@ const refreshTokenAtom = atomWithQuery(() => ({
   queryKey: ["refresh-token"],
   async queryFn() {
     const token = await API.invoke("accessTokenGetRefreshToken");
+    if (!token.$meta.ok) {
+      throw new Error(token.error);
+    }
     return token.token;
   },
 }));
@@ -30,8 +33,10 @@ const tokensListAtom = atomWithQuery(() => ({
   async queryFn() {
     console.log("loading tokens list");
     const tokens = await API.invoke("accessTokenList");
+    if (!tokens.$meta.ok) {
+      throw new Error(tokens.error);
+    }
 
-    console.log(tokens);
     return tokens as Token[];
   },
 }));
@@ -49,6 +54,9 @@ const createTokenAtom = atomWithMutation((get) => {
           refresh: refreshToken,
         },
       });
+      if (!token.$meta.ok) {
+        throw new Error(token.error);
+      }
       return token;
     },
   };
@@ -107,7 +115,7 @@ export function PersonalJWTToken() {
           <div>
             <Label text="Access Token" className={styles.label} />
             <div className="flex flex-col gap-2">
-              {tokens.data.map((token, index) => {
+              {tokens.data?.map((token, index) => {
                 return (
                   <div key={`${token.expires_at}${index}`} className="flex justify-between items-center">
                     <div>
