@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-
+from datetime import timedelta
 from typing import Any
 
 from annoying.fields import AutoOneToOneField
@@ -15,13 +14,17 @@ class JWTSettings(models.Model):
 
     organization = AutoOneToOneField(Organization, related_name='jwt', primary_key=True, on_delete=models.DO_NOTHING)
     api_tokens_enabled = models.BooleanField(
-        _('JWT API tokens enabled'), default=False, help_text='Enable JWT API token authentication for this organization'
+        _('JWT API tokens enabled'),
+        default=False,
+        help_text='Enable JWT API token authentication for this organization',
     )
     api_token_ttl_days = models.IntegerField(
         _('JWT API token time to live (days)'), default=30, help_text='Number of days before JWT API tokens expire'
     )
     legacy_api_tokens_enabled = models.BooleanField(
-        _('legacy API tokens enabled'), default=True, help_text='Enable legacy API token authentication for this organization'
+        _('legacy API tokens enabled'),
+        default=True,
+        help_text='Enable legacy API token authentication for this organization',
     )
 
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
@@ -75,6 +78,8 @@ class LSAPIToken(RefreshToken):
     lifetimes and support for truncated tokens. It uses the LSTokenBackend to
     securely store the token (without the signature).
     """
+
+    lifetime = timedelta(days=365 * 200)  # "eternity" (200 years)
 
     _token_backend = LSTokenBackend(
         api_settings.ALGORITHM,
