@@ -21,8 +21,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths":{
-      "/apps/*": ["apps/*"],
-      "/libs/*": ["libs/*"],
       "@humansignal/core": ["libs/core/src/index.ts"],
       "@humansignal/core/*": ["libs/core/src/*"],
       "@humansignal/datamanager": ["libs/datamanager/src/index.js"],
