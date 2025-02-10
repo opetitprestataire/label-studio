@@ -1,4 +1,4 @@
-import styles from "./PersonalAccessToken.module.scss";
+import styles from "./PersonalJWTToken.module.scss";
 import { API } from "/apps/labelstudio/src/providers/ApiProvider";
 import { modal } from "/apps/labelstudio/src/components/Modal/Modal";
 import { Button } from "/apps/labelstudio/src/components/Button/Button";
@@ -116,17 +116,20 @@ export function PersonalJWTToken() {
       <div className={tokensListClassName}>
         {tokens.isLoading ? (
           <div>loading...</div>
-        ) : tokens.isSuccess ? (
+        ) : tokens.isSuccess && tokens.data && tokens.data.length ? (
           <div>
             <Label text="Access Token" className={styles.label} />
             <div className="flex flex-col gap-2">
-              {tokens.data?.map((token, index) => {
+              {tokens.data.map((token, index) => {
                 return (
-                  <div key={`${token.expires_at}${index}`} className="flex justify-between items-center">
-                    <div>
-                      {token.expires_at
-                        ? format(new Date(token.expires_at), "MMM dd, yyyy HH:mm")
-                        : "Personal access token"}
+                  <div key={`${token.expires_at}${index}`} className={styles.token}>
+                    <div className={styles.tokenWrapper}>
+                      <div>
+                        {token.expires_at
+                          ? format(new Date(token.expires_at), "MMM dd, yyyy HH:mm")
+                          : "Personal access token"}
+                      </div>
+                      <div className={styles.tokenString}>{token.token}</div>
                     </div>
                     <Button look="destructive" onClick={() => revoke(token.token)}>
                       Revoke

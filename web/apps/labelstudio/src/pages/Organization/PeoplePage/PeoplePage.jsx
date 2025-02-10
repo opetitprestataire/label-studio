@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LsPlus } from "../../../assets/icons";
 import { Button } from "../../../components";
 import { Description } from "../../../components/Description/Description";
-import { Input } from "../../../components/Form";
+import { Input, Toggle } from "../../../components/Form";
 import { HeidiTips } from "../../../components/HeidiTips/HeidiTips";
 import { modal } from "../../../components/Modal/Modal";
 import { Space } from "../../../components/Space/Space";
@@ -37,6 +37,23 @@ const InvitationModal = ({ link }) => {
         .
       </Description>
     </Block>
+  );
+};
+
+const TokenSettingsModal = () => {
+  const [JWTEnabled, setJWTEnabled] = useState(false);
+  return (
+    <div>
+      <div>
+        <Toggle label="Enable JWT API Token" />
+      </div>
+      <div>
+        <Toggle label="Enable Legacy Token" />
+      </div>
+      <div>
+        <Input label="Token TTL" />
+      </div>
+    </div>
   );
 };
 
@@ -107,6 +124,20 @@ export const PeoplePage = () => {
     [],
   );
 
+  const apiTokensSettingsModalProps = useMemo(
+    () => ({
+      title: "API Token Settings",
+      style: { width: 480, height: 200 },
+      body: () => <TokenSettingsModal />,
+    }),
+    [],
+  );
+
+  const showApiTokenSettingsModal = useCallback(() => {
+    inviteModal.current = modal(apiTokensSettingsModalProps);
+    __lsa("organization.token_settings");
+  }, [inviteModalProps, link]);
+
   const showInvitationModal = useCallback(() => {
     inviteModal.current = modal(inviteModalProps(link));
     __lsa("organization.add_people");
@@ -133,6 +164,7 @@ export const PeoplePage = () => {
           <Space />
 
           <Space>
+            <Button onClick={showApiTokenSettingsModal}>API Tokens Settings</Button>
             <Button icon={<LsPlus />} primary onClick={showInvitationModal}>
               Add People
             </Button>
