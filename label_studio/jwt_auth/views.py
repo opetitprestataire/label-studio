@@ -1,20 +1,21 @@
 from core.permissions import all_permissions
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
+from jwt_auth.models import JWTSettings, LSAPIToken, TruncatedLSAPIToken
+from jwt_auth.serializers import (
+    JWTSettingsSerializer,
+    JWTSettingsUpdateSerializer,
+    LSAPITokenBlacklistSerializer,
+    LSAPITokenCreateSerializer,
+    LSAPITokenListSerializer,
+    TokenRefreshResponseSerializer,
+)
 from rest_framework import generics, status
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from rest_framework_simplejwt.views import TokenRefreshView, TokenViewBase
-
-from jwt_auth.models import JWTSettings, LSAPIToken, TruncatedLSAPIToken
-from jwt_auth.serializers import (JWTSettingsSerializer,
-                                  JWTSettingsUpdateSerializer,
-                                  LSAPITokenBlacklistSerializer,
-                                  LSAPITokenCreateSerializer,
-                                  LSAPITokenListSerializer,
-                                  TokenRefreshResponseSerializer)
 
 
 @method_decorator(

@@ -9,7 +9,7 @@ import { IconWarning } from "@humansignal/icons";
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { useAtomValue } from "jotai";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
 
 type Token = {
@@ -20,15 +20,18 @@ type Token = {
 const refreshTokenAtom = atomWithQuery(() => ({
   queryKey: ["refresh-token"],
   async queryFn() {
-    const token = await API.getRefreshToken();
-    console.log(token);
+    const token = await API.invoke("accessTokenGetRefreshToken");
+    return token.token;
   },
 }));
 
 const tokensListAtom = atomWithQuery(() => ({
   queryKey: ["access-tokens"],
   async queryFn() {
-    const tokens = await API.tokensList();
+    console.log("loading tokens list");
+    const tokens = await API.invoke("accessTokenList");
+
+    console.log(tokens);
     return tokens as Token[];
   },
 }));
@@ -38,7 +41,10 @@ const createTokenAtom = atomWithMutation((get) => {
   return {
     mutationKey: ["create-token", refreshToken],
     async mutationFn() {
-      const token = await API.createToken({
+      if (refreshToken) {
+        console.log(refreshToken);
+      }
+      const token = await API.invoke("accessTokenCreate", {
         body: {
           refresh: refreshToken,
         },
@@ -48,21 +54,37 @@ const createTokenAtom = atomWithMutation((get) => {
   };
 });
 
-const tokensAtom = atomWithQuery((get) => ({
-  queryKey: ["tokens", get(tokensListAtom), get(createTokenAtom)],
-  async queryFn() {
-    const list = get(tokensListAtom).data;
-    const created = get(createTokenAtom).data;
-    return [...(list ?? []), created].filter(Boolean);
-  },
-}));
+const revokeTokenAtom = atomWithMutation((get) => {
+  const refreshToken = get(refreshTokenAtom).data;
+  return {
+    mutationKey: ["revoke"],
+    async mutationFn({ token }: { token: string }) {
+      if (!refreshToken) return;
+      await API.invoke("accessTokenRevoke", {
+        body: {
+          refresh: refreshToken,
+        },
+      });
+    },
+  };
+});
 
 export function PersonalJWTToken() {
   const [dialogOpened, setDialogOpened] = useState(false);
-  const tokens = useAtomValue(tokensAtom);
+  const tokens = useAtomValue(tokensListAtom);
+  const revokeToken = useAtomValue(revokeTokenAtom);
+
   const tokensListClassName = clsx({
     [styles.tokensList]: tokens.data && tokens.data.length,
   });
+
+  const revoke = useCallback(
+    async (token: string) => {
+      await revokeToken.mutateAsync({ token });
+      tokens.refetch();
+    },
+    [revokeToken],
+  );
 
   function openDialog() {
     if (dialogOpened) return;
@@ -88,8 +110,14 @@ export function PersonalJWTToken() {
               {tokens.data.map((token, index) => {
                 return (
                   <div key={`${token.expires_at}${index}`} className="flex justify-between items-center">
-                    <div>{format(new Date(token.expires_at), "MMM dd, yyyy HH:mm")}</div>
-                    <Button look="destructive">Revoke</Button>
+                    <div>
+                      {token.expires_at
+                        ? format(new Date(token.expires_at), "MMM dd, yyyy HH:mm")
+                        : "Personal access token"}
+                    </div>
+                    <Button look="destructive" onClick={() => revoke(token.token)}>
+                      Revoke
+                    </Button>
                   </div>
                 );
               })}
@@ -99,17 +127,20 @@ export function PersonalJWTToken() {
           <div>Unable to load tokens list</div>
         ) : null}
       </div>
-      <Button disabled={tokens.isLoading || (tokens.data?.length ?? 0) > 0} onClick={openDialog}>
-        Create New Token
-      </Button>
+      {/* <Button disabled={tokens.isLoading || (tokens.data?.length ?? 0) > 0} onClick={openDialog}> */}
+      <Button onClick={openDialog}>Create New Token</Button>
     </div>
   );
 }
 
 function CreateTokenForm() {
+  const { data: tokens } = useAtomValue(tokensListAtom);
   const { data, mutate } = useAtomValue(createTokenAtom);
 
-  useEffect(() => mutate(), []);
+  useEffect(() => {
+    if (!tokens) return;
+    mutate(tokens[0].token);
+  }, [data]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -126,10 +157,12 @@ function CreateTokenForm() {
         <Button>Copy</Button>
       </div>
 
-      <div>
-        <Label text="Token Expiry Date" />
-        {data && format(new Date(data?.expires_at), "MMM dd, yyyy HH:mm z")}
-      </div>
+      {data?.expires_at && (
+        <div>
+          <Label text="Token Expiry Date" />
+          {data && format(new Date(data?.expires_at), "MMM dd, yyyy HH:mm z")}
+        </div>
+      )}
 
       <Callout variant="warning">
         <CalloutHeader>

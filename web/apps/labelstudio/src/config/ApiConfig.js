@@ -83,10 +83,10 @@ export const API_CONFIG = {
     updateProductTour: "PATCH:/current-user/product-tour",
 
     // Tokens
-    tokensList: "GET:/tokens",
-    getRefreshToken: "POST:/token",
-    revokeToken: "POST:/token/blacklist",
-    createToken: "POST:/token/refresh",
+    accessTokenList: "GET:/token",
+    accessTokenGetRefreshToken: "POST:/token",
+    accessTokenRevoke: "POST:/token/blacklist",
+    accessTokenCreate: "POST:/token/refresh",
   },
   alwaysExpectJSON: false,
 };

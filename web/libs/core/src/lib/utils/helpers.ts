@@ -4,3 +4,11 @@ export const isFlagEnabled = (id: string, flagList: Record<string, boolean>, def
   }
   return defaultValue;
 };
+
+export const formDataToJPO = (formData: FormData) => {
+  if (formData instanceof FormData) {
+    return Object.fromEntries(formData.entries());
+  }
+
+  return formData;
+};

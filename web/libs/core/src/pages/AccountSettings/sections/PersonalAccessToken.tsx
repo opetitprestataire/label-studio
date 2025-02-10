@@ -5,7 +5,7 @@ import styles from "./PersonalAccessToken.module.scss";
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { atom, useAtomValue } from "jotai";
 import clsx from "clsx";
-import { useCopyText } from "libs/core/src/lib/hooks/useCopyText";
+import { useCopyText } from "../../../lib/hooks/useCopyText";
 
 const tokenAtom = atomWithQuery(() => ({
   queryKey: ["access-token"],
