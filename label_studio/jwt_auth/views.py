@@ -4,11 +4,10 @@ from datetime import datetime
 from core.permissions import all_permissions
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
-from jwt_auth.models import JWTSettings, LSAPIToken, TruncatedLSAPIToken
+from jwt_auth.models import JWTSettings, LSAPIToken, TokenAlreadyBlacklisted, TruncatedLSAPIToken
 from jwt_auth.serializers import (
     JWTSettingsSerializer,
     JWTSettingsUpdateSerializer,
-    LSAPITokenBlacklistSerializer,
     LSAPITokenCreateSerializer,
     LSAPITokenListSerializer,
     TokenRefreshResponseSerializer,
@@ -22,16 +21,6 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 from rest_framework_simplejwt.views import TokenRefreshView, TokenViewBase
 
 logger = logging.getLogger(__name__)
-
-from jwt_auth.models import JWTSettings, LSAPIToken, TruncatedLSAPIToken
-from jwt_auth.serializers import (
-    JWTSettingsSerializer,
-    JWTSettingsUpdateSerializer,
-    LSAPITokenBlacklistSerializer,
-    LSAPITokenCreateSerializer,
-    LSAPITokenListSerializer,
-    TokenRefreshResponseSerializer,
-)
 
 
 @method_decorator(
@@ -105,6 +94,10 @@ class LSAPITokenView(generics.ListCreateAPIView):
     token_class = LSAPIToken
 
     def get_queryset(self):
+        """Returns all non-expired non-blacklisted tokens for the current user.
+
+        The `list` method handles filtering for refresh tokens (as opposed to access tokens),
+        since simple-jwt makes it hard to do this at the DB level."""
         current_blacklisted_tokens = BlacklistedToken.objects.filter(token__expires_at__gt=datetime.now()).values_list(
             'token_id', flat=True
         )
@@ -127,7 +120,7 @@ class LSAPITokenView(generics.ListCreateAPIView):
         token_objects = list(filter(None, [_maybe_get_token(token) for token in all_tokens]))
         refresh_tokens = [tok for tok in token_objects if tok['token_type'] == 'refresh']
 
-        serializer = self.get_serializer(token_objects, many=True)
+        serializer = self.get_serializer(refresh_tokens, many=True)
         data = serializer.data
         return Response(data)
 
@@ -146,9 +139,19 @@ class LSTokenBlacklistView(TokenViewBase):
 
     @swagger_auto_schema(
         tags=['JWT'],
+        operation_summary='Blacklist a JWT refresh token',
+        operation_description='Adds a JWT refresh token to the blacklist, preventing it from being used to obtain new access tokens.',
         responses={
-            status.HTTP_200_OK: LSAPITokenBlacklistSerializer,
+            204: 'Token was successfully blacklisted',
+            404: 'Token is already blacklisted',
+            401: 'Token is invalid or expired',
         },
     )
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenAlreadyBlacklisted as e:
+            return Response({'detail': str(e)}, status=404)
+
+        return Response(status=204)
