@@ -1,11 +1,11 @@
 import { type MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
-
+import { Waveform } from "../WaveformWavesurfer";
 import { isTimeRelativelySimilar } from "../Common/Utils";
 import type { Layer } from "../Visual/Layer";
-import { Waveform, type WaveformFrameState, type WaveformOptions } from "../Waveform";
+import type { WaveformOptions, WaveformFrameState } from "../Waveform";
 
 export const useWaveform = (
-  containter: MutableRefObject<HTMLElement | null | undefined>,
+  container: MutableRefObject<HTMLElement | null | undefined>,
   options: Omit<WaveformOptions, "container"> & {
     onLoad?: (wf: Waveform) => void;
     onSeek?: (time: number) => void;
@@ -17,7 +17,7 @@ export const useWaveform = (
     onFrameChanged?: (frame: { width: number; height: number; zoom: number; scroll: number }) => void;
   },
 ) => {
-  const waveform = useRef<Waveform>();
+  const waveformRef = useRef<Waveform>();
   const { showLabels = true } = options;
   const [zoom, setZoom] = useState(1);
   const [volume, setVolume] = useState(options?.volume ?? 1);
@@ -55,16 +55,18 @@ export const useWaveform = (
 
   useEffect(() => {
     const wf = new Waveform({
-      ...(options ?? {}),
-      container: containter.current!,
+      ...options,
+      container: container.current!,
     });
 
     if (options?.autoLoad === undefined || options?.autoLoad) {
       wf.load();
     }
 
+    // Map events from our Wavesurfer wrapper to the hook’s state.
     wf.on("load", () => {
       options?.onLoad?.(wf);
+      setDuration(wf.duration);
     });
     wf.on("play", () => {
       setPlaying(true);
@@ -72,7 +74,7 @@ export const useWaveform = (
     wf.on("pause", () => {
       setPlaying(false);
     });
-    wf.on("error", (error) => {
+    wf.on("error", (error: Error) => {
       options?.onError?.(error);
     });
     wf.on("playing", (time: number) => {
@@ -90,17 +92,17 @@ export const useWaveform = (
     wf.on("zoom", setZoom);
     wf.on("frameDrawn", updateAfterRegionDraw);
     wf.on("muted", setMuted);
-    wf.on("durationChanged", setDuration);
-    wf.on("volumeChanged", setVolume);
-    wf.on("rateChanged", (newRate) => {
+    // For volume, rate and other properties we’ll rely on our hook state:
+    wf.on("rateChanged", (newRate: number) => {
       options?.onRateChange?.(newRate);
       setRate(newRate);
     });
-    wf.on("layersUpdated", (layers) => {
-      const layersArray = [];
+    // If your Wavesurfer wrapper emits a layers update event, you can handle it similarly:
+    wf.on("layersUpdated", (layersMap: Map<string, Layer>) => {
+      const layersArray: Layer[] = [];
       const layerVis = new Map();
 
-      for (const layer of layers.values()) {
+      for (const layer of layersMap.values()) {
         layersArray.push(layer);
         layerVis.set(layer.name, layer.isVisible);
       }
@@ -108,40 +110,36 @@ export const useWaveform = (
       setLayerVisibility(layerVis);
     });
 
-    waveform.current = wf;
+    waveformRef.current = wf;
 
     return () => {
-      waveform.current?.destroy();
+      waveformRef.current?.destroy();
     };
   }, []);
 
   useEffect(() => {
-    const wf = waveform.current;
-
+    const wf = waveformRef.current;
     if (wf && wf.loaded) {
       wf.zoom = zoom;
     }
   }, [zoom]);
 
   useEffect(() => {
-    const wf = waveform.current;
-
+    const wf = waveformRef.current;
     if (wf && wf.loaded) {
       wf.volume = volume;
     }
   }, [volume]);
 
   useEffect(() => {
-    const wf = waveform.current;
-
+    const wf = waveformRef.current;
     if (wf && wf.loaded) {
       wf.rate = rate;
     }
   }, [rate]);
 
   useEffect(() => {
-    const wf = waveform.current;
-
+    const wf = waveformRef.current;
     if (wf && wf.loaded) {
       wf.amp = amp;
     }
@@ -152,17 +150,17 @@ export const useWaveform = (
   }, [playing]);
 
   useEffect(() => {
-    if (waveform.current) {
-      waveform.current.muted = muted;
+    if (waveformRef.current) {
+      waveformRef.current.muted = muted;
     }
   }, [muted]);
 
   useEffect(() => {
-    waveform.current?.updateLabelVisibility(showLabels);
+    waveformRef.current?.updateLabelVisibility(showLabels);
   }, [showLabels]);
 
   return {
-    waveform,
+    waveform: waveformRef,
     zoom,
     setZoom,
     volume,

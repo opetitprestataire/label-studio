@@ -14,6 +14,9 @@ import { clamp, getCursorTime } from "./Common/Utils";
 import type { PlayheadOptions } from "./Visual/PlayHead";
 import type { Layer } from "./Visual/Layer";
 
+import WaveSurfer from 'wavesurfer.js'
+import Spectrogram from 'wavesurfer.js/src/plugin/spectrogram'
+
 export interface WaveformOptions {
   /** URL of an audio or video */
   src: string;
