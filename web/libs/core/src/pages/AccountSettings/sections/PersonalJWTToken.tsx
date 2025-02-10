@@ -5,8 +5,7 @@ import { Button } from "/apps/labelstudio/src/components/Button/Button";
 import { Input, Label } from "/apps/labelstudio/src/components/Form/Elements";
 import { Callout, CalloutContent, CalloutHeader, CalloutIcon, CalloutTitle } from "@humansignal/ui/lib/callout/callout";
 import { IconWarning } from "@humansignal/icons";
-// import { Label } from "@humansignal/ui";
-import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
+import { atomWithMutation, atomWithQuery, queryClientAtom } from "jotai-tanstack-query";
 import { useAtomValue } from "jotai";
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
@@ -17,9 +16,11 @@ type Token = {
   expires_at: string;
 };
 
+const ACCESS_TOKENS_QUERY_KEY = ["access-tokens"];
+
 // list all existing API tokens
 const tokensListAtom = atomWithQuery(() => ({
-  queryKey: ["access-tokens"],
+  queryKey: ACCESS_TOKENS_QUERY_KEY,
   async queryFn() {
     console.log("loading tokens list");
     const tokens = await API.invoke("accessTokenList");
@@ -44,13 +45,38 @@ const refreshTokenAtom = atomWithMutation(() => ({
 }));
 
 const revokeTokenAtom = atomWithMutation((get) => {
+  const queryClient = get(queryClientAtom);
   return {
     mutationKey: ["revoke"],
     async mutationFn({ token }: { token: string }) {
       await API.invoke("accessTokenRevoke", null, {
+        params: {},
         body: {
           refresh: token,
         },
+      });
+    },
+    async onMutate({ token }: { token: string }) {
+      console.log(token);
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: ACCESS_TOKENS_QUERY_KEY });
+
+      // Snapshot the previous value
+      const previousTokens = queryClient.getQueryData(ACCESS_TOKENS_QUERY_KEY) as Token[];
+      const filtered = previousTokens.filter((t) => t.token !== token);
+      // Optimistically update to the new value
+      queryClient.setQueryData(ACCESS_TOKENS_QUERY_KEY, (old: Token[]) => filtered as Token[]);
+
+      // Return a context object with the snapshotted value
+      return { previousTokens };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(ACCESS_TOKENS_QUERY_KEY, context?.previousTokens);
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: ACCESS_TOKENS_QUERY_KEY,
       });
     },
   };
@@ -68,7 +94,6 @@ export function PersonalJWTToken() {
   const revoke = useCallback(
     async (token: string) => {
       await revokeToken.mutateAsync({ token });
-      tokens.refetch();
     },
     [revokeToken],
   );
