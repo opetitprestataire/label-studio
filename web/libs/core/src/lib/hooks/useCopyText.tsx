@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export function useCopyText(text: string) {
   const [copied, setCopied] = useState(false);
 
-  async function copy() {
+  const copy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -11,7 +11,7 @@ export function useCopyText(text: string) {
     } catch (e) {
       console.error(e);
     }
-  }
+  }, [text]);
 
   return [copy, copied] as const;
 }

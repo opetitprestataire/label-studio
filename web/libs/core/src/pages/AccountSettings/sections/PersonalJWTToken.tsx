@@ -10,6 +10,7 @@ import { useAtomValue } from "jotai";
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
+import { useCopyText } from "../../../lib/hooks/useCopyText";
 
 type Token = {
   token: string;
@@ -139,34 +140,30 @@ export function PersonalJWTToken() {
           <div>Unable to load tokens list</div>
         ) : null}
       </div>
-      {/* <Button disabled={tokens.isLoading || (tokens.data?.length ?? 0) > 0} onClick={openDialog}> */}
-      <Button onClick={openDialog}>Create New Token</Button>
+      <Button disabled={tokens.isLoading || (tokens.data?.length ?? 0) > 0} onClick={openDialog}>
+        Create New Token
+      </Button>
     </div>
   );
 }
 
 function CreateTokenForm() {
-  const { data: tokens } = useAtomValue(tokensListAtom);
-  const { data, mutate } = useAtomValue(refreshTokenAtom);
+  const { data, mutate: createToken } = useAtomValue(refreshTokenAtom);
+  const [copy, copied] = useCopyText(data ?? "");
 
   useEffect(() => {
-    if (!tokens) return;
-    mutate();
-  }, [data]);
+    createToken();
+  }, []);
 
   return (
     <div className="flex flex-col gap-2">
       <p>Copy your new access token from below and keep it secure. </p>
 
       <div className="flex items-end w-full gap-2">
-        <Input
-          label="Access Token"
-          labelProps={{ className: "flex-1" }}
-          className="w-full"
-          readOnly
-          value={data?.token}
-        />
-        <Button>Copy</Button>
+        <Input label="Access Token" labelProps={{ className: "flex-1" }} className="w-full" readOnly value={data} />
+        <Button onClick={copy} disabled={copied}>
+          {copied ? "Copied!" : "Copy"}
+        </Button>
       </div>
 
       {data?.expires_at && (
