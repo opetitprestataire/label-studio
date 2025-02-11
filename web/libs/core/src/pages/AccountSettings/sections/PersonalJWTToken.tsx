@@ -3,12 +3,13 @@ import { API } from "/apps/labelstudio/src/providers/ApiProvider";
 import { modal } from "/apps/labelstudio/src/components/Modal/Modal";
 import { Button } from "/apps/labelstudio/src/components/Button/Button";
 import { Input, Label } from "/apps/labelstudio/src/components/Form/Elements";
+import { Tooltip } from "/apps/labelstudio/src/components/Tooltip/Tooltip";
 import { Callout, CalloutContent, CalloutHeader, CalloutIcon, CalloutTitle } from "@humansignal/ui/lib/callout/callout";
 import { IconWarning } from "@humansignal/icons";
 import { atomWithMutation, atomWithQuery, queryClientAtom } from "jotai-tanstack-query";
 import { useAtomValue } from "jotai";
 import clsx from "clsx";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { useCopyText } from "../../../lib/hooks/useCopyText";
 
@@ -34,16 +35,22 @@ const tokensListAtom = atomWithQuery(() => ({
 }));
 
 // despite the name, gets user's access token
-const refreshTokenAtom = atomWithMutation(() => ({
-  mutationKey: ["refresh-token"],
-  async mutationFn() {
-    const token = await API.invoke("accessTokenGetRefreshToken");
-    if (!token.$meta.ok) {
-      throw new Error(token.error);
-    }
-    return token.token;
-  },
-}));
+const refreshTokenAtom = atomWithMutation((get) => {
+  const queryClient = get(queryClientAtom);
+  return {
+    mutationKey: ["refresh-token"],
+    async mutationFn() {
+      const token = await API.invoke("accessTokenGetRefreshToken");
+      if (!token.$meta.ok) {
+        throw new Error(token.error);
+      }
+      return token.token;
+    },
+    onSettled() {
+      queryClient.invalidateQueries({ queryKey: ACCESS_TOKENS_QUERY_KEY });
+    },
+  };
+});
 
 const revokeTokenAtom = atomWithMutation((get) => {
   const queryClient = get(queryClientAtom);
@@ -91,6 +98,10 @@ export function PersonalJWTToken() {
     [revokeToken],
   );
 
+  const disallowAddingTokens = useMemo(() => {
+    return tokens.isLoading || (tokens.data?.length ?? 0) > 0;
+  }, [tokens.isLoading, tokens.data]);
+
   function openDialog() {
     if (dialogOpened) return;
     setDialogOpened(true);
@@ -135,9 +146,13 @@ export function PersonalJWTToken() {
           <div>Unable to load tokens list</div>
         ) : null}
       </div>
-      <Button disabled={tokens.isLoading || (tokens.data?.length ?? 0) > 0} onClick={openDialog}>
-        Create New Token
-      </Button>
+      <Tooltip title="You can only have one active token" disabled={!disallowAddingTokens}>
+        <div style={{ width: "max-content" }}>
+          <Button disabled={disallowAddingTokens} onClick={openDialog}>
+            Create New Token
+          </Button>
+        </div>
+      </Tooltip>
     </div>
   );
 }

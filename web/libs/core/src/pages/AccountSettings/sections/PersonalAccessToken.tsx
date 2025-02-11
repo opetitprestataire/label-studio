@@ -63,7 +63,12 @@ export const PersonalAccessToken = () => {
         <div>
           <Label text="Example CURL Request" className={styles.label} />
           <div className="flex gap-2 w-full justify-between">
-            <TextArea name="example-curl" readOnly className={clsx(styles.input, styles.textarea)} value={curl} />
+            <TextArea
+              name="example-curl"
+              readOnly
+              className={clsx(styles.input, styles.textarea, "w-full min-h-[90px]")}
+              value={curl}
+            />
             <Button icon={<IconFileCopy />} onClick={copyCurl} disabled={curlCopied}>
               {curlCopied ? "Copied!" : "Copy"}
             </Button>
