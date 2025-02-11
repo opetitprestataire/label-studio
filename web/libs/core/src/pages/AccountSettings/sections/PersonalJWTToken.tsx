@@ -24,7 +24,6 @@ const ACCESS_TOKENS_QUERY_KEY = ["access-tokens"];
 const tokensListAtom = atomWithQuery(() => ({
   queryKey: ACCESS_TOKENS_QUERY_KEY,
   async queryFn() {
-    console.log("loading tokens list");
     const tokens = await API.invoke("accessTokenList");
     if (!tokens.$meta.ok) {
       throw new Error(tokens.error);
@@ -64,17 +63,24 @@ const revokeTokenAtom = atomWithMutation((get) => {
         },
       });
     },
+    // Optimistic update
     async onMutate({ token }: { token: string }) {
+      // Cancel all ongoing queries so we can override the data they hold
       await queryClient.cancelQueries({ queryKey: ACCESS_TOKENS_QUERY_KEY });
+      // Getting currently cached data of a specific query
       const previousTokens = queryClient.getQueryData(ACCESS_TOKENS_QUERY_KEY) as Token[];
+      // We need to keep everything but one token that we just deleted
       const filtered = previousTokens.filter((t) => t.token !== token);
+      // We now optimistically override data inside the query
       queryClient.setQueryData(ACCESS_TOKENS_QUERY_KEY, (old: Token[]) => filtered as Token[]);
       return { previousTokens };
     },
     onError: (err, newTodo, context) => {
+      // If error, reset query to its previous state (without changes from `onMutate`)
       queryClient.setQueryData(ACCESS_TOKENS_QUERY_KEY, context?.previousTokens);
     },
     onSettled() {
+      // Reload query from remote if deletion went ok
       queryClient.invalidateQueries({
         queryKey: ACCESS_TOKENS_QUERY_KEY,
       });
