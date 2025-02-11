@@ -88,7 +88,7 @@ export const API_CONFIG = {
     accessTokenRevoke: "POST:/token/blacklist",
 
     accessTokenSettings: "GET:/jwt/settings",
-    accessTokenUpdateSettings: "GET:/jwt/settings",
+    accessTokenUpdateSettings: "POST:/jwt/settings",
   },
   alwaysExpectJSON: false,
 };

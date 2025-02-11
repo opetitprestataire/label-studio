@@ -2,19 +2,20 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LsPlus } from "../../../assets/icons";
 import { Button } from "../../../components";
 import { Description } from "../../../components/Description/Description";
-import { Input, Toggle } from "../../../components/Form";
+import { Input } from "../../../components/Form";
 import { HeidiTips } from "../../../components/HeidiTips/HeidiTips";
 import { modal } from "../../../components/Modal/Modal";
 import { Space } from "../../../components/Space/Space";
 import { useAPI } from "../../../providers/ApiProvider";
 import { useConfig } from "../../../providers/ConfigProvider";
 import { Block, Elem } from "../../../utils/bem";
-import { FF_LSDV_E_297, isFF } from "../../../utils/feature-flags";
+import { FF_AUTH_TOKENS, FF_LSDV_E_297, isFF } from "../../../utils/feature-flags";
 import { copyText } from "../../../utils/helpers";
 import "./PeopleInvitation.scss";
 import { PeopleList } from "./PeopleList";
 import "./PeoplePage.scss";
 import { SelectedUser } from "./SelectedUser";
+import { TokenSettingsModal } from "@humansignal/core/components/TokenSettingsModal";
 
 const InvitationModal = ({ link }) => {
   return (
@@ -37,23 +38,6 @@ const InvitationModal = ({ link }) => {
         .
       </Description>
     </Block>
-  );
-};
-
-const TokenSettingsModal = () => {
-  const [JWTEnabled, setJWTEnabled] = useState(false);
-  return (
-    <div>
-      <div>
-        <Toggle label="Enable JWT API Token" />
-      </div>
-      <div>
-        <Toggle label="Enable Legacy Token" />
-      </div>
-      <div>
-        <Input label="Token TTL" />
-      </div>
-    </div>
   );
 };
 
@@ -127,7 +111,7 @@ export const PeoplePage = () => {
   const apiTokensSettingsModalProps = useMemo(
     () => ({
       title: "API Token Settings",
-      style: { width: 480, height: 200 },
+      style: { width: 480 },
       body: () => <TokenSettingsModal />,
     }),
     [],
@@ -164,7 +148,7 @@ export const PeoplePage = () => {
           <Space />
 
           <Space>
-            <Button onClick={showApiTokenSettingsModal}>API Tokens Settings</Button>
+            {isFF(FF_AUTH_TOKENS) && <Button onClick={showApiTokenSettingsModal}>API Tokens Settings</Button>}
             <Button icon={<LsPlus />} primary onClick={showInvitationModal}>
               Add People
             </Button>

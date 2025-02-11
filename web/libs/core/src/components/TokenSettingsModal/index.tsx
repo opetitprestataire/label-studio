@@ -1,11 +1,15 @@
-import { Form, Input, Toggle } from "../../../../../components/Form";
+import { Form, Input, Toggle } from "apps/labelstudio/src/components/Form";
 import { useAtomValue } from "jotai";
 import { formDataToJPO } from "@humansignal/core/lib/utils/helpers";
 import { saveSettingsAtom, settingsAtom } from "@humansignal/core/pages/AccountSettings/atoms";
 import type { AuthTokenSettings } from "@humansignal/core/pages/AccountSettings/types";
 import type { FormEventHandler } from "react";
 
-export const TokenSettingsModal = () => {
+export const TokenSettingsModal = ({
+  showTTL,
+}: {
+  showTTL?: boolean;
+}) => {
   const settings = useAtomValue(settingsAtom);
   const { mutate: saveSettings } = useAtomValue(saveSettingsAtom);
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
@@ -34,7 +38,7 @@ export const TokenSettingsModal = () => {
           checked={settings.data?.legacy_api_tokens_enabled}
         />
       </Form.Row>
-      {window.APP_SETTINGS.billing && (
+      {showTTL === true && (
         <Form.Row columnCount={1}>
           <Input
             name="time_to_live"

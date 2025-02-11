@@ -58,18 +58,10 @@ const revokeTokenAtom = atomWithMutation((get) => {
       });
     },
     async onMutate({ token }: { token: string }) {
-      console.log(token);
-      // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: ACCESS_TOKENS_QUERY_KEY });
-
-      // Snapshot the previous value
       const previousTokens = queryClient.getQueryData(ACCESS_TOKENS_QUERY_KEY) as Token[];
       const filtered = previousTokens.filter((t) => t.token !== token);
-      // Optimistically update to the new value
       queryClient.setQueryData(ACCESS_TOKENS_QUERY_KEY, (old: Token[]) => filtered as Token[]);
-
-      // Return a context object with the snapshotted value
       return { previousTokens };
     },
     onError: (err, newTodo, context) => {

@@ -5,30 +5,35 @@ import styles from "./AccountSettings.module.scss";
 import { accountSettingsSections } from "./sections";
 import { SidebarMenu } from "/apps/labelstudio/src/components/SidebarMenu/SidebarMenu";
 import clsx from "clsx";
+import { useAtomValue } from "jotai";
+import { settingsAtom } from "./atoms";
 
 export const AccountSettingsPage = () => {
+  const settings = useAtomValue(settingsAtom);
   const contentClassName = clsx(styles.accountSettings__content, {
     [styles.accountSettingsPadding]: window.APP_SETTINGS.billing !== undefined,
   });
+  const resolvedSections = useMemo(() => {
+    return settings.data ? accountSettingsSections(settings.data) : [];
+  }, [settings.data]);
 
-  console.log(window.APP_SETTINGS.billing);
   const menuItems = useMemo(
     () =>
-      accountSettingsSections.map(({ title, id }) => ({
+      resolvedSections.map(({ title, id }) => ({
         title,
         path: () => {
           if (!window?.location) return;
           window.location.hash = `#${id}`;
         },
       })),
-    [accountSettingsSections],
+    [accountSettingsSections, settings.data],
   );
 
   return (
     <div className={styles.accountSettings}>
       <SidebarMenu menuItems={menuItems} path={AccountSettingsPage.path}>
         <div className={contentClassName}>
-          {accountSettingsSections?.map(({ title, component: Section, description: Description, id }) => (
+          {resolvedSections?.map(({ title, component: Section, description: Description, id }) => (
             <Card key={id}>
               <CardHeader>
                 <CardTitle>{title}</CardTitle>
