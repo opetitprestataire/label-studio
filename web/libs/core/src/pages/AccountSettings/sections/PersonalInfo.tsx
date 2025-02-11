@@ -80,8 +80,7 @@ export const PersonalInfo = () => {
   useEffect(() => setIsInProgress(userInProgress), [userInProgress]);
 
   return (
-    <div className={styles.section}>
-      <a id="personal-info" />
+    <div className={styles.section} id="personal-info">
       <div className={styles.sectionContent}>
         <div className={styles.flexRow}>
           <Userpic user={user} isInProgress={userInProgress} size={92} style={{ flex: "none" }} />
@@ -95,7 +94,9 @@ export const PersonalInfo = () => {
           </form>
           {user?.avatar && (
             <form onSubmit={(e) => avatarFormSubmitHandler(e, true)}>
-              <button look="danger">Delete</button>
+              <button type="submit" look="danger">
+                Delete
+              </button>
             </form>
           )}
         </div>

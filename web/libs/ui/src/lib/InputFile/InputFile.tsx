@@ -25,7 +25,7 @@ export const InputFile = forwardRef(({ name, className, text, onChange, ...props
     [ref],
   );
   return (
-    <label className={clsx(styles.inputWrapper, className)} tabIndex={0} onKeyDown={wrapperKeyDownHandler}>
+    <label className={clsx(styles.inputWrapper, className)} onKeyDown={wrapperKeyDownHandler}>
       <span className={styles.labelContent}>
         <IconUpload className={styles.icon} /> {text ?? <>Upload Image</>}
       </span>
