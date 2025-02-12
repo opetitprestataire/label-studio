@@ -133,9 +133,9 @@ export function PersonalJWTToken() {
                 return (
                   <div key={`${token.expires_at}${index}`} className={styles.token}>
                     <div className={styles.tokenWrapper}>
-                      <div>
+                      <div className={styles.expirationDate}>
                         {token.expires_at
-                          ? format(new Date(token.expires_at), "MMM dd, yyyy HH:mm")
+                          ? `Expires on ${format(new Date(token.expires_at), "MMM dd, yyyy HH:mm")}`
                           : "Personal access token"}
                       </div>
                       <div className={styles.tokenString}>{token.token}</div>

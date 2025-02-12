@@ -34,7 +34,7 @@ const currentTokenAtom = atom((get) => {
 
 const curlStringAtom = atom((get) => {
   const currentToken = get(currentTokenAtom);
-  const curlString = `curl -X GET https://app.heartex.com/api/projects/ -H 'Authorization: Token ${currentToken}'`;
+  const curlString = `curl -X GET ${location.origin}/api/projects/ -H 'Authorization: Token ${currentToken}'`;
   return curlString;
 });
 
