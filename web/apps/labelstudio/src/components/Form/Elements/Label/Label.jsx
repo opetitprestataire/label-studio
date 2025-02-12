@@ -26,7 +26,7 @@ const Label = ({ text, children, required, placement, description, size, large, 
       style: style,
     },
     <>
-      <div className={rootClass.elem("text").toClassName()}>
+      <div className={rootClass.elem("text")}>
         <div className={rootClass.elem("content")}>
           <div className={rootClass.elem("label")}>{text}</div>
           {description && <div className={rootClass.elem("description")}>{description}</div>}
