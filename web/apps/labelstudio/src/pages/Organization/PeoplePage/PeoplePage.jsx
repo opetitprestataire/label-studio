@@ -15,7 +15,7 @@ import "./PeopleInvitation.scss";
 import { PeopleList } from "./PeopleList";
 import "./PeoplePage.scss";
 import { SelectedUser } from "./SelectedUser";
-import { TokenSettingsModal } from "@humansignal/core/components/TokenSettingsModal";
+import { TokenSettingsModal } from "@humansignal/core/blocks/TokenSettingsModal";
 
 const InvitationModal = ({ link }) => {
   return (
