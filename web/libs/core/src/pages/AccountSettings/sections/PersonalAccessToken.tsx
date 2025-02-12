@@ -1,11 +1,16 @@
-import { Input, TextArea } from "/apps/labelstudio/src/components/Form";
-import { Button } from "/apps/labelstudio/src/components/Button/Button";
 import { IconLaunch, IconFileCopy, Label } from "@humansignal/ui";
 import styles from "./PersonalAccessToken.module.scss";
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { atom, useAtomValue } from "jotai";
 import clsx from "clsx";
 import { useCopyText } from "../../../lib/hooks/useCopyText";
+
+/**
+ * FIXME: This is legacy imports. We're not supposed to use such statements
+ * each one of these eventually has to be migrated to core/ui
+ */
+import { Input, TextArea } from "/apps/labelstudio/src/components/Form";
+import { Button } from "/apps/labelstudio/src/components/Button/Button";
 
 const tokenAtom = atomWithQuery(() => ({
   queryKey: ["access-token"],

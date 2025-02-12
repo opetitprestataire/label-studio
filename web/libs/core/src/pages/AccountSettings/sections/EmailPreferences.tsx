@@ -1,7 +1,12 @@
 import { useCallback, useState } from "react";
 import { Checkbox } from "@humansignal/ui";
-import { useConfig } from "/apps/labelstudio/src/providers/ConfigProvider";
 import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
+
+/**
+ * FIXME: This is legacy imports. We're not supposed to use such statements
+ * each one of these eventually has to be migrated to core/ui
+ */
+import { useConfig } from "/apps/labelstudio/src/providers/ConfigProvider";
 import { useCurrentUser } from "/apps/labelstudio/src/providers/CurrentUser";
 import { Spinner } from "/apps/labelstudio/src/components/Spinner/Spinner";
 

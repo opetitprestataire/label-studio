@@ -3,10 +3,15 @@ import { useMemo } from "react";
 import { Redirect } from "react-router-dom";
 import styles from "./AccountSettings.module.scss";
 import { accountSettingsSections } from "./sections";
-import { SidebarMenu } from "/apps/labelstudio/src/components/SidebarMenu/SidebarMenu";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { settingsAtom } from "./atoms";
+
+/**
+ * FIXME: This is legacy imports. We're not supposed to use such statements
+ * each one of these eventually has to be migrated to core/ui
+ */
+import { SidebarMenu } from "/apps/labelstudio/src/components/SidebarMenu/SidebarMenu";
 
 export const AccountSettingsPage = () => {
   const settings = useAtomValue(settingsAtom);
