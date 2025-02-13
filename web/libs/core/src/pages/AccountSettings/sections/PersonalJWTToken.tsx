@@ -48,7 +48,7 @@ const refreshTokenAtom = atomWithMutation((get) => {
       const token = await API.invoke("accessTokenGetRefreshToken");
       if (!token.$meta.ok) {
         console.error(token.error);
-        return [];
+        return "";
       }
       return token.token;
     },
