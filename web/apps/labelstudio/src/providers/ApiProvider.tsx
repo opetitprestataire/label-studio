@@ -8,7 +8,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { showPauseError } from "../components/Error/PauseError";
 import { ErrorWrapper } from "../components/Error/Error";
 import { modal } from "../components/Modal/Modal";
 import { API_CONFIG } from "../config/ApiConfig";
@@ -74,13 +73,6 @@ const handleError = async (response: Response, showModal = true) => {
   }
 
   const { isShutdown, ...formattedError } = errorFormatter(result);
-  const isPaused = result.status === 403 && result.response?.display_context?.reason === "PAUSED";
-
-  if (isPaused) {
-    showPauseError(result.response);
-
-    return false;
-  }
 
   if (showModal) {
     modal({
