@@ -12,9 +12,11 @@ echo >&3 "=> Configure system resolver..."
 # This regex accepts only hex digits and colons so that IPv4 addresses with :port are not captured.
 nameservers=$(awk '$1=="nameserver" {
     ns = $2;
-    if (ns ~ /^[0-9a-fA-F:]+$/ && ns ~ /:/) {
+    # Capture only IPv6 addresses (they contain a colon and no dot)
+    if (ns ~ /^[0-9a-fA-F:]+$/ && ns ~ /:/ && ns !~ /\./) {
         printf "[%s] ", ns;
     } else {
+        # IPv4 addresses
         printf "%s ", ns;
     }
 }' /etc/resolv.conf)
