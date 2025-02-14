@@ -220,7 +220,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
     };
   }, []);
 
-  const handleMuteToggle = () => {
+  const handleSoloAudio = () => {
     const currentVolume = audioVolumeStore.getVolume(item.name) || 1;
     audioVolumeStore.muteAllAudioTags();
     audioVolumeStore.setVolume(item.name, currentVolume);
@@ -261,6 +261,8 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
             waveform.current?.seek(pos);
             waveform.current?.syncCursor();
           }}
+          handleSoloAudio={handleSoloAudio}
+          isSoloAudio={audioVolumeStore.isSoloAudio(item.name)}
           onSpeedChange={(speed) => controls.setRate(speed)}
           onZoom={(zoom) => controls.setZoom(zoom)}
           amp={controls.amp}
@@ -277,9 +279,6 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
           }}
           layerVisibility={controls.layerVisibility}
         />
-        <button type="button" onClick={handleMuteToggle}>
-          {audioVolumeStore.isSoloAudio(item.name) ? 'Solo Audio': 'Not Solo Audio'}
-        </button>
       </TimelineContextProvider>
     </Block>
   );

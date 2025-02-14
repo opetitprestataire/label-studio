@@ -189,6 +189,8 @@ export interface TimelineControlsProps {
   onZoom?: TimelineProps["onZoom"];
   onAmpChange?: (amp: number) => void;
   toggleVisibility?: (layerName: string, isVisible: boolean) => void;
+  handleSoloAudio: () => void;
+  isSoloAudio: boolean;
 }
 
 export interface TimelineCustomControls {

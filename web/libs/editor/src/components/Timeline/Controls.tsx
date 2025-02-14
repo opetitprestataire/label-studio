@@ -73,6 +73,8 @@ export const Controls: FC<TimelineControlsProps> = memo(
     toggleVisibility,
     layerVisibility,
     mediaType,
+    handleSoloAudio,
+    isSoloAudio,
     ...props
   }) => {
     const { settings } = useContext(TimelineContext);
@@ -133,6 +135,9 @@ export const Controls: FC<TimelineControlsProps> = memo(
             onSetModal={onSetVolumeModal}
             audioModal={audioModal}
           />
+          <ControlButton look={isSoloAudio ? "active" : undefined} onClick={handleSoloAudio}>
+            {isSoloAudio ? 'S' : 'M'}
+          </ControlButton>
         </Elem>
       );
     };
