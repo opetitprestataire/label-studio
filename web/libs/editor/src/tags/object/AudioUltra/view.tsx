@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import { type FC, useEffect, useMemo, useRef } from "react";
+import { types } from "mobx-state-tree";
 import { TimelineContextProvider } from "../../../components/Timeline/Context";
 import { Hotkey } from "../../../core/Hotkey";
 import { useWaveform } from "../../../lib/AudioUltra/react";
@@ -18,8 +19,57 @@ interface AudioUltraProps {
 
 const NORMALIZED_STEP = 0.1;
 
+// Create a MobX store to manage audio volumes
+const AudioVolumeStore = types.model("AudioVolumeStore", {
+  volumes: types.map(types.number), // Store volumes by audio name
+}).actions(self => ({
+  setVolume(audioName: string, volume: number) {
+    self.volumes.set(audioName, volume);
+  },
+  getVolume(audioName: string): number | undefined{
+    const volume = self.volumes.get(audioName)
+    return Number.isNaN(volume) ? 1 : Number(volume);
+  },
+  muteAllAudioTags() {
+    // Set all volumes to 0
+    self.volumes.forEach((volume, audioName) => {
+      self.volumes.set(audioName, 0);
+    });
+  },
+  isSoloAudio(name: string): boolean {
+    let unmutedCount = 0;
+    let isCurrentAudioUnmuted = false;
+
+    self.volumes.forEach((volume, audioName) => {
+      if (volume > 0) {
+        unmutedCount++;
+        if (audioName === name) {
+          isCurrentAudioUnmuted = true;
+        }
+      }
+    });
+
+    return unmutedCount === 1 && isCurrentAudioUnmuted;
+  }
+}));
+
+const audioVolumeStore = AudioVolumeStore.create({ volumes: {} });
+
 const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
   const rootRef = useRef<HTMLElement | null>();
+
+  // On mount, set the volume to the store
+  useEffect(() => {
+    audioVolumeStore.setVolume(item.name, 1);
+  }, []);
+
+  // Get the volume from the store
+  const itemVolume = audioVolumeStore.getVolume(item.name);
+
+  // When the volume changes, update the volume of the waveform
+  useEffect(() => {
+    controls.setVolume(Number.isNaN(Number(itemVolume)) ? 1 : Number(itemVolume))
+  }, [itemVolume])
 
   const { waveform, ...controls } = useWaveform(rootRef, {
     src: item._value,
@@ -30,12 +80,12 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
     backgroundColor: "#fafafa",
     autoCenter: true,
     zoomToCursor: true,
-    height: item.height && !isNaN(Number(item.height)) ? Number(item.height) : 96,
-    waveHeight: item.waveheight && !isNaN(Number(item.waveheight)) ? Number(item.waveheight) : 32,
+    height: item.height && !Number.isNaN(Number(item.height)) ? Number(item.height) : 96,
+    waveHeight: item.waveheight && !Number.isNaN(Number(item.waveheight)) ? Number(item.waveheight) : 32,
     splitChannels: item.splitchannels,
     decoderType: item.decoder,
     playerType: item.player,
-    volume: item.defaultvolume ? Number(item.defaultvolume) : 1,
+    volume: itemVolume,
     amp: item.defaultscale ? Number(item.defaultscale) : 1,
     zoom: item.defaultzoom ? Number(item.defaultzoom) : 1,
     showLabels: item.annotationStore.store.settings.showLabels,
@@ -63,6 +113,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
       item.setWFFrame(frameState);
     },
   });
+
 
   useEffect(() => {
     const hotkeys = Hotkey("Audio", "Audio Segmentation");
@@ -169,6 +220,12 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
     };
   }, []);
 
+  const handleSoloAudio = () => {
+    const currentVolume = audioVolumeStore.getVolume(item.name) || 1;
+    audioVolumeStore.muteAllAudioTags();
+    audioVolumeStore.setVolume(item.name, currentVolume);
+  }
+
   return (
     <Block name="audio-tag">
       {item.errors?.map((error: any, i: any) => (
@@ -184,14 +241,14 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
         <Controls
           position={controls.currentTime}
           playing={controls.playing}
-          volume={controls.volume}
+          volume={itemVolume}
           speed={controls.rate}
           zoom={controls.zoom}
           duration={controls.duration}
           onPlay={() => controls.setPlaying(true)}
           onPause={() => controls.setPlaying(false)}
           allowFullscreen={false}
-          onVolumeChange={(vol) => controls.setVolume(vol)}
+          onVolumeChange={(vol) => audioVolumeStore.setVolume(item.name, vol)}
           onStepBackward={() => {
             waveform.current?.seekBackward(NORMALIZED_STEP);
             waveform.current?.syncCursor();
@@ -204,6 +261,8 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
             waveform.current?.seek(pos);
             waveform.current?.syncCursor();
           }}
+          handleSoloAudio={handleSoloAudio}
+          isSoloAudio={audioVolumeStore.isSoloAudio(item.name)}
           onSpeedChange={(speed) => controls.setRate(speed)}
           onZoom={(zoom) => controls.setZoom(zoom)}
           amp={controls.amp}
