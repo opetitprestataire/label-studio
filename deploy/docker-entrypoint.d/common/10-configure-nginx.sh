@@ -8,7 +8,11 @@ mkdir -p "$OPT_DIR/nginx"
 \cp -f /etc/nginx/nginx.conf $NGINX_CONFIG
 
 echo >&3 "=> Configure system resolver..."
-echo resolver $(awk 'BEGIN{ORS=" "} $1=="nameserver" {print $2}' /etc/resolv.conf) ";" > $OPT_DIR/nginx/resolv.conf
+nameserver=$(awk 'BEGIN{ORS=" "} $1=="nameserver" {print $2}' /etc/resolv.conf)
+if [[ "$nameserver" =~ ":" ]]; then
+  nameserver="[$nameserver]"
+fi
+echo "resolver $nameserver;" > $OPT_DIR/nginx/resolv.conf
 
 if [ -n "${NGINX_SSL_CERT:-}" ]; then
   echo >&3 "=> Replacing nginx certs..."
