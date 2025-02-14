@@ -1,11 +1,10 @@
 import { type MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
-
 import { isTimeRelativelySimilar } from "../Common/Utils";
 import type { Layer } from "../Visual/Layer";
 import { Waveform, type WaveformFrameState, type WaveformOptions } from "../Waveform";
 
 export const useWaveform = (
-  containter: MutableRefObject<HTMLElement | null | undefined>,
+  container: MutableRefObject<HTMLElement | null | undefined>,
   options: Omit<WaveformOptions, "container"> & {
     onLoad?: (wf: Waveform) => void;
     onSeek?: (time: number) => void;
@@ -55,8 +54,10 @@ export const useWaveform = (
 
   useEffect(() => {
     const wf = new Waveform({
+      id: `waveform-${Math.random().toString(36).substring(2, 15)}`,
       ...(options ?? {}),
-      container: containter.current!,
+      container: container.current!,
+      playerType: "webaudio",
     });
 
     if (options?.autoLoad === undefined || options?.autoLoad) {
@@ -99,7 +100,6 @@ export const useWaveform = (
     wf.on("layersUpdated", (layers) => {
       const layersArray = [];
       const layerVis = new Map();
-
       for (const layer of layers.values()) {
         layersArray.push(layer);
         layerVis.set(layer.name, layer.isVisible);
@@ -117,7 +117,6 @@ export const useWaveform = (
 
   useEffect(() => {
     const wf = waveform.current;
-
     if (wf && wf.loaded) {
       wf.zoom = zoom;
     }
@@ -125,7 +124,6 @@ export const useWaveform = (
 
   useEffect(() => {
     const wf = waveform.current;
-
     if (wf && wf.loaded) {
       wf.volume = volume;
     }
@@ -133,7 +131,6 @@ export const useWaveform = (
 
   useEffect(() => {
     const wf = waveform.current;
-
     if (wf && wf.loaded) {
       wf.rate = rate;
     }
@@ -141,7 +138,6 @@ export const useWaveform = (
 
   useEffect(() => {
     const wf = waveform.current;
-
     if (wf && wf.loaded) {
       wf.amp = amp;
     }

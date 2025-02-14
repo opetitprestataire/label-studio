@@ -23,7 +23,6 @@ export abstract class Player extends Destructable {
 
   constructor(wf: Waveform) {
     super();
-
     this.wf = wf;
     this._rate = wf.params.rate ?? this._rate;
     this.volume = wf.params.volume ?? this._volume;
@@ -44,11 +43,8 @@ export abstract class Player extends Destructable {
 
   setCurrentTime(value: number, notify = false) {
     const timeChanged = this.time !== value;
-
     this.time = value;
-
     this.updateCurrentSourceTime(timeChanged);
-
     if (notify && timeChanged) {
       this.wf.invoke("seek", [this.time]);
     }
@@ -66,7 +62,6 @@ export abstract class Player extends Destructable {
 
   set volume(value: number) {
     const volumeChanged = this.volume !== value;
-
     if (volumeChanged) {
       if (value === 0) {
         this.muted = true;
@@ -76,7 +71,6 @@ export abstract class Player extends Destructable {
         this._volume = value;
       }
       this.adjustVolume();
-
       this.wf.invoke("volumeChanged", [this.volume]);
     }
   }
@@ -89,13 +83,11 @@ export abstract class Player extends Destructable {
 
   set muted(muted: boolean) {
     if (this.muted === muted) return;
-
     if (muted) {
       this.mute();
     } else {
       this.unmute();
     }
-
     this.wf.invoke("muted", [this.muted]);
   }
 
@@ -105,24 +97,16 @@ export abstract class Player extends Destructable {
   }
 
   unmute() {
-    this._volume = this._savedVolume || 1; // 1 is the default volume, if manually muted this will be 0 and we want to restore to 1
+    this._volume = this._savedVolume || 1;
   }
 
-  /**
-   * Get current playback speed
-   */
   get rate() {
     return this._rate;
   }
 
-  /**
-   * Set playback speed
-   */
   set rate(value: number) {
     const rateChanged = this._rate !== value;
-
     this._rate = value;
-
     if (rateChanged) {
       this.wf.invoke("rateChanged", [value]);
     }
@@ -139,9 +123,7 @@ export abstract class Player extends Destructable {
 
   seek(time: number) {
     const newTime = clamp(time, 0, this.duration);
-
     this.currentTime = newTime;
-
     if (this.playing) {
       this.updatePlayback();
     }
@@ -149,10 +131,8 @@ export abstract class Player extends Destructable {
 
   seekSilent(time: number) {
     const newTime = clamp(time, 0, this.duration);
-
     this.ended = false;
     this.setCurrentTime(newTime);
-
     if (this.playing) {
       this.updatePlayback();
     }
@@ -164,7 +144,6 @@ export abstract class Player extends Destructable {
       this.currentTime = from ?? 0;
     }
     const { start, end } = this.playSelection(from, to);
-
     this.playRange(start, end);
   }
 
@@ -219,7 +198,6 @@ export abstract class Player extends Destructable {
 
   protected updatePlayback() {
     const { start, end } = this.playSelection();
-
     this.playSource(start, end);
   }
 
@@ -234,20 +212,15 @@ export abstract class Player extends Destructable {
   protected playSource(start?: number, duration?: number) {
     this.stopWatch();
     this.connectSource();
-
     if (!this.audio) return;
-
     this.playing = true;
-
     if (this.loop) {
       if (this.currentTime < this.loop.start || this.currentTime > this.loop.end) {
         this.currentTime = this.loop.start;
       }
-
       duration = clamp(this.loop.end, 0, this.duration);
       start = clamp(this.loop.start, 0, duration);
     }
-
     this.playAudio(start, duration);
   }
 
@@ -255,34 +228,22 @@ export abstract class Player extends Destructable {
 
   protected playSelection(from?: number, to?: number) {
     const selected = this.wf.regions.selected;
-
     const looping = selected.length > 0;
-
     if (looping) {
       const regionsStart = Math.min(...selected.map((r) => r.start));
       const regionsEnd = Math.max(...selected.map((r) => r.end));
-
       const start = clamp(this.currentTime, regionsStart, regionsEnd);
-
       this.loop = { start: regionsStart, end: regionsEnd };
-
-      return {
-        start,
-        end: regionsEnd,
-      };
+      return { start, end: regionsEnd };
     }
     const start = from ?? this.currentTime;
     const end = to !== undefined ? to - start : undefined;
-
     return { start, end };
   }
 
   protected connectSource() {
     if (this.isDestroyed || !this.audio || this.connected) return;
     this.connected = true;
-
-    // Control pausing playback with checks to whether the audio has been asynchronously played already
-    // This is to prevent DomException: The play() request was interrupted by a call to pause()
     if (this.canPause()) {
       this.audio.disconnect();
     }
@@ -291,13 +252,9 @@ export abstract class Player extends Destructable {
   protected disconnectSource(): boolean {
     if (this.isDestroyed || !this.audio || !this.connected) return false;
     this.connected = false;
-
-    // Control pausing playback with checks to whether the audio has been asynchronously played already
-    // This is to prevent DomException: The play() request was interrupted by a call to pause()
     if (this.canPause()) {
       this.audio.disconnect();
     }
-
     return true;
   }
 
@@ -310,10 +267,8 @@ export abstract class Player extends Destructable {
 
   protected watch = () => {
     if (!this.playing) return;
-
     this.updateCurrentTime();
     this.updateLoop(this.time);
-
     this.timer = requestAnimationFrame(this.watch);
   };
 
@@ -327,17 +282,13 @@ export abstract class Player extends Destructable {
   }
 
   protected updateCurrentTime(forceEnd = false) {
+    console.log("updateCurrentTime", this.wf.id);
     const now = performance.now();
     const tick = ((now - this.timestamp) / 1000) * this.rate;
-
     this.timestamp = now;
-
     const end = this.loop?.end ?? this.duration;
-
     const newTime = forceEnd ? this.duration : clamp(this.time + tick, 0, end);
-
     this.time = newTime;
-
     if (!this.loop && this.time >= this.duration - tick) {
       this.time = this.duration;
       this.wf.invoke("playing", [this.duration]);

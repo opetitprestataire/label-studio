@@ -94,7 +94,6 @@ export class WaveformAudio extends Events<WaveformAudioEvents> {
 
   get chunks(): Float32Array[][] | undefined {
     if (!this.decoder) return;
-
     return this.decoder.chunks;
   }
 
@@ -121,59 +120,46 @@ export class WaveformAudio extends Events<WaveformAudioEvents> {
 
   async initDecoder(arraybuffer?: ArrayBuffer) {
     if (!this.decoder) return;
-
     if (!this.decoderPromise && arraybuffer) {
       this.decoderPromise = this.decoder.init(arraybuffer);
     }
-
     return this.decoderPromise;
   }
 
   async decodeAudioData(options: { multiChannel?: boolean; captureAudioBuffer?: boolean } = {}) {
     if (!this.decoder) return;
-
     // need to capture the actual AudioBuffer from the decoder
     // so we can use it in the audio element
     options.captureAudioBuffer = this.playerType === "webaudio";
-
     const buffer = await this.decoder.decode(options);
-
     if (options.captureAudioBuffer && buffer) {
       this.buffer = buffer;
     }
-
     return;
   }
 
   private createMediaElement() {
     if (!this.src || this.el || this.playerType !== "html5") return;
-
     this.el = document.createElement("audio");
     this.el.preload = "auto";
     this.el.setAttribute("data-testid", "waveform-audio");
     this.el.style.display = "none";
-
     if (isFF(FF_LSDV_4711)) this.el.crossOrigin = "anonymous";
-
     document.body.appendChild(this.el);
-
     this.mediaPromise = new Promise((resolve, reject) => {
       this.mediaResolve = resolve;
       this.mediaReject = reject;
     });
-
     this.el.addEventListener("canplaythrough", this.mediaReady);
     this.el.addEventListener("error", this.mediaError);
     this.loadMedia();
   }
 
   mediaError = () => {
-    // If this source has already loaded, we will retry the source url
     if (isFF(FF_LSDV_4711) && this.hasLoadedSource && this.el) {
       this.hasLoadedSource = false;
       this.invoke("resetSource");
     } else {
-      // otherwise it's an unrecoverable error
       this.mediaReject?.(this.el?.error);
     }
   };
@@ -183,25 +169,18 @@ export class WaveformAudio extends Events<WaveformAudioEvents> {
       this.mediaResolve?.();
       this.mediaResolve = undefined;
     }
-
     this.hasLoadedSource = true;
     this.invoke("canplay");
   };
 
-  /**
-   * Load the media element with the audio source and begin an initial playback buffer
-   */
   private loadMedia() {
     if (!this.src || !this.el) return;
-
     this.el.src = this.src;
   }
 
   private createAudioDecoder() {
     if (!this.src || this.decoder) return;
-
     this.decoder = audioDecoderPool.getDecoder(this.src, this.splitChannels, this.decoderType);
-
     this.decoder.on("progress", (chunk, total) => {
       this.invoke("decodingProgress", [chunk, total]);
     });
