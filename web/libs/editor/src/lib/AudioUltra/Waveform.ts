@@ -15,6 +15,8 @@ import type { PlayheadOptions } from "./Visual/PlayHead";
 import type { Layer } from "./Visual/Layer";
 
 export interface WaveformOptions {
+  id: string;
+
   /** URL of an audio or video */
   src: string;
 
@@ -194,6 +196,7 @@ export class Waveform extends Events<WaveformEventTypes> {
   private timeline!: Timeline;
   private focusTimeout: any = null;
 
+  id: string;
   tooltip!: Tooltip;
   cursor!: Cursor;
   player!: Player;
@@ -202,6 +205,7 @@ export class Waveform extends Events<WaveformEventTypes> {
   loaded = false;
   renderedChannels = false;
   autoPlayNewSegments = false;
+
 
   constructor(params: WaveformOptions) {
     super();
@@ -217,6 +221,7 @@ export class Waveform extends Events<WaveformEventTypes> {
 
     this.src = params.src;
     this.params = params;
+    this.id = params.id;
 
     this.init();
   }
