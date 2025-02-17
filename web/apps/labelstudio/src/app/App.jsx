@@ -20,6 +20,8 @@ import { FF_OPTIC_2, FF_UNSAVED_CHANGES, FF_PRODUCT_TOUR, isFF } from "../utils/
 import { TourProvider } from "@humansignal/core";
 import { ToastProvider, ToastViewport } from "@humansignal/ui";
 import { CurrentUserProvider } from "../providers/CurrentUser";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { LSQueryClient } from "../utils/query-client";
 
 const baseURL = new URL(APP_SETTINGS.hostname || location.origin);
 export const UNBLOCK_HISTORY_MESSAGE = "UNBLOCK_HISTORY";
@@ -57,6 +59,7 @@ const App = ({ content }) => {
       <Router history={browserHistory}>
         <MultiProvider
           providers={[
+            <QueryClientProvider client={LSQueryClient} key="query" />,
             <AppStoreProvider key="app-store" />,
             <ApiProvider key="api" />,
             <ConfigProvider key="config" />,

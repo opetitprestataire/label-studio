@@ -1,45 +1,92 @@
-import { useEffect, useState } from "react";
-import { ToastType, useToast } from "@humansignal/ui";
 import { format } from "date-fns";
 import styles from "./MembershipInfo.module.scss";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * FIXME: This is legacy imports. We're not supposed to use such statements
  * each one of these eventually has to be migrated to core/ui
  */
 import { useCurrentUser } from "/apps/labelstudio/src/providers/CurrentUser";
-import { useAPI } from "/apps/labelstudio/src/providers/ApiProvider";
+import { API } from "apps/labelstudio/src/providers/ApiProvider";
+import { useMemo } from "react";
 
 export const MembershipInfo = () => {
-  const api = useAPI();
-  const toast = useToast();
   const { user } = useCurrentUser();
-  const [registrationDate, setRegistrationDate] = useState<string | null>(null);
-  const [annotationsCount, setAnnotationsCount] = useState<number | null>(null);
-  const [projectsContributedTo, setProjectsContributedTo] = useState<number | null>(null);
+  const dateJoined = useMemo(() => {
+    if (!user?.date_joined) return null;
+    return format(new Date(user?.date_joined), "dd MMM yyyy, KK:mm a");
+  }, [user?.date_joined]);
+  console.log("====================");
 
-  useEffect(() => {
-    if (!user) return;
-    api
-      .callApi("userMemberships", {
-        params: {
-          pk: user.active_organization,
-          userPk: user.id,
-        },
-      })
-      .then((response: any) => {
-        if (response?.$meta?.ok) {
-          setRegistrationDate(format(new Date(response?.created_at), "dd MMM yyyy, KK:mm a"));
-          setAnnotationsCount(response?.annotations_count);
-          setProjectsContributedTo(response?.contributed_projects_count);
-        } else {
-          toast.show({
-            message: "Failed to fetch membership info",
-            type: ToastType.error,
-          });
-        }
+  const membership = useQuery({
+    queryKey: [user?.active_organization, user?.id, "user-membership"],
+    async queryFn() {
+      if (!user) return {};
+      console.log("loading membership");
+      const response = await API.invoke("userMemberships", {
+        pk: user.active_organization,
+        userPk: user.id,
       });
-  }, [user?.id]);
+
+      console.log("user", response);
+
+      const registrationDate = format(new Date(response?.created_at), "dd MMM yyyy, KK:mm a");
+      const annotationCount = response?.annotations_count;
+      const contributions = response?.contributed_projects_count;
+
+      return {
+        registrationDate,
+        annotationCount,
+        contributions,
+      };
+    },
+  });
+
+  const organization = useQuery({
+    queryKey: ["organization", user?.active_organization],
+    async queryFn() {
+      if (!user) return null;
+      if (!window.APP_SETTINGS.billing) return null;
+      const organization = await API.invoke("organization", {
+        pk: user.active_organization,
+      });
+      let role = "Owner";
+      console.log("org", organization);
+
+      switch (organization.userRole) {
+        case "OW":
+          role = "Owner";
+          break;
+        case "DI":
+          role = "Deactivated";
+          break;
+        case "AD":
+          role = "Administrator";
+          break;
+        case "MA":
+          role = "Manager";
+          break;
+        case "AN":
+          role = "Annotator";
+          break;
+        case "RE":
+          role = "Reviewer";
+          break;
+        case "NO":
+          role = "Pending";
+          break;
+      }
+
+      if (organization) {
+        return {
+          role,
+          title: organization.title,
+        };
+      }
+
+      return null;
+    },
+  });
 
   return (
     <div className={styles.membershipInfo} id="membership-info">
@@ -50,46 +97,52 @@ export const MembershipInfo = () => {
 
       <div className="flex gap-2 w-full justify-between">
         <div>Registration date</div>
-        <div>{registrationDate}</div>
+        <div>{dateJoined}</div>
       </div>
 
-      <div className="flex gap-2 w-full justify-between">
-        <div>Annotations submitted</div>
-        <div>{annotationsCount}</div>
-      </div>
-
-      <div className="flex gap-2 w-full justify-between">
-        <div>Projects contributed to</div>
-        <div>{projectsContributedTo}</div>
-      </div>
+      {/* <div className="flex gap-2 w-full justify-between"> */}
+      {/*   <div>Annotations submitted</div> */}
+      {/*   <div>{membership.data?.annotationCount}</div> */}
+      {/* </div> */}
+      {/**/}
+      {/* <div className="flex gap-2 w-full justify-between"> */}
+      {/*   <div>Projects contributed to</div> */}
+      {/*   <div>{membership.data?.contributions}</div> */}
+      {/* </div> */}
 
       <div className={styles.divider} />
 
-      <div className="flex gap-2 w-full justify-between">
-        <div>Organization</div>
-        <div>
-          <a href="/organization">{user?.email}</a>
+      {organization.data && (
+        <div className="flex gap-2 w-full justify-between">
+          <div>Organization</div>
+          <div>
+            <a href="/organization">{organization.data.title}</a>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="flex gap-2 w-full justify-between">
-        <div>My role</div>
-        <div>Owner</div>
-      </div>
+      {organization.data?.role && (
+        <div className="flex gap-2 w-full justify-between">
+          <div>My role</div>
+          <div>{organization.data.role}</div>
+        </div>
+      )}
 
       <div className="flex gap-2 w-full justify-between">
         <div>Organization ID</div>
         <div>{user?.active_organization}</div>
       </div>
 
-      <div className="flex gap-2 w-full justify-between">
-        <div>Owner</div>
-        <div>{user?.email}</div>
-      </div>
+      {organization.data && (
+        <div className="flex gap-2 w-full justify-between">
+          <div>Owner</div>
+          <div>{organization.data.title}</div>
+        </div>
+      )}
 
       <div className="flex gap-2 w-full justify-between">
         <div>Created</div>
-        <div>{registrationDate}</div>
+        <div>{membership.data?.registrationDate}</div>
       </div>
     </div>
   );
