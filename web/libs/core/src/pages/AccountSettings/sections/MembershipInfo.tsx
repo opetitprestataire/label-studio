@@ -51,7 +51,6 @@ export const MembershipInfo = () => {
         pk: user.active_organization,
       });
       let role = "Owner";
-      console.log("org", organization);
 
       switch (organization.userRole) {
         case "OW":
