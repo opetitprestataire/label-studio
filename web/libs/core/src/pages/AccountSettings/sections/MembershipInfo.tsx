@@ -10,11 +10,15 @@ import { useCurrentUser } from "/apps/labelstudio/src/providers/CurrentUser";
 import { API } from "apps/labelstudio/src/providers/ApiProvider";
 import { useMemo } from "react";
 
+function formatDate(date?: string) {
+  return format(new Date(date ?? ""), "dd MMM yyyy, KK:mm a");
+}
+
 export const MembershipInfo = () => {
   const { user } = useCurrentUser();
   const dateJoined = useMemo(() => {
     if (!user?.date_joined) return null;
-    return format(new Date(user?.date_joined), "dd MMM yyyy, KK:mm a");
+    return formatDate(user?.date_joined);
   }, [user?.date_joined]);
 
   const membership = useQuery({
@@ -26,7 +30,7 @@ export const MembershipInfo = () => {
         userPk: user.id,
       });
 
-      const registrationDate = format(new Date(response?.created_at), "dd MMM yyyy, KK:mm a");
+      const registrationDate = formatDate(response?.created_at);
       const annotationCount = response?.annotations_count;
       const contributions = response?.contributed_projects_count;
 
@@ -95,7 +99,6 @@ export const MembershipInfo = () => {
         <div>Registration date</div>
         <div>{dateJoined}</div>
       </div>
-
 
       <div className={styles.divider} />
 
