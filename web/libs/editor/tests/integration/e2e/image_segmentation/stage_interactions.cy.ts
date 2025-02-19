@@ -77,15 +77,18 @@ describe("Image Segmentation Stage Interactions", () => {
     ImageView.clickAtRelative(0.9, 0.5);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
     // drag and drop
     ImageView.drawRectRelative(0.8, 0.4, 0.1, 0.2);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
     // dblclick
     ImageView.clickAtRelative(0.8, 0.4);
     ImageView.clickAtRelative(0.8, 0.4);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
 
     ImageView.selectEllipseToolByButton();
     // two clicks
@@ -93,15 +96,18 @@ describe("Image Segmentation Stage Interactions", () => {
     ImageView.clickAtRelative(0.9, 0.5);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
     // drag and drop
     ImageView.drawRectRelative(0.8, 0.4, 0.1, 0.2);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
     // dblclick
     ImageView.clickAtRelative(0.8, 0.4);
     ImageView.clickAtRelative(0.8, 0.4);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
 
     ImageView.selectPolygonToolByButton();
     // draw triangle
@@ -117,26 +123,31 @@ describe("Image Segmentation Stage Interactions", () => {
     ImageView.clickAtRelative(0.8, 0.4);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
     // dblclick
     ImageView.clickAtRelative(0.8, 0.4);
     ImageView.clickAtRelative(0.8, 0.4);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
 
     ImageView.selectKeypointToolByButton();
     // click
     ImageView.clickAtRelative(0.8, 0.4);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
 
     ImageView.selectLineToolByButton();
     // click
     ImageView.clickAtRelative(0.8, 0.4);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
     // draw
     ImageView.drawRectRelative(0.8, 0.4, 0.1, 0.2);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
+    Sidebar.hasRegions(0);
   });
 });
