@@ -30,7 +30,7 @@ const _Tool = types
   .actions((self) => ({
     clickEv(ev, [x, y]) {
       if (!self.canStartDrawing()) return;
-      if (!self.inStage(ev)) return;
+      if (!self.isAllowedInteraction(ev)) return;
 
       const c = self.control;
 

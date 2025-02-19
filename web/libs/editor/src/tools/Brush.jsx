@@ -167,6 +167,7 @@ const _Tool = types
       },
 
       mousemoveEv(ev, _, [x, y]) {
+        if (!self.isAllowedInteraction(ev)) return;
         if (self.mode !== "drawing") return;
         if (
           !findClosestParent(
@@ -181,7 +182,7 @@ const _Tool = types
       },
 
       mousedownEv(ev, _, [x, y]) {
-        if (!self.inStage(ev)) return;
+        if (!self.isAllowedInteraction(ev)) return;
         if (
           !findClosestParent(
             ev.target,
