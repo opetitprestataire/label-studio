@@ -21,7 +21,6 @@ export const MembershipInfo = () => {
     queryKey: [user?.active_organization, user?.id, "user-membership"],
     async queryFn() {
       if (!user) return {};
-      console.log("loading membership");
       const response = await API.invoke("userMemberships", {
         pk: user.active_organization,
         userPk: user.id,
