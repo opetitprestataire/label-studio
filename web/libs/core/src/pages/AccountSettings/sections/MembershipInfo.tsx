@@ -26,8 +26,6 @@ export const MembershipInfo = () => {
         userPk: user.id,
       });
 
-      console.log("user", response);
-
       const registrationDate = format(new Date(response?.created_at), "dd MMM yyyy, KK:mm a");
       const annotationCount = response?.annotations_count;
       const contributions = response?.contributed_projects_count;
