@@ -16,7 +16,6 @@ export const MembershipInfo = () => {
     if (!user?.date_joined) return null;
     return format(new Date(user?.date_joined), "dd MMM yyyy, KK:mm a");
   }, [user?.date_joined]);
-  console.log("====================");
 
   const membership = useQuery({
     queryKey: [user?.active_organization, user?.id, "user-membership"],
