@@ -46,7 +46,7 @@ export const MembershipInfo = () => {
     queryKey: ["organization", user?.active_organization],
     async queryFn() {
       if (!user) return null;
-      if (!window.APP_SETTINGS.billing) return null;
+      if (!window?.APP_SETTINGS?.billing) return null;
       const organization = await API.invoke("organization", {
         pk: user.active_organization,
       });
