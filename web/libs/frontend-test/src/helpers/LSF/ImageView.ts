@@ -119,7 +119,7 @@ export const ImageView = {
     if (autoclose) {
       points = [...points, points[0]];
     }
-    points.forEach((point, index) => {
+    points.forEach((point, _index) => {
       drawingArea
         .trigger("mousemove", point[0], point[1], { eventConstructor: "MouseEvent", ...options })
         .trigger("mousedown", point[0], point[1], { eventConstructor: "MouseEvent", buttons: 1, ...options })
@@ -196,6 +196,18 @@ export const ImageView = {
 
   selectPolygonToolByButton() {
     this.toolBar.find('[aria-label="polygon-tool"]').should("be.visible").click().should("have.class", "lsf-tool");
+  },
+
+  selectKeypointToolByButton() {
+    this.toolBar
+      .find('[aria-label="key-point-tool"]')
+      .should("be.visible")
+      .click()
+      .should("have.class", "lsf-tool_active");
+  },
+
+  selectLineToolByButton() {
+    this.toolBar.find('[aria-label="brush-tool"]').should("be.visible").click().should("have.class", "lsf-tool_active");
   },
 
   selectMoveToolByButton() {
