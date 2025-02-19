@@ -113,6 +113,7 @@ describe("Image Segmentation Stage Interactions", () => {
       ],
       false,
     );
+    cy.wait(32); // Two frames to be sure
     ImageView.clickAtRelative(0.8, 0.4);
     Sidebar.hasRegions(1);
     Hotkeys.undo();
