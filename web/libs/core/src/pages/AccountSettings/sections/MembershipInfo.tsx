@@ -96,15 +96,6 @@ export const MembershipInfo = () => {
         <div>{dateJoined}</div>
       </div>
 
-      {/* <div className="flex gap-2 w-full justify-between"> */}
-      {/*   <div>Annotations submitted</div> */}
-      {/*   <div>{membership.data?.annotationCount}</div> */}
-      {/* </div> */}
-      {/**/}
-      {/* <div className="flex gap-2 w-full justify-between"> */}
-      {/*   <div>Projects contributed to</div> */}
-      {/*   <div>{membership.data?.contributions}</div> */}
-      {/* </div> */}
 
       <div className={styles.divider} />
 
