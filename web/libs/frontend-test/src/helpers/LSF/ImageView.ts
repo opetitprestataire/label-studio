@@ -206,7 +206,7 @@ export const ImageView = {
       .should("have.class", "lsf-tool_active");
   },
 
-  selectLineToolByButton() {
+  selectBrushToolByButton() {
     this.toolBar.find('[aria-label="brush-tool"]').should("be.visible").click().should("have.class", "lsf-tool_active");
   },
 

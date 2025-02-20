@@ -54,7 +54,7 @@ describe("Image Segmentation Stage Interactions", () => {
     // click
     ImageView.clickAtRelative(1.1, 0.4);
 
-    ImageView.selectLineToolByButton();
+    ImageView.selectBrushToolByButton();
     // click
     ImageView.clickAtRelative(1.1, 0.4);
     // draw
@@ -63,7 +63,7 @@ describe("Image Segmentation Stage Interactions", () => {
     Sidebar.hasRegions(0);
   });
 
-  it("should be able to draw outside of initial image boundaries after zoom", () => {
+  it("should be able to draw outside of initial image boundaries after zoom (Rectangle)", () => {
     LabelStudio.params().config(imageToolsConfig).data(imageData).withResult([]).init();
     LabelStudio.waitForObjectsReady();
 
@@ -73,81 +73,92 @@ describe("Image Segmentation Stage Interactions", () => {
 
     ImageView.selectRectangleToolByButton();
     // two clicks
-    ImageView.clickAtRelative(0.8, 0.4);
-    ImageView.clickAtRelative(0.9, 0.5);
+    ImageView.clickAtRelative(0.8, 0.1);
+    ImageView.clickAtRelative(0.9, 0.2);
     Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
     // drag and drop
-    ImageView.drawRectRelative(0.8, 0.4, 0.1, 0.2);
-    Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
+    ImageView.drawRectRelative(0.8, 0.3, 0.1, 0.1);
+    Sidebar.hasRegions(2);
     // dblclick
-    ImageView.clickAtRelative(0.8, 0.4);
-    ImageView.clickAtRelative(0.8, 0.4);
-    Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
+    ImageView.clickAtRelative(0.8, 0.5);
+    ImageView.clickAtRelative(0.8, 0.5);
+    Sidebar.hasRegions(3);
+  });
+  it("should be able to draw outside of initial image boundaries after zoom (Ellipse)", () => {
+    LabelStudio.params().config(imageToolsConfig).data(imageData).withResult([]).init();
+    LabelStudio.waitForObjectsReady();
+
+    for (let i = 0; i < 10; i++) {
+      ImageView.zoomInWithHotkey();
+    }
 
     ImageView.selectEllipseToolByButton();
     // two clicks
-    ImageView.clickAtRelative(0.8, 0.4);
-    ImageView.clickAtRelative(0.9, 0.5);
+    ImageView.clickAtRelative(0.8, 0.1);
+    ImageView.clickAtRelative(0.9, 0.2);
     Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
     // drag and drop
-    ImageView.drawRectRelative(0.8, 0.4, 0.1, 0.2);
-    Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
+    ImageView.drawRectRelative(0.8, 0.3, 0.1, 0.1);
+    Sidebar.hasRegions(2);
     // dblclick
-    ImageView.clickAtRelative(0.8, 0.4);
-    ImageView.clickAtRelative(0.8, 0.4);
-    Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
+    ImageView.clickAtRelative(0.8, 0.5);
+    ImageView.clickAtRelative(0.8, 0.5);
+    Sidebar.hasRegions(3);
+  });
+  it("should be able to draw outside of initial image boundaries after zoom (Polygon)", () => {
+    LabelStudio.params().config(imageToolsConfig).data(imageData).withResult([]).init();
+    LabelStudio.waitForObjectsReady();
+
+    for (let i = 0; i < 10; i++) {
+      ImageView.zoomInWithHotkey();
+    }
 
     ImageView.selectPolygonToolByButton();
     // draw triangle
     ImageView.drawPolygonRelative(
       [
-        [0.8, 0.4],
-        [0.9, 0.5],
-        [0.8, 0.6],
+        [0.8, 0.1],
+        [0.9, 0.2],
+        [0.8, 0.3],
       ],
       false,
     );
     cy.wait(32); // Two frames to be sure
-    ImageView.clickAtRelative(0.8, 0.4);
+    ImageView.clickAtRelative(0.8, 0.1);
     Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
     // dblclick
     ImageView.clickAtRelative(0.8, 0.4);
     ImageView.clickAtRelative(0.8, 0.4);
-    Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
+    Sidebar.hasRegions(2);
+  });
+  it("should be able to draw outside of initial image boundaries after zoom (KeyPoint)", () => {
+    LabelStudio.params().config(imageToolsConfig).data(imageData).withResult([]).init();
+    LabelStudio.waitForObjectsReady();
+
+    for (let i = 0; i < 10; i++) {
+      ImageView.zoomInWithHotkey();
+    }
 
     ImageView.selectKeypointToolByButton();
     // click
     ImageView.clickAtRelative(0.8, 0.4);
     Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
+  });
+  it("should be able to draw outside of initial image boundaries after zoom (Brush)", () => {
+    LabelStudio.params().config(imageToolsConfig).data(imageData).withResult([]).init();
+    LabelStudio.waitForObjectsReady();
 
-    ImageView.selectLineToolByButton();
+    for (let i = 0; i < 10; i++) {
+      ImageView.zoomInWithHotkey();
+    }
+
+    ImageView.selectBrushToolByButton();
     // click
-    ImageView.clickAtRelative(0.8, 0.4);
+    ImageView.clickAtRelative(0.8, 0.1);
     Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
     // draw
+    Hotkeys.unselectAllRegions();
     ImageView.drawRectRelative(0.8, 0.4, 0.1, 0.2);
-    Sidebar.hasRegions(1);
-    Hotkeys.undo();
-    Sidebar.hasRegions(0);
+    Sidebar.hasRegions(2);
   });
 });
