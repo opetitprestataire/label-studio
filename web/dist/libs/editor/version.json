@@ -1,6 +1,6 @@
 {
-  "message": "fix: DIA-1934: [FE] Popup warning is missing when user clicks 'Revoke' button on account settings page (#7107)",
-  "commit": "eb02f558db42615af21c65514fa631efb55b0b3c",
-  "date": "2025-02-20T12:12:40.000Z",
+  "message": "fix: OPTIC-1709: Ensure checks for feature flag enablement are done correctly (#7121)",
+  "commit": "459ffbf8e7a133c938453ae21b689dd28280b5ea",
+  "date": "2025-02-20T22:35:54.000Z",
   "branch": "develop"
 }
