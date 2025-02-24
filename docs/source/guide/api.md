@@ -35,7 +35,7 @@ You must retrieve your access token so that you can authenticate to the API.
 
 1. In the Label Studio UI, click the user icon in the upper right.
 2. Click **Account & Settings**.
-3. Copy the access token. 
+3. Copy the access token. For more information, see [Access tokens](access_tokens). 
 
 In your first API call, specify the access token in the headers: 
 ```bash
