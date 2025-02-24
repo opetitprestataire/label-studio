@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1709: Ensure checks for feature flag enablement are done correctly (#7121)",
-  "commit": "459ffbf8e7a133c938453ae21b689dd28280b5ea",
-  "date": "2025-02-20T22:35:54.000Z",
+  "message": "fix: DIA-1916: [FE] User is NOT able to upload profile image on new account page (#7106)",
+  "commit": "9215ad62f05c8c3e36b46a2adf4d04d8ab1a41aa",
+  "date": "2025-02-24T11:55:34.000Z",
   "branch": "develop"
 }
