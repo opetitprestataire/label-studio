@@ -109,7 +109,7 @@ From the **Organization** page, click **Access Token Settings** in the upper rig
 
 From here you can enable and disable token types. 
 
-* When a certain token type is disabled, existing tokens are not be able to authenticate to the Label Studio platform. 
+* When a certain token type is disabled, existing tokens will not be able to authenticate to the Label Studio platform. 
 
 * Use the Personal Access Token Time-to-Live to set an expiration date for personal access tokens. This is only available for Label Studio Enterprise users. 
 
@@ -119,6 +119,6 @@ From here you can enable and disable token types.
 
 ## Finding your access token
 
-You can find your access token from your [**Account & Settings** page](user_account) (click your username in the upper right in Label Studio). 
+You can create/manage your access token from your [**Account & Settings** page](user_account) (click your username in the upper right in Label Studio). 
 
 
