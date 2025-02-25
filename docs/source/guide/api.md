@@ -39,19 +39,8 @@ You must retrieve your access token so that you can authenticate to the API.
 
 In your first API call, specify the access token in the headers: 
 ```bash
-curl -X <method> <Label Studio URL>/api/<endpoint> -H 'Authorization: Token <token>'
+curl -X <method> <Label Studio URL>/api/<endpoint> -H 'Authorization: Bearer <token>'
 ```
-
-<div class="opensource-only">
-
-You can also retrieve the access token using the command line. 
-1. From the command line, run the following: 
-```bash
-label-studio user --username <username>
-```
-2. In the output returned in your terminal, the token for the user is listed as part of the user info.  
-
-</div>
 
 See [API documentation for authentication](https://api.labelstud.io/api-reference/introduction/getting-started#authentication).
 

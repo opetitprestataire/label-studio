@@ -11,7 +11,7 @@ section: "Manage Your Organization"
 date: 2025-02-18 12:03:59
 ---
 
-Label Studio has personal access tokens and legacy tokens. The options available to users are set at the Organization level. See BLANK below. 
+Label Studio has personal access tokens and legacy tokens. The options available to users are set at the Organization level. Se [Access settings for orgs](#Access-token-settings-for-orgs) below. 
 
 <table>
 <thead>
@@ -92,7 +92,19 @@ Use this access token by including it in your API requests via the Authorization
 Authorization: Bearer your-new-access-token
 ```
 
-When that access token expires you’ll get a 401 response, and will need to use your personal access token again to acquire a new one. This adds an extra layer of security.
+When that access token expires (after around 5 minutes) you’ll get a 401 response, and will need to use your personal access token again to acquire a new one. This adds an extra layer of security.
+
+You can also check when the token is set to expire using the following script:
+
+```python
+# pip install pyjwt
+from datetime import datetime, timezone
+import jwt
+
+decoded = jwt.decode(token)
+exp = decoded.get("exp")
+token_is_expired = (exp <= datetime.now(timezone.utc).timestamp())
+```
 
 ## Access token settings for orgs
 
