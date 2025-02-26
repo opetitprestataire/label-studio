@@ -33,26 +33,9 @@ export const MembershipInfo = () => {
       const registrationDate = formatDate(response?.created_at);
       const annotationCount = response?.annotations_count;
       const contributions = response?.contributed_projects_count;
-
-      return {
-        registrationDate,
-        annotationCount,
-        contributions,
-      };
-    },
-  });
-
-  const organization = useQuery({
-    queryKey: ["organization", user?.active_organization],
-    async queryFn() {
-      if (!user) return null;
-      if (!window?.APP_SETTINGS?.billing) return null;
-      const organization = await API.invoke("organization", {
-        pk: user.active_organization,
-      });
       let role = "Owner";
 
-      switch (organization.userRole) {
+      switch (response.role) {
         case "OW":
           role = "Owner";
           break;
@@ -76,14 +59,25 @@ export const MembershipInfo = () => {
           break;
       }
 
-      if (organization) {
-        return {
-          role,
-          title: organization.title,
-        };
-      }
+      return {
+        registrationDate,
+        annotationCount,
+        contributions,
+        role,
+      };
+    },
+  });
 
-      return null;
+  const organization = useQuery({
+    queryKey: ["organization", user?.active_organization],
+    async queryFn() {
+      if (!user) return null;
+      if (!window?.APP_SETTINGS?.billing) return null;
+      const organization = await API.invoke("organization", {
+        pk: user.active_organization,
+      });
+
+      return organization ? { ...organization, createdAt: formatDate(organization.created_at) } : null;
     },
   });
 
@@ -99,9 +93,19 @@ export const MembershipInfo = () => {
         <div>{dateJoined}</div>
       </div>
 
+      <div className="flex gap-2 w-full justify-between">
+        <div>Annotations Submitted</div>
+        <div>{membership.data?.annotationCount}</div>
+      </div>
+
+      <div className="flex gap-2 w-full justify-between">
+        <div>Projects contributed to</div>
+        <div>{membership.data?.contributions}</div>
+      </div>
+
       <div className={styles.divider} />
 
-      {organization.data && (
+      {organization.data?.title && (
         <div className="flex gap-2 w-full justify-between">
           <div>Organization</div>
           <div>
@@ -110,10 +114,10 @@ export const MembershipInfo = () => {
         </div>
       )}
 
-      {organization.data?.role && (
+      {membership.data?.role && (
         <div className="flex gap-2 w-full justify-between">
           <div>My role</div>
-          <div>{organization.data.role}</div>
+          <div>{membership.data.role}</div>
         </div>
       )}
 
@@ -122,17 +126,12 @@ export const MembershipInfo = () => {
         <div>{user?.active_organization}</div>
       </div>
 
-      {organization.data && (
+      {organization.data.created_at && (
         <div className="flex gap-2 w-full justify-between">
-          <div>Owner</div>
-          <div>{organization.data.title}</div>
+          <div>Created</div>
+          <div>{organization.data?.createdAt}</div>
         </div>
       )}
-
-      <div className="flex gap-2 w-full justify-between">
-        <div>Created</div>
-        <div>{membership.data?.registrationDate}</div>
-      </div>
     </div>
   );
 };
