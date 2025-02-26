@@ -24,7 +24,6 @@ Label Studio has personal access tokens and legacy tokens. The options available
   <td>
     <ul>
         <li>Have a TTL that can be set at the org level. (Label Studio Enterprise only)
-        <li>Have expirations dates
         <li>Are only visible to users once
         <li>Can be manually revoked
         <li>Require extra steps when used with HTTP API
