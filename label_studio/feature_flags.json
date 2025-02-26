@@ -4702,7 +4702,7 @@
     },
     "fflag_fix_front_lsdv_4930_selection_tool_fixes_240423_short": {
       "key": "fflag_fix_front_lsdv_4930_selection_tool_fixes_240423_short",
-      "on": true,
+      "on": false,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
