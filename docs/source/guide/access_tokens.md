@@ -65,10 +65,9 @@ ls = LabelStudio(base_url=LABEL_STUDIO_URL, api_key=API_KEY)
 
 ### HTTP API
 
-If you are interacting directly via HTTP, the personal access token functions similarly to a JWT refresh token.
+If you are interacting directly via HTTP, the personal access token functions as a JWT refresh token.
 
 You must use your personal access token (refresh token) to generate a short-lived access token. This access token is then used for API authentication.
-
 
 To generate this access token, make a POST request with your personal access token in the JSON body. For example:
      
