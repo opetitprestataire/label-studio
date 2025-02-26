@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCurrentUser } from "/apps/labelstudio/src/providers/CurrentUser";
 import { API } from "apps/labelstudio/src/providers/ApiProvider";
 import { useMemo } from "react";
+import type { WrappedResponse } from "@humansignal/core/lib/api-proxy/types";
 
 function formatDate(date?: string) {
   return format(new Date(date ?? ""), "dd MMM yyyy, KK:mm a");
@@ -25,10 +26,17 @@ export const MembershipInfo = () => {
     queryKey: [user?.active_organization, user?.id, "user-membership"],
     async queryFn() {
       if (!user) return {};
-      const response = await API.invoke("userMemberships", {
+      const response = (await API.invoke("userMemberships", {
         pk: user.active_organization,
         userPk: user.id,
-      });
+      })) as WrappedResponse<{
+        user: number;
+        organization: number;
+        contributed_projects_count: number;
+        annotations_count: number;
+        created_at: string;
+        role: string;
+      }>;
 
       const registrationDate = formatDate(response?.created_at);
       const annotationCount = response?.annotations_count;
@@ -73,11 +81,22 @@ export const MembershipInfo = () => {
     async queryFn() {
       if (!user) return null;
       if (!window?.APP_SETTINGS?.billing) return null;
-      const organization = await API.invoke("organization", {
+      const organization = (await API.invoke("organization", {
         pk: user.active_organization,
-      });
+      })) as WrappedResponse<{
+        id: number;
+        external_id: string;
+        title: string;
+        token: string;
+        default_role: string;
+        created_at: string;
+      }>;
 
-      return organization ? { ...organization, createdAt: formatDate(organization.created_at) } : null;
+      if (!organization.$meta.ok) {
+        return null;
+      }
+
+      return { ...organization, createdAt: formatDate(organization.created_at) } as const;
     },
   });
 
@@ -126,7 +145,7 @@ export const MembershipInfo = () => {
         <div>{user?.active_organization}</div>
       </div>
 
-      {organization.data.created_at && (
+      {organization.data?.createdAt && (
         <div className="flex gap-2 w-full justify-between">
           <div>Created</div>
           <div>{organization.data?.createdAt}</div>
