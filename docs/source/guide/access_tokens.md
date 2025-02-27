@@ -1,7 +1,7 @@
 ---
 title: Access tokens
 short: Access tokens
-tier: all
+tier: enterprise
 type: guide
 order: 381
 order_enterprise: 359

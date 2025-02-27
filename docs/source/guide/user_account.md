@@ -48,6 +48,8 @@ You can also see a high-level summary of your contributions.
 
 </div>
 
+<div class="enterprise-only">
+
 ## Personal access token
 
 !!! note
@@ -56,6 +58,8 @@ You can also see a high-level summary of your contributions.
 Click **Create** to generate an access token. When creating a token, ensure you save it somewhere secure, as it will only be visible one time. 
 
 While personal access tokens work seamlessly with the Label Studio SDK, if you are using HTTP API requests, you will need to take extra steps. See [Personal access tokens and the API](access_tokens#Personal-access-tokens-and-the-API). 
+
+</div>
 
 <div class="enterprise-only">
 
