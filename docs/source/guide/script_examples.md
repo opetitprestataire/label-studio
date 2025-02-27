@@ -606,23 +606,23 @@ The `TimelineLabels` tag is connected to the second video (`video0`), allowing a
 
 You can manually [pause an annotator](quality#Pause-an-annotator) to prevent stop them from completing tasks and revoke their project access. 
 
-This script automatically pauses an annotator who breaks any of the following rules:
+This script automatically pauses an annotator who breaks any of the following rules and customizes the message that appears:
 
 * Too many duplicate values `timesInARow(3)`:
 
-    Checks if the last three submitted annotations in the `TextArea` field (`comment`) all have the same value. If they do, it returns a warning message. 
+    Checks if the last three submitted annotations in the `TextArea` field (`comment`) all have the same value. If they do, it returns a custom warning message. 
 
     ![Screenshot of warning](/images/project/scripts_pause1.png)
 
 * Too many similar values `tooSimilar()`: 
 
-    For the `Choices` options (`sentiment`), it computes a deviation over the past values. If the deviation is below a threshold (meaning the values are too uniform/similar), it returns a warning. 
+    For the `Choices` options (`sentiment`), it computes a deviation over the past values. If the deviation is below a threshold (meaning the values are too uniform/similar), it returns a custom warning message. 
 
     ![Screenshot of warning](/images/project/scripts_pause2.png)
  
 * Too many submissions over a period of time `tooFast()`: 
 
-    Monitors the overall speed of annotations. It checks if, for example, 20 annotations were submitted in less than 10 minutes. If so, a warning appears. 
+    Monitors the overall speed of annotations. It checks if, for example, 20 annotations were submitted in less than 10 minutes. If so, a custom warning appears. 
 
     ![Screenshot of warning](/images/project/scripts_pause3.png)
 
