@@ -138,6 +138,11 @@ When a user is paused, the following occurs:
 
     For more information, see [Custom script examples - Pause an annotator](script_examples#Pause-an-annotator).
 
+!!! info Tip
+
+    If you hover over the **Paused** indicator, you can see the message that was shown to the user when they were paused. If a user was manually paused, it also shows who initiated the action.  
+
+    ![Screenshot of hover](/images/review/paused-tooltip.png)
 
 ## Verify model and annotator performance
 

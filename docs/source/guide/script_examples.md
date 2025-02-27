@@ -628,6 +628,12 @@ This script automatically pauses an annotator who breaks any of the following ru
 
 To unpause an annotator, use the [Members dashboard](quality#Pause-an-annotator). 
 
+!!! info Tip
+
+    If you hover over the **Paused** indicator, you can see the message that was shown to the user when they were paused. If a user was manually paused, it also shows who initiated the action.  
+
+    ![Screenshot of hover](/images/project/scripts_pause_hover.png)
+
 #### Script
 
 ```javascript
