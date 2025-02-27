@@ -67,14 +67,28 @@ You organization administrators may optionally set an expiration date for all pe
 
 </div>
 
+<div class="enterprise-only">
+
 ## Legacy token
 
 !!! note
     Whether this option appears depends on [settings at your organization level](access_tokens#Access-token-settings-for-orgs). 
 
-This token is pre-generated for you go use. Legacy tokens are easier to use for some API tasks, but are generally less secure. For more information, see [Access tokens](access_tokens).  
+This token is pre-generated for you to use. Legacy tokens are easier to use for some API tasks, but are generally less secure. For more information, see [Access tokens](access_tokens).  
 
 Click **Renew** to generate a new token. Any existing scripts using your old token will lose their authorization and will need to be updated to include your new token. 
+
+</div>
+
+<div class="opensource-only">
+
+## Access token
+
+If you want to use the API, use this token to authenticate your API requests.
+
+Click **Renew** to generate a new token. Any existing scripts using your old token will lose their authorization and will need to be updated to include your new token. 
+
+</div>
 
 
 
