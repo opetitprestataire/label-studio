@@ -11,6 +11,11 @@ import ObjectBase from "../Base";
 
 /**
  * Video tag plays a simple video file. Use for video annotation tasks such as classification and transcription.
+ * 
+ * Use with the following data types: video
+ * 
+ * ### Video format
+ * 
  * Label Studio relies on your web browser to play videos, so it's essential that your videos use a format and codecs that are universally supported. To ensure maximum compatibility, we recommend using an MP4 container with video encoded using the H.264 (AVC) codec and audio encoded with AAC. This combination is widely supported across all modern browsers and minimizes issues like incorrect total duration detection or problems with playback. In addition, it's important to convert your videos to a constant frame rate (CFR), ideally around 30 fps, to avoid discrepancies in frame counts and issues with duplicated or missing frames.
  * 
  * Converting your videos to this recommended format will help ensure that they play smoothly in Label Studio and that the frame rate and duration are correctly recognized for accurate annotations. To convert any video to this format, you can use FFmpeg. For example, the following command converts an input video to MP4 with H.264 video, AAC audio, and a constant frame rate of 30 fps:
@@ -35,7 +40,6 @@ import ObjectBase from "../Base";
  * ffprobe -v error -show_format -show_streams -print_format json input.mp4
  * ```
  * 
- * Use with the following data types: video
  * @example
  * <!--Labeling configuration to display a video on the labeling interface-->
  * <View>
