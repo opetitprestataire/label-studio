@@ -33,7 +33,7 @@ import ObjectBase from "../Base";
  * - `-c:a aac -b:a 128k` encodes the audio in AAC at 128 kbps.
  * - `output_video.mp4` is the converted video file ready for use in Label Studio.
  *  
- * Using this FFmpeg command to re-encode your videos will help eliminate playback issues and ensure that Label Studio detects the total video duration  accurately, providing a smooth annotation experience. 
+ * Using this FFmpeg command to re-encode your videos will help eliminate playback issues and ensure that Label Studio detects the total video duration  accurately, providing a smooth annotation experience.
  * 
  * It is a good idea to check all parameters of your video using this command:
  * ```bash
