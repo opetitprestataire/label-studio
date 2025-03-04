@@ -6,13 +6,13 @@ import styles from "./toggle.module.scss";
 type ToggleProps = {
   className?: string;
   label?: string;
-  labelProps: any;
+  labelProps?: any;
   description?: string;
   checked?: boolean;
   defaultChecked?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
-  style: any;
+  style?: any;
   disabled?: boolean;
   alwaysBlue?: boolean;
 };

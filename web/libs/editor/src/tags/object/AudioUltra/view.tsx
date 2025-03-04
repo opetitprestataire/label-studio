@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { type FC, useEffect, useMemo, useRef } from "react";
+import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TimelineContextProvider } from "../../../components/Timeline/Context";
 import { Hotkey } from "../../../core/Hotkey";
 import { useWaveform } from "../../../lib/AudioUltra/react";
@@ -153,22 +153,6 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
     };
   }, []);
 
-  const contextValue = useMemo(() => {
-    return {
-      position: 0,
-      length: 0,
-      regions: [],
-      step: 10,
-      playing: false,
-      visibleWidth: 0,
-      seekOffset: 0,
-      data: undefined,
-      settings: {
-        playpauseHotkey: "audio:playpause",
-      },
-    };
-  }, []);
-
   return (
     <Block name="audio-tag">
       {item.errors?.map((error: any, i: any) => (
@@ -180,49 +164,79 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
           item.stageRef.current = el;
         }}
       />
-      <TimelineContextProvider value={contextValue}>
-        <Controls
-          position={controls.currentTime}
-          playing={controls.playing}
-          volume={controls.volume}
-          speed={controls.rate}
-          zoom={controls.zoom}
-          duration={controls.duration}
-          onPlay={() => controls.setPlaying(true)}
-          onPause={() => controls.setPlaying(false)}
-          allowFullscreen={false}
-          onVolumeChange={(vol) => controls.setVolume(vol)}
-          onStepBackward={() => {
-            waveform.current?.seekBackward(NORMALIZED_STEP);
-            waveform.current?.syncCursor();
-          }}
-          onStepForward={() => {
-            waveform.current?.seekForward(NORMALIZED_STEP);
-            waveform.current?.syncCursor();
-          }}
-          onPositionChange={(pos) => {
-            waveform.current?.seek(pos);
-            waveform.current?.syncCursor();
-          }}
-          onSpeedChange={(speed) => controls.setRate(speed)}
-          onZoom={(zoom) => controls.setZoom(zoom)}
-          amp={controls.amp}
-          onAmpChange={(amp) => controls.setAmp(amp)}
-          mediaType="audio"
-          toggleVisibility={(layerName: string, isVisible: boolean) => {
-            if (waveform.current) {
-              const layer = waveform.current?.getLayer(layerName);
+      <Controls
+        position={controls.currentTime}
+        playing={controls.playing}
+        volume={controls.volume}
+        speed={controls.rate}
+        zoom={controls.zoom}
+        duration={controls.duration}
+        onPlay={() => controls.setPlaying(true)}
+        onPause={() => controls.setPlaying(false)}
+        allowFullscreen={false}
+        onVolumeChange={(vol) => controls.setVolume(vol)}
+        onStepBackward={() => {
+          waveform.current?.seekBackward(NORMALIZED_STEP);
+          waveform.current?.syncCursor();
+        }}
+        onStepForward={() => {
+          waveform.current?.seekForward(NORMALIZED_STEP);
+          waveform.current?.syncCursor();
+        }}
+        onPositionChange={(pos) => {
+          waveform.current?.seek(pos);
+          waveform.current?.syncCursor();
+        }}
+        onSpeedChange={(speed) => controls.setRate(speed)}
+        onZoom={(zoom) => controls.setZoom(zoom)}
+        amp={controls.amp}
+        onAmpChange={(amp) => controls.setAmp(amp)}
+        mediaType="audio"
+        toggleVisibility={(layerName: string, isVisible: boolean) => {
+          if (waveform.current) {
+            const layer = waveform.current?.getLayer(layerName);
 
-              if (layer) {
-                layer.setVisibility(isVisible);
-              }
+            if (layer) {
+              layer.setVisibility(isVisible);
             }
-          }}
-          layerVisibility={controls.layerVisibility}
-        />
-      </TimelineContextProvider>
+          }
+        }}
+        layerVisibility={controls.layerVisibility}
+      />
     </Block>
   );
 };
 
-export const AudioUltra = observer(AudioUltraView);
+const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
+  const [settings, setSettings] = useState({
+    playpauseHotkey: "audio:playpause",
+    loopRegion: false,
+  });
+  const changeSetting = useCallback((key: string, value: any) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  // @todo seems like this context is not used at all; and its values are static; better to check and remove
+  const contextValue = useMemo(() => {
+    return {
+      position: 0,
+      length: 0,
+      regions: [],
+      step: 10,
+      playing: false,
+      visibleWidth: 0,
+      seekOffset: 0,
+      data: undefined,
+      settings,
+      changeSetting,
+    };
+  }, [settings]);
+
+  return (
+    <TimelineContextProvider value={contextValue}>
+      <AudioUltraView item={item} />
+    </TimelineContextProvider>
+  );
+};
+
+export const AudioUltra = observer(AudioUltraWithSettings);

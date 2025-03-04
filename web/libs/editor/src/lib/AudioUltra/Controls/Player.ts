@@ -320,9 +320,13 @@ export abstract class Player extends Destructable {
   protected updateLoop(time: number) {
     if (this.isDestroyed || !this.loop) return;
     if (time >= this.loop.end) {
-      this.currentTime = this.loop.start;
-      this.playing = false;
-      this.play();
+      if (this.wf.settings.loopRegion) {
+        this.currentTime = this.loop.start;
+        this.playing = false;
+        this.play();
+      } else {
+        this.pause();
+      }
     }
   }
 
