@@ -1,5 +1,5 @@
 import type { WaveformAudio } from "../Media/WaveformAudio";
-import { averageMinMax, BROWSER_SCROLL_SIZE, clamp, debounce, defaults, warn } from "../Common/Utils";
+import { averageMinMax, BROWSER_SCROLLBAR_WIDTH, clamp, debounce, defaults, warn } from "../Common/Utils";
 import type { Waveform, WaveformOptions } from "../Waveform";
 import { type CanvasCompositeOperation, Layer, type RenderingContext } from "./Layer";
 import { Events } from "../Common/Events";
@@ -665,7 +665,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.scrollFiller = document.createElement("div");
     this.scrollFiller.style.position = "absolute";
     this.scrollFiller.style.width = "100%";
-    this.scrollFiller.style.height = `${BROWSER_SCROLL_SIZE}px`;
+    this.scrollFiller.style.height = `${BROWSER_SCROLLBAR_WIDTH}px`;
     this.scrollFiller.style.top = "100%";
     this.wrapper.appendChild(this.scrollFiller);
 
@@ -974,7 +974,7 @@ export class Visualizer extends Events<VisualizerEvents> {
   };
 
   private setContainerHeight() {
-    this.container.style.height = `${this.height + BROWSER_SCROLL_SIZE}px`;
+    this.container.style.height = `${this.height + BROWSER_SCROLLBAR_WIDTH}px`;
   }
 
   private updateSize() {

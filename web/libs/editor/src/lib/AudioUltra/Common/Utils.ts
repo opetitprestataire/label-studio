@@ -214,17 +214,17 @@ export const isTimeRelativelySimilar = (a: number, b: number, observedDuration: 
   isTimeSimilar(a / observedDuration, b / observedDuration);
 
 /**
- * A constant representing the width of the browser's scrollbar in pixels.
+ * A constant representing the thickness of the scrollbar's handle in pixels.
  * This value is calculated dynamically by creating a temporary DOM element
  * with a scrollable area and comparing its offset width to its client width.
- * Useful for making precise layout adjustments that depend on the scrollbar size.
+ * Useful for making precise layout adjustments that depend on the width of the scrollbar.
  *
  * Note: The calculation is performed immediately when the variable is defined
  * and retains its value for the duration of runtime.
  *
  * @constant {number}
  */
-export const BROWSER_SCROLL_SIZE = ((): number => {
+export const BROWSER_SCROLLBAR_WIDTH = ((): number => {
   const scrollDiv = document.createElement("div");
   scrollDiv.style.width = "100px";
   scrollDiv.style.height = "100px";
