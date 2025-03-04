@@ -1,6 +1,9 @@
 import { useAtomValue } from "jotai";
-import { formDataToJPO } from "@humansignal/core/lib/utils/helpers";
-import { saveSettingsAtom, settingsAtom } from "@humansignal/core/pages/AccountSettings/atoms";
+import { settingsAtom, TOKEN_SETTINGS_KEY } from "@humansignal/core/pages/AccountSettings/atoms";
+import { queryClientAtom } from "jotai-tanstack-query";
+
+import { Form, Input, Toggle } from "apps/labelstudio/src/components/Form";
+import { Button } from "apps/labelstudio/src/components/Button/Button";
 import type { AuthTokenSettings } from "@humansignal/core/pages/AccountSettings/types";
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles.module.scss";
@@ -11,8 +14,10 @@ import { IconCheck } from "apps/labelstudio/src/assets/icons";
 
 export const TokenSettingsModal = ({
   showTTL,
+  onSaved,
 }: {
   showTTL?: boolean;
+  onSaved?: () => void;
 }) => {
   const settings = useAtomValue(settingsAtom);
   const formRef = useRef<Form>();
@@ -42,7 +47,8 @@ export const TokenSettingsModal = ({
           label="Personal Access Tokens"
           name="api_tokens_enabled"
           description="Enable increased token authentication security"
-          checked={settings.data?.api_tokens_enabled ?? false}
+          checked={settings.api_tokens_enabled ?? false}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setEnableTTL(e.target.checked)}
         />
       </Form.Row>
       <Form.Row columnCount={1}>
@@ -50,7 +56,7 @@ export const TokenSettingsModal = ({
           label="Legacy Tokens"
           name="legacy_api_tokens_enabled"
           description="Enable legacy access tokens"
-          checked={settings.data?.legacy_api_tokens_enabled}
+          checked={settings.legacy_api_tokens_enabled ?? true}
         />
       </Form.Row>
       {showTTL === true && (
@@ -63,11 +69,11 @@ export const TokenSettingsModal = ({
               description:
                 "The number of days, after creation, that the token will be valid for. After this time period a user will need to create a new access token",
             }}
-            disabled={!settings.data?.api_tokens_enabled}
+            disabled={!enableTTL}
             type="number"
             min={10}
             max={365}
-            value={settings.data?.time_to_live ?? 30}
+            value={settings.api_token_ttl_days ?? 30}
           />
         </Form.Row>
       )}
@@ -83,4 +89,4 @@ export const TokenSettingsModal = ({
       </Form.Actions>
     </Form>
   );
-};
+}

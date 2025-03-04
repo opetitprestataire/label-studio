@@ -1,6 +1,6 @@
 {
-  "message": "feat: block sentry in frontend side (#6615)",
-  "commit": "560e33091fa392bec906ca43f082afb1657b11a7",
-  "date": "2025-02-13T23:13:39.000Z",
+  "message": "docs: Add context to Video tag page (#7160)",
+  "commit": "28c8aeb226d01aaccb1dbd6a22f50e86508dad1f",
+  "date": "2025-03-03T21:27:21.000Z",
   "branch": "develop"
 }
