@@ -1,9 +1,6 @@
+import { settingsAtom } from "@humansignal/core/pages/AccountSettings/atoms";
 import { useAtomValue } from "jotai";
-import { settingsAtom, TOKEN_SETTINGS_KEY } from "@humansignal/core/pages/AccountSettings/atoms";
-import { queryClientAtom } from "jotai-tanstack-query";
 
-import { Form, Input, Toggle } from "apps/labelstudio/src/components/Form";
-import { Button } from "apps/labelstudio/src/components/Button/Button";
 import type { AuthTokenSettings } from "@humansignal/core/pages/AccountSettings/types";
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles.module.scss";
@@ -89,4 +86,4 @@ export const TokenSettingsModal = ({
       </Form.Actions>
     </Form>
   );
-}
+};
