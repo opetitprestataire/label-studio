@@ -37,8 +37,9 @@ export const AudioView = {
     return this.root.get("loading-progress-bar", { timeout: 10000 });
   },
   isReady() {
-    this.loadingBar.should("not.exist");
     LabelStudio.waitForObjectsReady();
+    this.loadingBar.should("not.exist");
+    cy.wait(32); // wait for render
   },
   get playButton() {
     return cy.get(`[data-testid="playback-button:play"]`);
