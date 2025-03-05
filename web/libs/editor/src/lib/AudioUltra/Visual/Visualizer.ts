@@ -645,8 +645,6 @@ export class Visualizer extends Events<VisualizerEvents> {
 
     this.wrapper = document.createElement("div");
     this.wrapper.style.height = "100%";
-    this.wrapper.style.position = "relative";
-    this.wrapper.style.overflow = "scroll hidden";
 
     const mainLayer = this.createLayer({ name: "main" });
     this.createLayer({ name: "background", offscreen: true, zIndex: 0, isVisible: false });
@@ -655,21 +653,33 @@ export class Visualizer extends Events<VisualizerEvents> {
     const controlsLayer = this.createLayer({ name: "controls", offscreen: true, zIndex: 1000 });
 
     this.playhead.setLayer(controlsLayer);
+    this.initScrollBar();
+    mainLayer.appendTo(this.wrapper);
+    container.appendChild(this.wrapper);
+  }
 
+  initScrollBar() {
+    this.wrapper.style.position = "relative";
+    this.wrapper.style.overflowX = "scroll";
+    this.wrapper.style.overflowY = "hidden";
+    this.wrapper.style.scrollbarGutter = "stable";
+
+    const mainLayer = this.getLayer("main") as Layer;
+    // The parent element scrolls natively, and the canvas is redrawn accordingly.
+    // To maintain its position during scrolling, the element must use "sticky" positioning.
     mainLayer.canvas.style.position = "sticky";
     mainLayer.canvas.style.top = "0";
     mainLayer.canvas.style.left = "0";
     mainLayer.canvas.style.zIndex = "2";
-    mainLayer?.appendTo(this.wrapper);
-
+    // Adds a scroll filler element to adjust the size of the scrollable area
     this.scrollFiller = document.createElement("div");
     this.scrollFiller.style.position = "absolute";
     this.scrollFiller.style.width = "100%";
     this.scrollFiller.style.height = `${BROWSER_SCROLLBAR_WIDTH}px`;
     this.scrollFiller.style.top = "100%";
+    this.scrollFiller.style.minHeight = "1px";
+    mainLayer.canvas.style.zIndex = "1";
     this.wrapper.appendChild(this.scrollFiller);
-
-    container.appendChild(this.wrapper);
   }
 
   updateScrollFiller() {
