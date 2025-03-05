@@ -309,7 +309,7 @@ export class Regions {
 
     const addRegion = () => {
       const { container, zoomedWidth, fullWidth } = this.visualizer;
-      const { autoPlayNewSegments, duration } = this.waveform;
+      const { settings: { autoPlayNewSegments }, duration } = this.waveform;
       const scrollLeft = this.visualizer.getScrollLeftPx();
 
       startX = clamp(getCursorPositionX(e, container) + scrollLeft, 0, fullWidth);
@@ -352,7 +352,7 @@ export class Regions {
     };
 
     const handleMouseUp = () => {
-      const { player, autoPlayNewSegments } = this.waveform;
+      const { player, settings: { autoPlayNewSegments } } = this.waveform;
 
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);

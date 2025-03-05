@@ -58,7 +58,6 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
       backgroundCompute: true,
       denoize: true,
     },
-    autoPlayNewSegments: true,
     onFrameChanged: (frameState) => {
       item.setWFFrame(frameState);
     },
@@ -211,6 +210,7 @@ const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
   const [settings, setSettings] = useState({
     playpauseHotkey: "audio:playpause",
     loopRegion: false,
+    autoPlayNewSegments: true,
   });
   const changeSetting = useCallback((key: string, value: any) => {
     setSettings((prev) => ({ ...prev, [key]: value }));

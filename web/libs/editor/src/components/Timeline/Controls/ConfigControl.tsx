@@ -115,6 +115,13 @@ export const ConfigControl: FC<ConfigControlProps> = ({
             label="Loop Regions"
           />
         </Elem>
+        <Elem name="toggle">
+          <Toggle
+            checked={settings?.autoPlayNewSegments}
+            onChange={(e) => changeSetting?.("autoPlayNewSegments", e.target.checked)}
+            label="Auto-play New Regions"
+          />
+        </Elem>
         {renderLayerToggles()}
       </Elem>
     );

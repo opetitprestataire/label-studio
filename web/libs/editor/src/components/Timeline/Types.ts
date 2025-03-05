@@ -133,6 +133,7 @@ export type TimelineSettings = {
   stepSize?: TimelineStepFunction;
   leftOffset?: number;
   loopRegion?: boolean;
+  autoPlayNewSegments?: boolean;
 };
 
 export type TimelineStepFunction = (
