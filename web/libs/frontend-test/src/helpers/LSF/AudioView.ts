@@ -39,7 +39,14 @@ export const AudioView = {
   isReady() {
     LabelStudio.waitForObjectsReady();
     this.loadingBar.should("not.exist");
-    cy.wait(32); // wait for render
+    /**
+     * In `AudioUltra` version of the `Audio` tag isReady was missed.
+     * It's fixed right now, but it was done in the easiest way it could be done.
+     * In that case, there is still a time gap between setting `isReady` to `true` and getting the last initial draw at the canvas,
+     * which for now we are going to compensate by waiting approximately 2 frames of render (16 * 2 = 32 milliseconds)
+     * @todo: remove wait when `isReady` in audio become more precise
+     */
+    cy.wait(32);
   },
   get playButton() {
     return cy.get(`[data-testid="playback-button:play"]`);
