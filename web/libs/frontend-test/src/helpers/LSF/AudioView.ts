@@ -1,6 +1,7 @@
 import TriggerOptions = Cypress.TriggerOptions;
 import ObjectLike = Cypress.ObjectLike;
 import ClickOptions = Cypress.ClickOptions;
+import { LabelStudio } from "@humansignal/frontend-test/helpers/LSF/LabelStudio";
 
 type MouseInteractionOptions = Partial<TriggerOptions & ObjectLike & MouseEvent>;
 
@@ -37,6 +38,7 @@ export const AudioView = {
   },
   isReady() {
     this.loadingBar.should("not.exist");
+    LabelStudio.waitForObjectsReady();
   },
   get playButton() {
     return cy.get(`[data-testid="playback-button:play"]`);
