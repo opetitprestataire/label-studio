@@ -1,22 +1,17 @@
 import { format } from "date-fns";
 import styles from "./MembershipInfo.module.scss";
 import { useQuery } from "@tanstack/react-query";
-
-/**
- * FIXME: This is legacy imports. We're not supposed to use such statements
- * each one of these eventually has to be migrated to core/ui
- */
-import { useCurrentUser } from "/apps/labelstudio/src/providers/CurrentUser";
 import { API } from "apps/labelstudio/src/providers/ApiProvider";
 import { useMemo } from "react";
 import type { WrappedResponse } from "@humansignal/core/lib/api-proxy/types";
+import { useCurrentUserAtom } from "@humansignal/core/lib/hooks/useCurrentUser";
 
 function formatDate(date?: string) {
   return format(new Date(date ?? ""), "dd MMM yyyy, KK:mm a");
 }
 
 export const MembershipInfo = () => {
-  const { user } = useCurrentUser();
+  const { user } = useCurrentUserAtom();
   const dateJoined = useMemo(() => {
     if (!user?.date_joined) return null;
     return formatDate(user?.date_joined);
@@ -38,7 +33,6 @@ export const MembershipInfo = () => {
         role: string;
       }>;
 
-      const registrationDate = formatDate(response?.created_at);
       const annotationCount = response?.annotations_count;
       const contributions = response?.contributed_projects_count;
       let role = "Owner";
@@ -68,7 +62,6 @@ export const MembershipInfo = () => {
       }
 
       return {
-        registrationDate,
         annotationCount,
         contributions,
         role,
@@ -124,12 +117,10 @@ export const MembershipInfo = () => {
 
       <div className={styles.divider} />
 
-      {organization.data?.title && (
+      {user?.active_organization_meta && (
         <div className="flex gap-2 w-full justify-between">
           <div>Organization</div>
-          <div>
-            <a href="/organization">{organization.data.title}</a>
-          </div>
+          <div>{user.active_organization_meta.title}</div>
         </div>
       )}
 
@@ -144,6 +135,13 @@ export const MembershipInfo = () => {
         <div>Organization ID</div>
         <div>{user?.active_organization}</div>
       </div>
+
+      {user?.active_organization_meta && (
+        <div className="flex gap-2 w-full justify-between">
+          <div>Owner</div>
+          <div>{user.active_organization_meta.email}</div>
+        </div>
+      )}
 
       {organization.data?.createdAt && (
         <div className="flex gap-2 w-full justify-between">
