@@ -1,10 +1,10 @@
 import type React from "react";
 import { type FC, useEffect, useRef, useState } from "react";
+import { IconInfoConfig } from "../../../assets/icons/timeline";
+import { Tooltip } from "../../../common/Tooltip/Tooltip";
 import { Block, Elem } from "../../../utils/bem";
 
 import "./Slider.scss";
-import { Info } from "./Info";
-
 export interface SliderProps {
   description?: string;
   info?: string;
@@ -59,7 +59,7 @@ export const Slider: FC<SliderProps> = ({ description, info, max, min, value, st
       <Elem name="control">
         <Elem name="info">
           {description}
-          {info && <Info text={info} />}
+          {info && <Tooltip title={info}><IconInfoConfig /></Tooltip>}
         </Elem>
         <Elem
           name="input"

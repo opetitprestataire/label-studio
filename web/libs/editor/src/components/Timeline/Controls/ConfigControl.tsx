@@ -113,6 +113,8 @@ export const ConfigControl: FC<ConfigControlProps> = ({
             checked={settings?.loopRegion}
             onChange={(e) => changeSetting?.("loopRegion", e.target.checked)}
             label="Loop Regions"
+            // there are no "normal" size, so that's the hack to reset size
+            labelProps={{ size: "normal" }}
           />
         </Elem>
         <Elem name="toggle">
@@ -120,6 +122,8 @@ export const ConfigControl: FC<ConfigControlProps> = ({
             checked={settings?.autoPlayNewSegments}
             onChange={(e) => changeSetting?.("autoPlayNewSegments", e.target.checked)}
             label="Auto-play New Regions"
+            // there are no "normal" size, so that's the hack to reset size
+            labelProps={{ size: "normal" }}
           />
         </Elem>
         {renderLayerToggles()}
