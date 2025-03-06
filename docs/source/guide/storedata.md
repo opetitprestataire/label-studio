@@ -70,6 +70,18 @@ MINIO_ROOT_USER=minio_admin_do_not_use_in_production
 MINIO_ROOT_PASSWORD=minio_admin_do_not_use_in_production
 ````
 
+### Configure the correct connection settings
+
+For labelstudio to connect to minio configure the correct env variables
+
+````.dotenv
+STORAGE_TYPE=s3
+STORAGE_AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minio_admin}
+STORAGE_AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minio_password}
+STORAGE_AWS_BUCKET_NAME=labelstudio
+STORAGE_AWS_ENDPOINT_URL=http://minio:9000
+````
+
 ### Connect Label Studio to local MinIO
 
 If you do not have a static IP address, create an entry in your hosts file so that both the Label Studio container and 
