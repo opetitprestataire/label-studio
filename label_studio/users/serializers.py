@@ -24,8 +24,8 @@ class BaseUserSerializer(FlexFieldsModelSerializer):
 
     def get_active_organization_meta(self, instance):
         organization = instance.active_organization
-        title = organization.title
-        email = organization.created_by.email
+        title = organization.title if organization is not None else ''
+        email = organization.created_by.email if organization is not None else ''
 
         return {'title': title, 'email': email}
 
