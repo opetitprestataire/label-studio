@@ -137,9 +137,6 @@ export const AudioModel = types.compose(
       _wfFrame: null,
     }))
     .views((self) => ({
-      get isReady() {
-        return !!self._ws;
-      },
       get hasStates() {
         const states = self.states();
 
