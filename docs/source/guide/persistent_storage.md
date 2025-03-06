@@ -573,3 +573,42 @@ STORAGE_AZURE_FOLDER=""
 
   </div>
 </div>
+
+## Set up Minio
+
+Set up Minio as the persistent storage for Label Studio using Docker Compose.
+
+### Starting the container
+
+An example docker-compose file for this is available in the [Label Studio repository](https://github.com/HumanSignal/label-studio).
+To run MinIO alongside your Label Studio instance, use the following command:
+
+````bash
+# Add sudo on Linux if you are not a member of the docker group
+docker compose -f docker-compose.yml -f docker-compose.minio.yml up -d
+````
+
+The MinIO server will be accessible at http://localhost:9000. 
+
+To configure MinIO settings, create a `.env` file. Remember to override the default credentials.
+
+````.dotenv
+MINIO_ROOT_USER=minio_admin_do_not_use_in_production
+MINIO_ROOT_PASSWORD=minio_admin_do_not_use_in_production
+````
+
+### Create the bucket
+
+Create a bucket in minio. e.g. name the bucket `labelstudio`
+
+### Configure the correct connection settings
+
+For labelstudio to connect to minio configure the correct env variables
+
+````.dotenv
+STORAGE_TYPE=s3
+STORAGE_AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minio_admin}
+STORAGE_AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minio_password}
+STORAGE_AWS_BUCKET_NAME=labelstudio
+STORAGE_AWS_ENDPOINT_URL=http://minio:9000
+````
