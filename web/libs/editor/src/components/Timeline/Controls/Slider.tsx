@@ -5,6 +5,7 @@ import { Tooltip } from "../../../common/Tooltip/Tooltip";
 import { Block, Elem } from "../../../utils/bem";
 
 import "./Slider.scss";
+
 export interface SliderProps {
   description?: string;
   info?: string;
@@ -59,7 +60,11 @@ export const Slider: FC<SliderProps> = ({ description, info, max, min, value, st
       <Elem name="control">
         <Elem name="info">
           {description}
-          {info && <Tooltip title={info}><IconInfoConfig /></Tooltip>}
+          {info && (
+            <Tooltip title={info}>
+              <IconInfoConfig />
+            </Tooltip>
+          )}
         </Elem>
         <Elem
           name="input"
