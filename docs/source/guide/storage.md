@@ -320,9 +320,6 @@ Set up an IAM role in Amazon AWS to use with Label Studio.
     Make sure to require an external ID and do not require multi-factor authentication when you set up the role. Select an existing permissions policy, or create one that allows programmatic access to the bucket.
 3. Create a trust policy using the external ID. Use the following example: 
 
-{% details <b>Label Studio Enterprise Cloud</b> %}
-
-
 ```json
 {
   "Version": "2012-10-17",
@@ -348,41 +345,7 @@ Set up an IAM role in Amazon AWS to use with Label Studio.
 ```
 
 !!! attention
-    If your bucket is already connected to a Label Studio project, and that connection was created before April 7, 2025, your principal will be listed as `"arn:aws:iam::490065312183:user/rw_bucket"`. 
-    
-    You will need to modify it to also include `"arn:aws:iam::490065312183:role/label-studio-app-production"` before you can create any new storage connections. 
-    
-
-{% enddetails %}
-
-{% details <b>Label Studio Enterprise On-Prem</b> %}
-
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": [
-          "arn:aws:iam::490065312183:user/rw_bucket"
-        ]
-      },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "StringEquals": {
-          "sts:ExternalId": [
-            "<YOUR-ORG-ExternalId>"
-          ]
-        }
-      }
-    }
-  ]
-}
-```
-
-{% enddetails %}
+    If your bucket is already connected to a Label Studio project, and that connection was created before April 7, 2025,  you will need to add the new role (listed above) along with your old user to continue using your existing project. 
 
 4. After you create the IAM role, note the Amazon Resource Name (ARN) of the role. You need it to set up the S3 source storage in Label Studio.
 5. Assign role policies to the role to allow it to access your S3 bucket. Replace `<your_bucket_name>` with your S3 bucket name. Use the following role policy for S3 source storage:
