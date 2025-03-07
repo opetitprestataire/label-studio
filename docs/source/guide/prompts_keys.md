@@ -18,6 +18,7 @@ There are two approaches to adding a model provider API key.
     * OpenAI
     * Vertex AI
     * Gemini
+    * Anthropic
 
 * In the second scenario, you add a separate API key per model. Examples include:
 
@@ -58,6 +59,14 @@ The JSON credentials are required. You can also optionally provide the project I
 
 Once added, all supported models will appear in the base model drop-down when you [draft your prompt](prompts_draft).
 
+## Anthropic API key
+
+You can only have one Anthropic key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](prompts_overview#Supported-base-models). 
+
+For information on getting an Anthropic API key, see [Anthropic - Accessing the API](https://docs.anthropic.com/en/api/getting-started#accessing-the-api).
+
+Once added, all supported models will appear in the base model drop-down when you [draft your prompt](prompts_draft).
+
 ## Azure OpenAI key
 
 Each Azure OpenAI key is tied to a specific deployment, and each deployment comprises a single OpenAI model. So if you want to use multiple models through Azure, you will need to create a deployment for each model and then add each key to Label Studio. 
@@ -93,7 +102,7 @@ You can find all this information in the **Details** section of the deployment i
 
 You can use your own self-hosted and fine-tuned model as long as it meets the following criteria:
 
-* Your server must provide [JSON mode](https://python.useinstructor.com/concepts/patching/#json-mode) for the LLM. 
+* Your server must provide [JSON mode](https://js.useinstructor.com/concepts/patching/#json-schema-mode) for the LLM, specifically, the API must accepts `response_format` with `type: json_object` and `schema` with a valid JSON schema: ` {"response_format": {"type": "json_object", "schema": <schema>}}`
 * The server API must follow [OpenAI format](https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format). 
 
 Examples of compatible LLMs include [Ollama](https://ollama.com/) and [sglang](https://github.com/sgl-project/sglang?tab=readme-ov-file#openai-compatible-api). 
@@ -104,3 +113,23 @@ To add a custom model, enter the following:
 * The endpoint URL for the model. For example, `https://my.openai.endpoint.com/v1`
 * An API key to access the model. An API key is tied to a specific account, but the access is shared within the org if added. (Optional)
 * An auth token to access the model API. An auth token provides API access at the server level. (Optional)
+
+### Example with Ollama
+
+1. Setup [Ollama](https://ollama.com/), e.g. `ollama run llama3.2`
+2. [Verify your local OpenAI-compatible API is working](https://ollama.com/blog/openai-compatibility), e.g. `http://localhost:11434/v1`
+3. Create an externally facing endpoint, e.g. `https://my.openai.endpoint.com/v1` -> `http://localhost:11434/v1`
+4. Add connection to Label Studio:
+    - Name: `llama3.2` (must match the model name in Ollama)
+    - Endpoint: `https://my.openai.endpoint.com/v1` (note `v1` suffix is required)
+    - API key: `ollama` (default)
+    - Auth token: empty
+
+
+### Example with Hugging Face Inference Endpoints
+1. Use [DeepSeek model](https://huggingface.co/deepseek-ai/DeepSeek-R1)
+2. In `API Keys`, add to `Custom` provider:
+    - Name: `deepseek-ai/DeepSeek-R1`
+    - Endpoint: `https://router.huggingface.co/together/v1`
+    - API key: `<your-hf-api-key>`
+    - Auth token: empty
