@@ -1,6 +1,6 @@
 {
-  "message": "docs: Fix formatting in Taxonomy tag params (#6977)",
-  "commit": "87ced23fe772e330704a68b82377131e1a4bd1d6",
-  "date": "2025-02-24T21:58:34.000Z",
+  "message": "feat: DIA-1794: [FE] Home page (+Tailwind and shadcn integration) (#7009)",
+  "commit": "9844eaf1b53454798faee3144f8b1ee6890cc07b",
+  "date": "2025-03-06T12:21:24.000Z",
   "branch": "develop"
 }
