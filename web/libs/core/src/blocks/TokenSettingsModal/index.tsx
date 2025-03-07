@@ -8,6 +8,7 @@ import styles from "./styles.module.scss";
 import { Form, Input, Toggle } from "apps/labelstudio/src/components/Form";
 import { Button } from "apps/labelstudio/src/components/Button/Button";
 import { IconCheck } from "apps/labelstudio/src/assets/icons";
+import { formDataToJPO } from "@humansignal/core/lib/utils/helpers";
 
 export const TokenSettingsModal = ({
   showTTL,
