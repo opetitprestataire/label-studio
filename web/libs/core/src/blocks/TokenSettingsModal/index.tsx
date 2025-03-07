@@ -1,14 +1,11 @@
-import { settingsAtom } from "@humansignal/core/pages/AccountSettings/atoms";
 import { useAtomValue } from "jotai";
-
-import type { AuthTokenSettings } from "@humansignal/core/pages/AccountSettings/types";
-import { useEffect, useRef, useState } from "react";
-import styles from "./styles.module.scss";
+import { settingsAtom, TOKEN_SETTINGS_KEY } from "@humansignal/core/pages/AccountSettings/atoms";
+import { queryClientAtom } from "jotai-tanstack-query";
 
 import { Form, Input, Toggle } from "apps/labelstudio/src/components/Form";
 import { Button } from "apps/labelstudio/src/components/Button/Button";
-import { IconCheck } from "apps/labelstudio/src/assets/icons";
-import { formDataToJPO } from "@humansignal/core/lib/utils/helpers";
+import type { AuthTokenSettings } from "@humansignal/core/pages/AccountSettings/types";
+import { type ChangeEvent, useState } from "react";
 
 export const TokenSettingsModal = ({
   showTTL,
@@ -18,28 +15,32 @@ export const TokenSettingsModal = ({
   onSaved?: () => void;
 }) => {
   const settings = useAtomValue(settingsAtom);
-  const formRef = useRef<Form>();
-  const { mutate: saveSettings, isPending, isSuccess, isIdle } = useAtomValue(saveSettingsAtom);
-  const [saved, setSaved] = useState(false);
-  const onSubmit = () => {
-    const form = formRef.current.formElement.current as HTMLFormElement;
-    const data = formDataToJPO(new FormData(form));
-    const body = {
-      ...data,
-      api_tokens_enabled: data.api_tokens_enabled === "on",
-      legacy_api_tokens_enabled: data.legacy_api_tokens_enabled === "on",
-    } satisfies Partial<AuthTokenSettings>;
-    saveSettings(body);
-    setSaved(true);
-  };
-
-  useEffect(() => {
-    if (saved) {
-      setTimeout(() => setSaved(false), 2000);
-    }
-  }, [saved]);
+  if (!settings.isSuccess || settings.isError || "error" in settings.data) {
+    return <div>Error loading settings.</div>;
+  }
   return (
-    <Form ref={formRef}>
+    <TokenSettingsModalView
+      key={settings.data?.api_tokens_enabled}
+      settings={settings.data}
+      showTTL={showTTL}
+      onSaved={onSaved}
+    />
+  );
+};
+
+function TokenSettingsModalView({
+  settings,
+  showTTL,
+  onSaved,
+}: { settings: AuthTokenSettings; showTTL?: boolean; onSaved?: () => void }) {
+  const [enableTTL, setEnableTTL] = useState(settings.api_tokens_enabled);
+  const queryClient = useAtomValue(queryClientAtom);
+  const reloadSettings = () => {
+    queryClient.invalidateQueries({ queryKey: [TOKEN_SETTINGS_KEY] });
+    onSaved?.();
+  };
+  return (
+    <Form action="accessTokenUpdateSettings" onSubmit={reloadSettings}>
       <Form.Row columnCount={1}>
         <Toggle
           label="Personal Access Tokens"
@@ -76,15 +77,8 @@ export const TokenSettingsModal = ({
         </Form.Row>
       )}
       <Form.Actions>
-        {saved && (
-          <div className={styles.success}>
-            <IconCheck /> Saved!
-          </div>
-        )}
-        <Button type="button" onClick={onSubmit} disabled={isPending || saved}>
-          Save
-        </Button>
+        <Button type="submit">Save</Button>
       </Form.Actions>
     </Form>
   );
-};
+}
