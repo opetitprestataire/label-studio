@@ -1,14 +1,16 @@
 import { observer } from "mobx-react";
-import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type FC, useCallback, useEffect, useMemo, useRef } from "react";
+import { usePersistentJSONState } from "@humansignal/core/lib/hooks/usePersistentState";
 import { TimelineContextProvider } from "../../../components/Timeline/Context";
+import { ErrorMessage } from "../../../components/ErrorMessage/ErrorMessage";
+import { Controls } from "../../../components/Timeline/Controls";
+import type { TimelineSettings } from "../../../components/Timeline/Types";
 import { Hotkey } from "../../../core/Hotkey";
 import { useWaveform } from "../../../lib/AudioUltra/react";
-import { Controls } from "../../../components/Timeline/Controls";
 import type { Region } from "../../../lib/AudioUltra/Regions/Region";
 import type { Segment } from "../../../lib/AudioUltra/Regions/Segment";
 import type { Regions } from "../../../lib/AudioUltra/Regions/Regions";
 import { Block } from "../../../utils/bem";
-import { ErrorMessage } from "../../../components/ErrorMessage/ErrorMessage";
 
 import "./view.scss";
 
@@ -207,7 +209,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
 };
 
 const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = usePersistentJSONState<TimelineSettings>("ls:audio-tag:settings", {
     playpauseHotkey: "audio:playpause",
     loopRegion: false,
     autoPlayNewSegments: true,
