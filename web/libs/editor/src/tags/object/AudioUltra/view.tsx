@@ -210,6 +210,8 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
 
 const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
   const [settings, setSettings] = usePersistentJSONState<TimelineSettings>("ls:audio-tag:settings", {
+    // @todo this hotkey should be moved from these settings for a more appropriate place;
+    // @todo we are planning to have a central hotkeys management, that would be a better option.
     playpauseHotkey: "audio:playpause",
     loopRegion: false,
     autoPlayNewSegments: true,
