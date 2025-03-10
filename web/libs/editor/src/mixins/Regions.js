@@ -234,7 +234,7 @@ const RegionsMixin = types
           annotation.stopLinkingMode();
           annotation.regionStore.unselectAll();
         } else {
-          self._selectArea(ev?.ctrlKey || ev?.metaKey);
+          self._selectArea(ev?.ctrlKey || ev?.metaKey || ev?.shiftKey);
         }
       },
 
