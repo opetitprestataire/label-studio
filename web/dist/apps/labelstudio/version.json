@@ -1,6 +1,6 @@
 {
-  "message": "fix: DIA-2022: UI&UX | Issue with zoom functionality in Label Studio labelling UI (#7182)",
-  "commit": "f59505dbbe1b9f4eb7433a872f6f354fbc8b1f43",
-  "date": "2025-03-07T18:30:10.000Z",
+  "message": "refactor: LEAP-1907: Migrate EnterpriseBadge to UI library (#7173)",
+  "commit": "a5927325db38e1dbdf8d2c7106dfe8eb2da4207d",
+  "date": "2025-03-10T16:01:34.000Z",
   "branch": "develop"
 }
