@@ -35,7 +35,7 @@ export const useWaveform = (
   useEffect(() => {
     if (!waveform.current || !settings) return;
     waveform.current.settings = settings;
-  }, [settings]);
+  }, [settings, waveform.current]);
 
   const onFrameChangedRef = useRef(options?.onFrameChanged);
   onFrameChangedRef.current = options?.onFrameChanged;
