@@ -1,6 +1,6 @@
 {
-  "message": "feat: DIA-1794: [FE] Home page (+Tailwind and shadcn integration) (#7009)",
-  "commit": "9844eaf1b53454798faee3144f8b1ee6890cc07b",
-  "date": "2025-03-06T12:21:24.000Z",
+  "message": "refactor: LEAP-1907: Migrate EnterpriseBadge to UI library (#7173)",
+  "commit": "a5927325db38e1dbdf8d2c7106dfe8eb2da4207d",
+  "date": "2025-03-10T16:01:34.000Z",
   "branch": "develop"
 }
