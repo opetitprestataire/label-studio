@@ -8,14 +8,13 @@ import { Space } from "../../components/Space/Space";
 import { useAPI } from "../../providers/ApiProvider";
 import { useProject } from "../../providers/ProjectProvider";
 import { useContextProps, useFixedLocation, useParams } from "../../providers/RoutesProvider";
-import { addAction, addCrumb, deleteAction, deleteCrumb } from "../../services/breadrumbs";
+import { addCrumb, deleteAction, deleteCrumb } from "../../services/breadrumbs";
 import { Block, Elem } from "../../utils/bem";
 import { isDefined } from "../../utils/helpers";
 import { ImportModal } from "../CreateProject/Import/ImportModal";
 import { ExportPage } from "../ExportPage/ExportPage";
 import { APIConfig } from "./api-config";
 import { ToastContext } from "@humansignal/ui";
-import { FF_OPTIC_2, isFF } from "../../utils/feature-flags";
 
 import "./DataManager.scss";
 
@@ -230,13 +229,6 @@ DataManagerPage.context = ({ dmRef }) => {
       deleteAction(dmPath);
       deleteCrumb("dm-crumb");
     } else {
-      if (!isFF(FF_OPTIC_2)) {
-        addAction(dmPath, (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          dmRef?.store?.closeLabeling?.();
-        });
-      }
       addCrumb({
         key: "dm-crumb",
         title: "Labeling",
