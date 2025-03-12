@@ -65,6 +65,12 @@ class UserLastActivityMixin(models.Model):
     last_activity = models.DateTimeField(_('last activity'), default=timezone.now, editable=False)
 
     def update_last_activity(self):
+        check_interval = getattr(settings, 'USER_LAST_ACTIVITY_CHECK_INTERVAL', None)
+        if check_interval:
+            if timezone.now() - self.last_activity < check_interval:
+                # Don't update last_activity because it's not necessary since it's close enough to the existing last_activity value
+                return
+
         self.last_activity = timezone.now()
         self.save(update_fields=['last_activity'])
 
