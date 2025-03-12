@@ -2,12 +2,35 @@ import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { Modal } from "../../../components/Modal/Modal";
 import { cn } from "../../../utils/bem";
 import { cn as scn } from "@humansignal/shad/utils";
+import { CodeBlock } from "@humansignal/ui";
 import { unique } from "../../../utils/helpers";
 import "./Import.scss";
 import { IconError, IconInfo, IconUpload } from "../../../assets/icons";
 import { useAPI } from "../../../providers/ApiProvider";
 import Input from "libs/datamanager/src/components/Common/Input/Input";
 import { Button } from "apps/labelstudio/src/components";
+
+const testCode = `
+import { SimpleCard } from "../simple-card";
+
+export function CodeBlock({
+  code,
+  title,
+  description,
+  className,
+}: {
+  title?: string;
+  description?: string;
+  code: string;
+  className?: string;
+}) {
+  return (
+    <SimpleCard title={title} description={description} className={className}>
+      <div className="whitespace-pre-wrap font-mono mt-2 p-3 bg-gray-100 rounded-sm">{code}</div>
+    </SimpleCard>
+  );
+}
+`;
 
 const importClass = cn("upload_page");
 const dropzoneClass = cn("dropzone");
@@ -374,42 +397,45 @@ export const ImportPage = ({
       <main>
         <Upload sendFiles={sendFiles} project={project}>
           {!showList && (
-            <label htmlFor="file-input">
-              <div className={dropzoneClass.elem("content")}>
-                <header>
-                  Drag & drop files here
-                  <br />
-                  or click to browse
-                </header>
-                <IconUpload height="64" className={dropzoneClass.elem("icon")} />
-                <dl>
-                  <dt>Text</dt>
-                  <dd>{supportedExtensions.text.join(", ")}</dd>
-                  <dt>Audio</dt>
-                  <dd>{supportedExtensions.audio.join(", ")}</dd>
-                  <dt>Video</dt>
-                  <dd>mpeg4/H.264 webp, webm* {/* Keep in sync with supportedExtensions.video */}</dd>
-                  <dt>Images</dt>
-                  <dd>{supportedExtensions.image.join(", ")}</dd>
-                  <dt>HTML</dt>
-                  <dd>{supportedExtensions.html.join(", ")}</dd>
-                  <dt>Time Series</dt>
-                  <dd>{supportedExtensions.timeSeries.join(", ")}</dd>
-                  <dt>Common Formats</dt>
-                  <dd>{supportedExtensions.common.join(", ")}</dd>
-                </dl>
-                <b>
-                  * – Support depends on the browser
-                  <br />* – Direct media uploads have{" "}
-                  <a href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI">limitations</a>{" "}
-                  and we strongly recommend using{" "}
-                  <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
-                    Cloud Storage
-                  </a>{" "}
-                  instead
-                </b>
-              </div>
-            </label>
+            <div className="flex gap-4 justify-center items-start">
+              <label htmlFor="file-input">
+                <div className={dropzoneClass.elem("content")}>
+                  <header>
+                    Drag & drop files here
+                    <br />
+                    or click to browse
+                  </header>
+                  <IconUpload height="64" className={dropzoneClass.elem("icon")} />
+                  <dl>
+                    <dt>Text</dt>
+                    <dd>{supportedExtensions.text.join(", ")}</dd>
+                    <dt>Audio</dt>
+                    <dd>{supportedExtensions.audio.join(", ")}</dd>
+                    <dt>Video</dt>
+                    <dd>mpeg4/H.264 webp, webm* {/* Keep in sync with supportedExtensions.video */}</dd>
+                    <dt>Images</dt>
+                    <dd>{supportedExtensions.image.join(", ")}</dd>
+                    <dt>HTML</dt>
+                    <dd>{supportedExtensions.html.join(", ")}</dd>
+                    <dt>Time Series</dt>
+                    <dd>{supportedExtensions.timeSeries.join(", ")}</dd>
+                    <dt>Common Formats</dt>
+                    <dd>{supportedExtensions.common.join(", ")}</dd>
+                  </dl>
+                  <b>
+                    * – Support depends on the browser
+                    <br />* – Direct media uploads have{" "}
+                    <a href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI">limitations</a>{" "}
+                    and we strongly recommend using{" "}
+                    <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
+                      Cloud Storage
+                    </a>{" "}
+                    instead
+                  </b>
+                </div>
+              </label>
+              <CodeBlock title="Example input" code={testCode} className="max-w-[650px]" />
+            </div>
           )}
 
           {showList && (
