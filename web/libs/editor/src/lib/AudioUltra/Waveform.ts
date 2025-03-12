@@ -551,6 +551,9 @@ export class Waveform extends Events<WaveformEventTypes> {
     return this.media.sampleRate;
   }
 
+  get isDrawing() {
+    return this.visualizer.isDrawing;
+  }
   /**
    * Initialize events
    */

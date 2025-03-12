@@ -633,6 +633,10 @@ export class Visualizer extends Events<VisualizerEvents> {
     return result;
   }
 
+  get isDrawing() {
+    return this.drawing;
+  }
+
   private initialRender() {
     if (this.container) {
       this.container.style.height = `${this.baseWaveHeight}px`;
