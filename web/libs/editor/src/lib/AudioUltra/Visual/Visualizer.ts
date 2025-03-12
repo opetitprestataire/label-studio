@@ -667,7 +667,6 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.wrapper.style.position = "relative";
     this.wrapper.style.overflowX = "scroll";
     this.wrapper.style.overflowY = "hidden";
-    this.wrapper.style.scrollbarGutter = "stable";
 
     const mainLayer = this.getLayer("main") as Layer;
     // The parent element scrolls natively, and the canvas is redrawn accordingly.

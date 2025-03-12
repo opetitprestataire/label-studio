@@ -231,7 +231,6 @@ export const BROWSER_SCROLLBAR_WIDTH = ((): number => {
   scrollDiv.style.overflow = "scroll";
   scrollDiv.style.position = "absolute";
   scrollDiv.style.top = "-9999px";
-  scrollDiv.style.scrollbarGutter = "stable";
   document.body.appendChild(scrollDiv);
   const scrollSize = scrollDiv.offsetWidth - scrollDiv.clientWidth;
   document.body.removeChild(scrollDiv);
