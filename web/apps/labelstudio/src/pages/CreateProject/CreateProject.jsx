@@ -1,5 +1,5 @@
 import { EnterpriseBadge } from "@humansignal/ui";
-import React from "react";
+import React, { useMemo } from "react";
 import { useHistory } from "react-router";
 import { Button, ToggleItems } from "../../components";
 import { Modal } from "../../components/Modal/Modal";
@@ -99,6 +99,10 @@ export const CreateProject = ({ onClose, redirect = true }) => {
     };
     __lsa(`create_project.tab.${eventNameMap[step]}`);
   }, []);
+
+  const projectIsConfigured = useMemo(() => {
+    return config.trim().replace(/([\s\n]+)/, "") !== "<View></View>";
+  }, [config]);
 
   React.useEffect(() => {
     setError(null);
@@ -209,7 +213,13 @@ export const CreateProject = ({ onClose, redirect = true }) => {
           setDescription={setDescription}
           show={step === "name"}
         />
-        <ImportPage project={project} show={step === "import"} {...pageProps} />
+        <ImportPage
+          project={project}
+          show={step === "import"}
+          {...pageProps}
+          projectConfigured={projectIsConfigured}
+          openLabelingConfig={() => setStep("config")}
+        />
         <ConfigPage
           project={project}
           onUpdate={setConfig}

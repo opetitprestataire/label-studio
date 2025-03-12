@@ -2,7 +2,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { Modal } from "../../../components/Modal/Modal";
 import { cn } from "../../../utils/bem";
 import { cn as scn } from "@humansignal/shad/utils";
-import { CodeBlock } from "@humansignal/ui";
+import { CodeBlock, SimpleCard } from "@humansignal/ui";
 import { unique } from "../../../utils/helpers";
 import "./Import.scss";
 import { IconError, IconInfo, IconUpload } from "../../../assets/icons";
@@ -177,9 +177,11 @@ export const ImportPage = ({
   onFileListUpdate,
   highlightCsvHandling,
   dontCommitToProject = false,
+  projectConfigured = false,
   csvHandling,
   setCsvHandling,
   addColumns,
+  openLabelingConfig,
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
@@ -434,7 +436,24 @@ export const ImportPage = ({
                   </b>
                 </div>
               </label>
-              <CodeBlock title="Example input" code={testCode} className="max-w-[650px]" />
+              {projectConfigured ? (
+                <CodeBlock title="Expected input preview" code={testCode} className="w-full max-w-[650px]" />
+              ) : (
+                <SimpleCard title="Expected input preview" className="w-full max-w-[650px]">
+                  Set up your{" "}
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      openLabelingConfig?.();
+                    }}
+                  >
+                    labeling configuration
+                  </a>{" "}
+                  to generate an input preview.
+                </SimpleCard>
+              )}
             </div>
           )}
 
