@@ -251,6 +251,11 @@ export class Visualizer extends Events<VisualizerEvents> {
     });
   }
 
+  redrawCursor() {
+    this.renderCursor();
+    this.transferImage();
+  }
+
   destroy() {
     if (this.isDestroyed) return;
 
