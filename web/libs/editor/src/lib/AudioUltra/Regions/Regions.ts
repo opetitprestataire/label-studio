@@ -315,6 +315,8 @@ export class Regions {
       } = this.waveform;
       const scrollLeft = this.visualizer.getScrollLeftPx();
 
+      // we create a region when we press the mouse, so the end is not known yet,
+      // it will be updated on mousemove
       startX = clamp(getCursorPositionX(e, container) + scrollLeft, 0, fullWidth);
       const start = pixelsToTime(startX, zoomedWidth, duration);
       const end = pixelsToTime(startX, zoomedWidth, duration);
@@ -372,9 +374,15 @@ export class Regions {
           if (player.playing) {
             player.pause();
           }
-          player.play();
+          // we have to unlock player's handle first, then move the playhead to the start of the segment and play it
+          setTimeout(() => {
+            this.unlock();
+            player.seek(region.start);
+            player.play();
+          });
+        } else {
+          setTimeout(() => this.unlock(), 0);
         }
-        setTimeout(() => this.unlock(), 0);
       } else {
         this.unlock();
       }
