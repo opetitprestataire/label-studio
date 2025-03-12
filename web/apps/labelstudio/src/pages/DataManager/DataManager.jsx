@@ -7,8 +7,8 @@ import { modal } from "../../components/Modal/Modal";
 import { Space } from "../../components/Space/Space";
 import { useAPI } from "../../providers/ApiProvider";
 import { useProject } from "../../providers/ProjectProvider";
-import { useContextProps, useFixedLocation, useParams } from "../../providers/RoutesProvider";
-import { addCrumb, deleteAction, deleteCrumb } from "../../services/breadrumbs";
+import { useContextProps, useParams } from "../../providers/RoutesProvider";
+import { addCrumb, deleteCrumb } from "../../services/breadrumbs";
 import { Block, Elem } from "../../utils/bem";
 import { isDefined } from "../../utils/helpers";
 import { ImportModal } from "../CreateProject/Import/ImportModal";
@@ -213,7 +213,6 @@ DataManagerPage.pages = {
   ImportModal,
 };
 DataManagerPage.context = ({ dmRef }) => {
-  const location = useFixedLocation();
   const { project } = useProject();
   const [mode, setMode] = useState(dmRef?.mode ?? "explorer");
 
@@ -223,10 +222,8 @@ DataManagerPage.context = ({ dmRef }) => {
 
   const updateCrumbs = (currentMode) => {
     const isExplorer = currentMode === "explorer";
-    const dmPath = location.pathname.replace(DataManagerPage.path, "");
 
     if (isExplorer) {
-      deleteAction(dmPath);
       deleteCrumb("dm-crumb");
     } else {
       addCrumb({
