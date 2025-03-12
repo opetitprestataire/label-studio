@@ -1009,11 +1009,12 @@ export class Visualizer extends Events<VisualizerEvents> {
 
     requestAnimationFrame(() => {
       this.updateSize();
+      this.updateCursorToTime(this.wf.currentTime);
+      this.updateScrollFiller();
+      this.setScrollLeft(this.scrollLeft, false);
       this.wf.renderTimeline();
       this.resetWaveformRender();
       this.draw(false, true);
-      this.updateScrollFiller();
-      this.setScrollLeft(this.scrollLeft);
     });
   };
 
