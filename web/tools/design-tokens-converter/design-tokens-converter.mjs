@@ -83,10 +83,10 @@ function processColorTokens(colorObj, parentPath, result, variables) {
           colorObj[key].$variable_metadata.modes &&
           colorObj[key].$variable_metadata.modes.light
         ) {
-          const lightValue = resolveColorValue(colorObj[key].$variable_metadata.modes.light, variables);
+          const lightValue = resolveColor(colorObj[key].$variable_metadata.modes.light, variables);
           result.cssVariables.light.push(`${cssVarName}: ${lightValue};`);
         } else {
-          const resolvedValue = resolveColorValue(value, variables);
+          const resolvedValue = resolveColor(value, variables);
           result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
         }
 
@@ -96,7 +96,7 @@ function processColorTokens(colorObj, parentPath, result, variables) {
           colorObj[key].$variable_metadata.modes &&
           colorObj[key].$variable_metadata.modes.dark
         ) {
-          const darkValue = resolveColorValue(colorObj[key].$variable_metadata.modes.dark, variables);
+          const darkValue = resolveColor(colorObj[key].$variable_metadata.modes.dark, variables);
           result.cssVariables.dark.push(`${cssVarName}: ${darkValue};`);
         }
 
@@ -151,15 +151,20 @@ function processPrimitiveColors(primitiveColors, result, variables) {
  * Resolve color values, handling references to other variables
  * @param {String} value - The color value to resolve
  * @param {Object} variables - The variables object for reference resolution
+ * @param {Boolean} asCssVariable - Whether to return the value as a CSS variable
  * @returns {String} - The resolved color value
  */
-function resolveColorValue(value, variables) {
+function resolveColor(value, variables, asCssVariable = true) {
   if (typeof value !== "string") return value;
 
   // Handle references like "{@primitives.$color.$sand.100}"
   if (value.startsWith("{") && value.endsWith("}")) {
     const reference = value.substring(1, value.length - 1);
     const parts = reference.split(".");
+
+    if (asCssVariable) {
+      return `var(--color-${reference.replace("@primitives.", "primitive").replace("$color.", "").replace(/[$\.]/g, "-")})`;
+    }
 
     // Navigate through the object to find the referenced value
     let current = variables;
