@@ -24,7 +24,7 @@ const findWorkspaceRoot = () => {
 const workspaceRoot = findWorkspaceRoot();
 
 // Paths
-const designVariablesPath = path.join(workspaceRoot, "designvariables.json");
+const designVariablesPath = path.join(workspaceRoot, "design-tokens.json");
 const cssOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.scss");
 const jsOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.js");
 
@@ -201,7 +201,7 @@ function addToJsTokens(obj, path, cssVarName) {
  * @returns {String} - The CSS content
  */
 function generateCssContent(result) {
-  let content = "// Generated from designvariables.json - DO NOT EDIT DIRECTLY\n\n";
+  let content = "// Generated from design-tokens.json - DO NOT EDIT DIRECTLY\n\n";
 
   // Light mode variables (default)
   content += ":root {\n";
@@ -226,7 +226,7 @@ function generateCssContent(result) {
  * @returns {String} - The JavaScript content
  */
 function generateJsContent(result) {
-  let content = "// Generated from designvariables.json - DO NOT EDIT DIRECTLY\n\n";
+  let content = "// Generated from design-tokens.json - DO NOT EDIT DIRECTLY\n\n";
 
   content += `const designTokens = ${JSON.stringify(result.jsTokens, null, 2)};\n\n`;
   content += "export default designTokens;\n";
@@ -241,7 +241,7 @@ const designTokensConverter = async () => {
   try {
     console.log("Reading design variables file...");
     const designVariablesData = await fs.readFile(designVariablesPath, "utf8");
-    const variables = JSON.parse(designVariablesData);
+    variables = JSON.parse(designVariablesData);
 
     console.log("Processing design variables...");
     const processed = processDesignVariables(variables);

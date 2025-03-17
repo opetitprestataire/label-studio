@@ -1,6 +1,6 @@
 # Design Tokens Converter
 
-This script converts Figma design tokens from the `designvariables.json` format into usable CSS variables and JavaScript objects for Tailwind integration.
+This script converts Figma design tokens from the `design-tokens.json` format into usable CSS variables and JavaScript objects for Tailwind integration.
 
 ## Features
 
@@ -11,7 +11,7 @@ This script converts Figma design tokens from the `designvariables.json` format 
 
 ## How to Use
 
-1. Export design tokens from Figma as `designvariables.json` and place it in the `label-studio/web/` directory (workspace root)
+1. Export design tokens from Figma as `design-tokens.json` and place it in the `label-studio/web/` directory (workspace root)
 2. Run the conversion script using NX:
 
 ```bash
@@ -86,6 +86,6 @@ The CSS variables support dark mode with the `data-theme="dark"` attribute:
 
 When you get updated design tokens from Figma:
 
-1. Replace the `designvariables.json` file in the workspace root
+1. Replace the `design-tokens.json` file in the workspace root
 2. Run the NX command again: `nx design-tokens ui`
 3. The CSS and JavaScript files will be regenerated with the updated tokens 
