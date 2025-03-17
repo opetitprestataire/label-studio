@@ -11,16 +11,16 @@ This script converts Figma design tokens from the `designvariables.json` format 
 
 ## How to Use
 
-1. Export design tokens from Figma as `designvariables.json` and place it in the `label-studio/web/` directory
-2. Run the conversion script:
+1. Export design tokens from Figma as `designvariables.json` and place it in the `label-studio/web/` directory (workspace root)
+2. Run the conversion script using NX:
 
 ```bash
-node scripts/design-tokens-converter.js
+nx design-tokens ui
 ```
 
 3. This will generate:
-   - `src/styles/design-tokens.scss` - Contains CSS variables for light and dark themes
-   - `src/styles/design-tokens.js` - Contains JavaScript object for Tailwind integration
+   - `libs/ui/src/tokens/tokens.scss` - Contains CSS variables for light and dark themes
+   - `libs/ui/src/tokens/tokens.js` - Contains JavaScript object for Tailwind integration
 
 ## Importing the Generated Files
 
@@ -29,12 +29,29 @@ node scripts/design-tokens-converter.js
 Import the SCSS file in your main stylesheet:
 
 ```scss
-@import 'src/styles/design-tokens.scss';
+@import 'libs/ui/src/tokens/tokens.scss';
 ```
 
 ### Tailwind Integration
 
-The `tailwind.config.js` file is already set up to import the design tokens. The tokens will be available in your Tailwind classes.
+Update your Tailwind configuration to import the design tokens:
+
+```js
+// tailwind.config.js
+const designTokens = require('./libs/ui/src/tokens/tokens.js');
+
+module.exports = {
+  // ...
+  theme: {
+    extend: {
+      colors: {
+        // ...your existing colors
+        ...designTokens.colors,
+      },
+    },
+  },
+};
+```
 
 ## Usage Examples
 
@@ -69,6 +86,6 @@ The CSS variables support dark mode with the `data-theme="dark"` attribute:
 
 When you get updated design tokens from Figma:
 
-1. Replace the `designvariables.json` file
-2. Run the conversion script again
+1. Replace the `designvariables.json` file in the workspace root
+2. Run the NX command again: `nx design-tokens ui`
 3. The CSS and JavaScript files will be regenerated with the updated tokens 

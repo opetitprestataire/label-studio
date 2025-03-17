@@ -1,5 +1,13 @@
 const baseConfig = require("./libs/ui/src/tailwind.config");
-const designTokens = require("./src/styles/design-tokens");
+let designTokens = {};
+
+try {
+  designTokens = require("./libs/ui/src/tokens/tokens.js");
+} catch (error) {
+  console.warn("Design tokens not found. Run 'nx design-tokens ui' to generate them.");
+  // Use empty object if tokens file doesn't exist yet
+  designTokens = { colors: {} };
+}
 
 // Merge the design tokens with the base config
 const mergedConfig = {

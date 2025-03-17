@@ -1,0 +1,11 @@
+/**
+ * Main stylesheet for the UI library
+ */
+
+// Import design tokens
+@import './tokens/tokens.scss';
+@import './tokens/typography.scss';
+@import './tokens/colors.scss';
+@import './tokens/layout.scss';
+
+// Additional global styles can be added here

@@ -33,7 +33,7 @@
     "test:watch": "yarn test:unit --all --watch",
     "test:watch:affected": "yarn test --watch",
     "postinstall": "npx -y copy-files-from-to",
-    "design-tokens": "node scripts/design-tokens-converter.js"
+    "design-tokens": "nx design-tokens ui"
   },
   "husky": {
     "hooks": {

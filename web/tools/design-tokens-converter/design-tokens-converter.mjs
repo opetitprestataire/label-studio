@@ -1,13 +1,32 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Get current file directory for resolving paths
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Determine correct paths for the workspace
+const findWorkspaceRoot = () => {
+  // We'll start with this file's directory and go up until we find the web directory
+  let currentDir = __dirname;
+  while (!currentDir.endsWith("web") && currentDir !== "/") {
+    currentDir = path.dirname(currentDir);
+  }
+
+  if (!currentDir.endsWith("web")) {
+    throw new Error("Could not find workspace root directory");
+  }
+
+  return currentDir;
+};
+
+const workspaceRoot = findWorkspaceRoot();
 
 // Paths
-const designVariablesPath = path.join(__dirname, "../designvariables.json");
-const cssOutputPath = path.join(__dirname, "../src/styles/design-tokens.scss");
-const jsOutputPath = path.join(__dirname, "../src/styles/design-tokens.js");
-
-// Read the design variables file
-const designVariables = JSON.parse(fs.readFileSync(designVariablesPath, "utf8"));
+const designVariablesPath = path.join(workspaceRoot, "designvariables.json");
+const cssOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.scss");
+const jsOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.js");
 
 /**
  * Process design variables and extract color tokens
@@ -61,10 +80,10 @@ function processColorTokens(colorObj, parentPath, result) {
           colorObj[key].$variable_metadata.modes &&
           colorObj[key].$variable_metadata.modes.light
         ) {
-          const lightValue = resolveColorValue(colorObj[key].$variable_metadata.modes.light, designVariables);
+          const lightValue = resolveColorValue(colorObj[key].$variable_metadata.modes.light, variables);
           result.cssVariables.light.push(`${cssVarName}: ${lightValue};`);
         } else {
-          const resolvedValue = resolveColorValue(value, designVariables);
+          const resolvedValue = resolveColorValue(value, variables);
           result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
         }
 
@@ -74,7 +93,7 @@ function processColorTokens(colorObj, parentPath, result) {
           colorObj[key].$variable_metadata.modes &&
           colorObj[key].$variable_metadata.modes.dark
         ) {
-          const darkValue = resolveColorValue(colorObj[key].$variable_metadata.modes.dark, designVariables);
+          const darkValue = resolveColorValue(colorObj[key].$variable_metadata.modes.dark, variables);
           result.cssVariables.dark.push(`${cssVarName}: ${darkValue};`);
         }
 
@@ -210,40 +229,55 @@ function generateJsContent(result) {
   let content = "// Generated from designvariables.json - DO NOT EDIT DIRECTLY\n\n";
 
   content += `const designTokens = ${JSON.stringify(result.jsTokens, null, 2)};\n\n`;
-  content += "module.exports = designTokens;\n";
+  content += "export default designTokens;\n";
 
   return content;
 }
 
-// Main execution
-try {
-  console.log("Processing design variables...");
-  const processed = processDesignVariables(designVariables);
+/**
+ * Main function to run the design tokens converter
+ */
+const designTokensConverter = async () => {
+  try {
+    console.log("Reading design variables file...");
+    const designVariablesData = await fs.readFile(designVariablesPath, "utf8");
+    const variables = JSON.parse(designVariablesData);
 
-  console.log("Generating CSS...");
-  const cssContent = generateCssContent(processed);
+    console.log("Processing design variables...");
+    const processed = processDesignVariables(variables);
 
-  console.log("Generating JavaScript...");
-  const jsContent = generateJsContent(processed);
+    console.log("Generating CSS...");
+    const cssContent = generateCssContent(processed);
 
-  // Ensure directory exists
-  const cssDir = path.dirname(cssOutputPath);
-  const jsDir = path.dirname(jsOutputPath);
+    console.log("Generating JavaScript...");
+    const jsContent = generateJsContent(processed);
 
-  if (!fs.existsSync(cssDir)) {
-    fs.mkdirSync(cssDir, { recursive: true });
+    // Ensure directory exists
+    const cssDir = path.dirname(cssOutputPath);
+    await fs.mkdir(cssDir, { recursive: true });
+
+    // Write files
+    await fs.writeFile(cssOutputPath, cssContent);
+    await fs.writeFile(jsOutputPath, jsContent);
+
+    console.log(`CSS variables written to ${cssOutputPath}`);
+    console.log(`JavaScript tokens written to ${jsOutputPath}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, error: error.message };
   }
+};
 
-  if (!fs.existsSync(jsDir)) {
-    fs.mkdirSync(jsDir, { recursive: true });
-  }
-
-  // Write files
-  fs.writeFileSync(cssOutputPath, cssContent);
-  fs.writeFileSync(jsOutputPath, jsContent);
-
-  console.log(`CSS variables written to ${cssOutputPath}`);
-  console.log(`JavaScript tokens written to ${jsOutputPath}`);
-} catch (error) {
-  console.error("Error:", error);
+// Execute the function when this script is run directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  designTokensConverter().then((result) => {
+    if (!result.success) {
+      process.exit(1);
+    }
+    console.log("Design tokens conversion complete");
+  });
 }
+
+export default designTokensConverter;
