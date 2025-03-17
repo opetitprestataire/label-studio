@@ -386,6 +386,37 @@ const designTokens = {
       "950": "var(--color-primitive-fig-950)",
       "000": "var(--color-primitive-fig-000)"
     }
+  },
+  "spacing": {
+    "none": "var(--spacing-none)",
+    "tightest": "var(--spacing-tightest)",
+    "tighter": "var(--spacing-tighter)",
+    "tight": "var(--spacing-tight)",
+    "base": "var(--spacing-base)",
+    "wide": "var(--spacing-wide)",
+    "wider": "var(--spacing-wider)",
+    "widest": "var(--spacing-widest)"
+  },
+  "typography": {
+    "letterSpacing": {
+      "densest": "var(--letter-spacing-densest)",
+      "denser": "var(--letter-spacing-denser)",
+      "dense": "var(--letter-spacing-dense)",
+      "base": "var(--letter-spacing-base)",
+      "wide": "var(--letter-spacing-wide)",
+      "wider": "var(--letter-spacing-wider)",
+      "widest": "var(--letter-spacing-widest)"
+    }
+  },
+  "cornerRadius": {
+    "none": "var(--corner-radius-none)",
+    "smallest": "var(--corner-radius-smallest)",
+    "smaller": "var(--corner-radius-smaller)",
+    "small": "var(--corner-radius-small)",
+    "medium": "var(--corner-radius-medium)",
+    "large": "var(--corner-radius-large)",
+    "larger": "var(--corner-radius-larger)",
+    "largest": "var(--corner-radius-largest)"
   }
 };
 

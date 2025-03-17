@@ -269,6 +269,29 @@
   --color-primitive-fig-900: #5b3e72;
   --color-primitive-fig-950: #1f1526;
   --color-primitive-fig-000: #f8f2fc;
+  --spacing-none: {@primitives.$spacing.0}px;
+  --spacing-tightest: {@primitives.$spacing.50}px;
+  --spacing-tighter: {@primitives.$spacing.100}px;
+  --spacing-tight: {@primitives.$spacing.200}px;
+  --spacing-base: {@primitives.$spacing.400}px;
+  --spacing-wide: {@primitives.$spacing.600}px;
+  --spacing-wider: {@primitives.$spacing.800}px;
+  --spacing-widest: {@primitives.$spacing.1000}px;
+  --letter-spacing-densest: {@primitives.$typography.$letter-spacing.-20}px;
+  --letter-spacing-denser: {@primitives.$typography.$letter-spacing.-15}px;
+  --letter-spacing-dense: {@primitives.$typography.$letter-spacing.-10}px;
+  --letter-spacing-base: {@primitives.$typography.$letter-spacing.0}px;
+  --letter-spacing-wide: {@primitives.$typography.$letter-spacing.15}px;
+  --letter-spacing-wider: {@primitives.$typography.$letter-spacing.25}px;
+  --letter-spacing-widest: {@primitives.$typography.$letter-spacing.50}px;
+  --corner-radius-none: {@primitives.$corner-radius.0}px;
+  --corner-radius-smallest: {@primitives.$corner-radius.2}px;
+  --corner-radius-smaller: {@primitives.$corner-radius.4}px;
+  --corner-radius-small: {@primitives.$corner-radius.8}px;
+  --corner-radius-medium: {@primitives.$corner-radius.12}px;
+  --corner-radius-large: {@primitives.$corner-radius.16}px;
+  --corner-radius-larger: {@primitives.$corner-radius.18}px;
+  --corner-radius-largest: {@primitives.$corner-radius.24}px;
 }
 
 [data-theme="dark"] {

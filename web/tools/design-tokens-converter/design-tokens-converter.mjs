@@ -29,7 +29,7 @@ const cssOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.scss")
 const jsOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.js");
 
 /**
- * Process design variables and extract color tokens
+ * Process design variables and extract tokens
  * @param {Object} variables - The design variables object
  * @returns {Object} - Object containing tokens for CSS and JavaScript
  */
@@ -41,6 +41,9 @@ function processDesignVariables(variables) {
     },
     jsTokens: {
       colors: {},
+      spacing: {},
+      typography: {},
+      cornerRadius: {},
     },
   };
 
@@ -54,10 +57,232 @@ function processDesignVariables(variables) {
     processPrimitiveColors(variables["@primitives"].$color, result, variables);
   }
 
+  // Process spacing
+  if (variables["@sizing"] && variables["@sizing"].$spacing) {
+    processSpacingTokens(variables["@sizing"].$spacing, result, variables);
+  }
+
+  // Process typography
+  if (variables["@typography"]) {
+    processTypographyTokens(variables["@typography"], result, variables);
+  }
+
+  // Process corner-radius (fixing the "corder-radius" typo)
+  if (variables["@sizing"] && variables["@sizing"].$corder) {
+    processCornerRadiusTokens(variables["@sizing"].$corder, result, variables);
+  } else if (variables["@sizing"] && variables["@sizing"]["$corder-radius"]) {
+    processCornerRadiusTokens(variables["@sizing"]["$corder-radius"], result, variables);
+  }
+
   // Post-process for Tailwind compatibility
   result.jsTokens.colors = transformColorObjectForTailwind(result.jsTokens.colors);
 
   return result;
+}
+
+/**
+ * Process spacing tokens from design variables
+ * @param {Object} spacingObj - The spacing object from design variables
+ * @param {Object} result - The result object to populate
+ * @param {Object} variables - The variables object for reference resolution
+ */
+function processSpacingTokens(spacingObj, result, variables) {
+  for (const key in spacingObj) {
+    if (spacingObj[key].$type === "number" && spacingObj[key].$value !== undefined) {
+      const name = key.replace("$", "");
+      const value = spacingObj[key].$value;
+      const cssVarName = `--spacing-${name}`;
+
+      // Add to CSS variables
+      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+
+      // Add to JavaScript tokens
+      if (!result.jsTokens.spacing) {
+        result.jsTokens.spacing = {};
+      }
+
+      result.jsTokens.spacing[name] = `var(${cssVarName})`;
+    }
+  }
+}
+
+/**
+ * Process typography tokens from design variables
+ * @param {Object} typographyObj - The typography object from design variables
+ * @param {Object} result - The result object to populate
+ * @param {Object} variables - The variables object for reference resolution
+ */
+function processTypographyTokens(typographyObj, result, variables) {
+  // Process font families
+  if (typographyObj.$font) {
+    processFontFamilyTokens(typographyObj.$font, result);
+  }
+
+  // Process font sizes
+  if (typographyObj["$font-size"]) {
+    processFontSizeTokens(typographyObj["$font-size"], result);
+  }
+
+  // Process font weights
+  if (typographyObj["$font-weight"]) {
+    processFontWeightTokens(typographyObj["$font-weight"], result);
+  }
+
+  // Process line heights
+  if (typographyObj["$line-height"]) {
+    processLineHeightTokens(typographyObj["$line-height"], result);
+  }
+
+  // Process letter spacing
+  if (typographyObj["$letter-spacing"]) {
+    processLetterSpacingTokens(typographyObj["$letter-spacing"], result);
+  }
+}
+
+/**
+ * Process font family tokens
+ * @param {Object} fontObj - The font family object from typography
+ * @param {Object} result - The result object to populate
+ */
+function processFontFamilyTokens(fontObj, result) {
+  for (const key in fontObj) {
+    if (fontObj[key].$type === "string" && fontObj[key].$value) {
+      const name = key.replace("$", "");
+      const value = fontObj[key].$value;
+      const cssVarName = `--font-family-${name}`;
+
+      // Add to CSS variables
+      result.cssVariables.light.push(`${cssVarName}: ${value};`);
+
+      // Add to JavaScript tokens
+      if (!result.jsTokens.typography.fontFamily) {
+        result.jsTokens.typography.fontFamily = {};
+      }
+      result.jsTokens.typography.fontFamily[name] = `var(${cssVarName})`;
+    }
+  }
+}
+
+/**
+ * Process font size tokens
+ * @param {Object} fontSizeObj - The font size object from typography
+ * @param {Object} result - The result object to populate
+ */
+function processFontSizeTokens(fontSizeObj, result) {
+  for (const key in fontSizeObj) {
+    if (fontSizeObj[key].$type === "number" && fontSizeObj[key].$value !== undefined) {
+      const name = key.replace("$", "");
+      const value = fontSizeObj[key].$value;
+      const cssVarName = `--font-size-${name}`;
+
+      // Add to CSS variables
+      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+
+      // Add to JavaScript tokens
+      if (!result.jsTokens.typography.fontSize) {
+        result.jsTokens.typography.fontSize = {};
+      }
+      result.jsTokens.typography.fontSize[name] = `var(${cssVarName})`;
+    }
+  }
+}
+
+/**
+ * Process font weight tokens
+ * @param {Object} fontWeightObj - The font weight object from typography
+ * @param {Object} result - The result object to populate
+ */
+function processFontWeightTokens(fontWeightObj, result) {
+  for (const key in fontWeightObj) {
+    if (fontWeightObj[key].$type === "number" && fontWeightObj[key].$value !== undefined) {
+      const name = key.replace("$", "");
+      const value = fontWeightObj[key].$value;
+      const cssVarName = `--font-weight-${name}`;
+
+      // Add to CSS variables
+      result.cssVariables.light.push(`${cssVarName}: ${value};`);
+
+      // Add to JavaScript tokens
+      if (!result.jsTokens.typography.fontWeight) {
+        result.jsTokens.typography.fontWeight = {};
+      }
+      result.jsTokens.typography.fontWeight[name] = `var(${cssVarName})`;
+    }
+  }
+}
+
+/**
+ * Process line height tokens
+ * @param {Object} lineHeightObj - The line height object from typography
+ * @param {Object} result - The result object to populate
+ */
+function processLineHeightTokens(lineHeightObj, result) {
+  for (const key in lineHeightObj) {
+    if (lineHeightObj[key].$type === "number" && lineHeightObj[key].$value !== undefined) {
+      const name = key.replace("$", "");
+      const value = lineHeightObj[key].$value;
+      const cssVarName = `--line-height-${name}`;
+
+      // Add to CSS variables
+      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+
+      // Add to JavaScript tokens
+      if (!result.jsTokens.typography.lineHeight) {
+        result.jsTokens.typography.lineHeight = {};
+      }
+      result.jsTokens.typography.lineHeight[name] = `var(${cssVarName})`;
+    }
+  }
+}
+
+/**
+ * Process letter spacing tokens
+ * @param {Object} letterSpacingObj - The letter spacing object from typography
+ * @param {Object} result - The result object to populate
+ */
+function processLetterSpacingTokens(letterSpacingObj, result) {
+  for (const key in letterSpacingObj) {
+    if (letterSpacingObj[key].$type === "number" && letterSpacingObj[key].$value !== undefined) {
+      const name = key.replace("$", "");
+      const value = letterSpacingObj[key].$value;
+      const cssVarName = `--letter-spacing-${name}`;
+
+      // Add to CSS variables
+      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+
+      // Add to JavaScript tokens
+      if (!result.jsTokens.typography.letterSpacing) {
+        result.jsTokens.typography.letterSpacing = {};
+      }
+      result.jsTokens.typography.letterSpacing[name] = `var(${cssVarName})`;
+    }
+  }
+}
+
+/**
+ * Process corner radius tokens (correcting 'corder-radius' to 'corner-radius')
+ * @param {Object} cornerRadiusObj - The corner radius object from sizing
+ * @param {Object} result - The result object to populate
+ * @param {Object} variables - The variables object for reference resolution
+ */
+function processCornerRadiusTokens(cornerRadiusObj, result, variables) {
+  for (const key in cornerRadiusObj) {
+    if (cornerRadiusObj[key].$type === "number" && cornerRadiusObj[key].$value !== undefined) {
+      const name = key.replace("$", "");
+      const value = cornerRadiusObj[key].$value;
+      // Fix the variable name from corder to corner
+      const cssVarName = `--corner-radius-${name}`;
+
+      // Add to CSS variables
+      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+
+      // Add to JavaScript tokens
+      if (!result.jsTokens.cornerRadius) {
+        result.jsTokens.cornerRadius = {};
+      }
+      result.jsTokens.cornerRadius[name] = `var(${cssVarName})`;
+    }
+  }
 }
 
 /**
@@ -188,6 +413,41 @@ function resolveColor(value, variables, asCssVariable = true) {
 }
 
 /**
+ * Resolve references to other variables
+ * @param {String|Number} value - The value to resolve
+ * @param {Object} variables - The variables object for reference resolution
+ * @returns {String|Number} - The resolved value
+ */
+function resolveReference(value, variables) {
+  if (typeof value !== "string") return value;
+
+  // Handle references like "{@sizing.$spacing.base}"
+  if (value.startsWith("{") && value.endsWith("}")) {
+    const reference = value.substring(1, value.length - 1);
+    const parts = reference.split(".");
+
+    // Navigate through the object to find the referenced value
+    let current = variables;
+    for (const part of parts) {
+      if (current[part]) {
+        current = current[part];
+      } else {
+        // If we can't resolve, return the original value
+        return value;
+      }
+    }
+
+    if (current.$value !== undefined) {
+      return current.$value;
+    }
+
+    return value;
+  }
+
+  return value;
+}
+
+/**
  * Add a token to the JavaScript tokens object
  * @param {Object} obj - The object to add to
  * @param {String} path - The path to add at
@@ -258,15 +518,22 @@ function generateJsContent(result) {
 
   const designTokens = {};
   for (const [collectionKey, collectionValue] of Object.entries(result.jsTokens)) {
-    for (const [key, value] of Object.entries(collectionValue)) {
-      // Move primitive keys to the top level of the containing object
-      // ex. colors.primitive.sand -> colors.sand
-      if (key === "primitive") {
-        designTokens[collectionKey] = { ...(designTokens[collectionKey] ?? {}), ...value };
-      } else {
-        // Add the rest of the keys to the containing object
-        designTokens[collectionKey] = { ...(designTokens[collectionKey] ?? {}), [key]: value };
+    if (collectionKey === "colors") {
+      // Handle colors specially to move primitive keys to the top level
+      designTokens[collectionKey] = {};
+      for (const [key, value] of Object.entries(collectionValue)) {
+        // Move primitive keys to the top level of the containing object
+        // ex. colors.primitive.sand -> colors.sand
+        if (key === "primitive") {
+          designTokens[collectionKey] = { ...(designTokens[collectionKey] ?? {}), ...value };
+        } else {
+          // Add the rest of the keys to the containing object
+          designTokens[collectionKey] = { ...(designTokens[collectionKey] ?? {}), [key]: value };
+        }
       }
+    } else {
+      // Add other token categories directly
+      designTokens[collectionKey] = collectionValue;
     }
   }
 

@@ -8,6 +8,11 @@ This script converts Figma design tokens from the `design-tokens.json` format in
 - Supports both light and dark themes
 - Creates a JavaScript module for Tailwind integration
 - Resolves token references like `{@primitives.$color.$sand.100}`
+- Supports multiple token types:
+  - Colors (light and dark modes)
+  - Spacing
+  - Typography (font family, font size, font weight, line height, letter spacing)
+  - Corner Radius (fixed from "corder-radius" typo in the source)
 
 ## How to Use
 
@@ -48,6 +53,13 @@ module.exports = {
         // ...your existing colors
         ...designTokens.colors,
       },
+      spacing: designTokens.spacing,
+      fontSize: designTokens.typography.fontSize,
+      lineHeight: designTokens.typography.lineHeight,
+      letterSpacing: designTokens.typography.letterSpacing,
+      fontFamily: designTokens.typography.fontFamily,
+      fontWeight: designTokens.typography.fontWeight,
+      borderRadius: designTokens.cornerRadius,
     },
   },
 };
@@ -58,17 +70,53 @@ module.exports = {
 ### Using CSS Variables
 
 ```css
+/* Colors */
 .my-element {
   color: var(--color-primary-content);
   background-color: var(--color-neutral-surface);
+}
+
+/* Spacing */
+.padded {
+  padding: var(--spacing-base);
+  margin: var(--spacing-large);
+}
+
+/* Typography */
+.heading {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-24);
+  line-height: var(--line-height-32);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Corner Radius */
+.rounded {
+  border-radius: var(--corner-radius-medium);
 }
 ```
 
 ### Using in Tailwind Classes
 
 ```html
+<!-- Colors -->
 <div class="text-primary-content bg-neutral-surface">
-  Styled with design tokens
+  Styled with color tokens
+</div>
+
+<!-- Spacing -->
+<div class="p-base my-large">
+  Styled with spacing tokens
+</div>
+
+<!-- Typography -->
+<h1 class="font-sans text-24 leading-32 font-bold">
+  Styled with typography tokens
+</h1>
+
+<!-- Corner Radius -->
+<div class="rounded-medium">
+  Styled with corner radius tokens
 </div>
 ```
 
@@ -89,3 +137,7 @@ When you get updated design tokens from Figma:
 1. Replace the `design-tokens.json` file in the workspace root
 2. Run the NX command again: `nx design-tokens ui`
 3. The CSS and JavaScript files will be regenerated with the updated tokens 
+
+## Known Issues
+
+- The source design tokens refer to "corder-radius" (typo) instead of "corner-radius". The converter automatically corrects this in the generated output files.
