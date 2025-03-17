@@ -8,11 +8,12 @@ import { Badge } from "@humansignal/shad/components/ui/badge";
 import { unique } from "../../../utils/helpers";
 import "./Import.scss";
 import { IconError, IconInfo, IconUpload } from "../../../assets/icons";
-import { API, useAPI } from "../../../providers/ApiProvider";
+import { useAPI } from "../../../providers/ApiProvider";
 import Input from "libs/datamanager/src/components/Common/Input/Input";
 import { Button } from "apps/labelstudio/src/components";
 import { ff } from "@humansignal/core";
 import { IconTrash } from "libs/editor/src/assets/icons";
+import { importFiles } from "./utils";
 
 const importClass = cn("upload_page");
 const dropzoneClass = cn("dropzone");
@@ -61,36 +62,6 @@ function traverseFileTree(item, path) {
     }
   });
 }
-
-export const importFiles = async ({
-  files,
-  body,
-  project,
-  onUploadStart,
-  onUploadFinish,
-  onFinish,
-  onError,
-  dontCommitToProject,
-}) => {
-  onUploadStart?.(files);
-
-  const query = dontCommitToProject ? { commit_to_project: "false" } : {};
-
-  const contentType =
-    body instanceof FormData
-      ? "multipart/form-data" // usual multipart for usual files
-      : "application/x-www-form-urlencoded"; // chad urlencoded for URL uploads
-  const res = await API.invoke(
-    "importFiles",
-    { pk: project.id, ...query },
-    { headers: { "Content-Type": contentType }, body },
-  );
-
-  if (res && !res.error) onFinish?.(res);
-  else onError?.(res?.response);
-
-  onUploadFinish?.(files);
-};
 
 function getFiles(files) {
   // @todo this can be not a files, but text or any other draggable stuff

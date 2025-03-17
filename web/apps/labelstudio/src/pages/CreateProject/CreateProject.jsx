@@ -1,5 +1,5 @@
 import { EnterpriseBadge } from "@humansignal/ui";
-import React, { useCallback } from "react";
+import React from "react";
 import { useHistory } from "react-router";
 import { Button, ToggleItems } from "../../components";
 import { Modal } from "../../components/Modal/Modal";
@@ -9,7 +9,7 @@ import { useAPI } from "../../providers/ApiProvider";
 import { cn } from "../../utils/bem";
 import { ConfigPage } from "./Config/Config";
 import "./CreateProject.scss";
-import { importFiles, ImportPage } from "./Import/Import";
+import { ImportPage } from "./Import/Import";
 import { useImportPage } from "./Import/useImportPage";
 import { useDraftProject } from "./utils/useDraftProject";
 import { Input, Select, TextArea } from "../../components/Form";
@@ -106,7 +106,7 @@ export const CreateProject = ({ onClose, redirect = true }) => {
     setError(null);
   }, [name]);
 
-  const { columns, uploading, uploadDisabled, finishUpload, pageProps } = useImportPage(project, sample);
+  const { columns, uploading, uploadDisabled, finishUpload, pageProps, uploadSample } = useImportPage(project, sample);
 
   const rootClass = cn("create-project");
   const tabClass = rootClass.elem("tab");
@@ -127,18 +127,6 @@ export const CreateProject = ({ onClose, redirect = true }) => {
       label_config: config,
     }),
     [name, description, config],
-  );
-  const uploadSample = useCallback(
-    async (sample) => {
-      const url = sample.url;
-      const body = new URLSearchParams({ url });
-      await importFiles({
-        files: [{ name: url }],
-        body,
-        project,
-      });
-    },
-    [project],
   );
 
   const onCreate = React.useCallback(async () => {
