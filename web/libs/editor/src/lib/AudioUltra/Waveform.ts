@@ -1,3 +1,4 @@
+import type { TimelineSettings } from "../../components/Timeline/Types";
 import { Events } from "./Common/Events";
 import { MediaLoader } from "./Media/MediaLoader";
 import type { Player } from "./Controls/Player";
@@ -138,8 +139,6 @@ export interface WaveformOptions {
 
   padding?: Padding;
 
-  autoPlayNewSegments?: boolean;
-
   // Cursor options
   cursor?: CursorOptions;
 
@@ -201,7 +200,9 @@ export class Waveform extends Events<WaveformEventTypes> {
   regions!: Regions;
   loaded = false;
   renderedChannels = false;
-  autoPlayNewSegments = false;
+  // for now that's just an object to store setting and access them when needed;
+  // but if we need to react on changes we can convert it into getter/setter.
+  settings: TimelineSettings = {};
 
   constructor(params: WaveformOptions) {
     super();
@@ -253,8 +254,6 @@ export class Waveform extends Events<WaveformEventTypes> {
       this,
       this.visualizer,
     );
-
-    this.autoPlayNewSegments = this.params.autoPlayNewSegments ?? this.autoPlayNewSegments;
 
     this.player = this.params.playerType === "html5" ? new Html5Player(this) : new WebAudioPlayer(this);
 
@@ -320,9 +319,8 @@ export class Waveform extends Events<WaveformEventTypes> {
   syncCursor() {
     const time = this.currentTime;
 
-    // @todo - find a less hacky way to consistently update just the cursor
     this.visualizer.updateCursorToTime(time);
-    this.visualizer.draw(true);
+    this.visualizer.redrawCursor();
   }
 
   seek(value: number) {
@@ -552,6 +550,9 @@ export class Waveform extends Events<WaveformEventTypes> {
     return this.media.sampleRate;
   }
 
+  get isDrawing() {
+    return this.visualizer.isDrawing;
+  }
   /**
    * Initialize events
    */
