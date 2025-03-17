@@ -3,9 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "dependencies": {
-    "@radix-ui/react-select": "^2.1.6"
-  },
+  "dependencies": {},
   "main": "src/index.ts",
   "files": ["src/tailwind.css", "src/shad/components", "src/ui/assets", "src/ui/typography"]
 }
