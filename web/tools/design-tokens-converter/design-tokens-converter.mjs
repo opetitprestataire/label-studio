@@ -251,7 +251,21 @@ function generateCssContent(result) {
 function generateJsContent(result) {
   let content = "// Generated from design-tokens.json - DO NOT EDIT DIRECTLY\n\n";
 
-  content += `const designTokens = ${JSON.stringify(result.jsTokens, null, 2)};\n\n`;
+  const designTokens = {};
+  for (const [collectionKey, collectionValue] of Object.entries(result.jsTokens)) {
+    for (const [key, value] of Object.entries(collectionValue)) {
+      // Move primitive keys to the top level of the containing object
+      // ex. colors.primitive.sand -> colors.sand
+      if (key === "primitive") {
+        designTokens[collectionKey] = { ...(designTokens[collectionKey] ?? {}), ...value };
+      } else {
+        // Add the rest of the keys to the containing object
+        designTokens[collectionKey] = { ...(designTokens[collectionKey] ?? {}), [key]: value };
+      }
+    }
+  }
+
+  content += `const designTokens = ${JSON.stringify(designTokens, null, 2)};\n\n`;
   // Use CommonJS export for compatibility with Tailwind config
   content += "module.exports = designTokens;\n";
 
