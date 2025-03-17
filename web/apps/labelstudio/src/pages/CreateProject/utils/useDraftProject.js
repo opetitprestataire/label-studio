@@ -35,5 +35,5 @@ export const useDraftProject = () => {
     fetchDraftProject();
   }, []);
 
-  return project;
+  return { project, setProject };
 };

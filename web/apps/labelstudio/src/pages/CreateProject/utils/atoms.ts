@@ -7,7 +7,7 @@ export const sampleDatasetAtom = atomWithQuery((get) => {
   const project = get(projectAtom);
   const labelConfig = project?.label_config;
   return {
-    queryKey: [],
+    queryKey: [labelConfig, project, "sample-data"],
     enabled: isDefined(labelConfig) && labelConfig !== "<View></View>",
     async queryFn() {
       const response = await API.invoke(
@@ -23,7 +23,7 @@ export const sampleDatasetAtom = atomWithQuery((get) => {
 
       let json: Record<string, any> = response ?? {};
 
-      if (response.$meta.ok) json = { error: "Can't prepare sample data." };
+      if (!response.$meta.ok) json = { error: "Can't prepare sample data." };
       return JSON.stringify(json, null, "  ");
     },
   };

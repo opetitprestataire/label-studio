@@ -1,5 +1,5 @@
 import { EnterpriseBadge } from "@humansignal/ui";
-import React, { useMemo } from "react";
+import React from "react";
 import { useHistory } from "react-router";
 import { Button, ToggleItems } from "../../components";
 import { Modal } from "../../components/Modal/Modal";
@@ -82,14 +82,13 @@ export const CreateProject = ({ onClose, redirect = true }) => {
   const [step, _setStep] = React.useState("name"); // name | import | config
   const [waiting, setWaitingStatus] = React.useState(false);
 
-  const project = useDraftProject();
+  const { project, setProject: updateProject } = useDraftProject();
   const history = useHistory();
   const api = useAPI();
 
   const [name, setName] = React.useState("");
   const [error, setError] = React.useState();
   const [description, setDescription] = React.useState("");
-  const [config, setConfig] = React.useState("<View></View>");
   const setStep = React.useCallback((step) => {
     _setStep(step);
     const eventNameMap = {
@@ -99,10 +98,6 @@ export const CreateProject = ({ onClose, redirect = true }) => {
     };
     __lsa(`create_project.tab.${eventNameMap[step]}`);
   }, []);
-
-  const projectIsConfigured = useMemo(() => {
-    return config.trim().replace(/([\s\n]+)/, "") !== "<View></View>";
-  }, [config]);
 
   React.useEffect(() => {
     setError(null);
@@ -126,9 +121,9 @@ export const CreateProject = ({ onClose, redirect = true }) => {
     () => ({
       title: name,
       description,
-      label_config: config,
+      label_config: project?.label_config ?? "<View></View>",
     }),
-    [name, description, config],
+    [name, description, project?.label_config],
   );
 
   const onCreate = React.useCallback(async () => {
@@ -217,12 +212,13 @@ export const CreateProject = ({ onClose, redirect = true }) => {
           project={project}
           show={step === "import"}
           {...pageProps}
-          projectConfigured={projectIsConfigured}
           openLabelingConfig={() => setStep("config")}
         />
         <ConfigPage
           project={project}
-          onUpdate={setConfig}
+          onUpdate={(config) => {
+            updateProject({ ...project, label_config: config });
+          }}
           show={step === "config"}
           columns={columns}
           disableSaveButton={true}
