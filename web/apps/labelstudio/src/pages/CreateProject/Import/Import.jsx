@@ -9,6 +9,8 @@ import { IconError, IconInfo, IconUpload } from "../../../assets/icons";
 import { useAPI } from "../../../providers/ApiProvider";
 import Input from "libs/datamanager/src/components/Common/Input/Input";
 import { Button } from "apps/labelstudio/src/components";
+import { useAtomValue } from "jotai";
+import { sampleDatasetAtom } from "../utils/atoms";
 
 const testCode = `
 import { SimpleCard } from "../simple-card";
@@ -177,7 +179,6 @@ export const ImportPage = ({
   onFileListUpdate,
   highlightCsvHandling,
   dontCommitToProject = false,
-  projectConfigured = false,
   csvHandling,
   setCsvHandling,
   addColumns,
@@ -186,6 +187,8 @@ export const ImportPage = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
   const api = useAPI();
+  const projectConfigured = project?.label_config !== "<View></View>";
+  const sampleConfig = useAtomValue(sampleDatasetAtom);
 
   const processFiles = (state, action) => {
     if (action.sending) {
@@ -437,7 +440,11 @@ export const ImportPage = ({
                 </div>
               </label>
               {projectConfigured ? (
-                <CodeBlock title="Expected input preview" code={testCode} className="w-full max-w-[650px]" />
+                <CodeBlock
+                  title="Expected input preview"
+                  code={sampleConfig?.data ?? ""}
+                  className="w-full max-w-[650px]"
+                />
               ) : (
                 <SimpleCard title="Expected input preview" className="w-full max-w-[650px]">
                   Set up your{" "}
