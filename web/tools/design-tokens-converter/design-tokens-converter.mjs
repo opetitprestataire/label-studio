@@ -67,9 +67,9 @@ function processDesignVariables(variables) {
     processTypographyTokens(variables["@typography"], result, variables);
   }
 
-  // Process corner-radius (fixing the "corder-radius" typo)
-  if (variables["@sizing"] && variables["@sizing"].$corder) {
-    processCornerRadiusTokens(variables["@sizing"].$corder, result, variables);
+  // Process corner-radius (fixing the "corder-radius" typo if it exists)
+  if (variables["@sizing"] && variables["@sizing"]["$corner-radius"]) {
+    processCornerRadiusTokens(variables["@sizing"]["$corner-radius"], result, variables);
   } else if (variables["@sizing"] && variables["@sizing"]["$corder-radius"]) {
     processCornerRadiusTokens(variables["@sizing"]["$corder-radius"], result, variables);
   }
