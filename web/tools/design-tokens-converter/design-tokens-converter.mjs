@@ -46,12 +46,12 @@ function processDesignVariables(variables) {
 
   // Process colors
   if (variables["@color"] && variables["@color"].$color) {
-    processColorTokens(variables["@color"].$color, "", result);
+    processColorTokens(variables["@color"].$color, "", result, variables);
   }
 
   // Process primitives
   if (variables["@primitives"] && variables["@primitives"].$color) {
-    processPrimitiveColors(variables["@primitives"].$color, result);
+    processPrimitiveColors(variables["@primitives"].$color, result, variables);
   }
 
   return result;
@@ -63,7 +63,7 @@ function processDesignVariables(variables) {
  * @param {String} parentPath - The parent path for nesting
  * @param {Object} result - The result object to populate
  */
-function processColorTokens(colorObj, parentPath, result) {
+function processColorTokens(colorObj, parentPath, result, variables) {
   for (const key in colorObj) {
     if (typeof colorObj[key] === "object" && !Array.isArray(colorObj[key])) {
       const newPath = parentPath ? `${parentPath}-${key.replace("$", "")}` : key.replace("$", "");
@@ -101,7 +101,7 @@ function processColorTokens(colorObj, parentPath, result) {
         addToJsTokens(result.jsTokens.colors, name.replace(/\$/g, ""), cssVarName);
       } else {
         // Recursively process nested color objects
-        processColorTokens(colorObj[key], newPath, result);
+        processColorTokens(colorObj[key], newPath, result, variables);
       }
     }
   }
@@ -112,7 +112,7 @@ function processColorTokens(colorObj, parentPath, result) {
  * @param {Object} primitiveColors - The primitive colors object
  * @param {Object} result - The result object to populate
  */
-function processPrimitiveColors(primitiveColors, result) {
+function processPrimitiveColors(primitiveColors, result, variables) {
   for (const colorFamily in primitiveColors) {
     const familyName = colorFamily.replace("$", "");
 
@@ -229,7 +229,8 @@ function generateJsContent(result) {
   let content = "// Generated from design-tokens.json - DO NOT EDIT DIRECTLY\n\n";
 
   content += `const designTokens = ${JSON.stringify(result.jsTokens, null, 2)};\n\n`;
-  content += "export default designTokens;\n";
+  // Use CommonJS export for compatibility with Tailwind config
+  content += "module.exports = designTokens;\n";
 
   return content;
 }
@@ -241,7 +242,7 @@ const designTokensConverter = async () => {
   try {
     console.log("Reading design variables file...");
     const designVariablesData = await fs.readFile(designVariablesPath, "utf8");
-    variables = JSON.parse(designVariablesData);
+    const variables = JSON.parse(designVariablesData);
 
     console.log("Processing design variables...");
     const processed = processDesignVariables(variables);
