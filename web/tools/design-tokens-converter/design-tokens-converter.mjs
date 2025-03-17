@@ -243,8 +243,27 @@ function processPrimitiveCornerRadius(cornerRadiusObj, result) {
       const value = cornerRadiusObj[key].$value;
       const cssVarName = `--corner-radius-primitive-${name}`;
 
-      // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+      let resolvedValue;
+      if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
+        const reference = value.substring(1, value.length - 1);
+        const parts = reference.split(".");
+
+        // If it's a reference to a primitive spacing value, directly use the corresponding CSS variable
+        if (parts[0] === "@primitives") {
+          const collectionKey = parts[1].replace("$", "");
+          const valueKey = parts[2].replace("$", "");
+          resolvedValue = `var(--${collectionKey}-primitive-${valueKey})`;
+          result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
+        } else {
+          // Otherwise, try to resolve the value normally
+          resolvedValue = resolveReference(value, variables);
+          result.cssVariables.light.push(`${cssVarName}: ${resolvedValue}px;`);
+        }
+      } else {
+        // Not a reference, use directly
+        resolvedValue = value;
+        result.cssVariables.light.push(`${cssVarName}: ${resolvedValue}px;`);
+      }
 
       // Add to JavaScript tokens
       if (!result.jsTokens.cornerRadius.primitive) {
@@ -459,9 +478,10 @@ function processCornerRadiusTokens(cornerRadiusObj, result, variables) {
         const parts = reference.split(".");
 
         // If it's a reference to a primitive spacing value, directly use the corresponding CSS variable
-        if (parts[0] === "@primitives" && parts[1] === "$spacing") {
-          const spacingKey = parts[2].replace("$", "");
-          resolvedValue = `var(--spacing-primitive-${spacingKey})`;
+        if (parts[0] === "@primitives") {
+          const collectionKey = parts[1].replace("$", "");
+          const valueKey = parts[2].replace("$", "");
+          resolvedValue = `var(--${collectionKey}-primitive-${valueKey})`;
           result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
         } else {
           // Otherwise, try to resolve the value normally
