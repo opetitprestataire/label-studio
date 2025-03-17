@@ -155,8 +155,6 @@ const Model = types
   .volatile(() => ({
     // the only visible iframe/div, that contains rendered value
     mountNodeRef: createRef(),
-    // toggle showing which node to modify — visible or working
-    useWorkingNode: false,
 
     _isReady: false,
     _isLoaded: false,
@@ -260,7 +258,6 @@ const Model = types
       },
 
       beforeDestroy() {
-        // @TODO: Mention `regsObserverDisposer` in PR description
         domManager?.removeStyles(self.name);
         domManager?.destroy();
         domManager = null;
