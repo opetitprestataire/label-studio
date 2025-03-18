@@ -29,12 +29,12 @@ const cssOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.scss")
 const jsOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.js");
 
 /**
- * Convert a value to rem units
+ * Convert a value to rem units rounded to 4 decimal places no trailing zeros
  * @param {string} value - The value to convert
  * @returns {string} - The converted value in rem units
  */
 function convertToRem(value) {
-  return `${Number(value) / 16}rem`;
+  return `${(Number(value) / 16).toFixed(4).replace(/\.?0+$/, "")}rem`;
 }
 
 /**
