@@ -14,14 +14,38 @@ jest.mock("react", () => ({
   useLayoutEffect: jest.requireActual("react").useEffect,
 }));
 
-jest.mock("@humansignal/ui", () => ({
-  ToastProvider: ({ children }: { children: React.ReactNode }) => children,
-  ToastViewport: ({ children }: { children: React.ReactNode }) => children,
-  Toast: ({ children }: { children: React.ReactNode }) => children,
-  useToast: () => ({
-    show: jest.fn(),
-  }),
-}));
+jest.mock("@humansignal/ui", () => {
+  const { forwardRef } = jest.requireActual("react");
+  const actualCheckbox = jest.requireActual("@humansignal/ui/lib/checkbox/checkbox");
+  const actualToast = jest.requireActual("@humansignal/ui/lib/toast/toast");
+
+  return {
+    __esModule: true,
+    ...actualCheckbox,
+    ...actualToast,
+    Label: forwardRef(({ children }, ref) => {
+      return (
+        <div data-testid="label" ref={ref}>
+          {children}
+        </div>
+      );
+    }),
+    Tooltip: forwardRef(({ children }, ref) => {
+      return (
+        <div data-testid="tooltip" ref={ref}>
+          {children}
+        </div>
+      );
+    }),
+    Userpic: forwardRef(({ children }, ref) => {
+      return (
+        <div data-testid="userpic" ref={ref}>
+          {children}
+        </div>
+      );
+    }),
+  };
+});
 
 const mockStore = {
   hasInterface: jest.fn().mockReturnValue(true),
