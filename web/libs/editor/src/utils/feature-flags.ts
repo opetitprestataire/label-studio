@@ -109,13 +109,6 @@ export const FF_LEAD_TIME = "fflag_fix_front_lsdv_4600_lead_time_27072023_short"
 export const FF_LSDV_4620_3_ML = "fflag_fix_front_lsdv_4620_memory_leaks_100723_short";
 
 /**
- * Improving the responsiveness of the interface when working with the list of regions in the outliner
- *
- * @link https://app.launchdarkly.com/default/production/features/fflag_feat_front_lsdv_4620_outliner_optimization_310723_short
- */
-export const FF_OUTLINER_OPTIM = "fflag_feat_front_lsdv_4620_outliner_optimization_310723_short";
-
-/**
  * Fixes how presigned urls are generated and accessed to remove possibility of CORS errors.
  */
 export const FF_LSDV_4711 = "fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short";
