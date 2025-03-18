@@ -5,7 +5,6 @@ STALE_FEATURE_FLAGS = {
     'fflag_feat_front_lsdv_4620_outliner_optimization_310723_short': True,
     'fflag_fix_front_lsdv_4600_lead_time_27072023_short': False,
     'fflag_feat_front_lops_e_10_updated_ux_short': False,
-    'fflag_fix_front_lsdv_4988_dynamic_no_label_120523_short': True,
     'fflag_fix_back_lsdv_4648_annotator_filter_29052023_short': True,
     'ff_back_dev_4664_remove_storage_file_on_export_delete_29032023_short': False,
     'fflag_feat_front_lops_86_datasets_storage_edit_short': False,
