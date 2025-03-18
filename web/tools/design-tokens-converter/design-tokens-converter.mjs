@@ -727,120 +727,6 @@ function generateCssContent(result) {
 }
 
 /**
- * Generate JavaScript content
- * @param {Object} result - The processed tokens
- * @returns {String} - The JavaScript content
- */
-function generateJsContent(result) {
-  let content = "// Generated from design-tokens.json - DO NOT EDIT DIRECTLY\n\n";
-
-  // Pre-process primitive values to ensure they're in the correct format
-  normalizeJsTokens(result.jsTokens);
-
-  const designTokens = {};
-  for (const [collectionKey, collectionValue] of Object.entries(result.jsTokens)) {
-    if (collectionKey === "colors") {
-      // Handle colors specially to move primitive keys to the top level
-      designTokens[collectionKey] = {};
-      for (const [key, value] of Object.entries(collectionValue)) {
-        // Move primitive keys to the top level of the containing object
-        // ex. colors.primitive.sand -> colors.sand
-        if (key === "primitive") {
-          designTokens[collectionKey] = { ...(designTokens[collectionKey] ?? {}), ...value };
-        } else {
-          // Add the rest of the keys to the containing object
-          designTokens[collectionKey] = { ...(designTokens[collectionKey] ?? {}), [key]: value };
-        }
-      }
-    } else if (["typography", "spacing", "cornerRadius"].includes(collectionKey)) {
-      // Handle other token categories that may have primitives
-      designTokens[collectionKey] = {};
-
-      // Move any primitive properties to the top level
-      for (const [key, value] of Object.entries(collectionValue)) {
-        if (key === "primitive") {
-          // we need to handle each subcategory individually as strings
-          if (typeof value === "object" && !Array.isArray(value)) {
-            for (const [subKey, subValue] of Object.entries(value)) {
-              const isNestedObject = typeof subValue === "object" && !Array.isArray(subValue);
-              if (!isNestedObject) {
-                designTokens[collectionKey][subKey] = subValue;
-              } else {
-                if (!designTokens[collectionKey][subKey]) {
-                  designTokens[collectionKey][subKey] = {};
-                }
-                designTokens[collectionKey][subKey] = { ...subValue, ...designTokens[collectionKey][subKey] };
-              }
-            }
-          } else {
-            // For others like spacing and cornerRadius, add directly
-            designTokens[collectionKey] = { ...(designTokens[collectionKey] ?? {}), ...value };
-          }
-        } else {
-          // Add other keys directly
-          designTokens[collectionKey][key] = value;
-        }
-      }
-    } else {
-      // Add other token categories directly
-      designTokens[collectionKey] = collectionValue;
-    }
-  }
-
-  content += `const designTokens = ${JSON.stringify(designTokens, null, 2)};\n\n`;
-  // Use CommonJS export for compatibility with Tailwind config
-  content += "module.exports = designTokens;\n";
-
-  return content;
-}
-
-/**
- * Normalize JS tokens to ensure they're in the correct format
- * @param {Object} jsTokens - The JS tokens to normalize
- */
-function normalizeJsTokens(jsTokens) {
-  // Fix any broken primitive value references in the JS tokens
-  for (const category in jsTokens) {
-    if (typeof jsTokens[category] === "object" && jsTokens[category] !== null) {
-      // Fix primitive values
-      if (jsTokens[category].primitive) {
-        for (const key in jsTokens[category].primitive) {
-          // Check if the value is an object with character indices
-          if (typeof jsTokens[category].primitive[key] === "object" && "0" in jsTokens[category].primitive[key]) {
-            // Reconstruct the string from the character indices
-            let stringValue = "";
-            for (let i = 0; i < Object.keys(jsTokens[category].primitive[key]).length; i++) {
-              stringValue += jsTokens[category].primitive[key][i.toString()];
-            }
-            jsTokens[category].primitive[key] = stringValue;
-          }
-        }
-      }
-
-      // Also check other non-primitive values in this category
-      for (const key in jsTokens[category]) {
-        if (key !== "primitive" && typeof jsTokens[category][key] === "object" && jsTokens[category][key] !== null) {
-          // Check if it's a nested object with subcategories (like typography)
-          if ("primitive" in jsTokens[category][key]) {
-            normalizeJsTokens({ temp: jsTokens[category][key] });
-          } else if ("0" in jsTokens[category][key]) {
-            // It's a broken string representation
-            let stringValue = "";
-            for (let i = 0; i < Object.keys(jsTokens[category][key]).length; i++) {
-              stringValue += jsTokens[category][key][i.toString()];
-            }
-            jsTokens[category][key] = stringValue;
-          } else {
-            // It's a regular nested object, recursively normalize its contents
-            normalizeJsTokens({ temp: jsTokens[category][key] });
-          }
-        }
-      }
-    }
-  }
-}
-
-/**
  * Transform color object structure for better Tailwind CSS compatibility
  * @param {Object} colors - The color object to transform
  * @returns {Object} - The transformed color object
@@ -892,6 +778,76 @@ function transformColorObjectForTailwind(colors) {
 }
 
 /**
+ * Process JS tokens for output, merging primitive values
+ * @param {Object} tokens - The tokens to process
+ * @returns {Object} - The processed tokens
+ */
+function processJsTokens(tokens) {
+  // Merge primitive values at all levels
+  const merged = mergePrimitiveValues(tokens);
+
+  // Then transform colors for Tailwind if they exist
+  if (merged.colors) {
+    merged.colors = transformColorObjectForTailwind(merged.colors);
+  }
+
+  return merged;
+}
+
+/**
+ * Merge primitive values from nested structures
+ * @param {Object} values - The object to process
+ * @returns {Object} - The processed object with primitive values merged
+ */
+function mergePrimitiveValues(values) {
+  if (typeof values !== "object" || values === null || Array.isArray(values)) {
+    return values;
+  }
+
+  const result = {};
+
+  // First, process all non-primitive keys and add them to the result
+  for (const [key, value] of Object.entries(values)) {
+    if (key !== "primitive") {
+      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        result[key] = mergePrimitiveValues(value);
+      } else {
+        result[key] = value;
+      }
+    }
+  }
+
+  // Then, if there's a primitive key, merge up its values into the result
+  if (values.primitive) {
+    if (typeof values.primitive === "object" && !Array.isArray(values.primitive)) {
+      // Handle nested primitive objects (e.g., typography.primitive.fontSize)
+      for (const [primKey, primValue] of Object.entries(values.primitive)) {
+        result[primKey] = mergePrimitiveValues(primValue);
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Generate JS content from tokens
+ * @param {Object} jsTokens - The JS tokens to convert to content
+ * @returns {string} - The JS content
+ */
+function generateJsContent(jsTokens) {
+  let content = `// This file is generated by the design-tokens-converter tool.
+// Do not edit this file directly. Edit design-tokens.json instead.
+
+const designTokens = ${JSON.stringify(processJsTokens(jsTokens), null, 2)};
+
+module.exports = designTokens;
+`;
+
+  return content;
+}
+
+/**
  * Main function to run the design tokens converter
  */
 const designTokensConverter = async () => {
@@ -919,7 +875,7 @@ const designTokensConverter = async () => {
       const cssContent = generateCssContent(processed);
 
       console.log("Generating JavaScript...");
-      const jsContent = generateJsContent(processed);
+      const jsContent = generateJsContent(processed.jsTokens);
 
       // Ensure directory exists
       const cssDir = path.dirname(cssOutputPath);
