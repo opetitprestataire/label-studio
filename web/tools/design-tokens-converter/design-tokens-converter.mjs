@@ -29,6 +29,15 @@ const cssOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.scss")
 const jsOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.js");
 
 /**
+ * Convert a value to rem units
+ * @param {string} value - The value to convert
+ * @returns {string} - The converted value in rem units
+ */
+function convertToRem(value) {
+  return `${Number(value) / 16}rem`;
+}
+
+/**
  * Process design variables and extract tokens
  * @param {Object} variables - The design variables object
  * @returns {Object} - Object containing tokens for CSS and JavaScript
@@ -108,7 +117,7 @@ function processPrimitiveSpacing(spacingObj, result) {
       const cssVarName = `--spacing-primitive-${name}`;
 
       // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+      result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
 
       // Add to JavaScript tokens
       if (!result.jsTokens.spacing.primitive) {
@@ -138,7 +147,7 @@ function processPrimitiveTypography(typographyObj, result) {
         const cssVarName = `--font-size-primitive-${name}`;
 
         // Add to CSS variables
-        result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+        result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
 
         // Add to JavaScript tokens
         if (!result.jsTokens.typography.fontSize) {
@@ -190,7 +199,7 @@ function processPrimitiveTypography(typographyObj, result) {
         const cssVarName = `--line-height-primitive-${name}`;
 
         // Add to CSS variables
-        result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+        result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
 
         // Add to JavaScript tokens
         if (!result.jsTokens.typography.lineHeight) {
@@ -216,7 +225,7 @@ function processPrimitiveTypography(typographyObj, result) {
         const cssVarName = `--letter-spacing-primitive-${name}`;
 
         // Add to CSS variables
-        result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+        result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
 
         // Add to JavaScript tokens
         if (!result.jsTokens.typography.letterSpacing) {
@@ -257,12 +266,12 @@ function processPrimitiveCornerRadius(cornerRadiusObj, result) {
         } else {
           // Otherwise, try to resolve the value normally
           resolvedValue = resolveReference(value, variables);
-          result.cssVariables.light.push(`${cssVarName}: ${resolvedValue}px;`);
+          result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
         }
       } else {
         // Not a reference, use directly
         resolvedValue = value;
-        result.cssVariables.light.push(`${cssVarName}: ${resolvedValue}px;`);
+        result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
       }
 
       // Add to JavaScript tokens
@@ -288,7 +297,7 @@ function processSpacingTokens(spacingObj, result, variables) {
       const cssVarName = `--spacing-${name}`;
 
       // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+      result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
 
       // Add to JavaScript tokens
       if (!result.jsTokens.spacing) {
@@ -371,7 +380,7 @@ function processFontSizeTokens(fontSizeObj, result, variables) {
       const cssVarName = `--font-size-${name}`;
 
       // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+      result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
 
       // Add to JavaScript tokens
       if (!result.jsTokens.typography.fontSize) {
@@ -421,7 +430,7 @@ function processLineHeightTokens(lineHeightObj, result, variables) {
       const cssVarName = `--line-height-${name}`;
 
       // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+      result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
 
       // Add to JavaScript tokens
       if (!result.jsTokens.typography.lineHeight) {
@@ -446,7 +455,7 @@ function processLetterSpacingTokens(letterSpacingObj, result, variables) {
       const cssVarName = `--letter-spacing-${name}`;
 
       // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${value}px;`);
+      result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
 
       // Add to JavaScript tokens
       if (!result.jsTokens.typography.letterSpacing) {
@@ -486,12 +495,12 @@ function processCornerRadiusTokens(cornerRadiusObj, result, variables) {
         } else {
           // Otherwise, try to resolve the value normally
           resolvedValue = resolveReference(refValue, variables);
-          result.cssVariables.light.push(`${cssVarName}: ${resolvedValue}px;`);
+          result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
         }
       } else {
         // Not a reference, use directly
         resolvedValue = refValue;
-        result.cssVariables.light.push(`${cssVarName}: ${resolvedValue}px;`);
+        result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
       }
 
       // Add to JavaScript tokens
