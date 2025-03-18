@@ -759,13 +759,18 @@ function generateJsContent(result) {
       // Move any primitive properties to the top level
       for (const [key, value] of Object.entries(collectionValue)) {
         if (key === "primitive") {
-          // For typography, we need to handle each subcategory
+          // we need to handle each subcategory individually as strings
           if (typeof value === "object" && !Array.isArray(value)) {
             for (const [subKey, subValue] of Object.entries(value)) {
-              if (!designTokens[collectionKey][subKey]) {
-                designTokens[collectionKey][subKey] = {};
+              const isNestedObject = typeof subValue === "object" && !Array.isArray(subValue);
+              if (!isNestedObject) {
+                designTokens[collectionKey][subKey] = subValue;
+              } else {
+                if (!designTokens[collectionKey][subKey]) {
+                  designTokens[collectionKey][subKey] = {};
+                }
+                designTokens[collectionKey][subKey] = { ...subValue, ...designTokens[collectionKey][subKey] };
               }
-              designTokens[collectionKey][subKey] = { ...subValue, ...designTokens[collectionKey][subKey] };
             }
           } else {
             // For others like spacing and cornerRadius, add directly
