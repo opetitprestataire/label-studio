@@ -1,6 +1,6 @@
 {
-  "message": "feat: LEAP-1896: Add scrollbar support to Visualizer (#7165)",
-  "commit": "05a419b5ce92bb646860b285acd19ce5f9936716",
-  "date": "2025-03-12T17:05:15.000Z",
+  "message": "refactor: LEAP-1290: remove feature flag FF_LOPS_E_10 and related code (#7218)",
+  "commit": "437b8933f1127bf11d3f488ae9e01a86cbb1ea9b",
+  "date": "2025-03-18T11:06:02.000Z",
   "branch": "develop"
 }
