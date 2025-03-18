@@ -144,10 +144,12 @@ const Model = types
       }
       `;
     },
+    // This is not a real getter as it is dependant on ref wich cannot be cached in the right way
     getIframeBodyNode() {
       const mountNode = self.mountNodeRef.current;
       return mountNode?.contentDocument?.body;
     },
+    // This is not a real getter as it is dependant on ref wich cannot be cached in the right way
     getRootNode() {
       return self.getIframeBodyNode() ?? self.mountNodeRef.current;
     },
