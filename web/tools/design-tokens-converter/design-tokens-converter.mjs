@@ -34,7 +34,12 @@ const jsOutputPath = path.join(workspaceRoot, "libs/ui/src/tokens/tokens.js");
  * @returns {string} - The converted value in rem units
  */
 function convertToRem(value) {
-  return `${(Number(value) / 16).toFixed(4).replace(/\.?0+$/, "")}rem`;
+  const remValue = (Number(value) / 16).toFixed(4).replace(/\.?0+$/, "");
+  // Ensure 0 is returned as a unitless value
+  if (remValue === "0") {
+    return remValue;
+  }
+  return `${remValue}rem`;
 }
 
 /**
