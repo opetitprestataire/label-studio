@@ -13,7 +13,7 @@ export const HighlightMixin = types
   .views((self) => ({
     get _hasSpans() {
       // @todo is it possible that only some spans are connected?
-      // @TODO: Is it a legacy code we no need anymore?
+      // @TODO: Need to check if it is still necessary condition. The way of working with spans was changed and it could affect this part. The main question, is there still a way to get `isConnected === false`
       return self._spans ? self._spans.every((span) => span.isConnected) : false;
     },
     get identifier() {
