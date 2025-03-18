@@ -1,6 +1,6 @@
 {
-  "message": "feat: LEAP-1893: LEAP-1900: Add setting to toggle region looping and autoplay (#7166)",
-  "commit": "2b7f0a40bd83d3fc30890fb716caed41a6a19c80",
-  "date": "2025-03-13T15:14:59.000Z",
+  "message": "refactor: LEAP-1300: Remove outdated FF_LSDV_4620_3 (#7228)",
+  "commit": "0b5f6a0faea973f9f96bf7512cada901f1f1df57",
+  "date": "2025-03-18T18:01:00.000Z",
   "branch": "develop"
 }

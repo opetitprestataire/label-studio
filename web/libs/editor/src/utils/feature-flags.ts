@@ -102,27 +102,11 @@ export const FF_LSDV_3009 = "fflag_fix_font_lsdv_3009_draft_saving_stuck_130223_
 export const FF_LEAD_TIME = "fflag_fix_front_lsdv_4600_lead_time_27072023_short";
 
 /**
- * Reworking of RichText to optimize its work with DOM and decrease response time with a large number of regions.
- * It also fixes scenarios of working with hidden regions
- * and edge cases for creating spans inside other spans.
- *
- * @link https://app.launchdarkly.com/default/production/features/fflag_feat_front_lsdv_4620_richtext_opimization_060423_short
- */
-export const FF_LSDV_4620_3 = "fflag_feat_front_lsdv_4620_richtext_opimization_060423_short";
-
-/**
  * Fixes memory leaks in label studio frontend relative to mobx-state-tree and react usage
  *
  * @link https://app.launchdarkly.com/default/production/features/fflag_fix_front_lsdv_4620_memory_leaks_100723_short
  */
 export const FF_LSDV_4620_3_ML = "fflag_fix_front_lsdv_4620_memory_leaks_100723_short";
-
-/**
- * Improving the responsiveness of the interface when working with the list of regions in the outliner
- *
- * @link https://app.launchdarkly.com/default/production/features/fflag_feat_front_lsdv_4620_outliner_optimization_310723_short
- */
-export const FF_OUTLINER_OPTIM = "fflag_feat_front_lsdv_4620_outliner_optimization_310723_short";
 
 /**
  * Fixes how presigned urls are generated and accessed to remove possibility of CORS errors.
