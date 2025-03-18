@@ -11,6 +11,7 @@ import Input from "libs/datamanager/src/components/Common/Input/Input";
 import { Button } from "apps/labelstudio/src/components";
 import { useAtomValue } from "jotai";
 import { sampleDatasetAtom } from "../utils/atoms";
+import { ff } from "@humansignal/core";
 
 const testCode = `
 import { SimpleCard } from "../simple-card";
@@ -337,6 +338,15 @@ export const ImportPage = ({
     [importFiles],
   );
 
+  const openConfig = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openLabelingConfig?.();
+    },
+    [openLabelingConfig],
+  );
+
   useEffect(() => {
     if (project?.id !== undefined) {
       loadFilesList().then((files) => {
@@ -439,28 +449,21 @@ export const ImportPage = ({
                   </b>
                 </div>
               </label>
-              {projectConfigured ? (
+              {projectConfigured && ff.isFF(ff.FF_HOMEPAGE) ? (
                 <CodeBlock
                   title="Expected input preview"
                   code={sampleConfig?.data ?? ""}
                   className="w-full max-w-[650px]"
                 />
-              ) : (
+              ) : ff.isFF(ff.FF_HOMEPAGE) ? (
                 <SimpleCard title="Expected input preview" className="w-full max-w-[650px]">
                   Set up your{" "}
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      openLabelingConfig?.();
-                    }}
-                  >
+                  <a href="#" onClick={openConfig}>
                     labeling configuration
                   </a>{" "}
                   to generate an input preview.
                 </SimpleCard>
-              )}
+              ) : null}
             </div>
           )}
 
