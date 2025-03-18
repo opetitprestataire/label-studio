@@ -12,7 +12,7 @@ This script converts Figma design tokens from the `design-tokens.json` format in
   - Colors (light and dark modes)
   - Spacing
   - Typography (font family, font size, font weight, line height, letter spacing)
-  - Corner Radius (fixed from "corder-radius" typo in the source)
+  - Corner Radius
 
 ## How to Use
 
