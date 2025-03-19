@@ -1,18 +1,19 @@
 import { observer } from "mobx-react";
+import { MSTTimelineRegion } from "../../Timeline/Types";
 import styles from "./TimelineRegionEditor.module.scss";
 
-export const TimelineRegionEditor = observer(({ region }: { region: any }) => {
+export const TimelineRegionEditor = observer(({ region }: { region: MSTTimelineRegion }) => {
   const { start, end } = region.ranges[0];
   const length = region.object.length;
 
   const changeStartTimeHandler = (value: number) => {
     if (+value === region.ranges[0].start) return;
-    region.setRanges([+value, region.ranges[0].end]);
+    region.setRange([+value, region.ranges[0].end]);
   };
 
   const changeEndTimeHandler = (value: number) => {
     if (+value === region.ranges[0].end) return;
-    region.setRanges([region.ranges[0].start, +value]);
+    region.setRange([region.ranges[0].start, +value]);
   };
 
   return (

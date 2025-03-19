@@ -3,10 +3,16 @@ import { type FC, type MouseEvent, useCallback, useEffect, useMemo, useRef, useS
 import { useMemoizedHandlers } from "../../../../hooks/useMemoizedHandlers";
 import { Block, Elem } from "../../../../utils/bem";
 import { isDefined } from "../../../../utils/utilities";
-import type { TimelineRegion, TimelineViewProps } from "../../Types";
+import type { MSTTimelineRegion, TimelineRegion, TimelineViewProps } from "../../Types";
 import { Keypoints } from "./Keypoints";
 import "./Frames.scss";
 
+/**
+ * Effectively returns the frame on the given offset
+ * @param {number} num The offset to calculate the frame from
+ * @param {number} step Frame size, technically it's static, but comes from the props
+ * @returns {number} The frame on the given offset
+ */
 const toSteps = (num: number, step: number) => {
   return Math.floor(num / step);
 };
@@ -191,6 +197,10 @@ export const Frames: FC<TimelineViewProps> = ({
     return value + timelineStartOffset;
   }, [position, currentOffsetX, step, length]);
 
+  /**
+   * Main function for all interactions with the timeline.
+   * It's responsible for creating new regions, updating existing ones and updating the player position.
+   */
   const onFrameScrub = useCallback(
     (e: MouseEvent) => {
       const dimensions = scrollable.current!.getBoundingClientRect();
@@ -203,26 +213,40 @@ export const Frames: FC<TimelineViewProps> = ({
       const onKeyframes = e.pageX - offsetLeft > timelineStartOffset;
       // don't draw on region lines, only on the empty space or special new line
       const isDrawing = onKeyframes && (!regionRow || regionRow.dataset?.id === "new");
-      let region: any;
+      let region: MSTTimelineRegion | undefined;
+      let mode: "new" | "edit" | undefined;
 
-      const getMouseToFrame = (e: MouseEvent | globalThis.MouseEvent) => {
+      const getMouseToOffset = (e: MouseEvent | globalThis.MouseEvent) => {
         const mouseOffset = e.pageX - offsetLeft - timelineStartOffset;
 
         return mouseOffset + currentOffsetX;
       };
 
-      const offset = getMouseToFrame(e);
-      const baseFrame = toSteps(offset, step) + 1;
+      const offset = getMouseToOffset(e);
+      let baseFrame = toSteps(offset, step) + 1;
+      let isInstant = false;
 
       setIndicatorOffset(offset);
 
       if (isDrawing) {
         // always a timeline region
-        region = props.onStartDrawing?.(baseFrame);
+        region = props.onStartDrawing?.({ frame: baseFrame });
+        mode = "new";
+      } else {
+        region = props.onStartDrawing?.({ region: regionRow?.dataset.id, frame: baseFrame });
+        if (region) {
+          const { start, end } = region.ranges[0];
+          mode = "edit";
+          if (baseFrame === start) {
+            baseFrame = end;
+          } else if (baseFrame === end) {
+            baseFrame = start;
+          }
+        }
       }
 
       const onMouseMove = (e: globalThis.MouseEvent) => {
-        const offset = getMouseToFrame(e);
+        const offset = getMouseToOffset(e);
         const frame = toSteps(offset, step) + 1;
 
         if (offset >= 0 && offset <= rightLimit) {
@@ -232,15 +256,19 @@ export const Frames: FC<TimelineViewProps> = ({
         }
 
         if (region) {
-          const [start, end] = frame > baseFrame ? [baseFrame, frame] : [frame, baseFrame];
-          region.setRanges([start, end]);
+          if (isInstant) {
+            region.setRange([frame, frame], { mode });
+          } else {
+            const [start, end] = frame > baseFrame ? [baseFrame, frame] : [frame, baseFrame];
+            region.setRange([start, end], { mode });
+          }
         }
       };
 
       const onMouseUp = () => {
         setHoverEnabled(true);
         setRegionSelectionDisabled(false);
-        props.onFinishDrawing?.();
+        props.onFinishDrawing?.({ mode });
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
       };
