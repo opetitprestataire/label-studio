@@ -101,9 +101,7 @@ export class Modal extends React.Component {
               {!bare && (
                 <Modal.Header>
                   <Elem name="title">{this.state.title}</Elem>
-                  {this.props.allowClose !== false && (
-                    <Elem tag={Button} name="close" icon={<IconCross />} />
-                  )}
+                  {this.props.allowClose !== false && <Elem tag={Button} name="close" icon={<IconCross />} />}
                 </Modal.Header>
               )}
               <Elem name="body" mod={{ bare }}>
