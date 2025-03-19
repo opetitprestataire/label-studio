@@ -290,10 +290,10 @@ const Model = types
       },
 
       /**
-       * Create a new timeline region at a given `frame` (only if labels are selected)
+       * Create a new timeline region at a given `frame` (only if labels are selected) or edit an existing one if `region` is provided
        * @param {Object} options
-       * @param {number} options.frame
-       * @param {string} options.region
+       * @param {number} options.frame current frame under the cursor
+       * @param {string} options.region region id to search for it in the store; used to edit existing region
        * @returns {Object} created region
        */
       startDrawing({ frame, region: id }) {
@@ -315,6 +315,11 @@ const Model = types
         return self.drawingRegion;
       },
 
+      /**
+       * Finish drawing a region and save its final state to the store if it was edited
+       * @param {Object} options
+       * @param {string} options.mode "new" if we are creating a new region, "edit" if we are editing an existing one
+       */
       finishDrawing({ mode }) {
         self.drawingRegion = null;
         if (mode === "edit") {
