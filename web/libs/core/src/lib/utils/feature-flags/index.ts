@@ -1,5 +1,3 @@
-import { FF_SAMPLE_DATASETS } from "./flags";
-
 const FEATURE_FLAGS = window.APP_SETTINGS?.feature_flags || {};
 
 // TODO: remove the override + if statement once LSE and LSO start building
@@ -11,19 +9,18 @@ const FLAGS_OVERRIDE: Record<string, boolean> = {
   //
   // Add your flags overrides as following:
   // [FF_FLAG_NAME]: boolean
-  [FF_SAMPLE_DATASETS]: true,
 };
 
 /**
  * Checks if the Feature Flag is active or not.
  */
 export const isActive = (id: string) => {
-  console.log(id, FEATURE_FLAGS, FLAGS_OVERRIDE);
   const defaultValue = window.APP_SETTINGS?.feature_flags_default_value === true;
   const isSentryOSS = window?.APP_SETTINGS?.sentry_environment === "opensource";
+  const isDevelopment = process.env.NODE_ENV === "development";
 
   if (isSentryOSS && id in FLAGS_OVERRIDE) return FLAGS_OVERRIDE[id];
-  if (id in FEATURE_FLAGS) return FEATURE_FLAGS[id] ?? defaultValue;
+  if (isDevelopment && id in FEATURE_FLAGS) return FEATURE_FLAGS[id] ?? defaultValue;
 
   return defaultValue;
 };
