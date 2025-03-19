@@ -9,11 +9,14 @@ const getFileNameFromIcon = (iconName: string): string => {
     // Convert IconCamelCase to kebab-case.svg
     const name = iconName.substring(4); // Remove 'Icon' prefix
 
-    // convert to kebab-case
+    if (name === "HumanSignal") {
+      return "humansignal.svg";
+    }
+
     return `${name
       .replace(/([A-Z])/g, "-$1")
-      .toLowerCase()
-      .substring(1)}.svg`;
+      .replace(/^-/, "")
+      .toLowerCase()}.svg`;
   }
 
   return "unknown.svg";
@@ -22,6 +25,14 @@ const getFileNameFromIcon = (iconName: string): string => {
 // Function to get the category of an icon
 const getIconCategory = (iconName: string): string => {
   const name = iconName.substring(4); // Remove 'Icon' prefix
+
+  if (["Models", "Model", "ModelVersion", "BoundingBox", "Predictions", "LsLabeling", "LsReview"].includes(name)) {
+    return "AI/ML";
+  }
+
+  if (["HumanSignal", "Slack", "Github", "Mastercard", "Visa"].includes(name)) {
+    return "Brand";
+  }
 
   if (
     [
@@ -45,7 +56,8 @@ const getIconCategory = (iconName: string): string => {
   ) {
     return "Labeling Actions";
   }
-  if (["ZoomIn", "ZoomOut"].includes(name) || name.includes("Tool")) {
+
+  if (["ZoomIn", "ZoomOut", "BulkLabeling", "RelationLink"].includes(name) || name.includes("Tool")) {
     return "Labeling Tools";
   }
 
@@ -68,23 +80,7 @@ const getIconCategory = (iconName: string): string => {
   }
 
   if (
-    [
-      "Check",
-      "Cross",
-      "CheckBold",
-      "CrossBold",
-      "CheckAlt",
-      "CrossAlt",
-      "CheckCircle",
-      "CheckCircleFilled",
-      "CheckCircleGreen",
-      "CheckCircleFilledGreen",
-      "CheckCircleBlue",
-      "Check2",
-      "Check3",
-      "CrossNoPadding",
-      "CrossCircleFilledRed",
-    ].includes(name)
+    name.includes("Check") || name.includes("Cross") || name.includes("Close") || ["Remove", "Delete"].includes(name)
   ) {
     return "Check & Cross";
   }
@@ -94,7 +90,6 @@ const getIconCategory = (iconName: string): string => {
       "VolumeMute",
       "VolumeHalf",
       "VolumeFull",
-      "SoundBars",
       "SoundConfig",
       "SoundMutedConfig",
       "SoundMuted",
@@ -124,12 +119,24 @@ const getIconCategory = (iconName: string): string => {
     return "Audio & Video";
   }
 
+  if (["Bouncing3Dots", "SoundBars"].includes(name)) {
+    return "Animated"
+  }
+
   if (["Star", "StarOutline", "StarSquare", "StarRectangle"].includes(name)) {
     return "Stars";
   }
 
-  if (["Folder", "FolderOpen", "FolderPlus", "FolderSpark", "EmptyFolder", "AllProjects"].includes(name)) {
+  if (["AllProjects"].includes(name) || name.includes("Folder")) {
     return "Folders";
+  }
+
+  if (["Document", "Text", "Pencil"].includes(name) || name.includes("File") || name.includes("Copy") || name.includes("Undo") || name.includes("Redo") || name.includes("Upload") || name.includes("Download") || name.includes("Duplicate") || name.includes("Paste") || name.includes("Cut") || name.includes("Delete") ||name.includes("Edit")|| name.includes("Trash") || name.includes("Folder")) {
+    return "Content & Documents";
+  }
+
+  if (["Calendar"].includes(name) ||  name.includes("Date") || name.includes("Time") || name.includes("Clock")) {
+    return "Calendar & Time";
   }
 
   if (
@@ -162,6 +169,8 @@ const getIconCategory = (iconName: string): string => {
 const categoryDescriptions: Record<string, string> = {
   General: "General purpose icons",
   Special: "Special case icons with unique names",
+  "AI/ML": "Icons related to AI and ML",
+  Brand: "Icons related to brands/companies",
   "Labeling Tools": "Icons related to tools used for interactions and editing",
   "Labeling Actions": "Icons related to actions performed during labeling",
   Comments: "Icons for comments and feedback",
@@ -171,9 +180,12 @@ const categoryDescriptions: Record<string, string> = {
   "Check & Cross": "Icons for indicating success, completion, or rejection",
   "Audio & Video": "Icons related to audio and video controls and volume",
   Stars: "Star-related icons for ratings and favorites",
-  Folders: "Icons for folders and file management",
+  Folders: "Icons for folders and project management",
+  "Content & Documents": "Icons for files and content management",
+  "Calendar & Time": "Icons for calendar and time",
   Navigation: "Icons for navigation and direction indicators",
   Information: "Icons for information, warnings, errors, and help",
+  Animated: "Animated icons",
 };
 
 // Component for a single icon

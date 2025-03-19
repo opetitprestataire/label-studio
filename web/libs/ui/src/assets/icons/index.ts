@@ -120,7 +120,7 @@ export { ReactComponent as IconFullscreen } from "./fullscreen.svg";
 export { ReactComponent as IconFullscreenExit } from "./fullscreen-exit.svg";
 export { ReactComponent as IconGear } from "./gear.svg";
 export { ReactComponent as IconGearNewUI } from "./gear-new-ui.svg";
-export { ReactComponent as IconGitHub } from "./github.svg";
+export { ReactComponent as IconGithub } from "./github.svg";
 export { ReactComponent as IconGrid } from "./grid.svg";
 export { ReactComponent as IconHamburger } from "./hamburger.svg";
 export { ReactComponent as IconHandTool } from "./hand-tool.svg";
