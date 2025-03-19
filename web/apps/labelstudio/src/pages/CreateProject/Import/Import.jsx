@@ -352,7 +352,7 @@ export const ImportPage = ({
           <IconUpload width="16" height="16" className={importClass.elem("upload-icon")} />
           Upload {files.uploaded.length ? "More " : ""}Files
         </Button>
-        {ff.isFF(ff.FF_SAMPLE_DATASETS) && (
+        {ff.isActive(ff.FF_SAMPLE_DATASETS) && (
           <SampleDatasetSelect samples={samples} sample={sample} onSampleApplied={onSampleDatasetSelect} />
         )}
         <div
