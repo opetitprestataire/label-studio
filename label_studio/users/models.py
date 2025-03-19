@@ -72,7 +72,7 @@ class UserLastActivityMixin(models.Model):
         self.last_activity = timezone.now()
 
         if check_interval:
-            if (timezone.now() - self.last_activity) < check_interval:
+            if (timezone.now() - self.last_activity).seconds < check_interval:
                 # Don't update last_activity because it's not necessary since it's close enough to the existing last_activity value
                 logger.info(
                     f'Not updating last_activity for {self.id} because last_activity of {self.last_activity} is within {check_interval} seconds of their existing last_activity value'
