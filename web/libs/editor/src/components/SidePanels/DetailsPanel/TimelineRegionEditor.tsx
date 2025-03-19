@@ -59,6 +59,8 @@ const Field = ({ label, value: originalValue, onChange: saveValue, region, min, 
       <span className={styles.labelText}>{label}</span>
       <input
         className={styles.input}
+        // hacky way to update value on region change; `onChange` is not called on every change, so input is still not controlled
+        key={originalValue}
         type="number"
         step={1}
         readOnly={readonly}
