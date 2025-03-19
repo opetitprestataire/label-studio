@@ -243,5 +243,5 @@ export { ReactComponent as IconVolumeMute } from "./volume-mute.svg";
 export { ReactComponent as IconWarning } from "./warning.svg";
 export { ReactComponent as IconWarningCircle } from "./warning-circle.svg";
 export { ReactComponent as IconWarningCircleFilled } from "./warning-circle-filled.svg";
-export { ReactComponent as IconZoomIn } from "./zoom-in-tool.svg";
-export { ReactComponent as IconZoomOut } from "./zoom-out-tool.svg";
+export { ReactComponent as IconZoomIn } from "./zoom-in.svg";
+export { ReactComponent as IconZoomOut } from "./zoom-out.svg";
