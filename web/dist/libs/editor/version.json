@@ -1,6 +1,6 @@
 {
-  "message": "fix: LEAP-1892: [FE] Deeply nested Choices are visible when their parents are hidden (#7180)",
-  "commit": "52e941a0860ea8211eaa77bef0e10628db3e1b69",
-  "date": "2025-03-14T12:07:16.000Z",
+  "message": "fix: OPTIC-1832: Missing tokens scss variables import (#7253)",
+  "commit": "a0777872900f2029ec013684a5c81309f7b98bdd",
+  "date": "2025-03-19T13:47:30.000Z",
   "branch": "develop"
 }
