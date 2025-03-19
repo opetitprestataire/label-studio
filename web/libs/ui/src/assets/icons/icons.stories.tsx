@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import type { Meta } from "@storybook/react";
 import * as Icons from "./";
 
-const iconNames = Object.keys(Icons).sort();
-
 // Function to get SVG file name from component name
 const getFileNameFromIcon = (iconName: string): string => {
   // Regular icons
@@ -11,47 +9,7 @@ const getFileNameFromIcon = (iconName: string): string => {
     // Convert IconCamelCase to kebab-case.svg
     const name = iconName.substring(4); // Remove 'Icon' prefix
 
-    // Handle special directory cases
-    if (
-      [
-        "BrushTool",
-        "CircleTool",
-        "KeypointsTool",
-        "PolygonTool",
-        "RectangleTool",
-        "Rectangle3PointTool",
-        "MagicWandTool",
-        "EraserTool",
-        "HandTool",
-        "BrightnessTool",
-        "ContrastTool",
-        "ZoomIn",
-        "ZoomOut",
-        "ExpandTool",
-        "MoveTool",
-        "RotateLeftTool",
-        "RotateRightTool",
-      ].includes(name)
-    ) {
-      return `tools/${name
-        .replace(/([A-Z])/g, "-$1")
-        .toLowerCase()
-        .substring(1)}.svg`;
-    }
-
-    if (["RelationRight", "RelationLeft", "RelationBi"].includes(name)) {
-      return `relations/${name.replace("Relation", "").toLowerCase()}.svg`;
-    }
-
-    if (name.startsWith("Property")) {
-      return `properties/${name
-        .replace("Property", "")
-        .replace(/([A-Z])/g, "-$1")
-        .toLowerCase()
-        .substring(1)}.svg`;
-    }
-
-    // Default case - convert to kebab-case
+    // convert to kebab-case
     return `${name
       .replace(/([A-Z])/g, "-$1")
       .toLowerCase()
@@ -63,34 +21,32 @@ const getFileNameFromIcon = (iconName: string): string => {
 
 // Function to get the category of an icon
 const getIconCategory = (iconName: string): string => {
-  if (iconName === "CopyIcon" || iconName === "FileDownload" || iconName === "FileDownloadBlack") {
-    return "Special";
-  }
-
   const name = iconName.substring(4); // Remove 'Icon' prefix
 
   if (
     [
-      "BrushTool",
-      "CircleTool",
-      "KeypointsTool",
-      "PolygonTool",
-      "RectangleTool",
-      "Rectangle3PointTool",
-      "MagicWandTool",
-      "EraserTool",
-      "HandTool",
-      "BrightnessTool",
-      "ContrastTool",
-      "ZoomIn",
-      "ZoomOut",
-      "ExpandTool",
-      "MoveTool",
-      "RotateLeftTool",
-      "RotateRightTool",
+      "Annotation",
+      "AnnotationAccepted",
+      "AnnotationRejected",
+      "AnnotationSkipped",
+      "AnnotationSkipped2",
+      "AnnotationGroundTruth",
+      "AnnotationImported",
+      "AnnotationPrediction",
+      "AnnotationPropagated",
+      "AnnotationReviewRemoved",
+      "AnnotationSubmitted",
+      "Ban",
+      "BanSquare",
+      "DraftCreated",
+      "DraftCreated2",
+      "SparkSquare",
     ].includes(name)
   ) {
-    return "Tools";
+    return "Labeling Actions";
+  }
+  if (["ZoomIn", "ZoomOut"].includes(name) || name.includes("Tool")) {
+    return "Labeling Tools";
   }
 
   if (["RelationRight", "RelationLeft", "RelationBi"].includes(name)) {
@@ -105,6 +61,10 @@ const getIconCategory = (iconName: string): string => {
     ["ThumbsUp", "ThumbsDown", "ThumbsUpFill", "ThumbsDownFill", "ThumbsUpOutline", "ThumbsDownOutline"].includes(name)
   ) {
     return "Feedback";
+  }
+
+  if (name.includes("Comment") || ["Send"].includes(name)) {
+    return "Comments";
   }
 
   if (
@@ -129,44 +89,58 @@ const getIconCategory = (iconName: string): string => {
     return "Check & Cross";
   }
 
-  if (["VolumeMute", "VolumeHalf", "VolumeFull", "SoundBars"].includes(name)) {
-    return "Audio";
+  if (
+    [
+      "VolumeMute",
+      "VolumeHalf",
+      "VolumeFull",
+      "SoundBars",
+      "SoundConfig",
+      "SoundMutedConfig",
+      "SoundMuted",
+      "Play",
+      "Pause",
+      "Replay",
+      "Rewind",
+      "FastForward",
+      "TimelinePlay",
+      "TimelinePause",
+      "TimelineRegion",
+      "TimelineRewind",
+      "TimelineFastForward",
+      "TimelineRewind",
+      "InterpolationAdd",
+      "InterpolationRemove",
+      "InterpolationDisabled",
+      "KeypointAdd",
+      "KeypointDelete",
+      "KeypointDisabled",
+      "Prev",
+      "Next",
+      "Fast",
+      "Slow",
+    ].includes(name)
+  ) {
+    return "Audio & Video";
   }
 
   if (["Star", "StarOutline", "StarSquare", "StarRectangle"].includes(name)) {
     return "Stars";
   }
 
-  if (["Folder", "FolderOpen", "FolderPlus", "FolderSpark", "EmptyFolder"].includes(name)) {
+  if (["Folder", "FolderOpen", "FolderPlus", "FolderSpark", "EmptyFolder", "AllProjects"].includes(name)) {
     return "Folders";
   }
 
   if (
-    [
-      "Arrow",
-      "ArrowLeft",
-      "ArrowRight",
-      "ArrowRightBlue",
-      "ArrowRightBottom",
-      "ChevronLeft",
-      "ChevronRight",
-      "ChevronDown",
-      "ChevronLeftSmall",
-      "ChevronLeftBold",
-      "ChevronRightBold",
-      "ChevronRightSmall",
-    ].includes(name) ||
-    name.startsWith("Arrow") ||
-    name.startsWith("Chevron")
+    name.includes("Arrow") ||
+    name.includes("Chevron")
   ) {
     return "Navigation";
   }
 
   if (
     [
-      "Info",
-      "InfoOutline",
-      "InfoFilled",
       "Help",
       "QuestionOutline",
       "Warning",
@@ -174,7 +148,8 @@ const getIconCategory = (iconName: string): string => {
       "WarningCircleFilled",
       "Error",
       "ErrorAlt",
-    ].includes(name)
+    ].includes(name) ||
+    name.includes("Info")
   ) {
     return "Information";
   }
@@ -185,18 +160,20 @@ const getIconCategory = (iconName: string): string => {
 
 // Description for each category
 const categoryDescriptions: Record<string, string> = {
-  Tools: "Icons related to tools used for interactions and editing",
+  General: "General purpose icons",
+  Special: "Special case icons with unique names",
+  "Labeling Tools": "Icons related to tools used for interactions and editing",
+  "Labeling Actions": "Icons related to actions performed during labeling",
+  Comments: "Icons for comments and feedback",
   Relations: "Icons representing different types of relations",
   Properties: "Icons for properties and attributes",
   Feedback: "Icons representing user feedback (thumbs up/down, etc.)",
   "Check & Cross": "Icons for indicating success, completion, or rejection",
-  Audio: "Icons related to audio controls and volume",
+  "Audio & Video": "Icons related to audio and video controls and volume",
   Stars: "Star-related icons for ratings and favorites",
   Folders: "Icons for folders and file management",
   Navigation: "Icons for navigation and direction indicators",
   Information: "Icons for information, warnings, errors, and help",
-  General: "General purpose icons",
-  Special: "Special case icons with unique names",
 };
 
 // Component for a single icon
@@ -269,10 +246,7 @@ const IconCatalog = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Get all icons from the imported icons
-  const iconEntries = Object.entries(Icons).filter(
-    ([name]) =>
-      name.startsWith("Icon") || name === "CopyIcon" || name === "FileDownload" || name === "FileDownloadBlack",
-  );
+  const iconEntries = Object.entries(Icons);
 
   // Filter icons based on search term (component name or file name)
   const filteredIcons = iconEntries.filter(([name]) => {
@@ -323,13 +297,13 @@ const IconCatalogByCategory = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Get all icons from the imported icons
-  const iconEntries = Object.entries(Icons).filter(
-    ([name]) =>
-      name.startsWith("Icon") || name === "CopyIcon" || name === "FileDownload" || name === "FileDownloadBlack",
-  );
+  const iconEntries = Object.entries(Icons);
 
   // Group icons by category
-  const categorizedIcons: Record<string, Array<[string, unknown]>> = {};
+  const categorizedIcons: Record<string, Array<[string, unknown]>> = Object.keys(categoryDescriptions).reduce((acc, category) => {
+    acc[category] = [];
+    return acc;
+  }, {} as Record<string, Array<[string, unknown]>>);
 
   iconEntries.forEach((entry) => {
     const [name, Icon] = entry;
