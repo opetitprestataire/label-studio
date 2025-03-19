@@ -2,6 +2,14 @@ import { isFlagEnabled } from "./helpers";
 
 const FEATURE_FLAGS = window.APP_SETTINGS?.feature_flags || {};
 
+//// LEGACY FLAGS ////
+/**
+ * Aync import for task data
+ * @deprecated
+ */
+export const FF_LSDV_4915 = "fflag_feat_all_lsdv_4915_async_task_import_13042023_short";
+//// END OF LEGACY FLAGS ////
+
 // Fix displaying of created_at in the review mode
 export const FF_DEV_1480 = "ff_front_dev_1480_created_on_in_review_180122_short";
 // Notifications
@@ -48,6 +56,11 @@ export const FF_HOMEPAGE = "fflag_all_feat_dia_1777_ls_homepage_short";
  */
 export const FF_SAMPLE_DATASETS = "fflag_feat_dia_1920_project_creation_sample_data_short";
 
+/**
+ * Checks if the Feature Flag is active or not.
+ *
+ * @deprecated Use `isActive` instead
+ */
 export function isFF(id: string) {
   // TODO: remove the override + if statement once LSE and LSO start building react the same way and fflag_fix_front_lsdv_4620_memory_leaks_100723_short is removed
   const override: Record<string, boolean> = {
@@ -58,3 +71,8 @@ export function isFF(id: string) {
   }
   return isFlagEnabled(id, FEATURE_FLAGS, window.APP_SETTINGS?.feature_flags_default_value === true);
 }
+
+/**
+ * Checks if the Feature Flag is active or not.
+ */
+export const isActive = isFF;
