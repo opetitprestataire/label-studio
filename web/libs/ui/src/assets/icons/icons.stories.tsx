@@ -2,23 +2,10 @@ import React, { useState } from "react";
 import type { Meta } from "@storybook/react";
 import * as Icons from "./";
 
-// Get actual file paths for each icon in assets/icons
-const requireIcons = require.context("!!file-loader!./", true, /\.svg$/);
-
 const iconNames = Object.keys(Icons).sort();
-const iconFiles = requireIcons
-  .keys()
-  .map((path: string, index: number) => ({ name: iconNames[index], path: path.replace("./", "") }));
-
-console.log(iconFiles);
 
 // Function to get SVG file name from component name
 const getFileNameFromIcon = (iconName: string): string => {
-  // Handle special cases first
-  if (iconName === "CopyIcon") return "content-copy.svg";
-  if (iconName === "FileDownload") return "file-download.svg";
-  if (iconName === "FileDownloadBlack") return "file_download_black.svg";
-
   // Regular icons
   if (iconName.startsWith("Icon")) {
     // Convert IconCamelCase to kebab-case.svg
