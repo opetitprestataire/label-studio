@@ -449,13 +449,13 @@ export const ImportPage = ({
                   </b>
                 </div>
               </label>
-              {projectConfigured && ff.isFF(ff.FF_HOMEPAGE) ? (
+              {projectConfigured && ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
                 <CodeBlock
                   title="Expected input preview"
                   code={sampleConfig?.data ?? ""}
                   className="w-full max-w-[650px]"
                 />
-              ) : ff.isFF(ff.FF_HOMEPAGE) ? (
+              ) : ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
                 <SimpleCard title="Expected input preview" className="w-full max-w-[650px]">
                   Set up your{" "}
                   <a href="#" onClick={openConfig}>
