@@ -145,7 +145,7 @@
     display: inline-flex;
     flex: 1;
     color: var(--text-color, var(--sand_900));
-    min-width: min-content;
+    min-width: 50px;
   }
 
   &__ocr {
