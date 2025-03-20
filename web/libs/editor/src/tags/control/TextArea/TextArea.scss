@@ -63,11 +63,6 @@
     --border-color: var(--sand_300);
   }
 
-  &_outliner &__item,
-  &_outliner &__form {
-    margin: 0 0 0 -8px;
-  }
-
   &_outliner &__item + &__item,
   &_outliner &__item + &__form,
   &_outliner &__form + &__item,

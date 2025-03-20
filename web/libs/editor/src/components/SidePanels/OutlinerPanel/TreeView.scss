@@ -124,15 +124,16 @@
     min-height: 32px;
     align-items: center;
     justify-content: space-between;
+    gap: var(--spacing-small-x, 4px);
   }
 
   &__index {
     width: 18px;
     height: 18px;
     display: flex;
+    flex: none;
     font-size: 9px;
     color: var(--sand_0);
-    margin-right: 4px;
     text-align: center;
     align-items: center;
     border-radius: 4px;
@@ -145,7 +146,7 @@
     display: inline-flex;
     flex: 1;
     color: var(--text-color, var(--sand_900));
-    min-width: 0;
+    min-width: min-content;
   }
 
   &__text {
