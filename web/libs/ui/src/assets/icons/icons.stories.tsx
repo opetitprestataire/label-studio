@@ -57,11 +57,11 @@ const getIconCategory = (iconName: string): string => {
     return "Labeling Actions";
   }
 
-  if (["ZoomIn", "ZoomOut", "BulkLabeling", "RelationLink"].includes(name) || name.includes("Tool")) {
+  if (["ZoomIn", "ZoomOut", "BulkLabeling"].includes(name) || name.includes("Tool")) {
     return "Labeling Tools";
   }
 
-  if (["RelationRight", "RelationLeft", "RelationBi"].includes(name)) {
+  if (["RelationRight", "RelationLeft", "RelationBi", "RelationLink"].includes(name)) {
     return "Relations";
   }
 
