@@ -171,7 +171,20 @@ export const Frames: FC<TimelineViewProps> = ({
   const hoverHandler = useCallback(
     (e) => {
       if (scrollable.current) {
-        const currentOffset = e.pageX - scrollable.current.getBoundingClientRect().left - timelineStartOffset;
+        const offsetLeft = scrollable.current.getBoundingClientRect().left;
+        const currentOffset = e.pageX - offsetLeft - timelineStartOffset;
+        const frame = toSteps(currentOffset + currentOffsetX, step) + 1;
+        const target = e.target as Element;
+        // every region has `data-id` attribute, so looking for them
+        const regionRow = target.closest("[data-id]") as HTMLElement | null;
+        if (regionRow) {
+          const [start, end] = [regionRow.dataset?.start, regionRow.dataset?.end];
+          if (start === String(frame) || end === String(frame)) {
+            regionRow.style.cursor = "col-resize";
+          } else if (regionRow.style.cursor === "col-resize") {
+            regionRow.style.cursor = "auto";
+          }
+        }
 
         if (currentOffset > 0) {
           setHoverOffset(currentOffset);
