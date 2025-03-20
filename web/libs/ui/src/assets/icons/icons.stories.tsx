@@ -114,6 +114,7 @@ const getIconCategory = (iconName: string): string => {
       "Next",
       "Fast",
       "Slow",
+      "Speed"
     ].includes(name)
   ) {
     return "Audio & Video";
