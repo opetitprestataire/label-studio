@@ -42,7 +42,7 @@
       "executor": "@nx/storybook:build",
       "outputs": ["{options.outputDir}"],
       "options": {
-        "outputDir": "dist/libs/storybook",
+        "outputDir": "dist/libs/storybook/storybook",
         "configDir": "libs/storybook/.storybook"
       },
       "configurations": {
