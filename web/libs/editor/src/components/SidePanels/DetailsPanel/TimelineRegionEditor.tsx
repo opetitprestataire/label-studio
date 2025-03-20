@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { MSTTimelineRegion } from "../../Timeline/Types";
+import type { MSTTimelineRegion } from "../../Timeline/Types";
 import styles from "./TimelineRegionEditor.module.scss";
 
 export const TimelineRegionEditor = observer(({ region }: { region: MSTTimelineRegion }) => {
