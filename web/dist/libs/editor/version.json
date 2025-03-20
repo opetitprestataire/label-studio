@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1794: Improve handling of missing tasks and projects when fetching data within DataManager (#7210)",
-  "commit": "efe460801e93d30fd3a0e3b1c4ab49d2372ce2ed",
-  "date": "2025-03-13T14:52:34.000Z",
+  "message": "fix: OPTIC-1832: Missing tokens scss variables import (#7253)",
+  "commit": "a0777872900f2029ec013684a5c81309f7b98bdd",
+  "date": "2025-03-19T13:47:30.000Z",
   "branch": "develop"
 }

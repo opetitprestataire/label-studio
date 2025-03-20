@@ -388,16 +388,14 @@ SENTRY_REDIS_ENABLED = False
 FRONTEND_SENTRY_DSN = get_env('FRONTEND_SENTRY_DSN', None)
 FRONTEND_SENTRY_RATE = get_env('FRONTEND_SENTRY_RATE', 0.01)
 FRONTEND_SENTRY_ENVIRONMENT = get_env('FRONTEND_SENTRY_ENVIRONMENT', 'stage.opensource')
+
+# Exceptions that should not be logged to Sentry and aren't children of drf's APIException class
 SENTRY_IGNORED_EXCEPTIONS = [
     'Http404',
-    'NotAuthenticated',
-    'AuthenticationFailed',
-    'NotFound',
     'XMLSyntaxError',
     'FileUpload.DoesNotExist',
     'Forbidden',
     'KeyboardInterrupt',
-    'PermissionDenied',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -822,3 +820,5 @@ if CI:
     }
 
 LOGOUT_REDIRECT_URL = get_env('LOGOUT_REDIRECT_URL', None)
+
+USER_LAST_ACTIVITY_CHECK_INTERVAL = get_env('USER_LAST_ACTIVITY_CHECK_INTERVAL', 60)
