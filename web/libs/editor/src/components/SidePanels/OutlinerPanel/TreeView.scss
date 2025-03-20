@@ -53,7 +53,6 @@
       flex: 1;
       padding: var(--spacing-small-x, 4px);
       display: flex;
-      max-width: 100%;
       align-items: center;
     }
   }
@@ -146,6 +145,11 @@
     display: inline-flex;
     flex: 1;
     color: var(--text-color, var(--sand_900));
+    min-width: min-content;
+  }
+
+  &__ocr {
+    flex: 1 1 auto;
     min-width: min-content;
   }
 
