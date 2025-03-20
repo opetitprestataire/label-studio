@@ -140,6 +140,7 @@ const getIconCategory = (iconName: string): string => {
   }
 
   if (
+    ["Forward", "Backward"].includes(name) ||
     name.includes("Arrow") ||
     name.includes("Chevron")
   ) {
@@ -162,12 +163,12 @@ const getIconCategory = (iconName: string): string => {
   }
 
   // Default category
-  return "General";
+  return "Misc";
 };
 
 // Description for each category
 const categoryDescriptions: Record<string, string> = {
-  General: "General purpose icons",
+  Misc: "Miscellaneous icons",
   Special: "Special case icons with unique names",
   "AI/ML": "Icons related to AI and ML",
   Brand: "Icons related to brands/companies",
