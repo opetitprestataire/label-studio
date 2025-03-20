@@ -300,11 +300,7 @@ const Model = types
         if (id) {
           const region = self.annotation.regions.find((r) => r.cleanId === id);
           const range = region?.ranges?.[0];
-          if (range && [range.start, range.end].includes(frame)) {
-            return region;
-          } else {
-            return null;
-          }
+          return range && [range.start, range.end].includes(frame) ? region : null;
         }
         const control = self.timelineControl;
         // labels should be selected or allow to create region without labels
