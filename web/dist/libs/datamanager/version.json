@@ -1,6 +1,6 @@
 {
-  "message": "refactor: LEAP-1300: Remove outdated FF_LSDV_4620_3 (#7228)",
-  "commit": "0b5f6a0faea973f9f96bf7512cada901f1f1df57",
-  "date": "2025-03-18T18:01:00.000Z",
+  "message": "refactor: LEAP-1785: remove obsolete feature flag FF_LSDV_4988 (#7219)",
+  "commit": "0672f4b250682f8e6a0f52d591c0b1919d36ebcf",
+  "date": "2025-03-20T13:26:07.000Z",
   "branch": "develop"
 }
