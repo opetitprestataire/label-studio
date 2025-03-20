@@ -434,16 +434,16 @@ const RootTitle: FC<any> = observer(
         </Elem>
 
         {!collapsed && hasControls && isArea && (
-            <Elem name="ocr">
-              <RegionItemDesc
-                item={item}
-                controls={controls}
-                collapsed={collapsed}
-                setCollapsed={setCollapsed}
-                selected={props.selected}
-              />
-            </Elem>
-          )}
+          <Elem name="ocr">
+            <RegionItemDesc
+              item={item}
+              controls={controls}
+              collapsed={collapsed}
+              setCollapsed={setCollapsed}
+              selected={props.selected}
+            />
+          </Elem>
+        )}
       </Block>
     );
   },
