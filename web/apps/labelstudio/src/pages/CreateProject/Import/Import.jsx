@@ -458,9 +458,14 @@ export const ImportPage = ({
               ) : ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
                 <SimpleCard title="Expected input preview" className="w-full max-w-[650px]">
                   Set up your{" "}
-                  <a href="#" onClick={openConfig}>
+                  <button
+                    type="button"
+                    look="link"
+                    onClick={openConfig}
+                    className="border-none bg-none p-0 m-0 text-lsPrimaryContent underline"
+                  >
                     labeling configuration
-                  </a>{" "}
+                  </button>{" "}
                   to generate an input preview.
                 </SimpleCard>
               ) : null}
