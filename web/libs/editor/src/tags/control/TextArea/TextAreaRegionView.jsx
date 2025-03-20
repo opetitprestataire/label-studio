@@ -17,7 +17,7 @@ import "./TextArea.scss";
 const { TextArea } = Input;
 
 const HtxTextAreaResultLine = forwardRef(
-  ({ idx, value, readOnly, onChange, onDelete, onFocus, validate, control, collapsed, canDelete=true }, ref) => {
+  ({ idx, value, readOnly, onChange, onDelete, onFocus, validate, control, collapsed, canDelete = true }, ref) => {
     const rows = Number.parseInt(control.rows);
     const isTextarea = rows > 1;
     const [stateValue, setStateValue] = useState(value ?? "");
@@ -93,7 +93,7 @@ const HtxTextAreaResultLine = forwardRef(
   },
 );
 
-const HtxTextAreaResult = observer(({ item, control, firstResultInputRef, onFocus, collapsed, canDelete=true }) => {
+const HtxTextAreaResult = observer(({ item, control, firstResultInputRef, onFocus, collapsed, canDelete = true }) => {
   const value = item.mainValue;
   const editable = !item.isReadOnly() && item.from_name.editable && !item.area.isReadOnly();
 
@@ -139,7 +139,7 @@ const HtxTextAreaResult = observer(({ item, control, firstResultInputRef, onFocu
   });
 });
 
-const HtxTextAreaRegionView = observer(({ item, area, collapsed, setCollapsed, outliner, color, canDelete=true }) => {
+const HtxTextAreaRegionView = observer(({ item, area, collapsed, setCollapsed, outliner, color, canDelete = true }) => {
   const rows = Number.parseInt(item.rows);
   const isTextArea = rows > 1;
   const isActive = item.perRegionArea === area;
