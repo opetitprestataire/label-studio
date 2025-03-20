@@ -51,7 +51,7 @@
   &-node {
     &-content-wrapper {
       flex: 1;
-      padding: 0 4px;
+      padding: var(--spacing-small-x, 4px);
       display: flex;
       max-width: 100%;
       align-items: center;
@@ -93,6 +93,8 @@
       display: inline;
       line-height: 1.2; // make it dense for multiline labels
       padding: 2px 0; // + add a little padding so it won't be too close to the item edges
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
@@ -235,7 +237,6 @@
 .ocr {
   background: none;
   position: relative;
-  padding: 0 0 8px;
 
   &_empty {
     display: none;

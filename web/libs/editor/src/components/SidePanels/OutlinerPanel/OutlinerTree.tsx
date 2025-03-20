@@ -421,6 +421,17 @@ const RootTitle: FC<any> = observer(
               </Elem>
             )}
           </Elem>
+          {hasControls && isArea && (
+            <Elem name="ocr">
+              <RegionItemDesc
+                item={item}
+                controls={controls}
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+                selected={props.selected}
+              />
+            </Elem>
+          )}
           <RegionControls
             hovered={hovered}
             item={item}
@@ -432,17 +443,6 @@ const RootTitle: FC<any> = observer(
             toggleCollapsed={toggleCollapsed}
           />
         </Elem>
-        {hasControls && isArea && (
-          <Elem name="ocr">
-            <RegionItemDesc
-              item={item}
-              controls={controls}
-              collapsed={collapsed}
-              setCollapsed={setCollapsed}
-              selected={props.selected}
-            />
-          </Elem>
-        )}
       </Block>
     );
   },
@@ -613,6 +613,7 @@ const RegionItemDesc: FC<RegionItemOCSProps> = observer(({ item, collapsed, setC
               setCollapsed={setCollapsed}
               color={css}
               outliner
+              canDelete={false}
             />
           ) : null;
         })}
