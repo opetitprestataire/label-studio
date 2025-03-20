@@ -33,11 +33,6 @@ export const FF_LSDV_E_297 = "fflag_feat_front_lsdv_e_297_increase_oss_to_enterp
 //// END OF LEGACY FLAGS ////
 
 /**
- * Improve load time performance of Dashboard Members page
- */
-export const FF_OPTIC_2 = "fflag_feat_optic_2_ensure_draft_saved_short";
-
-/**
  * Prompter workflow
  */
 export const FF_DIA_835 = "fflag_feat_all_dia_835_prompter_workflow_long";
