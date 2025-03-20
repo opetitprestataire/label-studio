@@ -4,7 +4,7 @@ import { useCallback, useMemo } from "react";
 import { FaQuestionCircle } from "react-icons/fa";
 import { useShortcut } from "../../../sdk/hotkeys";
 import { Block, Elem } from "../../../utils/bem";
-import { FF_DEV_2536, FF_LOPS_86, FF_OPTIC_2, isFF } from "../../../utils/feature-flags";
+import { FF_DEV_2536, isFF } from "../../../utils/feature-flags";
 import * as CellViews from "../../CellViews";
 import { Icon } from "../../Common/Icon/Icon";
 import { ImportButton } from "../../Common/SDKButtons";
@@ -120,7 +120,7 @@ export const DataView = injector(
         } else if (e.metaKey || e.ctrlKey) {
           window.open(`./?task=${itemID}`, "_blank");
         } else {
-          if (isFF(FF_OPTIC_2)) store._sdk.lsf?.saveDraft();
+          store._sdk.lsf?.saveDraft();
           getRoot(view).startLabeling(item);
         }
       },
@@ -142,20 +142,7 @@ export const DataView = injector(
               <Elem name="title" tag="h3">
                 Failed to sync data
               </Elem>
-              {isFF(FF_LOPS_86) ? (
-                <>
-                  <Elem name="text">Check your storage settings and resync to import records</Elem>
-                  <Button
-                    onClick={async () => {
-                      window.open("./settings/storage");
-                    }}
-                  >
-                    Manage Storage
-                  </Button>
-                </>
-              ) : (
-                <Elem name="text">Check your storage settings. You may need to recreate this dataset</Elem>
-              )}
+              <Elem name="text">Check your storage settings. You may need to recreate this dataset</Elem>
             </Block>
           );
         }
