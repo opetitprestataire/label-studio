@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1832: Missing tokens scss variables import (#7253)",
-  "commit": "a0777872900f2029ec013684a5c81309f7b98bdd",
-  "date": "2025-03-19T13:47:30.000Z",
+  "message": "fix: LEAP-1931: Correct frame offset calculation in Timeline (#7244)",
+  "commit": "6b4ef15e085e82079ded671a653fc5e3776d868b",
+  "date": "2025-03-20T12:25:05.000Z",
   "branch": "develop"
 }
