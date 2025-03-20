@@ -232,8 +232,8 @@ export const Frames: FC<TimelineViewProps> = ({
         // always a timeline region
         region = props.onStartDrawing?.({ frame: baseFrame });
         mode = "new";
-      } else {
-        region = props.onStartDrawing?.({ region: regionRow?.dataset.id, frame: baseFrame });
+      } else if (regionRow && onKeyframes) {
+        region = props.onStartDrawing?.({ region: regionRow.dataset.id, frame: baseFrame });
         if (region) {
           const { start, end } = region.ranges[0];
           mode = "edit";
@@ -241,6 +241,9 @@ export const Frames: FC<TimelineViewProps> = ({
             baseFrame = end;
           } else if (baseFrame === end) {
             baseFrame = start;
+          }
+          if (start === end) {
+            isInstant = true;
           }
         }
       }
