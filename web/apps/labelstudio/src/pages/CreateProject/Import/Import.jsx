@@ -1,18 +1,21 @@
+import { ff } from "@humansignal/core";
+import { SampleDatasetSelect } from "@humansignal/core/blocks/SampleDatasetSelect/SampleDatasetSelect";
+import { IconError, IconFileUpload, IconInfo, IconUpload } from "@humansignal/icons";
+import { Badge } from "@humansignal/shad/components/ui/badge";
+import { cn as scn } from "@humansignal/shad/utils";
+import { CodeBlock, SimpleCard } from "@humansignal/ui";
+import { Button } from "apps/labelstudio/src/components";
+import { useAtomValue } from "jotai";
+import Input from "libs/datamanager/src/components/Common/Input/Input";
+import { IconTrash } from "libs/editor/src/assets/icons";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { Modal } from "../../../components/Modal/Modal";
-import { SampleDatasetSelect } from "@humansignal/core/blocks/SampleDatasetSelect/SampleDatasetSelect";
-import samples from "./samples.json";
-import { cn } from "../../../utils/bem";
-import { cn as scn } from "@humansignal/shad/utils";
-import { Badge } from "@humansignal/shad/components/ui/badge";
-import { unique } from "../../../utils/helpers";
-import "./Import.scss";
-import { IconError, IconInfo, IconUpload } from "../../../assets/icons";
 import { useAPI } from "../../../providers/ApiProvider";
-import Input from "libs/datamanager/src/components/Common/Input/Input";
-import { Button } from "apps/labelstudio/src/components";
-import { ff } from "@humansignal/core";
-import { IconTrash } from "libs/editor/src/assets/icons";
+import { cn } from "../../../utils/bem";
+import { unique } from "../../../utils/helpers";
+import { sampleDatasetAtom } from "../utils/atoms";
+import "./Import.scss";
+import samples from "./samples.json";
 import { importFiles } from "./utils";
 
 const importClass = cn("upload_page");
@@ -165,10 +168,13 @@ export const ImportPage = ({
   csvHandling,
   setCsvHandling,
   addColumns,
+  openLabelingConfig,
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
   const api = useAPI();
+  const projectConfigured = project?.label_config !== "<View></View>";
+  const sampleConfig = useAtomValue(sampleDatasetAtom);
 
   const processFiles = (state, action) => {
     if (action.sending) {
@@ -308,6 +314,15 @@ export const ImportPage = ({
     [importFilesImmediately],
   );
 
+  const openConfig = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openLabelingConfig?.();
+    },
+    [openLabelingConfig],
+  );
+
   useEffect(() => {
     if (project?.id !== undefined) {
       loadFilesList().then((files) => {
@@ -376,42 +391,64 @@ export const ImportPage = ({
       <main>
         <Upload sendFiles={sendFiles} project={project}>
           {!showList && (
-            <label htmlFor="file-input">
-              <div className={dropzoneClass.elem("content")}>
-                <header>
-                  Drag & drop files here
-                  <br />
-                  or click to browse
-                </header>
-                <IconUpload height="64" className={dropzoneClass.elem("icon")} />
-                <dl>
-                  <dt>Text</dt>
-                  <dd>{supportedExtensions.text.join(", ")}</dd>
-                  <dt>Audio</dt>
-                  <dd>{supportedExtensions.audio.join(", ")}</dd>
-                  <dt>Video</dt>
-                  <dd>mpeg4/H.264 webp, webm* {/* Keep in sync with supportedExtensions.video */}</dd>
-                  <dt>Images</dt>
-                  <dd>{supportedExtensions.image.join(", ")}</dd>
-                  <dt>HTML</dt>
-                  <dd>{supportedExtensions.html.join(", ")}</dd>
-                  <dt>Time Series</dt>
-                  <dd>{supportedExtensions.timeSeries.join(", ")}</dd>
-                  <dt>Common Formats</dt>
-                  <dd>{supportedExtensions.common.join(", ")}</dd>
-                </dl>
-                <b>
-                  * – Support depends on the browser
-                  <br />* – Direct media uploads have{" "}
-                  <a href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI">limitations</a>{" "}
-                  and we strongly recommend using{" "}
-                  <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
-                    Cloud Storage
-                  </a>{" "}
-                  instead
-                </b>
-              </div>
-            </label>
+            <div className="flex gap-4 justify-center items-start">
+              <label htmlFor="file-input">
+                <div className={dropzoneClass.elem("content")}>
+                  <header>
+                    Drag & drop files here
+                    <br />
+                    or click to browse
+                  </header>
+                  <IconFileUpload height="64" className={dropzoneClass.elem("icon")} />
+                  <dl>
+                    <dt>Text</dt>
+                    <dd>{supportedExtensions.text.join(", ")}</dd>
+                    <dt>Audio</dt>
+                    <dd>{supportedExtensions.audio.join(", ")}</dd>
+                    <dt>Video</dt>
+                    <dd>mpeg4/H.264 webp, webm* {/* Keep in sync with supportedExtensions.video */}</dd>
+                    <dt>Images</dt>
+                    <dd>{supportedExtensions.image.join(", ")}</dd>
+                    <dt>HTML</dt>
+                    <dd>{supportedExtensions.html.join(", ")}</dd>
+                    <dt>Time Series</dt>
+                    <dd>{supportedExtensions.timeSeries.join(", ")}</dd>
+                    <dt>Common Formats</dt>
+                    <dd>{supportedExtensions.common.join(", ")}</dd>
+                  </dl>
+                  <b>
+                    * – Support depends on the browser
+                    <br />* – Direct media uploads have{" "}
+                    <a href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI">limitations</a>{" "}
+                    and we strongly recommend using{" "}
+                    <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
+                      Cloud Storage
+                    </a>{" "}
+                    instead
+                  </b>
+                </div>
+              </label>
+              {projectConfigured && ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
+                <CodeBlock
+                  title="Expected input preview"
+                  code={sampleConfig?.data ?? ""}
+                  className="w-full max-w-[650px]"
+                />
+              ) : ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
+                <SimpleCard title="Expected input preview" className="w-full max-w-[650px]">
+                  Set up your{" "}
+                  <button
+                    type="button"
+                    look="link"
+                    onClick={openConfig}
+                    className="border-none bg-none p-0 m-0 text-lsPrimaryContent underline"
+                  >
+                    labeling configuration
+                  </button>{" "}
+                  to generate an input preview.
+                </SimpleCard>
+              ) : null}
+            </div>
           )}
 
           {showList && (
