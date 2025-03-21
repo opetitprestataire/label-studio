@@ -1,4 +1,4 @@
-import { LabelStudio, ImageView, Taxonomy, ToolBar, Modals, Sidebar } from "@humansignal/frontend-test/helpers/LSF";
+import { LabelStudio, ImageView, Taxonomy, ToolBar, Modals } from "@humansignal/frontend-test/helpers/LSF";
 import {
   simpleMIGData,
   TAXONOMY_REQUIRED_WARNING,
