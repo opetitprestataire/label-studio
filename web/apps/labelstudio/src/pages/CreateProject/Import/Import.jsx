@@ -1,13 +1,12 @@
 import { ff } from "@humansignal/core";
 import { SampleDatasetSelect } from "@humansignal/core/blocks/SampleDatasetSelect/SampleDatasetSelect";
-import { IconError, IconFileUpload, IconInfo, IconUpload } from "@humansignal/icons";
+import { IconError, IconFileUpload, IconInfo, IconTrash, IconUpload } from "@humansignal/icons";
 import { Badge } from "@humansignal/shad/components/ui/badge";
 import { cn as scn } from "@humansignal/shad/utils";
 import { CodeBlock, SimpleCard } from "@humansignal/ui";
 import { Button } from "apps/labelstudio/src/components";
 import { useAtomValue } from "jotai";
 import Input from "libs/datamanager/src/components/Common/Input/Input";
-import { IconTrash } from "libs/editor/src/assets/icons";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { Modal } from "../../../components/Modal/Modal";
 import { useAPI } from "../../../providers/ApiProvider";
