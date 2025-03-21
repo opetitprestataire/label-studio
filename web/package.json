@@ -35,7 +35,7 @@
     "postinstall": "npx -y copy-files-from-to",
     "design-tokens": "nx design-tokens ui",
     "storybook:serve": "nx storybook storybook",
-    "storybook:build": "nx build-storybook storybook && cp libs/storybook/netlify.toml dist/libs/storybook"
+    "storybook:build": "nx build-storybook storybook"
   },
   "husky": {
     "hooks": {
