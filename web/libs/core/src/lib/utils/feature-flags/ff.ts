@@ -17,10 +17,9 @@ const FLAGS_OVERRIDE: Record<string, boolean> = {
 export const isActive = (id: string) => {
   const defaultValue = window.APP_SETTINGS?.feature_flags_default_value === true;
   const isSentryOSS = window?.APP_SETTINGS?.sentry_environment === "opensource";
-  const isDevelopment = process.env.NODE_ENV === "development";
 
   if (isSentryOSS && id in FLAGS_OVERRIDE) return FLAGS_OVERRIDE[id];
-  if (isDevelopment && id in FEATURE_FLAGS) return FEATURE_FLAGS[id] ?? defaultValue;
+  if (id in FEATURE_FLAGS) return FEATURE_FLAGS[id] ?? defaultValue;
 
   return defaultValue;
 };
