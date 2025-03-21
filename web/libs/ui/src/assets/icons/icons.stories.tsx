@@ -80,7 +80,10 @@ const getIconCategory = (iconName: string): string => {
   }
 
   if (
-    name.includes("Check") || name.includes("Cross") || name.includes("Close") || ["Remove", "Delete"].includes(name)
+    name.includes("Check") ||
+    name.includes("Cross") ||
+    name.includes("Close") ||
+    ["Remove", "Delete"].includes(name)
   ) {
     return "Check & Cross";
   }
@@ -114,14 +117,14 @@ const getIconCategory = (iconName: string): string => {
       "Next",
       "Fast",
       "Slow",
-      "Speed"
+      "Speed",
     ].includes(name)
   ) {
     return "Audio & Video";
   }
 
   if (["Bouncing3Dots", "SoundBars"].includes(name)) {
-    return "Animated"
+    return "Animated";
   }
 
   if (["Star", "StarOutline", "StarSquare", "StarRectangle"].includes(name)) {
@@ -132,32 +135,37 @@ const getIconCategory = (iconName: string): string => {
     return "Folders";
   }
 
-  if (["Document", "Text", "Pencil"].includes(name) || name.includes("File") || name.includes("Copy") || name.includes("Undo") || name.includes("Redo") || name.includes("Upload") || name.includes("Download") || name.includes("Duplicate") || name.includes("Paste") || name.includes("Cut") || name.includes("Delete") ||name.includes("Edit")|| name.includes("Trash") || name.includes("Folder")) {
+  if (
+    ["Document", "Text", "Pencil"].includes(name) ||
+    name.includes("File") ||
+    name.includes("Copy") ||
+    name.includes("Undo") ||
+    name.includes("Redo") ||
+    name.includes("Upload") ||
+    name.includes("Download") ||
+    name.includes("Duplicate") ||
+    name.includes("Paste") ||
+    name.includes("Cut") ||
+    name.includes("Delete") ||
+    name.includes("Edit") ||
+    name.includes("Trash") ||
+    name.includes("Folder")
+  ) {
     return "Content & Documents";
   }
 
-  if (["Calendar"].includes(name) ||  name.includes("Date") || name.includes("Time") || name.includes("Clock")) {
+  if (["Calendar"].includes(name) || name.includes("Date") || name.includes("Time") || name.includes("Clock")) {
     return "Calendar & Time";
   }
 
-  if (
-    ["Forward", "Backward"].includes(name) ||
-    name.includes("Arrow") ||
-    name.includes("Chevron")
-  ) {
+  if (["Forward", "Backward"].includes(name) || name.includes("Arrow") || name.includes("Chevron")) {
     return "Navigation";
   }
 
   if (
-    [
-      "Help",
-      "QuestionOutline",
-      "Warning",
-      "WarningCircle",
-      "WarningCircleFilled",
-      "Error",
-      "ErrorAlt",
-    ].includes(name) ||
+    ["Help", "QuestionOutline", "Warning", "WarningCircle", "WarningCircleFilled", "Error", "ErrorAlt"].includes(
+      name,
+    ) ||
     name.includes("Info")
   ) {
     return "Information";
@@ -314,10 +322,13 @@ const IconCatalogByCategory = () => {
   const iconEntries = Object.entries(Icons);
 
   // Group icons by category
-  const categorizedIcons: Record<string, Array<[string, unknown]>> = Object.keys(categoryDescriptions).reduce((acc, category) => {
-    acc[category] = [];
-    return acc;
-  }, {} as Record<string, Array<[string, unknown]>>);
+  const categorizedIcons: Record<string, Array<[string, unknown]>> = Object.keys(categoryDescriptions).reduce(
+    (acc, category) => {
+      acc[category] = [];
+      return acc;
+    },
+    {} as Record<string, Array<[string, unknown]>>,
+  );
 
   iconEntries.forEach((entry) => {
     const [name, Icon] = entry;
