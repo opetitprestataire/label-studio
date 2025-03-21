@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1832: Missing tokens scss variables import (#7253)",
-  "commit": "a0777872900f2029ec013684a5c81309f7b98bdd",
-  "date": "2025-03-19T13:47:30.000Z",
+  "message": "fix: OPTIC-1835: Address issue affecting OCR region panel visualization (#7259)",
+  "commit": "486803f13a36fbb99f2fdcb5d3ea25a5a8a8fa66",
+  "date": "2025-03-20T21:26:35.000Z",
   "branch": "develop"
 }

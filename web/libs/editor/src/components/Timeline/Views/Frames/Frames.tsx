@@ -265,7 +265,7 @@ export const Frames: FC<TimelineViewProps> = ({
         const offset = getMouseToOffset(e);
         const frame = toSteps(offset, step) + 1;
 
-        if (offset >= 0 && offset <= rightLimit) {
+        if (offset >= currentOffsetX && offset <= rightLimit + currentOffsetX) {
           setHoverEnabled(false);
           setRegionSelectionDisabled(true);
           setIndicatorOffset(offset);
