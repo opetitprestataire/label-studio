@@ -5,6 +5,8 @@
   &__buttons {
     display: flex;
     gap: 8px;
+    height: 100%;
+    align-items: center;
   }
 
   &__action {

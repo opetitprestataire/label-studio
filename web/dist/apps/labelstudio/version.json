@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1832: Missing tokens scss variables import (#7253)",
-  "commit": "a0777872900f2029ec013684a5c81309f7b98bdd",
-  "date": "2025-03-19T13:47:30.000Z",
+  "message": "feat: LEAP-1924: Allow to edit Timeline span by drag-n-drop (#7251)",
+  "commit": "c0dab3be4d26d1fc2a45eca650ff61a9ff20d8eb",
+  "date": "2025-03-21T15:40:59.000Z",
   "branch": "develop"
 }
