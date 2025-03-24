@@ -1,6 +1,7 @@
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import type { Meta } from "@storybook/react";
+import { atom, useAtom, useSetAtom } from "jotai";
 // @ts-ignore: JS module without types
 import designTokens from "./tokens";
 
@@ -313,11 +314,15 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
   );
 };
 
+const searchAtom = atom("");
+const activeCategoryAtom = atom("all");
+const activeColorSubcategoryAtom = atom("all");
+
 // Component for the token catalog
 const TokenCatalog = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [activeColorSubcategory, setActiveColorSubcategory] = useState("all");
+  const [searchTerm, setSearchTerm] = useAtom(searchAtom);
+  const [activeCategory, setActiveCategory] = useAtom(activeCategoryAtom);
+  const [activeColorSubcategory, setActiveColorSubcategory] = useAtom(activeColorSubcategoryAtom);
 
   // Function to flatten nested token objects into a searchable format
   const flattenTokens = (obj: Record<string, DesignTokenValue>, prefix = ""): FlattenedTokens => {
@@ -415,7 +420,10 @@ const TokenCatalog = () => {
           }}
         >
           <button
-            onClick={() => setActiveCategory("all")}
+            onClick={() => {
+              setActiveCategory("all")
+              setActiveColorSubcategory("all")
+            }}
             style={{
               padding: "6px 12px",
               borderRadius: "4px",
@@ -476,7 +484,9 @@ const TokenCatalog = () => {
             {Object.keys(colorSubcategoryDescriptions).map((subcategory) => (
               <button
                 key={subcategory}
-                onClick={() => setActiveColorSubcategory(subcategory)}
+                onClick={() => {
+                  setActiveColorSubcategory(subcategory)
+                }}
                 style={{
                   padding: "6px 12px",
                   borderRadius: "4px",
@@ -542,6 +552,10 @@ const TokenCatalog = () => {
 
 // Component to display design tokens organized by categories
 const TokenCategorized = () => {
+  const setSearchTerm = useSetAtom(searchAtom);
+  const setActiveCategory = useSetAtom(activeCategoryAtom);
+  const setActiveColorSubcategory = useSetAtom(activeColorSubcategoryAtom);
+
   // Helper function to generate a color palette for the colors category
   const generateColorPalette = () => {
     return (
@@ -706,8 +720,9 @@ const TokenCategorized = () => {
                       e.currentTarget.style.borderColor = "#eee";
                     }}
                     onClick={() => {
-                      // In a real app, you would use history.push or similar
-                      console.log(`Navigate to colors.${subCategory}`);
+                      setSearchTerm("")
+                      setActiveCategory("colors")
+                      setActiveColorSubcategory(subCategory)
                     }}
                   >
                     {/* Color preview for each subcategory */}
@@ -788,8 +803,8 @@ const TokenCategorized = () => {
                   e.currentTarget.style.borderColor = "#eee";
                 }}
                 onClick={() => {
-                  // In a real app, you would use history.push or similar
-                  console.log(`Navigate to ${category}`);
+                  setSearchTerm("")
+                  setActiveCategory(category)
                 }}
               >
                 <p style={{ fontSize: "14px" }}>View all {category} tokens &rarr;</p>
@@ -816,7 +831,7 @@ const meta: Meta = {
 
 export default meta;
 
-export const Tokens = {
+export const TokensIndex = {
   render: () => <TokenCategorized />,
   name: "Index",
   parameters: {
@@ -828,7 +843,7 @@ export const Tokens = {
   },
 };
 
-export const Catalog = {
+export const TokensCatalog = {
   render: () => <TokenCatalog />,
   name: "Catalog",
   parameters: {
