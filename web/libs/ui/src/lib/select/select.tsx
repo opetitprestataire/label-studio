@@ -124,7 +124,7 @@ export const Select = forwardRef(
             aria-expanded={isOpen}
             className={clsx(
               isInline ? "" : "w-full",
-              "inline-flex flex-1 justify-between p-2 items-center disabled:cursor-not-allowed disabled:opacity-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500",
+              "inline-flex flex-1 justify-between p-3 items-center disabled:cursor-not-allowed disabled:opacity-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500",
               props.triggerProps?.className ?? "",
             )}
           >
@@ -146,6 +146,7 @@ export const Select = forwardRef(
           <Command>
             {searchable && (
               <CommandInput
+                className="p-2 border-b border-gray-300"
                 placeholder={searchPlaceholder ?? "Search"}
                 onChangeCapture={(e) => setQuery(e.currentTarget.value)}
               />
@@ -198,6 +199,7 @@ export const Select = forwardRef(
                       key={`${optionValue}_${index}`}
                       value={optionValue}
                       onSelect={() => {
+                        console.log("optionValue", optionValue);
                         _onChange(optionValue, isOptionSelected);
                       }}
                       disabled={option?.disabled}
@@ -218,6 +220,7 @@ export const Select = forwardRef(
             </CommandList>
           </Command>
         </PopoverContent>
+        <input type="hidden" name={props?.name} value={value} ref={ref} disabled={disabled} {...props} />
       </Popover>
     );
     // return (
