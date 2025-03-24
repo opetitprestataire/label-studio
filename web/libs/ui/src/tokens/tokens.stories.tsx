@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import LinkTo from "@storybook/addon-links/react";
 
 import type { Meta } from "@storybook/react";
-import { atom, useAtom, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 // @ts-ignore: JS module without types
 import designTokens from "./tokens";
@@ -35,14 +35,14 @@ const ThemeToggle = () => {
       <span className="text-sm font-medium">Theme:</span>
       <div className="flex border border-gray-300 rounded overflow-hidden">
         <button
-          className={`px-4 py-2 text-sm ${theme === 'light' ? 'bg-blue-100 text-blue-800' : 'bg-white'}`}
-          onClick={() => setTheme('light')}
+          className={`px-4 py-2 text-sm ${theme === "light" ? "bg-blue-100 text-blue-800" : "bg-white"}`}
+          onClick={() => setTheme("light")}
         >
           Light
         </button>
         <button
-          className={`px-4 py-2 text-sm ${theme === 'dark' ? 'bg-blue-700 text-white' : 'bg-white'}`}
-          onClick={() => setTheme('dark')}
+          className={`px-4 py-2 text-sm ${theme === "dark" ? "bg-blue-700 text-white" : "bg-white"}`}
+          onClick={() => setTheme("dark")}
         >
           Dark
         </button>
@@ -202,17 +202,11 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
         <div className="flex-1 flex flex-col gap-1">
           <div className="flex justify-between items-center">
             <div className="flex flex-col">
-              <div className="text-black text-sm font-bold break-words">
-                {tokenName.split(".").pop() || tokenName}
-              </div>
-              <div className="text-[10px] text-gray-400 -mt-1">
-                {tokenName.split(".").slice(0, -1).join(".")}
-              </div>
+              <div className="text-black text-sm font-bold break-words">{tokenName.split(".").pop() || tokenName}</div>
+              <div className="text-[10px] text-gray-400 -mt-1">{tokenName.split(".").slice(0, -1).join(".")}</div>
             </div>
 
-            <span className="text-xs text-black text-right">
-              {computedValue || "..."}
-            </span>
+            <span className="text-xs text-black text-right">{computedValue || "..."}</span>
           </div>
 
           <div className="text-xs font-bold text-gray-600 text-center break-all flex-shrink-0 bg-gray-100 p-0.5 rounded">
@@ -222,9 +216,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
       </div>
 
       {/* Copy indicator */}
-      <div
-        className="copy-indicator absolute -bottom-7 right-2 bg-black text-white px-2 py-1 rounded text-xs opacity-0 transition-all duration-300 z-10"
-      >
+      <div className="copy-indicator absolute -bottom-7 right-2 bg-black text-white px-2 py-1 rounded text-xs opacity-0 transition-all duration-300 z-10">
         Copied!
       </div>
     </div>
@@ -243,7 +235,7 @@ const TokenCatalog = () => {
 
   // Function to flatten nested token objects into a searchable format
   const flattenTokens = (obj: Record<string, DesignTokenValue>, prefix = ""): FlattenedTokens => {
-    let result: FlattenedTokens = {};
+    const result: FlattenedTokens = {};
 
     for (const key in obj) {
       const newPrefix = prefix ? `${prefix}.${key}` : key;
@@ -311,9 +303,9 @@ const TokenCatalog = () => {
     if (activeCategory !== "colors") return null;
 
     // Find raw color tokens
-    const rawColorTokens = filteredTokens.filter(([name]) =>
-      name.includes("-raw") &&
-      (name.includes("outline") || name.includes("shadow") || name.includes("primary"))
+    const rawColorTokens = filteredTokens.filter(
+      ([name]) =>
+        name.includes("-raw") && (name.includes("outline") || name.includes("shadow") || name.includes("primary")),
     );
 
     if (rawColorTokens.length === 0) return null;
@@ -322,8 +314,8 @@ const TokenCatalog = () => {
       <div className="mb-10 p-4 border border-gray-200 rounded-lg bg-gray-50">
         <h2 className="text-lg font-semibold mb-2">Using Raw Color Values with Theme Support</h2>
         <p className="text-sm mb-4">
-          Some color tokens have "-raw" variants that provide RGB values without the rgb() wrapper,
-          allowing you to create translucent versions with custom opacity. These work seamlessly with both light and dark modes.
+          Some color tokens have "-raw" variants that provide RGB values without the rgb() wrapper, allowing you to
+          create translucent versions with custom opacity. These work seamlessly with both light and dark modes.
         </p>
 
         <div className="bg-white p-4 rounded border border-gray-200">
@@ -363,7 +355,7 @@ const TokenCatalog = () => {
                   className="w-16 h-10 rounded flex items-center justify-center text-xs"
                   style={{
                     backgroundColor: "white",
-                    boxShadow: "0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%)"
+                    boxShadow: "0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%)",
                   }}
                 >
                   Shadow
@@ -372,14 +364,15 @@ const TokenCatalog = () => {
                   className="w-16 h-10 rounded flex items-center justify-center text-xs"
                   style={{
                     backgroundColor: "white",
-                    border: "1px solid rgb(var(--color-neutral-outline-raw) / 40%)"
+                    border: "1px solid rgb(var(--color-neutral-outline-raw) / 40%)",
                   }}
                 >
                   Border
                 </div>
               </div>
               <div className="bg-gray-100 p-2 rounded text-xs font-mono">
-                box-shadow: 0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%);<br />
+                box-shadow: 0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%);
+                <br />
                 border: 1px solid rgb(var(--color-neutral-outline-raw) / 40%);
               </div>
             </div>
@@ -388,7 +381,8 @@ const TokenCatalog = () => {
           <div className="mt-6 border-t border-gray-200 pt-4">
             <h4 className="text-sm font-medium mb-2">Automatically Adapts to Dark Mode</h4>
             <p className="text-xs text-gray-600 mb-2">
-              The same CSS will automatically use dark mode values when <code className="bg-gray-100 px-1">data-color-scheme="dark"</code> is set on a parent element.
+              The same CSS will automatically use dark mode values when{" "}
+              <code className="bg-gray-100 px-1">data-color-scheme="dark"</code> is set on a parent element.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -404,21 +398,25 @@ const TokenCatalog = () => {
                     className="w-10 h-10 rounded"
                     style={{
                       backgroundColor: "white",
-                      boxShadow: "0 3px 6px rgb(var(--color-neutral-shadow-raw) / 30%)"
+                      boxShadow: "0 3px 6px rgb(var(--color-neutral-shadow-raw) / 30%)",
                     }}
                   />
                   <div
                     className="w-10 h-10 rounded"
                     style={{
                       backgroundColor: "white",
-                      border: "2px solid rgb(var(--color-neutral-outline-raw) / 40%)"
+                      border: "2px solid rgb(var(--color-neutral-outline-raw) / 40%)",
                     }}
                   />
                 </div>
               </div>
 
               {/* Dark mode example */}
-              <div className="p-3 border border-gray-300 rounded" data-color-scheme="dark" style={{ backgroundColor: "#222" }}>
+              <div
+                className="p-3 border border-gray-300 rounded"
+                data-color-scheme="dark"
+                style={{ backgroundColor: "#222" }}
+              >
                 <div className="text-xs mb-2 font-medium text-gray-300">Dark mode preview:</div>
                 <div className="flex gap-3">
                   <div
@@ -429,14 +427,14 @@ const TokenCatalog = () => {
                     className="w-10 h-10 rounded"
                     style={{
                       backgroundColor: "#333",
-                      boxShadow: "0 3px 6px rgb(var(--color-neutral-shadow-raw) / 30%)"
+                      boxShadow: "0 3px 6px rgb(var(--color-neutral-shadow-raw) / 30%)",
                     }}
                   />
                   <div
                     className="w-10 h-10 rounded"
                     style={{
                       backgroundColor: "#333",
-                      border: "2px solid rgb(var(--color-neutral-outline-raw) / 40%)"
+                      border: "2px solid rgb(var(--color-neutral-outline-raw) / 40%)",
                     }}
                   />
                 </div>
@@ -444,7 +442,7 @@ const TokenCatalog = () => {
             </div>
 
             <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto mt-4">
-{`// The CSS is the same for both light and dark mode
+              {`// The CSS is the same for both light and dark mode
 .element {
   background-color: rgb(var(--color-primary-surface-raw) / 50%);
   border: 1px solid rgb(var(--color-neutral-outline-raw) / 40%);
@@ -465,9 +463,7 @@ const TokenCatalog = () => {
     <div className="token-catalog p-8">
       <ThemeToggle />
 
-      <div
-        className="mb-6"
-      >
+      <div className="mb-6">
         <input
           type="text"
           placeholder="Search tokens by name or value..."
@@ -476,13 +472,11 @@ const TokenCatalog = () => {
           className="p-2 rounded border border-gray-300 w-full text-sm mb-4"
         />
 
-        <div
-          className="flex gap-2 mb-4 flex-wrap"
-        >
+        <div className="flex gap-2 mb-4 flex-wrap">
           <button
             onClick={() => {
-              setActiveCategory("all")
-              setActiveColorSubcategory("all")
+              setActiveCategory("all");
+              setActiveColorSubcategory("all");
             }}
             className={`py-1.5 px-3 rounded border border-gray-300 text-sm cursor-pointer ${
               activeCategory === "all" ? "bg-gray-200" : "bg-white"
@@ -509,9 +503,7 @@ const TokenCatalog = () => {
         </div>
 
         {activeCategory === "colors" && (
-          <div
-            className="flex gap-2 mb-4 flex-wrap"
-          >
+          <div className="flex gap-2 mb-4 flex-wrap">
             <button
               onClick={() => setActiveColorSubcategory("all")}
               className={`py-1.5 px-3 rounded border border-gray-300 text-sm cursor-pointer ${
@@ -524,7 +516,7 @@ const TokenCatalog = () => {
               <button
                 key={subcategory}
                 onClick={() => {
-                  setActiveColorSubcategory(subcategory)
+                  setActiveColorSubcategory(subcategory);
                 }}
                 className={`py-1.5 px-3 rounded border border-gray-300 text-sm cursor-pointer ${
                   activeColorSubcategory === subcategory ? "bg-gray-200" : "bg-white"
@@ -542,27 +534,18 @@ const TokenCatalog = () => {
 
       {/* Display the tokens */}
       {Object.keys(groupedTokens).length === 0 ? (
-        <div className="text-center my-10 text-gray-600">
-          No tokens found matching "{searchTerm}"
-        </div>
+        <div className="text-center my-10 text-gray-600">No tokens found matching "{searchTerm}"</div>
       ) : (
         Object.entries(groupedTokens).map(([category, tokens]) => (
           <div key={category} className="category-section mb-10">
-            <h2
-              className="text-lg m-0 mb-2 pb-2 border-b border-gray-200"
-            >
+            <h2 className="text-lg m-0 mb-2 pb-2 border-b border-gray-200">
               {category} ({tokens.length})
             </h2>
-            <p
-              className="text-sm m-0 mb-4 text-gray-600"
-            >
+            <p className="text-sm m-0 mb-4 text-gray-600">
               {categoryDescriptions[category] || "Design tokens in this category"}
             </p>
 
-            <div
-              className="grid gap-4"
-              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
-            >
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
               {tokens.map(([name, value]) => (
                 <TokenValue key={name} token={value} tokenName={name} />
               ))}
@@ -612,8 +595,8 @@ const TokenCategorized = () => {
       <div className="mt-4">
         <h3 className="text-base mb-3">Translucent Color Values with Theme Support</h3>
         <p className="text-sm mb-4 text-gray-600">
-          These color tokens have raw RGB values available for creating translucent colors with custom opacity.
-          The same code will automatically adapt to dark mode.
+          These color tokens have raw RGB values available for creating translucent colors with custom opacity. The same
+          code will automatically adapt to dark mode.
         </p>
 
         <div className="flex flex-col gap-6">
@@ -651,7 +634,7 @@ const TokenCategorized = () => {
                   className="w-16 h-16 rounded flex items-center justify-center"
                   style={{
                     backgroundColor: "white",
-                    boxShadow: "0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%)"
+                    boxShadow: "0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%)",
                   }}
                 >
                   <span className="text-xs text-center">Neutral Shadow</span>
@@ -663,7 +646,7 @@ const TokenCategorized = () => {
                   className="w-16 h-16 rounded flex items-center justify-center"
                   style={{
                     backgroundColor: "white",
-                    border: "3px solid rgb(var(--color-primary-focus-outline-raw) / 30%)"
+                    border: "3px solid rgb(var(--color-primary-focus-outline-raw) / 30%)",
                   }}
                 >
                   <span className="text-xs text-center">Primary Outline</span>
@@ -671,7 +654,8 @@ const TokenCategorized = () => {
               </div>
             </div>
             <div className="mt-2 bg-gray-100 p-2 rounded text-xs font-mono">
-              box-shadow: 0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%);<br />
+              box-shadow: 0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%);
+              <br />
               border: 3px solid rgb(var(--color-primary-focus-outline-raw) / 30%);
             </div>
           </div>
@@ -685,20 +669,13 @@ const TokenCategorized = () => {
     return (
       <div className="flex flex-col gap-2 mt-4 items-start">
         {["100", "200", "400", "800"].map((size) => (
-          <div
-            key={size}
-            className="flex flex-col"
-          >
+          <div key={size} className="flex flex-col">
             <div
               className="h-5 bg-indigo-100 rounded relative"
               style={{ width: `var(--spacing-${size})` }}
               title={`spacing-${size}`}
             />
-            <div
-              className="text-xs"
-            >
-              {size}
-            </div>
+            <div className="text-xs">{size}</div>
           </div>
         ))}
       </div>
@@ -762,7 +739,9 @@ const TokenCategorized = () => {
       <div className="flex flex-col gap-8">
         {Object.entries(categoryDescriptions).map(([category, description]) => (
           <div key={category} className="category-card">
-            <h2 className="text-xl mb-2">{category.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</h2>
+            <h2 className="text-xl mb-2">
+              {category.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
+            </h2>
             <p className="mb-4 text-gray-600">{description}</p>
 
             {/* Preview for each category */}
@@ -772,9 +751,7 @@ const TokenCategorized = () => {
             {category === "colors" && generateRawColorsPalette()}
 
             {category === "colors" && (
-              <div
-                className="flex flex-wrap gap-4 mt-6"
-              >
+              <div className="flex flex-wrap gap-4 mt-6">
                 {Object.entries(colorSubcategoryDescriptions).map(([subCategory, subDescription]) => (
                   <LinkTo
                     key={subCategory}
@@ -782,9 +759,9 @@ const TokenCategorized = () => {
                     story="tokens-catalog"
                     className="flex-1 basis-[300px] border border-gray-200 rounded-lg p-4 cursor-pointer relative overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200"
                     onClick={() => {
-                      setSearchTerm("")
-                      setActiveCategory("colors")
-                      setActiveColorSubcategory(subCategory)
+                      setSearchTerm("");
+                      setActiveCategory("colors");
+                      setActiveColorSubcategory(subCategory);
                     }}
                   >
                     {/* Color preview for each subcategory */}
@@ -796,9 +773,7 @@ const TokenCategorized = () => {
                     )}
 
                     {subCategory === "primitives" && (
-                      <div
-                        className="absolute top-0 right-0 w-15 h-15 opacity-30 overflow-hidden"
-                      >
+                      <div className="absolute top-0 right-0 w-15 h-15 opacity-30 overflow-hidden">
                         <div className="flex">
                           <div className="w-5 h-5" style={{ backgroundColor: "var(--color-grape-500)" }} />
                           <div className="w-5 h-5" style={{ backgroundColor: "var(--color-blueberry-500)" }} />
@@ -818,9 +793,7 @@ const TokenCategorized = () => {
                     )}
 
                     <h3 className="text-base mb-2">{subCategory}</h3>
-                    <p className="text-sm text-gray-600 relative z-10">
-                      {subDescription}
-                    </p>
+                    <p className="text-sm text-gray-600 relative z-10">{subDescription}</p>
                   </LinkTo>
                 ))}
               </div>
@@ -832,8 +805,8 @@ const TokenCategorized = () => {
                 story="tokens-catalog"
                 className="block border border-gray-200 rounded-lg p-4 cursor-pointer mt-6 hover:shadow-md hover:border-gray-300 transition-all duration-200"
                 onClick={() => {
-                  setSearchTerm("")
-                  setActiveCategory(category)
+                  setSearchTerm("");
+                  setActiveCategory(category);
                 }}
               >
                 <p className="text-sm">View all {category} tokens &rarr;</p>
@@ -883,4 +856,3 @@ export const TokensCatalog = {
     },
   },
 };
-
