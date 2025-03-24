@@ -34,79 +34,70 @@ Feature("Smoke test through all the examples");
 
 // old audio is broken, so skipping it
 examples.slice(1).forEach((example) =>
-  Scenario(
-    example.title || "Noname smoke test",
-    async ({ I, LabelStudio, AtImageView, AtAudioView, AtOutliner, AtTopbar }) => {
-      LabelStudio.setFeatureFlags({
-        ff_front_dev_2715_audio_3_280722_short: true,
-      });
+  Scenario(example.title || "Noname smoke test", async ({ I, LabelStudio, AtOutliner, AtTopbar, AtDetails }) => {
+    LabelStudio.setFeatureFlags({
+      ff_front_dev_2715_audio_3_280722_short: true,
+    });
 
-      // @todo optional predictions in example
-      const { annotations, config, data, result = annotations[0].result } = example;
-      const params = { annotations: [{ id: "test", result }], config, data };
-      const configTree = Utils.parseXml(config);
-      const ids = [];
-      // add all unique ids from non-classification results
-      // @todo some classifications will be reflected in Results list soon
+    // @todo optional predictions in example
+    const { annotations, config, data, result = annotations[0].result } = example;
+    const params = { annotations: [{ id: "test", result }], config, data };
+    const configTree = Utils.parseXml(config);
+    const ids = [];
+    // add all unique ids from non-classification results
+    // @todo some classifications will be reflected in Results list soon
 
-      result.forEach((r) => !ids.includes(r.id) && Object.keys(r.value).length > 1 && ids.push(r.id));
-      const count = ids.length;
+    result.forEach((r) => !ids.includes(r.id) && Object.keys(r.value).length > 1 && ids.push(r.id));
+    const count = ids.length;
 
-      await I.amOnPage("/");
+    await I.amOnPage("/");
 
-      LabelStudio.init(params);
+    LabelStudio.init(params);
 
+    AtOutliner.seeRegions(count);
+
+    let restored;
+
+    LabelStudio.waitForObjectsReady();
+
+    if (Utils.xmlFindBy(configTree, (node) => ["text", "hypertext"].includes(node["#name"].toLowerCase()))) {
+      I.waitForVisible(".lsf-htx-richtext", 5);
+    }
+
+    I.dontSeeElement(locate(".lsf-errors"));
+
+    restored = await I.executeScript(serialize);
+    assertWithTolerance(restored, result);
+
+    if (count) {
+      AtOutliner.clickRegion(1);
+      // I.click('Delete Entity') - it founds something by tooltip, but not a button
+      // so click the bin button in entity's info block
+      AtDetails.clickDeleteRegion();
+      AtOutliner.seeRegions(count - 1);
+      AtTopbar.clickAria("Reset");
       AtOutliner.seeRegions(count);
+      // Reset is undoable
+      AtTopbar.clickAria("Undo");
 
-      let restored;
-
-      if (Utils.xmlTreeHasTag(configTree, "Image")) {
-        AtImageView.waitForImage();
-      }
-
-      if (Utils.xmlFindBy(configTree, (node) => node["#name"] === "Audio")) {
-        await AtAudioView.waitForAudio();
-      }
-
-      if (Utils.xmlFindBy(configTree, (node) => ["text", "hypertext"].includes(node["#name"].toLowerCase()))) {
-        I.waitForVisible(".lsf-htx-richtext", 5);
-      }
-
-      I.dontSeeElement(locate(".lsf-errors"));
-
+      // so after all these manipulations first region should be deleted
       restored = await I.executeScript(serialize);
-      assertWithTolerance(restored, result);
+      assertWithTolerance(
+        restored,
+        result.filter((r) => r.id !== ids[0]),
+      );
+    }
+    // Click on annotation copy button
+    AtTopbar.clickAria("Copy Annotation");
 
-      if (count) {
-        I.click(".ant-list-item");
-        // I.click('Delete Entity') - it founds something by tooltip, but not a button
-        // so click the bin button in entity's info block
-        I.click(".lsf-entity-buttons span[aria-label=delete]");
-        AtOutliner.seeRegions(count - 1);
-        I.click(".lsf-history-buttons__action[aria-label=Reset]");
-        AtOutliner.seeRegions(count);
-        // Reset is undoable
-        I.click(".lsf-history-buttons__action[aria-label=Undo]");
+    // Check if new annotation exists
+    AtTopbar.seeAnnotationAt(2);
 
-        // so after all these manipulations first region should be deleted
-        restored = await I.executeScript(serialize);
-        assertWithTolerance(
-          restored,
-          result.filter((r) => r.id !== ids[0]),
-        );
-      }
-      // Click on annotation copy button
-      AtTopbar.click('[aria-label="Copy Annotation"]');
+    // Check for regions count
+    AtOutliner.seeRegions(count);
 
-      // Check if new annotation exists
-      AtTopbar.seeAnnotationAt(2);
-
-      // Check for regions count
-      AtOutliner.seeRegions(count);
-
-      await I.executeScript(() => {
-        window.LabelStudio.destroyAll();
-      });
-    },
-  ),
+    await I.executeScript(() => {
+      window.LabelStudio.destroyAll();
+    });
+  }),
 );

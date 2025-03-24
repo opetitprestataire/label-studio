@@ -107,6 +107,9 @@ module.exports = {
   clickCreateRelation() {
     I.click(this.locate('[aria-label="Create Relation"]'));
   },
+  clickDeleteRegion() {
+    I.click(this.locate('[aria-label="Delete selected region"]'));
+  },
 
   seeRelations(count) {
     I.seeElement(this.locate(this._sectionHeadSelector).withText(`Relations (${count})`));

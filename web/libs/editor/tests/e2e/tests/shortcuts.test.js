@@ -1,6 +1,6 @@
 const assert = require("assert");
 
-Feature("Shortcuts functional").tag("@this");
+Feature("Shortcuts functional");
 
 const createConfig = ({ rows = "1" }) => {
   return `<View>
