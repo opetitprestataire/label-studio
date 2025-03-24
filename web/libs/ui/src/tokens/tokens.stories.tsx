@@ -1,7 +1,10 @@
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
+import LinkTo from "@storybook/addon-links/react";
+
 import type { Meta } from "@storybook/react";
 import { atom, useAtom, useSetAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 // @ts-ignore: JS module without types
 import designTokens from "./tokens";
 
@@ -189,9 +192,9 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
   );
 };
 
-const searchAtom = atom("");
-const activeCategoryAtom = atom("all");
-const activeColorSubcategoryAtom = atom("all");
+const searchAtom = atomWithStorage("tokensSearch", "");
+const activeCategoryAtom = atomWithStorage("tokensActiveCategory", "all");
+const activeColorSubcategoryAtom = atomWithStorage("tokensActiveColorSubcategory", "all");
 
 // Component for the token catalog
 const TokenCatalog = () => {
@@ -403,16 +406,19 @@ const TokenCategorized = () => {
   // Helper function to generate a spacing visualization
   const generateSpacingPreview = () => {
     return (
-      <div className="flex gap-2 mt-4 items-end">
+      <div className="flex flex-col gap-2 mt-4 items-start">
         {["100", "200", "400", "800"].map((size) => (
           <div
             key={size}
-            className="h-5 bg-indigo-100 rounded relative"
-            style={{ width: `var(--spacing-${size})` }}
-            title={`spacing-${size}`}
+            className="flex flex-col"
           >
             <div
-              className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-xs"
+              className="h-5 bg-indigo-100 rounded relative"
+              style={{ width: `var(--spacing-${size})` }}
+              title={`spacing-${size}`}
+            />
+            <div
+              className="text-xs"
             >
               {size}
             </div>
@@ -488,9 +494,11 @@ const TokenCategorized = () => {
                 className="flex flex-wrap gap-4 mt-6"
               >
                 {Object.entries(colorSubcategoryDescriptions).map(([subCategory, subDescription]) => (
-                  <div
+                  <LinkTo
                     key={subCategory}
                     className="flex-1 basis-[300px] border border-gray-200 rounded-lg p-4 cursor-pointer relative overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200"
+                    kind="design-tokens"
+                    story="tokens-catalog"
                     onClick={() => {
                       setSearchTerm("")
                       setActiveCategory("colors")
@@ -531,21 +539,23 @@ const TokenCategorized = () => {
                     <p className="text-sm text-gray-600 relative z-10">
                       {subDescription}
                     </p>
-                  </div>
+                  </LinkTo>
                 ))}
               </div>
             )}
 
             {category !== "colors" && (
-              <div
-                className="border border-gray-200 rounded-lg p-4 cursor-pointer mt-6 hover:shadow-md hover:border-gray-300 transition-all duration-200"
+              <LinkTo
+                className="block border border-gray-200 rounded-lg p-4 cursor-pointer mt-6 hover:shadow-md hover:border-gray-300 transition-all duration-200"
+                kind="design-tokens"
+                story="tokens-catalog"
                 onClick={() => {
                   setSearchTerm("")
                   setActiveCategory(category)
                 }}
               >
                 <p className="text-sm">View all {category} tokens &rarr;</p>
-              </div>
+              </LinkTo>
             )}
           </div>
         ))}
