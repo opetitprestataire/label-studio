@@ -207,7 +207,7 @@ const waitForAudio = async () => {
 const waitForObjectsReady = async () => {
   await new Promise((resolve) => {
     const watchObjectsReady = () => {
-      const isReady = window.Htx.annotationStore.selected.objects.every((object) => object.isReady);
+      const isReady = window.Htx?.annotationStore?.selected?.objects.every((object) => object.isReady);
 
       if (isReady) {
         resolve(true);

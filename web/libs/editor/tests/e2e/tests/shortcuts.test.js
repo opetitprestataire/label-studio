@@ -1,4 +1,6 @@
-Feature("Shortcuts functional");
+const assert = require("assert");
+
+Feature("Shortcuts functional").tag("@this");
 
 const createConfig = ({ rows = "1" }) => {
   return `<View>
@@ -84,8 +86,9 @@ Data(configParams).Scenario(
     I.pressKey(["Shift", "Enter"]);
 
     // If we got an expected result then we didn't lost focus.
-    AtOutliner.seeRegions(1);
-    AtOutliner.see("-A + B!");
+    const result = await LabelStudio.serialize();
+    assert.equal(result.length, 1);
+    assert.equal(result[0].value.text[0], "-A + B!");
   },
 );
 
@@ -123,8 +126,9 @@ Data(configParams).Scenario("Should work with emoji.", async ({ I, LabelStudio, 
   I.pressKey(["Shift", "Enter"]);
 
   // If we got an expected result then we didn't lost focus.
-  AtOutliner.seeRegions(1);
-  AtOutliner.see("🐱🐱‍👤🐱");
+  const result = await LabelStudio.serialize();
+  assert.equal(result.length, 1);
+  assert.equal(result[0].value.text[0], "🐱🐱‍👤🐱");
 });
 
 Data(configParams).Scenario("Should work with existent regions.", async ({ I, LabelStudio, AtOutliner, current }) => {
@@ -154,7 +158,12 @@ Data(configParams).Scenario("Should work with existent regions.", async ({ I, La
 
   I.amOnPage("/");
   LabelStudio.init(params);
-  AtOutliner.seeRegions(1);
+  // Text regions will not be displayed at outliner
+  AtOutliner.seeRegions(0);
+  LabelStudio.waitForObjectsReady();
+
+  const initialResult = await LabelStudio.serialize();
+  assert.equal(initialResult.length, 1);
 
   // Start editing
   I.click('[aria-label="Edit Region"]');
@@ -191,8 +200,9 @@ Data(configParams).Scenario("Should work with existent regions.", async ({ I, La
   I.pressKey(["Shift", "Enter"]);
 
   // If we got an expected result then we didn't lost focus.
-  AtOutliner.seeRegions(1);
-  AtOutliner.see("-A + B!");
+  const result = await LabelStudio.serialize();
+  assert.equal(result.length, 1);
+  assert.equal(result[0].value.text[0], "-A + B!");
 });
 
 {
