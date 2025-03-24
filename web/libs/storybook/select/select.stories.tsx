@@ -14,6 +14,40 @@ const meta: Meta<typeof Select> = {
           {...args}
         />
         <Select
+          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+          label="searchable select"
+          searchable={true}
+          {...args}
+        />
+        <Select
+          placeholder="inline select"
+          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+          label="default"
+          isInline={true}
+          {...args}
+        />
+        <Select
+          placeholder="Select a fruit"
+          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+          label="ghost"
+          ghost={true}
+          {...args}
+        />
+        <Select
+          placeholder="Select a fruit"
+          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+          label="required"
+          required={true}
+          {...args}
+        />
+        <Select
+          placeholder="Select a fruit"
+          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+          label="error"
+          value="Blueberry"
+          {...args}
+        />
+        <Select
           placeholder="Select a fruit"
           options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
           label="disabled select"
@@ -44,13 +78,6 @@ const meta: Meta<typeof Select> = {
           label="disabled options"
           {...args}
         />
-        <Select
-          placeholder="Select a fruit"
-          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-          label="searchable select"
-          searchable={true}
-          {...args}
-        />
       </>
     );
   },
@@ -60,7 +87,5 @@ export default meta;
 type Story = StoryObj<typeof Select>;
 
 export const Primary: Story = {
-  args: {
-    value: "Blueberry",
-  },
+  args: {},
 };

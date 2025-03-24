@@ -122,11 +122,13 @@ export const Select = forwardRef(
               props.triggerProps?.className ?? "",
             )}
           >
-            {value ? (
-              <>{selectedOptions?.map((option) => option?.label ?? option?.value ?? option)}</>
-            ) : (
-              props?.placeholder ?? ""
-            )}
+            <span className="flex-1 text-left" data-testid="select-display-value">
+              {value ? (
+                <>{selectedOptions?.map((option) => option?.label ?? option?.value ?? option)}</>
+              ) : (
+                props?.placeholder ?? ""
+              )}
+            </span>
             {isOpen ? (
               <IconChevron className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             ) : (
