@@ -33,10 +33,7 @@ const designTokens = {
         "bolder": "var(--color-neutral-border-bolder)",
         "boldest": "var(--color-neutral-border-boldest)"
       },
-      "shadow": {
-        "DEFAULT": "var(--color-neutral-shadow)",
-        "raw": "var(--color-neutral-shadow-raw)"
-      },
+      "shadow": "var(--color-neutral-shadow)",
       "inverted": {
         "surface": {
           "DEFAULT": "var(--color-neutral-inverted-surface)",
@@ -84,15 +81,9 @@ const designTokens = {
         "bold": "var(--color-primary-border-bold)"
       },
       "focus": {
-        "outline": {
-          "DEFAULT": "var(--color-primary-focus-outline)",
-          "raw": "var(--color-primary-focus-outline-raw)"
-        }
+        "outline": "var(--color-primary-focus-outline)"
       },
-      "shadow": {
-        "DEFAULT": "var(--color-primary-shadow)",
-        "raw": "var(--color-primary-shadow-raw)"
-      }
+      "shadow": "var(--color-primary-shadow)"
     },
     "negative": {
       "surface": {
@@ -124,10 +115,7 @@ const designTokens = {
         "bold": "var(--color-negative-border-bold)"
       },
       "focus": {
-        "outline": {
-          "DEFAULT": "var(--color-negative-focus-outline)",
-          "raw": "var(--color-negative-focus-outline-raw)"
-        }
+        "outline": "var(--color-negative-focus-outline)"
       }
     },
     "positive": {
@@ -160,10 +148,7 @@ const designTokens = {
         "bold": "var(--color-positive-border-bold)"
       },
       "focus": {
-        "outline": {
-          "DEFAULT": "var(--color-positive-focus-outline)",
-          "raw": "var(--color-positive-focus-outline-raw)"
-        }
+        "outline": "var(--color-positive-focus-outline)"
       }
     },
     "warning": {
@@ -196,10 +181,7 @@ const designTokens = {
         "bold": "var(--color-warning-border-bold)"
       },
       "focus": {
-        "outline": {
-          "DEFAULT": "var(--color-warning-focus-outline)",
-          "raw": "var(--color-warning-focus-outline-raw)"
-        }
+        "outline": "var(--color-warning-focus-outline)"
       }
     },
     "accent": {
@@ -275,468 +257,135 @@ const designTokens = {
       }
     },
     "sand": {
-      "100": {
-        "DEFAULT": "var(--color-sand-100)",
-        "raw": "var(--color-sand-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-sand-200)",
-        "raw": "var(--color-sand-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-sand-300)",
-        "raw": "var(--color-sand-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-sand-400)",
-        "raw": "var(--color-sand-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-sand-500)",
-        "raw": "var(--color-sand-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-sand-600)",
-        "raw": "var(--color-sand-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-sand-700)",
-        "raw": "var(--color-sand-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-sand-800)",
-        "raw": "var(--color-sand-800-raw)"
-      },
-      "850": {
-        "DEFAULT": "var(--color-sand-850)",
-        "raw": "var(--color-sand-850-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-sand-900)",
-        "raw": "var(--color-sand-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-sand-950)",
-        "raw": "var(--color-sand-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-sand-000)",
-        "raw": "var(--color-sand-000-raw)"
-      }
+      "100": "var(--color-sand-100)",
+      "200": "var(--color-sand-200)",
+      "300": "var(--color-sand-300)",
+      "400": "var(--color-sand-400)",
+      "500": "var(--color-sand-500)",
+      "600": "var(--color-sand-600)",
+      "700": "var(--color-sand-700)",
+      "800": "var(--color-sand-800)",
+      "850": "var(--color-sand-850)",
+      "900": "var(--color-sand-900)",
+      "950": "var(--color-sand-950)",
+      "000": "var(--color-sand-000)"
     },
     "grape": {
-      "100": {
-        "DEFAULT": "var(--color-grape-100)",
-        "raw": "var(--color-grape-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-grape-200)",
-        "raw": "var(--color-grape-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-grape-300)",
-        "raw": "var(--color-grape-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-grape-400)",
-        "raw": "var(--color-grape-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-grape-500)",
-        "raw": "var(--color-grape-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-grape-600)",
-        "raw": "var(--color-grape-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-grape-700)",
-        "raw": "var(--color-grape-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-grape-800)",
-        "raw": "var(--color-grape-800-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-grape-900)",
-        "raw": "var(--color-grape-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-grape-950)",
-        "raw": "var(--color-grape-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-grape-000)",
-        "raw": "var(--color-grape-000-raw)"
-      }
+      "100": "var(--color-grape-100)",
+      "200": "var(--color-grape-200)",
+      "300": "var(--color-grape-300)",
+      "400": "var(--color-grape-400)",
+      "500": "var(--color-grape-500)",
+      "600": "var(--color-grape-600)",
+      "700": "var(--color-grape-700)",
+      "800": "var(--color-grape-800)",
+      "900": "var(--color-grape-900)",
+      "950": "var(--color-grape-950)",
+      "000": "var(--color-grape-000)"
     },
     "blueberry": {
-      "100": {
-        "DEFAULT": "var(--color-blueberry-100)",
-        "raw": "var(--color-blueberry-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-blueberry-200)",
-        "raw": "var(--color-blueberry-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-blueberry-300)",
-        "raw": "var(--color-blueberry-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-blueberry-400)",
-        "raw": "var(--color-blueberry-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-blueberry-500)",
-        "raw": "var(--color-blueberry-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-blueberry-600)",
-        "raw": "var(--color-blueberry-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-blueberry-700)",
-        "raw": "var(--color-blueberry-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-blueberry-800)",
-        "raw": "var(--color-blueberry-800-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-blueberry-900)",
-        "raw": "var(--color-blueberry-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-blueberry-950)",
-        "raw": "var(--color-blueberry-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-blueberry-000)",
-        "raw": "var(--color-blueberry-000-raw)"
-      }
+      "100": "var(--color-blueberry-100)",
+      "200": "var(--color-blueberry-200)",
+      "300": "var(--color-blueberry-300)",
+      "400": "var(--color-blueberry-400)",
+      "500": "var(--color-blueberry-500)",
+      "600": "var(--color-blueberry-600)",
+      "700": "var(--color-blueberry-700)",
+      "800": "var(--color-blueberry-800)",
+      "900": "var(--color-blueberry-900)",
+      "950": "var(--color-blueberry-950)",
+      "000": "var(--color-blueberry-000)"
     },
     "kale": {
-      "100": {
-        "DEFAULT": "var(--color-kale-100)",
-        "raw": "var(--color-kale-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-kale-200)",
-        "raw": "var(--color-kale-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-kale-300)",
-        "raw": "var(--color-kale-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-kale-400)",
-        "raw": "var(--color-kale-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-kale-500)",
-        "raw": "var(--color-kale-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-kale-600)",
-        "raw": "var(--color-kale-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-kale-700)",
-        "raw": "var(--color-kale-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-kale-800)",
-        "raw": "var(--color-kale-800-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-kale-900)",
-        "raw": "var(--color-kale-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-kale-950)",
-        "raw": "var(--color-kale-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-kale-000)",
-        "raw": "var(--color-kale-000-raw)"
-      }
+      "100": "var(--color-kale-100)",
+      "200": "var(--color-kale-200)",
+      "300": "var(--color-kale-300)",
+      "400": "var(--color-kale-400)",
+      "500": "var(--color-kale-500)",
+      "600": "var(--color-kale-600)",
+      "700": "var(--color-kale-700)",
+      "800": "var(--color-kale-800)",
+      "900": "var(--color-kale-900)",
+      "950": "var(--color-kale-950)",
+      "000": "var(--color-kale-000)"
     },
     "kiwi": {
-      "100": {
-        "DEFAULT": "var(--color-kiwi-100)",
-        "raw": "var(--color-kiwi-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-kiwi-200)",
-        "raw": "var(--color-kiwi-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-kiwi-300)",
-        "raw": "var(--color-kiwi-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-kiwi-400)",
-        "raw": "var(--color-kiwi-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-kiwi-500)",
-        "raw": "var(--color-kiwi-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-kiwi-600)",
-        "raw": "var(--color-kiwi-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-kiwi-700)",
-        "raw": "var(--color-kiwi-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-kiwi-800)",
-        "raw": "var(--color-kiwi-800-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-kiwi-900)",
-        "raw": "var(--color-kiwi-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-kiwi-950)",
-        "raw": "var(--color-kiwi-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-kiwi-000)",
-        "raw": "var(--color-kiwi-000-raw)"
-      }
+      "100": "var(--color-kiwi-100)",
+      "200": "var(--color-kiwi-200)",
+      "300": "var(--color-kiwi-300)",
+      "400": "var(--color-kiwi-400)",
+      "500": "var(--color-kiwi-500)",
+      "600": "var(--color-kiwi-600)",
+      "700": "var(--color-kiwi-700)",
+      "800": "var(--color-kiwi-800)",
+      "900": "var(--color-kiwi-900)",
+      "950": "var(--color-kiwi-950)",
+      "000": "var(--color-kiwi-000)"
     },
     "mango": {
-      "100": {
-        "DEFAULT": "var(--color-mango-100)",
-        "raw": "var(--color-mango-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-mango-200)",
-        "raw": "var(--color-mango-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-mango-300)",
-        "raw": "var(--color-mango-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-mango-400)",
-        "raw": "var(--color-mango-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-mango-500)",
-        "raw": "var(--color-mango-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-mango-600)",
-        "raw": "var(--color-mango-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-mango-700)",
-        "raw": "var(--color-mango-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-mango-800)",
-        "raw": "var(--color-mango-800-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-mango-900)",
-        "raw": "var(--color-mango-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-mango-950)",
-        "raw": "var(--color-mango-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-mango-000)",
-        "raw": "var(--color-mango-000-raw)"
-      }
+      "100": "var(--color-mango-100)",
+      "200": "var(--color-mango-200)",
+      "300": "var(--color-mango-300)",
+      "400": "var(--color-mango-400)",
+      "500": "var(--color-mango-500)",
+      "600": "var(--color-mango-600)",
+      "700": "var(--color-mango-700)",
+      "800": "var(--color-mango-800)",
+      "900": "var(--color-mango-900)",
+      "950": "var(--color-mango-950)",
+      "000": "var(--color-mango-000)"
     },
     "canteloupe": {
-      "100": {
-        "DEFAULT": "var(--color-canteloupe-100)",
-        "raw": "var(--color-canteloupe-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-canteloupe-200)",
-        "raw": "var(--color-canteloupe-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-canteloupe-300)",
-        "raw": "var(--color-canteloupe-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-canteloupe-400)",
-        "raw": "var(--color-canteloupe-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-canteloupe-500)",
-        "raw": "var(--color-canteloupe-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-canteloupe-600)",
-        "raw": "var(--color-canteloupe-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-canteloupe-700)",
-        "raw": "var(--color-canteloupe-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-canteloupe-800)",
-        "raw": "var(--color-canteloupe-800-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-canteloupe-900)",
-        "raw": "var(--color-canteloupe-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-canteloupe-950)",
-        "raw": "var(--color-canteloupe-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-canteloupe-000)",
-        "raw": "var(--color-canteloupe-000-raw)"
-      }
+      "100": "var(--color-canteloupe-100)",
+      "200": "var(--color-canteloupe-200)",
+      "300": "var(--color-canteloupe-300)",
+      "400": "var(--color-canteloupe-400)",
+      "500": "var(--color-canteloupe-500)",
+      "600": "var(--color-canteloupe-600)",
+      "700": "var(--color-canteloupe-700)",
+      "800": "var(--color-canteloupe-800)",
+      "900": "var(--color-canteloupe-900)",
+      "950": "var(--color-canteloupe-950)",
+      "000": "var(--color-canteloupe-000)"
     },
     "persimmon": {
-      "100": {
-        "DEFAULT": "var(--color-persimmon-100)",
-        "raw": "var(--color-persimmon-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-persimmon-200)",
-        "raw": "var(--color-persimmon-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-persimmon-300)",
-        "raw": "var(--color-persimmon-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-persimmon-400)",
-        "raw": "var(--color-persimmon-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-persimmon-500)",
-        "raw": "var(--color-persimmon-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-persimmon-600)",
-        "raw": "var(--color-persimmon-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-persimmon-700)",
-        "raw": "var(--color-persimmon-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-persimmon-800)",
-        "raw": "var(--color-persimmon-800-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-persimmon-900)",
-        "raw": "var(--color-persimmon-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-persimmon-950)",
-        "raw": "var(--color-persimmon-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-persimmon-000)",
-        "raw": "var(--color-persimmon-000-raw)"
-      }
+      "100": "var(--color-persimmon-100)",
+      "200": "var(--color-persimmon-200)",
+      "300": "var(--color-persimmon-300)",
+      "400": "var(--color-persimmon-400)",
+      "500": "var(--color-persimmon-500)",
+      "600": "var(--color-persimmon-600)",
+      "700": "var(--color-persimmon-700)",
+      "800": "var(--color-persimmon-800)",
+      "900": "var(--color-persimmon-900)",
+      "950": "var(--color-persimmon-950)",
+      "000": "var(--color-persimmon-000)"
     },
     "plum": {
-      "100": {
-        "DEFAULT": "var(--color-plum-100)",
-        "raw": "var(--color-plum-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-plum-200)",
-        "raw": "var(--color-plum-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-plum-300)",
-        "raw": "var(--color-plum-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-plum-400)",
-        "raw": "var(--color-plum-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-plum-500)",
-        "raw": "var(--color-plum-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-plum-600)",
-        "raw": "var(--color-plum-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-plum-700)",
-        "raw": "var(--color-plum-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-plum-800)",
-        "raw": "var(--color-plum-800-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-plum-900)",
-        "raw": "var(--color-plum-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-plum-950)",
-        "raw": "var(--color-plum-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-plum-000)",
-        "raw": "var(--color-plum-000-raw)"
-      }
+      "100": "var(--color-plum-100)",
+      "200": "var(--color-plum-200)",
+      "300": "var(--color-plum-300)",
+      "400": "var(--color-plum-400)",
+      "500": "var(--color-plum-500)",
+      "600": "var(--color-plum-600)",
+      "700": "var(--color-plum-700)",
+      "800": "var(--color-plum-800)",
+      "900": "var(--color-plum-900)",
+      "950": "var(--color-plum-950)",
+      "000": "var(--color-plum-000)"
     },
     "fig": {
-      "100": {
-        "DEFAULT": "var(--color-fig-100)",
-        "raw": "var(--color-fig-100-raw)"
-      },
-      "200": {
-        "DEFAULT": "var(--color-fig-200)",
-        "raw": "var(--color-fig-200-raw)"
-      },
-      "300": {
-        "DEFAULT": "var(--color-fig-300)",
-        "raw": "var(--color-fig-300-raw)"
-      },
-      "400": {
-        "DEFAULT": "var(--color-fig-400)",
-        "raw": "var(--color-fig-400-raw)"
-      },
-      "500": {
-        "DEFAULT": "var(--color-fig-500)",
-        "raw": "var(--color-fig-500-raw)"
-      },
-      "600": {
-        "DEFAULT": "var(--color-fig-600)",
-        "raw": "var(--color-fig-600-raw)"
-      },
-      "700": {
-        "DEFAULT": "var(--color-fig-700)",
-        "raw": "var(--color-fig-700-raw)"
-      },
-      "800": {
-        "DEFAULT": "var(--color-fig-800)",
-        "raw": "var(--color-fig-800-raw)"
-      },
-      "900": {
-        "DEFAULT": "var(--color-fig-900)",
-        "raw": "var(--color-fig-900-raw)"
-      },
-      "950": {
-        "DEFAULT": "var(--color-fig-950)",
-        "raw": "var(--color-fig-950-raw)"
-      },
-      "000": {
-        "DEFAULT": "var(--color-fig-000)",
-        "raw": "var(--color-fig-000-raw)"
-      }
+      "100": "var(--color-fig-100)",
+      "200": "var(--color-fig-200)",
+      "300": "var(--color-fig-300)",
+      "400": "var(--color-fig-400)",
+      "500": "var(--color-fig-500)",
+      "600": "var(--color-fig-600)",
+      "700": "var(--color-fig-700)",
+      "800": "var(--color-fig-800)",
+      "900": "var(--color-fig-900)",
+      "950": "var(--color-fig-950)",
+      "000": "var(--color-fig-000)"
     }
   },
   "spacing": {

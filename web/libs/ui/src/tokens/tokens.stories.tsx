@@ -12,6 +12,45 @@ import designTokens from "./tokens";
 type DesignTokenValue = string | Record<string, any>;
 type FlattenedTokens = Record<string, string>;
 
+// Create an atom for theme (light/dark)
+const themeAtom = atomWithStorage("tokensTheme", "light");
+
+// ThemeToggle component
+const ThemeToggle = () => {
+  const [theme, setTheme] = useAtom(themeAtom);
+
+  useEffect(() => {
+    // Apply theme to document when it changes
+    document.body.dataset.colorScheme = theme;
+
+    // Clean up when component unmounts
+    return () => {
+      // Remove data-color-scheme attribute when unmounting
+      delete document.body.dataset.colorScheme;
+    };
+  }, [theme]);
+
+  return (
+    <div className="mb-6 flex items-center gap-4">
+      <span className="text-sm font-medium">Theme:</span>
+      <div className="flex border border-gray-300 rounded overflow-hidden">
+        <button
+          className={`px-4 py-2 text-sm ${theme === 'light' ? 'bg-blue-100 text-blue-800' : 'bg-white'}`}
+          onClick={() => setTheme('light')}
+        >
+          Light
+        </button>
+        <button
+          className={`px-4 py-2 text-sm ${theme === 'dark' ? 'bg-blue-700 text-white' : 'bg-white'}`}
+          onClick={() => setTheme('dark')}
+        >
+          Dark
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // Token categories and their descriptions
 const categoryDescriptions: Record<string, string> = {
   colors: "Color tokens for UI elements including semantic, accent, and scale colors",
@@ -267,6 +306,7 @@ const TokenCatalog = () => {
 
   // Component to showcase raw color values usage
   const RawColorsUsageGuide = () => {
+    const [theme] = useAtom(themeAtom);
     // Only show for color category
     if (activeCategory !== "colors") return null;
 
@@ -280,13 +320,19 @@ const TokenCatalog = () => {
 
     return (
       <div className="mb-10 p-4 border border-gray-200 rounded-lg bg-gray-50">
-        <h2 className="text-lg font-semibold mb-2">Using Raw Color Values</h2>
+        <h2 className="text-lg font-semibold mb-2">Using Raw Color Values with Theme Support</h2>
         <p className="text-sm mb-4">
           Some color tokens have "-raw" variants that provide RGB values without the rgb() wrapper,
-          allowing you to create translucent versions with custom opacity.
+          allowing you to create translucent versions with custom opacity. These work seamlessly with both light and dark modes.
         </p>
 
         <div className="bg-white p-4 rounded border border-gray-200">
+          <div className="mb-2 text-sm">
+            <span className="inline-block px-2 py-1 bg-gray-200 rounded text-xs font-medium">
+              Current theme: {theme}
+            </span>
+          </div>
+
           <h3 className="text-base font-medium mb-2">Examples</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -314,14 +360,20 @@ const TokenCatalog = () => {
               <h4 className="text-sm font-medium">Shadows & Outlines</h4>
               <div className="flex gap-4">
                 <div
-                  className="w-16 h-10 rounded bg-white flex items-center justify-center text-xs"
-                  style={{ boxShadow: "0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%)" }}
+                  className="w-16 h-10 rounded flex items-center justify-center text-xs"
+                  style={{
+                    backgroundColor: "white",
+                    boxShadow: "0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%)"
+                  }}
                 >
                   Shadow
                 </div>
                 <div
-                  className="w-16 h-10 rounded bg-white flex items-center justify-center text-xs"
-                  style={{ border: "1px solid rgb(var(--color-neutral-outline-raw) / 40%)" }}
+                  className="w-16 h-10 rounded flex items-center justify-center text-xs"
+                  style={{
+                    backgroundColor: "white",
+                    border: "1px solid rgb(var(--color-neutral-outline-raw) / 40%)"
+                  }}
                 >
                   Border
                 </div>
@@ -332,6 +384,78 @@ const TokenCatalog = () => {
               </div>
             </div>
           </div>
+
+          <div className="mt-6 border-t border-gray-200 pt-4">
+            <h4 className="text-sm font-medium mb-2">Automatically Adapts to Dark Mode</h4>
+            <p className="text-xs text-gray-600 mb-2">
+              The same CSS will automatically use dark mode values when <code className="bg-gray-100 px-1">data-color-scheme="dark"</code> is set on a parent element.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              {/* Light mode example */}
+              <div className="p-3 border border-gray-200 rounded">
+                <div className="text-xs mb-2 font-medium">Light mode preview:</div>
+                <div className="flex gap-3">
+                  <div
+                    className="w-10 h-10 rounded"
+                    style={{ backgroundColor: "rgb(var(--color-primary-surface-raw) / 50%)" }}
+                  />
+                  <div
+                    className="w-10 h-10 rounded"
+                    style={{
+                      backgroundColor: "white",
+                      boxShadow: "0 3px 6px rgb(var(--color-neutral-shadow-raw) / 30%)"
+                    }}
+                  />
+                  <div
+                    className="w-10 h-10 rounded"
+                    style={{
+                      backgroundColor: "white",
+                      border: "2px solid rgb(var(--color-neutral-outline-raw) / 40%)"
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Dark mode example */}
+              <div className="p-3 border border-gray-300 rounded" data-color-scheme="dark" style={{ backgroundColor: "#222" }}>
+                <div className="text-xs mb-2 font-medium text-gray-300">Dark mode preview:</div>
+                <div className="flex gap-3">
+                  <div
+                    className="w-10 h-10 rounded"
+                    style={{ backgroundColor: "rgb(var(--color-primary-surface-raw) / 50%)" }}
+                  />
+                  <div
+                    className="w-10 h-10 rounded"
+                    style={{
+                      backgroundColor: "#333",
+                      boxShadow: "0 3px 6px rgb(var(--color-neutral-shadow-raw) / 30%)"
+                    }}
+                  />
+                  <div
+                    className="w-10 h-10 rounded"
+                    style={{
+                      backgroundColor: "#333",
+                      border: "2px solid rgb(var(--color-neutral-outline-raw) / 40%)"
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto mt-4">
+{`// The CSS is the same for both light and dark mode
+.element {
+  background-color: rgb(var(--color-primary-surface-raw) / 50%);
+  border: 1px solid rgb(var(--color-neutral-outline-raw) / 40%);
+}
+
+// The colors adapt automatically when:
+<div data-color-scheme="dark">
+  <div class="element">Content</div>
+</div>`}
+            </pre>
+          </div>
         </div>
       </div>
     );
@@ -339,6 +463,8 @@ const TokenCatalog = () => {
 
   return (
     <div className="token-catalog p-8">
+      <ThemeToggle />
+
       <div
         className="mb-6"
       >
@@ -480,14 +606,23 @@ const TokenCategorized = () => {
 
   // Helper function to showcase raw color values for translucent colors
   const generateRawColorsPalette = () => {
+    const [theme] = useAtom(themeAtom);
+
     return (
       <div className="mt-4">
-        <h3 className="text-base mb-3">Translucent Color Values</h3>
+        <h3 className="text-base mb-3">Translucent Color Values with Theme Support</h3>
         <p className="text-sm mb-4 text-gray-600">
           These color tokens have raw RGB values available for creating translucent colors with custom opacity.
+          The same code will automatically adapt to dark mode.
         </p>
 
         <div className="flex flex-col gap-6">
+          <div className="mb-2 text-sm">
+            <span className="inline-block px-2 py-1 bg-gray-200 rounded text-xs font-medium">
+              Current theme: {theme}
+            </span>
+          </div>
+
           {/* Primitive color demonstration */}
           <div>
             <h4 className="text-sm font-semibold mb-2">Primary Color with Different Opacities</h4>
@@ -514,29 +649,30 @@ const TokenCategorized = () => {
               <div className="flex flex-col items-center">
                 <div
                   className="w-16 h-16 rounded flex items-center justify-center"
-                  style={{ boxShadow: "0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%)" }}
+                  style={{
+                    backgroundColor: "white",
+                    boxShadow: "0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%)"
+                  }}
                 >
-                  <span className="text-xs">Shadow</span>
+                  <span className="text-xs text-center">Neutral Shadow</span>
                 </div>
-                <span className="text-xs mt-1">Shadow</span>
               </div>
 
               <div className="flex flex-col items-center">
                 <div
                   className="w-16 h-16 rounded flex items-center justify-center"
                   style={{
-                    border: "2px solid rgb(var(--color-neutral-outline-raw) / 30%)",
-                    backgroundColor: "rgb(var(--color-neutral-surface-raw) / 5%)"
+                    backgroundColor: "white",
+                    border: "3px solid rgb(var(--color-primary-focus-outline-raw) / 30%)"
                   }}
                 >
-                  <span className="text-xs">Outline</span>
+                  <span className="text-xs text-center">Primary Outline</span>
                 </div>
-                <span className="text-xs mt-1">Outline</span>
               </div>
             </div>
             <div className="mt-2 bg-gray-100 p-2 rounded text-xs font-mono">
               box-shadow: 0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%);<br />
-              border: 2px solid rgb(var(--color-neutral-outline-raw) / 30%);
+              border: 3px solid rgb(var(--color-primary-focus-outline-raw) / 30%);
             </div>
           </div>
         </div>
@@ -616,6 +752,8 @@ const TokenCategorized = () => {
 
   return (
     <div className="p-8">
+      <ThemeToggle />
+
       <h1 className="text-2xl mb-6">Design Tokens</h1>
       <p className="mb-6">
         Browse through our design tokens organized by category. These tokens are the foundation of our design system.
@@ -638,8 +776,10 @@ const TokenCategorized = () => {
                 className="flex flex-wrap gap-4 mt-6"
               >
                 {Object.entries(colorSubcategoryDescriptions).map(([subCategory, subDescription]) => (
-                  <div
+                  <LinkTo
                     key={subCategory}
+                    kind="design-tokens"
+                    story="tokens-catalog"
                     className="flex-1 basis-[300px] border border-gray-200 rounded-lg p-4 cursor-pointer relative overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200"
                     onClick={() => {
                       setSearchTerm("")
@@ -681,13 +821,15 @@ const TokenCategorized = () => {
                     <p className="text-sm text-gray-600 relative z-10">
                       {subDescription}
                     </p>
-                  </div>
+                  </LinkTo>
                 ))}
               </div>
             )}
 
             {category !== "colors" && (
-              <div
+              <LinkTo
+                kind="design-tokens"
+                story="tokens-catalog"
                 className="block border border-gray-200 rounded-lg p-4 cursor-pointer mt-6 hover:shadow-md hover:border-gray-300 transition-all duration-200"
                 onClick={() => {
                   setSearchTerm("")
@@ -695,7 +837,7 @@ const TokenCategorized = () => {
                 }}
               >
                 <p className="text-sm">View all {category} tokens &rarr;</p>
-              </div>
+              </LinkTo>
             )}
           </div>
         ))}

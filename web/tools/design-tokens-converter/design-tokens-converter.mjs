@@ -543,8 +543,8 @@ function processColorTokens(colorObj, parentPath, result, variables) {
           const lightValue = resolveColor(colorObj[key].$variable_metadata.modes.light, variables);
           result.cssVariables.light.push(`${cssVarName}: ${lightValue};`);
 
-          // Add raw RGB values for colors with "outline" or "shadow" in the name
-          if (name.includes("outline") || name.includes("shadow")) {
+          // Add raw RGB values for colors with "outline" or "shadow" or is part of the accent color family in the name
+          if (name.includes("outline") || name.includes("shadow") || name.includes("accent")) {
             const rawRgbValues = hexToRgbRaw(colorObj[key].$variable_metadata.modes.light, variables);
             result.cssVariables.light.push(`${cssVarName}-raw: ${rawRgbValues};`);
           }
@@ -552,8 +552,8 @@ function processColorTokens(colorObj, parentPath, result, variables) {
           const resolvedValue = resolveColor(value, variables);
           result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
 
-          // Add raw RGB values for colors with "outline" or "shadow" in the name
-          if (name.includes("outline") || name.includes("shadow")) {
+          // Add raw RGB values for colors with "outline" or "shadow" or is part of the accent color family in the name
+          if (name.includes("outline") || name.includes("shadow") || name.includes("accent")) {
             const rawRgbValues = hexToRgbRaw(value, variables);
             result.cssVariables.light.push(`${cssVarName}-raw: ${rawRgbValues};`);
           }
@@ -568,8 +568,8 @@ function processColorTokens(colorObj, parentPath, result, variables) {
           const darkValue = resolveColor(colorObj[key].$variable_metadata.modes.dark, variables);
           result.cssVariables.dark.push(`${cssVarName}: ${darkValue};`);
 
-          // Add raw RGB values for colors with "outline" or "shadow" in the name for dark mode
-          if (name.includes("outline") || name.includes("shadow")) {
+          // Add raw RGB values for colors with "outline" or "shadow" or is part of the accent color family in the name for dark mode
+          if (name.includes("outline") || name.includes("shadow") || name.includes("accent")) {
             const rawRgbValues = hexToRgbRaw(colorObj[key].$variable_metadata.modes.dark, variables);
             result.cssVariables.dark.push(`${cssVarName}-raw: ${rawRgbValues};`);
           }
@@ -577,11 +577,6 @@ function processColorTokens(colorObj, parentPath, result, variables) {
 
         // Add to JavaScript tokens
         addToJsTokens(result.jsTokens.colors, name.replace(/\$/g, ""), cssVarName);
-
-        // Add raw values to JavaScript tokens for outlines and shadows
-        if (name.includes("outline") || name.includes("shadow")) {
-          addToJsTokens(result.jsTokens.colors, `${name.replace(/\$/g, "")}-raw`, `${cssVarName}-raw`);
-        }
       } else {
         // Recursively process nested color objects
         processColorTokens(colorObj[key], newPath, result, variables);
@@ -612,8 +607,23 @@ function processPrimitiveColors(primitiveColors, result, variables) {
           result.cssVariables.light.push(`${cssVarName}: ${rgbValue};`);
 
           // Add raw RGB values for primitives to support translucent colors
-          const rawRgbValues = hexToRgbRaw(value);
-          result.cssVariables.light.push(`${cssVarName}-raw: ${rawRgbValues};`);
+          // if dark mode is available
+          if (
+            primitiveColors[colorFamily][shade].$variable_metadata &&
+            primitiveColors[colorFamily][shade].$variable_metadata.modes &&
+            primitiveColors[colorFamily][shade].$variable_metadata.modes.dark
+          ) {
+            const rawRgbValues = hexToRgbRaw(value);
+            result.cssVariables.light.push(`${cssVarName}-raw: ${rawRgbValues};`);
+
+            const darkValue = primitiveColors[colorFamily][shade].$variable_metadata.modes.dark;
+            const darkRgbValue = hexToRgb(darkValue);
+            result.cssVariables.dark.push(`${cssVarName}: ${darkRgbValue};`);
+
+            // Add raw RGB values for dark mode
+            const darkRawRgbValues = hexToRgbRaw(darkValue);
+            result.cssVariables.dark.push(`${cssVarName}-raw: ${darkRawRgbValues};`);
+          }
 
           // Add to JavaScript tokens
           if (!result.jsTokens.colors.primitive) {
@@ -624,7 +634,6 @@ function processPrimitiveColors(primitiveColors, result, variables) {
           }
 
           result.jsTokens.colors.primitive[familyName][shade] = `var(${cssVarName})`;
-          result.jsTokens.colors.primitive[familyName][`${shade}-raw`] = `var(${cssVarName}-raw)`;
         }
       } catch (error) {
         console.warn(`Warning: Error processing primitive color ${colorFamily}.${shade}:`, error.message);
@@ -862,7 +871,7 @@ function generateCssContent(result) {
   content += "}\n\n";
 
   // Dark mode variables
-  content += '[data-theme="dark"] {\n';
+  content += '[data-color-scheme="dark"] {\n';
   result.cssVariables.dark.forEach((variable) => {
     content += `  ${variable}\n`;
   });
