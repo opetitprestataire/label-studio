@@ -1,4 +1,4 @@
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@humansignal/shad/components/ui/select";
+import { Select } from "@humansignal/ui";
 import { useCallback, useMemo } from "react";
 
 type Sample = {
@@ -27,22 +27,22 @@ export function SampleDatasetSelect({
     [samples, onSampleApplied],
   );
 
+  const options = useMemo(() => {
+    return samples.map((sample) => ({
+      value: sample.url,
+      label: (
+        <div className="flex flex-col">
+          <div className="font-bold">{sample.title}</div>
+          <div className="mt-2">{sample.description}</div>
+        </div>
+      ),
+    }));
+  }, [samples]);
+
   return (
     <div className="flex gap-3 items-center">
       <span className="text-lsNeutralContentSubtler">or use a sample dataset</span>
-      <Select value={sample?.url ?? undefined} onValueChange={onSelect}>
-        <SelectTrigger className="h-10 min-w-52 rounded-sm border-lsNeutralBorderBold data-[placeholder]:text-[#000] text-[16px] [&_svg]:stroke-[#000]">
-          {title}
-        </SelectTrigger>
-        <SelectContent className="z-99999 min-w-90">
-          {samples.map((sample) => (
-            <SelectItem value={sample.url} key={sample.url}>
-              <div className=" font-bold">{sample.title}</div>
-              <div className="mt-2">{sample.description}</div>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <Select value={sample?.url ?? undefined} placeholder="Select sample" onChange={onSelect} options={options} />
     </div>
   );
 }

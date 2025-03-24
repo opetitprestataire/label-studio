@@ -7,14 +7,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@humansignal/shad/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@humansignal/shad/components/ui/popover';
+} from "@humansignal/shad/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@humansignal/shad/components/ui/popover";
 import type { SelectOption, SelectProps } from "./types.ts";
-import { Checkbox, Label } from "@humansignal/ui";
+import { Checkbox } from "@humansignal/ui";
 import { IconCheck, IconChevron, IconChevronDown } from "@humansignal/icons";
 import clsx from "clsx";
 
@@ -34,12 +30,19 @@ export const Select = forwardRef(
       value: externalValue,
       disabled = false,
       multiple = false,
+      isInline = false,
       ...props
     }: SelectProps<T, A>,
     ref: ForwardedRef<HTMLSelectElement>,
   ) => {
     const [query, setQuery] = useState<string>("");
-    let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue ?? options?.[0]?.value ?? options?.[0];
+    let initialValue =
+      defaultValue?.value ??
+      defaultValue ??
+      externalValue?.value ??
+      externalValue ??
+      options?.[0]?.value ??
+      options?.[0];
     if (multiple) {
       initialValue = initialValue ?? [];
     } else if (Array.isArray(initialValue)) {
@@ -60,14 +63,14 @@ export const Select = forwardRef(
       (val: string, isSelected: boolean) => {
         if (disabled) return;
 
-        if(multiple) {
+        if (multiple) {
           setValue((prev = []) => {
             if (isSelected) {
               return [...prev.filter((v) => v !== val)];
             } else {
               return [...prev, val];
             }
-          })
+          });
         } else {
           setValue(val);
         }
@@ -78,27 +81,29 @@ export const Select = forwardRef(
     );
 
     const flatOptions = useMemo(() => {
-      return options.flatMap(option => option?.children ?? option);
-    }, [options])
+      return options.flatMap((option) => option?.children ?? option);
+    }, [options]);
 
     const _options = useMemo(() => {
       if (!searchable || !query.trim()) return options;
 
       const filterHandler = (option: any) => {
-
         const label = option?.label ?? option?.value ?? option;
 
         return label?.toString()?.toLowerCase().includes(query.toLowerCase());
-      }
+      };
       return flatOptions.filter(filterHandler);
     }, [options, searchable, query, flatOptions]);
 
-    const isSelected = useCallback((val: any) => {
-      if (multiple) {
-        return value.includes(val?.value ?? val);
-      }
-      return (value?.value ?? value) === (val?.value ?? val);
-    }, [value, multiple]);
+    const isSelected = useCallback(
+      (val: any) => {
+        if (multiple) {
+          return value.includes(val?.value ?? val);
+        }
+        return (value?.value ?? value) === (val?.value ?? val);
+      },
+      [value, multiple],
+    );
 
     const selectedOptions = useMemo(() => {
       return flatOptions.filter((option) => isSelected(option));
@@ -106,24 +111,37 @@ export const Select = forwardRef(
 
     return (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild  disabled={disabled}>
+        <PopoverTrigger asChild disabled={disabled}>
           <button
             variant="outline"
             role="combobox"
             aria-expanded={isOpen}
-            className="flex justify-between p-2 items-center"
+            className={clsx(
+              isInline ? "" : "w-full",
+              "inline-flex flex-1 justify-between p-2 items-center disabled:cursor-not-allowed disabled:opacity-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500",
+              props.triggerProps?.className ?? "",
+            )}
           >
-            {value
-              ? (<>
-              {selectedOptions?.map((option) => option?.label ?? option?.value ?? option)}
-              </>)
-              : (props?.placeholder ?? "")}
-            {isOpen ? <IconChevron className="ml-2 h-4 w-4 shrink-0 opacity-50" /> : <IconChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />}
+            {value ? (
+              <>{selectedOptions?.map((option) => option?.label ?? option?.value ?? option)}</>
+            ) : (
+              props?.placeholder ?? ""
+            )}
+            {isOpen ? (
+              <IconChevron className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            ) : (
+              <IconChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            )}
           </button>
         </PopoverTrigger>
         <PopoverContent className="z-99999" asChild={false} align="start">
           <Command>
-            {searchable && <CommandInput placeholder={searchPlaceholder ?? "Search"} onChangeCapture={(e) => setQuery(e.currentTarget.value)} />}
+            {searchable && (
+              <CommandInput
+                placeholder={searchPlaceholder ?? "Search"}
+                onChangeCapture={(e) => setQuery(e.currentTarget.value)}
+              />
+            )}
             <CommandList>
               <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
               <CommandGroup>
@@ -141,24 +159,26 @@ export const Select = forwardRef(
                           const val = item?.value ?? item;
                           const lab = item?.label ?? val;
                           const isChildOptionSelected = isSelected(val);
-                          console.log({isChildOptionSelected, value, val, lab, multiple})
+                          console.log({ isChildOptionSelected, value, val, lab, multiple });
                           return (
                             <CommandItem
                               key={`${lab}_${i}`}
                               value={val}
-                              onSelect={() => {_onChange(val, isChildOptionSelected)}}
+                              onSelect={() => {
+                                _onChange(val, isChildOptionSelected);
+                              }}
+                              disabled={option?.disabled}
                               {...(item?.disabled ? { "data-disabled": true } : {})}
                               {...(item?.style ? { style: item.style } : {})}
                             >
                               {multiple ? (
                                 <Checkbox
-                                  className={clsx(
-                                    "mr-2 h-4 w-4",
-                                    isChildOptionSelected ? "opacity-100" : "opacity-0"
-                                  )}
+                                  className={clsx("mr-2 h-4 w-4", isChildOptionSelected ? "opacity-100" : "opacity-0")}
                                   checked={isChildOptionSelected}
                                 />
-                              ) : (isChildOptionSelected ? <IconCheck className="mr-2 h-4 w-4" /> : null)}
+                              ) : isChildOptionSelected ? (
+                                <IconCheck className="mr-2 h-4 w-4" />
+                              ) : null}
                               {lab}
                             </CommandItem>
                           );
@@ -170,17 +190,19 @@ export const Select = forwardRef(
                     <CommandItem
                       key={`${optionValue}_${index}`}
                       value={optionValue}
-                      onSelect={() => {_onChange(optionValue, isOptionSelected)}}
+                      onSelect={() => {
+                        _onChange(optionValue, isOptionSelected);
+                      }}
+                      disabled={option?.disabled}
                     >
                       {multiple ? (
                         <Checkbox
-                          className={clsx(
-                            "mr-2 h-4 w-4",
-                            isOptionSelected ? "opacity-100" : "opacity-0"
-                          )}
+                          className={clsx("mr-2 h-4 w-4", isOptionSelected ? "opacity-100" : "opacity-0")}
                           checked={isOptionSelected}
                         />
-                      ) : (isOptionSelected ? <IconCheck className="mr-2 h-4 w-4" /> : null)}
+                      ) : isOptionSelected ? (
+                        <IconCheck className="mr-2 h-4 w-4" />
+                      ) : null}
                       {label}
                     </CommandItem>
                   );

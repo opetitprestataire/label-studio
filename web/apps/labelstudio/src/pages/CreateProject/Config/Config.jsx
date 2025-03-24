@@ -292,6 +292,7 @@ const ConfigureColumn = ({ template, obj, columns }) => {
         onChange={selectValue}
         value={isManual ? "-" : value}
         options={columnsList}
+        isInline={true}
         triggerProps={{ className: "w-[180px]" }}
       />
       {isManual && <Input value={newValue} onChange={handleChange} onBlur={handleBlur} onKeyDown={handleKeyDown} />}

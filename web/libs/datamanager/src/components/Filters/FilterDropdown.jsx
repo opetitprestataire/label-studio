@@ -19,7 +19,7 @@ export const FilterDropdown = observer(
     const parseItems = (item) => {
       return {
         ...(item?.options ? { children: item?.options.map(parseItems) } : {}),
-        ...(item?.original ? { label: optionRender({item}) } : {}),
+        ...(item?.original ? { label: optionRender({ item }) } : {}),
         ...(item?.title ? { label: item?.title } : {}),
         ...item,
       };
