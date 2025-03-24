@@ -78,90 +78,39 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
   return (
     <div
       ref={elementRef}
-      className="token-item"
+      className="flex flex-col p-4 border border-gray-200 rounded-lg mb-2 cursor-pointer relative overflow-hidden transition-all duration-200 hover:shadow-md hover:border-gray-300"
       onClick={handleCopy}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        padding: "16px",
-        border: "1px solid #eee",
-        borderRadius: "8px",
-        margin: "8px 0",
-        cursor: "pointer",
-        transition: "all 0.2s",
-        position: "relative",
-        overflow: "hidden",
-      }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
-        e.currentTarget.style.borderColor = "#ddd";
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.boxShadow = "none";
-        e.currentTarget.style.borderColor = "#eee";
-      }}
       title={`Click to copy: ${tokenName}`}
     >
       {/* Visual preview for different token types */}
       {isColor && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "12px" }}>
+        <div className="flex flex-col gap-2 mb-3">
           <div
-            className="color-preview"
-            style={{
-              width: "100%",
-              height: "64px",
-              backgroundColor: token,
-              borderRadius: "4px",
-              border: "1px solid #eee",
-              boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)",
-            }}
+            className="w-full h-16 bg-gray-100 rounded border border-gray-200 shadow-inner"
+            style={{ backgroundColor: token }}
           />
         </div>
       )}
 
       {isSpacing && (
-        <div
-          className="spacing-preview"
-          style={{
-            marginBottom: "12px",
-            height: "64px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "0 16px",
-          }}
-        >
+        <div className="mb-3 h-16 flex items-center justify-center px-4">
           <div
+            className="h-2 rounded min-w-1 relative"
             style={{
               width: token,
-              height: "8px",
               background: "linear-gradient(90deg, #6366F1 0%, #A855F7 100%)",
-              borderRadius: "4px",
-              minWidth: "4px",
-              position: "relative",
             }}
           />
         </div>
       )}
 
       {isTypography && (
-        <div
-          className="typography-preview"
-          style={{
-            marginBottom: "12px",
-            height: "64px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            overflow: "hidden",
-          }}
-        >
+        <div className="mb-3 h-16 flex items-center justify-center overflow-hidden">
           {token.includes("--font-size-") && (
             <div
+              className="whitespace-nowrap leading-tight"
               style={{
                 fontSize: token,
-                lineHeight: 1.2,
-                whiteSpace: "nowrap",
               }}
             >
               Aa
@@ -169,24 +118,12 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
           )}
 
           {token.includes("--line-height-") && (
-            <div
-              style={{
-                position: "relative",
-                width: "60%",
-                height: "40px",
-              }}
-            >
+            <div className="relative w-3/5 h-10">
               <div
+                className="w-full flex items-center justify-center text-xs text-indigo-600 relative"
                 style={{
-                  width: "100%",
                   height: token,
                   backgroundColor: "rgba(99, 102, 241, 0.2)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "12px",
-                  color: "#6366F1",
-                  position: "relative",
                 }}
               >
                 Line Height
@@ -196,11 +133,9 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
 
           {token.includes("--letter-spacing-") && (
             <div
+              className="text-sm relative px-4"
               style={{
                 letterSpacing: token,
-                fontSize: "14px",
-                position: "relative",
-                padding: "0 16px",
               }}
             >
               LETTER SPACING
@@ -210,82 +145,35 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
       )}
 
       {isCornerRadius && (
-        <div
-          className="corner-radius-preview"
-          style={{
-            marginBottom: "12px",
-            height: "64px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-          }}
-        >
+        <div className="mb-3 h-16 flex items-center justify-center relative">
           <div
+            className="w-3/5 h-10 bg-indigo-100 border border-dashed border-indigo-500"
             style={{
-              width: "60%",
-              height: "40px",
-              backgroundColor: "rgba(99, 102, 241, 0.2)",
               borderRadius: token,
-              border: "1px dashed #6366F1",
             }}
           />
         </div>
       )}
 
       {/* Token information */}
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div style={{ flex: "1", display: "flex", flexDirection: "column", gap: "4px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <div
-                className="token-name"
-                style={{
-                  color: "#000",
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  wordBreak: "break-word",
-                }}
-              >
+      <div className="flex justify-between">
+        <div className="flex-1 flex flex-col gap-1">
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col">
+              <div className="text-black text-sm font-bold break-words">
                 {tokenName.split(".").pop() || tokenName}
               </div>
-              <div
-                className="token-path"
-                style={{
-                  fontSize: "10px",
-                  color: "#aaa",
-                  marginTop: "-4px",
-                }}
-              >
+              <div className="text-xs text-gray-400 -mt-1">
                 {tokenName.split(".").slice(0, -1).join(".")}
               </div>
             </div>
 
-            <span
-              style={{
-                fontSize: "10px",
-                color: "#000",
-                textAlign: "right",
-              }}
-            >
+            <span className="text-xs text-black text-right">
               {computedValue || "..."}
             </span>
           </div>
 
-          <div
-            className="token-value"
-            style={{
-              fontSize: "12px",
-              fontWeight: "bold",
-              color: "#555",
-              textAlign: "center",
-              wordBreak: "break-all",
-              flexShrink: 0,
-              backgroundColor: "rgb(247 246 246)",
-              padding: "1px 2px",
-              borderRadius: "4px",
-            }}
-          >
+          <div className="text-xs font-bold text-gray-600 text-center break-all flex-shrink-0 bg-gray-100 p-0.5 rounded">
             {token.replace("var(", "").replace(")", "")}
           </div>
         </div>
@@ -293,20 +181,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
 
       {/* Copy indicator */}
       <div
-        className="copy-indicator"
-        style={{
-          position: "absolute",
-          bottom: "-30px",
-          right: "8px",
-          backgroundColor: "#000",
-          color: "#fff",
-          padding: "4px 8px",
-          borderRadius: "4px",
-          fontSize: "12px",
-          opacity: "0",
-          transition: "all 0.3s",
-          zIndex: "10",
-        }}
+        className="copy-indicator absolute -bottom-7 right-2 bg-black text-white px-2 py-1 rounded text-xs opacity-0 transition-all duration-300 z-10"
       >
         Copied!
       </div>
@@ -390,48 +265,27 @@ const TokenCatalog = () => {
   return (
     <div className="token-catalog p-8">
       <div
-        className="search-container"
-        style={{
-          marginBottom: "24px",
-        }}
+        className="mb-6"
       >
         <input
           type="text"
           placeholder="Search tokens by name or value..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            padding: "8px 12px",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-            width: "100%",
-            fontSize: "14px",
-            marginBottom: "16px",
-          }}
+          className="p-2 rounded border border-gray-300 w-full text-sm mb-4"
         />
 
         <div
-          className="category-filters"
-          style={{
-            display: "flex",
-            gap: "8px",
-            marginBottom: "16px",
-            flexWrap: "wrap",
-          }}
+          className="flex gap-2 mb-4 flex-wrap"
         >
           <button
             onClick={() => {
               setActiveCategory("all")
               setActiveColorSubcategory("all")
             }}
-            style={{
-              padding: "6px 12px",
-              borderRadius: "4px",
-              border: "1px solid #ccc",
-              backgroundColor: activeCategory === "all" ? "#eee" : "white",
-              cursor: "pointer",
-              fontSize: "14px",
-            }}
+            className={`py-1.5 px-3 rounded border border-gray-300 text-sm cursor-pointer ${
+              activeCategory === "all" ? "bg-gray-200" : "bg-white"
+            }`}
           >
             All Categories
           </button>
@@ -444,14 +298,9 @@ const TokenCatalog = () => {
                   setActiveColorSubcategory("all");
                 }
               }}
-              style={{
-                padding: "6px 12px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-                backgroundColor: activeCategory === category ? "#eee" : "white",
-                cursor: "pointer",
-                fontSize: "14px",
-              }}
+              className={`py-1.5 px-3 rounded border border-gray-300 text-sm cursor-pointer ${
+                activeCategory === category ? "bg-gray-200" : "bg-white"
+              }`}
             >
               {category}
             </button>
@@ -460,24 +309,13 @@ const TokenCatalog = () => {
 
         {activeCategory === "colors" && (
           <div
-            className="color-subcategory-filters"
-            style={{
-              display: "flex",
-              gap: "8px",
-              marginBottom: "16px",
-              flexWrap: "wrap",
-            }}
+            className="flex gap-2 mb-4 flex-wrap"
           >
             <button
               onClick={() => setActiveColorSubcategory("all")}
-              style={{
-                padding: "6px 12px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-                backgroundColor: activeColorSubcategory === "all" ? "#eee" : "white",
-                cursor: "pointer",
-                fontSize: "14px",
-              }}
+              className={`py-1.5 px-3 rounded border border-gray-300 text-sm cursor-pointer ${
+                activeColorSubcategory === "all" ? "bg-gray-200" : "bg-white"
+              }`}
             >
               All Colors
             </button>
@@ -487,14 +325,9 @@ const TokenCatalog = () => {
                 onClick={() => {
                   setActiveColorSubcategory(subcategory)
                 }}
-                style={{
-                  padding: "6px 12px",
-                  borderRadius: "4px",
-                  border: "1px solid #ccc",
-                  backgroundColor: activeColorSubcategory === subcategory ? "#eee" : "white",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
+                className={`py-1.5 px-3 rounded border border-gray-300 text-sm cursor-pointer ${
+                  activeColorSubcategory === subcategory ? "bg-gray-200" : "bg-white"
+                }`}
               >
                 {subcategory}
               </button>
@@ -505,39 +338,26 @@ const TokenCatalog = () => {
 
       {/* Display the tokens */}
       {Object.keys(groupedTokens).length === 0 ? (
-        <div style={{ textAlign: "center", margin: "40px 0", color: "#666" }}>
+        <div className="text-center my-10 text-gray-600">
           No tokens found matching "{searchTerm}"
         </div>
       ) : (
         Object.entries(groupedTokens).map(([category, tokens]) => (
-          <div key={category} className="category-section" style={{ marginBottom: "40px" }}>
+          <div key={category} className="category-section mb-10">
             <h2
-              style={{
-                fontSize: "18px",
-                margin: "0 0 8px 0",
-                padding: "0 0 8px 0",
-                borderBottom: "1px solid #eee",
-              }}
+              className="text-lg m-0 mb-2 pb-2 border-b border-gray-200"
             >
               {category} ({tokens.length})
             </h2>
             <p
-              style={{
-                fontSize: "14px",
-                margin: "0 0 16px 0",
-                color: "#666",
-              }}
+              className="text-sm m-0 mb-4 text-gray-600"
             >
               {categoryDescriptions[category] || "Design tokens in this category"}
             </p>
 
             <div
-              className="tokens-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                gap: "16px",
-              }}
+              className="grid gap-4"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
             >
               {tokens.map(([name, value]) => (
                 <TokenValue key={name} token={value} tokenName={name} />
@@ -559,30 +379,20 @@ const TokenCategorized = () => {
   // Helper function to generate a color palette for the colors category
   const generateColorPalette = () => {
     return (
-      <div style={{ display: "flex", gap: "4px", marginTop: "16px" }}>
+      <div className="flex gap-1 mt-4">
         {["primary", "positive", "warning", "negative", "neutral"].map((color) => (
           <div
             key={color}
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "4px",
-              backgroundColor: `var(--color-${color}-surface)`,
-              border: "1px solid #eee",
-            }}
+            className="w-10 h-10 rounded border border-gray-200"
+            style={{ backgroundColor: `var(--color-${color}-surface)` }}
             title={`${color}`}
           />
         ))}
         {["grape", "blueberry", "kale", "kiwi", "mango", "persimmon"].map((color) => (
           <div
             key={color}
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "4px",
-              backgroundColor: `var(--color-${color}-500)`,
-              border: "1px solid #eee",
-            }}
+            className="w-10 h-10 rounded border border-gray-200"
+            style={{ backgroundColor: `var(--color-${color}-500)` }}
             title={`${color}`}
           />
         ))}
@@ -593,27 +403,16 @@ const TokenCategorized = () => {
   // Helper function to generate a spacing visualization
   const generateSpacingPreview = () => {
     return (
-      <div style={{ display: "flex", gap: "8px", marginTop: "16px", alignItems: "flex-end" }}>
+      <div className="flex gap-2 mt-4 items-end">
         {["100", "200", "400", "800"].map((size) => (
           <div
             key={size}
-            style={{
-              width: `var(--spacing-${size})`,
-              height: "20px",
-              backgroundColor: "rgba(99, 102, 241, 0.2)",
-              borderRadius: "4px",
-              position: "relative",
-            }}
+            className="h-5 bg-indigo-100 rounded relative"
+            style={{ width: `var(--spacing-${size})` }}
             title={`spacing-${size}`}
           >
             <div
-              style={{
-                position: "absolute",
-                bottom: "-16px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                fontSize: "10px",
-              }}
+              className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-xs"
             >
               {size}
             </div>
@@ -626,7 +425,7 @@ const TokenCategorized = () => {
   // Helper function to generate a typography preview
   const generateTypographyPreview = () => {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}>
+      <div className="flex flex-col gap-2 mt-4">
         <div style={{ fontSize: "var(--font-size-12)", lineHeight: "var(--line-height-16)" }}>Font Size 12px</div>
         <div style={{ fontSize: "var(--font-size-14)", lineHeight: "var(--line-height-20)" }}>Font Size 14px</div>
         <div style={{ fontSize: "var(--font-size-16)", lineHeight: "var(--line-height-24)" }}>Font Size 16px</div>
@@ -637,21 +436,12 @@ const TokenCategorized = () => {
   // Helper function to generate a corner radius preview
   const generateCornerRadiusPreview = () => {
     return (
-      <div style={{ display: "flex", gap: "16px", marginTop: "16px" }}>
+      <div className="flex gap-4 mt-4">
         {["small", "medium", "large"].map((size) => (
           <div
             key={size}
-            style={{
-              width: "60px",
-              height: "40px",
-              borderRadius: `var(--corner-radius-${size})`,
-              backgroundColor: "rgba(99, 102, 241, 0.2)",
-              border: "1px dashed #6366F1",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "10px",
-            }}
+            className="w-15 h-10 bg-indigo-100 border border-dashed border-indigo-500 flex items-center justify-center text-xs"
+            style={{ borderRadius: `var(--corner-radius-${size})` }}
             title={`corner-radius-${size}`}
           >
             {size}
@@ -678,47 +468,29 @@ const TokenCategorized = () => {
   };
 
   return (
-    <div className="token-categorized p-8">
-      <h1 style={{ fontSize: "24px", marginBottom: "24px" }}>Design Tokens</h1>
-      <p style={{ marginBottom: "24px" }}>
+    <div className="p-8">
+      <h1 className="text-2xl mb-6">Design Tokens</h1>
+      <p className="mb-6">
         Browse through our design tokens organized by category. These tokens are the foundation of our design system.
       </p>
 
-      <div className="categories" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+      <div className="flex flex-col gap-8">
         {Object.entries(categoryDescriptions).map(([category, description]) => (
           <div key={category} className="category-card">
-            <h2 style={{ fontSize: "20px", marginBottom: "8px" }}>{category}</h2>
-            <p style={{ marginBottom: "16px", color: "#666" }}>{description}</p>
+            <h2 className="text-xl mb-2">{category}</h2>
+            <p className="mb-4 text-gray-600">{description}</p>
 
             {/* Preview for each category */}
             {getCategoryPreview(category)}
 
             {category === "colors" && (
               <div
-                className="color-subcategories"
-                style={{ display: "flex", flexWrap: "wrap", gap: "16px", marginTop: "24px" }}
+                className="flex flex-wrap gap-4 mt-6"
               >
                 {Object.entries(colorSubcategoryDescriptions).map(([subCategory, subDescription]) => (
                   <div
                     key={subCategory}
-                    className="subcategory-card"
-                    style={{
-                      flex: "1 0 300px",
-                      border: "1px solid #eee",
-                      borderRadius: "8px",
-                      padding: "16px",
-                      cursor: "pointer",
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
-                      e.currentTarget.style.borderColor = "#ddd";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.boxShadow = "none";
-                      e.currentTarget.style.borderColor = "#eee";
-                    }}
+                    className="flex-1 basis-[300px] border border-gray-200 rounded-lg p-4 cursor-pointer relative overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200"
                     onClick={() => {
                       setSearchTerm("")
                       setActiveCategory("colors")
@@ -728,55 +500,35 @@ const TokenCategorized = () => {
                     {/* Color preview for each subcategory */}
                     {subCategory !== "primitives" && (
                       <div
-                        style={{
-                          position: "absolute",
-                          top: "0",
-                          right: "0",
-                          width: "60px",
-                          height: "60px",
-                          backgroundColor: `var(--color-${subCategory}-surface)`,
-                          opacity: 0.3,
-                          borderBottomLeftRadius: "100%",
-                        }}
+                        className="absolute top-0 right-0 w-15 h-15 opacity-30 rounded-bl-full"
+                        style={{ backgroundColor: `var(--color-${subCategory}-surface)` }}
                       />
                     )}
 
                     {subCategory === "primitives" && (
                       <div
-                        style={{
-                          position: "absolute",
-                          top: "0",
-                          right: "0",
-                          width: "60px",
-                          height: "60px",
-                          opacity: 0.3,
-                          overflow: "hidden",
-                        }}
+                        className="absolute top-0 right-0 w-15 h-15 opacity-30 overflow-hidden"
                       >
-                        <div style={{ display: "flex" }}>
-                          <div style={{ width: "20px", height: "20px", backgroundColor: "var(--color-grape-500)" }} />
-                          <div
-                            style={{ width: "20px", height: "20px", backgroundColor: "var(--color-blueberry-500)" }}
-                          />
-                          <div style={{ width: "20px", height: "20px", backgroundColor: "var(--color-kale-500)" }} />
+                        <div className="flex">
+                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-grape-500)" }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-blueberry-500)" }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-kale-500)" }} />
                         </div>
-                        <div style={{ display: "flex" }}>
-                          <div style={{ width: "20px", height: "20px", backgroundColor: "var(--color-kiwi-500)" }} />
-                          <div style={{ width: "20px", height: "20px", backgroundColor: "var(--color-mango-500)" }} />
-                          <div
-                            style={{ width: "20px", height: "20px", backgroundColor: "var(--color-persimmon-500)" }}
-                          />
+                        <div className="flex">
+                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-kiwi-500)" }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-mango-500)" }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-persimmon-500)" }} />
                         </div>
-                        <div style={{ display: "flex" }}>
-                          <div style={{ width: "20px", height: "20px", backgroundColor: "var(--color-plum-500)" }} />
-                          <div style={{ width: "20px", height: "20px", backgroundColor: "var(--color-fig-500)" }} />
-                          <div style={{ width: "20px", height: "20px", backgroundColor: "var(--color-sand-500)" }} />
+                        <div className="flex">
+                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-plum-500)" }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-fig-500)" }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-sand-500)" }} />
                         </div>
                       </div>
                     )}
 
-                    <h3 style={{ fontSize: "16px", marginBottom: "8px" }}>{subCategory}</h3>
-                    <p style={{ fontSize: "14px", color: "#666", position: "relative", zIndex: "1" }}>
+                    <h3 className="text-base mb-2">{subCategory}</h3>
+                    <p className="text-sm text-gray-600 relative z-10">
                       {subDescription}
                     </p>
                   </div>
@@ -786,28 +538,13 @@ const TokenCategorized = () => {
 
             {category !== "colors" && (
               <div
-                className="category-preview"
-                style={{
-                  border: "1px solid #eee",
-                  borderRadius: "8px",
-                  padding: "16px",
-                  cursor: "pointer",
-                  marginTop: "24px",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
-                  e.currentTarget.style.borderColor = "#ddd";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.borderColor = "#eee";
-                }}
+                className="border border-gray-200 rounded-lg p-4 cursor-pointer mt-6 hover:shadow-md hover:border-gray-300 transition-all duration-200"
                 onClick={() => {
                   setSearchTerm("")
                   setActiveCategory(category)
                 }}
               >
-                <p style={{ fontSize: "14px" }}>View all {category} tokens &rarr;</p>
+                <p className="text-sm">View all {category} tokens &rarr;</p>
               </div>
             )}
           </div>
