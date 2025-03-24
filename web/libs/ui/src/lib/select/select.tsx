@@ -73,9 +73,8 @@ export const Select = forwardRef(
           setValue((prev = []) => {
             if (isSelected) {
               return [...prev.filter((v) => v !== val)];
-            } else {
-              return [...prev, val];
             }
+            return [...prev, val];
           });
         } else {
           setValue(val);
@@ -120,13 +119,13 @@ export const Select = forwardRef(
         <PopoverTrigger asChild disabled={disabled}>
           <button
             variant="outline"
-            role="combobox"
             aria-expanded={isOpen}
             className={clsx(
               isInline ? "" : "w-full",
               "inline-flex flex-1 justify-between p-3 items-center disabled:cursor-not-allowed disabled:opacity-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500",
               props.triggerProps?.className ?? "",
             )}
+            type="button"
           >
             <span className="flex-1 text-left" data-testid="select-display-value">
               {value ? (
