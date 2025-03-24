@@ -11,6 +11,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@humansignal/shad/components/ui/popover";
 import type { SelectOption, SelectProps } from "./types.ts";
 import { Checkbox } from "@humansignal/ui";
+import { isDefined } from "@humansignal/core/lib/utils/helpers";
 import { IconCheck, IconChevron, IconChevronDown } from "@humansignal/icons";
 import clsx from "clsx";
 
@@ -42,15 +43,20 @@ export const Select = forwardRef(
       externalValue?.value ??
       externalValue ??
       options?.[0]?.value ??
+      options?.[0]?.children?.[0]?.value ??
+      options?.[0]?.children?.[0] ??
       options?.[0];
+
     if (multiple) {
-      initialValue = initialValue ?? [];
+      initialValue = Array.isArray(initialValue) ? initialValue ?? [] : [initialValue];
     } else if (Array.isArray(initialValue)) {
       initialValue = initialValue[0];
     }
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [value, setValue] = useState<any>(initialValue ?? "");
+    const [value, setValue] = useState<any>(initialValue);
+
     useEffect(() => {
+      if (!isDefined(externalValue)) return;
       let val = externalValue?.value ?? externalValue;
       if (multiple && !Array.isArray(val)) {
         val = [val];
@@ -161,10 +167,9 @@ export const Select = forwardRef(
                           const val = item?.value ?? item;
                           const lab = item?.label ?? val;
                           const isChildOptionSelected = isSelected(val);
-                          console.log({ isChildOptionSelected, value, val, lab, multiple });
                           return (
                             <CommandItem
-                              key={`${lab}_${i}`}
+                              key={`${val}_${i}`}
                               value={val}
                               onSelect={() => {
                                 _onChange(val, isChildOptionSelected);
