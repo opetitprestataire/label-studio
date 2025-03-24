@@ -645,12 +645,13 @@ function processPrimitiveColors(primitiveColors, result, variables) {
 /**
  * Convert hex color to RGB format for opacity support
  * @param {string} hex - Hex color code
- * @returns {string} - RGB color format as rgb(r, g, b)
+ * @returns {string} - RGB color format as rgb(r, g, b) or raw r g b
+ * @param {boolean} raw - Whether to return the raw RGB values
  */
-function hexToRgb(hex) {
+function hexToRgb(hex, raw = false) {
   // Check if it's already in rgb/rgba format
   if (hex.startsWith("rgb")) {
-    return hex;
+    return raw ? hex.replace("rgb(", "").replace(")", "") : hex;
   }
 
   // Remove # if present
@@ -675,7 +676,7 @@ function hexToRgb(hex) {
   }
 
   // Return RGB format
-  return `rgb(${r}, ${g}, ${b})`;
+  return raw ? `${r} ${g} ${b}` : `rgb(${r}, ${g}, ${b})`;
 }
 
 /**
@@ -703,30 +704,8 @@ function hexToRgbRaw(hex, variables) {
     return hex;
   }
 
-  // Remove # if present
   if (typeof hex === "string") {
-    hex = hex.replace(/^#/, "");
-
-    // Parse the hex values
-    let r;
-    let g;
-    let b;
-    if (hex.length === 3) {
-      // Convert 3-digit hex to 6-digit
-      r = Number.parseInt(hex[0] + hex[0], 16);
-      g = Number.parseInt(hex[1] + hex[1], 16);
-      b = Number.parseInt(hex[2] + hex[2], 16);
-    } else if (hex.length === 6) {
-      r = Number.parseInt(hex.substring(0, 2), 16);
-      g = Number.parseInt(hex.substring(2, 4), 16);
-      b = Number.parseInt(hex.substring(4, 6), 16);
-    } else {
-      // Invalid hex, return as is
-      return hex;
-    }
-
-    // Return raw RGB values
-    return `${r} ${g} ${b}`;
+    return hexToRgb(hex, true);
   }
 
   return hex;
