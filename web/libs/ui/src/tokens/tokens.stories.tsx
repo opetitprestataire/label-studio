@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import LinkTo from "@storybook/addon-links/react";
 
 import type { Meta } from "@storybook/react";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 // @ts-ignore: JS module without types
 import designTokens from "./tokens";
@@ -72,6 +72,7 @@ const colorSubcategoryDescriptions: Record<string, string> = {
 
 // Component to render a token value
 const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) => {
+  const theme = useAtomValue(themeAtom);
   // Determine token type
   const isColor = typeof token === "string" && token.includes("--color-");
   const isSpacing = typeof token === "string" && token.includes("--spacing-");
@@ -83,19 +84,27 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
   // Create a ref to access computed values
   const [computedValue, setComputedValue] = useState<string>("");
   const elementRef = useRef<HTMLDivElement>(null);
+  const computedValueRef = useRef<string>(computedValue);
+  computedValueRef.current = computedValue;
 
   // Get the computed value when the component mounts
   useEffect(() => {
-    if (elementRef.current && token.includes("var(")) {
-      // Extract the CSS variable name from the token string
-      const varName = token.match(/var\((.*?)\)/)?.[1] || "";
-      if (varName) {
-        // Get the computed style for the variable
-        const computedStyle = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-        setComputedValue(computedStyle);
+    const handleComputedValue = () => {
+      if (elementRef.current && token.includes("var(")) {
+        // Extract the CSS variable name from the token string
+        const varName = token.match(/var\((.*?)\)/)?.[1] || "";
+        if (varName) {
+          // Get the computed style for the variable
+          const computedStyle = getComputedStyle(document.body).getPropertyValue(varName).trim();
+          if (computedStyle !== computedValueRef.current) {
+            setComputedValue(computedStyle);
+          }
+        }
       }
-    }
-  }, [token]);
+    };
+
+    handleComputedValue();
+  }, [token, theme]);
 
   const handleCopy = (e: React.MouseEvent<HTMLDivElement>) => {
     // Copy token name to clipboard
@@ -765,29 +774,29 @@ const TokenCategorized = () => {
                     }}
                   >
                     {/* Color preview for each subcategory */}
-                    {subCategory !== "primitives" && (
+                    {!["primitives", "neutral", "accent"].includes(subCategory) && (
                       <div
-                        className="absolute top-0 right-0 w-15 h-15 opacity-30 rounded-bl-full"
+                        className="absolute top-0 right-0 w-15 h-15 opacity-30 rounded-bl-full border-l border-b border-gray-200"
                         style={{ backgroundColor: `var(--color-${subCategory}-surface)` }}
                       />
                     )}
 
-                    {subCategory === "primitives" && (
-                      <div className="absolute top-0 right-0 w-15 h-15 opacity-30 overflow-hidden">
+                    {["primitives", "neutral", "accent"].includes(subCategory) && (
+                      <div className="absolute top-0 right-0 w-15 h-15 opacity-30 overflow-hidden border-l border-b border-gray-200">
                         <div className="flex">
-                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-grape-500)" }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-blueberry-500)" }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-kale-500)" }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "grape-500" : subCategory === "neutral" ? "neutral-surface" : "accent-grape-bold"})` }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "blueberry-500" : subCategory === "neutral" ? "neutral-surface-hover" : "accent-blueberry-bold"})` }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "kale-500" : subCategory === "neutral" ? "neutral-surface-active" : "accent-kale-bold"})` }} />
                         </div>
                         <div className="flex">
-                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-kiwi-500)" }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-mango-500)" }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-persimmon-500)" }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "kiwi-500" : subCategory === "neutral" ? "neutral-border" : "accent-kiwi-bold"})` }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "mango-500" : subCategory === "neutral" ? "neutral-border-subtle" : "accent-mango-bold"})` }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "persimmon-500" : subCategory === "neutral" ? "neutral-border-subtler" : "accent-persimmon-bold"})` }} />
                         </div>
                         <div className="flex">
-                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-plum-500)" }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-fig-500)" }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: "var(--color-sand-500)" }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "plum-500" : subCategory === "neutral" ? "neutral-content" : "accent-plum-bold"})` }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "fig-500" : subCategory === "neutral" ? "neutral-content-subtle" : "accent-fig-bold"})` }} />
+                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "sand-500" : subCategory === "neutral" ? "neutral-content-subtler" : "accent-sand-bold"})` }} />
                         </div>
                       </div>
                     )}
