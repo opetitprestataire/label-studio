@@ -26,7 +26,7 @@ When you [set up your labeling interface](/guide/setup.html), you can choose to 
 <div class="enterprise-only">
 
 !!! info Tip
-    You can also implement custom scripts as part of your labeling interface. Custom scripts allow you to use Javascript to extend your interface and customize annotator workflows. For more information, see [Custom Scripts](scripts).
+    You can also implement custom scripts as part of your labeling interface. Custom scripts allow you to use Javascript to extend your interface and customize annotator workflows. For more information, see [Custom Scripts](/guide/scripts).
 
 </div>
 
