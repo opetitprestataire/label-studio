@@ -33,8 +33,7 @@ module.exports = {
   },
 
   locateToolByCode(toolCode) {
-    const toolBarLocator = this.locate(this._toolBarSelector);
-    return toolBarLocator.find(locate(`[aria-label=${toolCode}-tool]`));
+    return locate(`[aria-label=${toolCode}-tool]`);
   },
 
   percToX(xPerc) {
@@ -341,6 +340,10 @@ module.exports = {
 
   selectToolByCode(toolCode) {
     I.click(this.locateToolByCode(toolCode));
+  },
+
+  hasSelectedTool(toolCode) {
+    I.seeElement(`.lsf-tool_active${this.locateToolByCode(toolCode).toString()}`);
   },
 
   async multiImageGoForwardWithHotkey() {

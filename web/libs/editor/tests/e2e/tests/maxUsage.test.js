@@ -119,10 +119,11 @@ const maxUsageDataTable = new DataTable(["maxUsage"]);
 
 Data(maxUsageImageToolsDataTable).Scenario(
   "Max usages of separated labels in ImageView on region creating",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { maxUsage, shapeName } = current;
     const shape = shapes[shapeName];
     const annotations = [];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     for (let k = 0; k < maxUsage; k++) {
       annotations.push({
@@ -152,6 +153,7 @@ Data(maxUsageImageToolsDataTable).Scenario(
         },
       ],
     });
+    AtDetailsPanel.collapsePanel();
     await AtImageView.waitForImage();
     await AtImageView.lookForStage();
     AtOutliner.seeRegions(maxUsage);
@@ -166,9 +168,10 @@ Data(maxUsageImageToolsDataTable).Scenario(
 
 Data(maxUsageImageToolsDataTable).Scenario(
   "Max usages of labels in ImageView on region creating",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { maxUsage, shapeName } = current;
     const shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init({
@@ -177,6 +180,7 @@ Data(maxUsageImageToolsDataTable).Scenario(
         image: IMAGE,
       },
     });
+    AtDetailsPanel.collapsePanel();
 
     await AtImageView.waitForImage();
     await AtImageView.lookForStage();
@@ -255,8 +259,8 @@ Data(maxUsageDataTable).Scenario(
       },
     });
 
-    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
+    LabelStudio.waitForObjectsReady();
 
     for (let k = 0; k < maxUsage; k++) {
       I.pressKey("1");
@@ -288,8 +292,8 @@ Data(maxUsageDataTable).Scenario(
       data: require("../examples/text-paragraphs").data,
     });
 
-    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
+    LabelStudio.waitForObjectsReady();
 
     for (let k = 0; k < maxUsage; k++) {
       I.pressKey("1");
@@ -324,8 +328,8 @@ Data(maxUsageDataTable).Scenario(
       data: require("../examples/data/sample-sin.json"),
     });
 
-    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
+    LabelStudio.waitForObjectsReady();
     await AtTimeSeries.lookForStage();
 
     for (let k = 0; k < maxUsage; k++) {

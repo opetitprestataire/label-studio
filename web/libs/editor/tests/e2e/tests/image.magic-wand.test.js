@@ -59,156 +59,162 @@ async function assertMagicWandPixel(I, x, y, assertValue, rgbArray, msg) {
   assert.equal(hasPixel, assertValue, msg);
 }
 
-Scenario("Make sure the magic wand works in a variety of scenarios", async ({ I, AtImageView, AtOutliner }) => {
-  const params = {
-    config,
-    data,
-    annotations: [annotationEmpty],
-  };
+Scenario(
+  "Make sure the magic wand works in a variety of scenarios",
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels }) => {
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
+    const params = {
+      config,
+      data,
+      annotations: [annotationEmpty],
+    };
 
-  I.amOnPage("/");
+    I.amOnPage("/");
 
-  I.executeScript(initLabelStudio, params);
+    I.executeScript(initLabelStudio, params);
 
-  AtImageView.waitForImage();
-  await AtImageView.lookForStage();
+    AtImageView.waitForImage();
+    AtDetailsPanel.collapsePanel();
+    await LabelStudio.waitForObjectsReady();
+    await AtImageView.lookForStage();
 
-  I.say("Making sure magic wand button is present");
-  I.seeElement('.lsf-toolbar__group button[aria-label="magicwand"]');
+    I.say("Making sure magic wand button is present");
+    I.seeElement('.lsf-toolbar__group button[aria-label="magicwand"]');
 
-  I.say("Making sure Eraser button is present");
-  I.seeElement('.lsf-toolbar__group button[aria-label="eraser"]');
+    I.say("Making sure Eraser button is present");
+    I.seeElement('.lsf-toolbar__group button[aria-label="eraser"]');
 
-  I.say("Select magic wand & cloud class");
-  I.pressKey("W");
-  I.pressKey("4");
+    I.say("Select magic wand & cloud class");
+    I.pressKey("W");
+    I.pressKey("4");
 
-  AtOutliner.seeRegions(0);
+    AtOutliner.seeRegions(0);
 
-  I.say("Magic wanding clouds with cloud class in upper left of image");
-  await doDrawingAction(I, { msg: "Fill in clouds upper left", fromX: 258, fromY: 214, toX: 650, toY: 650 });
-  await doDrawingAction(I, { msg: "Fill in clouds lower left", fromX: 337, fromY: 777, toX: 650, toY: 650 });
+    I.say("Magic wanding clouds with cloud class in upper left of image");
+    await doDrawingAction(I, { msg: "Fill in clouds upper left", fromX: 454, fromY: 184, toX: 650, toY: 644 });
+    await doDrawingAction(I, { msg: "Fill in clouds lower left", fromX: 454, fromY: 834, toX: 650, toY: 644 });
 
-  I.say("Ensuring repeated magic wands back to back with same class collapsed into single region");
-  AtOutliner.seeRegions(1);
-  AtOutliner.see("Cloud");
+    I.say("Ensuring repeated magic wands back to back with same class collapsed into single region");
+    AtOutliner.seeRegions(1);
+    AtOutliner.see("Cloud");
 
-  // Force all the magic wand regions to be a consistent color with no opacity to make testing
-  // magic wand pixel colors more robust.
-  I.say("Ensuring cloud magic wand pixels are correctly filled color");
-  await I.executeScript(setKonvaLayersOpacity, [1.0]);
-  await assertMagicWandPixel(
-    I,
-    0,
-    0,
-    false,
-    CLOUD.rgbArray,
-    "Far upper left corner should not have magic wand cloud class",
-  );
-  await assertMagicWandPixel(I, 260, 50, true, CLOUD.rgbArray, "Upper left should have magic wand cloud class");
-  await assertMagicWandPixel(I, 300, 620, true, CLOUD.rgbArray, "Lower left should have magic wand cloud class");
-  await assertMagicWandPixel(
-    I,
-    675,
-    650,
-    false,
-    CLOUD.rgbArray,
-    "Far lower right corner should not have magic wand cloud class",
-  );
+    // Force all the magic wand regions to be a consistent color with no opacity to make testing
+    // magic wand pixel colors more robust.
+    I.say("Ensuring cloud magic wand pixels are correctly filled color");
+    await I.executeScript(setKonvaLayersOpacity, [1.0]);
+    await assertMagicWandPixel(
+      I,
+      0,
+      0,
+      false,
+      CLOUD.rgbArray,
+      "Far upper left corner should not have magic wand cloud class",
+    );
+    await assertMagicWandPixel(I, 260, 50, true, CLOUD.rgbArray, "Upper left should have magic wand cloud class");
+    await assertMagicWandPixel(I, 300, 620, true, CLOUD.rgbArray, "Lower left should have magic wand cloud class");
+    await assertMagicWandPixel(
+      I,
+      675,
+      650,
+      false,
+      CLOUD.rgbArray,
+      "Far lower right corner should not have magic wand cloud class",
+    );
 
-  // Make sure the region made from this is correct.
-  I.say("Ensuring magic wand brushregion was created correctly");
-  const result = await I.executeScript(serialize);
-  const entry = result[1];
+    // Make sure the region made from this is correct.
+    I.say("Ensuring magic wand brushregion was created correctly");
+    const result = await I.executeScript(serialize);
+    const entry = result[1];
 
-  assert.equal(entry.from_name, "labels_1");
-  assert.equal(entry.type, "labels");
-  const labels = entry.value.labels;
+    assert.equal(entry.from_name, "labels_1");
+    assert.equal(entry.type, "labels");
+    const labels = entry.value.labels;
 
-  assert.equal(labels.length, 1);
-  assert.equal(labels[0], "Cloud");
-  assert.equal(entry.value.rle.length > 0, true);
+    assert.equal(labels.length, 1);
+    assert.equal(labels[0], "Cloud");
+    assert.equal(entry.value.rle.length > 0, true);
 
-  // Undo the bottom left area we just added, make sure its gone but our region list is still
-  // 1, then redo it and ensure its back and our region list is still 1 again.
-  I.say("Undoing last cloud magic wand and ensuring it worked correctly");
-  I.click('button[aria-label="Undo"]');
-  I.wait(1);
-  await assertMagicWandPixel(
-    I,
-    300,
-    620,
-    false,
-    CLOUD.rgbArray,
-    "Undone lower left should not have magic wand cloud class anymore",
-  );
-  await assertMagicWandPixel(I, 260, 50, true, CLOUD.rgbArray, "Upper left should still have magic wand cloud class");
-  AtOutliner.seeRegions(1);
+    // Undo the bottom left area we just added, make sure its gone but our region list is still
+    // 1, then redo it and ensure its back and our region list is still 1 again.
+    I.say("Undoing last cloud magic wand and ensuring it worked correctly");
+    I.click('button[aria-label="Undo"]');
+    I.wait(1);
+    await assertMagicWandPixel(
+      I,
+      300,
+      620,
+      false,
+      CLOUD.rgbArray,
+      "Undone lower left should not have magic wand cloud class anymore",
+    );
+    await assertMagicWandPixel(I, 260, 50, true, CLOUD.rgbArray, "Upper left should still have magic wand cloud class");
+    AtOutliner.seeRegions(1);
 
-  I.say("Redoing last cloud magic wand and ensuring it worked correctly");
-  I.click('button[aria-label="Redo"]');
-  I.wait(1);
-  await assertMagicWandPixel(
-    I,
-    300,
-    620,
-    true,
-    CLOUD.rgbArray,
-    "Redone lower left should have magic wand cloud class again",
-  );
-  await assertMagicWandPixel(I, 260, 50, true, CLOUD.rgbArray, "Upper left should still have magic wand cloud class");
-  AtOutliner.seeRegions(1);
+    I.say("Redoing last cloud magic wand and ensuring it worked correctly");
+    I.click('button[aria-label="Redo"]');
+    I.wait(1);
+    await assertMagicWandPixel(
+      I,
+      300,
+      620,
+      true,
+      CLOUD.rgbArray,
+      "Redone lower left should have magic wand cloud class again",
+    );
+    await assertMagicWandPixel(I, 260, 50, true, CLOUD.rgbArray, "Upper left should still have magic wand cloud class");
+    AtOutliner.seeRegions(1);
 
-  I.say("Unselecting last magic wand region");
-  I.pressKey("Escape");
+    I.say("Unselecting last magic wand region");
+    I.pressKey("Escape");
 
-  // @todo currently gallery doesn't work well with CORS, so this is not covered by test
-  // Change to the false color view, zoom in, and magic wand with a new class.
-  // I.say('Changing to false-color view');
-  // I.click('[class*="gallery--"] img[src*="false_color"]');
+    // @todo currently gallery doesn't work well with CORS, so this is not covered by test
+    // Change to the false color view, zoom in, and magic wand with a new class.
+    // I.say('Changing to false-color view');
+    // I.click('[class*="gallery--"] img[src*="false_color"]');
 
-  I.say("Zooming in");
-  I.click('button[aria-label="zoom-in"]');
-  I.click('button[aria-label="zoom-in"]');
-  I.click('button[aria-label="zoom-in"]');
-  I.click('button[aria-label="zoom-in"]');
-  I.click('button[aria-label="zoom-in"]');
+    I.say("Zooming in");
+    I.click('button[aria-label="zoom-in"]');
+    I.click('button[aria-label="zoom-in"]');
+    I.click('button[aria-label="zoom-in"]');
+    I.click('button[aria-label="zoom-in"]');
+    I.click('button[aria-label="zoom-in"]');
 
-  I.say("Selecting cloud shadow class");
-  I.pressKey("2");
+    I.say("Selecting cloud shadow class");
+    I.pressKey("2");
 
-  I.say("Magic wanding cloud shadows with cloud shadow class in center of zoomed image");
-  await doDrawingAction(I, { msg: "Cloud shadow in middle of image", fromX: 390, fromY: 500, toX: 500, toY: 500 });
+    I.say("Magic wanding cloud shadows with cloud shadow class in center of zoomed image");
+    await doDrawingAction(I, { msg: "Cloud shadow in middle of image", fromX: 600, fromY: 500, toX: 500, toY: 500 });
 
-  I.say("Ensuring new cloud shadow magic wand region gets added to sidebar");
-  AtOutliner.seeRegions(2);
-  AtOutliner.see("Cloud Shadow");
+    I.say("Ensuring new cloud shadow magic wand region gets added to sidebar");
+    AtOutliner.seeRegions(2);
+    AtOutliner.see("Cloud Shadow");
 
-  I.say("Ensuring cloud shadow magic wand pixels are correctly filled color");
-  await I.executeScript(setKonvaLayersOpacity, [1.0]);
-  await assertMagicWandPixel(
-    I,
-    0,
-    0,
-    false,
-    CLOUDSHADOW.rgbArray,
-    "Zoomed upper left corner should not have cloud shadow",
-  );
-  await assertMagicWandPixel(
-    I,
-    350,
-    360,
-    true,
-    CLOUDSHADOW.rgbArray,
-    "Center area should have magic wand cloud shadow class",
-  );
+    I.say("Ensuring cloud shadow magic wand pixels are correctly filled color");
+    await I.executeScript(setKonvaLayersOpacity, [1.0]);
+    await assertMagicWandPixel(
+      I,
+      0,
+      0,
+      false,
+      CLOUDSHADOW.rgbArray,
+      "Zoomed upper left corner should not have cloud shadow",
+    );
+    await assertMagicWandPixel(
+      I,
+      350,
+      360,
+      true,
+      CLOUDSHADOW.rgbArray,
+      "Center area should have magic wand cloud shadow class",
+    );
 
-  // Make sure if you have a region selected then change the class the region class changes.
-  I.say("Changing class of existing selected region to Haze should change it to new class");
-  I.pressKey("3");
-  AtOutliner.seeRegions(2);
-  AtOutliner.dontSee("Cloud Shadow");
-  AtOutliner.see("Haze");
-  await I.executeScript(setKonvaLayersOpacity, [1.0]);
-  await assertMagicWandPixel(I, 350, 360, true, HAZE.rgbArray, "Center area should have magic wand haze class");
-});
+    // Make sure if you have a region selected then change the class the region class changes.
+    I.say("Changing class of existing selected region to Haze should change it to new class");
+    I.pressKey("3");
+    AtOutliner.seeRegions(2);
+    AtOutliner.dontSee("Cloud Shadow");
+    AtOutliner.see("Haze");
+    await I.executeScript(setKonvaLayersOpacity, [1.0]);
+    await assertMagicWandPixel(I, 350, 360, true, HAZE.rgbArray, "Center area should have magic wand haze class");
+  },
+);

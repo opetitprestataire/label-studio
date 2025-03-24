@@ -65,28 +65,30 @@ const annotationWithPerRegion = {
 const image =
   "https://htx-pub.s3.us-east-1.amazonaws.com/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg";
 
-Scenario("Check Rect region for Image", async ({ I, AtImageView, AtOutliner }) => {
+Scenario("Check Rect region for Image", async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels }) => {
   const params = {
     config,
     data: { image },
     annotations: [annotationMoonwalker],
   };
+  const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
   I.amOnPage("/");
   I.executeScript(initLabelStudio, params);
+  AtDetailsPanel.collapsePanel();
 
   AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   await AtImageView.lookForStage();
-  I.executeScript(waitForImage);
   AtOutliner.seeRegions(1);
   // select first and only region
-  I.click(locate('[aria-label="region"]'));
-  I.see("Labels:");
+  AtOutliner.clickRegion(1);
+  AtOutliner.seeSelectedRegion();
 
   // click on region's rect on the canvas
   AtImageView.clickAt(330, 80);
   I.wait(1);
-  I.dontSee("Labels:");
+  AtOutliner.dontSeeSelectedRegion();
 });
 
 Scenario("Image with perRegion tags", async ({ I, AtImageView, AtOutliner }) => {
@@ -104,8 +106,8 @@ Scenario("Image with perRegion tags", async ({ I, AtImageView, AtOutliner }) => 
   I.executeScript(waitForImage);
   AtOutliner.seeRegions(1);
   // select first and only region
-  I.click(locate('[aria-label="region"]'));
-  I.see("Labels:");
+  AtOutliner.clickRegion(1);
+  AtOutliner.seeSelectedRegion();
 
   // check that there is deserialized text for this region; and without doubles
   I.seeNumberOfElements(locate("mark").withText("blah"), 1);
@@ -154,10 +156,11 @@ outOfBoundsFFs.add([false]);
 
 Data(outOfBoundsFFs).Scenario(
   "Can't create rectangles outside of canvas",
-  async ({ I, AtLabels, AtOutliner, AtImageView, LabelStudio, current }) => {
+  async ({ I, AtLabels, AtOutliner, AtImageView, LabelStudio, AtPanels, current }) => {
     LabelStudio.setFeatureFlags({
       fflag_fix_front_dev_3793_relative_coords_short: current.FF_DEV_3793,
     });
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
 
@@ -170,6 +173,7 @@ Data(outOfBoundsFFs).Scenario(
         predictions: [],
       },
     });
+    AtDetailsPanel.collapsePanel();
 
     await AtImageView.waitForImage();
     await AtImageView.lookForStage();
@@ -218,10 +222,11 @@ Data(outOfBoundsFFs).Scenario(
 
 Data(outOfBoundsFFs).Scenario(
   "Can't create ellipses outside of canvas",
-  async ({ I, AtLabels, AtOutliner, AtImageView, LabelStudio, current }) => {
+  async ({ I, AtLabels, AtOutliner, AtImageView, LabelStudio, AtPanels, current }) => {
     LabelStudio.setFeatureFlags({
       fflag_fix_front_dev_3793_relative_coords_short: current.FF_DEV_3793,
     });
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
 
@@ -234,6 +239,7 @@ Data(outOfBoundsFFs).Scenario(
         predictions: [],
       },
     });
+    AtDetailsPanel.collapsePanel();
 
     await AtImageView.waitForImage();
     await AtImageView.lookForStage();

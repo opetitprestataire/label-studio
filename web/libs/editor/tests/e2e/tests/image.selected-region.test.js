@@ -47,6 +47,7 @@ async function testRegion(testType, toolAccelerator, I, LabelStudio, AtImageView
   I.executeScript(initLabelStudio, params);
 
   AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   await AtImageView.lookForStage();
   I.executeScript(waitForImage);
 
@@ -58,7 +59,13 @@ async function testRegion(testType, toolAccelerator, I, LabelStudio, AtImageView
   AtOutliner.seeRegions(0);
 
   I.say(`${testType} initial region`);
-  await doDrawingAction(I, { msg: `Initial ${testType}`, fromX: 150, fromY: 110, toX: 150 + 50, toY: 110 + 50 });
+  await doDrawingAction(I, {
+    msg: `Initial ${testType}`,
+    fromX: 319 + 150,
+    fromY: 110,
+    toX: 319 + 150 + 50,
+    toY: 110 + 50,
+  });
 
   I.say("There should now be a single region");
   AtOutliner.seeRegions(1);
@@ -66,15 +73,21 @@ async function testRegion(testType, toolAccelerator, I, LabelStudio, AtImageView
   I.say(`Using Eraser on ${testType} region`);
   I.pressKey("E");
   I.usePlaywrightTo("Erasing", async ({ browser, browserContext, page }) => {
-    await page.mouse.move(150, 150);
+    await page.mouse.move(319 + 150, 150);
     await page.mouse.down();
-    await page.mouse.move(150 + 100, 150);
+    await page.mouse.move(319 + 150 + 100, 150);
     await page.mouse.up();
   });
 
   I.say(`Doing another ${testType} with same class after erasing`);
   I.pressKey(toolAccelerator);
-  await doDrawingAction(I, { msg: `${testType} after erasing`, fromX: 280, fromY: 480, toX: 280 + 50, toY: 480 + 50 });
+  await doDrawingAction(I, {
+    msg: `${testType} after erasing`,
+    fromX: 319 + 280,
+    fromY: 480,
+    toX: 319 + 280 + 50,
+    toY: 480 + 50,
+  });
 
   I.say("There should still only be one region");
   AtOutliner.seeRegions(1);
@@ -88,9 +101,9 @@ async function testRegion(testType, toolAccelerator, I, LabelStudio, AtImageView
   I.pressKey(toolAccelerator);
   await doDrawingAction(I, {
     msg: `${testType} after zoom and pan selected`,
-    fromX: 400,
+    fromX: 319 + 400,
     fromY: 200,
-    toX: 400 + 15,
+    toX: 319 + 400 + 15,
     toY: 400 + 15,
   });
 

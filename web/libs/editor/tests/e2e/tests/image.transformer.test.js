@@ -122,7 +122,7 @@ for (const shapeName of Object.keys(shapes)) {
 
 Data(shapesTable).Scenario(
   "Check transformer existing for different shapes, their amount and modes.",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
 
@@ -141,8 +141,11 @@ Data(shapesTable).Scenario(
     };
     const getCenter = (bbox) => [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
     let isTransformerExist;
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     LabelStudio.init(getParamsWithLabels(shapeName));
+    AtDetailsPanel.collapsePanel();
+
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -203,12 +206,14 @@ Data(shapesTable).Scenario(
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer)).Scenario(
   "Resizing a single region",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -251,9 +256,10 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer)).Scenario(
   "Resizing a single region with zoom",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     LabelStudio.setFeatureFlags({
       fflag_fix_front_dev_3377_image_regions_shift_on_resize_280922_short: true,
@@ -263,6 +269,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
     I.amOnPage("/");
 
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -308,12 +315,14 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRotator)).Scenario(
   "Simple rotating",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -370,12 +379,14 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRotator)).Scenario(
   "Rotating of unrotatable region",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -425,12 +436,14 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRotator)).Scenario(
   "Broke the limits with rotation",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -582,12 +595,14 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRotator)).Scenario(
   "Check the initial rotation of transformer for the single region",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -672,12 +687,14 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRotator)).Scenario(
   "Check the initial rotation of transformer for the couple of regions",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -777,97 +794,109 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
 // KeyPoints are transformed unpredictable so for now just skip them
 Data(
   shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionTransformer && shapeName !== "KeyPoint"),
-).Scenario("Transforming of multiple regions", async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
-  const { shapeName } = current;
-  const Shape = shapes[shapeName];
-
-  I.amOnPage("/");
-  LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
-  AtImageView.waitForImage();
-  AtOutliner.seeRegions(0);
-  await AtImageView.lookForStage();
-  const canvasSize = await AtImageView.getCanvasSize();
-  const convertToImageSize = Helpers.getSizeConvertor(canvasSize.width, canvasSize.height);
-
-  const bbox1 = {
-    x: 100,
-    y: 100,
-    width: 50,
-    height: 50,
-  };
-
-  const bbox2 = {
-    x: 150,
-    y: 150,
-    width: 50,
-    height: 50,
-  };
-
-  const transformerBbox = {
-    x: bbox1.x,
-    y: bbox1.y,
-    width: bbox2.x + bbox2.width - bbox1.x,
-    height: bbox2.y + bbox2.height - bbox1.y,
-  };
-  const transformerBboxCenter = {
-    get x() {
-      return transformerBbox.x + transformerBbox.width / 2;
-    },
-    get y() {
-      return transformerBbox.y + transformerBbox.height / 2;
-    },
-  };
-
-  // Draw the first region
-  I.pressKey(Shape.hotKey);
-  drawShapeByBbox(Shape, bbox1.x, bbox1.y, bbox1.width, bbox1.height, AtImageView);
-  AtOutliner.seeRegions(1);
-
-  // Draw the second region
-  I.pressKey(Shape.hotKey);
-  I.pressKeyDown("CommandOrControl");
-  drawShapeByBbox(Shape, bbox2.x, bbox2.y, bbox2.width, bbox2.height, AtImageView);
-  I.pressKeyUp("CommandOrControl");
-  AtOutliner.seeRegions(2);
-
-  // Switch to move tool and select them
-  I.pressKey("v");
-  AtImageView.drawThroughPoints([
-    [transformerBbox.x - 20, transformerBbox.y - 20],
-    [transformerBbox.x + transformerBbox.width + 20, transformerBbox.y + transformerBbox.height + 20],
-  ]);
-  AtOutliner.seeSelectedRegion();
-  // Scale the shapes vertically
-  AtImageView.drawByDrag(transformerBboxCenter.x, transformerBbox.y + transformerBbox.height, 0, 50);
-  transformerBbox.height += 50;
-  AtOutliner.seeSelectedRegion();
-  // Scale the shapes horizontally
-  AtImageView.drawByDrag(transformerBbox.x + transformerBbox.width, transformerBboxCenter.y, 50, 0);
-  transformerBbox.width += 50;
-  AtOutliner.seeSelectedRegion();
-  // Scale the shapes in both directions
-  AtImageView.drawByDrag(transformerBbox.x + transformerBbox.width, transformerBbox.y + transformerBbox.height, 50, 50);
-  transformerBbox.height += 50;
-  transformerBbox.width += 50;
-  AtOutliner.seeSelectedRegion();
-
-  // Check resulting sizes
-  const rectangleResult = await LabelStudio.serialize();
-  const exceptedResult1 = Shape.byBBox(bbox1.x, bbox1.y, bbox1.width + 50, bbox1.height + 50).result;
-  const exceptedResult2 = Shape.byBBox(bbox2.x + 50, bbox2.y + 50, bbox2.width + 50, bbox2.height + 50).result;
-
-  Asserts.deepEqualWithTolerance(rectangleResult[0].value, convertToImageSize(exceptedResult1));
-  Asserts.deepEqualWithTolerance(rectangleResult[1].value, convertToImageSize(exceptedResult2));
-});
-
-Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionTransformer)).Scenario(
-  "Move regions by drag",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+).Scenario(
+  "Transforming of multiple regions",
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
+    AtImageView.waitForImage();
+    AtOutliner.seeRegions(0);
+    await AtImageView.lookForStage();
+    const canvasSize = await AtImageView.getCanvasSize();
+    const convertToImageSize = Helpers.getSizeConvertor(canvasSize.width, canvasSize.height);
+
+    const bbox1 = {
+      x: 100,
+      y: 100,
+      width: 50,
+      height: 50,
+    };
+
+    const bbox2 = {
+      x: 150,
+      y: 150,
+      width: 50,
+      height: 50,
+    };
+
+    const transformerBbox = {
+      x: bbox1.x,
+      y: bbox1.y,
+      width: bbox2.x + bbox2.width - bbox1.x,
+      height: bbox2.y + bbox2.height - bbox1.y,
+    };
+    const transformerBboxCenter = {
+      get x() {
+        return transformerBbox.x + transformerBbox.width / 2;
+      },
+      get y() {
+        return transformerBbox.y + transformerBbox.height / 2;
+      },
+    };
+
+    // Draw the first region
+    I.pressKey(Shape.hotKey);
+    drawShapeByBbox(Shape, bbox1.x, bbox1.y, bbox1.width, bbox1.height, AtImageView);
+    AtOutliner.seeRegions(1);
+
+    // Draw the second region
+    I.pressKey(Shape.hotKey);
+    I.pressKeyDown("CommandOrControl");
+    drawShapeByBbox(Shape, bbox2.x, bbox2.y, bbox2.width, bbox2.height, AtImageView);
+    I.pressKeyUp("CommandOrControl");
+    AtOutliner.seeRegions(2);
+
+    // Switch to move tool and select them
+    I.pressKey("v");
+    AtImageView.drawThroughPoints([
+      [transformerBbox.x - 20, transformerBbox.y - 20],
+      [transformerBbox.x + transformerBbox.width + 20, transformerBbox.y + transformerBbox.height + 20],
+    ]);
+    AtOutliner.seeSelectedRegion();
+    // Scale the shapes vertically
+    AtImageView.drawByDrag(transformerBboxCenter.x, transformerBbox.y + transformerBbox.height, 0, 50);
+    transformerBbox.height += 50;
+    AtOutliner.seeSelectedRegion();
+    // Scale the shapes horizontally
+    AtImageView.drawByDrag(transformerBbox.x + transformerBbox.width, transformerBboxCenter.y, 50, 0);
+    transformerBbox.width += 50;
+    AtOutliner.seeSelectedRegion();
+    // Scale the shapes in both directions
+    AtImageView.drawByDrag(
+      transformerBbox.x + transformerBbox.width,
+      transformerBbox.y + transformerBbox.height,
+      50,
+      50,
+    );
+    transformerBbox.height += 50;
+    transformerBbox.width += 50;
+    AtOutliner.seeSelectedRegion();
+
+    // Check resulting sizes
+    const rectangleResult = await LabelStudio.serialize();
+    const exceptedResult1 = Shape.byBBox(bbox1.x, bbox1.y, bbox1.width + 50, bbox1.height + 50).result;
+    const exceptedResult2 = Shape.byBBox(bbox2.x + 50, bbox2.y + 50, bbox2.width + 50, bbox2.height + 50).result;
+
+    Asserts.deepEqualWithTolerance(rectangleResult[0].value, convertToImageSize(exceptedResult1));
+    Asserts.deepEqualWithTolerance(rectangleResult[1].value, convertToImageSize(exceptedResult2));
+  },
+);
+
+Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionTransformer)).Scenario(
+  "Move regions by drag",
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
+    const { shapeName } = current;
+    const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
+
+    I.amOnPage("/");
+    LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -981,12 +1010,14 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionTr
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRotator)).Scenario(
   "Limitation of dragging a single rotated region",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -1118,12 +1149,14 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRotator)).Scenario(
   "Limitation of dragging a couple of rotated regions",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -1310,12 +1343,14 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasRotator)).Scenario(
   "Rotating the region near the border",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, current }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+    AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();

@@ -98,7 +98,7 @@ const MULTIPLE_TYPE = "multiple";
       await expectSelectedLabels(expectSelectedNum);
       I.pressKey(["u"]);
       await expectSelectedLabels(0);
-      I.click(locate(".lsf-region-item"));
+      AtOutliner.clickRegion(1);
       await expectSelectedLabels(expectSelectedNum);
     }
     async function clickLabelWithSelectedExpection(labelNumber, expectSelectedNum) {
@@ -129,7 +129,7 @@ const MULTIPLE_TYPE = "multiple";
     await AtAudioView.waitForAudio();
     AtOutliner.seeRegions(regionsCount);
 
-    I.click(locate(".lsf-region-item"));
+    AtOutliner.clickRegion(1);
     AtLabels.clickLabel("1");
 
     const restored = await LabelStudio.serialize();
@@ -170,7 +170,8 @@ const MULTIPLE_TYPE = "multiple";
   });
 });
 
-Scenario("Consistency of empty labels", async ({ I, LabelStudio, AtOutliner, AtImageView, AtLabels }) => {
+Scenario("Consistency of empty labels", async ({ I, LabelStudio, AtOutliner, AtImageView, AtLabels, AtPanels }) => {
+  const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
   const { config, data } = require("../examples/image-bboxes");
   const params = { annotations: [{ id: "test", result: [] }], data };
   const configTree = Utils.parseXml(config);
@@ -184,6 +185,7 @@ Scenario("Consistency of empty labels", async ({ I, LabelStudio, AtOutliner, AtI
 
   I.amOnPage("/");
   LabelStudio.init(params);
+  AtDetailsPanel.collapsePanel();
   AtOutliner.seeRegions(0);
   AtImageView.waitForImage();
   AtLabels.clickLabel("1");

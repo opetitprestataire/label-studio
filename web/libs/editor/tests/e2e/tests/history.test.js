@@ -19,6 +19,7 @@ Scenario(
     });
 
     await AtImageView.waitForImage();
+    await LabelStudio.waitForObjectsReady();
 
     AtOutliner.seeRegions(0);
     AtOutliner.dontSeeSelectedRegion();
@@ -27,6 +28,7 @@ Scenario(
     await AtImageView.lookForStage();
 
     AtImageView.selectToolByCode("brush");
+    AtImageView.hasSelectedTool("brush");
 
     AtImageView.drawThroughPoints([
       [50, 50],
@@ -79,12 +81,15 @@ Scenario(
   </View>`,
     });
     await AtImageView.waitForImage();
+    await LabelStudio.waitForObjectsReady();
+
     AtOutliner.seeRegions(0);
     AtOutliner.dontSeeSelectedRegion();
 
     I.say("Draw a rectangle region");
     await AtImageView.lookForStage();
     AtImageView.selectToolByCode("rectangle");
+    AtImageView.hasSelectedTool("rectangle");
     AtImageView.drawByDrag(100, 100, 200, 200);
 
     I.say("Select the region");

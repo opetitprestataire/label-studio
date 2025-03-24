@@ -125,11 +125,8 @@ Scenario("Check good nested Choice for Text", async ({ I, AtLabels, AtOutliner }
   AtOutliner.seeRegions(1);
   I.dontSee("Female");
 
-  // the only element of regions tree list
-  const regionInList = locate(".lsf-entities__regions").find(".ant-list-item");
-
   // select this region
-  I.click(regionInList);
+  AtOutliner.clickRegion(1);
 
   AtOutliner.seeRegions(1);
   I.see("More details"); // View with visibleWhen
