@@ -265,6 +265,78 @@ const TokenCatalog = () => {
     {} as Record<string, Array<[string, string]>>,
   );
 
+  // Component to showcase raw color values usage
+  const RawColorsUsageGuide = () => {
+    // Only show for color category
+    if (activeCategory !== "colors") return null;
+
+    // Find raw color tokens
+    const rawColorTokens = filteredTokens.filter(([name]) =>
+      name.includes("-raw") &&
+      (name.includes("outline") || name.includes("shadow") || name.includes("primary"))
+    );
+
+    if (rawColorTokens.length === 0) return null;
+
+    return (
+      <div className="mb-10 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <h2 className="text-lg font-semibold mb-2">Using Raw Color Values</h2>
+        <p className="text-sm mb-4">
+          Some color tokens have "-raw" variants that provide RGB values without the rgb() wrapper,
+          allowing you to create translucent versions with custom opacity.
+        </p>
+
+        <div className="bg-white p-4 rounded border border-gray-200">
+          <h3 className="text-base font-medium mb-2">Examples</h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Primary surface with opacity */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">Primary Surface with Opacity</h4>
+              <div className="flex gap-2">
+                {[25, 50, 75, 100].map((opacity) => (
+                  <div
+                    key={opacity}
+                    className="w-10 h-10 rounded-sm flex items-center justify-center text-xs border border-gray-200"
+                    style={{ backgroundColor: `rgb(var(--color-primary-surface-raw) / ${opacity}%)` }}
+                  >
+                    {opacity}%
+                  </div>
+                ))}
+              </div>
+              <div className="bg-gray-100 p-2 rounded text-xs font-mono">
+                background-color: rgb(var(--color-primary-surface-raw) / 50%);
+              </div>
+            </div>
+
+            {/* Shadows and outlines */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">Shadows & Outlines</h4>
+              <div className="flex gap-4">
+                <div
+                  className="w-16 h-10 rounded bg-white flex items-center justify-center text-xs"
+                  style={{ boxShadow: "0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%)" }}
+                >
+                  Shadow
+                </div>
+                <div
+                  className="w-16 h-10 rounded bg-white flex items-center justify-center text-xs"
+                  style={{ border: "1px solid rgb(var(--color-neutral-outline-raw) / 40%)" }}
+                >
+                  Border
+                </div>
+              </div>
+              <div className="bg-gray-100 p-2 rounded text-xs font-mono">
+                box-shadow: 0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%);<br />
+                border: 1px solid rgb(var(--color-neutral-outline-raw) / 40%);
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="token-catalog p-8">
       <div
@@ -339,6 +411,9 @@ const TokenCatalog = () => {
         )}
       </div>
 
+      {/* Display the Raw Colors Usage Guide */}
+      <RawColorsUsageGuide />
+
       {/* Display the tokens */}
       {Object.keys(groupedTokens).length === 0 ? (
         <div className="text-center my-10 text-gray-600">
@@ -399,6 +474,72 @@ const TokenCategorized = () => {
             title={`${color}`}
           />
         ))}
+      </div>
+    );
+  };
+
+  // Helper function to showcase raw color values for translucent colors
+  const generateRawColorsPalette = () => {
+    return (
+      <div className="mt-4">
+        <h3 className="text-base mb-3">Translucent Color Values</h3>
+        <p className="text-sm mb-4 text-gray-600">
+          These color tokens have raw RGB values available for creating translucent colors with custom opacity.
+        </p>
+
+        <div className="flex flex-col gap-6">
+          {/* Primitive color demonstration */}
+          <div>
+            <h4 className="text-sm font-semibold mb-2">Primary Color with Different Opacities</h4>
+            <div className="flex gap-4">
+              {[10, 25, 50, 75, 100].map((opacity) => (
+                <div key={opacity} className="flex flex-col items-center">
+                  <div
+                    className="w-12 h-12 rounded border border-gray-200 mb-1"
+                    style={{ backgroundColor: `rgb(var(--color-primary-surface-raw) / ${opacity}%)` }}
+                  />
+                  <span className="text-xs">{opacity}%</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 bg-gray-100 p-2 rounded text-xs font-mono">
+              background-color: rgb(var(--color-primary-surface-raw) / 50%);
+            </div>
+          </div>
+
+          {/* Shadow/outline example */}
+          <div>
+            <h4 className="text-sm font-semibold mb-2">Shadow and Outline Examples</h4>
+            <div className="flex gap-4">
+              <div className="flex flex-col items-center">
+                <div
+                  className="w-16 h-16 rounded flex items-center justify-center"
+                  style={{ boxShadow: "0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%)" }}
+                >
+                  <span className="text-xs">Shadow</span>
+                </div>
+                <span className="text-xs mt-1">Shadow</span>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div
+                  className="w-16 h-16 rounded flex items-center justify-center"
+                  style={{
+                    border: "2px solid rgb(var(--color-neutral-outline-raw) / 30%)",
+                    backgroundColor: "rgb(var(--color-neutral-surface-raw) / 5%)"
+                  }}
+                >
+                  <span className="text-xs">Outline</span>
+                </div>
+                <span className="text-xs mt-1">Outline</span>
+              </div>
+            </div>
+            <div className="mt-2 bg-gray-100 p-2 rounded text-xs font-mono">
+              box-shadow: 0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%);<br />
+              border: 2px solid rgb(var(--color-neutral-outline-raw) / 30%);
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -489,16 +630,17 @@ const TokenCategorized = () => {
             {/* Preview for each category */}
             {getCategoryPreview(category)}
 
+            {/* Add raw colors palette for the colors category */}
+            {category === "colors" && generateRawColorsPalette()}
+
             {category === "colors" && (
               <div
                 className="flex flex-wrap gap-4 mt-6"
               >
                 {Object.entries(colorSubcategoryDescriptions).map(([subCategory, subDescription]) => (
-                  <LinkTo
+                  <div
                     key={subCategory}
                     className="flex-1 basis-[300px] border border-gray-200 rounded-lg p-4 cursor-pointer relative overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200"
-                    kind="design-tokens"
-                    story="tokens-catalog"
                     onClick={() => {
                       setSearchTerm("")
                       setActiveCategory("colors")
@@ -539,23 +681,21 @@ const TokenCategorized = () => {
                     <p className="text-sm text-gray-600 relative z-10">
                       {subDescription}
                     </p>
-                  </LinkTo>
+                  </div>
                 ))}
               </div>
             )}
 
             {category !== "colors" && (
-              <LinkTo
+              <div
                 className="block border border-gray-200 rounded-lg p-4 cursor-pointer mt-6 hover:shadow-md hover:border-gray-300 transition-all duration-200"
-                kind="design-tokens"
-                story="tokens-catalog"
                 onClick={() => {
                   setSearchTerm("")
                   setActiveCategory(category)
                 }}
               >
                 <p className="text-sm">View all {category} tokens &rarr;</p>
-              </LinkTo>
+              </div>
             )}
           </div>
         ))}

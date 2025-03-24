@@ -542,9 +542,21 @@ function processColorTokens(colorObj, parentPath, result, variables) {
         ) {
           const lightValue = resolveColor(colorObj[key].$variable_metadata.modes.light, variables);
           result.cssVariables.light.push(`${cssVarName}: ${lightValue};`);
+
+          // Add raw RGB values for colors with "outline" or "shadow" in the name
+          if (name.includes("outline") || name.includes("shadow")) {
+            const rawRgbValues = hexToRgbRaw(colorObj[key].$variable_metadata.modes.light, variables);
+            result.cssVariables.light.push(`${cssVarName}-raw: ${rawRgbValues};`);
+          }
         } else {
           const resolvedValue = resolveColor(value, variables);
           result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
+
+          // Add raw RGB values for colors with "outline" or "shadow" in the name
+          if (name.includes("outline") || name.includes("shadow")) {
+            const rawRgbValues = hexToRgbRaw(value, variables);
+            result.cssVariables.light.push(`${cssVarName}-raw: ${rawRgbValues};`);
+          }
         }
 
         // Add to CSS variables for dark mode
@@ -555,10 +567,21 @@ function processColorTokens(colorObj, parentPath, result, variables) {
         ) {
           const darkValue = resolveColor(colorObj[key].$variable_metadata.modes.dark, variables);
           result.cssVariables.dark.push(`${cssVarName}: ${darkValue};`);
+
+          // Add raw RGB values for colors with "outline" or "shadow" in the name for dark mode
+          if (name.includes("outline") || name.includes("shadow")) {
+            const rawRgbValues = hexToRgbRaw(colorObj[key].$variable_metadata.modes.dark, variables);
+            result.cssVariables.dark.push(`${cssVarName}-raw: ${rawRgbValues};`);
+          }
         }
 
         // Add to JavaScript tokens
         addToJsTokens(result.jsTokens.colors, name.replace(/\$/g, ""), cssVarName);
+
+        // Add raw values to JavaScript tokens for outlines and shadows
+        if (name.includes("outline") || name.includes("shadow")) {
+          addToJsTokens(result.jsTokens.colors, `${name.replace(/\$/g, "")}-raw`, `${cssVarName}-raw`);
+        }
       } else {
         // Recursively process nested color objects
         processColorTokens(colorObj[key], newPath, result, variables);
@@ -588,6 +611,10 @@ function processPrimitiveColors(primitiveColors, result, variables) {
           const rgbValue = hexToRgb(value);
           result.cssVariables.light.push(`${cssVarName}: ${rgbValue};`);
 
+          // Add raw RGB values for primitives to support translucent colors
+          const rawRgbValues = hexToRgbRaw(value);
+          result.cssVariables.light.push(`${cssVarName}-raw: ${rawRgbValues};`);
+
           // Add to JavaScript tokens
           if (!result.jsTokens.colors.primitive) {
             result.jsTokens.colors.primitive = {};
@@ -597,6 +624,7 @@ function processPrimitiveColors(primitiveColors, result, variables) {
           }
 
           result.jsTokens.colors.primitive[familyName][shade] = `var(${cssVarName})`;
+          result.jsTokens.colors.primitive[familyName][`${shade}-raw`] = `var(${cssVarName}-raw)`;
         }
       } catch (error) {
         console.warn(`Warning: Error processing primitive color ${colorFamily}.${shade}:`, error.message);
@@ -639,6 +667,60 @@ function hexToRgb(hex) {
 
   // Return RGB format
   return `rgb(${r}, ${g}, ${b})`;
+}
+
+/**
+ * Convert hex color to raw RGB values for translucent color support
+ * @param {string} hex - Hex color code or reference
+ * @param {Object} variables - Variables for resolving references
+ * @returns {string} - Raw RGB values as "r g b"
+ */
+function hexToRgbRaw(hex, variables) {
+  // If it's a reference, try to resolve it
+  if (typeof hex === "string" && hex.startsWith("{") && hex.endsWith("}") && variables) {
+    const resolvedValue = resolveReference(hex, variables);
+    if (resolvedValue !== hex) {
+      return hexToRgbRaw(resolvedValue);
+    }
+  }
+
+  // Check if it's already in rgb/rgba format
+  if (typeof hex === "string" && hex.startsWith("rgb")) {
+    // Extract the RGB values from the rgb() format
+    const match = hex.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+      return `${match[1]} ${match[2]} ${match[3]}`;
+    }
+    return hex;
+  }
+
+  // Remove # if present
+  if (typeof hex === "string") {
+    hex = hex.replace(/^#/, "");
+
+    // Parse the hex values
+    let r;
+    let g;
+    let b;
+    if (hex.length === 3) {
+      // Convert 3-digit hex to 6-digit
+      r = Number.parseInt(hex[0] + hex[0], 16);
+      g = Number.parseInt(hex[1] + hex[1], 16);
+      b = Number.parseInt(hex[2] + hex[2], 16);
+    } else if (hex.length === 6) {
+      r = Number.parseInt(hex.substring(0, 2), 16);
+      g = Number.parseInt(hex.substring(2, 4), 16);
+      b = Number.parseInt(hex.substring(4, 6), 16);
+    } else {
+      // Invalid hex, return as is
+      return hex;
+    }
+
+    // Return raw RGB values
+    return `${r} ${g} ${b}`;
+  }
+
+  return hex;
 }
 
 /**
