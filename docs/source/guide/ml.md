@@ -19,14 +19,14 @@ You can use an ML backend to integrate your model development pipeline with your
 <div class="opensource-only">
 
 !!! error enterprise
-    Label Studio Enterprise features an out-of-the-box solution for LLM-assisted labeling. All you need to get set up is to connect one of our supported models. For more information, see [Prompts](https://docs.humansignal.com/guide/prompts_overview).
+    Label Studio Enterprise features an out-of-the-box solution for LLM-assisted auto-labeling and model evaluation. Compare LLMs based on accuracy and cost. For more information, see [Prompts](https://docs.humansignal.com/guide/prompts_overview).
 
 </div>
 
 <div class="enterprise-only">
 
 !!! info Tip
-    Prompts is an out-of-the-box solution for LLM-assisted labeling. All you need to get set up is to connect one of our supported models. For more information, see [Prompts](prompts_overview).
+    Prompts is an out-of-the-box solution for LLM-assisted auto-labeling and model evaluation. For more information, see [Prompts](prompts_overview).
 
 </div>
 
