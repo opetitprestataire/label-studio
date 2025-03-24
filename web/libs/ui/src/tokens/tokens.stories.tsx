@@ -205,7 +205,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
               <div className="text-black text-sm font-bold break-words">
                 {tokenName.split(".").pop() || tokenName}
               </div>
-              <div className="text-xs text-gray-400 -mt-1">
+              <div className="text-[10px] text-gray-400 -mt-1">
                 {tokenName.split(".").slice(0, -1).join(".")}
               </div>
             </div>
