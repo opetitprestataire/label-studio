@@ -483,7 +483,7 @@ const TokenCategorized = () => {
       <div className="flex flex-col gap-8">
         {Object.entries(categoryDescriptions).map(([category, description]) => (
           <div key={category} className="category-card">
-            <h2 className="text-xl mb-2">{category}</h2>
+            <h2 className="text-xl mb-2">{category.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</h2>
             <p className="mb-4 text-gray-600">{description}</p>
 
             {/* Preview for each category */}
