@@ -45,6 +45,7 @@ Scenario("Lines overlap", async ({ I, LabelStudio, AtTaxonomy }) => {
       text: "Annotation 1",
     },
   });
+  LabelStudio.waitForObjectsReady();
 
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.toggleGroupWithText("target group");
@@ -68,6 +69,7 @@ Scenario("Lines overlap", async ({ I, LabelStudio, AtTaxonomy }) => {
       text: "Annotation 2",
     },
   });
+  LabelStudio.waitForObjectsReady();
 
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.fillSearch("long");
@@ -90,6 +92,7 @@ Scenario("Lines overlap", async ({ I, LabelStudio, AtTaxonomy }) => {
       text: "Annotation 3",
     },
   });
+  LabelStudio.waitForObjectsReady();
 
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.fillSearch("long");
@@ -124,6 +127,7 @@ Scenario("Add custom items", async ({ I, LabelStudio, AtTaxonomy }) => {
 
   I.amOnPage("/");
   LabelStudio.init(params);
+  LabelStudio.waitForObjectsReady();
 
   I.say("Add item to the root");
   AtTaxonomy.clickTaxonomy();
@@ -172,6 +176,7 @@ Scenario("Add custom items", async ({ I, LabelStudio, AtTaxonomy }) => {
         },
       ],
     });
+    LabelStudio.waitForObjectsReady();
     I.say("Restore user labels");
     LabelStudio.initUserLabels(userLabels);
 
@@ -239,6 +244,7 @@ Scenario("Non unique values filtering", async ({ I, LabelStudio, AtTaxonomy }) =
       text: "Text",
     },
   });
+  LabelStudio.waitForObjectsReady();
   AtTaxonomy.clickTaxonomy();
   I.seeElement(AtTaxonomy.locateItemByText("a").at(1));
   I.dontSeeElement(AtTaxonomy.locateItemByText("a").at(2));
@@ -295,6 +301,7 @@ Scenario("Taxonomy read only in history", async ({ I, LabelStudio, AtTaxonomy })
     },
     annotations: [{ id: 2, result: [] }],
   });
+  LabelStudio.waitForObjectsReady();
   I.click(".lsf-history-item");
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.seeSelectedValues(["ab", "c"]);
@@ -348,6 +355,7 @@ Scenario("Taxonomy readonly result", async ({ I, LabelStudio, AtTaxonomy }) => {
       },
     ],
   });
+  LabelStudio.waitForObjectsReady();
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.seeSelectedValues(["ab", "c"]);
   AtTaxonomy.toggleGroupWithText("a");
@@ -435,6 +443,7 @@ Scenario("Taxonomy per region", async ({ I, LabelStudio, AtTaxonomy, AtOutliner 
       },
     ],
   });
+  LabelStudio.waitForObjectsReady();
   I.say("Should not see perrigion taxonomy without selected region");
   AtTaxonomy.dontSeeTaxonomy();
   I.say("Should not see perrigion taxonomy without selected region that was set in whenLabelValue");
@@ -470,6 +479,7 @@ Scenario("Taxonomy per region", async ({ I, LabelStudio, AtTaxonomy, AtOutliner 
         },
       ],
     });
+    LabelStudio.waitForObjectsReady();
     I.say("Should not see perrigion taxonomy without selected region");
     AtTaxonomy.dontSeeTaxonomy();
     I.say("Should not see perrigion taxonomy without selected region that was set in whenLabelValue");
@@ -519,6 +529,7 @@ Scenario("Aliases in Taxonomy", async ({ I, LabelStudio, AtTaxonomy }) => {
       text: "A text",
     },
   });
+  LabelStudio.waitForObjectsReady();
   I.say("Should see values of choices and work with them");
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.toggleGroupWithText("One to three");
@@ -551,6 +562,7 @@ Scenario("Aliases in Taxonomy", async ({ I, LabelStudio, AtTaxonomy }) => {
         },
       ],
     });
+    LabelStudio.waitForObjectsReady();
     I.say("Should see the same result");
     AtTaxonomy.clickTaxonomy();
     AtTaxonomy.toggleGroupWithText("One to three");
@@ -575,6 +587,7 @@ Scenario("Aliases in Taxonomy", async ({ I, LabelStudio, AtTaxonomy }) => {
         },
       ],
     });
+    LabelStudio.waitForObjectsReady();
     I.say("Should see the full paths");
     AtTaxonomy.clickTaxonomy();
     AtTaxonomy.seeSelectedValues(["One to three / Three", "Four to seven / Seven"]);
@@ -623,6 +636,7 @@ Scenario("Taxonomy dynamic items", async ({ I, LabelStudio, AtTaxonomy }) => {
 `,
     data,
   });
+  LabelStudio.waitForObjectsReady();
   I.say("Should see items");
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.toggleGroupWithText("Items");
@@ -663,6 +677,7 @@ Scenario("Taxonomy dynamic items", async ({ I, LabelStudio, AtTaxonomy }) => {
         },
       ],
     });
+    LabelStudio.waitForObjectsReady();
     I.say("Should see same items");
     AtTaxonomy.clickTaxonomy();
     AtTaxonomy.toggleGroupWithText("Items");
@@ -703,6 +718,7 @@ Scenario("Taxonomy maxUsages", async ({ I, LabelStudio, AtTaxonomy }) => {
       text: "A text",
     },
   });
+  LabelStudio.waitForObjectsReady();
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.toggleGroupWithText("1");
   AtTaxonomy.toggleGroupWithText("2");
@@ -763,6 +779,7 @@ Scenario("Taxonomy visibleWhen", async ({ I, LabelStudio, AtTaxonomy }) => {
       text: "A text",
     },
   });
+  LabelStudio.waitForObjectsReady();
   I.say("Should see values of choices and work with them");
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.toggleGroupWithText("One to three");
@@ -824,6 +841,7 @@ Scenario("Taxonomy visibleWhen", async ({ I, LabelStudio, AtTaxonomy }) => {
         },
       ],
     });
+    LabelStudio.waitForObjectsReady();
     I.say("Should see the same result");
     AtTaxonomy.clickTaxonomy();
     AtTaxonomy.toggleGroupWithText("One to three");
@@ -849,6 +867,7 @@ Scenario("Taxonomy visibleWhen", async ({ I, LabelStudio, AtTaxonomy }) => {
         },
       ],
     });
+    LabelStudio.waitForObjectsReady();
     I.say("Should see the full paths");
     AtTaxonomy.clickTaxonomy();
     AtTaxonomy.seeSelectedValues(["One to three / Three", "Four to seven / Four"]);
@@ -891,6 +910,7 @@ Scenario("Taxonomy visibleWhen with aliases", async ({ I, LabelStudio, AtTaxonom
       text: "A text",
     },
   });
+  LabelStudio.waitForObjectsReady();
   I.say("Should see values of choices and work with them");
   AtTaxonomy.clickTaxonomy();
   AtTaxonomy.toggleGroupWithText("One to three");
@@ -952,6 +972,7 @@ Scenario("Taxonomy visibleWhen with aliases", async ({ I, LabelStudio, AtTaxonom
         },
       ],
     });
+    LabelStudio.waitForObjectsReady();
     I.say("Should see the same result");
     AtTaxonomy.clickTaxonomy();
     AtTaxonomy.toggleGroupWithText("One to three");
@@ -977,6 +998,7 @@ Scenario("Taxonomy visibleWhen with aliases", async ({ I, LabelStudio, AtTaxonom
         },
       ],
     });
+    LabelStudio.waitForObjectsReady();
     I.say("Should see the full paths");
     AtTaxonomy.clickTaxonomy();
     AtTaxonomy.seeSelectedValues(["One to three / Three", "Four to seven / Four"]);
