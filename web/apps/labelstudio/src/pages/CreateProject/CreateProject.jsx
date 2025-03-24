@@ -169,17 +169,20 @@ export const CreateProject = ({ onClose, redirect = true }) => {
     setError(err.validation_errors?.title);
   };
 
-  const onDelete = React.useCallback(async () => {
-    setWaitingStatus(true);
-    if (project)
-      await api.callApi("deleteProject", {
-        params: {
-          pk: project.id,
-        },
-      });
-    setWaitingStatus(false);
-    redirect && history.replace("/projects");
-    onClose?.();
+  const onDelete = React.useCallback(() => {
+    const performClose = async () => {
+      setWaitingStatus(true);
+      if (project)
+        await api.callApi("deleteProject", {
+          params: {
+            pk: project.id,
+          },
+        });
+      setWaitingStatus(false);
+      redirect && history.replace("/projects");
+      onClose?.();
+    };
+    performClose();
   }, [project, redirect]);
 
   return (
