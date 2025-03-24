@@ -23,11 +23,11 @@ const categoryDescriptions: Record<string, string> = {
 // Color subcategories and their descriptions
 const colorSubcategoryDescriptions: Record<string, string> = {
   neutral: "Neutral colors for backgrounds, text, borders, and other UI elements",
+  accent: "Accent colors for highlighting and distinguishing UI elements",
   primary: "Primary brand colors for key UI elements and interactions",
   negative: "Negative/danger colors for error states and destructive actions",
   positive: "Positive/success colors for confirmations and success states",
   warning: "Warning colors for cautionary messages and states",
-  accent: "Accent colors for highlighting and distinguishing UI elements",
   primitives: "Base color scales for the design system",
 };
 
