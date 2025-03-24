@@ -53,7 +53,7 @@ const ThemeToggle = () => {
 
 // Token categories and their descriptions
 const categoryDescriptions: Record<string, string> = {
-  colors: "Color tokens for UI elements including semantic, accent, and scale colors",
+  colors: "Color tokens for UI elements including semantic, and scale colors",
   spacing: "Spacing values for layout, padding, margins, and positioning",
   typography: "Typography tokens for font sizes, line heights, and letter spacing",
   cornerRadius: "Corner radius values for UI components with rounded edges",
@@ -328,12 +328,6 @@ const TokenCatalog = () => {
         </p>
 
         <div className="bg-white p-4 rounded border border-gray-200">
-          <div className="mb-2 text-sm">
-            <span className="inline-block px-2 py-1 bg-gray-200 rounded text-xs font-medium">
-              Current theme: {theme}
-            </span>
-          </div>
-
           <h3 className="text-base font-medium mb-2">Examples</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -575,48 +569,141 @@ const TokenCategorized = () => {
   // Helper function to generate a color palette for the colors category
   const generateColorPalette = () => {
     return (
-      <div className="flex gap-1 mt-4">
-        {["primary", "positive", "warning", "negative", "neutral"].map((color) => (
-          <div
-            key={color}
-            className="w-10 h-10 rounded border border-gray-200"
-            style={{ backgroundColor: `var(--color-${color}-surface)` }}
-            title={`${color}`}
-          />
-        ))}
-        {["grape", "blueberry", "kale", "kiwi", "mango", "persimmon"].map((color) => (
-          <div
-            key={color}
-            className="w-10 h-10 rounded border border-gray-200"
-            style={{ backgroundColor: `var(--color-${color}-500)` }}
-            title={`${color}`}
-          />
-        ))}
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-16">
+          <div className="flex gap-3 items-center">
+            {["primary", "positive", "warning", "negative", "neutral"].map((color) => (
+              <div key={color} className="flex flex-col items-center w-13">
+                <div
+                  className="w-12 h-12 rounded border border-gray-200"
+                  style={{ backgroundColor: `var(--color-${color}-surface)` }}
+                  title={`${color}`}
+                />
+                <div className="text-xs">{color}</div>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-3 items-center">
+            {["grape", "blueberry", "kale", "kiwi", "mango", "persimmon"].map((color) => (
+              <div key={color} className="flex flex-col items-center w-13">
+                <div
+                  className="w-12 h-12 rounded border border-gray-200"
+                  style={{ backgroundColor: `var(--color-${color}-500)` }}
+                  title={`${color}`}
+                />
+                <div className="text-xs">{color}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          {Object.entries(colorSubcategoryDescriptions).map(([subCategory, subDescription]) => (
+            <LinkTo
+              key={subCategory}
+              kind="design-tokens"
+              story="tokens-catalog"
+              className="flex-1 basis-[300px] border border-gray-200 rounded-lg p-4 cursor-pointer relative overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200"
+              onClick={() => {
+                setSearchTerm("");
+                setActiveCategory("colors");
+                setActiveColorSubcategory(subCategory);
+              }}
+            >
+              {/* Color preview for each subcategory */}
+              {!["primitives", "neutral", "accent"].includes(subCategory) && (
+                <div
+                  className="absolute top-0 right-0 w-15 h-15 opacity-30 rounded-bl-full border-l border-b border-gray-200"
+                  style={{ backgroundColor: `var(--color-${subCategory}-surface)` }}
+                />
+              )}
+
+              {["primitives", "neutral", "accent"].includes(subCategory) && (
+                <div className="absolute top-0 right-0 w-15 h-15 opacity-30 overflow-hidden border-l border-b border-gray-200">
+                  <div className="flex">
+                    <div
+                      className="w-5 h-5"
+                      style={{
+                        backgroundColor: `var(--color-${subCategory === "primitives" ? "grape-500" : subCategory === "neutral" ? "neutral-surface" : "accent-grape-bold"})`,
+                      }}
+                    />
+                    <div
+                      className="w-5 h-5"
+                      style={{
+                        backgroundColor: `var(--color-${subCategory === "primitives" ? "blueberry-500" : subCategory === "neutral" ? "neutral-surface-hover" : "accent-blueberry-bold"})`,
+                      }}
+                    />
+                    <div
+                      className="w-5 h-5"
+                      style={{
+                        backgroundColor: `var(--color-${subCategory === "primitives" ? "kale-500" : subCategory === "neutral" ? "neutral-surface-active" : "accent-kale-bold"})`,
+                      }}
+                    />
+                  </div>
+                  <div className="flex">
+                    <div
+                      className="w-5 h-5"
+                      style={{
+                        backgroundColor: `var(--color-${subCategory === "primitives" ? "kiwi-500" : subCategory === "neutral" ? "neutral-border" : "accent-kiwi-bold"})`,
+                      }}
+                    />
+                    <div
+                      className="w-5 h-5"
+                      style={{
+                        backgroundColor: `var(--color-${subCategory === "primitives" ? "mango-500" : subCategory === "neutral" ? "neutral-border-subtle" : "accent-mango-bold"})`,
+                      }}
+                    />
+                    <div
+                      className="w-5 h-5"
+                      style={{
+                        backgroundColor: `var(--color-${subCategory === "primitives" ? "persimmon-500" : subCategory === "neutral" ? "neutral-border-subtler" : "accent-persimmon-bold"})`,
+                      }}
+                    />
+                  </div>
+                  <div className="flex">
+                    <div
+                      className="w-5 h-5"
+                      style={{
+                        backgroundColor: `var(--color-${subCategory === "primitives" ? "plum-500" : subCategory === "neutral" ? "neutral-content" : "accent-plum-bold"})`,
+                      }}
+                    />
+                    <div
+                      className="w-5 h-5"
+                      style={{
+                        backgroundColor: `var(--color-${subCategory === "primitives" ? "fig-500" : subCategory === "neutral" ? "neutral-content-subtle" : "accent-fig-bold"})`,
+                      }}
+                    />
+                    <div
+                      className="w-5 h-5"
+                      style={{
+                        backgroundColor: `var(--color-${subCategory === "primitives" ? "sand-500" : subCategory === "neutral" ? "neutral-content-subtler" : "accent-sand-bold"})`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <h3 className="text-base mb-2">{subCategory}</h3>
+              <p className="text-sm text-gray-600 relative z-10">{subDescription}</p>
+            </LinkTo>
+          ))}
+        </div>
       </div>
     );
   };
 
-  // Helper function to showcase raw color values for translucent colors
-  const generateRawColorsPalette = () => {
-    const [theme] = useAtom(themeAtom);
-
+  const RawColorsPalette = () => {
     return (
-      <div className="mt-4">
-        <h3 className="text-base mb-3">Translucent Color Values with Theme Support</h3>
-        <p className="text-sm mb-4 text-gray-600">
-          These color tokens have raw RGB values available for creating translucent colors with custom opacity. The same
-          code will automatically adapt to dark mode.
-        </p>
-
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h3 className="text-base">Raw Color Values</h3>
+          <p className="text-sm text-gray-600">
+            These color tokens have raw RGB values available for creating translucent colors with custom opacity. The
+            same code will automatically adapt to dark mode.
+          </p>
+        </div>
         <div className="flex flex-col gap-6">
-          <div className="mb-2 text-sm">
-            <span className="inline-block px-2 py-1 bg-gray-200 rounded text-xs font-medium">
-              Current theme: {theme}
-            </span>
-          </div>
-
           {/* Primitive color demonstration */}
-          <div>
+          <div className="mt-2">
             <h4 className="text-sm font-semibold mb-2">Primary Color with Different Opacities</h4>
             <div className="flex gap-4">
               {[10, 25, 50, 75, 100].map((opacity) => (
@@ -629,7 +716,7 @@ const TokenCategorized = () => {
                 </div>
               ))}
             </div>
-            <div className="mt-2 bg-gray-100 p-2 rounded text-xs font-mono">
+            <div className="mt-3 bg-gray-100 p-2 rounded text-xs font-mono">
               background-color: rgb(var(--color-primary-surface-raw) / 50%);
             </div>
           </div>
@@ -662,7 +749,7 @@ const TokenCategorized = () => {
                 </div>
               </div>
             </div>
-            <div className="mt-2 bg-gray-100 p-2 rounded text-xs font-mono">
+            <div className="mt-3 bg-gray-100 p-2 rounded text-xs font-mono">
               box-shadow: 0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%);
               <br />
               border: 3px solid rgb(var(--color-primary-focus-outline-raw) / 30%);
@@ -745,66 +832,21 @@ const TokenCategorized = () => {
         Browse through our design tokens organized by category. These tokens are the foundation of our design system.
       </p>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-12">
         {Object.entries(categoryDescriptions).map(([category, description]) => (
-          <div key={category} className="category-card">
-            <h2 className="text-xl mb-2">
-              {category.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
-            </h2>
-            <p className="mb-4 text-gray-600">{description}</p>
+          <div key={category} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-xl">{category.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</h2>
+              <p className="text-gray-600">{description}</p>
+            </div>
 
             {/* Preview for each category */}
             {getCategoryPreview(category)}
 
             {/* Add raw colors palette for the colors category */}
-            {category === "colors" && generateRawColorsPalette()}
-
             {category === "colors" && (
-              <div className="flex flex-wrap gap-4 mt-6">
-                {Object.entries(colorSubcategoryDescriptions).map(([subCategory, subDescription]) => (
-                  <LinkTo
-                    key={subCategory}
-                    kind="design-tokens"
-                    story="tokens-catalog"
-                    className="flex-1 basis-[300px] border border-gray-200 rounded-lg p-4 cursor-pointer relative overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200"
-                    onClick={() => {
-                      setSearchTerm("");
-                      setActiveCategory("colors");
-                      setActiveColorSubcategory(subCategory);
-                    }}
-                  >
-                    {/* Color preview for each subcategory */}
-                    {!["primitives", "neutral", "accent"].includes(subCategory) && (
-                      <div
-                        className="absolute top-0 right-0 w-15 h-15 opacity-30 rounded-bl-full border-l border-b border-gray-200"
-                        style={{ backgroundColor: `var(--color-${subCategory}-surface)` }}
-                      />
-                    )}
-
-                    {["primitives", "neutral", "accent"].includes(subCategory) && (
-                      <div className="absolute top-0 right-0 w-15 h-15 opacity-30 overflow-hidden border-l border-b border-gray-200">
-                        <div className="flex">
-                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "grape-500" : subCategory === "neutral" ? "neutral-surface" : "accent-grape-bold"})` }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "blueberry-500" : subCategory === "neutral" ? "neutral-surface-hover" : "accent-blueberry-bold"})` }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "kale-500" : subCategory === "neutral" ? "neutral-surface-active" : "accent-kale-bold"})` }} />
-                        </div>
-                        <div className="flex">
-                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "kiwi-500" : subCategory === "neutral" ? "neutral-border" : "accent-kiwi-bold"})` }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "mango-500" : subCategory === "neutral" ? "neutral-border-subtle" : "accent-mango-bold"})` }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "persimmon-500" : subCategory === "neutral" ? "neutral-border-subtler" : "accent-persimmon-bold"})` }} />
-                        </div>
-                        <div className="flex">
-                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "plum-500" : subCategory === "neutral" ? "neutral-content" : "accent-plum-bold"})` }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "fig-500" : subCategory === "neutral" ? "neutral-content-subtle" : "accent-fig-bold"})` }} />
-                          <div className="w-5 h-5" style={{ backgroundColor: `var(--color-${subCategory === "primitives" ? "sand-500" : subCategory === "neutral" ? "neutral-content-subtler" : "accent-sand-bold"})` }} />
-                        </div>
-                      </div>
-                    )}
-
-                    <h3 className="text-base mb-2">{subCategory}</h3>
-                    <p className="text-sm text-gray-600 relative z-10">{subDescription}</p>
-                  </LinkTo>
-                ))}
+              <div className="mt-4">
+                <RawColorsPalette />
               </div>
             )}
 
