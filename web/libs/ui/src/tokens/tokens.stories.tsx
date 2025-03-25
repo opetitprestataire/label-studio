@@ -35,6 +35,7 @@ const ThemeToggle = () => {
       <span className="text-sm font-medium">Theme:</span>
       <div className="flex border border-neutral-border rounded overflow-hidden">
         <button
+          type="button"
           className={`px-4 py-2 text-sm ${
             theme === "light"
               ? "bg-primary-surface border-primary-border text-primary-surface-content"
@@ -45,6 +46,7 @@ const ThemeToggle = () => {
           Light
         </button>
         <button
+          type="button"
           className={`px-4 py-2 text-sm ${
             theme === "dark"
               ? "bg-primary-surface border-primary-border text-primary-surface-content"
@@ -337,6 +339,7 @@ const TokenCatalog = () => {
 
         <div className="flex gap-2 mb-4 flex-wrap">
           <button
+            type="button"
             onClick={() => {
               setActiveCategory("all");
               setActiveColorSubcategory("all");
@@ -351,6 +354,7 @@ const TokenCatalog = () => {
           </button>
           {Object.keys(categoryDescriptions).map((category) => (
             <button
+              type="button"
               key={category}
               onClick={() => {
                 setActiveCategory(category);
@@ -372,6 +376,7 @@ const TokenCatalog = () => {
         {activeCategory === "colors" && (
           <div className="flex gap-2 mb-4 flex-wrap">
             <button
+              type="button"
               onClick={() => setActiveColorSubcategory("all")}
               className={`py-1.5 px-3 rounded border text-sm cursor-pointer ${
                 activeColorSubcategory === "all"
@@ -383,6 +388,7 @@ const TokenCatalog = () => {
             </button>
             {Object.keys(colorSubcategoryDescriptions).map((subcategory) => (
               <button
+                type="button"
                 key={subcategory}
                 onClick={() => {
                   setActiveColorSubcategory(subcategory);
