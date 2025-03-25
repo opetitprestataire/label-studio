@@ -623,19 +623,37 @@ const TokenCategorized = () => {
                     <div
                       className="w-5 h-5"
                       style={{
-                        backgroundColor: `var(--color-${subCategory === "primitives" ? "grape-500" : subCategory === "neutral" ? "neutral-surface" : "accent-grape-bold"})`,
+                        backgroundColor: `var(--color-${
+                          subCategory === "primitives"
+                            ? "grape-500"
+                            : subCategory === "neutral"
+                              ? "neutral-surface"
+                              : "accent-grape-bold"
+                        })`,
                       }}
                     />
                     <div
                       className="w-5 h-5"
                       style={{
-                        backgroundColor: `var(--color-${subCategory === "primitives" ? "blueberry-500" : subCategory === "neutral" ? "neutral-surface-hover" : "accent-blueberry-bold"})`,
+                        backgroundColor: `var(--color-${
+                          subCategory === "primitives"
+                            ? "blueberry-500"
+                            : subCategory === "neutral"
+                              ? "neutral-surface-hover"
+                              : "accent-blueberry-bold"
+                        })`,
                       }}
                     />
                     <div
                       className="w-5 h-5"
                       style={{
-                        backgroundColor: `var(--color-${subCategory === "primitives" ? "kale-500" : subCategory === "neutral" ? "neutral-surface-active" : "accent-kale-bold"})`,
+                        backgroundColor: `var(--color-${
+                          subCategory === "primitives"
+                            ? "kale-500"
+                            : subCategory === "neutral"
+                              ? "neutral-surface-active"
+                              : "accent-kale-bold"
+                        })`,
                       }}
                     />
                   </div>
@@ -643,19 +661,37 @@ const TokenCategorized = () => {
                     <div
                       className="w-5 h-5"
                       style={{
-                        backgroundColor: `var(--color-${subCategory === "primitives" ? "kiwi-500" : subCategory === "neutral" ? "neutral-border" : "accent-kiwi-bold"})`,
+                        backgroundColor: `var(--color-${
+                          subCategory === "primitives"
+                            ? "kiwi-500"
+                            : subCategory === "neutral"
+                              ? "neutral-border"
+                              : "accent-kiwi-bold"
+                        })`,
                       }}
                     />
                     <div
                       className="w-5 h-5"
                       style={{
-                        backgroundColor: `var(--color-${subCategory === "primitives" ? "mango-500" : subCategory === "neutral" ? "neutral-border-subtle" : "accent-mango-bold"})`,
+                        backgroundColor: `var(--color-${
+                          subCategory === "primitives"
+                            ? "mango-500"
+                            : subCategory === "neutral"
+                              ? "neutral-border-subtle"
+                              : "accent-mango-bold"
+                        })`,
                       }}
                     />
                     <div
                       className="w-5 h-5"
                       style={{
-                        backgroundColor: `var(--color-${subCategory === "primitives" ? "persimmon-500" : subCategory === "neutral" ? "neutral-border-subtler" : "accent-persimmon-bold"})`,
+                        backgroundColor: `var(--color-${
+                          subCategory === "primitives"
+                            ? "persimmon-500"
+                            : subCategory === "neutral"
+                              ? "neutral-border-subtler"
+                              : "accent-persimmon-bold"
+                        })`,
                       }}
                     />
                   </div>
@@ -663,19 +699,37 @@ const TokenCategorized = () => {
                     <div
                       className="w-5 h-5"
                       style={{
-                        backgroundColor: `var(--color-${subCategory === "primitives" ? "plum-500" : subCategory === "neutral" ? "neutral-content" : "accent-plum-bold"})`,
+                        backgroundColor: `var(--color-${
+                          subCategory === "primitives"
+                            ? "plum-500"
+                            : subCategory === "neutral"
+                              ? "neutral-content"
+                              : "accent-plum-bold"
+                        })`,
                       }}
                     />
                     <div
                       className="w-5 h-5"
                       style={{
-                        backgroundColor: `var(--color-${subCategory === "primitives" ? "fig-500" : subCategory === "neutral" ? "neutral-content-subtle" : "accent-fig-bold"})`,
+                        backgroundColor: `var(--color-${
+                          subCategory === "primitives"
+                            ? "fig-500"
+                            : subCategory === "neutral"
+                              ? "neutral-content-subtle"
+                              : "accent-fig-bold"
+                        })`,
                       }}
                     />
                     <div
                       className="w-5 h-5"
                       style={{
-                        backgroundColor: `var(--color-${subCategory === "primitives" ? "sand-500" : subCategory === "neutral" ? "neutral-content-subtler" : "accent-sand-bold"})`,
+                        backgroundColor: `var(--color-${
+                          subCategory === "primitives"
+                            ? "sand-500"
+                            : subCategory === "neutral"
+                              ? "neutral-content-subtler"
+                              : "accent-sand-bold"
+                        })`,
                       }}
                     />
                   </div>
