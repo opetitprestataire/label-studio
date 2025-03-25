@@ -676,7 +676,7 @@ function hexToRgb(hex, raw = false) {
   }
 
   // Return RGB format
-  return raw ? `${r} ${g} ${b}` : `rgb(${r}, ${g}, ${b})`;
+  return raw ? `${r} ${g} ${b}` : `rgb(${r} ${g} ${b})`;
 }
 
 /**
