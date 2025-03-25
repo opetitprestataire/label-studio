@@ -271,6 +271,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
     AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const naturalSize = await AtImageView.getNaturalSize();
