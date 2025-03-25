@@ -18,7 +18,7 @@ const meta: Meta<typeof Select> = {
         <div>
           <Select
             options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-            label="searchable select"
+            placeholder="searchable select"
             searchable={true}
             {...args}
           />
@@ -27,7 +27,6 @@ const meta: Meta<typeof Select> = {
           <Select
             placeholder="inline select"
             options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-            label="inline"
             isInline={true}
             {...args}
           />
@@ -38,15 +37,6 @@ const meta: Meta<typeof Select> = {
             options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
             label="required"
             required={true}
-            {...args}
-          />
-        </div>
-        <div>
-          <Select
-            placeholder="Select a fruit"
-            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-            label="error"
-            value="Blueberry"
             {...args}
           />
         </div>
@@ -83,6 +73,14 @@ const meta: Meta<typeof Select> = {
               "Pineapple",
             ]}
             label="Fancy option"
+            {...args}
+          />
+        </div>
+        <div>
+          <Select
+            placeholder="custom testid"
+            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+            data-testid="my-select"
             {...args}
           />
         </div>
