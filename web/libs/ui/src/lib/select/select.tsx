@@ -219,7 +219,7 @@ export const Select = forwardRef(
             </CommandList>
           </Command>
         </PopoverContent>
-        <input  {...props} type="hidden" name={props?.name} value={value} ref={ref} disabled={disabled} />
+        <input {...props} type="hidden" name={props?.name} value={value} ref={ref} disabled={disabled} />
       </Popover>
     );
     // return (
