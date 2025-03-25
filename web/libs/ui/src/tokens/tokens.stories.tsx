@@ -126,6 +126,13 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
     }
   };
 
+  // Get the token value name and path
+  const tokens = tokenName.split(".");
+  let tokenValueName = tokens.pop() || tokenName;
+  if (tokenValueName === "DEFAULT") {
+    tokenValueName = tokens.pop() || tokenName;
+  }
+
   return (
     <div
       ref={elementRef}
@@ -211,8 +218,8 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
         <div className="flex-1 flex flex-col gap-1">
           <div className="flex justify-between items-center">
             <div className="flex flex-col">
-              <div className="text-black text-sm font-bold break-words">{tokenName.split(".").pop() || tokenName}</div>
-              <div className="text-[10px] text-gray-400 -mt-1">{tokenName.split(".").slice(0, -1).join(".")}</div>
+              <div className="text-black text-sm font-bold break-words">{tokenValueName}</div>
+              <div className="text-[10px] text-gray-400 -mt-1">{tokens.join(".")}</div>
             </div>
 
             <span className="text-xs text-black text-right">{computedValue || "..."}</span>
