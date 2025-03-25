@@ -277,7 +277,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
     I.pressKey(Shape.hotKey);
     drawShapeByBbox(Shape, 50, 50, 300, 300, AtImageView);
     AtSidebar.seeRegions(1);
-    AtSidebar.dontElement(AtSidebar._incompleteStateBadge);
+    AtSidebar.dontSeeElement(AtSidebar._incompleteStateBadge);
 
     // Select the shape
     AtImageView.clickAt(100, 100);

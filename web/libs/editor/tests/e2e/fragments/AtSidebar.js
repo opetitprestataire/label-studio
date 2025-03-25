@@ -56,6 +56,9 @@ module.exports = {
   seeElement(locator) {
     I.seeElement(this.locate(locator));
   },
+  dontSeeElement(locator) {
+    I.dontSeeElement(this.locate(locator));
+  },
   clickRegion(text) {
     I.click(this._regionLocator.withText(`${text}`));
   },
