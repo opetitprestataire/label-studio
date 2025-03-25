@@ -51,6 +51,8 @@ const ThemeToggle = () => {
   );
 };
 
+const pxToRem = (px: number) => `${px / 16}rem`;
+
 // Token categories and their descriptions
 const categoryDescriptions: Record<string, string> = {
   colors: "Color tokens for UI elements including semantic, and scale colors",
@@ -669,9 +671,15 @@ const TokenCategorized = () => {
   const generateTypographyPreview = () => {
     return (
       <div className="flex flex-col gap-2 mt-4">
-        <div style={{ fontSize: "var(--font-size-12)", lineHeight: "var(--line-height-16)" }}>Font Size 12px</div>
-        <div style={{ fontSize: "var(--font-size-14)", lineHeight: "var(--line-height-20)" }}>Font Size 14px</div>
-        <div style={{ fontSize: "var(--font-size-16)", lineHeight: "var(--line-height-24)" }}>Font Size 16px</div>
+        <div style={{ fontSize: "var(--font-size-12)", lineHeight: "var(--line-height-16)" }}>
+          Font Size 12: {pxToRem(12)}
+        </div>
+        <div style={{ fontSize: "var(--font-size-14)", lineHeight: "var(--line-height-20)" }}>
+          Font Size 14: {pxToRem(14)}
+        </div>
+        <div style={{ fontSize: "var(--font-size-16)", lineHeight: "var(--line-height-24)" }}>
+          Font Size 16: {pxToRem(16)}
+        </div>
       </div>
     );
   };
