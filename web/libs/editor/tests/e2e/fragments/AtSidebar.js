@@ -8,6 +8,7 @@ module.exports = {
   _regionSelectedLocator: locate('[data-testid="regionitem:selected=true"]'),
   _regionUnselectedLocator: locate('[data-testid="regionitem:selected=false"]'),
   _selectedRegionsLocator: locate(".lsf-entity"),
+  _incompleteStateBadge: locate(".lsf-node__incomplete"),
   seeRegions(count) {
     if (count) {
       I.seeElement(this._regionsCounterLocator.withText(`${count}`));
