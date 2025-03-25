@@ -37,8 +37,7 @@ export const Select = forwardRef(
     ref: ForwardedRef<HTMLSelectElement>,
   ) => {
     const [query, setQuery] = useState<string>("");
-    let initialValue =
-      defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
+    let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
 
     if (multiple) {
       initialValue = Array.isArray(initialValue) ? initialValue ?? [] : [initialValue];
@@ -209,7 +208,9 @@ export const Select = forwardRef(
 
     if (label) {
       return (
-        <Label required={required} description={description} text={label} {...labelProps}>{combobox}</Label>
+        <Label required={required} description={description} text={label} {...labelProps}>
+          {combobox}
+        </Label>
       );
     }
     return combobox;
