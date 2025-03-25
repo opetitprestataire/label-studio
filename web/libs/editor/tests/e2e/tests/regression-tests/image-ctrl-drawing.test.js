@@ -181,7 +181,7 @@ Scenario("How it works without ctrl", async ({ I, LabelStudio, AtOutliner, AtIma
 
   I.amOnPage("/");
   LabelStudio.init(params);
-  AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   const canvasSize = await AtImageView.getCanvasSize();
   const size = Math.min(canvasSize.width, canvasSize.height);
@@ -214,7 +214,7 @@ Scenario("How it works without ctrl", async ({ I, LabelStudio, AtOutliner, AtIma
     if (innerRegion.shape === "Brush") continue;
 
     LabelStudio.init(params);
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     I.say(`Drawing ${innerRegion.shape} on ${outerRegion.shape}`);
     I.pressKey(["u"]);
