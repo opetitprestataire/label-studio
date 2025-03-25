@@ -250,9 +250,8 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
   },
 );
 
-Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer)).Scenario(
-  "Resizing a single region with zoom",
-  async ({ I, LabelStudio, AtImageView, AtSidebar, current }) => {
+Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer))
+  .Scenario("Resizing a single region with zoom", async ({ I, LabelStudio, AtImageView, AtSidebar, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
 
@@ -277,6 +276,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
     I.pressKey(Shape.hotKey);
     drawShapeByBbox(Shape, 50, 50, 300, 300, AtImageView);
     AtSidebar.seeRegions(1);
+    AtSidebar.dontElement(AtSidebar._incompleteStateBadge);
 
     // Select the shape
     AtImageView.clickAt(100, 100);
