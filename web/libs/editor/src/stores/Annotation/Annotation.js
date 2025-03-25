@@ -659,9 +659,10 @@ const _Annotation = types
       self.names.forEach((tag) => tag.needsUpdate && tag.needsUpdate());
       self.updateAppearenceFromState();
       const areas = Array.from(self.areas.values());
+      // It should find just one unfinished region, but just in case we work with array
       const filtered = areas.filter((area) => area.isDrawing);
 
-      // An unfinished region takes control if it exists.
+      // Update UI to reflect the state of an unfinished region in case if it exists
       if (filtered.length) self.regionStore.selection._updateResultsFromRegions(filtered);
     },
     updateAppearenceFromState() {
