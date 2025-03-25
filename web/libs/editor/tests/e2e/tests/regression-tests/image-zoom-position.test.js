@@ -83,7 +83,7 @@ Data(relativeCoordsFF).Scenario(
 
     I.amOnPage("/");
     LabelStudio.init(params);
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(2);
 
     await AtImageView.lookForStage();
@@ -256,7 +256,7 @@ Scenario(
         ...params,
         data: { image: imageUrl },
       });
-      await AtImageView.waitForImage();
+      await LabelStudio.waitForObjectsReady();
 
       AtImageView.selectPanTool();
       I.click("[aria-label='zoom-in']");

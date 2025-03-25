@@ -22,7 +22,7 @@ Scenario(
     I.amOnPage("/");
 
     LabelStudio.init(params);
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
 
     // Zoom in
@@ -75,7 +75,7 @@ Scenario(
     I.resizeWindow(wWidthSmall, wHeight);
 
     LabelStudio.init(params);
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
 
     // Zoom in

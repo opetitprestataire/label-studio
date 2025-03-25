@@ -22,11 +22,11 @@ const data = {
 
 Feature("Two or more same named tools referred same image").tag("@regress");
 
-Scenario("Two RectangleLabels", async ({ I, AtImageView, AtLabels, AtOutliner }) => {
+Scenario("Two RectangleLabels", async ({ I, LabelStudio, AtImageView, AtLabels, AtOutliner }) => {
   I.amOnPage("/");
   I.executeScript(initLabelStudio, { config, data });
 
-  AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   I.executeScript(waitForImage);
 
   AtLabels.clickLabel("Plane");

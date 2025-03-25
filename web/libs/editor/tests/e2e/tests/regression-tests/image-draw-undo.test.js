@@ -110,7 +110,7 @@ Scenario("Drawing shapes and undoing after that", async ({ I, LabelStudio, AtOut
 
   I.amOnPage("/");
   LabelStudio.init(params);
-  AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   const canvasSize = await AtImageView.getCanvasSize();
   const size = Math.min(canvasSize.width, canvasSize.height);
@@ -134,7 +134,7 @@ Scenario("Drawing shapes and undoing after that", async ({ I, LabelStudio, AtOut
   // Running a test scenario for each shape type
   for (const region of regions) {
     LabelStudio.init(params);
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     I.say(`Drawing ${region.shape}`);
     await AtImageView.lookForStage();

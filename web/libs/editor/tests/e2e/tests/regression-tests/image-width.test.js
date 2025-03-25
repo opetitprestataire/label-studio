@@ -20,7 +20,7 @@ Scenario(
 
     I.amOnPage("/");
     LabelStudio.init(params);
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     let canvasSize = await AtImageView.getCanvasSize();
