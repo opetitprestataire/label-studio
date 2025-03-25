@@ -31,6 +31,7 @@ Scenario("Broken limits", async ({ I, LabelStudio, AtOutliner }) => {
     config: createConfig(),
     data: { text: "First line\nSecond line" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(1);
   AtOutliner.clickRegion(1);
   // The potential errors should be caught by `errorsCollector` plugin
@@ -43,6 +44,7 @@ Scenario("The selection in degenerate cases", async ({ I, LabelStudio, AtOutline
     config: createConfig(),
     data: { text: "\n\nThird line" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   I.pressKey("1");
   await AtRichText.selectTextByGlobalOffset(0, 2);
@@ -61,6 +63,7 @@ Scenario("Exactly 1 word", async ({ I, LabelStudio, AtOutliner, AtRichText }) =>
     config: createConfig("Text", "word"),
     data: { text: "Somé wórds\n\nwíth\n\nmultiline" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   I.pressKey("1");
   AtRichText.dblClickOnWord("Somé");
@@ -81,6 +84,7 @@ Scenario("Trim spaces around the word", async ({ I, LabelStudio, AtOutliner, AtR
     config: createConfig("Text", "word"),
     data: { text: "One two three four five six" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   I.pressKey("1");
   AtRichText.dblClickOnWord("four");
@@ -107,6 +111,7 @@ Scenario("Trim spaces with BRs", async ({ I, LabelStudio, AtOutliner, AtRichText
     config: createConfig("Text", "word"),
     data: { text: "Three\n\n\nBRs\n\n\ntrim test" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   I.pressKey("1");
   await AtRichText.selectTextByGlobalOffset(5, 14);
@@ -129,6 +134,7 @@ Scenario("Overlap checks", async ({ I, LabelStudio, AtOutliner, AtRichText }) =>
     config: createConfig(),
     data: { text: "Halfword" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   I.pressKey("1");
   await AtRichText.selectTextByGlobalOffset(0, 4);
@@ -151,6 +157,7 @@ Scenario("Non-standard characters in words", async ({ I, LabelStudio, AtOutliner
     config: createConfig("Text", "word"),
     data: { text: "Somé wórds" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   I.pressKey("1");
   await AtRichText.selectTextByGlobalOffset(0, 5);
@@ -171,6 +178,7 @@ Scenario("Should not select words from next line", async ({ I, LabelStudio, AtOu
     config: createConfig("Text", "word"),
     data: { text: "Оne\nline" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   I.pressKey("1");
   AtRichText.setSelection(AtRichText.locateText(), 0, AtRichText.locateRoot(), 2);
@@ -192,6 +200,7 @@ Scenario("Trying to select alt attr", async ({ I, LabelStudio, AtOutliner, AtRic
     config: createConfig("HyperText", "word"),
     data: { text: "The bad <img alt='image'> we got here" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   I.pressKey("1");
   AtRichText.dblClickOnElement('img[alt="image"]');
@@ -257,6 +266,7 @@ Scenario("Neighboring nested regions misplacement", async ({ I, LabelStudio, AtO
 </View>`,
     data: { text: "<div>Catfish</div>" },
   });
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(3);
 
   within({ frame: ".lsf-richtext__iframe" }, () => {
