@@ -10,6 +10,16 @@ export type SelectOptionData<T = any> = {
 
 export type SelectOption<T> = string | number | SelectOptionData<T>;
 
+export type OptionProps = {
+  value: any;
+  label?: string;
+  isOptionSelected?: boolean;
+  disabled?: boolean;
+  style?: any;
+  multiple?: boolean;
+  onSelect?: () => void;
+};
+
 type ExtractStructOption<T> = T extends SelectOptionData ? T["value"] : never;
 type ExtractPrimitiveOption<T> = T extends string | number ? T : never;
 export type ExtractOption<T> = T extends SelectOption<any>

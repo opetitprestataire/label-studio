@@ -25,10 +25,6 @@ const Select = ({ label, className, options, validate, required, skip, labelProp
     return groupedOptions;
   }, {});
 
-  const renderOptions = (option) => {
-    return <SelectOption {...(option.value ? { ...option, key: option.value } : { value: option, key: option })} />;
-  };
-
   const classList = rootClass.mod({ ghost }).mix(className);
 
   useEffect(() => {

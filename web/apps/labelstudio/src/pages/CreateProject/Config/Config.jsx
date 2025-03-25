@@ -164,7 +164,14 @@ const ConfigureSettings = ({ template }) => {
         };
         return (
           <li key={key}>
-            <Select className="border" value={value} onChange={onChange} options={options.type} label={options.title} />
+            <Select
+              className="border"
+              value={value}
+              onChange={onChange}
+              options={options.type}
+              label={options.title}
+              isInline={true}
+            />
           </li>
         );
       case Boolean:

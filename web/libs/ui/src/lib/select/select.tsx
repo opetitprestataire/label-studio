@@ -9,8 +9,8 @@ import {
   CommandList,
 } from "@humansignal/shad/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@humansignal/shad/components/ui/popover";
-import type { SelectOption, SelectProps } from "./types.ts";
-import { Checkbox } from "@humansignal/ui";
+import type { SelectOption, OptionProps, SelectProps } from "./types.ts";
+import { Checkbox, Label } from "@humansignal/ui";
 import { isDefined } from "@humansignal/core/lib/utils/helpers";
 import { IconCheck, IconChevron, IconChevronDown } from "@humansignal/icons";
 import clsx from "clsx";
@@ -38,14 +38,8 @@ export const Select = forwardRef(
   ) => {
     const [query, setQuery] = useState<string>("");
     let initialValue =
-      defaultValue?.value ??
-      defaultValue ??
-      externalValue?.value ??
-      externalValue ??
-      options?.[0]?.value ??
-      options?.[0]?.children?.[0]?.value ??
-      options?.[0]?.children?.[0] ??
-      options?.[0];
+      (defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue) ||
+      (options?.[0]?.value ?? options?.[0]?.children?.[0]?.value ?? options?.[0]?.children?.[0] ?? options?.[0]);
 
     if (multiple) {
       initialValue = Array.isArray(initialValue) ? initialValue ?? [] : [initialValue];
@@ -114,7 +108,7 @@ export const Select = forwardRef(
       return flatOptions.filter((option) => isSelected(option));
     }, [flatOptions, isSelected, value, multiple]);
 
-    return (
+    const combobox = (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild disabled={disabled}>
           <button
@@ -162,57 +156,42 @@ export const Select = forwardRef(
                   if (children) {
                     return (
                       <CommandGroup key={index}>
-                        <div>{label}</div>
+                        <div className="font-bold">{label}</div>
                         {children.map((item, i) => {
                           const val = item?.value ?? item;
                           const lab = item?.label ?? val;
                           const isChildOptionSelected = isSelected(val);
                           return (
-                            <CommandItem
+                            <Option
                               key={`${val}_${i}`}
                               value={val}
+                              label={lab}
+                              isOptionSelected={isChildOptionSelected}
+                              disabled={item?.disabled}
+                              style={item?.style}
+                              multiple={multiple}
                               onSelect={() => {
                                 _onChange(val, isChildOptionSelected);
                               }}
-                              disabled={option?.disabled}
-                              {...(item?.disabled ? { "data-disabled": true } : {})}
-                              {...(item?.style ? { style: item.style } : {})}
-                            >
-                              {multiple ? (
-                                <Checkbox
-                                  className={clsx("mr-2 h-4 w-4", isChildOptionSelected ? "opacity-100" : "opacity-0")}
-                                  checked={isChildOptionSelected}
-                                />
-                              ) : isChildOptionSelected ? (
-                                <IconCheck className="mr-2 h-4 w-4" />
-                              ) : null}
-                              {lab}
-                            </CommandItem>
+                            />
                           );
                         })}
                       </CommandGroup>
                     );
                   }
                   return (
-                    <CommandItem
+                    <Option
                       key={`${optionValue}_${index}`}
                       value={optionValue}
+                      label={label}
+                      isOptionSelected={isOptionSelected}
+                      disabled={option?.disabled}
+                      style={option?.style}
+                      multiple={multiple}
                       onSelect={() => {
-                        console.log("optionValue", optionValue);
                         _onChange(optionValue, isOptionSelected);
                       }}
-                      disabled={option?.disabled}
-                    >
-                      {multiple ? (
-                        <Checkbox
-                          className={clsx("mr-2 h-4 w-4", isOptionSelected ? "opacity-100" : "opacity-0")}
-                          checked={isOptionSelected}
-                        />
-                      ) : isOptionSelected ? (
-                        <IconCheck className="mr-2 h-4 w-4" />
-                      ) : null}
-                      {label}
-                    </CommandItem>
+                    />
                   );
                 })}
               </CommandGroup>
@@ -222,66 +201,43 @@ export const Select = forwardRef(
         <input {...props} type="hidden" name={props?.name} value={value} ref={ref} disabled={disabled} />
       </Popover>
     );
-    // return (
-    //   <SelectComponent value={value} onValueChange={_onChange} disabled={disabled} {...props}>
-    //     {label && <Label {...labelProps}>{label}</Label>}
-    //     <SelectTrigger disabled={disabled} {...(props?.triggerProps ?? {})}>
-    //       <SelectValue placeholder={props?.placeholder}  data-testid="select"/>
-    //     </SelectTrigger>
-    //     <SelectContent>
-    //       {searchable && (
-    //         <div className="search">
-    //           <input
-    //             className="border border-gray-300 text-gray-900 text-md rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full px-3 py-2"
-    //             type="text"
-    //             placeholder={searchPlaceholder ?? "Search"}
-    //             value={query}
-    //             onChange={(e) => setQuery(e.target.value)}
-    //           />
-    //         </div>
-    //       )}
-    //       {_options.map((option, index) => {
-    //         const value = option?.value ?? option;
-    //         const label = option?.label ?? value;
-    //         const children = option?.children;
 
-    //         if (children) {
-    //           return (
-    //             <SelectGroup key={index}>
-    //               <SelectLabel>{label}</SelectLabel>
-    //               {children.map((item, i) => {
-    //                 const val = item?.value ?? item;
-    //                 const lab = item?.label ?? val;
-    //                 return (
-    //                   <SelectItem
-    //                     key={`${lab}_${i}`}
-    //                     value={val}
-    //                     {...(item?.disabled ? { "data-disabled": true } : {})}
-    //                     {...(item?.style ? { style: item.style } : {})}
-    //                   >
-    //                     {lab}
-    //                   </SelectItem>
-    //                 );
-    //               })}
-    //             </SelectGroup>
-    //           );
-    //         }
-
-    //         return (
-    //           <SelectItem
-    //             key={index}
-    //             value={value}
-    //             {...(option?.disabled ? { "data-disabled": true } : {})}
-    //             {...(option?.style ? { style: option.style } : {})}
-    //           >
-    //             {label}
-    //           </SelectItem>
-    //         );
-    //       })}
-    //     </SelectContent>
-    //   </SelectComponent>
-    // );
+    if (label) {
+      return (
+        <div className="flex gap-1">
+          <Label className="text-sm font-medium text-gray-700" {...labelProps}>
+            {label}
+            {required && <span className="text-red-600">*</span>}
+          </Label>
+          {description && <p className="text-sm text-gray-500">{description}</p>}
+          {combobox}
+        </div>
+      );
+    }
+    return combobox;
   },
 );
+
+const Option = ({ value, label, isOptionSelected, disabled, style, multiple, onSelect }: OptionProps) => {
+  return (
+    <CommandItem
+      value={value}
+      onSelect={onSelect}
+      disabled={disabled}
+      {...(disabled ? { "data-disabled": true } : {})}
+      {...(style ? { style } : {})}
+    >
+      {multiple ? (
+        <Checkbox
+          className={clsx("mr-2 h-4 w-4", isOptionSelected ? "opacity-100" : "opacity-0")}
+          checked={isOptionSelected}
+        />
+      ) : isOptionSelected ? (
+        <IconCheck className="mr-2 h-4 w-4" />
+      ) : null}
+      {label}
+    </CommandItem>
+  );
+};
 
 Select.displayName = "Select";
