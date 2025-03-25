@@ -73,24 +73,6 @@ module.exports = {
         ...tokens.colors,
       },
       fontSize: {
-        metatitle: ["12px", "20px"],
-        sectiontitle: ["14px", "22px"],
-        regular: ["16px", "26px"],
-        metatitle3: ["18px", "26px"],
-        metatitle2: ["20px", "32px"],
-        para2: ["22px", "35px"],
-        itemtitle: ["26px", "32px"],
-        itemtitle2: ["24px", "32px"],
-        hero: ["44px", "58px"],
-        sectiontitle3: ["44px", "55px"],
-        sectiontitle2: ["40px", "52px"],
-        sectiontitle4: ["34px", "48px"],
-        // LS styles
-        lsLabelMedium: ["16px", "24px"],
-        lsLabelSmall: ["14px", "8px"],
-        lsLabelSmaller: ["12px", "16px"],
-        lsLabelSmallest: ["11px", "16px"],
-
         // Add all font sizes from tokens
         ...tokens.typography.fontSize,
       },

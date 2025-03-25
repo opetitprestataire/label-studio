@@ -89,7 +89,7 @@ export const HomePage: Page = () => {
               return (
                 <Button
                   key={action.title}
-                  className="flex-grow-0 text-lsLabelMedium text-primary-content text-left justify-start min-w-[250px] [&_svg]:w-6 [&_svg]:h-6"
+                  className="flex-grow-0 text-16/24 text-primary-content text-left justify-start min-w-[250px] [&_svg]:w-6 [&_svg]:h-6"
                   variant="lsOutline"
                   onClick={handleActions(action.type)}
                 >
@@ -119,7 +119,7 @@ export const HomePage: Page = () => {
             ) : isError ? (
               <div className="h-64 flex justify-center items-center">can't load projects</div>
             ) : isSuccess && data.results.length === 0 ? (
-              <div className="flex flex-col justify-center items-center border border-primary-border-subtle bg-lsPrimaryEmphasisSubtle rounded-lg h-64">
+              <div className="flex flex-col justify-center items-center border border-primary-border-subtle bg-primary-emphasis-subtle rounded-lg h-64">
                 <div
                   className={
                     "rounded-full w-12 h-12 flex justify-center items-center bg-accent-grape-subtle text-primary-icon"
