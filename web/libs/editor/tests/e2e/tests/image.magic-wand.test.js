@@ -1,10 +1,4 @@
-const {
-  initLabelStudio,
-  doDrawingAction,
-  hasKonvaPixelColorAtPoint,
-  setKonvaLayersOpacity,
-  serialize,
-} = require("./helpers");
+const { doDrawingAction, hasKonvaPixelColorAtPoint, setKonvaLayersOpacity, serialize } = require("./helpers");
 const assert = require("assert");
 
 Feature("Test Image Magic Wand");
@@ -71,11 +65,10 @@ Scenario(
 
     I.amOnPage("/");
 
-    I.executeScript(initLabelStudio, params);
+    LabelStudio.init(params);
 
-    AtImageView.waitForImage();
     AtDetailsPanel.collapsePanel();
-    await LabelStudio.waitForObjectsReady();
+    LabelStudio.waitForObjectsReady();
     await AtImageView.lookForStage();
 
     I.say("Making sure magic wand button is present");

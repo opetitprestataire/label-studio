@@ -116,7 +116,6 @@ Scenario("Drawing with ctrl pressed", async ({ I, LabelStudio, AtOutliner, AtIma
   I.amOnPage("/");
   LabelStudio.init(params);
   AtDetailsPanel.collapsePanel();
-  AtImageView.waitForImage();
   LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   const canvasSize = await AtImageView.getCanvasSize();
@@ -146,7 +145,6 @@ Scenario("Drawing with ctrl pressed", async ({ I, LabelStudio, AtOutliner, AtIma
     const [outerRegion, innerRegion] = regionPair;
 
     LabelStudio.init(params);
-    AtImageView.waitForImage();
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     I.say(`Drawing ${innerRegion.shape} on ${outerRegion.shape}`);

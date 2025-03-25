@@ -256,7 +256,7 @@ Scenario(
         ...params,
         data: { image: imageUrl },
       });
-      await LabelStudio.waitForObjectsReady();
+      LabelStudio.waitForObjectsReady();
 
       AtImageView.selectPanTool();
       I.click("[aria-label='zoom-in']");

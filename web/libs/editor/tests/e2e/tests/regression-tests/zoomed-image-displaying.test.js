@@ -21,7 +21,7 @@ Scenario("Image displaying precision.", async ({ I, LabelStudio, AtImageView, At
   I.amOnPage("/");
 
   LabelStudio.init(params);
-  AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
 
   const { imageTransform } = await I.executeScript(async () => {

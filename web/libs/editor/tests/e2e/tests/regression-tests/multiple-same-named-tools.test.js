@@ -1,4 +1,4 @@
-const { initLabelStudio, dragKonva, waitForImage, serialize } = require("../helpers");
+const { dragKonva, serialize } = require("../helpers");
 const assert = require("assert");
 
 const config = `
@@ -22,12 +22,11 @@ const data = {
 
 Feature("Two or more same named tools referred same image").tag("@regress");
 
-Scenario("Two RectangleLabels", async ({ I, LabelStudio, AtImageView, AtLabels, AtOutliner }) => {
+Scenario("Two RectangleLabels", async ({ I, LabelStudio, AtLabels, AtOutliner }) => {
   I.amOnPage("/");
-  I.executeScript(initLabelStudio, { config, data });
+  LabelStudio.init({ config, data });
 
   LabelStudio.waitForObjectsReady();
-  I.executeScript(waitForImage);
 
   AtLabels.clickLabel("Plane");
   I.executeScript(dragKonva, [300, 300, 50, 50]);

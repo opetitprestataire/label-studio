@@ -18,8 +18,7 @@ Scenario(
     </View>`,
     });
 
-    await AtImageView.waitForImage();
-    await LabelStudio.waitForObjectsReady();
+    LabelStudio.waitForObjectsReady();
 
     AtOutliner.seeRegions(0);
     AtOutliner.dontSeeSelectedRegion();
@@ -80,8 +79,7 @@ Scenario(
     </Labels>
   </View>`,
     });
-    await AtImageView.waitForImage();
-    await LabelStudio.waitForObjectsReady();
+    LabelStudio.waitForObjectsReady();
 
     AtOutliner.seeRegions(0);
     AtOutliner.dontSeeSelectedRegion();

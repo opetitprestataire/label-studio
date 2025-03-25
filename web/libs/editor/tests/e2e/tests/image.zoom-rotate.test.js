@@ -121,7 +121,7 @@ Data(shapesTable).Scenario(
     I.amOnPage("/");
     LabelStudio.init(params);
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     const canvasSize = await AtImageView.getCanvasSize();
 
@@ -163,7 +163,7 @@ Data(shapesTable).Scenario("Rotate zoomed", async ({ I, LabelStudio, AtImageView
   I.amOnPage("/");
   LabelStudio.init(params);
   AtDetailsPanel.collapsePanel();
-  AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   const canvasSize = await AtImageView.getCanvasSize();
 
@@ -217,7 +217,7 @@ Data(windowSizesTable).Scenario(
     if (current.width > 1000) {
       AtDetailsPanel.collapsePanel();
     }
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     const canvasSize = await AtImageView.getCanvasSize();
     const imageSize = await AtImageView.getImageFrameSize();
@@ -329,7 +329,7 @@ Data(layoutVariations).Scenario(
 
     LabelStudio.init(params);
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(1);
 
     I.click(locate("[aria-label='rotate-right']"));

@@ -40,7 +40,7 @@ Scenario("Basic scenario", async ({ I, LabelStudio, AtImageView, AtSettings, AtL
       preserveSelectedTool: false,
     },
   });
-  AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   AtSettings.open();
   AtSettings.setGeneralSettings({
     [AtSettings.GENERAL_SETTINGS.AUTO_SELECT_REGION]: true,
@@ -165,7 +165,7 @@ Scenario(
   async ({ I, LabelStudio, AtImageView, AtSettings, AtLabels, AtOutliner }) => {
     I.amOnPage("/");
     LabelStudio.init({ config: createConfig(), data });
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtSettings.open();
     AtSettings.setGeneralSettings({
       [AtSettings.GENERAL_SETTINGS.SHOW_LABELS]: true,
@@ -211,7 +211,7 @@ Scenario(
     session("Deserialization", () => {
       I.amOnPage("/");
       LabelStudio.init({ config: createConfig(), data, annotations: [{ id: "test", result: results }] });
-      AtImageView.waitForImage();
+      LabelStudio.waitForObjectsReady();
       AtOutliner.seeRegions(regions.length);
       for (const [idx, region] of Object.entries(regions)) {
         if (region.text) {

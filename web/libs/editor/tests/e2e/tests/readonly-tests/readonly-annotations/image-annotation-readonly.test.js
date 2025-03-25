@@ -32,7 +32,7 @@ Data(imageExamples).Scenario(
 
     LabelStudio.init(params);
 
-    await AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     await AtImageView.lookForStage();
 
     I.say(`Running against ${current.example.title}`);

@@ -1,4 +1,4 @@
-const { initLabelStudio, serialize, convertToFixed, getSizeConvertor } = require("./helpers");
+const { serialize, convertToFixed, getSizeConvertor } = require("./helpers");
 
 const assert = require("assert");
 
@@ -178,9 +178,8 @@ Scenario("Creating regions by various gestures", async ({ I, LabelStudio, AtImag
   const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
   I.amOnPage("/");
-  await I.executeScript(initLabelStudio, params);
+  LabelStudio.init(params);
   AtDetailsPanel.collapsePanel();
-  AtImageView.waitForImage();
   LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   const canvasSize = await AtImageView.getCanvasSize();

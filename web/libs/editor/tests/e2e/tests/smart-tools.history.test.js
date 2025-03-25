@@ -533,7 +533,7 @@ Scenario("Undo regions auto-annotated from predictions", async ({ I, LabelStudio
   LabelStudio.setFeatureFlags({
     fflag_fix_front_dev_1284_auto_detect_undo_281022_short: true,
   });
-  AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
   await AtImageView.lookForStage();
   I.say("Select magic tool");
@@ -582,7 +582,7 @@ Scenario(
     LabelStudio.setFeatureFlags({
       fflag_fix_front_dev_1284_auto_detect_undo_281022_short: true,
     });
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     I.say("Select magic tool");

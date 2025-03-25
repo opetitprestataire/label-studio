@@ -36,7 +36,6 @@ Scenario(
 
     I.amOnPage("/");
     LabelStudio.init(params);
-    AtImageView.waitForImage();
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -89,7 +88,7 @@ Scenario(
         annotations: [{ id: "imported", result: annotation }],
       });
 
-      AtImageView.waitForImage();
+      LabelStudio.waitForObjectsReady();
       // Check that relation still exist
       AtDetails.seeRelations(1);
       // move tool is already selected and stored so we don't need to select it again

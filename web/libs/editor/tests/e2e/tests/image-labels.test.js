@@ -128,7 +128,7 @@ DataStore.Scenario(
     I.amOnPage("/");
     LabelStudio.init(params);
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     const canvasSize = await AtImageView.getCanvasSize();
     const size = Math.min(canvasSize.width, canvasSize.height);
@@ -170,7 +170,7 @@ DataStore.Scenario(
       const toolSelector = `[aria-label=${toKebabCase(`${shape}-tool`)}]`;
 
       LabelStudio.init(params);
-      AtImageView.waitForImage();
+      LabelStudio.waitForObjectsReady();
       AtOutliner.seeRegions(0);
       I.click(toolSelector);
       await AtImageView.lookForStage();

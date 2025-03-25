@@ -1,5 +1,3 @@
-const { initLabelStudio } = require("./helpers");
-
 Feature("Test required param");
 
 const createConfig = ({ visibleWhen = "choice-selected" } = {}) => {
@@ -84,7 +82,7 @@ const result = {
 };
 const annotations = [{ id: "1", result: [result] }];
 
-Scenario("Check required param", async ({ I }) => {
+Scenario("Check required param", async ({ I, LabelStudio }) => {
   const params = { config: createConfig(), data: { text } };
 
   const waitForError = (name) => {
@@ -97,7 +95,7 @@ Scenario("Check required param", async ({ I }) => {
   };
 
   I.amOnPage("/");
-  I.executeScript(initLabelStudio, params);
+  LabelStudio.init(params);
 
   // Add new Annotation to be able to submit it
   I.click('[aria-label="Annotations List Toggle"]');
@@ -119,7 +117,7 @@ Scenario("Check required param", async ({ I }) => {
   I.seeAnnotationSubmitted();
 
   // Reload to check another combination
-  I.executeScript(initLabelStudio, params);
+  LabelStudio.init(params);
   // Page is reloaded, there are no new annotation from prev steps
   I.dontSee("New annotation");
   I.click('[aria-label="Annotations List Toggle"]');
@@ -130,7 +128,7 @@ Scenario("Check required param", async ({ I }) => {
   I.see('Checkbox "second" is required');
 });
 
-Scenario("Check required param in complex config", async ({ I, AtOutliner }) => {
+Scenario("Check required param in complex config", async ({ I, LabelStudio, AtOutliner }) => {
   const params = { annotations, config: complex, data: { text } };
 
   const waitForError = (name) => {
@@ -146,7 +144,7 @@ Scenario("Check required param in complex config", async ({ I, AtOutliner }) => 
   };
 
   I.amOnPage("/");
-  I.executeScript(initLabelStudio, params);
+  LabelStudio.init(params);
 
   // we already have an annotation
   I.updateAnnotation();

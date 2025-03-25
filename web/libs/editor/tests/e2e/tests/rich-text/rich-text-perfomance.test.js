@@ -108,7 +108,7 @@ Scenario("Rich text initialization in hightload conditions", async ({ I, LabelSt
     });
   });
   LabelStudio.init(params);
-  await LabelStudio.waitForObjectsReady();
+  LabelStudio.waitForObjectsReady();
   const initDuration = await I.executeScript(() => {
     return window._loadedTime - window._startTime;
   });

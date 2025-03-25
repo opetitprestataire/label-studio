@@ -37,14 +37,8 @@ examples.forEach((example) => {
 
     I.amOnPage("/");
     LabelStudio.init(params);
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(regionsCount);
-
-    if (Utils.xmlTreeHasTag(configTree, "Image")) {
-      AtImageView.waitForImage();
-    }
-    if (Utils.xmlFindBy(configTree, (node) => node["#name"] === "Audio")) {
-      await AtAudioView.waitForAudio();
-    }
 
     if (regionsCount) {
       const restored = await LabelStudio.serialize();
@@ -187,7 +181,7 @@ Scenario("Consistency of empty labels", async ({ I, LabelStudio, AtOutliner, AtI
   LabelStudio.init(params);
   AtDetailsPanel.collapsePanel();
   AtOutliner.seeRegions(0);
-  AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   AtLabels.clickLabel("1");
   AtImageView.dragKonva(200, 200, 100, 100);
   const shapesNum = await AtImageView.countKonvaShapes();

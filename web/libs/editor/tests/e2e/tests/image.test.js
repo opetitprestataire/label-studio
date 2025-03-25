@@ -1,4 +1,4 @@
-const { initLabelStudio, serialize, waitForImage } = require("./helpers");
+const { serialize } = require("./helpers");
 
 const assert = require("assert");
 
@@ -74,10 +74,9 @@ Scenario("Check Rect region for Image", async ({ I, LabelStudio, AtImageView, At
   const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
   I.amOnPage("/");
-  I.executeScript(initLabelStudio, params);
+  LabelStudio.init(params);
   AtDetailsPanel.collapsePanel();
 
-  AtImageView.waitForImage();
   LabelStudio.waitForObjectsReady();
   await AtImageView.lookForStage();
   AtOutliner.seeRegions(1);
@@ -91,7 +90,7 @@ Scenario("Check Rect region for Image", async ({ I, LabelStudio, AtImageView, At
   AtOutliner.dontSeeSelectedRegion();
 });
 
-Scenario("Image with perRegion tags", async ({ I, AtImageView, AtOutliner }) => {
+Scenario("Image with perRegion tags", async ({ I, LabelStudio, AtOutliner }) => {
   let result;
   const params = {
     config: perRegionConfig,
@@ -100,10 +99,9 @@ Scenario("Image with perRegion tags", async ({ I, AtImageView, AtOutliner }) => 
   };
 
   I.amOnPage("/");
-  I.executeScript(initLabelStudio, params);
+  LabelStudio.init(params);
 
-  AtImageView.waitForImage();
-  I.executeScript(waitForImage);
+  LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(1);
   // select first and only region
   AtOutliner.clickRegion(1);
@@ -175,7 +173,7 @@ Data(outOfBoundsFFs).Scenario(
     });
     AtDetailsPanel.collapsePanel();
 
-    await AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     await AtImageView.lookForStage();
 
     const stage = AtImageView.stageBBox();
@@ -241,7 +239,7 @@ Data(outOfBoundsFFs).Scenario(
     });
     AtDetailsPanel.collapsePanel();
 
-    await AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     await AtImageView.lookForStage();
 
     const stage = AtImageView.stageBBox();

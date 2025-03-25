@@ -154,7 +154,7 @@ Data(maxUsageImageToolsDataTable).Scenario(
       ],
     });
     AtDetailsPanel.collapsePanel();
-    await AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     await AtImageView.lookForStage();
     AtOutliner.seeRegions(maxUsage);
 
@@ -182,7 +182,7 @@ Data(maxUsageImageToolsDataTable).Scenario(
     });
     AtDetailsPanel.collapsePanel();
 
-    await AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     await AtImageView.lookForStage();
     AtOutliner.seeRegions(0);
 

@@ -1,7 +1,6 @@
 /* global Feature, Scenario */
 
-const { doDrawingAction, initLabelStudio, waitForImage } = require("./helpers");
-const assert = require("assert");
+const { doDrawingAction } = require("./helpers");
 
 Feature("Test Image Region Stay Selected Between Tools");
 
@@ -44,12 +43,10 @@ async function testRegion(testType, toolAccelerator, I, LabelStudio, AtImageView
 
   I.amOnPage("/");
 
-  I.executeScript(initLabelStudio, params);
+  LabelStudio.init(params);
 
-  AtImageView.waitForImage();
   LabelStudio.waitForObjectsReady();
   await AtImageView.lookForStage();
-  I.executeScript(waitForImage);
 
   I.say(`Select ${testType} & planet class`);
   I.pressKey(toolAccelerator);

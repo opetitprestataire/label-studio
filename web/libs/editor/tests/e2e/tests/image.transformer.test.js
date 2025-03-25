@@ -146,7 +146,7 @@ Data(shapesTable).Scenario(
     LabelStudio.init(getParamsWithLabels(shapeName));
     AtDetailsPanel.collapsePanel();
 
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
 
@@ -214,7 +214,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
@@ -271,7 +271,6 @@ xData(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfo
 
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -325,7 +324,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
@@ -389,7 +388,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
@@ -446,7 +445,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
@@ -605,7 +604,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
 
@@ -697,7 +696,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
 
@@ -806,7 +805,7 @@ Data(
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
@@ -899,7 +898,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionTr
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
@@ -1020,7 +1019,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
@@ -1159,7 +1158,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRo
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
@@ -1353,7 +1352,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasRotator)).Scenar
     I.amOnPage("/");
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();

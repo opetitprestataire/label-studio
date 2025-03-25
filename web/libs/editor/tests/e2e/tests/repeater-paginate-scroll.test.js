@@ -1,5 +1,3 @@
-const { initLabelStudio } = require("./helpers");
-
 Feature("Repeater paginate and scroll");
 
 const data = {
@@ -139,7 +137,7 @@ Scenario("Outliner Regions will paginate view window on region click and page ad
   const params = { config: configPagination, annotations, data };
 
   I.amOnPage("/");
-  I.executeScript(initLabelStudio, params);
+  LabelStudio.init(params);
 
   annotations[0].result.forEach((result) => {
     const label = result.value?.rectanglelabels[0];
@@ -155,7 +153,7 @@ Scenario("Outliner Regions will scroll view window on region click", async ({ I,
   const params = { config: configScroll, annotations, data };
 
   I.amOnPage("/");
-  I.executeScript(initLabelStudio, params);
+  LabelStudio.init(params);
 
   annotations[0].result.forEach((result) => {
     const label = result.value?.rectanglelabels[0];

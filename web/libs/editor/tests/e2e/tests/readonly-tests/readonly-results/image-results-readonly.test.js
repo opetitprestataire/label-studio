@@ -30,7 +30,7 @@ Data(imageExamples).Scenario("Image Readonly Results", async ({ I, current, Labe
     data,
   });
 
-  await AtImageView.waitForImage();
+  LabelStudio.waitForObjectsReady();
   await AtImageView.lookForStage();
 
   I.say(`Running against ${current.example.title}`);

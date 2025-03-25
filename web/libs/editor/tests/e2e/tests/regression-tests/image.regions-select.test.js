@@ -110,7 +110,7 @@ Data(shapesTable).Scenario(
     LabelStudio.init(params);
     LabelStudio.enableSetting("Select regions after creating");
 
-    AtImageView.waitForImage();
+    LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
