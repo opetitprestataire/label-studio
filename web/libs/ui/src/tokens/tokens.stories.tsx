@@ -61,13 +61,13 @@ const categoryDescriptions: Record<string, string> = {
 
 // Color subcategories and their descriptions
 const colorSubcategoryDescriptions: Record<string, string> = {
+  primitives: "Base color scales for the design system",
   neutral: "Neutral colors for backgrounds, text, borders, and other UI elements",
   accent: "Accent colors for highlighting and distinguishing UI elements",
   primary: "Primary brand colors for key UI elements and interactions",
   negative: "Negative/danger colors for error states and destructive actions",
   positive: "Positive/success colors for confirmations and success states",
   warning: "Warning colors for cautionary messages and states",
-  primitives: "Base color scales for the design system",
 };
 
 // Component to render a token value
@@ -312,163 +312,6 @@ const TokenCatalog = () => {
     {} as Record<string, Array<[string, string]>>,
   );
 
-  // Component to showcase raw color values usage
-  const RawColorsUsageGuide = () => {
-    const [theme] = useAtom(themeAtom);
-    // Only show for color category
-    if (activeCategory !== "colors") return null;
-
-    // Find raw color tokens
-    const rawColorTokens = filteredTokens.filter(
-      ([name]) =>
-        name.includes("-raw") && (name.includes("outline") || name.includes("shadow") || name.includes("primary")),
-    );
-
-    if (rawColorTokens.length === 0) return null;
-
-    return (
-      <div className="mb-10 p-4 border border-gray-200 rounded-lg bg-gray-50">
-        <h2 className="text-lg font-semibold mb-2">Using Raw Color Values with Theme Support</h2>
-        <p className="text-sm mb-4">
-          Some color tokens have "-raw" variants that provide RGB values without the rgb() wrapper, allowing you to
-          create translucent versions with custom opacity. These work seamlessly with both light and dark modes.
-        </p>
-
-        <div className="bg-white p-4 rounded border border-gray-200">
-          <h3 className="text-base font-medium mb-2">Examples</h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Primary surface with opacity */}
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium">Primary Surface with Opacity</h4>
-              <div className="flex gap-2">
-                {[25, 50, 75, 100].map((opacity) => (
-                  <div
-                    key={opacity}
-                    className="w-10 h-10 rounded-sm flex items-center justify-center text-xs border border-gray-200"
-                    style={{ backgroundColor: `rgb(var(--color-primary-surface-raw) / ${opacity}%)` }}
-                  >
-                    {opacity}%
-                  </div>
-                ))}
-              </div>
-              <div className="bg-gray-100 p-2 rounded text-xs font-mono">
-                background-color: rgb(var(--color-primary-surface-raw) / 50%);
-              </div>
-            </div>
-
-            {/* Shadows and outlines */}
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium">Shadows & Outlines</h4>
-              <div className="flex gap-4">
-                <div
-                  className="w-16 h-10 rounded flex items-center justify-center text-xs"
-                  style={{
-                    backgroundColor: "white",
-                    boxShadow: "0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%)",
-                  }}
-                >
-                  Shadow
-                </div>
-                <div
-                  className="w-16 h-10 rounded flex items-center justify-center text-xs"
-                  style={{
-                    backgroundColor: "white",
-                    border: "1px solid rgb(var(--color-neutral-outline-raw) / 40%)",
-                  }}
-                >
-                  Border
-                </div>
-              </div>
-              <div className="bg-gray-100 p-2 rounded text-xs font-mono">
-                box-shadow: 0 2px 8px rgb(var(--color-neutral-shadow-raw) / 20%);
-                <br />
-                border: 1px solid rgb(var(--color-neutral-outline-raw) / 40%);
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 border-t border-gray-200 pt-4">
-            <h4 className="text-sm font-medium mb-2">Automatically Adapts to Dark Mode</h4>
-            <p className="text-xs text-gray-600 mb-2">
-              The same CSS will automatically use dark mode values when{" "}
-              <code className="bg-gray-100 px-1">data-color-scheme="dark"</code> is set on a parent element.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-              {/* Light mode example */}
-              <div className="p-3 border border-gray-200 rounded">
-                <div className="text-xs mb-2 font-medium">Light mode preview:</div>
-                <div className="flex gap-3">
-                  <div
-                    className="w-10 h-10 rounded"
-                    style={{ backgroundColor: "rgb(var(--color-primary-surface-raw) / 50%)" }}
-                  />
-                  <div
-                    className="w-10 h-10 rounded"
-                    style={{
-                      backgroundColor: "white",
-                      boxShadow: "0 3px 6px rgb(var(--color-neutral-shadow-raw) / 30%)",
-                    }}
-                  />
-                  <div
-                    className="w-10 h-10 rounded"
-                    style={{
-                      backgroundColor: "white",
-                      border: "2px solid rgb(var(--color-neutral-outline-raw) / 40%)",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Dark mode example */}
-              <div
-                className="p-3 border border-gray-300 rounded"
-                data-color-scheme="dark"
-                style={{ backgroundColor: "#222" }}
-              >
-                <div className="text-xs mb-2 font-medium text-gray-300">Dark mode preview:</div>
-                <div className="flex gap-3">
-                  <div
-                    className="w-10 h-10 rounded"
-                    style={{ backgroundColor: "rgb(var(--color-primary-surface-raw) / 50%)" }}
-                  />
-                  <div
-                    className="w-10 h-10 rounded"
-                    style={{
-                      backgroundColor: "#333",
-                      boxShadow: "0 3px 6px rgb(var(--color-neutral-shadow-raw) / 30%)",
-                    }}
-                  />
-                  <div
-                    className="w-10 h-10 rounded"
-                    style={{
-                      backgroundColor: "#333",
-                      border: "2px solid rgb(var(--color-neutral-outline-raw) / 40%)",
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto mt-4">
-              {`// The CSS is the same for both light and dark mode
-.element {
-  background-color: rgb(var(--color-primary-surface-raw) / 50%);
-  border: 1px solid rgb(var(--color-neutral-outline-raw) / 40%);
-}
-
-// The colors adapt automatically when:
-<div data-color-scheme="dark">
-  <div class="element">Content</div>
-</div>`}
-            </pre>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="token-catalog p-8">
       <ThemeToggle />
@@ -538,9 +381,6 @@ const TokenCatalog = () => {
           </div>
         )}
       </div>
-
-      {/* Display the Raw Colors Usage Guide */}
-      <RawColorsUsageGuide />
 
       {/* Display the tokens */}
       {Object.keys(groupedTokens).length === 0 ? (
@@ -784,7 +624,7 @@ const TokenCategorized = () => {
 
           {/* Shadow/outline example */}
           <div>
-            <h4 className="text-sm font-semibold mb-2">Shadow and Outline Examples</h4>
+            <h4 className="text-sm font-semibold mb-2">Shadow Example</h4>
             <div className="flex gap-4">
               <div className="flex flex-col items-center">
                 <div
@@ -797,23 +637,9 @@ const TokenCategorized = () => {
                   <span className="text-xs text-center">Neutral Shadow</span>
                 </div>
               </div>
-
-              <div className="flex flex-col items-center">
-                <div
-                  className="w-16 h-16 rounded flex items-center justify-center"
-                  style={{
-                    backgroundColor: "white",
-                    border: "3px solid rgb(var(--color-primary-focus-outline-raw) / 30%)",
-                  }}
-                >
-                  <span className="text-xs text-center">Primary Outline</span>
-                </div>
-              </div>
             </div>
             <div className="mt-3 bg-gray-100 p-2 rounded text-xs font-mono">
               box-shadow: 0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%);
-              <br />
-              border: 3px solid rgb(var(--color-primary-focus-outline-raw) / 30%);
             </div>
           </div>
         </div>
