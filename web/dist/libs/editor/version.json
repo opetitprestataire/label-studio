@@ -1,6 +1,6 @@
 {
-  "message": "fix: LEAP-1892: [FE] Deeply nested Choices are visible when their parents are hidden (#7180)",
-  "commit": "52e941a0860ea8211eaa77bef0e10628db3e1b69",
-  "date": "2025-03-14T12:07:16.000Z",
+  "message": "fix: OPTIC-1835: Address issue affecting OCR region panel visualization (#7259)",
+  "commit": "486803f13a36fbb99f2fdcb5d3ea25a5a8a8fa66",
+  "date": "2025-03-20T21:26:35.000Z",
   "branch": "develop"
 }

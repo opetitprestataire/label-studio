@@ -250,8 +250,9 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
   },
 );
 
-Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer))
-  .Scenario("Resizing a single region with zoom", async ({ I, LabelStudio, AtImageView, AtSidebar, current }) => {
+Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer)).Scenario(
+  "Resizing a single region with zoom",
+  async ({ I, LabelStudio, AtImageView, AtSidebar, current }) => {
     const { shapeName } = current;
     const Shape = shapes[shapeName];
 
