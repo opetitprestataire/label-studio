@@ -16,7 +16,7 @@ function isLabels(val, key) {
 examples.forEach((example) => {
   const { annotations, config, data, result = annotations[0].result, title } = example;
 
-  Scenario(`Different from_name -> ${title}`, async ({ I, LabelStudio, AtOutliner, AtImageView, AtAudioView }) => {
+  Scenario(`Different from_name -> ${title}`, async ({ I, LabelStudio, AtOutliner, AtAudioView }) => {
     let { result = annotations[0].result } = example;
 
     LabelStudio.setFeatureFlags({
@@ -40,6 +40,9 @@ examples.forEach((example) => {
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(regionsCount);
 
+    if (Utils.xmlFindBy(configTree, (node) => node["#name"] === "Audio")) {
+      await AtAudioView.waitForAudio();
+    }
     if (regionsCount) {
       const restored = await LabelStudio.serialize();
 
