@@ -62,3 +62,8 @@ export const FF_HOMEPAGE = "fflag_all_feat_dia_1777_ls_homepage_short";
  * Sample datasets UI for the import flow
  */
 export const FF_SAMPLE_DATASETS = "fflag_feat_dia_1920_project_creation_sample_data_short";
+
+/**
+ * Optimizes the way projects list is loaded
+ */
+export const FF_USE_NEW_PROJECTS_COUNTS_API = "fflag_feat_front_optic_1351_use_new_projects_counts_api_short";
