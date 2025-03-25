@@ -7,77 +7,85 @@ const meta: Meta<typeof Select> = {
   render: ({ form, ...args }) => {
     return (
       <>
-        <Select
-          placeholder="Select a fruit"
-          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-          label="default"
-          {...args}
-        />
-        <Select
-          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-          label="searchable select"
-          searchable={true}
-          {...args}
-        />
-        <Select
-          placeholder="inline select"
-          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-          label="default"
-          isInline={true}
-          {...args}
-        />
-        <Select
-          placeholder="Select a fruit"
-          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-          label="ghost"
-          ghost={true}
-          {...args}
-        />
-        <Select
-          placeholder="Select a fruit"
-          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-          label="required"
-          required={true}
-          {...args}
-        />
-        <Select
-          placeholder="Select a fruit"
-          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-          label="error"
-          value="Blueberry"
-          {...args}
-        />
-        <Select
-          placeholder="Select a fruit"
-          options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-          label="disabled select"
-          disabled={true}
-          {...args}
-        />
-        <Select
-          placeholder="Select a fruit"
-          options={[
-            {
-              value: "Apple",
-              disabled: true,
-            },
-            "Banana",
-            {
-              value: "Blueberry",
-              label: (
-                <>
-                  <span>Blueberry</span>
-                  <span className="text-sm"> - 15</span>
-                </>
-              ),
-              disabled: true,
-            },
-            "Grapes",
-            "Pineapple",
-          ]}
-          label="disabled options"
-          {...args}
-        />
+        <div>
+          <Select
+            placeholder="Select a fruit"
+            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+            label="default"
+            {...args}
+          />
+        </div>
+        <div>
+          <Select
+            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+            label="searchable select"
+            searchable={true}
+            {...args}
+          />
+        </div>
+        <div>
+          <Select
+            placeholder="inline select"
+            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+            label="inline"
+            isInline={true}
+            {...args}
+          />
+        </div>
+        <div>
+          <Select
+            placeholder="Select a fruit"
+            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+            label="required"
+            required={true}
+            {...args}
+          />
+        </div>
+        <div>
+          <Select
+            placeholder="Select a fruit"
+            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+            label="error"
+            value="Blueberry"
+            {...args}
+          />
+        </div>
+        <div>
+          <Select
+            placeholder="Select a fruit"
+            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+            label="disabled select"
+            disabled={true}
+            {...args}
+          />
+        </div>
+        <div>
+          <Select
+            placeholder="Select a fruit"
+            value="Blueberry"
+            options={[
+              {
+                value: "Apple",
+                disabled: true,
+              },
+              "Banana",
+              {
+                value: "Blueberry",
+                label: (
+                  <>
+                    <span>Blueberry</span>
+                    <span className="text-sm"> - 15</span>
+                  </>
+                ),
+                disabled: true,
+              },
+              "Grapes",
+              "Pineapple",
+            ]}
+            label="Fancy option"
+            {...args}
+          />
+        </div>
       </>
     );
   },

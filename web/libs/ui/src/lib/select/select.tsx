@@ -38,8 +38,7 @@ export const Select = forwardRef(
   ) => {
     const [query, setQuery] = useState<string>("");
     let initialValue =
-      (defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue) ||
-      (options?.[0]?.value ?? options?.[0]?.children?.[0]?.value ?? options?.[0]?.children?.[0] ?? options?.[0]);
+      defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
 
     if (multiple) {
       initialValue = Array.isArray(initialValue) ? initialValue ?? [] : [initialValue];
@@ -59,6 +58,10 @@ export const Select = forwardRef(
       }
       setValue(val);
     }, [externalValue, multiple]);
+
+    useEffect(() => {
+      if (!isOpen) setQuery("");
+    }, [isOpen]);
     const _onChange = useCallback(
       (val: string, isSelected: boolean) => {
         if (disabled) return;
@@ -120,6 +123,7 @@ export const Select = forwardRef(
               props.triggerProps?.className ?? "",
             )}
             type="button"
+            data-testid="select-trigger"
           >
             <span className="flex-1 text-left" data-testid="select-display-value">
               {value ? (
@@ -135,13 +139,14 @@ export const Select = forwardRef(
             )}
           </button>
         </PopoverTrigger>
-        <PopoverContent className="z-99999" asChild={false} align="start">
+        <PopoverContent className="z-99999" asChild={false} align="start" data-testid="select-popup">
           <Command>
             {searchable && (
               <CommandInput
                 className="p-2 border-b border-gray-300"
                 placeholder={searchPlaceholder ?? "Search"}
                 onChangeCapture={(e) => setQuery(e.currentTarget.value)}
+                data-testid="select-search-field"
               />
             )}
             <CommandList>
@@ -204,14 +209,7 @@ export const Select = forwardRef(
 
     if (label) {
       return (
-        <div className="flex gap-1">
-          <Label className="text-sm font-medium text-gray-700" {...labelProps}>
-            {label}
-            {required && <span className="text-red-600">*</span>}
-          </Label>
-          {description && <p className="text-sm text-gray-500">{description}</p>}
-          {combobox}
-        </div>
+        <Label required={required} description={description} text={label} {...labelProps}>{combobox}</Label>
       );
     }
     return combobox;
@@ -226,6 +224,7 @@ const Option = ({ value, label, isOptionSelected, disabled, style, multiple, onS
       disabled={disabled}
       {...(disabled ? { "data-disabled": true } : {})}
       {...(style ? { style } : {})}
+      data-testid="select-option"
     >
       {multiple ? (
         <Checkbox
