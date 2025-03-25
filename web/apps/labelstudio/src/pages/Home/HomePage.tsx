@@ -93,7 +93,7 @@ export const HomePage: Page = () => {
                   variant="lsOutline"
                   onClick={handleActions(action.type)}
                 >
-                  <action.icon className="text-lsPrimaryIcon" />
+                  <action.icon className="text-primary-icon" />
                   {action.title}
                 </Button>
               );
@@ -122,7 +122,7 @@ export const HomePage: Page = () => {
               <div className="flex flex-col justify-center items-center border border-primary-border-subtle bg-lsPrimaryEmphasisSubtle rounded-lg h-64">
                 <div
                   className={
-                    "rounded-full w-12 h-12 flex justify-center items-center bg-accent-grape-subtle text-lsPrimaryIcon"
+                    "rounded-full w-12 h-12 flex justify-center items-center bg-accent-grape-subtle text-primary-icon"
                   }
                 >
                   <IconFolderOpen />
@@ -156,7 +156,7 @@ export const HomePage: Page = () => {
                       rel="noreferrer"
                     >
                       {link.title}
-                      <IconExternal className="text-lsPrimaryIcon" />
+                      <IconExternal className="text-primary-icon" />
                     </a>
                   </li>
                 );
