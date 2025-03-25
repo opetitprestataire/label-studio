@@ -25,11 +25,11 @@ export const sampleDatasetAtom = atomWithQuery((get) => {
         return JSON.stringify({ error: "Can't prepare sample data." }, null, "  ");
       }
 
-      if (!response?.response?.sample_task) {
+      if (!response?.sample_task) {
         return JSON.stringify({ error: "No sample task data available." }, null, "  ");
       }
 
-      return JSON.stringify(response.response.sample_task, null, "  ");
+      return JSON.stringify(response.sample_task, null, "  ");
     },
   };
 });
