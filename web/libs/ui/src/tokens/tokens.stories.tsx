@@ -323,7 +323,7 @@ const TokenCatalog = () => {
   );
 
   return (
-    <div className="token-catalog p-8 bg-neutral-background h-full">
+    <div className="token-catalog p-8 bg-neutral-background">
       <ThemeToggle />
 
       <div className="mb-6">
@@ -734,7 +734,7 @@ const TokenCategorized = () => {
   };
 
   return (
-    <div className="p-8 bg-neutral-background h-full">
+    <div className="p-8 bg-neutral-background">
       <ThemeToggle />
 
       <h1 className="text-2xl mb-6">Design Tokens</h1>
