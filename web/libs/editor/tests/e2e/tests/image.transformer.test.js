@@ -254,64 +254,64 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
   },
 );
 
-Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer)).Scenario(
-  "Resizing a single region with zoom",
-  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
-    const { shapeName } = current;
-    const Shape = shapes[shapeName];
-    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
+Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer))
+  .Scenario(
+    "Resizing a single region with zoom",
+    async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
+      const { shapeName } = current;
+      const Shape = shapes[shapeName];
+      const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
 
-    LabelStudio.setFeatureFlags({
-      fflag_fix_front_dev_3377_image_regions_shift_on_resize_280922_short: true,
-      fflag_fix_front_dev_3793_relative_coords_short: true,
-    });
+      LabelStudio.setFeatureFlags({
+        fflag_fix_front_dev_3377_image_regions_shift_on_resize_280922_short: true,
+        fflag_fix_front_dev_3793_relative_coords_short: true,
+      });
 
-    I.amOnPage("/");
+      I.amOnPage("/");
 
-    LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
-    AtDetailsPanel.collapsePanel();
-    LabelStudio.waitForObjectsReady();
-    AtOutliner.seeRegions(0);
-    await AtImageView.lookForStage();
-    const naturalSize = await AtImageView.getNaturalSize();
-    const canvasSize = await AtImageView.getCanvasSize();
-    // region sizes are relative (0 to 100) so we have to convert sizes we use for them...
-    // ...relatively to displayed image size, which is canvas size when we open the page
-    const convertToImageSize = Helpers.getSizeConvertor(canvasSize.width, canvasSize.height);
+      LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
+      AtDetailsPanel.collapsePanel();
+      LabelStudio.waitForObjectsReady();
+      AtOutliner.seeRegions(0);
+      await AtImageView.lookForStage();
+      const naturalSize = await AtImageView.getNaturalSize();
+      const canvasSize = await AtImageView.getCanvasSize();
 
-    // Draw a region in bbox {x1:50,y1:50,x2:150,y2:150}
-    I.pressKey(Shape.hotKey);
-    drawShapeByBbox(Shape, 50, 50, 300, 300, AtImageView);
-    AtOutliner.seeRegions(1);
+      // Draw a region in bbox {x1:50,y1:50,x2:150,y2:150}
+      I.pressKey(Shape.hotKey);
+      drawShapeByBbox(Shape, 50, 50, 300, 300, AtImageView);
+      AtOutliner.seeRegions(1);
 
-    // Select the shape
-    AtImageView.clickAt(100, 100);
-    AtOutliner.seeSelectedRegion();
+      // Select the shape
+      AtImageView.clickAt(100, 100);
+      AtOutliner.seeSelectedRegion();
 
-    // Switch to move tool to force appearance of transformer
-    I.pressKey("v");
-    const isTransformerExist = await AtImageView.isTransformerExist();
+      // Switch to move tool to force appearance of transformer
+      I.pressKey("v");
+      const isTransformerExist = await AtImageView.isTransformerExist();
 
-    assert.strictEqual(isTransformerExist, true);
+      assert.strictEqual(isTransformerExist, true);
 
-    // we display an image to fit to canvas size on page load, so initial zoom is not 1;
-    // to do an x3 zoom we have to calculate current zoom and multiply it by 3
-    AtImageView.setZoom((3 * canvasSize.width) / naturalSize.width, 0, 0);
+      const prevResult = await LabelStudio.serialize();
 
-    // Transform the shape
-    AtImageView.drawByDrag(150, 150, -150, -150);
+      // we display an image to fit to canvas size on page load, so initial zoom is not 1;
+      // to do an x3 zoom we have to calculate current zoom and multiply it by 3
+      AtImageView.setZoom((3 * canvasSize.width) / naturalSize.width, 0, 0);
 
-    AtImageView.drawByDrag(0, 0, -300, -100);
+      // Transform the shape
+      AtImageView.drawByDrag(150, 150, -150, -150);
 
-    AtImageView.drawByDrag(0, 0, 150, 150);
+      AtImageView.drawByDrag(0, 0, -300, -100);
 
-    // Check resulting sizes
-    const rectangleResult = await LabelStudio.serialize();
-    const exceptedResult = Shape.byBBox(50, 50, 300, 300).result;
+      AtImageView.drawByDrag(0, 0, 150, 150);
 
-    Asserts.deepEqualWithTolerance(rectangleResult[0].value, convertToImageSize(exceptedResult), 2);
-  },
-);
+      // Check resulting sizes
+      const rectangleResult = await LabelStudio.serialize();
+
+      Asserts.deepEqualWithTolerance(rectangleResult[0].value, prevResult[0].value, 2);
+    },
+  )
+  .tag("@this");
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRotator)).Scenario(
   "Simple rotating",
