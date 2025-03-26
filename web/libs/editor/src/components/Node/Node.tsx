@@ -18,9 +18,10 @@ import {
   IconRectangleTool,
   IconRectangleToolSmart,
   IconText,
-} from "../../assets/icons";
-import { IconTimelineRegion } from "../../assets/icons/timeline";
-import { NodeView } from "./NodeView";
+  IconWarning,
+  IconTimelineRegion,
+} from "@humansignal/icons";
+import { Tooltip } from "@humansignal/ui";
 
 const NodeViews = {
   // fake view for virtual node representing label group
