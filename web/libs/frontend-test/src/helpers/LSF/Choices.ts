@@ -40,7 +40,11 @@ class ChoicesHelper {
   }
 
   findOption(text: string) {
-    return cy.get("[data-testid=select-popup]").find("[data-testid=select-option-label]").contains(text).parents("[data-testid=select-option]");
+    return cy
+      .get("[data-testid=select-popup]")
+      .find("[data-testid=select-option-label]")
+      .contains(text)
+      .parents("[data-testid=select-option]");
   }
 }
 

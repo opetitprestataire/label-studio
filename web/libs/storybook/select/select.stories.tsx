@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Checkbox, Select } from "@humansignal/ui";
-import { useMemo, useState } from "react";
+import { Select } from "@humansignal/ui";
+import { useMemo } from "react";
 
 const meta: Meta<typeof Select> = {
   title: "UI/Select",
@@ -89,19 +89,32 @@ const meta: Meta<typeof Select> = {
           />
         </div>
         <div>
-            <Select
-              options={thousandOptions}
-              label="Thousand options"
-              {...args}
-            />
+          <Select options={thousandOptions} label="Thousand options" {...args} />
         </div>
         <div>
-            <Select
-              options={[]}
-              label="In progress"
-              isInProgress={true}
-              {...args}
-            />
+          <Select options={[]} label="In progress" isInProgress={true} {...args} />
+        </div>
+        <div>
+          <Select
+            placeholder="Multiple Selector"
+            options={[
+              "Apple",
+              "Banana",
+              "Blueberry",
+              { label: "Grapes", children: ["Small", "Large", "Green", "Red"] },
+              "Pineapple",
+            ]}
+            multiple={true}
+            {...args}
+          />
+        </div>
+        <div>
+          <Select
+            value={["Blueberry", "Banana"]}
+            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+            multiple={true}
+            {...args}
+          />
         </div>
       </>
     );

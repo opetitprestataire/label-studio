@@ -12,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@humansignal/shad/compo
 import type { SelectOption, OptionProps, SelectProps } from "./types.ts";
 import { Checkbox, Label } from "@humansignal/ui";
 import { isDefined } from "@humansignal/core/lib/utils/helpers";
-import { IconCheck, IconChevron, IconChevronDown } from "@humansignal/icons";
+import { IconChevron, IconChevronDown } from "@humansignal/icons";
 import clsx from "clsx";
 
 export const Select = forwardRef(
@@ -78,7 +78,7 @@ export const Select = forwardRef(
           setValue(val);
         }
         props?.onChange?.(val);
-        setIsOpen(false);
+        !multiple && setIsOpen(false);
       },
       [props?.onChange, multiple, disabled],
     );
@@ -129,12 +129,16 @@ export const Select = forwardRef(
           >
             <span className="flex-1 text-left" data-testid="select-display-value">
               {value ? (
-                <>{selectedOptions?.map((option, index) => {
-                  const optionValue = option?.value ?? option;
-                  return (<span key={`${optionValue}_${index}`} className="truncate">
-                    {option?.label ?? optionValue}
-                  </span>)
-                })}</>
+                <>
+                  {selectedOptions?.map((option, index) => {
+                    const optionValue = option?.value ?? option;
+                    return (
+                      <span key={`${optionValue}_${index}`} className="truncate">
+                        {option?.label ?? optionValue}
+                      </span>
+                    );
+                  })}
+                </>
               ) : (
                 props?.placeholder ?? ""
               )}
@@ -169,31 +173,45 @@ export const Select = forwardRef(
                       const optionValue = option?.value ?? option;
                       const label = option?.label ?? optionValue;
                       const children = option?.children;
-                      const isOptionSelected = isSelected(optionValue);
-    
+                      const isIndeterminate = multiple && children?.some((child) => isSelected(child));
+                      const isOptionSelected =
+                        multiple && children ? children?.every((child) => isSelected(child)) : isSelected(optionValue);
+
                       if (children) {
                         return (
                           <CommandGroup key={index}>
-                            <div className="font-bold">{label}</div>
-                            {children.map((item, i) => {
-                              const val = item?.value ?? item;
-                              const lab = item?.label ?? val;
-                              const isChildOptionSelected = isSelected(val);
-                              return (
-                                <Option
-                                  key={`${val}_${i}`}
-                                  value={val}
-                                  label={lab}
-                                  isOptionSelected={isChildOptionSelected}
-                                  disabled={item?.disabled}
-                                  style={item?.style}
-                                  multiple={multiple}
-                                  onSelect={() => {
-                                    _onChange(val, isChildOptionSelected);
-                                  }}
-                                />
-                              );
-                            })}
+                            {multiple ? (
+                              <Option
+                                multiple={multiple}
+                                label={label}
+                                isIndeterminate={!isOptionSelected && isIndeterminate}
+                                isOptionSelected={isOptionSelected}
+                                className="pl-0"
+                              />
+                            ) : (
+                              <div className="font-bold">{label}</div>
+                            )}
+                            <div className="pl-2">
+                              {children.map((item, i) => {
+                                const val = item?.value ?? item;
+                                const lab = item?.label ?? val;
+                                const isChildOptionSelected = isSelected(val);
+                                return (
+                                  <Option
+                                    key={`${val}_${i}`}
+                                    value={val}
+                                    label={lab}
+                                    isOptionSelected={isChildOptionSelected}
+                                    disabled={item?.disabled}
+                                    style={item?.style}
+                                    multiple={multiple}
+                                    onSelect={() => {
+                                      _onChange(val, isChildOptionSelected);
+                                    }}
+                                  />
+                                );
+                              })}
+                            </div>
                           </CommandGroup>
                         );
                       }
@@ -233,15 +251,27 @@ export const Select = forwardRef(
   },
 );
 
-const Option = ({ value, label, isOptionSelected, isIndeterminate, disabled, style, onSelect, multiple }: OptionProps) => {
-  const keyDownHandler = useCallback((e: any) => {
+const Option = ({
+  value,
+  label,
+  isOptionSelected,
+  isIndeterminate,
+  disabled,
+  style,
+  onSelect,
+  multiple,
+  classname,
+}: OptionProps) => {
+  const keyDownHandler = useCallback(
+    (e: any) => {
       if (["Enter", " "].includes(e.key)) {
         e.preventDefault();
         e.stopPropagation();
         onSelect?.(value);
       }
-    }
-  ,[onSelect, value]);
+    },
+    [onSelect, value],
+  );
   return (
     <CommandItem
       value={value}
@@ -251,10 +281,11 @@ const Option = ({ value, label, isOptionSelected, isIndeterminate, disabled, sty
       {...(style ? { style } : {})}
       data-selected={isOptionSelected}
       data-testid="select-option"
-      tabIndex={0}
+      tabIndex={disabled ? -1 : 0}
       onKeyDown={keyDownHandler}
+      className={classname}
     >
-      {multiple && <Checkbox checked={isOptionSelected} indeterminate={isIndeterminate} />}
+      {multiple && <Checkbox tabIndex={-1} checked={isOptionSelected} indeterminate={isIndeterminate} />}
       <div data-testid="select-option-label" className="truncate">
         {label}
       </div>
