@@ -254,8 +254,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
   },
 );
 
-// FIXME: Some problem with sizes in CI
-xData(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer)).Scenario(
+Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransformer)).Scenario(
   "Resizing a single region with zoom",
   async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { shapeName } = current;
