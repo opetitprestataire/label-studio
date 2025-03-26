@@ -171,15 +171,7 @@ export const HomePage: Page = () => {
           </div>
         </section>
       </div>
-      {creationDialogOpen && (
-        <CreateProject
-          redirect={false}
-          onClose={() => {
-            setCreationDialogOpen(false);
-            history.replace("/"); // hack to stop modal from auto-closing
-          }}
-        />
-      )}
+      {creationDialogOpen && <CreateProject onClose={() => setCreationDialogOpen(false)} />}
       <InviteLink opened={invitationOpen} onClosed={() => setInvitationOpen(false)} />
     </main>
   );
