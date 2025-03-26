@@ -921,13 +921,13 @@
     },
     "fflag__feature_develop__prompts__dia_1829_jwt_token_auth": {
       "key": "fflag__feature_develop__prompts__dia_1829_jwt_token_auth",
-      "on": true,
+      "on": false,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
       "rules": [],
       "fallthrough": {
-        "variation": 0
+        "variation": 1
       },
       "offVariation": 1,
       "variations": [
@@ -943,7 +943,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 4,
+      "version": 6,
       "deleted": false
     },
     "fflag__feature_develop__prompts__dia_1868_azure_ai_foundry": {
@@ -997,7 +997,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 3,
+      "version": 5,
       "deleted": false
     },
     "fflag_feat_all_dia_13_structured_data_support_short": {
