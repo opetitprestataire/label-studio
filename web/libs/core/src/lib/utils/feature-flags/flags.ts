@@ -30,6 +30,11 @@ export const FF_LSDV_4711 = "fflag_fix_all_lsdv_4711_cors_errors_accessing_task_
  * Enables "Enterprise Awareness" features
  */
 export const FF_LSDV_E_297 = "fflag_feat_front_lsdv_e_297_increase_oss_to_enterprise_adoption_short";
+
+/**
+ * Project list search
+ */
+export const FF_PROD_281 = "fflag_feat_front_prod_281_project_list_search_19072023_short";
 //// END OF LEGACY FLAGS ////
 
 /**
