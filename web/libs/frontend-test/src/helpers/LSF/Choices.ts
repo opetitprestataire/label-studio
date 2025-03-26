@@ -20,7 +20,7 @@ class ChoicesHelper {
   }
 
   get select() {
-    return this.root.find(".ant-select");
+    return this.root.find("[data-testid=select-trigger]");
   }
 
   findChoice(text: string) {
@@ -40,7 +40,7 @@ class ChoicesHelper {
   }
 
   findOption(text: string) {
-    return cy.get(".ant-select-dropdown").find(".ant-select-item-option").contains(text);
+    return cy.get("[data-testid=select-popup]").find("[data-testid=select-option-label]").contains(text).parents("[data-testid=select-option]");
   }
 }
 

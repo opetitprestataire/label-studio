@@ -37,6 +37,7 @@ export const FilterDropdown = observer(
         size="small"
         options={options}
         searchable={true}
+        triggerProps={{ className: "whitespace-nowrap" }}
       />
     );
   },

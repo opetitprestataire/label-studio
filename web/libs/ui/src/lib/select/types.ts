@@ -18,6 +18,7 @@ export type OptionProps = {
   style?: any;
   multiple?: boolean;
   onSelect?: () => void;
+  isIndeterminate?: boolean;
 };
 
 type ExtractStructOption<T> = T extends SelectOptionData ? T["value"] : never;
@@ -63,6 +64,7 @@ export type SelectProps<T, A extends SelectOption<T>[]> = {
   disabled?: boolean;
   triggerProps?: any;
   isInline?: boolean;
+  isInProgress?: boolean;
 } & SelectVirtualizedProps &
   Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value" | "placeholder">;
 

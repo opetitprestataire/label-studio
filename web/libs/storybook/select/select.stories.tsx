@@ -1,10 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Select } from "@humansignal/ui";
+import { Checkbox, Select } from "@humansignal/ui";
+import { useMemo, useState } from "react";
 
 const meta: Meta<typeof Select> = {
   title: "UI/Select",
   component: Select,
   render: ({ form, ...args }) => {
+    const thousandOptions = useMemo(() => {
+      return Array.from({ length: 1000 }, (_, i) => `Option ${i}`);
+    }, []);
     return (
       <>
         <div>
@@ -83,6 +87,21 @@ const meta: Meta<typeof Select> = {
             data-testid="my-select"
             {...args}
           />
+        </div>
+        <div>
+            <Select
+              options={thousandOptions}
+              label="Thousand options"
+              {...args}
+            />
+        </div>
+        <div>
+            <Select
+              options={[]}
+              label="In progress"
+              isInProgress={true}
+              {...args}
+            />
         </div>
       </>
     );

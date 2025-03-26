@@ -1,4 +1,4 @@
-import { type ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import { type ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Command,
@@ -32,10 +32,12 @@ export const Select = forwardRef(
       disabled = false,
       multiple = false,
       isInline = false,
+      isInProgress = false,
       ...props
     }: SelectProps<T, A>,
     ref: ForwardedRef<HTMLSelectElement>,
   ) => {
+    const triggerRef = ref ?? useRef<HTMLDivElement>();
     const [query, setQuery] = useState<string>("");
     let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
 
@@ -112,7 +114,7 @@ export const Select = forwardRef(
 
     const combobox = (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild disabled={disabled}>
+        <PopoverTrigger asChild={true} disabled={disabled}>
           <button
             variant="outline"
             aria-expanded={isOpen}
@@ -123,10 +125,16 @@ export const Select = forwardRef(
             )}
             type="button"
             data-testid={props?.["data-testid"] ?? "select-trigger"}
+            ref={triggerRef}
           >
             <span className="flex-1 text-left" data-testid="select-display-value">
               {value ? (
-                <>{selectedOptions?.map((option) => option?.label ?? option?.value ?? option)}</>
+                <>{selectedOptions?.map((option, index) => {
+                  const optionValue = option?.value ?? option;
+                  return (<span key={`${optionValue}_${index}`} className="truncate">
+                    {option?.label ?? optionValue}
+                  </span>)
+                })}</>
               ) : (
                 props?.placeholder ?? ""
               )}
@@ -138,7 +146,7 @@ export const Select = forwardRef(
             )}
           </button>
         </PopoverTrigger>
-        <PopoverContent className="z-99999" asChild={false} align="start" data-testid="select-popup">
+        <PopoverContent className="z-99999 min-w-full" align="start" data-testid="select-popup">
           <Command>
             {searchable && (
               <CommandInput
@@ -149,56 +157,64 @@ export const Select = forwardRef(
               />
             )}
             <CommandList>
-              <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
-              <CommandGroup>
-                {_options.map((option, index) => {
-                  const optionValue = option?.value ?? option;
-                  const label = option?.label ?? optionValue;
-                  const children = option?.children;
-                  const isOptionSelected = isSelected(optionValue);
-
-                  if (children) {
-                    return (
-                      <CommandGroup key={index}>
-                        <div className="font-bold">{label}</div>
-                        {children.map((item, i) => {
-                          const val = item?.value ?? item;
-                          const lab = item?.label ?? val;
-                          const isChildOptionSelected = isSelected(val);
-                          return (
-                            <Option
-                              key={`${val}_${i}`}
-                              value={val}
-                              label={lab}
-                              isOptionSelected={isChildOptionSelected}
-                              disabled={item?.disabled}
-                              style={item?.style}
-                              multiple={multiple}
-                              onSelect={() => {
-                                _onChange(val, isChildOptionSelected);
-                              }}
-                            />
-                          );
-                        })}
-                      </CommandGroup>
-                    );
-                  }
-                  return (
-                    <Option
-                      key={`${optionValue}_${index}`}
-                      value={optionValue}
-                      label={label}
-                      isOptionSelected={isOptionSelected}
-                      disabled={option?.disabled}
-                      style={option?.style}
-                      multiple={multiple}
-                      onSelect={() => {
-                        _onChange(optionValue, isOptionSelected);
-                      }}
-                    />
-                  );
-                })}
-              </CommandGroup>
+              {isInProgress ? (
+                <CommandGroup>
+                  <span>Loading...</span>
+                </CommandGroup>
+              ) : (
+                <>
+                  <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
+                  <CommandGroup>
+                    {_options.map((option, index) => {
+                      const optionValue = option?.value ?? option;
+                      const label = option?.label ?? optionValue;
+                      const children = option?.children;
+                      const isOptionSelected = isSelected(optionValue);
+    
+                      if (children) {
+                        return (
+                          <CommandGroup key={index}>
+                            <div className="font-bold">{label}</div>
+                            {children.map((item, i) => {
+                              const val = item?.value ?? item;
+                              const lab = item?.label ?? val;
+                              const isChildOptionSelected = isSelected(val);
+                              return (
+                                <Option
+                                  key={`${val}_${i}`}
+                                  value={val}
+                                  label={lab}
+                                  isOptionSelected={isChildOptionSelected}
+                                  disabled={item?.disabled}
+                                  style={item?.style}
+                                  multiple={multiple}
+                                  onSelect={() => {
+                                    _onChange(val, isChildOptionSelected);
+                                  }}
+                                />
+                              );
+                            })}
+                          </CommandGroup>
+                        );
+                      }
+                      return (
+                        <Option
+                          key={`${optionValue}_${index}`}
+                          value={optionValue}
+                          label={label}
+                          isOptionSelected={isOptionSelected}
+                          disabled={option?.disabled}
+                          style={option?.style}
+                          multiple={multiple}
+                          onSelect={() => {
+                            _onChange(optionValue, isOptionSelected);
+                          }}
+                        />
+                      );
+                    })}
+                  </CommandGroup>
+                </>
+              )}
             </CommandList>
           </Command>
         </PopoverContent>
@@ -217,7 +233,15 @@ export const Select = forwardRef(
   },
 );
 
-const Option = ({ value, label, isOptionSelected, disabled, style, multiple, onSelect }: OptionProps) => {
+const Option = ({ value, label, isOptionSelected, isIndeterminate, disabled, style, onSelect, multiple }: OptionProps) => {
+  const keyDownHandler = useCallback((e: any) => {
+      if (["Enter", " "].includes(e.key)) {
+        e.preventDefault();
+        e.stopPropagation();
+        onSelect?.(value);
+      }
+    }
+  ,[onSelect, value]);
   return (
     <CommandItem
       value={value}
@@ -225,17 +249,15 @@ const Option = ({ value, label, isOptionSelected, disabled, style, multiple, onS
       disabled={disabled}
       {...(disabled ? { "data-disabled": true } : {})}
       {...(style ? { style } : {})}
+      data-selected={isOptionSelected}
       data-testid="select-option"
+      tabIndex={0}
+      onKeyDown={keyDownHandler}
     >
-      {multiple ? (
-        <Checkbox
-          className={clsx("mr-2 h-4 w-4", isOptionSelected ? "opacity-100" : "opacity-0")}
-          checked={isOptionSelected}
-        />
-      ) : isOptionSelected ? (
-        <IconCheck className="mr-2 h-4 w-4" />
-      ) : null}
-      {label}
+      {multiple && <Checkbox checked={isOptionSelected} indeterminate={isIndeterminate} />}
+      <div data-testid="select-option-label" className="truncate">
+        {label}
+      </div>
     </CommandItem>
   );
 };
