@@ -417,3 +417,28 @@ def mock_feature_flag(flag_name: str, value: bool, parent_module: str = 'core.fe
         return wrapper
 
     return decorator
+
+
+def enable_legacy_api_tokens(response):
+    """Enable legacy API tokens for the organization in the response.
+    
+    This is used by tavern tests to ensure legacy API tokens are enabled 
+    even when the JWT feature flag is enabled.
+    
+    Args:
+        response: The response object containing the organization ID
+        
+    Returns:
+        The original response unmodified
+    """
+    from organizations.models import Organization
+    
+    org_id = response.json().get('active_organization')
+    if org_id:
+        org = Organization.objects.get(id=org_id)
+        if hasattr(org, 'jwt'):
+            org.jwt.legacy_api_tokens_enabled = True
+            org.jwt.save()
+            print(f"Enabled legacy API tokens for organization {org_id}")
+    
+    return response

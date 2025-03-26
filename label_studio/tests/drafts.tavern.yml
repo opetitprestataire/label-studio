@@ -436,6 +436,16 @@ stages:
 - id: create_annotation
   type: ref
 
+# Test this functionality with legacy tokens, need to enable them for the org
+- name: enable_legacy_api_tokens
+  request:
+    url: "{django_live_url}/api/current-user/whoami"
+    method: GET
+  response:
+    status_code: 200
+    verify_response_with:
+      function: tests.utils:enable_legacy_api_tokens
+
 - id: get_invite_url
   type: ref
 - id: logout
