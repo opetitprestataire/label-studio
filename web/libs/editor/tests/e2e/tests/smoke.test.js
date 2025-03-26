@@ -60,6 +60,10 @@ examples.slice(1).forEach((example) =>
 
     LabelStudio.waitForObjectsReady();
 
+    if (Utils.xmlFindBy(configTree, (node) => node["#name"] === "Audio")) {
+      await AtAudioView.waitForAudio();
+    }
+
     if (Utils.xmlFindBy(configTree, (node) => ["text", "hypertext"].includes(node["#name"].toLowerCase()))) {
       I.waitForVisible(".lsf-htx-richtext", 5);
     }
