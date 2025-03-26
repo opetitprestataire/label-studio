@@ -1,6 +1,6 @@
 {
-  "message": "feat: DIA-1924: \"Import sample data\" ability in the Data Import page (#7206)",
-  "commit": "4075937f4b2bf286e8cad366fd46b39c8426c55a",
-  "date": "2025-03-21T18:39:51.000Z",
+  "message": "fix: DIA-1925: fix payload for sample task in data import (#7276)",
+  "commit": "5fbf4df499d7fe0542cd751b1b51380aa961b7d4",
+  "date": "2025-03-25T17:11:11.000Z",
   "branch": "develop"
 }
