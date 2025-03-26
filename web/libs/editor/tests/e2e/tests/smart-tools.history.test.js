@@ -546,13 +546,13 @@ Scenario("Undo regions auto-annotated from predictions", async ({ I, LabelStudio
   I.seeElement(':not([disabled])[aria-label="Undo"]');
   I.seeElement('[disabled][aria-label="Redo"]');
   I.say("Go back through history");
-  I.pressKey(["ctrl", "z"]);
+  I.pressKey(["CommandOrControl", "z"]);
   I.say("Should see nothing");
   AtOutliner.seeRegions(0);
   I.seeElement('[disabled][aria-label="Undo"]');
   I.seeElement(':not([disabled])[aria-label="Redo"]');
   I.say("Go forward through history");
-  I.pressKey(["ctrl", "shift", "z"]);
+  I.pressKey(["CommandOrControl", "shift", "z"]);
   I.say("Regions must be restored");
   AtOutliner.seeRegions(5);
   I.seeElement(':not([disabled])[aria-label="Undo"]');
@@ -561,7 +561,8 @@ Scenario("Undo regions auto-annotated from predictions", async ({ I, LabelStudio
 
 Scenario(
   "Undo if there are no regions auto-annotated from predictions",
-  async ({ I, LabelStudio, AtImageView, AtOutliner }) => {
+  async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels }) => {
+    const AtDetailsPanel = AtPanels.usePanel(AtPanels.PANEL.DETAILS);
     I.amOnPage("/");
     LabelStudio.init({
       config: createRectangleConfig({
@@ -582,6 +583,7 @@ Scenario(
     LabelStudio.setFeatureFlags({
       fflag_fix_front_dev_1284_auto_detect_undo_281022_short: true,
     });
+    AtDetailsPanel.collapsePanel();
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
@@ -595,20 +597,20 @@ Scenario(
     I.seeElement(':not([disabled])[aria-label="Undo"]');
     I.seeElement('[disabled][aria-label="Redo"]');
     I.say("Go back through history");
-    I.pressKey(["ctrl", "z"]);
+    I.pressKey(["CommandOrControl", "z"]);
     I.say("Should see nothing");
     AtOutliner.seeRegions(0);
     I.seeElement('[disabled][aria-label="Undo"]');
     I.seeElement(':not([disabled])[aria-label="Redo"]');
     I.say("Go forward through history");
-    I.pressKey(["ctrl", "shift", "z"]);
+    I.pressKey(["CommandOrControl", "shift", "z"]);
     I.say("And see nothing again");
     AtOutliner.seeRegions(0);
     I.seeElement(':not([disabled])[aria-label="Undo"]');
     I.seeElement('[disabled][aria-label="Redo"]');
 
     I.say("Go back through history");
-    I.pressKey(["ctrl", "z"]);
+    I.pressKey(["CommandOrControl", "z"]);
     I.say("Should see nothing");
     AtOutliner.seeRegions(0);
     I.seeElement('[disabled][aria-label="Undo"]');
