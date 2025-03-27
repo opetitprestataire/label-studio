@@ -241,12 +241,9 @@ export const AppStore = types
       yield taskPromise.then(async () => {
         // wait for self.LSF to be initialized with currentAnnotation
         let maxWait = 1000;
-        while (!self.LSF?.currentAnnotation) {
+        while (!self.LSF?.currentAnnotation && maxWait > 0) {
           await new Promise((resolve) => setTimeout(resolve, 1));
           maxWait -= 1;
-          if (maxWait <= 0) {
-            break;
-          }
         }
 
         if (self.LSF) {
