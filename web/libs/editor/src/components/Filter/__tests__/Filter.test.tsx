@@ -4,6 +4,8 @@ import { Filter } from "../Filter";
 const resizeObserverMock = () => ({
   observe: () => null,
   disconnect: () => null,
+  unobserve: () => null,
+  scrollIntoView: () => null,
 });
 
 window.ResizeObserver = jest.fn().mockImplementation(resizeObserverMock);
