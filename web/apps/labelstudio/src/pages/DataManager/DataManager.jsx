@@ -213,21 +213,7 @@ export const DataManagerPage = ({ ...props }) => {
   ) : (
     <>
       {loading && (
-        <div
-          style={{
-            flex: 1,
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <div className="flex-1 absolute inset-0 flex items-center justify-center">
           <Spinner size={64} />
         </div>
       )}
