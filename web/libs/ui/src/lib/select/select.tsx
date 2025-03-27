@@ -35,6 +35,7 @@ export const Select = forwardRef(
       isInline = false,
       isInProgress = false,
       triggerProps,
+      className,
       ...props
     }: SelectProps<T, A>,
     ref: ForwardedRef<HTMLSelectElement>,
@@ -126,7 +127,7 @@ export const Select = forwardRef(
             className={clsx(
               isInline ? "" : "w-full",
               // "inline-flex flex-1 justify-between gap-2 items-center disabled:cursor-not-allowed disabled:opacity-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500",
-              triggerProps?.className ?? "",
+              className ?? "",
               styles.selectTrigger,
               {
                 [styles.isOpen]: isOpen,
@@ -136,6 +137,7 @@ export const Select = forwardRef(
             type="button"
             data-testid={props?.dataTestid ?? "select-trigger"}
             ref={triggerRef}
+            {...triggerProps}
           >
             <span className="flex flex-1 text-left gap-2 leading-none" data-testid="select-display-value">
               {isDefined(value) ? (
