@@ -17,11 +17,14 @@ type ApiMethods<T extends Record<string, EndpointConfig>> = {
 
 // We're catching certain types of errors that
 // are not supposed to be user-facing
-const IGNORED_ERRORS = new Set([
-  "AbortError", // Whenever the abort controller kicked in
-  "Failed to fetch", // Network's offline, bad URL, CORS, etc. in Chrome
-  "NetworkError when attempting to fetch resource.", // Same as the above but Firefox,
-]);
+const IGNORED_ERRORS = new RegExp(
+  [
+    "abort", // Whenever the abort controller kicked in
+    "failed to fetch", // Network's offline, bad URL, CORS, etc. in Chrome
+    "networkerror", // Same as the above but Firefox,
+  ].join("|"),
+  "i",
+);
 
 export type ApiParams = {
   headers?: RequestInit["headers"];
@@ -229,13 +232,20 @@ export class APIProxy<T extends {}> {
         } else {
           try {
             rawResponse = await fetch(apiCallURL, requestParams);
-          } catch (err: any) {
-            // we must catch an AbortError here to as it's fired if
-            // the request is aborted mid-flight
-            if (IGNORED_ERRORS.has(err.message)) {
+          } catch (err: unknown) {
+            if (!(err instanceof Error)) {
+              console.warn("Can't handle error", err);
               return null;
             }
-            responseResult = this.generateException(err as Error);
+            // we don't want the user to see some of the errors
+            // so we fail silently
+            if (err.message.match(IGNORED_ERRORS) !== null) {
+              IGNORED_ERRORS.lastIndex = -1;
+              return null;
+            }
+
+            const error = err as Error;
+            responseResult = this.generateException(error);
             return new Response(`${err.name}: ${err.message}`, { status: 500 });
           }
         }
