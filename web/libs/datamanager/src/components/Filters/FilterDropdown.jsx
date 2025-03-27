@@ -23,12 +23,15 @@ export const FilterDropdown = observer(
           typeof item === "string" || typeof item === "number"
             ? { label: <OptionVisuals item={item} />, value: item, original: item }
             : {
-                label: item?.parent ? <OptionVisuals item={item} /> : item?.title ?? item?.label ?? item?.name,
+                ...item,
+                label: item?.original?.field?.parent ? (
+                  <OptionVisuals item={item} />
+                ) : (
+                  item?.title ?? item?.label ?? item?.name
+                ),
                 value: item?.value ?? item,
-                original: item,
                 children: item?.options?.map(parseItems),
               };
-        console.log("options123", option);
         return option;
       },
       [optionRender],

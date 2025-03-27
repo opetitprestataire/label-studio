@@ -290,7 +290,7 @@ const Option = ({
       className={classname}
     >
       {multiple && <Checkbox tabIndex={-1} checked={isOptionSelected} indeterminate={isIndeterminate} />}
-      <div data-testid="select-option-label" className="truncate">
+      <div data-testid="select-option-label" className="w-full truncate">
         {label}
       </div>
     </CommandItem>
