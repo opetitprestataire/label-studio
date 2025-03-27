@@ -1,44 +1,46 @@
 .selectTrigger {
   display: flex;
-  padding: var(--spacing-small, 8px) var(--spacing-small, 8px) var(--spacing-small, 8px) var(--spacing-base, 16px);
+  align-items: center;
+  height: 100%;
+  padding: var(--spacing-small) var(--spacing-small) var(--spacing-small) var(--spacing-base);
   gap: 8px;
   flex: 1 0 0;
   overflow: hidden;
-  color: var(--color-neutral-content-subtler, #6B6860);
+  color: var(--color-neutral-content-subtler);
   text-overflow: ellipsis;
 
   /* body/medium */
   font-family: var(--font-family-body, Figtree);
-  font-size: var(--font-size-body-medium, 16px);
+  font-size: var(--font-size-body-medium);
   font-style: normal;
-  font-weight: var(--font-weight-regular, 400);
-  line-height: var(--line-height-body-medium, 24px); /* 150% */
-  letter-spacing: var(--letter-spacing-base, 0);
-  border-radius: var(--corner-radius-smaller, 4px);
-  border: 1px solid var(--color-neutral-border, #E1DED5);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body-medium); /* 150% */
+  letter-spacing: var(--letter-spacing-base);
+  border-radius: var(--corner-radius-smaller);
+  border: 1px solid var(--color-neutral-border);
 
   &:hover:not(.isDisabled) {
-    border: 1px solid var(--color-neutral-border-bold, #CAC5B8);
+    border: 1px solid var(--color-neutral-border-bold);
   }
 
   &:focus {
-    border-radius: var(--corner-radius-smaller, 4px);
-    background: var(--color-neutral-surface-hover, #FDFDFC);
+    border-radius: var(--corner-radius-smaller);
+    background: var(--color-neutral-surface-hover);
     box-shadow: 0 1px 2px 1px rgb(0 0 0 / 6%) inset;
-    color: var(--color-neutral-content, #262522);
+    color: var(--color-neutral-content);
     outline: none;
   }
 
   &.isOpen {
-    border: 1px solid var(--color-neutral-border-bold, #CAC5B8);
-    background: var(--color-neutral-surface-active, #F0EFEB);
+    border: 1px solid var(--color-neutral-border-bold);
+    background: var(--color-neutral-surface-active);
     box-shadow: 0 1px 2px 1px rgb(0 0 0 / 6%) inset;
-    color: var(--color-neutral-content, #262522);
+    color: var(--color-neutral-content);
   }
 
   &.isDisabled {
-    color: var(--color-neutral-content-subtlest, #A49F95);
-    background: var(--color-neutral-surface, #F9F8F6);
+    color: var(--color-neutral-content-subtlest);
+    background: var(--color-neutral-surface);
     box-shadow: 0 1px 2px 1px rgb(0 0 0 / 6%) inset;
     cursor: not-allowed;
   }
@@ -47,7 +49,7 @@
 .selectLoading {
   &:focus {
     outline: none;
-    padding: var(--spacing-small, 8px);
+    padding: var(--spacing-small);
 
   }
 }

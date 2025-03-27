@@ -1,6 +1,16 @@
 import { FilterRow } from "../FilterRow";
 import { fireEvent, render, screen } from "@testing-library/react";
 
+const resizeObserverMock = () => ({
+  observe: () => null,
+  disconnect: () => null,
+  unobserve: () => null,
+  scrollIntoView: () => null,
+});
+
+window.ResizeObserver = jest.fn().mockImplementation(resizeObserverMock);
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
 describe("FilterRow", () => {
   const mockOnChange = jest.fn();
   const mockOnDelete = jest.fn();

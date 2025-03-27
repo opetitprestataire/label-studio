@@ -57,12 +57,22 @@ const meta: Meta<typeof Select> = {
           <Select
             placeholder="Select a fruit"
             value="Blueberry"
+            searchable={true}
             options={[
               {
                 value: "Apple",
                 disabled: true,
               },
-              "Banana",
+              {
+                value: "Banana",
+                label: (
+                  <>
+                    <span>Banana</span>
+                    <span className="text-sm"> - 10</span>
+                    <span className="text-lg"> other element</span>
+                  </>
+                )
+              },
               {
                 value: "Blueberry",
                 label: (

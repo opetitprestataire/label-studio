@@ -9,6 +9,7 @@ const resizeObserverMock = () => ({
 });
 
 window.ResizeObserver = jest.fn().mockImplementation(resizeObserverMock);
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
 describe("Filter", () => {
   const mockOnChange = jest.fn();
