@@ -1,6 +1,6 @@
 {
-  "message": "fix: DIA-1925: fix payload for sample task in data import (#7276)",
-  "commit": "5fbf4df499d7fe0542cd751b1b51380aa961b7d4",
-  "date": "2025-03-25T17:11:11.000Z",
+  "message": "refactor: OPTIC-927: remove FF_DEV_2432 feature flag (#7229)",
+  "commit": "113d3389fee805f3dbc3dd51f9fd189637b6b4da",
+  "date": "2025-03-26T16:24:07.000Z",
   "branch": "develop"
 }
