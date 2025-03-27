@@ -66,6 +66,7 @@ export type SelectProps<T, A extends SelectOption<T>[]> = {
   triggerProps?: any;
   isInline?: boolean;
   isInProgress?: boolean;
+  dataTestid?: string;
 } & SelectVirtualizedProps &
   Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value" | "placeholder">;
 

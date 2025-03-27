@@ -134,7 +134,7 @@ export const Select = forwardRef(
               },
             )}
             type="button"
-            data-testid={props?.["data-testid"] ?? "select-trigger"}
+            data-testid={props?.dataTestid ?? "select-trigger"}
             ref={triggerRef}
           >
             <span className="flex flex-1 text-left gap-2 leading-none" data-testid="select-display-value">
