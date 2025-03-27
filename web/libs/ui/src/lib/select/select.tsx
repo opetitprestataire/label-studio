@@ -137,7 +137,7 @@ export const Select = forwardRef(
             data-testid={props?.["data-testid"] ?? "select-trigger"}
             ref={triggerRef}
           >
-            <span className="flex-1 text-left" data-testid="select-display-value">
+            <span className="flex flex-1 text-left gap-2 leading-none" data-testid="select-display-value">
               {isDefined(value) ? (
                 <>
                   {selectedOptions?.map((option, index) => {
@@ -161,96 +161,94 @@ export const Select = forwardRef(
           </button>
         </PopoverTrigger>
         <PopoverContent className="z-99999 min-w-full" align="start" data-testid="select-popup">
-          <Command shouldFilter={false}>
-            {searchable && (
-              <CommandInput
-                className="p-2 border border-gray-300"
-                placeholder={searchPlaceholder ?? "Search"}
-                onChangeCapture={(e) => setQuery(e.currentTarget.value)}
-                data-testid="select-search-field"
-              />
-            )}
-            <CommandList label="Select an option">
-              {isInProgress ? (
-                <CommandGroup>
-                  <span>Loading...</span>
-                </CommandGroup>
-              ) : (
-                <>
-                  <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
-                  <CommandGroup className="p-2">
-                    {_options.map((option, index) => {
-                      const optionValue = option?.value ?? option;
-                      const label = option?.label ?? optionValue;
-                      const children = option?.children;
-                      const isIndeterminate = multiple && children?.some((child) => isSelected(child));
-                      const isOptionSelected =
-                        multiple && children ? children?.every((child) => isSelected(child)) : isSelected(optionValue);
-
-                      if (children) {
-                        return (
-                          <CommandGroup key={index}>
-                            {multiple ? (
-                              <Option
-                                multiple={multiple}
-                                label={label}
-                                isIndeterminate={!isOptionSelected && isIndeterminate}
-                                isOptionSelected={isOptionSelected}
-                                className="pl-0"
-                                onSelect={() => {
-                                  children.forEach((child: SelectOption<T>) => {
-                                    const childVal = child?.value ?? child;
-                                    isOptionSelected ? _onChange(childVal, true) : _onChange(childVal, false);
-                                  });
-                                }}
-                              />
-                            ) : (
-                              <div className="pl-1 font-bold">{label}</div>
-                            )}
-                            <div className="pl-2">
-                              {children.map((item, i) => {
-                                const val = item?.value ?? item;
-                                const lab = item?.label ?? val;
-                                const isChildOptionSelected = isSelected(val);
-                                return (
-                                  <Option
-                                    key={`${val}_${i}`}
-                                    value={val}
-                                    label={lab}
-                                    isOptionSelected={isChildOptionSelected}
-                                    disabled={item?.disabled}
-                                    style={item?.style}
-                                    multiple={multiple}
-                                    onSelect={() => {
-                                      _onChange(val, isChildOptionSelected);
-                                    }}
-                                  />
-                                );
-                              })}
-                            </div>
-                          </CommandGroup>
-                        );
-                      }
-                      return (
-                        <Option
-                          key={`${optionValue}_${index}`}
-                          value={optionValue}
-                          label={label}
-                          isOptionSelected={isOptionSelected}
-                          disabled={option?.disabled}
-                          style={option?.style}
-                          multiple={multiple}
-                          onSelect={() => {
-                            _onChange(optionValue, isOptionSelected);
-                          }}
-                        />
-                      );
-                    })}
-                  </CommandGroup>
-                </>
+          {isInProgress ? (
+            <span className={styles.selectLoading} tabIndex={-1}>
+              Loading...
+            </span>
+          ) : (
+            <Command shouldFilter={false}>
+              {searchable && (
+                <CommandInput
+                  className="p-2 border border-gray-300"
+                  placeholder={searchPlaceholder ?? "Search"}
+                  onChangeCapture={(e) => setQuery(e.currentTarget.value)}
+                  data-testid="select-search-field"
+                />
               )}
-            </CommandList>
-          </Command>
+              <CommandList label="Select an option">
+                <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
+                <CommandGroup className="p-2">
+                  {_options.map((option, index) => {
+                    const optionValue = option?.value ?? option;
+                    const label = option?.label ?? optionValue;
+                    const children = option?.children;
+                    const isIndeterminate = multiple && children?.some((child) => isSelected(child));
+                    const isOptionSelected =
+                      multiple && children ? children?.every((child) => isSelected(child)) : isSelected(optionValue);
+
+                    if (children) {
+                      return (
+                        <CommandGroup key={index}>
+                          {multiple ? (
+                            <Option
+                              multiple={multiple}
+                              label={label}
+                              isIndeterminate={!isOptionSelected && isIndeterminate}
+                              isOptionSelected={isOptionSelected}
+                              className="pl-0"
+                              onSelect={() => {
+                                children.forEach((child: SelectOption<T>) => {
+                                  const childVal = child?.value ?? child;
+                                  isOptionSelected ? _onChange(childVal, true) : _onChange(childVal, false);
+                                });
+                              }}
+                            />
+                          ) : (
+                            <div className="pl-1 font-bold">{label}</div>
+                          )}
+                          <div className="pl-2">
+                            {children.map((item, i) => {
+                              const val = item?.value ?? item;
+                              const lab = item?.label ?? val;
+                              const isChildOptionSelected = isSelected(val);
+                              return (
+                                <Option
+                                  key={`${val}_${i}`}
+                                  value={val}
+                                  label={lab}
+                                  isOptionSelected={isChildOptionSelected}
+                                  disabled={item?.disabled}
+                                  style={item?.style}
+                                  multiple={multiple}
+                                  onSelect={() => {
+                                    _onChange(val, isChildOptionSelected);
+                                  }}
+                                />
+                              );
+                            })}
+                          </div>
+                        </CommandGroup>
+                      );
+                    }
+                    return (
+                      <Option
+                        key={`${optionValue}_${index}`}
+                        value={optionValue}
+                        label={label}
+                        isOptionSelected={isOptionSelected}
+                        disabled={option?.disabled}
+                        style={option?.style}
+                        multiple={multiple}
+                        onSelect={() => {
+                          _onChange(optionValue, isOptionSelected);
+                        }}
+                      />
+                    );
+                  })}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          )}
         </PopoverContent>
         <input {...props} type="hidden" name={props?.name} value={value ?? ""} ref={ref} disabled={disabled} />
       </Popover>
