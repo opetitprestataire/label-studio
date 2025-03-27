@@ -132,7 +132,7 @@ export const Select = forwardRef(
             ref={triggerRef}
           >
             <span className="flex-1 text-left" data-testid="select-display-value">
-              {value ? (
+              {isDefined(value) ? (
                 <>
                   {selectedOptions?.map((option, index) => {
                     const optionValue = option?.value ?? option;
@@ -148,9 +148,9 @@ export const Select = forwardRef(
               )}
             </span>
             {isOpen ? (
-              <IconChevron className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              <IconChevron className="ml-2 h-4 w-4 shrink-0 opacity-50 pointer-events-none" />
             ) : (
-              <IconChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              <IconChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 pointer-events-none" />
             )}
           </button>
         </PopoverTrigger>

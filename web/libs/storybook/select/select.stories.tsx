@@ -92,7 +92,12 @@ const meta: Meta<typeof Select> = {
           <Select options={thousandOptions} label="Thousand options" {...args} />
         </div>
         <div>
-          <Select options={[]} label="In progress" isInProgress={true} {...args} />
+          <Select
+            options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+            label="In progress"
+            isInProgress={true}
+            {...args}
+          />
         </div>
         <div>
           <Select
@@ -113,6 +118,17 @@ const meta: Meta<typeof Select> = {
             value={["Blueberry", "Banana"]}
             options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
             multiple={true}
+            {...args}
+          />
+        </div>
+
+        <div>
+          <Select
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
+            label="Boolean values"
             {...args}
           />
         </div>
