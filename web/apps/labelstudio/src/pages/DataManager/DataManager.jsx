@@ -231,6 +231,7 @@ export const DataManagerPage = ({ ...props }) => {
           <Spinner size={64} />
         </div>
       )}
+      {/* Allow this to exist before the DataManager is initialized as the async app.fetchData call eventually calls startLabeling, and that requires the root element to exist */}
       <Block ref={root} name="datamanager" />
     </>
   );
