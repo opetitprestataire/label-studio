@@ -17,7 +17,7 @@ export const VariantSelect = observer(({ filter, schema, onChange, multiple, val
 
   return (
     <FilterDropdown
-      items={items}
+      items={items?.toJSON ? items.toJSON() : items}
       value={selectedValue}
       multiple={multiple}
       optionRender={FilterItem}
@@ -38,13 +38,19 @@ export const ListFilter = [
     key: "contains",
     label: "contains",
     valueType: "single",
-    input: (props) => <VariantSelect {...props} multiple />,
+    input: (props) => {
+      console.log("props", props);
+      return <VariantSelect {...props} multiple />;
+    },
   },
   {
     key: "not_contains",
     label: "not contains",
     valueType: "single",
-    input: (props) => <VariantSelect {...props} multiple />,
+    input: (props) => {
+      console.log("props", props);
+      return <VariantSelect {...props} multiple />;
+    },
   },
   // ... Common,
 ];

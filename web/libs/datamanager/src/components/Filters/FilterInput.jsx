@@ -11,13 +11,12 @@ export const FilterInput = ({ value, type, onChange, placeholder, schema, style 
 
   return (
     <Input
-      size="small"
       type={type}
       value={value ?? ""}
       ref={inputRef}
       placeholder={placeholder}
       onChange={onChangeHandler}
-      style={style}
+      style={{ height: "100%", ...style }}
       {...(schema ?? {})}
     />
   );

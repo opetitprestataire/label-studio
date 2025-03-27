@@ -33,6 +33,7 @@ export const Select = forwardRef(
       multiple = false,
       isInline = false,
       isInProgress = false,
+      triggerProps,
       ...props
     }: SelectProps<T, A>,
     ref: ForwardedRef<HTMLSelectElement>,
@@ -91,12 +92,15 @@ export const Select = forwardRef(
       if (!searchable || !query.trim()) return options;
 
       const filterHandler = (option: any) => {
+        const value = option?.value ?? option;
         const label = option?.label ?? option?.value ?? option;
-
-        return label?.toString()?.toLowerCase().includes(query.toLowerCase());
+        return (
+          label?.toString()?.toLowerCase().includes(query.toLowerCase()) ||
+          value?.toString()?.toLowerCase().includes(query.toLowerCase())
+        );
       };
       return flatOptions.filter(filterHandler);
-    }, [options, searchable, query, flatOptions]);
+    }, [options, flatOptions, searchable, query]);
 
     const isSelected = useCallback(
       (val: any) => {
@@ -121,7 +125,7 @@ export const Select = forwardRef(
             className={clsx(
               isInline ? "" : "w-full",
               "inline-flex flex-1 justify-between p-3 items-center disabled:cursor-not-allowed disabled:opacity-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500",
-              props.triggerProps?.className ?? "",
+              triggerProps?.className ?? "",
             )}
             type="button"
             data-testid={props?.["data-testid"] ?? "select-trigger"}
@@ -151,7 +155,7 @@ export const Select = forwardRef(
           </button>
         </PopoverTrigger>
         <PopoverContent className="z-99999 min-w-full" align="start" data-testid="select-popup">
-          <Command>
+          <Command shouldFilter={false}>
             {searchable && (
               <CommandInput
                 className="p-2 border-b border-gray-300"
@@ -160,7 +164,7 @@ export const Select = forwardRef(
                 data-testid="select-search-field"
               />
             )}
-            <CommandList>
+            <CommandList label="Select an option">
               {isInProgress ? (
                 <CommandGroup>
                   <span>Loading...</span>
@@ -189,7 +193,7 @@ export const Select = forwardRef(
                                 className="pl-0"
                               />
                             ) : (
-                              <div className="font-bold">{label}</div>
+                              <div className="pl-1 font-bold">{label}</div>
                             )}
                             <div className="pl-2">
                               {children.map((item, i) => {
@@ -236,7 +240,7 @@ export const Select = forwardRef(
             </CommandList>
           </Command>
         </PopoverContent>
-        <input {...props} type="hidden" name={props?.name} value={value} ref={ref} disabled={disabled} />
+        <input {...props} type="hidden" name={props?.name} value={value ?? ""} ref={ref} disabled={disabled} />
       </Popover>
     );
 

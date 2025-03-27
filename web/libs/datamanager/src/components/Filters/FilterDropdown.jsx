@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { Select } from "@humansignal/ui";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 export const FilterDropdown = observer(
   ({
@@ -16,15 +16,24 @@ export const FilterDropdown = observer(
     dropdownClassName,
     outputFormat,
   }) => {
-    const parseItems = (item) => {
-      return {
-        ...(item?.options ? { children: item?.options.map(parseItems) } : {}),
-        ...(item?.original ? { label: optionRender({ item }) } : {}),
-        ...(item?.title ? { label: item?.title } : {}),
-        ...item,
-      };
-    };
-    const options = useMemo(() => items.map(parseItems), [items, optionRender]);
+    const parseItems = useCallback(
+      (item) => {
+        const OptionVisuals = optionRender;
+        const option =
+          typeof item === "string" || typeof item === "number"
+            ? { label: <OptionVisuals item={item} />, value: item, original: item }
+            : {
+                label: item?.parent ? <OptionVisuals item={item} /> : item?.title ?? item?.label ?? item?.name,
+                value: item?.value ?? item,
+                original: item,
+                children: item?.options?.map(parseItems),
+              };
+        console.log("options123", option);
+        return option;
+      },
+      [optionRender],
+    );
+    const options = useMemo(() => items.map(parseItems), [items, parseItems]);
 
     return (
       <Select

@@ -10,15 +10,14 @@
   grid-template-columns: 70px 110px 100px 120px 24px;
 
   &__remove {
-    width: 24px;
-    height: 24px;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 
     .button-dm {
+      height: 100%;
       flex: none;
-      padding: 0;
     }
   }
 
