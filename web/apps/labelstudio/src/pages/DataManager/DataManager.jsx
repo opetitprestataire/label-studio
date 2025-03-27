@@ -7,14 +7,15 @@ import { modal } from "../../components/Modal/Modal";
 import { Space } from "../../components/Space/Space";
 import { useAPI } from "../../providers/ApiProvider";
 import { useProject } from "../../providers/ProjectProvider";
-import { useContextProps, useParams } from "../../providers/RoutesProvider";
-import { addCrumb, deleteCrumb } from "../../services/breadrumbs";
+import { useContextProps, useFixedLocation, useParams } from "../../providers/RoutesProvider";
+import { addAction, addCrumb, deleteAction, deleteCrumb } from "../../services/breadrumbs";
 import { Block, Elem } from "../../utils/bem";
 import { isDefined } from "../../utils/helpers";
 import { ImportModal } from "../CreateProject/Import/ImportModal";
 import { ExportPage } from "../ExportPage/ExportPage";
 import { APIConfig } from "./api-config";
 import { ToastContext, ToastType } from "@humansignal/ui";
+import { FF_OPTIC_2, isFF } from "../../utils/feature-flags";
 
 import "./DataManager.scss";
 
@@ -59,7 +60,7 @@ const buildLink = (path, params) => {
 };
 
 export const DataManagerPage = ({ ...props }) => {
-  const dependencies = useMemo(loadDependencies);
+  const dependencies = useMemo(loadDependencies, []);
   const toast = useContext(ToastContext);
   const root = useRef();
   const params = useParams();
@@ -191,32 +192,18 @@ export const DataManagerPage = ({ ...props }) => {
       dataManagerRef.current.destroy();
       dataManagerRef.current = null;
     }
-  }, [dataManagerRef]);
+  }, []);
 
   useEffect(() => {
     Promise.all(dependencies)
       .then(() => setLoading(false))
       .then(init);
+  }, [init]);
 
+  useEffect(() => {
+    // destroy the data manager when the component is unmounted
     return () => destroyDM();
-  }, [root, init]);
-
-  if (loading) {
-    return (
-      <div
-        style={{
-          flex: 1,
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Spinner size={64} />
-      </div>
-    );
-  }
+  }, []);
 
   return crashed ? (
     <Block name="crash">
@@ -225,7 +212,28 @@ export const DataManagerPage = ({ ...props }) => {
       <Button to="/projects">Back to projects</Button>
     </Block>
   ) : (
-    <Block ref={root} name="datamanager" />
+    <>
+      {loading && (
+        <div
+          style={{
+            flex: 1,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Spinner size={64} />
+        </div>
+      )}
+      <Block ref={root} name="datamanager" />
+    </>
   );
 };
 
@@ -235,6 +243,7 @@ DataManagerPage.pages = {
   ImportModal,
 };
 DataManagerPage.context = ({ dmRef }) => {
+  const location = useFixedLocation();
   const { project } = useProject();
   const [mode, setMode] = useState(dmRef?.mode ?? "explorer");
 
@@ -244,10 +253,19 @@ DataManagerPage.context = ({ dmRef }) => {
 
   const updateCrumbs = (currentMode) => {
     const isExplorer = currentMode === "explorer";
+    const dmPath = location.pathname.replace(DataManagerPage.path, "");
 
     if (isExplorer) {
+      deleteAction(dmPath);
       deleteCrumb("dm-crumb");
     } else {
+      if (!isFF(FF_OPTIC_2)) {
+        addAction(dmPath, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dmRef?.store?.closeLabeling?.();
+        });
+      }
       addCrumb({
         key: "dm-crumb",
         title: "Labeling",

@@ -18,6 +18,7 @@ import {
   FF_DEV_2887,
   FF_DEV_3034,
   FF_LSDV_4620_3_ML,
+  FF_OPTIC_2,
   FF_REGION_VISIBILITY_FROM_URL,
   isFF,
 } from "../utils/feature-flags";
@@ -44,7 +45,7 @@ const DEFAULT_INTERFACES = [
 
 let LabelStudioDM;
 
-const resolveLabelStudio = async () => {
+const resolveLabelStudio = () => {
   if (LabelStudioDM) {
     return LabelStudioDM;
   }
@@ -222,9 +223,9 @@ export class LSFWrapper {
   }
 
   /** @private */
-  async initLabelStudio(settings) {
+  initLabelStudio(settings) {
     try {
-      const LSF = await resolveLabelStudio();
+      const LSF = resolveLabelStudio();
 
       this.lsfInstance = new LSF(this.root, settings);
 
@@ -740,8 +741,6 @@ export class LSFWrapper {
   };
 
   onSubmitDraft = async (studio, annotation, params = {}) => {
-    // It should be preserved as soon as possible because each `await` will allow it to be changed
-    const taskId = this.task.id;
     const annotationDoesntExist = !annotation.pk;
     const data = { body: this.prepareData(annotation, { isNewDraft: true }) }; // serializedAnnotation
     const hasChanges = this.needsDraftSave(annotation);
@@ -764,11 +763,11 @@ export class LSFWrapper {
     let response;
 
     if (annotationDoesntExist) {
-      response = await this.datamanager.apiCall("createDraftForTask", { taskID: taskId }, data);
+      response = await this.datamanager.apiCall("createDraftForTask", { taskID: this.task.id }, data);
     } else {
       response = await this.datamanager.apiCall(
         "createDraftForAnnotation",
-        { taskID: taskId, annotationID: annotation.pk },
+        { taskID: this.task.id, annotationID: annotation.pk },
         data,
       );
     }
@@ -882,7 +881,7 @@ export class LSFWrapper {
     if (window.APP_SETTINGS.read_only_quick_view_enabled && !this.labelStream) {
       prevAnnotation?.setEditable(false);
     }
-    if (nextAnnotation?.history?.undoIdx) {
+    if (isFF(FF_OPTIC_2) && !!nextAnnotation?.history?.undoIdx) {
       this.saveDraft(nextAnnotation).then(() => {
         this.datamanager.invoke("onSelectAnnotation", prevAnnotation, nextAnnotation, options, this);
       });
@@ -892,11 +891,11 @@ export class LSFWrapper {
   };
 
   onNextTask = async (nextTaskId, nextAnnotationId) => {
-    this.saveDraft();
+    if (isFF(FF_OPTIC_2)) this.saveDraft();
     this.loadTask(nextTaskId, nextAnnotationId, true);
   };
   onPrevTask = async (prevTaskId, prevAnnotationId) => {
-    this.saveDraft();
+    if (isFF(FF_OPTIC_2)) this.saveDraft();
     this.loadTask(prevTaskId, prevAnnotationId, true);
   };
   async submitCurrentAnnotation(eventName, submit, includeId = false, loadNext = true) {
