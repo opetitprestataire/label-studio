@@ -185,7 +185,7 @@ export const CreateProject = ({ onClose }) => {
       onClose?.();
     };
     performClose();
-  }, [project, redirect]);
+  }, [project]);
 
   return (
     <Modal onHide={onDelete} closeOnClickOutside={false} allowToInterceptEscape fullscreen visible bare>
