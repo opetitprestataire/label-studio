@@ -1,6 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { Filter } from "../Filter";
 
+const resizeObserverMock = () => ({
+  observe: () => null,
+  disconnect: () => null,
+});
+
+window.ResizeObserver = jest.fn().mockImplementation(resizeObserverMock);
+
 describe("Filter", () => {
   const mockOnChange = jest.fn();
   const filterData = [
