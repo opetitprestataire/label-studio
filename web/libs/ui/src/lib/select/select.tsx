@@ -191,6 +191,12 @@ export const Select = forwardRef(
                                 isIndeterminate={!isOptionSelected && isIndeterminate}
                                 isOptionSelected={isOptionSelected}
                                 className="pl-0"
+                                onSelect={() => {
+                                  children.forEach((child: SelectOption<T>) => {
+                                    const childVal = child?.value ?? child;
+                                    isOptionSelected ? _onChange(childVal, true) : _onChange(childVal, false);
+                                  });
+                                }}
                               />
                             ) : (
                               <div className="pl-1 font-bold">{label}</div>
