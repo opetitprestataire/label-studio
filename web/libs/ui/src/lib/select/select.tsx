@@ -14,6 +14,7 @@ import { Checkbox, Label } from "@humansignal/ui";
 import { isDefined } from "@humansignal/core/lib/utils/helpers";
 import { IconChevron, IconChevronDown } from "@humansignal/icons";
 import clsx from "clsx";
+import styles from "./select.module.scss";
 
 export const Select = forwardRef(
   <T, A extends SelectOption<T>[]>(
@@ -124,8 +125,13 @@ export const Select = forwardRef(
             aria-expanded={isOpen}
             className={clsx(
               isInline ? "" : "w-full",
-              "inline-flex flex-1 justify-between p-3 items-center disabled:cursor-not-allowed disabled:opacity-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500",
+              // "inline-flex flex-1 justify-between gap-2 items-center disabled:cursor-not-allowed disabled:opacity-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500",
               triggerProps?.className ?? "",
+              styles.selectTrigger,
+              {
+                [styles.isOpen]: isOpen,
+                [styles.isDisabled]: disabled,
+              },
             )}
             type="button"
             data-testid={props?.["data-testid"] ?? "select-trigger"}
@@ -158,7 +164,7 @@ export const Select = forwardRef(
           <Command shouldFilter={false}>
             {searchable && (
               <CommandInput
-                className="p-2 border-b border-gray-300"
+                className="p-2 border border-gray-300"
                 placeholder={searchPlaceholder ?? "Search"}
                 onChangeCapture={(e) => setQuery(e.currentTarget.value)}
                 data-testid="select-search-field"
@@ -172,7 +178,7 @@ export const Select = forwardRef(
               ) : (
                 <>
                   <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
-                  <CommandGroup>
+                  <CommandGroup className="p-2">
                     {_options.map((option, index) => {
                       const optionValue = option?.value ?? option;
                       const label = option?.label ?? optionValue;
