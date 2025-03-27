@@ -131,19 +131,19 @@ Scenario(
 
     I.click(locate("li").withText(regions[0].text));
     // less than min
-    I.selectOption("select[name=year-year]", "1999");
-    assert.strictEqual("", await I.grabValueFrom("select[name=year-year]"));
+    I.selectOption("input[name=year-year]", "1999");
+    assert.strictEqual("", await I.grabValueFrom("input[name=year-year]"));
     // more than max
-    I.selectOption("select[name=year-year]", "2023");
-    assert.strictEqual("", await I.grabValueFrom("select[name=year-year]"));
+    I.selectOption("input[name=year-year]", "2023");
+    assert.strictEqual("", await I.grabValueFrom("input[name=year-year]"));
     // exactly the same as max, should be correct
-    I.selectOption("select[name=year-year]", "2022");
-    assert.strictEqual("2022", await I.grabValueFrom("select[name=year-year]"));
+    I.selectOption("input[name=year-year]", "2022");
+    assert.strictEqual("2022", await I.grabValueFrom("input[name=year-year]"));
     I.pressKey("Escape");
 
     regions.forEach((region) => {
       I.click(locate("li").withText(region.text));
-      I.selectOption("select[name=year-year]", region.year);
+      I.selectOption("input[name=year-year]", region.year);
     });
 
     I.updateAnnotation();
@@ -154,7 +154,7 @@ Scenario(
       I.click(locate("li").withText(region.text));
       // important to see that per-regions change their values
       I.seeInField("input[name=date-date]", region.dateValue);
-      I.seeInField("select[name=year-year]", region.year);
+      I.seeInField("input[name=year-year]", region.year);
     });
 
     const results = await I.executeScript(serialize);
