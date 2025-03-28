@@ -5,6 +5,7 @@
   --header-border-radius: 0;
   --header-background: var(--color-neutral-surface-inset);
   --icon-color: var(--color-neutral-icon);
+  --handle-size-hover: 2px;
 
   height: 100%;
   z-index: 10;
@@ -206,8 +207,6 @@
 
   &__resizer {
     --size: 12px;
-    --handle-size-hover: 2px;
-
     z-index: 10;
     position: absolute;
     background-color: transparent;
@@ -348,12 +347,11 @@
 
     &:hover::before,
     &_drag::before {
-      background-color: var(--grape_500);
+      background-color: var(--color-primary-border-subtle);
       content: '';
       width: calc(100% + 50px);
-      height: 3px;
+      height: var(--handle-size-hover);
       position: absolute;
-      border-radius: 3px;
       transform: translate(0, -50%);
       cursor: ns-resize;
     }
@@ -366,8 +364,7 @@
     width: 100%;
     height: 6px;
     position: absolute;
-    background-color: var(--grape_500);
-    border-radius: 6px;
+    background-color: var(--color-primary-border-subtle);
   }
 
   &_dragBottom::after {
