@@ -80,18 +80,19 @@ const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, 
     </form>
   );
 
-export const CreateProject = ({ onClose, redirect = true }) => {
+export const CreateProject = ({ onClose }) => {
   const [step, _setStep] = React.useState("name"); // name | import | config
   const [waiting, setWaitingStatus] = React.useState(false);
 
-  const project = useDraftProject();
+  const { project, setProject: updateProject } = useDraftProject();
   const history = useHistory();
   const api = useAPI();
 
   const [name, setName] = React.useState("");
   const [error, setError] = React.useState();
   const [description, setDescription] = React.useState("");
-  const [config, setConfig] = React.useState("<View></View>");
+  const [sample, setSample] = React.useState(null);
+
   const setStep = React.useCallback((step) => {
     _setStep(step);
     const eventNameMap = {
@@ -106,7 +107,7 @@ export const CreateProject = ({ onClose, redirect = true }) => {
     setError(null);
   }, [name]);
 
-  const { columns, uploading, uploadDisabled, finishUpload, pageProps } = useImportPage(project);
+  const { columns, uploading, uploadDisabled, finishUpload, pageProps, uploadSample } = useImportPage(project, sample);
 
   const rootClass = cn("create-project");
   const tabClass = rootClass.elem("tab");
@@ -118,15 +119,17 @@ export const CreateProject = ({ onClose, redirect = true }) => {
 
   // name intentionally skipped from deps:
   // this should trigger only once when we got project loaded
-  React.useEffect(() => project && !name && setName(project.title), [project]);
+  React.useEffect(() => {
+    project && !name && setName(project.title);
+  }, [project]);
 
   const projectBody = React.useMemo(
     () => ({
       title: name,
       description,
-      label_config: config,
+      label_config: project?.label_config ?? "<View></View>",
     }),
-    [name, description, config],
+    [name, description, project?.label_config],
   );
 
   const onCreate = React.useCallback(async () => {
@@ -135,6 +138,10 @@ export const CreateProject = ({ onClose, redirect = true }) => {
     if (!imported) return;
 
     setWaitingStatus(true);
+
+    if (sample) {
+      await uploadSample(sample);
+    }
     const response = await api.callApi("updateProject", {
       params: {
         pk: project.id,
@@ -166,18 +173,21 @@ export const CreateProject = ({ onClose, redirect = true }) => {
     setError(err.validation_errors?.title);
   };
 
-  const onDelete = React.useCallback(async () => {
-    setWaitingStatus(true);
-    if (project)
-      await api.callApi("deleteProject", {
-        params: {
-          pk: project.id,
-        },
-      });
-    setWaitingStatus(false);
-    redirect && history.replace("/projects");
-    onClose?.();
-  }, [project, redirect]);
+  const onDelete = React.useCallback(() => {
+    const performClose = async () => {
+      setWaitingStatus(true);
+      if (project)
+        await api.callApi("deleteProject", {
+          params: {
+            pk: project.id,
+          },
+        });
+      setWaitingStatus(false);
+      updateProject(null);
+      onClose?.();
+    };
+    performClose();
+  }, [project]);
 
   return (
     <Modal onHide={onDelete} closeOnClickOutside={false} allowToInterceptEscape fullscreen visible bare>
@@ -211,10 +221,19 @@ export const CreateProject = ({ onClose, redirect = true }) => {
           setDescription={setDescription}
           show={step === "name"}
         />
-        <ImportPage project={project} show={step === "import"} {...pageProps} />
+        <ImportPage
+          project={project}
+          show={step === "import"}
+          sample={sample}
+          onSampleDatasetSelect={setSample}
+          openLabelingConfig={() => setStep("config")}
+          {...pageProps}
+        />
         <ConfigPage
           project={project}
-          onUpdate={setConfig}
+          onUpdate={(config) => {
+            updateProject({ ...project, label_config: config });
+          }}
           show={step === "config"}
           columns={columns}
           disableSaveButton={true}

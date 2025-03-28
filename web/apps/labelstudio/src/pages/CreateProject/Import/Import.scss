@@ -59,7 +59,6 @@
     }
 
     & + span {
-      margin: 0 16px;
       color: var(--color-neutral-content-subtler);
     }
   }
@@ -135,8 +134,8 @@
   }
 
   &__upload-icon {
-    height: 16px;
-    margin-right: 8px;
+    height: 20px;
+    width: 20px;
   }
 
   &__info-icon {
@@ -208,7 +207,7 @@
   }
 
   &__icon {
-    height: 64px;
+    color: var(--grape_500);
   }
 
   label {

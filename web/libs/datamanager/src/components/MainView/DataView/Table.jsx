@@ -1,10 +1,9 @@
 import { inject } from "mobx-react";
 import { getRoot } from "mobx-state-tree";
 import { useCallback, useMemo } from "react";
-import { FaQuestionCircle } from "react-icons/fa";
 import { useShortcut } from "../../../sdk/hotkeys";
 import { Block, Elem } from "../../../utils/bem";
-import { FF_DEV_2536, FF_LOPS_86, isFF } from "../../../utils/feature-flags";
+import { FF_DEV_2536, isFF } from "../../../utils/feature-flags";
 import * as CellViews from "../../CellViews";
 import { Icon } from "../../Common/Icon/Icon";
 import { ImportButton } from "../../Common/SDKButtons";
@@ -12,6 +11,7 @@ import { Spinner } from "../../Common/Spinner";
 import { Table } from "../../Common/Table/Table";
 import { Tag } from "../../Common/Tag/Tag";
 import { Tooltip } from "@humansignal/ui";
+import { IconQuestionOutline } from "@humansignal/icons";
 import { GridView } from "../GridView/GridView";
 import "./Table.scss";
 import { Button } from "../../Common/Button/Button";
@@ -99,7 +99,7 @@ export const DataView = injector(
       if (help && decoration?.help !== false) {
         children.push(
           <Tooltip key="help-tooltip" title={help}>
-            <Icon icon={FaQuestionCircle} style={{ opacity: 0.5 }} />
+            <Icon icon={IconQuestionOutline} style={{ opacity: 0.5 }} />
           </Tooltip>,
         );
       }
@@ -142,20 +142,7 @@ export const DataView = injector(
               <Elem name="title" tag="h3">
                 Failed to sync data
               </Elem>
-              {isFF(FF_LOPS_86) ? (
-                <>
-                  <Elem name="text">Check your storage settings and resync to import records</Elem>
-                  <Button
-                    onClick={async () => {
-                      window.open("./settings/storage");
-                    }}
-                  >
-                    Manage Storage
-                  </Button>
-                </>
-              ) : (
-                <Elem name="text">Check your storage settings. You may need to recreate this dataset</Elem>
-              )}
+              <Elem name="text">Check your storage settings. You may need to recreate this dataset</Elem>
             </Block>
           );
         }

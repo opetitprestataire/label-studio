@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1832: Missing tokens scss variables import (#7253)",
-  "commit": "a0777872900f2029ec013684a5c81309f7b98bdd",
-  "date": "2025-03-19T13:47:30.000Z",
+  "message": "fix: OPTIC-1859: Incomplete string escaping causing warnings for dependabot for design-tokens-converter (#7300)",
+  "commit": "db3b7fcf4bc80b246dcebb697596a0444a2d0bda",
+  "date": "2025-03-28T12:59:34.000Z",
   "branch": "develop"
 }
