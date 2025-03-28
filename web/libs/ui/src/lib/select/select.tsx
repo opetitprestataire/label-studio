@@ -302,7 +302,13 @@ const Option = ({
       data-testid="select-option"
       tabIndex={disabled ? -1 : 0}
       onKeyDown={keyDownHandler}
-      className={className}
+      className={clsx(
+        className,
+        isOptionSelected && ["bg-accent-grape-subtle"],
+        ["hover:bg-accent-grape-subtlest", "hover:cursor-pointer"],
+        ["active:bg-sky-200", "active:text-sky-700"],
+        ["data-[disabled=true]:opacity-50"],
+      )}
     >
       {multiple && <Checkbox tabIndex={-1} checked={isOptionSelected} indeterminate={isIndeterminate} readOnly />}
       <div data-testid="select-option-label" className="w-full truncate">

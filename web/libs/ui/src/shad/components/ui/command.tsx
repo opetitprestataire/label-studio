@@ -96,17 +96,12 @@ function CommandSeparator({ className, ...props }: React.ComponentProps<typeof C
 }
 
 function CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
-  const isSelected = props?.["data-selected"];
   return (
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
         "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none [&_svg]:pointer-events-none",
         className,
-        isSelected && ["bg-green-200", "text-green-700"],
-        ["hover:bg-sky-200", "hover:text-sky-700", "hover:cursor-pointer"],
-        ["active:bg-sky-200", "active:text-sky-700"],
-        ["data-[disabled=true]:opacity-50"],
       )}
       {...props}
     />
