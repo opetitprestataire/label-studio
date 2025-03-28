@@ -53,6 +53,8 @@ export class APIProxy<T extends {}> {
 
   methods = {} as ApiMethods<T>;
 
+  endpoints!: APIProxyOptions<T>["endpoints"];
+
   constructor(options: APIProxyOptions<T>) {
     this.commonHeaders = options.commonHeaders ?? {};
     this.gateway = this.resolveGateway(options.gateway);
@@ -61,6 +63,7 @@ export class APIProxy<T extends {}> {
     this.mockDisabled = options.mockDisabled ?? false;
     this.sharedParams = options.sharedParams ?? {};
     this.alwaysExpectJSON = options.alwaysExpectJSON ?? true;
+    this.endpoints = options.endpoints;
 
     this.resolveMethods(options.endpoints);
   }
@@ -75,6 +78,10 @@ export class APIProxy<T extends {}> {
     }
 
     return this.methods[method](params, options);
+  }
+
+  getSettingsByMethodName(methodName: keyof typeof this.methods) {
+    return this.endpoints && methodName && this.endpoints[methodName];
   }
 
   /**
