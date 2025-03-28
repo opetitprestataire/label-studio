@@ -633,7 +633,7 @@ export const AppStore = types
         }
         self.requestsInFlight.set(requestKey, controller);
       }
-      const result = yield self.API[methodName](requestParams, {
+      const result = yield self.API.invoke(methodName, requestParams, {
         headers: requestHeaders,
         body: requestBody.body ?? requestBody,
         options,
