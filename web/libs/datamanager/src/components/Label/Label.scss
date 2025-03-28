@@ -51,7 +51,6 @@
     height: 100%;
     display: flex;
     min-width: 200px;
-    box-shadow: 0 0 0 1px #ccc;
   }
 
   &__lsf-wrapper {
@@ -86,14 +85,14 @@
     flex-direction: column;
     overflow-y: auto;
 
-    & > div {
+    &>div {
       --main-bg-color: var(--color-neutral-surface);
 
       flex: 1;
       height: auto;
     }
 
-    &_outliner > div {
+    &_outliner>div {
       height: 100%;
     }
   }
