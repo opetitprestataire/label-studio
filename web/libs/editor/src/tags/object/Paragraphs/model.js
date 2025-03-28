@@ -14,6 +14,7 @@ import messages from "../../../utils/messages";
 import { clamp, isDefined, isValidObjectURL } from "../../../utils/utilities";
 import ObjectBase from "../Base";
 import styles from "./Paragraphs.module.scss";
+import { safeFetch } from "@humansignal/core";
 
 /**
  * The `Paragraphs` tag displays paragraphs of text on the labeling interface. Use to label dialogue transcripts for NLP and NER projects.
@@ -439,9 +440,10 @@ const ParagraphsLoadingModel = types.model().actions((self) => ({
         self.setRemoteValue("");
         return;
       }
-      fetch(url)
+
+      safeFetch(url)
         .then((res) => {
-          if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+          if (!res?.ok) throw new Error(`${res.status} ${res.statusText}`);
           return res.json();
         })
         .then(self.setRemoteValue)

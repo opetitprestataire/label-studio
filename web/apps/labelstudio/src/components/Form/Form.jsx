@@ -19,6 +19,7 @@ import {
 } from "./FormContext";
 import * as Validators from "./Validation/Validators";
 import { ToastProvider, ToastViewport } from "@humansignal/ui";
+import { safeFetch } from "@humansignal/core";
 
 const PASSWORD_PROTECTED_VALUE = "got ya, suspicious hacker!";
 
@@ -256,10 +257,10 @@ export default class Form extends React.Component {
   async submitWithFetch(body) {
     const action = this.formElement.current.action;
     const method = (this.props.method ?? "POST").toUpperCase();
-    const response = await fetch(action, { method, body });
+    const response = await safeFetch(action, { method, body });
 
     try {
-      const result = await response.json();
+      const result = await response?.json();
 
       this.setState({ lastResponse: result });
 

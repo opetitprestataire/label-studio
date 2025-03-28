@@ -10,22 +10,23 @@ import { useCopyText } from "../../../lib/hooks/useCopyText";
  */
 import { Input, TextArea } from "apps/labelstudio/src/components/Form";
 import { Button } from "apps/labelstudio/src/components/Button/Button";
+import { safeFetch } from "@humansignal/core";
 
 const tokenAtom = atomWithQuery(() => ({
   queryKey: ["access-token"],
   queryFn: async () => {
-    const result = await fetch("/api/current-user/token");
-    return result.json();
+    const result = await safeFetch("/api/current-user/token");
+    return result?.json() ?? {};
   },
 }));
 
 const resetTokenAtom = atomWithMutation(() => ({
   mutationKey: ["reset-token"],
   mutationFn: async () => {
-    const result = await fetch("/api/current-user/reset-token", {
+    const result = await safeFetch("/api/current-user/reset-token", {
       method: "post",
     });
-    return result.json();
+    return result?.json() ?? {};
   },
 }));
 

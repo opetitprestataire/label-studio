@@ -8,7 +8,7 @@ export const CurrentUserProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [isInProgress, setIsInProgress] = useState(false);
 
-  const fetch = useCallback(() => {
+  const fetchCurrentUser = useCallback(() => {
     setIsInProgress(true);
     api
       .callApi("me")
@@ -17,10 +17,14 @@ export const CurrentUserProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    fetch();
-  }, [fetch]);
+    fetchCurrentUser();
+  }, [fetchCurrentUser]);
 
-  return <CurrentUserContext.Provider value={{ user, fetch, isInProgress }}>{children}</CurrentUserContext.Provider>;
+  return (
+    <CurrentUserContext.Provider value={{ user, fetch: fetchCurrentUser, isInProgress }}>
+      {children}
+    </CurrentUserContext.Provider>
+  );
 };
 
 export const useCurrentUser = () => useContext(CurrentUserContext) ?? {};

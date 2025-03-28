@@ -18,6 +18,7 @@ import * as Validators from "./Validation/Validators";
 import { SDKContext } from "../../../providers/SDKProvider";
 import { isDefined } from "../../../utils/utils";
 import { MultiProvider } from "../../../providers/MultiProvider";
+import { safeFetch } from "@humansignal/core";
 
 const PASSWORD_PROTECTED_VALUE = "got ya, suspicious hacker!";
 
@@ -38,7 +39,7 @@ export default class Form extends Component {
 
   validation = new Map();
 
-  /**@type {import("../../../utils/api-proxy").APIProxy;} */
+  /**@type {import("@humansignal/core").APIProxy;} */
   get api() {
     return this.context.api;
   }
@@ -260,10 +261,10 @@ export default class Form extends Component {
   async submitWithFetch(body) {
     const action = this.formElement.current.action;
     const method = (this.props.method ?? "POST").toUpperCase();
-    const response = await fetch(action, { method, body });
+    const response = await safeFetch(action, { method, body });
 
     try {
-      const result = await response.json();
+      const result = await response?.json();
 
       this.setState({ lastResponse: result });
 

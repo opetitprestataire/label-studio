@@ -69,7 +69,7 @@ export const AppStore = types
       return self.SDK.lsf;
     },
 
-    /** @returns {import("../utils/api-proxy").APIProxy} */
+    /** @returns {import("@humansignal/core").APIProxy} */
     get API() {
       return self.SDK.api;
     },

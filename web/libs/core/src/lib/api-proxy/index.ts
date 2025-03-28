@@ -1,4 +1,5 @@
 import { formDataToJPO } from "../utils/helpers";
+import { safeFetch } from "../utils/safe-fetch";
 import statusCodes from "./status-codes.json";
 import type {
   APIProxyOptions,
@@ -220,7 +221,7 @@ export class APIProxy<T extends {}> {
         }
 
         /** @type {Response} */
-        let rawResponse: Response;
+        let rawResponse: Response | null;
 
         const isDevelopment = process.env.NODE_ENV === "development";
         const useMock =
@@ -231,26 +232,20 @@ export class APIProxy<T extends {}> {
           rawResponse = await this.mockRequest(apiCallURL, urlParams, requestParams, methodSettings);
         } else {
           try {
-            rawResponse = await fetch(apiCallURL, requestParams);
+            rawResponse = await safeFetch(apiCallURL, requestParams);
           } catch (err: unknown) {
             if (!(err instanceof Error)) {
               console.warn("Can't handle error", err);
               return null;
             }
-            // we don't want the user to see some of the errors
-            // so we fail silently
-            if (err.message.match(IGNORED_ERRORS) !== null) {
-              IGNORED_ERRORS.lastIndex = -1;
-              return null;
-            }
 
-            const error = err as Error;
-            responseResult = this.generateException(error);
+            responseResult = this.generateException(err);
             return new Response(`${err.name}: ${err.message}`, { status: 500 });
           }
         }
 
         if (raw) return rawResponse;
+        if (!rawResponse) return null;
 
         responseMeta = {
           headers: new Map(headersToArray(rawResponse.headers)),

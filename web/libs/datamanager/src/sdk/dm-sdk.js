@@ -44,7 +44,7 @@ import { destroy } from "mobx-state-tree";
 import { unmountComponentAtNode } from "react-dom";
 import { toCamelCase } from "strman";
 import { instruments } from "../components/DataManager/Toolbar/instruments";
-import { APIProxy } from "../utils/api-proxy";
+import { APIProxy } from "@humansignal/core";
 import { FF_LSDV_4620_3_ML, isFF } from "../utils/feature-flags";
 import { objectToMap } from "../utils/helpers";
 import { serializeJsonForUrl, deserializeJsonFromUrl } from "../utils/urlJSON";

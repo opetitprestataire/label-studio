@@ -1,3 +1,4 @@
+import { safeFetch } from "@humansignal/core";
 import { defaultTipsCollection } from "./content";
 import type { Tip, TipsCollection } from "./types";
 
@@ -58,7 +59,7 @@ export const loadLiveTipsCollection = () => {
   const abortTimeout = setTimeout(abortController.abort, MAX_TIMEOUT);
 
   // Fetch from github raw liveContent.json proxied through the server
-  fetch("/heidi-tips", {
+  safeFetch("/heidi-tips", {
     headers: {
       "Cache-Control": "no-cache",
       "Content-Type": "application/json",
@@ -66,7 +67,7 @@ export const loadLiveTipsCollection = () => {
     signal: abortController.signal,
   })
     .then(async (response) => {
-      if (response.ok) {
+      if (response?.ok) {
         const data = await response.json();
 
         // Cache the fetched content
