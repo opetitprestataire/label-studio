@@ -121,12 +121,15 @@
   }
 
   &__trigger {
+    --trigger-border-color: transparent;
+
     transform: rotate(90deg);
     display: flex;
     border-radius: 4px;
     color: var(--color-neutral-content-subtler);
     visibility: hidden;
     padding: var(--spacing-small-x, 4px);
+    border: 1px solid var(--trigger-border-color);
 
     svg {
       width: 20px;
@@ -136,9 +139,10 @@
     }
 
     &:hover {
+      cursor: pointer;
       color: var(--color-neutral-content);
       background: var(--color-primary-emphasis-subtle);
-      border: 1px solid var(--color-primary-border-subtle);
+      border-color: var(--color-primary-border-subtle);
     }
   }
 
