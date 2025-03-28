@@ -339,7 +339,6 @@ const HtxDateTime = inject("store")(
     const visibleStyle = item.perRegionVisible() ? { margin: "0 0 1em" } : { display: "none" };
     const visual = {
       style: { width: "auto", marginRight: "4px", borderColor: item.isValid ? undefined : "red" },
-      className: "ant-input",
     };
     const [minTime, maxTime] = [item.min, item.max].map((s) => s?.match(/\d?\d:\d\d/)?.[0]);
     const [dateInputValue, setDateInputValue] = useState("");

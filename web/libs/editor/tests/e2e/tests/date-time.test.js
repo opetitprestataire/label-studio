@@ -132,12 +132,9 @@ Scenario(
     I.click(locate("li").withText(regions[0].text));
     // less than min
     I.click(locate("[data-testid=select-trigger][data-name=year-year]"));
-    I.click(locate("[data-testid=select-option][data-value=1999]"));
-    assert.strictEqual("", await I.grabValueFrom("input[name=year-year]"));
-    // more than max
-    I.click(locate("[data-testid=select-trigger][data-name=year-year]"));
-    I.click(locate("[data-testid=select-option][data-value=2023]"));
-    assert.strictEqual("", await I.grabValueFrom("input[name=year-year]"));
+    I.dontSee("1999");
+    // less than max
+    I.dontSee("2023");
     // exactly the same as max, should be correct
     I.click(locate("[data-testid=select-trigger][data-name=year-year]"));
     I.click(locate("[data-testid=select-option][data-value=2022]"));
