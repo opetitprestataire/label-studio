@@ -140,7 +140,7 @@
     display: flex;
     flex: none;
     font-size: 9px;
-    color: var(--color-neutral-content);
+    color: var(--color-sand-000); // TODO: Revisit this with a css variable that can be calculated against --text-color for a dynamically high contrast value.
     text-align: center;
     align-items: center;
     border-radius: 4px;
