@@ -257,7 +257,9 @@ const ChoicesSelectLayout = observer(({ item }) => {
         value: i._value,
         label: (
           <Tooltip title={i.hint}>
-            <span>{i._value}</span>
+            <span data-testid="choiceOptionText" className="w-full">
+              {i._value}
+            </span>
           </Tooltip>
         ),
       })),

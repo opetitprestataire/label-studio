@@ -277,7 +277,7 @@ const Option = ({
   style,
   onSelect,
   multiple,
-  classname,
+  className,
 }: OptionProps) => {
   const keyDownHandler = useCallback(
     (e: any) => {
@@ -296,13 +296,14 @@ const Option = ({
       disabled={disabled}
       {...(disabled ? { "data-disabled": true } : {})}
       {...(style ? { style } : {})}
+      data-value={value}
       data-selected={isOptionSelected}
       data-testid="select-option"
       tabIndex={disabled ? -1 : 0}
       onKeyDown={keyDownHandler}
-      className={classname}
+      className={className}
     >
-      {multiple && <Checkbox tabIndex={-1} checked={isOptionSelected} indeterminate={isIndeterminate} />}
+      {multiple && <Checkbox tabIndex={-1} checked={isOptionSelected} indeterminate={isIndeterminate} readOnly />}
       <div data-testid="select-option-label" className="w-full truncate">
         {label}
       </div>

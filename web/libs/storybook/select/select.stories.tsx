@@ -71,7 +71,7 @@ const meta: Meta<typeof Select> = {
                     <span className="text-sm"> - 10</span>
                     <span className="text-lg"> other element</span>
                   </>
-                )
+                ),
               },
               {
                 value: "Blueberry",
