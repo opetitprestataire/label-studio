@@ -41,7 +41,7 @@ export function SampleDatasetSelect({
 
   return (
     <div className="flex gap-3 items-center">
-      <span className="text-lsNeutralContentSubtler">or use a sample dataset</span>
+      <span className="text-neutral-content-subtler">or use a sample dataset</span>
       <Select value={sample?.url ?? undefined} placeholder="Select sample" onChange={onSelect} options={options} />
     </div>
   );

@@ -289,20 +289,24 @@ const ConfigureColumn = ({ template, obj, columns }) => {
   }, [columns, DEFAULT_COLUMN, value]);
 
   return (
-    <p>
-      Use {obj.tagName.toLowerCase()}
-      {template.objects > 1 && ` for ${obj.getAttribute("name")}`}
-      {" from "}
-      {columns?.length > 0 && columns[0] !== DEFAULT_COLUMN && "field "}
+    <>
       <Select
-        className="border w-[180px]"
         onChange={selectValue}
         value={isManual ? "-" : value}
         options={columnsList}
         isInline={true}
+        label={
+          <>
+            Use {obj.tagName.toLowerCase()}
+            {template.objects > 1 && ` for ${obj.getAttribute("name")}`}
+            {" from "}
+            {columns?.length > 0 && columns[0] !== DEFAULT_COLUMN && "field "}
+          </>
+        }
+        labelProps={{ className: "inline-flex" }}
       />
       {isManual && <Input value={newValue} onChange={handleChange} onBlur={handleBlur} onKeyDown={handleKeyDown} />}
-    </p>
+    </>
   );
 };
 

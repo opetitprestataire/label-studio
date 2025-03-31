@@ -37,9 +37,7 @@ export const DateTimeInput = observer(({ value, range, time, onChange }) => {
     return isValid(date) ? date : undefined;
   }, [range, value]);
 
-  return (
-    <DatePicker size="small" value={dateValue} selectRange={range} showTime={time === true} onChange={onValueChange} />
-  );
+  return <DatePicker value={dateValue} selectRange={range} showTime={time === true} onChange={onValueChange} />;
 });
 
 export const DateFields = (extraProps) => {
