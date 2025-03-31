@@ -40,8 +40,6 @@ const CustomBackendForm = ({ action, backend, project, onSubmit }) => {
           ]}
           value={selectedAuthMethod}
           onChange={setAuthMethod}
-            setAuthMethod(val);
-          }}
         />
       </Form.Row>
 
