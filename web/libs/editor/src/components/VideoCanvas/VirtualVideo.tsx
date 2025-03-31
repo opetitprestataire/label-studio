@@ -1,7 +1,6 @@
 import { type DetailedHTMLProps, forwardRef, useCallback, useEffect, useRef, type VideoHTMLAttributes } from "react";
 import InfoModal from "../../components/Infomodal/Infomodal";
 import { FF_LSDV_4711, isFF } from "../../utils/feature-flags";
-import { safeFetch } from "@humansignal/core";
 
 type VirtualVideoProps = DetailedHTMLProps<VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement> & {
   canPlayType?: (supported: boolean) => void;
@@ -49,14 +48,14 @@ export const canPlayUrl = async (url: string) => {
   let fileMimeType: string | null | undefined = mimeTypeMapping[fileType];
 
   if (!fileMimeType) {
-    const fileMeta = await safeFetch(url, {
+    const fileMeta = await fetch(url, {
       method: "GET",
       headers: {
         Range: "bytes=0-0",
       },
     });
 
-    fileMimeType = fileMeta?.headers.get("content-type") ?? "application/octet-stream";
+    fileMimeType = fileMeta.headers.get("content-type");
   }
 
   // If the file is binary, we can't check if the browser can play it, so we just assume it can.

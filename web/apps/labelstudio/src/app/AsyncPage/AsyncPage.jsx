@@ -7,7 +7,6 @@ import { FF_UNSAVED_CHANGES, isFF } from "../../utils/feature-flags";
 import { absoluteURL, removePrefix } from "../../utils/helpers";
 import { clearScriptsCache, isScriptValid, reInsertScripts, replaceScript } from "../../utils/scripts";
 import { UNBLOCK_HISTORY_MESSAGE } from "../App";
-import { safeFetch } from "@humansignal/core";
 
 const pageCache = new Map();
 
@@ -22,8 +21,8 @@ const loadAsyncPage = async (url) => {
     if (pageCache.has(url)) {
       return pageCache.get(url);
     }
-    const response = await safeFetch(url);
-    const html = (await response?.text()) ?? "";
+    const response = await fetch(url);
+    const html = await response.text();
 
     if (response.status === 401) {
       location.href = absoluteURL("/");

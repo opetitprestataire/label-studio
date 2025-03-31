@@ -25,7 +25,6 @@ import { parseCSV, parseValue, tryToParseJSON } from "../../utils/data";
 import { fixMobxObserve } from "../../utils/utilities";
 
 import "./TimeSeries/Channel";
-import { safeFetch } from "@humansignal/core";
 
 /**
  * The `TimeSeries` tag can be used to label time series data. Read more about Time Series Labeling on [the time series template page](../templates/time_series.html).
@@ -448,8 +447,8 @@ const Model = types
       let res;
 
       try {
-        res = await safeFetch(url);
-        if (!res?.ok) {
+        res = await fetch(url);
+        if (!res.ok) {
           if (res.status === 400) {
             store.annotationStore.addErrors([
               errorBuilder.loadingError(
@@ -469,8 +468,8 @@ const Model = types
 
         if (!res) {
           try {
-            res = await safeFetch(url, { mode: "no-cors" });
-            if (!res?.ok && res?.status === 0) cors = true;
+            res = await fetch(url, { mode: "no-cors" });
+            if (!res.ok && res.status === 0) cors = true;
           } catch (e) {
             error = e;
           }

@@ -3,8 +3,6 @@ import * as pages from "./pages";
 
 export * from "./lib/Tour";
 export * from "./lib/utils/analytics";
-export * from "./lib/utils/safe-fetch";
-export * from "./lib/api-proxy";
 
 export * from "./hooks/useAbortController";
 

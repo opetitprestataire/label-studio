@@ -9,7 +9,6 @@ import { AnnotationMixin } from "../../mixins/AnnotationMixin";
 import ProcessAttrsMixin from "../../mixins/ProcessAttrs";
 import Base from "./Base";
 import { parseTypeAndOption, parseValue } from "../../utils/data";
-import { safeFetch } from "@humansignal/core";
 
 /**
  * The `Table` tag is used to display object keys and values in a table.
@@ -66,8 +65,8 @@ const Model = types
 
       if (options.url) {
         try {
-          const response = yield safeFetch(originData);
-          const { ok, status, statusText } = response ?? { ok: false };
+          const response = yield fetch(originData);
+          const { ok, status, statusText } = response;
 
           if (!ok) throw new Error(`${status} ${statusText}`);
 

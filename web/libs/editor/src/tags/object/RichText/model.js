@@ -18,7 +18,6 @@ import { FF_SAFE_TEXT, isFF } from "../../../utils/feature-flags";
 import DomManager from "./domManager";
 import { STATE_CLASS_MODS } from "../../../mixins/HighlightMixin";
 import Constants from "../../../core/Constants";
-import { safeFetch } from "@humansignal/core";
 
 const WARNING_MESSAGES = {
   dataTypeMistmatch: () => "Do not put text directly in task data if you use valueType=url.",
@@ -205,8 +204,8 @@ const Model = types
           }
 
           try {
-            const response = yield safeFetch(url);
-            const { ok, status, statusText } = response ?? { ok: false };
+            const response = yield fetch(url);
+            const { ok, status, statusText } = response;
 
             if (!ok) throw new Error(`${status} ${statusText}`);
 

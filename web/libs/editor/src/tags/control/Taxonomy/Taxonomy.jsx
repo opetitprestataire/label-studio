@@ -26,7 +26,6 @@ import ClassificationBase from "../ClassificationBase";
 import styles from "./Taxonomy.scss";
 import messages from "../../../utils/messages";
 import { errorBuilder } from "../../../core/DataValidator/ConfigValidator";
-import { safeFetch } from "@humansignal/core";
 
 /**
  * @typedef TaxonomyItem
@@ -405,8 +404,8 @@ const Model = types
       }
 
       try {
-        const res = yield safeFetch(url, requestOptions);
-        const { ok, status, statusText } = res ?? { ok: false };
+        const res = yield fetch(url, requestOptions);
+        const { ok, status, statusText } = res;
 
         if (!ok) throw new Error(`${status} ${statusText}`);
 

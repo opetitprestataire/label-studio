@@ -1,58 +1,60 @@
-import { formDataToJPO } from "../utils/helpers";
+/**
+ * @typedef {string | {
+ * path: string,
+ * method: RequestMethod,
+ * convert: ResponseConverter,
+ * mock: (url: string, request: Request) => Dict
+ * body: Dict,
+ * headers: Headers,
+ * }} EndpointConfig
+ */
+
+import { formDataToJPO, parseJson } from "../helpers";
 import statusCodes from "./status-codes.json";
-import type {
-  APIProxyOptions,
-  ApiResponse,
-  EndpointConfig,
-  RequestMethod,
-  RequestMode,
-  ResponseError,
-  ResponseMeta,
-  WrappedResponse,
-} from "./types";
 
-type ApiMethods<T extends Record<string, EndpointConfig>> = {
-  [K in keyof T]: (params?: Record<string, any>, options?: ApiParams) => Promise<WrappedResponse<any>>;
-};
+/**
+ * @typedef {Dict<string, EndpointConfig>} Endpoints
+ */
 
-// We're catching certain types of errors that
-// are not supposed to be user-facing
-const IGNORED_ERRORS = new RegExp(
-  [
-    "abort", // Whenever the abort controller kicked in
-    "failed to fetch", // Network's offline, bad URL, CORS, etc. in Chrome
-    "networkerror", // Same as the above but Firefox,
-  ].join("|"),
-  "i",
-);
-
-export type ApiParams = {
-  headers?: RequestInit["headers"];
-  signal?: RequestInit["signal"];
-  body?: FormData | URLSearchParams | Record<string, any>;
-};
+/**
+ * @typedef {{
+ * gateway: string | URL,
+ * endpoints: Dict<EndpointConfig>,
+ * commonHeaders: Dict<string>,
+ * mockDelay: number,
+ * mockDisabled: boolean,
+ * sharedParams: Dict<any>,
+ * alwaysExpectJSON: boolean,
+ * }} APIProxyOptions
+ */
 
 /**
  * Proxy layer for any type of API's
  */
-export class APIProxy<T extends {}> {
-  gateway: string;
+export class APIProxy {
+  /** @type {string} */
+  gateway = null;
 
-  commonHeaders: Record<string, string> = {};
+  /** @type {Dict<string>} */
+  commonHeaders = {};
 
+  /** @type {number} */
   mockDelay = 0;
 
+  /** @type {boolean} */
   mockDisabled = false;
 
-  requestMode: RequestMode = "same-origin";
+  /** @type {"same-origin"|"cors"} */
+  requestMode = "same-origin";
 
-  sharedParams: Record<string, any> = {};
+  /** @type {Dict} */
+  sharedParams = {};
 
-  alwaysExpectJSON = true;
-
-  methods = {} as ApiMethods<T>;
-
-  constructor(options: APIProxyOptions<T>) {
+  /**
+   * Constructor
+   * @param {APIProxyOptions} options
+   */
+  constructor(options) {
     this.commonHeaders = options.commonHeaders ?? {};
     this.gateway = this.resolveGateway(options.gateway);
     this.requestMode = this.detectMode();
@@ -60,42 +62,38 @@ export class APIProxy<T extends {}> {
     this.mockDisabled = options.mockDisabled ?? false;
     this.sharedParams = options.sharedParams ?? {};
     this.alwaysExpectJSON = options.alwaysExpectJSON ?? true;
+    this.endpoints = options.endpoints;
 
     this.resolveMethods(options.endpoints);
   }
 
-  invoke<T>(
-    method: keyof typeof this.methods,
-    params?: Record<string, any>,
-    options?: ApiParams,
-  ): Promise<WrappedResponse<T>> {
-    if (!this.isValidMethod(method as string)) {
-      throw new Error(`Method ${method.toString()} not found`);
+  call(method, { params, body, headers }) {
+    if (this.isValidMethod(method)) {
+      return this[method](params ?? {}, { body, headers });
     }
-
-    return this.methods[method](params, options);
+    console.warn(`Unknown API method "${method}"`);
   }
 
   /**
    * Check if method exists
    * @param {String} method
    */
-  isValidMethod(method: string) {
-    return method in this.methods && this.methods[method as keyof typeof this.methods] instanceof Function;
+  isValidMethod(method) {
+    return this[method] instanceof Function;
   }
 
   /**
    * Resolves gateway to a full URL
    * @returns {string}
    */
-  resolveGateway(url: string | URL): string {
+  resolveGateway(url) {
     if (url instanceof URL) {
       return url.toString();
     }
 
     try {
       return new URL(url).toString();
-    } catch (_e) {
+    } catch (e) {
       const gateway = new URL(window.location.href);
 
       gateway.search = "";
@@ -113,8 +111,9 @@ export class APIProxy<T extends {}> {
 
   /**
    * Detect RequestMode.
+   * @returns {"same-origin"|"cors"}
    */
-  detectMode(): RequestMode {
+  detectMode() {
     const currentOrigin = window.location.origin;
     const gatewayOrigin = new URL(this.gateway).origin;
 
@@ -123,41 +122,58 @@ export class APIProxy<T extends {}> {
 
   /**
    * Build methods list from endpoints
+   * @private
    */
-  private resolveMethods(endpoints: Record<string, EndpointConfig>, parentPath?: string[]) {
+  resolveMethods(endpoints, parentPath) {
     if (endpoints) {
       const methods = new Map(Object.entries(endpoints));
 
       methods.forEach((settings, methodName) => {
         const { scope, ...restSettings } = this.getSettings(settings);
-        const parent = parentPath ?? ([] as string[]);
-        const method = this.createApiCallExecutor(restSettings, parent, false);
-        const rawMethod = this.createApiCallExecutor(restSettings, parent, true);
 
-        Object.assign(this.methods, {
-          [methodName]: method,
-          [`${methodName}Raw`]: rawMethod,
+        Object.defineProperty(this, methodName, {
+          value: this.createApiCallExecutor(restSettings, [parentPath]),
         });
 
-        if (scope && typeof scope === "object") this.resolveMethods(scope, [...(parentPath ?? []), restSettings.path]);
+        Object.defineProperty(this, `${methodName}Raw`, {
+          value: this.createApiCallExecutor(restSettings, [parentPath], true),
+        });
+
+        if (scope) this.resolveMethods(scope, [...(parentPath ?? []), restSettings.path]);
       });
     }
   }
 
   /**
    * Actual API call
+   * @param {EndpointConfig} settings
+   * @private
    */
-  private createApiCallExecutor(methodSettings: Exclude<EndpointConfig, string>, parentPath: string[], raw = false) {
-    return async (urlParams: Record<string, any>, { headers, signal, body }: ApiParams = {}) => {
-      let responseResult: ApiResponse = {};
-      let responseMeta = {} as ResponseMeta;
+  createApiCallExecutor(methodSettings, parentPath, raw = false) {
+    return async (urlParams, { headers, body, options } = {}) => {
+      let responseResult;
+      let responseMeta;
+      const alwaysExpectJSON = options?.alwaysExpectJSON === undefined ? true : options.alwaysExpectJSON;
 
+      let shouldUseQueryCache = false;
       try {
         const finalParams = {
           ...(methodSettings.params ?? {}),
           ...(urlParams ?? {}),
           ...(this.sharedParams ?? {}),
         };
+
+        if (finalParams.__useQueryCache && methodSettings.queryCache) {
+          shouldUseQueryCache = true;
+
+          const cachedData = methodSettings.queryCache(finalParams);
+
+          if (cachedData) {
+            return cachedData;
+          }
+
+          delete finalParams.__useQueryCache;
+        }
 
         const { method, url: apiCallURL } = this.createUrl(
           methodSettings.path,
@@ -169,7 +185,7 @@ export class APIProxy<T extends {}> {
         const requestMethod = method ?? (methodSettings.method ?? "get").toUpperCase();
 
         const initialheaders = Object.assign(
-          this.getDefaultHeaders(requestMethod as RequestMethod),
+          this.getDefaultHeaders(requestMethod),
           this.commonHeaders ?? {},
           methodSettings.headers ?? {},
           headers ?? {},
@@ -177,16 +193,12 @@ export class APIProxy<T extends {}> {
 
         const requestHeaders = new Headers(initialheaders);
 
-        const requestParams: RequestInit = {
+        const requestParams = {
           method: requestMethod,
           headers: requestHeaders,
           mode: this.requestMode,
           credentials: this.requestMode === "cors" ? "omit" : "same-origin",
         };
-
-        if (signal) {
-          requestParams.signal = signal;
-        }
 
         if (requestMethod !== "GET") {
           const contentType = requestHeaders.get("Content-Type");
@@ -204,12 +216,14 @@ export class APIProxy<T extends {}> {
             });
           }
 
-          if (extendedBody instanceof FormData || extendedBody instanceof URLSearchParams) {
+          if (extendedBody instanceof FormData) {
             requestParams.body = extendedBody;
           } else if (contentType === "multipart/form-data") {
             requestParams.body = this.createRequestBody(extendedBody);
           } else if (contentType === "application/json") {
             requestParams.body = this.bodyToJSON(extendedBody);
+          } else {
+            requestParams.body = extendedBody;
           }
 
           // @todo better check for files maybe?
@@ -220,43 +234,20 @@ export class APIProxy<T extends {}> {
         }
 
         /** @type {Response} */
-        let rawResponse: Response;
+        let rawResponse;
 
-        const isDevelopment = process.env.NODE_ENV === "development";
-        const useMock =
-          methodSettings.mock instanceof Function &&
-          (methodSettings.forceMock || (isDevelopment && this.mockDisabled !== true));
-
-        if (useMock) {
+        if (methodSettings.mock && process.env.NODE_ENV === "development" && !this.mockDisabled) {
           rawResponse = await this.mockRequest(apiCallURL, urlParams, requestParams, methodSettings);
         } else {
-          try {
-            rawResponse = await fetch(apiCallURL, requestParams);
-          } catch (err: unknown) {
-            if (!(err instanceof Error)) {
-              console.warn("Can't handle error", err);
-              return null;
-            }
-            // we don't want the user to see some of the errors
-            // so we fail silently
-            if (err.message.match(IGNORED_ERRORS) !== null) {
-              IGNORED_ERRORS.lastIndex = -1;
-              return null;
-            }
-
-            const error = err as Error;
-            responseResult = this.generateException(error);
-            return new Response(`${err.name}: ${err.message}`, { status: 500 });
-          }
+          rawResponse = await fetch(apiCallURL, requestParams);
         }
 
-        if (raw) return rawResponse;
+        if (raw || rawResponse.isCanceled) return rawResponse;
 
         responseMeta = {
-          headers: new Map(headersToArray(rawResponse.headers)),
+          headers: new Map(Array.from(rawResponse.headers)),
           status: rawResponse.status,
           url: rawResponse.url,
-          ok: rawResponse.ok,
         };
 
         if (rawResponse.ok && rawResponse.status !== 401) {
@@ -265,22 +256,28 @@ export class APIProxy<T extends {}> {
           try {
             const responseData =
               rawResponse.status !== 204
-                ? JSON.parse(this.alwaysExpectJSON ? responseText : responseText || "{}")
+                ? parseJson(this.alwaysExpectJSON && alwaysExpectJSON ? responseText : responseText || "{}")
                 : { ok: true };
 
             if (methodSettings.convert instanceof Function) {
-              return await methodSettings.convert(responseData);
+              const convertedData = await methodSettings.convert(responseData);
+
+              if (shouldUseQueryCache) {
+                methodSettings.queryCache(finalParams, convertedData);
+              }
+
+              return convertedData;
             }
 
             responseResult = responseData;
           } catch (err) {
-            responseResult = this.generateException(err as Error, responseText);
+            responseResult = this.generateException(err, responseText);
           }
         } else {
           responseResult = await this.generateError(rawResponse);
         }
       } catch (exception) {
-        responseResult = this.generateException(exception as Error);
+        responseResult = this.generateException(exception);
       }
 
       Object.defineProperty(responseResult, "$meta", {
@@ -289,6 +286,10 @@ export class APIProxy<T extends {}> {
         enumerable: false,
         writable: false,
       });
+
+      if (shouldUseQueryCache) {
+        methodSettings.queryCache(finalParams, responseResult);
+      }
 
       return responseResult;
     };
@@ -300,7 +301,7 @@ export class APIProxy<T extends {}> {
    * @param {EndpointConfig} settings
    * @returns {EndpointConfig}
    */
-  getSettings(settings: EndpointConfig): Exclude<EndpointConfig, string> {
+  getSettings(settings) {
     if (typeof settings === "string") {
       settings = {
         path: settings,
@@ -316,7 +317,11 @@ export class APIProxy<T extends {}> {
     };
   }
 
-  getDefaultHeaders(method: RequestMethod) {
+  getSettingsByMethodName(methodName) {
+    return this.endpoints && methodName && this.endpoints[methodName];
+  }
+
+  getDefaultHeaders(method) {
     switch (method) {
       case "POST":
       case "PATCH":
@@ -332,22 +337,25 @@ export class APIProxy<T extends {}> {
 
   /**
    * Creates a URL from gateway + endpoint path + params
+   * @param {string} path
+   * @param {Dict} data
+   * @private
    */
-  private createUrl(endpoint: string, data: Record<string, any> = {}, parentPath: string[] = [], gateway?: string) {
+  createUrl(endpoint, data = {}, parentPath, gateway) {
     const url = new URL(gateway ? this.resolveGateway(gateway) : this.gateway);
-    const usedKeys: string[] = [];
+    const usedKeys = [];
 
     const { path: resolvedPath, method: resolvedMethod } = this.resolveEndpoint(endpoint, data);
 
-    const path = ([] as string[])
+    const path = []
       .concat(...(parentPath ?? []), resolvedPath)
       .filter((p) => p !== undefined)
       .join("/")
       .replace(/([/]+)/g, "/");
 
     const processedPath = path.replace(/:([^/]+)/g, (...res) => {
-      const keyRaw = res[1] as string;
-      const [key, optional] = keyRaw.match(/([^?]+)(\??)/)!.slice(1, 3);
+      const keyRaw = res[1];
+      const [key, optional] = keyRaw.match(/([^?]+)(\??)/).slice(1, 3);
       const result = data[key];
 
       usedKeys.push(key);
@@ -378,8 +386,10 @@ export class APIProxy<T extends {}> {
 
   /**
    * Resolves an endpoint
+   * @param {string|Function} endpoint
+   * @param {Dict} data
    */
-  resolveEndpoint(endpoint: string | ((data: Record<string, any>) => string), data: Record<string, any>) {
+  resolveEndpoint(endpoint, data) {
     let finalEndpoint;
 
     if (endpoint instanceof Function) {
@@ -397,8 +407,10 @@ export class APIProxy<T extends {}> {
 
   /**
    * Create FormData object from raw JS object
+   * @private
+   * @param {Dict} body
    */
-  private createRequestBody(body: Record<string, any>) {
+  createRequestBody(body) {
     if (body instanceof FormData) return body;
 
     const formData = new FormData();
@@ -412,29 +424,34 @@ export class APIProxy<T extends {}> {
 
   /**
    * Converts body to JSON string
+   * @param {Object|FormData} body
    */
-  bodyToJSON(body: Record<string, any> | FormData) {
-    const object = body instanceof FormData ? formDataToJPO(body) : body;
+  bodyToJSON(body) {
+    const object = formDataToJPO(body);
 
     return JSON.stringify(object);
   }
 
   /**
    * Generates an error from a Response object
+   * @param {Response} fetchResponse
+   * @private
    */
-  async generateError(fetchResponse: Response): Promise<ResponseError> {
-    let response = await fetchResponse.text();
+  async generateError(fetchResponse, exception) {
+    const result = (async () => {
+      const text = await fetchResponse.text();
 
-    try {
-      response = JSON.parse(response);
-    } catch (_e) {}
-
-    const statusCode = statusCodes[fetchResponse.status.toString() as keyof typeof statusCodes] ?? "Unknown error";
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        return text;
+      }
+    })();
 
     return {
       status: fetchResponse.status,
-      error: statusCode,
-      response,
+      error: exception?.message ?? statusCodes[fetchResponse.status.toString()],
+      response: await result,
     };
   }
 
@@ -443,12 +460,12 @@ export class APIProxy<T extends {}> {
    * @param {Error} exception
    * @private
    */
-  generateException(exception: Error, details?: string) {
+  generateException(exception, details) {
     console.error(exception);
     const parsedDetails = () => {
       try {
-        return JSON.parse(details ?? "{}");
-      } catch (_e) {
+        return JSON.parse(details);
+      } catch (e) {
         return details;
       }
     };
@@ -462,64 +479,40 @@ export class APIProxy<T extends {}> {
   /**
    * Emulate server call
    * @param {string} url
-   * @param {Record<string, unknown>} params
-   * @param {Request} request
+   * @param {Request} params
    * @param {EndpointConfig} settings
    */
-  mockRequest(
-    url: string,
-    params: Record<string, unknown>,
-    request: RequestInit,
-    settings: Exclude<EndpointConfig, string>,
-  ) {
-    return new Promise<Response>(async (resolve) => {
-      let response: Record<string, any> | undefined = undefined;
+  mockRequest(url, params, request, settings) {
+    return new Promise(async (resolve) => {
+      let response = null;
       let ok = true;
 
       try {
-        const requestParams = {
-          ...(request ?? {}),
-          url,
-          referrer: location.href,
-        };
+        const fakeRequest = new Request(request);
 
         if (typeof request.body === "string") {
-          requestParams.body = request.body;
+          fakeRequest.body = JSON.parse(request.body);
         }
 
-        const fakeRequest = new Request(url, requestParams);
-
-        console.log("Request", params, fakeRequest);
-
-        response = await settings.mock?.(url, params ?? {}, fakeRequest);
+        response = await settings.mock(url, params ?? {}, fakeRequest);
       } catch (err) {
         console.error(err);
         ok = false;
       }
 
-      const fakeResponse = new Response(JSON.stringify(response), {
-        status: ok ? 200 : 500,
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-        },
-      });
-
-      console.log("Response", {
-        response: fakeResponse,
-        responseBody: response,
-      });
-
       setTimeout(() => {
-        resolve(fakeResponse);
+        resolve({
+          ok,
+          json() {
+            return Promise.resolve(response);
+          },
+          text() {
+            return typeof response === "string" ? response : JSON.stringify(response);
+          },
+          headers: {},
+          status: 200,
+        });
       }, this.mockDelay);
     });
   }
-}
-
-function headersToArray(headers: Headers) {
-  const headersArray: [string, string][] = [];
-  headers.forEach((value, key) => {
-    headersArray.push([key, value]);
-  });
-  return headersArray;
 }

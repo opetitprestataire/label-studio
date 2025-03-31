@@ -1,6 +1,5 @@
 import { flow, types } from "mobx-state-tree";
 import Papa from "papaparse";
-import { safeFetch } from "@humansignal/core";
 
 import { parseTypeAndOption, parseValue } from "../utils/data";
 
@@ -55,7 +54,7 @@ const ProcessAttrsMixin = types
 
       // @todo checks for url
       // @todo error handling
-      const response = yield safeFetch(value);
+      const response = yield fetch(value);
       const text = yield response.text();
 
       return resolvers[type](text, options);
