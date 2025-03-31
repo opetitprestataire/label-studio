@@ -84,6 +84,7 @@ const shapes = {
         params: [[...points, points[0]]],
         result: {
           points,
+          closed: true,
         },
       };
     },
@@ -224,6 +225,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
     I.pressKey(Shape.hotKey);
     drawShapeByBbox(Shape, 50, 50, 100, 100, AtImageView);
     AtOutliner.seeRegions(1);
+    AtOutliner.dontSeeIncompleteRegion();
 
     // Select the shape
     AtImageView.clickAt(100, 100);
@@ -281,6 +283,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
       I.pressKey(Shape.hotKey);
       drawShapeByBbox(Shape, 50, 50, 300, 300, AtImageView);
       AtOutliner.seeRegions(1);
+      AtOutliner.dontSeeIncompleteRegion();
 
       // Select the shape
       AtImageView.clickAt(100, 100);
@@ -310,8 +313,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
 
       Asserts.deepEqualWithTolerance(rectangleResult[0].value, prevResult[0].value, 2);
     },
-  )
-  .tag("@this");
+  );
 
 Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMultiSelectionRotator)).Scenario(
   "Simple rotating",
