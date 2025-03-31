@@ -29,6 +29,10 @@ export const HighlightMixin = types
         classNames.push(HIGHLIGHT_NO_LABEL_CN);
       }
 
+      if (self.selected) {
+        classNames.push(STATE_CLASS_MODS.active);
+      }
+
       // in this case labels presence can't be changed from settings — manual mode
       if (isDefined(self.parent.showlabels)) {
         classNames.push("htx-manual-label");
@@ -50,6 +54,39 @@ export const HighlightMixin = types
         .${className}.${STATE_CLASS_MODS.active}:not(.${STATE_CLASS_MODS.hidden}) {
           color: ${Utils.Colors.contrastColor(initialActiveColor)} !important;
           background-color: ${initialActiveColor} !important;
+        }
+        .${className} area {
+          position: absolute;
+          width: 1px;
+          height: 1.25em;
+          padding: 0 2px;
+          cursor: col-resize;
+          box-sizing: content-box;
+          margin-left: -2px;
+        }
+        .${className} area::before {
+          position: absolute;
+          content: '';
+          width: 1px;
+          height: 100%;
+          background: red;
+        }
+        .${className} area:hover::before {
+          width: 100%;
+          left: 0;
+        }
+        .${className} area::after {
+          content: '';
+          position: absolute;
+          width: 7px;
+          height: 7px;
+          background: red;
+          top: -7px;
+          left: -1px;
+          z-index: 100;
+        }
+        .${className} area:hover::after {
+          outline: 1px solid red;
         }
       `;
     },
@@ -118,6 +155,28 @@ export const HighlightMixin = types
     },
 
     /**
+     * Attach resize handles to the first and last spans. `area` is used to be less possible to be
+     * in user's document. They are not fully valid inside spans, but they work.
+     */
+    attachHandles() {
+      const classes = [STATE_CLASS_MODS.leftHandle, STATE_CLASS_MODS.rightHandle];
+      const spanStart = self._spans[0];
+      const spanEnd = self._spans.at(-1);
+
+      classes.forEach((resizeClass, index) => {
+        // html element that can't be encountered in a usual html
+        const handleArea = document.createElement("area");
+
+        handleArea.classList.add(resizeClass);
+        index === 0 ? spanStart.prepend(handleArea) : spanEnd.append(handleArea);
+      });
+    },
+
+    detachHandles() {
+      self._spans?.forEach((span) => span.querySelectorAll("area").forEach((area) => area.remove()));
+    },
+
+    /**
      * Make current region selected
      */
     selectRegion() {
@@ -127,9 +186,9 @@ export const HighlightMixin = types
 
       const first = self._spans?.[0];
 
-      if (!first) {
-        return;
-      }
+      if (!first) return;
+
+      self.attachHandles();
 
       if (first.scrollIntoViewIfNeeded) {
         first.scrollIntoViewIfNeeded();
@@ -143,6 +202,7 @@ export const HighlightMixin = types
      */
     afterUnselectRegion() {
       self.removeClass(STATE_CLASS_MODS.active);
+      self.detachHandles();
     },
 
     /**
@@ -153,7 +213,7 @@ export const HighlightMixin = types
     },
 
     /**
-     * Draw region outline
+     * Draw region outline on hover
      * @param {boolean} val
      */
     setHighlight(val) {
@@ -230,5 +290,7 @@ export const STATE_CLASS_MODS = {
   highlighted: "__highlighted",
   collapsed: "__collapsed",
   hidden: "__hidden",
+  rightHandle: "__resize_right",
+  leftHandle: "__resize_left",
   noLabel: HIGHLIGHT_NO_LABEL_CN,
 };
