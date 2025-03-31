@@ -5,6 +5,11 @@ const { serialize, selectText } = require("./helpers");
 Feature("Date Time");
 
 const config = `<View>
+<style>
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
+</style>
 <Header>Select text to see related smaller DateTime controls for every region</Header>
 <Labels name="label" toName="text">
   <Label value="birth" background="green"/>
@@ -137,13 +142,13 @@ Scenario(
     I.dontSee("2023");
     I.see("2022");
     // exactly the same as max, should be correct
-    I.click("div[data-testid='select-option'][data-value='2022']");
+    I.click("2022", "div[data-testid='select-option']");
     assert.strictEqual("2022", await I.grabValueFrom("input[name=year-year]"));
     I.pressKey("Escape");
 
     regions.forEach((region) => {
       I.click(locate("li").withText(region.text));
-      I.selectOption("input[name=year-year]", region.year);
+      I.seeInField("input[name=year-year]", region.year);
     });
 
     I.updateAnnotation();
