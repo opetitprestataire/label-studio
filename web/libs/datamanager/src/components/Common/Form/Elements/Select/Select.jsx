@@ -39,9 +39,9 @@ const Select = ({
             {...props}
             ref={ref}
             value={value}
-            onChange={(e) => {
-              setValue(e.target.value);
-              props.onChange?.(e);
+            onChange={(val) => {
+              setValue(val);
+              props.onChange?.(val);
             }}
             className={rootClass.elem("list")}
             option={options}
