@@ -38,19 +38,13 @@ export const ListFilter = [
     key: "contains",
     label: "contains",
     valueType: "single",
-    input: (props) => {
-      console.log("props", props);
-      return <VariantSelect {...props} multiple />;
-    },
+    input: (props) => <VariantSelect {...props} multiple />,
   },
   {
     key: "not_contains",
     label: "not contains",
     valueType: "single",
-    input: (props) => {
-      console.log("props", props);
-      return <VariantSelect {...props} multiple />;
-    },
+    input: (props) => <VariantSelect {...props} multiple />,
   },
   // ... Common,
 ];
