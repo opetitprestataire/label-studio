@@ -42,14 +42,16 @@ jobs:
                 repo,
                 tag: 'nightly'
               });
-              
               await github.rest.repos.deleteRelease({
                 owner,
                 repo,
                 release_id: nightlyRelease.data.id
               });
-              
-              core.setOutput('tag_name', nightlyRelease.data.tag_name);
+              await github.rest.git.deleteRef({
+                owner,
+                repo,
+                ref: 'tags/nightly'
+              });
             } catch (error) {
               if (error.status === 404) {
                 console.log('No previous nightly release found');
@@ -69,15 +71,23 @@ jobs:
               repo
             });
             const latestTag = latestRelease.data.tag_name;
-            const message = `# Nightly Build ${{ needs.calculate-version.outputs.version }}
+            const message = `# Nightly Build
 
             This is an automated nightly build that is recreated every night with the latest changes from the \`${{ github.event.repository.default_branch }}\` branch.
 
             ## Installation
 
-            You can install this nightly build by downloading the wheel package from the release assets and installing it:
+            You can install this nightly build by downloading the wheel package (the file ending in \`.whl\`) from the \`Assets\` section below this description. 
+            After downloading, you can install it using the following commands from your terminal:
+
+            For Windows:
             \`\`\`bash
-            pip install label_studio-*-py3-none-any.whl
+            pip install %USERPROFILE%\\Downloads\\label_studio-${{ needs.calculate-version.outputs.version }}-py3-none-any.whl
+            \`\`\`
+
+            For macOS/Linux:
+            \`\`\`bash
+            pip install ~/Downloads/label_studio-${{ needs.calculate-version.outputs.version }}-py3-none-any.whl
             \`\`\`
 
             ## Important Notes
@@ -98,7 +108,7 @@ jobs:
           token: ${{ secrets.GIT_PAT }}
           body_path: ${{ github.workspace }}-CHANGELOG.txt
           tag_name: nightly
-          name: "Nightly"
+          name: ${{ needs.calculate-version.outputs.version }}
           generate_release_notes: false
           draft: false
           prerelease: true
@@ -118,3 +128,23 @@ jobs:
       release_type: nightly
       release-id: ${{ needs.create-nightly-release.outputs.release_id }}
     secrets: inherit
+
+  notify_slack_on_failure:
+      name: "Notify Slack on Failure"
+      needs:
+        - build-pypi
+        - create-nightly-release
+      runs-on: ubuntu-latest
+      if: failure()
+      steps:
+        - name: Send Notification to Slack
+          id: slack_notify_ops_release
+          uses: slackapi/slack-github-action@v1.27
+          with:
+            channel-id: '${{ vars.SLACK_CH_RELEASE_TRAIN }}'
+            slack-message: |
+              ❌ Nightly PyPI build failed! <!subteam^${{ vars.SLACK_GR_DEVOPS }}>
+
+              ><https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|[Workflow run]>
+          env:
+            SLACK_BOT_TOKEN: ${{ secrets.SLACK_LSE_BOT_TOKEN }}
