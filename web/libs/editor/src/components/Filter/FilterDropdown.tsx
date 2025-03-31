@@ -42,7 +42,6 @@ export const FilterDropdown: FC<FilterDropdownInterface> = ({
         ...(style ?? {}),
       }}
       onChange={(value) => onChange(value)}
-      size="small"
       options={options}
     />
   );

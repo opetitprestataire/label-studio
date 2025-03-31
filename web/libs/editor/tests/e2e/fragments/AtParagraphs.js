@@ -3,7 +3,7 @@ const Helpers = require("../tests/helpers");
 
 module.exports = {
   _rootSelector: ".lsf-paragraphs",
-  _filterSelector: ".lsf-select__value",
+  _filterSelector: "[select-trigger]",
   _phraseSelector: "[class^='phrase--']",
   _phraseDialoguetextSelector: "[class^='dialoguetext--']",
 
@@ -38,8 +38,8 @@ module.exports = {
   clickFilter(...authors) {
     I.click(this.locate(this._filterSelector));
     for (const author of authors) {
-      I.fillField("search_author", author);
-      I.click(locate(".lsf-select__option").withText(author));
+      I.fillField("[select-search-field]", author);
+      I.click(locate("[data-testid=select-option]").withText(author));
     }
     I.click(this.locate(this._filterSelector));
   },
