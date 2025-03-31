@@ -41,7 +41,7 @@ export const StorageForm = forwardRef(({ onSubmit, target, project, rootClass, s
           label: title,
         })),
         value: storage?.type ?? type,
-        onChange: (value) => {
+        onChange: setType,
           setType(value);
         },
       },
