@@ -6,6 +6,12 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const RAW_COLOR_VALUE_TOKENS = ["primary", "shadow", "outline", "surface"];
+
+const shouldGenerateRawColorValue = (name) => {
+  return RAW_COLOR_VALUE_TOKENS.some((token) => name.includes(token));
+};
+
 // Determine correct paths for the workspace
 const findWorkspaceRoot = () => {
   // We'll start with this file's directory and go up until we find the web directory
@@ -543,8 +549,7 @@ function processColorTokens(colorObj, parentPath, result, variables) {
           const lightValue = resolveColor(colorObj[key].$variable_metadata.modes.light, variables);
           result.cssVariables.light.push(`${cssVarName}: ${lightValue};`);
 
-          // Add raw RGB values for colors with "outline" or "shadow" or is part of the primary color family in the name
-          if (name.includes("outline") || name.includes("shadow") || name.includes("primary")) {
+          if (shouldGenerateRawColorValue(name)) {
             const rawRgbValues = hexToRgbRaw(colorObj[key].$variable_metadata.modes.light, variables);
             result.cssVariables.light.push(`${cssVarName}-raw: ${rawRgbValues};`);
           }
@@ -552,8 +557,7 @@ function processColorTokens(colorObj, parentPath, result, variables) {
           const resolvedValue = resolveColor(value, variables);
           result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
 
-          // Add raw RGB values for colors with "outline" or "shadow" or is part of the primary color family in the name
-          if (name.includes("outline") || name.includes("shadow") || name.includes("primary")) {
+          if (shouldGenerateRawColorValue(name)) {
             const rawRgbValues = hexToRgbRaw(value, variables);
             result.cssVariables.light.push(`${cssVarName}-raw: ${rawRgbValues};`);
           }
@@ -568,8 +572,7 @@ function processColorTokens(colorObj, parentPath, result, variables) {
           const darkValue = resolveColor(colorObj[key].$variable_metadata.modes.dark, variables);
           result.cssVariables.dark.push(`${cssVarName}: ${darkValue};`);
 
-          // Add raw RGB values for colors with "outline" or "shadow" or is part of the primary color family in the name for dark mode
-          if (name.includes("outline") || name.includes("shadow") || name.includes("primary")) {
+          if (shouldGenerateRawColorValue(name)) {
             const rawRgbValues = hexToRgbRaw(colorObj[key].$variable_metadata.modes.dark, variables);
             result.cssVariables.dark.push(`${cssVarName}-raw: ${rawRgbValues};`);
           }
