@@ -39,7 +39,7 @@ const CustomBackendForm = ({ action, backend, project, onSubmit }) => {
             { label: "Basic Authentication", value: "BASIC_AUTH" },
           ]}
           value={selectedAuthMethod}
-          onChange={(val) => {
+          onChange={setAuthMethod}
             setAuthMethod(val);
           }}
         />
