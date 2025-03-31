@@ -135,8 +135,9 @@ Scenario(
     I.dontSee("1999");
     // less than max
     I.dontSee("2023");
+    I.see("2022");
     // exactly the same as max, should be correct
-    I.click(locate("[data-testid=select-option][data-value='2022']"));
+    I.click("div[data-testid='select-option'][data-value='2022']");
     assert.strictEqual("2022", await I.grabValueFrom("input[name=year-year]"));
     I.pressKey("Escape");
 
