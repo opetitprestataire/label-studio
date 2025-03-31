@@ -146,20 +146,20 @@ Scenario(
     assert.strictEqual("2022", await I.grabValueFrom("input[name=year-year]"));
     I.pressKey("Escape");
 
-    regions.forEach((region) => {
+    regions.forEach(async (region) => {
       I.click(locate("li").withText(region.text));
-      I.seeInField("input[name=year-year]", region.year);
+      assert.strictEqual(region.year, await I.grabValueFrom("input[name=year-year]"));
     });
 
     I.updateAnnotation();
     I.dontSee("Warning");
     I.dontSee("is required");
 
-    regions.forEach((region) => {
+    regions.forEach(async (region) => {
       I.click(locate("li").withText(region.text));
       // important to see that per-regions change their values
       I.seeInField("input[name=date-date]", region.dateValue);
-      I.seeInField("input[name=year-year]", region.year);
+      assert.strictEqual(region.year, await I.grabValueFrom("input[name=year-year]"));
     });
 
     const results = await I.executeScript(serialize);
