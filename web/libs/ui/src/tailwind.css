@@ -3,12 +3,13 @@
 @tailwind utilities;
 
 body {
-  @apply text-neutral-content;
+  @apply !text-neutral-content !bg-neutral-surface;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
   margin: 0;
+  color: inherit !important;
 }
 
 h1 { font-size: 2em; }

@@ -8,15 +8,7 @@
   top: 70px;
   margin-top: 50px;
 
-  &::before {
-    height: 12px;
-    display: block;
-    background-color: var(--color-neutral-surface-active);
-    content: "";
-    border-radius: 7px 7px 0 0;
-  }
-
-  &__group ~ &__group {
+  &__group ~ &__group:not(:last-child) {
     margin-top: 4px;
     border-top: 2px solid var(--color-neutral-border);
   }
