@@ -38,7 +38,7 @@ module.exports = {
   clickFilter(...authors) {
     I.click(this.locate(this._filterSelector));
     for (const author of authors) {
-      I.fillField("[select-search-field]", author);
+      I.fillField("[data-testid=select-search-field]", author);
       I.click(locate("[data-testid=select-option]").withText(author));
     }
     I.click(this.locate(this._filterSelector));
