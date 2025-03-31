@@ -60,6 +60,11 @@ const DATA = {
 
 const CONFIG = `
 <View>
+  <style>
+    [data-radix-popper-content-wrapper] {
+      z-index: 9999 !important;
+    }
+  </style>
   <ParagraphLabels name="ner" toName="text">
     <Label value="Important Stuff"></Label>
     <Label value="Random talk"></Label>
