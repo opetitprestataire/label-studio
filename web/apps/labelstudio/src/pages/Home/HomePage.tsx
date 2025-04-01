@@ -194,7 +194,11 @@ function ProjectSimpleCard({
   const color = project.color && project.color !== white ? project.color : "#E1DED5";
 
   return (
-    <Link to={`/projects/${project.id}`} className="block even:bg-neutral-surface rounded-sm overflow-hidden">
+    <Link
+      to={`/projects/${project.id}`}
+      className="block even:bg-neutral-surface rounded-sm overflow-hidden"
+      data-external={true}
+    >
       <div
         className="grid grid-cols-[minmax(0,1fr)_150px] p-2 py-3 items-center border-l-[3px]"
         style={{ borderLeftColor: color }}
