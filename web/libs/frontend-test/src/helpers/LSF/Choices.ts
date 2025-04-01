@@ -40,7 +40,7 @@ class ChoicesHelper {
   }
 
   findOption(text: string) {
-    const option = cy.get(`[data-testid=select-option][data-value="${text}"] [data-testid=choiceOptionText]`);
+    const option = cy.get(`[data-testid*='select-option'][data-value="${text}"] [data-testid=choiceOptionText]`);
     return option;
   }
 }
