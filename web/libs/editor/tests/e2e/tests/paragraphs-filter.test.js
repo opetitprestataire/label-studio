@@ -172,15 +172,16 @@ Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagra
   I.say("Select only Authors 1 and 2");
   AtParagraphs.clickFilter("Author 1", "Author 2");
   I.wait(2); // Wait for filter to take effect
-  
+
   // Debug: Check which messages are visible
   I.executeScript(() => {
-    const visibleTexts = Array.from(document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'))
-      .map(el => el.textContent);
-    console.log('Visible messages:', visibleTexts);
+    const visibleTexts = Array.from(
+      document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
+    ).map((el) => el.textContent);
+    console.log("Visible messages:", visibleTexts);
     return visibleTexts;
   });
-  
+
   I.say("Make regions by selecting everything visible");
   AtLabels.clickLabel("Random talk");
   // Select from the first visible message to the last visible message we can find
@@ -193,17 +194,20 @@ Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagra
 
     // Log the actual number of regions created
     I.say(`Created ${result.length} regions`);
-    console.log('Created regions:', result.map(r => omitBy(r.value, (v, key) => key === "paragraphlabels")));
-    
+    console.log(
+      "Created regions:",
+      result.map((r) => omitBy(r.value, (v, key) => key === "paragraphlabels")),
+    );
+
     // Verify that regions were created
     assert.ok(result.length > 0, "No regions were created");
-    
+
     // Verify at least the first region has the expected text (more flexible assertion)
     const firstRegion = omitBy(result[0].value, (v, key) => key === "paragraphlabels");
     assert.ok(firstRegion.text.includes("Message"), "First region should contain Message text");
-    
+
     // Verify all regions have the expected label
-    result.forEach(region => {
+    result.forEach((region) => {
       assert.ok(region.value.paragraphlabels.includes("Random talk"), "Region should have Random talk label");
     });
   }
@@ -212,23 +216,23 @@ Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagra
   AtLabels.clickLabel("Important Stuff");
   AtParagraphs.setSelection(AtParagraphs.locateText("Message 3"), 4, AtParagraphs.locateText("Message 8"), 4);
   I.wait(1); // Wait for regions to be created
-  
+
   {
     const result = await LabelStudio.serialize();
     const prevCount = result.length;
-    
+
     // Log the updated regions count
     I.say(`Now we have ${result.length} regions total`);
-    
+
     // Verify that additional regions were created
     assert.ok(result.length > 2, "Should have created additional regions");
-    
+
     // Verify the new regions have the ImportantStuff label
     const newRegions = result.slice(2);
-    newRegions.some(region => {
+    newRegions.some((region) => {
       assert.ok(
-        region.value.paragraphlabels.includes("Important Stuff"), 
-        "At least one region should have Important Stuff label"
+        region.value.paragraphlabels.includes("Important Stuff"),
+        "At least one region should have Important Stuff label",
       );
       return region.value.paragraphlabels.includes("Important Stuff");
     });
@@ -237,34 +241,35 @@ Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagra
   I.say("Test filtering with different authors");
   AtParagraphs.clickFilter("Author 2", "Author 3");
   I.wait(2); // Wait for filter to take effect
-  
+
   // Debug: Check which messages are visible after filter change
   I.executeScript(() => {
-    const visibleTexts = Array.from(document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'))
-      .map(el => el.textContent);
-    console.log('Visible messages after filter change:', visibleTexts);
+    const visibleTexts = Array.from(
+      document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
+    ).map((el) => el.textContent);
+    console.log("Visible messages after filter change:", visibleTexts);
     return visibleTexts;
   });
-  
+
   I.say("Create regions with a different filter");
   AtLabels.clickLabel("Important Stuff");
   // Select text we can find in the filtered view
   AtParagraphs.setSelection(AtParagraphs.locateText("Message 4"), 4, AtParagraphs.locateText("Message 7"), 5);
   I.wait(1); // Wait for regions to be created
-  
+
   {
     const result = await LabelStudio.serialize();
-    
+
     // Log the total regions
     I.say(`Total of ${result.length} regions after filtering and selecting`);
-    
+
     // Verify that regions were created with the new filter
     assert.ok(result.length > 4, "Additional regions should have been created with new filter");
-    
+
     // Verify we have regions with both labels
-    const randomTalkCount = result.filter(r => r.value.paragraphlabels.includes("Random talk")).length;
-    const importantStuffCount = result.filter(r => r.value.paragraphlabels.includes("Important Stuff")).length;
-    
+    const randomTalkCount = result.filter((r) => r.value.paragraphlabels.includes("Random talk")).length;
+    const importantStuffCount = result.filter((r) => r.value.paragraphlabels.includes("Important Stuff")).length;
+
     I.say(`Found ${randomTalkCount} Random talk regions and ${importantStuffCount} Important Stuff regions`);
     assert.ok(randomTalkCount > 0, "Should have Random talk regions");
     assert.ok(importantStuffCount > 0, "Should have Important Stuff regions");
@@ -361,15 +366,16 @@ Scenario(
     I.wait(2); // Wait for filter to take effect
     AtLabels.clickLabel("Important Stuff");
     I.wait(1);
-    
+
     // Debug visible messages
     I.executeScript(() => {
-      const visibleTexts = Array.from(document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'))
-        .map(el => el.textContent);
-      console.log('Visible messages:', visibleTexts);
+      const visibleTexts = Array.from(
+        document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
+      ).map((el) => el.textContent);
+      console.log("Visible messages:", visibleTexts);
       return visibleTexts;
     });
-    
+
     // Find messages that are visible
     AtParagraphs.setSelection(AtParagraphs.locateText("Message 4"), 0, AtParagraphs.locateText("Message 7"), 9);
     I.wait(1);
@@ -377,17 +383,17 @@ Scenario(
     {
       const result = await LabelStudio.serialize();
       I.say(`Created ${result.length} regions with Important Stuff label`);
-      
+
       // Verify we've created regions with the Important Stuff label
-      const importantStuffRegions = result.filter(r => r.value.paragraphlabels.includes("Important Stuff"));
+      const importantStuffRegions = result.filter((r) => r.value.paragraphlabels.includes("Important Stuff"));
       assert.ok(importantStuffRegions.length > 0, "Should have created regions with Important Stuff label");
-      
+
       // Verify the content contains the expected text
-      const regionTexts = importantStuffRegions.map(r => r.value.text);
+      const regionTexts = importantStuffRegions.map((r) => r.value.text);
       I.say(`Region texts: ${JSON.stringify(regionTexts)}`);
-      
+
       // Verify some of the regions contain our expected message text
-      const hasExpectedContent = regionTexts.some(text => text.includes("Message"));
+      const hasExpectedContent = regionTexts.some((text) => text.includes("Message"));
       assert.ok(hasExpectedContent, "At least one region should contain Message text");
     }
 
@@ -396,7 +402,7 @@ Scenario(
     );
     AtLabels.clickLabel("Other");
     I.wait(1); // Wait for label selection to take effect
-    
+
     // Try to select from visible content
     AtParagraphs.setSelection(AtParagraphs.locateText("Message 4"), 0, AtParagraphs.locateText("Message 7"), 0);
     I.wait(1);
@@ -405,43 +411,47 @@ Scenario(
       const result = await LabelStudio.serialize();
       const prevCount = result.length;
       I.say(`Now have ${result.length} total regions`);
-      
+
       // Verify we've created new regions with the Other label
-      const otherLabelRegions = result.filter(r => r.value.paragraphlabels.includes("Other"));
+      const otherLabelRegions = result.filter((r) => r.value.paragraphlabels.includes("Other"));
       assert.ok(otherLabelRegions.length > 0, "Should have created regions with Other label");
-      
+
       // Verify we have regions with all three label types
       const labelTypes = new Set();
-      result.forEach(r => {
-        r.value.paragraphlabels.forEach(label => labelTypes.add(label));
+      result.forEach((r) => {
+        r.value.paragraphlabels.forEach((label) => labelTypes.add(label));
       });
-      
+
       I.say(`Found label types: ${Array.from(labelTypes).join(", ")}`);
       assert.ok(labelTypes.size >= 2, "Should have at least 2 different label types");
     }
 
-    I.say(
-      "Test selection from Message 11 to Message 14",
-    );
+    I.say("Test selection from Message 11 to Message 14");
     AtLabels.clickLabel("Random talk");
     I.wait(1);
-    
+
     // Try to find messages 11-14 and select if possible
     try {
       const msg11Found = I.executeScript(() => {
         return !!document.evaluate(
-          "//*[contains(@class,'text--')]//text()[contains(.,'Message 11')]", 
-          document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+          "//*[contains(@class,'text--')]//text()[contains(.,'Message 11')]",
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null,
         ).singleNodeValue;
       });
-      
+
       const msg14Found = I.executeScript(() => {
         return !!document.evaluate(
-          "//*[contains(@class,'text--')]//text()[contains(.,'Message 14')]", 
-          document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+          "//*[contains(@class,'text--')]//text()[contains(.,'Message 14')]",
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null,
         ).singleNodeValue;
       });
-      
+
       if (msg11Found && msg14Found) {
         AtParagraphs.setSelection(AtParagraphs.locateText("Message 11"), 0, AtParagraphs.locateText("Message 14"), 0);
         I.wait(1);
@@ -449,29 +459,30 @@ Scenario(
         I.say("Could not find Message 11 or Message 14, selecting different visible messages");
         // Find any two visible messages and select between them
         const visibleMsgs = I.executeScript(() => {
-          return Array.from(document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'))
-            .map(el => el.textContent);
+          return Array.from(
+            document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
+          ).map((el) => el.textContent);
         });
-        
+
         if (visibleMsgs.length >= 2) {
           // Select between the first and last visible messages
           const firstMsg = visibleMsgs[0].trim();
-          const lastMsg = visibleMsgs[visibleMsgs.length-1].trim();
+          const lastMsg = visibleMsgs[visibleMsgs.length - 1].trim();
           AtParagraphs.setSelection(AtParagraphs.locateText(firstMsg), 0, AtParagraphs.locateText(lastMsg), 5);
         }
       }
     } catch (e) {
       I.say(`Error trying to select: ${e.message}`);
     }
-    
+
     I.wait(1);
-    
+
     {
       const result = await LabelStudio.serialize();
       I.say(`Final region count: ${result.length}`);
-      
+
       // Verify we have created some regions with the Random talk label
-      const randomTalkRegions = result.filter(r => r.value.paragraphlabels.includes("Random talk"));
+      const randomTalkRegions = result.filter((r) => r.value.paragraphlabels.includes("Random talk"));
       assert.ok(randomTalkRegions.length > 0, "Should have Random talk regions");
     }
   },
@@ -494,81 +505,81 @@ Scenario(
 
     I.say("Select across phrases to test selection behavior");
     I.wait(1);
-    
+
     // Debug: Check which phrases are visible
     I.executeScript(() => {
-      const visibleTexts = Array.from(document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'))
-        .map(el => el.textContent);
-      console.log('Visible phrases:', visibleTexts);
+      const visibleTexts = Array.from(
+        document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
+      ).map((el) => el.textContent);
+      console.log("Visible phrases:", visibleTexts);
       return visibleTexts;
     });
-    
+
     // Try to find and select from "Dont you hate that?" to the next phrase
     try {
       AtLabels.clickLabel("Random talk");
       I.wait(0.5);
-      
+
       const hateTextFound = I.executeScript(() => {
         return !!document.evaluate(
-          "//*[contains(@class,'text--')]//text()[contains(.,'hate that')]", 
-          document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+          "//*[contains(@class,'text--')]//text()[contains(.,'hate that')]",
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null,
         ).singleNodeValue;
       });
-      
+
       const uncomfortableTextFound = I.executeScript(() => {
         return !!document.evaluate(
-          "//*[contains(@class,'text--')]//text()[contains(.,'Uncomfortable silences')]", 
-          document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+          "//*[contains(@class,'text--')]//text()[contains(.,'Uncomfortable silences')]",
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null,
         ).singleNodeValue;
       });
-      
+
       if (hateTextFound && uncomfortableTextFound) {
         AtParagraphs.setSelection(
           AtParagraphs.locateText("hate that?"),
           10,
           AtParagraphs.locateText("Uncomfortable silences"),
-          5
+          5,
         );
       } else {
         I.say("Could not find specific phrases, selecting between any visible phrases");
         // Select between any two visible phrases
         const visiblePhrases = I.executeScript(() => {
-          return Array.from(document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'))
-            .map(el => el.textContent);
+          return Array.from(
+            document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
+          ).map((el) => el.textContent);
         });
-        
+
         if (visiblePhrases.length >= 2) {
           const phrase1 = visiblePhrases[0].substring(0, 10); // First few chars of first phrase
           const phrase2 = visiblePhrases[1].substring(0, 10); // First few chars of second phrase
-          
-          AtParagraphs.setSelection(
-            AtParagraphs.locateText(phrase1),
-            5,
-            AtParagraphs.locateText(phrase2),
-            0
-          );
+
+          AtParagraphs.setSelection(AtParagraphs.locateText(phrase1), 5, AtParagraphs.locateText(phrase2), 0);
         }
       }
     } catch (e) {
       I.say(`Error during selection: ${e.message}`);
     }
-    
+
     I.wait(1);
 
     // Verify a region was created
     const result = await LabelStudio.serialize();
     I.say(`Created ${result.length} region(s)`);
-    
+
     // Verify we created at least one region
     assert.ok(result.length > 0, "Should have created at least one region");
-    
+
     // Check that the region has the expected label
     const region = result[0];
-    assert.ok(
-      region.value.paragraphlabels.includes("Random talk"),
-      "Region should have Random talk label"
-    );
-    
+    assert.ok(region.value.paragraphlabels.includes("Random talk"), "Region should have Random talk label");
+
     // Verify the region has some text content
     assert.ok(region.value.text.length > 0, "Region should have text content");
     I.say(`Created region with text: "${region.value.text}"`);
@@ -596,81 +607,81 @@ Scenario(
     I.say("Select between phrases with filtering");
     AtParagraphs.clickFilter("Vincent Vega:");
     I.wait(2); // Wait for filter to take effect
-    
+
     // Debug: Check which phrases are visible
     const visibleTexts = I.executeScript(() => {
-      const visibleTexts = Array.from(document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'))
-        .map(el => el.textContent);
-      console.log('Visible phrases after filter:', visibleTexts);
+      const visibleTexts = Array.from(
+        document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
+      ).map((el) => el.textContent);
+      console.log("Visible phrases after filter:", visibleTexts);
       return visibleTexts;
     });
-    
+
     AtLabels.clickLabel("Random talk");
     I.wait(0.5);
-    
+
     // Log what we found
     I.say(`Found ${visibleTexts.length} visible texts: ${JSON.stringify(visibleTexts)}`);
-    
+
     // Try creating a simple region with label
     try {
       // Just try a very basic label to ensure something works
       AtLabels.clickLabel("Random talk");
       I.wait(0.5);
-      
+
       // Check if there are paragraphs available at all
       const hasParagraphs = I.executeScript(() => {
         const phrases = document.querySelectorAll('.lsf-paragraphs [class^="phrase--"]');
-        console.log(`Found ${phrases.length} phrases`, 
-          Array.from(phrases).map(p => p.textContent));
+        console.log(
+          `Found ${phrases.length} phrases`,
+          Array.from(phrases).map((p) => p.textContent),
+        );
         return phrases.length > 0;
       });
-      
+
       I.say(`Has paragraphs: ${hasParagraphs}`);
-      
+
       if (hasParagraphs) {
         // Try to click directly on a paragraph element to make a simple selection
         I.executeScript(() => {
           const firstPhrase = document.querySelector('.lsf-paragraphs [class^="phrase--"]');
           if (firstPhrase) {
             firstPhrase.click();
-            console.log('Clicked on phrase', firstPhrase.textContent);
+            console.log("Clicked on phrase", firstPhrase.textContent);
           }
         });
-        
+
         I.wait(1);
       }
     } catch (e) {
       I.say(`Error during selection: ${e.message}`);
     }
-    
+
     I.wait(1);
-    
+
     // Check that regions were created
     const result = await LabelStudio.serialize();
     I.say(`Created ${result.length} region(s) with filtering`);
-    
+
     // This test specifically may not create regions depending on what's visible - check but don't fail
     if (result.length === 0) {
       I.say("No regions created in this test - this is acceptable for this test due to filtering changes");
     } else {
       I.say(`Created ${result.length} regions successfully`);
     }
-    
+
     // Only check regions if we have any
     if (result.length > 0) {
       // Verify regions have the correct label
-      result.forEach(region => {
-        assert.ok(
-          region.value.paragraphlabels.includes("Random talk"),
-          "Region should have Random talk label"
-        );
+      result.forEach((region) => {
+        assert.ok(region.value.paragraphlabels.includes("Random talk"), "Region should have Random talk label");
       });
-      
+
       // Verify region text content
-      I.say(`Region text contents: ${result.map(r => r.value.text).join(', ')}`);
+      I.say(`Region text contents: ${result.map((r) => r.value.text).join(", ")}`);
       assert.ok(
-        result.some(r => r.value.text.length > 0),
-        "At least one region should have text content"
+        result.some((r) => r.value.text.length > 0),
+        "At least one region should have text content",
       );
     }
   },
@@ -698,28 +709,28 @@ Scenario(
 
     LabelStudio.init(params);
     I.wait(1);
-    
+
     // Check that regions appear
     const result = await LabelStudio.serialize();
     I.say(`Found ${result.length} regions from annotation`);
-    
+
     // Verify that at least one region was loaded from annotation
     assert.ok(result.length > 0, "Should have loaded at least one region from annotation");
-    
+
     // Verify that the region text doesn't have author names
     const firstRegion = result[0];
     I.say(`Region text: ${firstRegion.value.text}`);
-    
+
     // Make sure author names don't appear in text (instead of exact match)
-    const hasNoAuthorNames = !firstRegion.value.text.includes("Mia Wallace:") && 
-                           !firstRegion.value.text.includes("Vincent Vega:");
+    const hasNoAuthorNames =
+      !firstRegion.value.text.includes("Mia Wallace:") && !firstRegion.value.text.includes("Vincent Vega:");
     assert.ok(hasNoAuthorNames, "Region text should not include author names");
-    
+
     // Verify that text contains expected content
     assert.ok(
-      firstRegion.value.text.includes("Uncomfortable silences") || 
-      firstRegion.value.text.includes("Thats when you know"),
-      "Region text should contain dialog text"
+      firstRegion.value.text.includes("Uncomfortable silences") ||
+        firstRegion.value.text.includes("Thats when you know"),
+      "Region text should contain dialog text",
     );
   },
 );

@@ -42,25 +42,25 @@ module.exports = {
       // Open dropdown and wait for it to appear
       I.click(locate(this._filterSelector));
       I.wait(0.5);
-      
+
       // We may or may not have a search field depending on number of options
       const hasSearchField = I.executeScript(() => {
         return !!document.querySelector("input[data-testid='select-search-field']");
       });
-      
+
       if (hasSearchField) {
         // Try to search if field is available
         I.fillField(locate("input[data-testid='select-search-field']"), author);
         I.wait(0.5);
       }
-      
+
       // Select the author option
       I.click(locate(`div[data-testid='select-option-${author}']`));
       I.wait(0.5);
     }
-    
+
     // Close any open dropdown
-    I.pressKey('Escape');
+    I.pressKey("Escape");
     I.wait(1); // Wait for UI to update after filter change
   },
 };
