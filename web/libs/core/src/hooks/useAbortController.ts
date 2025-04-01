@@ -15,19 +15,9 @@ export const useAbortController = () => {
 
   const abort = useCallback(() => {
     const ctrl = controller.current;
-
     if (ctrl.signal.aborted) return;
 
-    try {
-      ctrl.abort();
-    } catch (err) {
-      // handling errors during abort (especially "signal is aborted without a reason")
-      if (err instanceof Error && err.name.match(/abort/gi)) {
-        console.info(`AbortError: ${controller.current.signal.reason ?? "Operation aborted"}`);
-      } else {
-        console.error("Unexpected error during abort:", err);
-      }
-    }
+    ctrl.abort();
   }, []);
 
   useEffect(() => {
