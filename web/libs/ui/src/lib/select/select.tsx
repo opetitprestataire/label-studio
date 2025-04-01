@@ -96,7 +96,6 @@ export const Select = forwardRef(
       const filterHandler = (option: any) => {
         const value = option?.value ?? option;
         const label = option?.label ?? option?.value ?? option;
-        console.log("label", label, "value", value, query);
         return (
           label?.toString()?.toLowerCase().includes(query.toLowerCase()) ||
           value?.toString()?.toLowerCase().includes(query.toLowerCase())
