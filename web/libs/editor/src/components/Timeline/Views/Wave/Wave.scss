@@ -115,7 +115,7 @@
     border-radius: 2px;
     position: absolute;
     pointer-events: none;
-    background-color: var(--sand_900);
+    background-color: var(--color-neutral-inverted-background);
     transform: translate3d(-50%, 0, 0);
   }
 
@@ -141,7 +141,7 @@
       z-index: 10 !important;
 
       & > div{
-        background-color: var(--sand_900);
+        background-color: var(--color-neutral-inverted-background);
         color: var(--color-neutral-background);
         box-shadow: none;
       }

@@ -132,7 +132,7 @@
         z-index: 100;
         white-space: nowrap;
         border-radius: 4px;
-        background-color: var(--sand_900);
+        background-color: var(--color-neutral-inverted-background);
         content: attr(data-tooltip);
         left: 50%;
         transform: translate(-50%, -110%);
