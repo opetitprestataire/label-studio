@@ -40,6 +40,7 @@ module.exports = {
     for (const author of authors) {
       I.fillField(locate("input[data-testid='select-search-field']"), author);
       I.click(locate("div[data-testid='select-option-label']").withText(author));
+      I.click(locate(this._filterSelector));
     }
     I.click(locate(this._filterSelector));
   },
