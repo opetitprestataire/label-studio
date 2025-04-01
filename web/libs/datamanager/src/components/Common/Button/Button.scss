@@ -1,7 +1,8 @@
 .button-dm {
   --button-color: var(--color-neutral-content);
+  --button-height: 32px;
 
-  height: 32px;
+  height: var(--button-height);
   cursor: pointer;
   padding: 0 12px;
   outline: none;
@@ -33,9 +34,10 @@
     border: 1px solid var(--color-neutral-border);
   }
 
-  &:hover {
+  &:not(&_look_primary):hover, {
+    --button-color: var(--color-neutral-content);
+
     border: 1px solid var(--color-neutral-border);
-    color: var(--color-neutral-content);
   }
 
   &:active {
@@ -150,6 +152,10 @@
 
     &_danger {
       --button-color: var(--color-negative-content);
+
+      &:not(:disabled):hover {
+        --button-color: var(--color-negative-content-hover) !important;
+      }
     }
 
     &_destructive {
@@ -168,19 +174,22 @@
 
   &_size {
     &_compact {
-      height: 36px;
+      --button-height: 36px;
+
       font-size: 16px;
       line-height: 20px;
     }
 
     &_medium {
-      height: 32px;
+      --button-height: 32px;
+
       font-size: 14px;
       line-height: 20px;
     }
 
     &_small {
-      height: 24px;
+      --button-height: 24px;
+
       font-size: 12px;
       line-height: 12px;
       padding: 0 10px;
@@ -188,7 +197,8 @@
     }
 
     &_large {
-      height: 40px;
+      --button-height: 40px;
+
       font-size: 16px;
     }
   }

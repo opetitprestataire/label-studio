@@ -1,4 +1,6 @@
 .tabs-dm-content {
+  --filters-sidebar-width: 448px;
+
   height: 100%;
   width: 100%;
   display: flex;
@@ -9,7 +11,7 @@
     width: 100%;
 
     &_shrink {
-      width: calc(100% - 350px);
+      width: calc(100% - var(--filters-sidebar-width));
     }
   }
 }

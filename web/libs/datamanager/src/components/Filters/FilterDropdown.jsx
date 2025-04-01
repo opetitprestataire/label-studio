@@ -61,7 +61,6 @@ export const FilterDropdown = observer(
         style={{
           fontSize: 12,
           width: "100%",
-          backgroundColor: disabled ? "none" : "#fafafa",
           ...(multiple ? { padding: 0 } : {}),
           ...(style ?? {}),
         }}
