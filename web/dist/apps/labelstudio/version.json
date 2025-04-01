@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1859: Incomplete string escaping causing warnings for dependabot for design-tokens-converter (#7300)",
-  "commit": "db3b7fcf4bc80b246dcebb697596a0444a2d0bda",
-  "date": "2025-03-28T12:59:34.000Z",
+  "message": "fix: DIA-1907: [FE] TypeError: Failed to fetch (#7289)",
+  "commit": "294067c677b27ed405527ff49958cec461353351",
+  "date": "2025-04-01T11:13:22.000Z",
   "branch": "develop"
 }
