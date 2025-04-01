@@ -197,7 +197,7 @@ function ProjectSimpleCard({
     <Link
       to={`/projects/${project.id}`}
       className="block even:bg-neutral-surface rounded-sm overflow-hidden"
-      data-external={true}
+      data-external
     >
       <div
         className="grid grid-cols-[minmax(0,1fr)_150px] p-2 py-3 items-center border-l-[3px]"
