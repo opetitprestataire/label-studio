@@ -13,6 +13,7 @@ body {
   width: 100vw;
   max-width: 100%;
   min-height: 100vh;
+  scrollbar-color: var(--color-neutral-border-bold) var(--color-neutral-background);
 }
 
 .app-wrapper {
