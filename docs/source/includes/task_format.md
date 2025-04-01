@@ -153,6 +153,8 @@ When importing annotations to Label Studio, you can control which users are assi
 
 The system will match the email or ID to an existing user in your organization, or fall back to the importing user if configured to allow this.
 
+Note that this applies when importing via the Label Studio UI, the API, or the SDK. 
+
 <div class="enterprise-only">
 
 Enterprise fields are presented in export:
