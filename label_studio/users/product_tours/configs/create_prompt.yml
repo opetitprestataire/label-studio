@@ -6,12 +6,12 @@ steps:
 
 - target: .cm-editor
   placement: right
-  title: '<div style="color: var(--sand_600)">Step 1 of 3</div>'
+  title: '<div style="color: var(--color-neutral-content-subtler)">Step 1 of 3</div>'
   content: '<div style="width: 100%;">We’ve gone ahead and generated a prompt for you based on your project’s labeling configuration.<br/><br/> Feel free to adjust it!</div>'
 
 - target: '[data-testid="evaluate-model-button"]'
   placement: top
-  title: '<div style="color: var(--sand_600)">Step 2 of 3</div>'
+  title: '<div style="color: var(--color-neutral-content-subtler)">Step 2 of 3</div>'
   content: '<div style="width: 100%;">That''s it! After saving, just click here to start getting predictions for your tasks.</div>'
 
 - target: body

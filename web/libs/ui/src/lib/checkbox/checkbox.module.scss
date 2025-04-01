@@ -2,7 +2,7 @@ $check-icon: "data:image/svg+xml;charset=UTF-8,%3csvg width='13' height='10' vie
 
 .checkbox {
   --checkbox-default-size: 16px;
-  --checkbox-default-color: var(--grape_0);
+  --checkbox-default-color: var(--color-primary-surface-content);
   --checkbox-default-background-color: var(--color-neutral-background);
   --checkbox-default-border-color: var(--color-neutral-border);
   --checkbox-default-checked-color: var(--color-primary-surface-content);
@@ -11,10 +11,10 @@ $check-icon: "data:image/svg+xml;charset=UTF-8,%3csvg width='13' height='10' vie
   --checkbox-default-hover-background-color: var(--color-neutral-surface);
   --checkbox-default-hover-color: var(--color-primary-surface-content);
   --checkbox-default-hover-border-color: var(--color-neutral-border-bold);
-  --checkbox-default-checked-hover-color: var(--grape_0);
+  --checkbox-default-checked-hover-color: var(--color-primary-surface-content);
   --checkbox-default-checked-hover-background-color: var(--color-primary-surface-hover);
   --checkbox-default-checked-hover-border-color: var(--grape_600);
-  --checkbox-default-checked-focused-color: var(--grape_0);
+  --checkbox-default-checked-focused-color: var(--color-primary-surface-content);
   --checkbox-default-checked-focused-background-color: var(--grape_800);
   --checkbox-default-checked-focused-border-color: var(--grape_800);
   --checkbox-default-disabled-background-color: var(--color-neutral-background);

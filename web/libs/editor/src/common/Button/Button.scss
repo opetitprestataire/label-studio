@@ -50,7 +50,7 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 6px var(--grape_100), inset 0 -1px 0 rgb(0 0 0 / 10%), inset 0 0 0 1px rgb(0 0 0 / 15%), inset 0 0 0 1px var(--grape_100);
+    box-shadow: 0 0 0 6px var(--color-primary-surface-content-subtle), inset 0 -1px 0 rgb(0 0 0 / 10%), inset 0 0 0 1px rgb(0 0 0 / 15%), inset 0 0 0 1px var(--color-primary-surface-content-subtle);
   }
 
   &__extra {
@@ -120,7 +120,7 @@
 
       &:hover {
         background: linear-gradient(0deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 10%)), var(--primary_link);
-        box-shadow: 0 2px 4px var(--grape_100), inset 0 -1px 0 rgb(0 0 0 / 10%);
+        box-shadow: 0 2px 4px var(--color-primary-surface-content-subtle), inset 0 -1px 0 rgb(0 0 0 / 10%);
       }
 
       &:active {
@@ -129,7 +129,7 @@
       }
 
       &:focus {
-        box-shadow: 0 0 0 6px var(--grape_100), inset 0 -1px 0 rgb(0 0 0 / 10%);
+        box-shadow: 0 0 0 6px var(--color-primary-surface-content-subtle), inset 0 -1px 0 rgb(0 0 0 / 10%);
       }
     }
 

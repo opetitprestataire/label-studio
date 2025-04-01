@@ -37,8 +37,8 @@
     cursor: pointer;
     position: relative;
     box-shadow: -1px 0 0 var(--color-neutral-border) inset, 1px 0 0 var(--color-neutral-border) inset, 0 1px 0 var(--color-neutral-border-subtle) inset, 0 -3px 0 var(--color-neutral-border) inset;
-    border-top-left-radius: var(--radius-small);
-    border-top-right-radius: var(--radius-small);
+    border-top-left-radius: var(--corner-radius-small);
+    border-top-right-radius: var(--corner-radius-small);
 
     &_active {
       color: var(--color-neutral-content);
@@ -129,7 +129,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    position: absolute; 
+    position: absolute;
     bottom: 0;
     z-index: 1000;
     width: 100%;

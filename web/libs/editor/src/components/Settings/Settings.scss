@@ -154,7 +154,7 @@
   }
 
   :global(.ant-modal-header) {
-    border-radius: var(--radius-small) var(--modal-border-radius) 0 0 !important;
+    border-radius: var(--corner-radius-small) var(--modal-border-radius) 0 0 !important;
     padding: var(--modal-padding) !important;
     border: none !important;
     background-color: var(--color-neutral-background);

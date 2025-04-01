@@ -22,7 +22,7 @@
 
       &:hover {
         --icon-color: var(--color-primary-icon);
-        --header-background-new: var(--grape_0);
+        --header-background-new: var(--color-primary-surface-content);
       }
     }
   }
@@ -122,7 +122,7 @@
 
     &:hover {
       --icon-color: var(--grape_500);
-      --header-background: var(--grape_0);
+      --header-background: var(--color-primary-surface-content);
     }
   }
 
@@ -135,7 +135,7 @@
     font-size: 13px;
     font-weight: 700;
     line-height: 16px;
-    color: var(--sand_600);
+    color: var(--color-neutral-content-subtler);
     user-select: none;
     position: sticky;
     align-items: center;
@@ -167,7 +167,7 @@
     }
 
     &:hover {
-      background-color: var(--grape_0);
+      background-color: var(--color-primary-surface-content);
     }
   }
 

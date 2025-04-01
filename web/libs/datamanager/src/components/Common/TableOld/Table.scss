@@ -79,11 +79,11 @@
     }
 
     &_selected {
-      background-color: var(--grape_0);
+      background-color: var(--color-primary-surface-content);
     }
 
     &:not(.table__row_wrapper_selected):hover {
-      background-color: var(--grape_0);
+      background-color: var(--color-primary-surface-content);
     }
 
     &_highlighted:not(.table__row_wrapper_selected)::after {

@@ -26,7 +26,7 @@
     margin-left: -2px;
     display: flex;
     padding-top: 24px;
-    border-radius: var(--radius-small);
+    border-radius: var(--corner-radius-small);
   }
 
   &__footer-text {
@@ -119,7 +119,7 @@
   }
 
   &__item-date {
-    color: var(--sand_600);
+    color: var(--color-neutral-content-subtler);
     font-size: 0.875rem;
     margin-top: 0.25rem;
   }

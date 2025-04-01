@@ -29,14 +29,14 @@
     cursor: pointer;
 
     &:hover {
-      background-color: var(--grape_0);
+      background-color: var(--color-primary-surface-content);
     }
   }
 
   &__entity {
     &_selected {
       pointer-events: none;
-      background-color: var(--grape_0);
+      background-color: var(--color-primary-surface-content);
     }
   }
 

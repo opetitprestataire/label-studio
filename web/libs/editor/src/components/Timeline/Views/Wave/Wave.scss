@@ -24,7 +24,7 @@
     justify-content: center;
     position: absolute;
     border-radius: 20px;
-    box-shadow: 0 5px 20px var(--grape_100);
+    box-shadow: 0 5px 20px var(--color-primary-surface-content-subtle);
 
     @include waiting(var(--primary_link));
 
