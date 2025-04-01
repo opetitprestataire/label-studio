@@ -79,11 +79,6 @@
     box-shadow: none;
     border-color: var(--border-color);
   }
-
-  &:read-only {
-    background-color: var(--sand_100);
-    color: var(--sand_500);
-  }
 }
 
 .form-indicator {

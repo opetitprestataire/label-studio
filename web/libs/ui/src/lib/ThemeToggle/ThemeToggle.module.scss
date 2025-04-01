@@ -7,12 +7,14 @@
   --button-border-color-active:  var(--color-neutral-border-bold);
   --button-text-color:  var(--color-neutral-content);
   --button-icon-color: var(--color-neutral-content);
+  --button-font-size: var(--font-size-16);
 
   display: flex;
   justify-content: center;
   overflow: hidden;
   height: 32px;
   align-self: center;
+  font-size: var(--button-font-size);
   border: 1px solid var(--button-border-color);
   border-radius: 24px;
   background: var(--button-background-color);
