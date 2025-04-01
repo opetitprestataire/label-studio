@@ -15,7 +15,7 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         lsOutline:
-          "border-solid border-primary-icon text-primary-content bg-background hover:bg-accent hover:text-accent-foreground disabled:bg-neutral-surface disabled:border-neutral-border disabled:text-neutral-content-subtlest",
+          "border-solid border-primary-icon text-primary-content hover:bg-primary-emphasis-subtle hover:text-primary-content-hover disabled:bg-neutral-surface disabled:border-neutral-border disabled:text-neutral-content-subtlest",
       },
       size: {
         default: "h-10 px-4 py-2",
