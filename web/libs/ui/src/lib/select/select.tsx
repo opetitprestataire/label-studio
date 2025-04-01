@@ -125,16 +125,10 @@ export const Select = forwardRef(
           <button
             variant="outline"
             aria-expanded={isOpen}
-            className={clsx(
-              isInline ? "" : "w-full",
-              // "inline-flex flex-1 justify-between gap-2 items-center disabled:cursor-not-allowed disabled:opacity-50 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500",
-              className ?? "",
-              styles.selectTrigger,
-              {
-                [styles.isOpen]: isOpen,
-                [styles.isDisabled]: disabled,
-              },
-            )}
+            className={clsx(isInline ? "" : "w-full", className ?? "", styles.selectTrigger, {
+              [styles.isOpen]: isOpen,
+              [styles.isDisabled]: disabled,
+            })}
             type="button"
             data-testid={props?.dataTestid ?? "select-trigger"}
             ref={triggerRef}
