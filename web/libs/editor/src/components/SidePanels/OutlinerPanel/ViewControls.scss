@@ -44,7 +44,7 @@
     justify-content: flex-start;
     white-space: nowrap;
     box-shadow: none;
-    gap: var(--spacing-small-x, 4px);
+    gap: var(--spacing-tighter);
 
     &_newUI {
       font-size: 12px;

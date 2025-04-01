@@ -52,7 +52,7 @@
   &-node {
     &-content-wrapper {
       flex: 1;
-      padding: var(--spacing-small-x, 4px);
+      padding: var(--spacing-tighter);
       display: flex;
       align-items: flex-start;
     }
@@ -131,7 +131,7 @@
     min-height: 32px;
     align-items: center;
     justify-content: space-between;
-    gap: var(--spacing-small-x, 4px);
+    gap: var(--spacing-tighter);
   }
 
   &__index {
