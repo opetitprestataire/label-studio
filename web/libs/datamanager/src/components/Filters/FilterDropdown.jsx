@@ -27,7 +27,7 @@ export const FilterDropdown = observer(
                 label: item?.original?.field?.parent ? (
                   <OptionVisuals item={item} />
                 ) : (
-                  item?.title ?? item?.label ?? item?.name
+                  (item?.title ?? item?.label ?? item?.name)
                 ),
                 value: item?.value ?? item,
                 children: item?.options?.map(parseItems),

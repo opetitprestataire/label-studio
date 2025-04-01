@@ -45,7 +45,7 @@ export const Select = forwardRef(
     let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
 
     if (multiple) {
-      initialValue = Array.isArray(initialValue) ? initialValue ?? [] : [initialValue];
+      initialValue = Array.isArray(initialValue) ? (initialValue ?? []) : [initialValue];
     } else if (Array.isArray(initialValue)) {
       initialValue = initialValue[0];
     }
@@ -155,7 +155,7 @@ export const Select = forwardRef(
                   })}
                 </>
               ) : (
-                props?.placeholder ?? ""
+                (props?.placeholder ?? "")
               )}
             </span>
             {isOpen ? (
@@ -300,7 +300,7 @@ const Option = ({
       {...(style ? { style } : {})}
       data-value={value}
       data-selected={isOptionSelected}
-      data-testid="select-option"
+      data-testid={`select-option-${value}`}
       tabIndex={disabled ? -1 : 0}
       onKeyDown={keyDownHandler}
       className={clsx(

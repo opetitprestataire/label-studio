@@ -10,11 +10,10 @@
   height: 40px;
 
   /* body/medium */
-  font-family: var(--font-family-body, Figtree);
-  font-size: var(--font-size-body-medium);
+  font-size: var(--font-size-16);
   font-style: normal;
-  font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-body-medium); /* 150% */
+  font-weight: var(--font-weight-400);
+  line-height: var(--line-height-24); /* 150% */
   letter-spacing: var(--letter-spacing-base);
   border-radius: var(--corner-radius-smaller);
   border: 1px solid var(--color-neutral-border);
@@ -24,7 +23,6 @@
   }
 
   &:focus {
-    border-radius: var(--corner-radius-smaller);
     background: var(--color-neutral-surface-hover);
     box-shadow: 0 1px 2px 1px rgb(0 0 0 / 6%) inset;
     color: var(--color-neutral-content);
