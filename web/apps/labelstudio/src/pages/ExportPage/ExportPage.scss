@@ -21,13 +21,13 @@
 .formats {
   color: var(--color-neutral-content-subtler);
   font-size: 16px;
-  padding-bottom: var(--spacing-medium);
+  padding-bottom: var(--spacing-base);
 
   &__list {
     margin: 10px -7px;
     display: flex;
     flex-flow: row wrap;
-    gap: var(--spacing-small);
+    gap: var(--spacing-tight);
   }
 
   & a {

@@ -65,7 +65,7 @@
 .taxonomy__dropdown {
   position: absolute;
   z-index: 10;
-  background: var(--sand_0);
+  background: var(--color-neutral-background);
   border-radius: 6px;
   left: -1px;
   border: 1px solid var(--color-neutral-border);
@@ -92,7 +92,7 @@
   border-radius: 3px 3px 0 0;
   padding: 6px 16px;
   margin-bottom: 4px;
-  box-shadow: 0 -2px 0 6px var(--sand_0); // white background over scrolled items
+  box-shadow: 0 -2px 0 6px var(--color-neutral-background); // white background over scrolled items
   position: sticky;
   top: 0;
   z-index: 1;

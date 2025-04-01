@@ -13,11 +13,11 @@
   top: 0;
   border: 1px solid var(--primary_link);
   color: var(--primary_link);
-  border-radius: var(--radius-xs);
+  border-radius: var(--corner-radius-smaller);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-small);
+  padding: var(--spacing-tight);
   background-color: var(--white);
 }
 

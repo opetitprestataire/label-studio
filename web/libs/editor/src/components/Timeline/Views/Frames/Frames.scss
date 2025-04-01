@@ -49,8 +49,8 @@
     box-sizing: content-box;
     padding-top: 24px;
     border-top: 1px solid var(--color-neutral-border);
-    background-image: repeating-linear-gradient(90deg, var(--sand_0),
-        var(--sand_0) var(--frame-width),
+    background-image: repeating-linear-gradient(90deg, var(--color-neutral-background),
+        var(--color-neutral-background) var(--frame-width),
         transparent var(--frame-width),
         transparent calc(var(--frame-width) + 1)),
       linear-gradient(0deg, var(--sand_100), transparent 50%);
@@ -101,7 +101,7 @@
       top: 0;
       left: 50%;
       height: 12px;
-      color: var(--sand_0);
+      color: var(--color-neutral-background);
       display: flex;
       padding: 0 4px;
       min-width: 100%;

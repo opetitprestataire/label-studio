@@ -56,7 +56,7 @@
         background-color: var(--color-neutral-surface);
 
       & .wave__timeline{
-        background-color: var(--sand_0);
+        background-color: var(--color-neutral-background);
       }
     }
   }
@@ -68,7 +68,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--sand_0);
+    background-color: var(--color-neutral-background);
   }
 
   &__body {
@@ -142,7 +142,7 @@
 
       & > div{
         background-color: var(--sand_900);
-        color: var(--sand_0);
+        color: var(--color-neutral-background);
         box-shadow: none;
       }
     }
@@ -153,7 +153,7 @@
       padding: 0 8px;
       border-radius: 4px;
       position: relative;
-      background-color: var(--sand_0);
+      background-color: var(--color-neutral-background);
       box-shadow: 0 4px 15px rgb(0 0 0 / 20%);
     }
   }

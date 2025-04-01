@@ -12,7 +12,7 @@
   --button-min-width: 0;
   --icon-size: 16px;
   --button-padding: 0 16px;
-  --button-radius: var(--radius-xs);
+  --button-radius: var(--corner-radius-smaller);
   --button-font-size: var(--font-size-400);
   --button-margin-left: 0;
   --button-margin-right: 0;
@@ -95,7 +95,7 @@
   }
 
   &__label {
-    padding: 0 var(--spacing-small, 8px);
+    padding: 0 var(--spacing-tight);
   }
 
   &__icon {
@@ -199,7 +199,7 @@
     }
 
     &_ghost {
-      --button-color: var(--sand_0);
+      --button-color: var(--color-neutral-background);
 
       border: none;
 
@@ -340,7 +340,7 @@
   display: flex;
 
   &:not(.button-group-ls_collapsed) {
-    .button-ls + .button-ls {
+    .button-ls+.button-ls {
       --button-margin-left: 16px;
     }
   }

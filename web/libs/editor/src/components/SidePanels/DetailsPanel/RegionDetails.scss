@@ -46,7 +46,7 @@
   }
 
   &__index_value {
-    color: var(--sand_0);
+    color: var(--color-neutral-background);
   }
 
   &__result {
@@ -69,12 +69,12 @@
     &:hover {
       textarea {
         border-color: var(--sand_300);
-        background-color: var(--sand_0);
+        background-color: var(--color-neutral-background);
       }
     }
 
     &:focus {
-      background-color: var(--sand_0);
+      background-color: var(--color-neutral-background);
       border-color: var(--grape_500);
       box-shadow: 0 0 0 1px var(--grape_500);
     }

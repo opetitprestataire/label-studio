@@ -33,7 +33,7 @@
     height: 32px;
     opacity: 0.5;
     color: var(--text-color-hover);
-    border-radius: var(--radius-xs);
+    border-radius: var(--corner-radius-smaller);
     transition: all 150ms ease-out;
 
     svg {
@@ -224,7 +224,7 @@
     background: var(--color-neutral-background);
     text-transform: uppercase;
     padding: 3px 3px 6px;
-    border-radius: var(--radius-xs);
+    border-radius: var(--corner-radius-smaller);
     border: 1px solid var(--color-neutral-border);
     box-shadow: 0 -2.5px 0.5px 0 rgba(var(--color-neutral-border-raw) / 70%) inset;
     position: relative;

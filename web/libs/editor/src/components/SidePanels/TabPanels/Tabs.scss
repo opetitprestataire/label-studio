@@ -97,8 +97,8 @@
     display: block;
     cursor: grab;
     user-select: none;
-    border-top-left-radius: var(--radius-xs);
-    border-top-right-radius: var(--radius-xs);
+    border-top-left-radius: var(--corner-radius-smaller);
+    border-top-right-radius: var(--corner-radius-smaller);
 
     &_active {
       overflow: visible;
