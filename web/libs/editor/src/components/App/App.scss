@@ -1,5 +1,9 @@
 @import "../../assets/styles/global";
 
+body {
+  background: var(--color-neutral-background);
+}
+
 .editor {
   --main-bg-color: var(--color-neutral-surface);
   --sticky-items-offset: 48px;
