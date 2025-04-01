@@ -95,9 +95,7 @@
       <span></span>
     </button>
     <nav>
-      <% if(page.type !== "playground" && page.type !== "blog") { %>
-        <%- partial("partials/toc", { type: page.type, tier: tier, component: "nav" }) %>
-      <% } %>
+
       <ul class="page-header-main-nav">
         <% if(isEnterpriseTheme) { %>
           <li>
@@ -172,6 +170,10 @@
       {
         label: "Templates",
         href: "/templates/"
+      },
+      {
+        label: "Plugins",
+        href: "/plugins/"
       },
       {
         label: "Tags",
