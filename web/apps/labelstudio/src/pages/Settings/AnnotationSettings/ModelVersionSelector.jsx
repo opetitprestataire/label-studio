@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useAPI } from "../../../providers/ApiProvider";
-import { Select } from "@humansignal/ui";
+import { Select } from "../../../components/Form";
 import { ProjectContext } from "../../../providers/ProjectProvider";
 
 export const ModelVersionSelector = ({
@@ -84,7 +84,8 @@ export const ModelVersionSelector = ({
             value={version}
             onChange={setVersion}
             options={[...models, ...versions]}
-            placeholder={loading ? "Loading ..." : placeholder ? placeholder : "Please select model or predictions"}
+            placeholder={placeholder || "Please select model or predictions"}
+            isInProgress={loading}
             {...props}
           />
         </div>
