@@ -299,11 +299,7 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
       // to do an x3 zoom we have to calculate current zoom and multiply it by 3
       AtImageView.setZoom((3 * canvasSize.width) / naturalSize.width, 0, 0);
 
-      const prevResult = await LabelStudio.serialize();
-
-      const regionBBox = await Regions.getBBoxByRegionIdx(0);
-
-      I.say(`Debug: regionBBox = ${JSON.stringify(regionBBox)}`);
+      const prevRegionBBox = await Regions.getBBoxByRegionIdx(0);
 
       // Transform the shape
       AtImageView.drawByDrag(150, 150, -150, -150);
@@ -313,9 +309,9 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
       AtImageView.drawByDrag(0, 0, 150, 150);
 
       // Check resulting sizes
-      const rectangleResult = await LabelStudio.serialize();
+      const regionBBox = await Regions.getBBoxByRegionIdx(0);
 
-      Asserts.deepEqualWithTolerance(rectangleResult[0].value, prevResult[0].value, 2);
+      Asserts.deepEqualWithTolerance(regionBBox, prevRegionBBox, 2);
     },
   )
   .tag("@this");
