@@ -294,11 +294,11 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
 
     assert.strictEqual(isTransformerExist, true);
 
-    const prevResult = await LabelStudio.serialize();
-
     // we display an image to fit to canvas size on page load, so initial zoom is not 1;
     // to do an x3 zoom we have to calculate current zoom and multiply it by 3
     AtImageView.setZoom((3 * canvasSize.width) / naturalSize.width, 0, 0);
+
+    const prevResult = await LabelStudio.serialize();
 
     // Transform the shape
     AtImageView.drawByDrag(150, 150, -150, -150);
