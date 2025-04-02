@@ -91,7 +91,7 @@ module.exports = {
    * @return {void} This method does not return any value.
    */
   seeIncompleteRegion(idxOrText) {
-    I.dontSeeElement(this.locateIncompleteStateIcon(idxOrText));
+    I.seeElement(this.locateIncompleteStateIcon(idxOrText));
   },
   /**
    * Verifies that the incomplete state icon is not visible in a region list or for the specific region.

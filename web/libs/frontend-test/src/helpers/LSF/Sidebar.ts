@@ -2,9 +2,6 @@ export const Sidebar = {
   get outliner() {
     return cy.get(".lsf-outliner");
   },
-  get legacySidebar() {
-    return cy.get(".lsf-sidebar-tabs");
-  },
   get toolBar() {
     return this.outliner.get(".lsf-view-controls");
   },

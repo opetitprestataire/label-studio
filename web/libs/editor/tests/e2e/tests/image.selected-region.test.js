@@ -4,6 +4,8 @@ const { doDrawingAction } = require("./helpers");
 
 Feature("Test Image Region Stay Selected Between Tools");
 
+const OUTLINER_PANEL_WIDTH = 319;
+
 const PLANET = {
   color: "#00FF00",
   rgbArray: [0, 255, 0],
@@ -58,9 +60,9 @@ async function testRegion(testType, toolAccelerator, I, LabelStudio, AtImageView
   I.say(`${testType} initial region`);
   await doDrawingAction(I, {
     msg: `Initial ${testType}`,
-    fromX: 319 + 150,
+    fromX: OUTLINER_PANEL_WIDTH + 150,
     fromY: 110,
-    toX: 319 + 150 + 50,
+    toX: OUTLINER_PANEL_WIDTH + 150 + 50,
     toY: 110 + 50,
   });
 
@@ -70,9 +72,9 @@ async function testRegion(testType, toolAccelerator, I, LabelStudio, AtImageView
   I.say(`Using Eraser on ${testType} region`);
   I.pressKey("E");
   I.usePlaywrightTo("Erasing", async ({ browser, browserContext, page }) => {
-    await page.mouse.move(319 + 150, 150);
+    await page.mouse.move(OUTLINER_PANEL_WIDTH + 150, 150);
     await page.mouse.down();
-    await page.mouse.move(319 + 150 + 100, 150);
+    await page.mouse.move(OUTLINER_PANEL_WIDTH + 150 + 100, 150);
     await page.mouse.up();
   });
 
@@ -80,9 +82,9 @@ async function testRegion(testType, toolAccelerator, I, LabelStudio, AtImageView
   I.pressKey(toolAccelerator);
   await doDrawingAction(I, {
     msg: `${testType} after erasing`,
-    fromX: 319 + 280,
+    fromX: OUTLINER_PANEL_WIDTH + 280,
     fromY: 480,
-    toX: 319 + 280 + 50,
+    toX: OUTLINER_PANEL_WIDTH + 280 + 50,
     toY: 480 + 50,
   });
 
@@ -98,9 +100,9 @@ async function testRegion(testType, toolAccelerator, I, LabelStudio, AtImageView
   I.pressKey(toolAccelerator);
   await doDrawingAction(I, {
     msg: `${testType} after zoom and pan selected`,
-    fromX: 319 + 400,
+    fromX: OUTLINER_PANEL_WIDTH + 400,
     fromY: 200,
-    toX: 319 + 400 + 15,
+    toX: OUTLINER_PANEL_WIDTH + 400 + 15,
     toY: 400 + 15,
   });
 
