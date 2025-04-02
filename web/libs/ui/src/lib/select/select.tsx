@@ -41,7 +41,7 @@ export const Select = forwardRef(
     }: SelectProps<T, A>,
     ref: ForwardedRef<HTMLSelectElement>,
   ) => {
-    const triggerRef = ref ?? useRef<HTMLDivElement>();
+    const triggerRef = useRef<HTMLDivElement>();
     const [query, setQuery] = useState<string>("");
     let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
 
@@ -83,6 +83,7 @@ export const Select = forwardRef(
         }
         props?.onChange?.(val);
         !multiple && setIsOpen(false);
+        ref?.current?.dispatchEvent?.(new Event("change", { target: { value: val } }));
       },
       [props?.onChange, multiple, disabled],
     );
