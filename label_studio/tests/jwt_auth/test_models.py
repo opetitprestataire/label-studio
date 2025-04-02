@@ -59,7 +59,7 @@ def test_user_from_other_org_cannot_access_jwt_settings():
     assert not org2.jwt.has_view_permission(org1_owner)
     assert not org2.jwt.has_modify_permission(org1_owner)
     assert not org2.jwt.has_permission(org1_owner)
-    
+
     # Verify org2 owner cannot view or modify JWT settings of org1
     assert not org1.jwt.has_view_permission(org2_owner)
     assert not org1.jwt.has_modify_permission(org2_owner)

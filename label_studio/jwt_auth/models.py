@@ -41,7 +41,7 @@ class JWTSettings(models.Model):
 
     def has_modify_permission(self, user):
         """Determine who can modify JWT settings.
-        
+
         In label studio enterprise: Only organization owners/admins can modify JWT settings.
         In label studio open-source: Any organization member can modify JWT settings.
         """

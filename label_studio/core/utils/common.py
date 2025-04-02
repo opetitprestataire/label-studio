@@ -751,6 +751,7 @@ def get_ttl_hash(seconds: int = 60) -> int:
     """Return the same value within `seconds` time period"""
     return round(time.time() / seconds)
 
+
 def is_enterprise():
     """Determine if the current Label Studio instance is Enterprise (LSE) or open-source (LSO).
 
@@ -760,7 +761,8 @@ def is_enterprise():
         True if running Label Studio Enterprise, False if running open-source Label Studio
     """
     try:
-        import label_studio_enterprise
+        import label_studio_enterprise  # noqa: F401
+
         return True
     except ImportError:
         return False
