@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { Button, Columns } from "../../../components";
 import { confirm, modal } from "../../../components/Modal/Modal";
 import { Spinner } from "../../../components/Spinner/Spinner";
@@ -24,11 +24,10 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
     storagesLoading,
     storagesLoaded,
     reloadStoragesList,
+    loading,
+    loaded,
     fetchStorages,
   } = useStorageCard(target, project?.id);
-
-  const loading = useMemo(() => storageTypesLoading || storagesLoading);
-  const loaded = useMemo(() => storageTypesLoaded || storagesLoaded);
 
   const showStorageFormModal = useCallback(
     (storage) => {

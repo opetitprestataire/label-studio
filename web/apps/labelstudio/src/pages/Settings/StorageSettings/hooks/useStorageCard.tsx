@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 export function useStorageCard(target: "import" | "export", projectId?: number) {
   const api = useAPI();
@@ -59,6 +59,9 @@ export function useStorageCard(target: "import" | "export", projectId?: number) 
     reloadStorageTypes({ queryKey: storageTypesQueryKey });
   }, [storagesQueryKey, storageTypesQueryKey]);
 
+  const loading = useMemo(() => storageTypesLoading || storagesLoading, [storageTypesLoading, storagesLoading]);
+  const loaded = useMemo(() => storageTypesLoaded || storagesLoaded, [storageTypesLoaded, storagesLoaded]);
+
   return {
     storageTypes,
     storageTypesLoading,
@@ -69,6 +72,10 @@ export function useStorageCard(target: "import" | "export", projectId?: number) 
     storagesLoading,
     storagesLoaded,
     reloadStoragesList,
+
+    loaded,
+    loading,
+
     fetchStorages,
   };
 }
