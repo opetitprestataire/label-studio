@@ -297,7 +297,7 @@ class App extends Component {
                   </SideTabsPanels>
                 )
               ) : isBulkMode ? (
-                <>{mainContent}</>
+                mainContent
               ) : (
                 <SidePanels
                   panelsHidden={viewingAll}
