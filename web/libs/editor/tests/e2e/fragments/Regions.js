@@ -11,6 +11,15 @@ module.exports = {
     AtOutliner.dontSeeSelectedRegion();
   },
 
+  async getBBoxByRegionIdx(idx) {
+    return await I.executeScript(
+      ({ idx }) => {
+        return window.Htx.annotationStore.selected.regionStore.regions[idx].bboxCoordsCanvas;
+      },
+      { idx },
+    );
+  },
+
   undoLastActionWithHotkey() {
     I.pressKey(["CommandOrControl", "z"]);
   },
