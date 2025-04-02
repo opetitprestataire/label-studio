@@ -2,50 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
 import { useCallback, useMemo } from "react";
 
-export function useStorageCard(target: "import" | "export", projectId?: number) {
+function useStorages(target: "import" | "export", projectId?: number) {
   const api = useAPI();
-  const storageTypesQueryKey = ["storage-types", target];
   const storagesQueryKey = ["storages", target, projectId];
-
-  const {
-    data: storageTypes,
-    isLoading: storageTypesLoading,
-    isSuccess: storageTypesLoaded,
-    refetch: reloadStorageTypes,
-  } = useQuery({
-    queryKey: storageTypesQueryKey,
-    async queryFn() {
-      const result = await api.callApi("storageTypes", {
-        params: {
-          target,
-        },
-        errorFilter() {
-          return true;
-        },
-      });
-
-      if (!result?.$meta.ok) return [];
-
-      return result;
-    },
-  });
-
-  const {
-    data: storages,
-    isLoading: storagesLoading,
-    isSuccess: storagesLoaded,
-    refetch: reloadStoragesList,
-  } = useQuery({
+  const { data, isLoading, isSuccess, refetch } = useQuery({
     queryKey: storagesQueryKey,
     async queryFn() {
       const result = await api.callApi("listStorages", {
-        params: {
-          project: projectId,
-          target,
-        },
-        errorFilter() {
-          return true;
-        },
+        params: { project: projectId, target },
+        errorFilter: () => true,
       });
 
       if (!result?.$meta.ok) return [];
@@ -54,28 +19,62 @@ export function useStorageCard(target: "import" | "export", projectId?: number) 
     },
   });
 
-  const fetchStorages = useCallback(async () => {
-    reloadStoragesList({ queryKey: storagesQueryKey });
-    reloadStorageTypes({ queryKey: storageTypesQueryKey });
-  }, [storagesQueryKey, storageTypesQueryKey]);
+  return {
+    storages: data,
+    storagesLoading: isLoading,
+    storagesLoaded: isSuccess,
+    reloadStoragesList: () => refetch({ queryKey: storagesQueryKey }),
+  };
+}
 
-  const loading = useMemo(() => storageTypesLoading || storagesLoading, [storageTypesLoading, storagesLoading]);
-  const loaded = useMemo(() => storageTypesLoaded || storagesLoaded, [storageTypesLoaded, storagesLoaded]);
+function useStorageTypes(target: "import" | "export") {
+  const api = useAPI();
+  const storageTypesQueryKey = ["storage-types", target];
+  const { data, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: storageTypesQueryKey,
+    async queryFn() {
+      const result = await api.callApi("storageTypes", {
+        params: { target },
+        errorFilter: () => true,
+      });
+
+      if (!result?.$meta.ok) return [];
+
+      return result;
+    },
+  });
 
   return {
-    storageTypes,
-    storageTypesLoading,
-    storageTypesLoaded,
-    reloadStorageTypes,
+    storageTypes: data,
+    storageTypesLoading: isLoading,
+    storageTypesLoaded: isSuccess,
+    reloadStorageTypes: () => refetch({ queryKey: storageTypesQueryKey }),
+  };
+}
 
-    storages,
-    storagesLoading,
-    storagesLoaded,
-    reloadStoragesList,
+export function useStorageCard(target: "import" | "export", projectId?: number) {
+  const { reloadStoragesList, ...storages } = useStorages(target, projectId);
+  const { reloadStorageTypes, ...storageTypes } = useStorageTypes(target);
 
+  const fetchStorages = useCallback(async () => {
+    reloadStoragesList();
+    reloadStorageTypes();
+  }, [reloadStoragesList, reloadStorageTypes]);
+
+  const loading = useMemo(
+    () => storageTypes.storageTypesLoading || storages.storagesLoading,
+    [storageTypes.storageTypesLoading, storages.storagesLoading],
+  );
+  const loaded = useMemo(
+    () => storageTypes.storageTypesLoaded || storages.storagesLoaded,
+    [storageTypes.storageTypesLoaded, storages.storagesLoaded],
+  );
+
+  return {
+    ...storages,
+    ...storageTypes,
     loaded,
     loading,
-
     fetchStorages,
   };
 }
