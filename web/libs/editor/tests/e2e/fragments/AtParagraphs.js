@@ -3,7 +3,7 @@ const Helpers = require("../tests/helpers");
 
 module.exports = {
   _rootSelector: ".lsf-paragraphs",
-  _filterSelector: "button[data-testid='select-trigger']",
+  _filterSelector: "button[data-testid*='select-trigger']",
   _phraseSelector: "[class^='phrase--']",
   _phraseDialoguetextSelector: "[class^='dialoguetext--']",
 

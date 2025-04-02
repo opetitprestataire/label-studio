@@ -136,7 +136,7 @@ Scenario(
 
     I.click(locate("li").withText(regions[0].text));
     // less than min
-    I.click(locate("[data-testid=select-trigger][data-name=year-year]"));
+    I.click(locate("[data-testid*=select-trigger][data-name=year-year]"));
     I.dontSee("1999");
     // less than max
     I.dontSee("2023");

@@ -133,7 +133,7 @@ export const Select = forwardRef(
               [styles.sizeLarge]: size === "large",
             })}
             type="button"
-            data-testid={props?.dataTestid ?? "select-trigger"}
+            data-testid={props?.dataTestid ?? `select-trigger${value ? `-${value}` : ""}`}
             ref={triggerRef}
             data-name={props?.name}
             data-value={value ?? ""}
@@ -252,7 +252,7 @@ export const Select = forwardRef(
             </Command>
           )}
         </PopoverContent>
-        <input type="hidden" name={props?.name} value={value ?? ""} ref={ref} disabled={disabled} />
+        <select name={props?.name} value={value ?? ""} ref={ref} disabled={disabled} className="hidden" />
       </Popover>
     );
 
