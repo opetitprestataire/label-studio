@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1858: Wait for the store and currentAnnotation before proceeding to complete task initialization in Datamanager Quickview (#7299)",
-  "commit": "0c2c0d84d7070e65b403dc39ce914a61df6bca10",
-  "date": "2025-03-28T13:07:14.000Z",
+  "message": "fix: DIA-2120: Clicking on project item from home page is not always responsive (#7313)",
+  "commit": "08f436b4dab488f5c37f8a61d7ae60f2b3d2115d",
+  "date": "2025-04-02T13:04:55.000Z",
   "branch": "develop"
 }
