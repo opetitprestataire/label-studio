@@ -20,7 +20,7 @@ class ChoicesHelper {
   }
 
   get select() {
-    return this.root.find("[data-testid=select-trigger]");
+    return this.root.find("[data-testid*=select-trigger]");
   }
 
   findChoice(text: string) {
