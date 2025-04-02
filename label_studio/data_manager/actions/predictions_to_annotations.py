@@ -106,7 +106,7 @@ actions = [
         'dialog': {
             'title': 'Create Annotations From Predictions',
             'text': 'Create annotations from predictions using selected predictions set '
-            'for each selected task.'
+            'for each selected task. '
             'Your account will be assigned as an owner to those annotations. ',
             'type': 'confirm',
             'form': predictions_to_annotations_form,

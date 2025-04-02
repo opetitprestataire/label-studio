@@ -3,7 +3,6 @@ import { cn } from "../../../../utils/bem";
 import { FormField } from "../../FormField";
 import { default as Label } from "../Label/Label";
 import { Select as SelectUI } from "@humansignal/ui";
-import "./Select.scss";
 
 const SelectOption = ({ value, label, disabled = false, hidden = false, ...props }) => {
   return (

@@ -3,7 +3,6 @@ import { FormField } from "../../FormField";
 import { useValueTracker } from "../../Utils";
 import { default as Label } from "../Label/Label";
 import { Select as SelectUI } from "@humansignal/ui";
-import "./Select.scss";
 
 const Select = ({
   label,
@@ -19,7 +18,7 @@ const Select = ({
   ...props
 }) => {
   const rootClass = cn("form-select");
-  const [value, setValue] = useValueTracker(props.value, defaultValue);
+  const [value, setValue] = useValueTracker(props.value, defaultValue ?? options[0]?.value ?? options[0]);
 
   const selectWrapper = (
     <FormField
@@ -43,8 +42,8 @@ const Select = ({
               setValue(val);
               props.onChange?.(val);
             }}
-            className={rootClass.elem("list")}
-            option={options}
+            className={rootClass.elem("list").toString()}
+            options={options?.toJSON ? options.toJSON() : options}
           />
         );
       }}
