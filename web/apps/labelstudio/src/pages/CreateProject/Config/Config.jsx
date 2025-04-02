@@ -1,10 +1,5 @@
-import "codemirror/lib/codemirror.css";
-import "codemirror/mode/xml/xml";
 import React, { useEffect, useState } from "react";
-import { UnControlled as CodeMirror } from "react-codemirror2";
 import CM from "codemirror";
-import "codemirror/addon/hint/show-hint";
-import "codemirror/addon/hint/show-hint.css";
 
 import { Button, ToggleItems } from "../../../components";
 import { Form } from "../../../components/Form";
@@ -18,11 +13,9 @@ import { Preview } from "./Preview";
 import { DEFAULT_COLUMN, EMPTY_CONFIG, isEmptyConfig, Template } from "./Template";
 import { TemplatesList } from "./TemplatesList";
 
-import "./codemirror.css";
-import "./config-hint";
 import tags from "./schema.json";
 import { UnsavedChanges } from "./UnsavedChanges";
-import { Checkbox } from "@humansignal/ui";
+import { Checkbox, CodeEditor } from "@humansignal/ui";
 import { toSnakeCase } from "strman";
 
 const wizardClass = cn("wizard");
@@ -497,7 +490,7 @@ const Configurator = ({
         <div className={configClass.elem("editor")}>
           {configure === "code" && (
             <div className={configClass.elem("code")} style={{ display: configure === "code" ? undefined : "none" }}>
-              <CodeMirror
+              <CodeEditor
                 name="code"
                 id="edit_code"
                 value={config}

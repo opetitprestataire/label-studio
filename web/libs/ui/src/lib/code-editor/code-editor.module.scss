@@ -1,0 +1,75 @@
+.codeEditor {
+  textarea,
+  .react-codemirror2 {
+    flex: 1;
+    font-family: var(--font-mono);
+    caret-color: var(--color-neutral-content);
+
+    .CodeMirror {
+      height: 100%;
+      background: var(--color-neutral-background);
+      color: var(--color-neutral-content-subtle);
+      border-radius: var(--corner-radius-small);
+      border: 1px solid var(--color-neutral-border);
+    }
+
+    .CodeMirror-hints {
+      z-index: 3000;
+    }
+
+    .CodeMirror-hint-tag {
+      white-space: normal;
+      line-height: 1.4em;
+      max-height: 3em;
+      max-width: 400px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .CodeMirror-hint-name {
+      font-weight: 500;
+      color: darkgoldenrod;
+      font-family: var(--font-mono);
+    }
+
+    .CodeMirror-hint-active .CodeMirror-hint-name {
+      color: blanchedalmond;
+    }
+
+    .CodeMirror-hint-type {
+      font-style: italic;
+      color: #aaa;
+    }
+
+    .CodeMirror-hint-active .CodeMirror-hint-type {
+      color: #ddd;
+    }
+
+    .CodeMirror-cursor {
+      border-color: var(--color-neutral-content);
+    }
+
+    .cm-attribute {
+      color: var(--color-accent-blueberry-bold);
+    }
+
+    .cm-tag,
+    .cm-bracket {
+      color: var(--color-accent-kale-bold);
+    }
+
+    .cm-string {
+      color: var(--color-accent-persimmon-bold);
+    }
+
+    .cm-comment {
+      color: var(--color-accent-sand-bold);
+    }
+
+    .CodeMirror-gutters {
+      background-color: var(--color-neutral-surface-inset);
+      color: var(--color-neutral-content-subtlest);
+      border-right: 1px solid var(--color-neutral-border);
+    }
+  }
+}

@@ -274,47 +274,6 @@ $scroll-width: 5px;
 
 .wizard .configure__code {
   overflow-x: hidden;
-
-  textarea,
-  :global(.react-codemirror2) {
-    flex: 1;
-    font-family: var(--font-mono);
-    caret-color: var(--color-neutral-content);
-
-    :global(.CodeMirror) {
-      height: 100%;
-      background: var(--color-neutral-background);
-      color: var(--color-neutral-content-subtle);
-      border-radius: var(--corner-radius-small);
-      border: 1px solid var(--color-neutral-border);
-    }
-
-    :global(.CodeMirror-cursor) {
-      border-color: var(--color-neutral-content);
-    }
-
-    :global(.cm-attribute) {
-      color:  var(--color-accent-blueberry-bold);
-    }
-
-    :global(.cm-tag), :global(.cm-bracket) {
-      color:  var(--color-accent-kale-bold);
-    }
-
-    :global(.cm-string) {
-      color:  var(--color-accent-persimmon-bold);
-    }
-
-    :global(.cm-comment) {
-      color:  var(--color-accent-sand-bold);
-    }
-
-    :global(.CodeMirror-gutters) {
-      background-color:  var(--color-neutral-surface-inset);
-      color: var(--color-neutral-content-subtlest);
-      border-right: 1px solid var(--color-neutral-border);
-    }
-  }
 }
 
 .wizard .configure__code,
