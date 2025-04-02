@@ -1,60 +1,73 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 import { Button, Columns } from "../../../components";
 import { confirm, modal } from "../../../components/Modal/Modal";
 import { Spinner } from "../../../components/Spinner/Spinner";
 import { ApiContext } from "../../../providers/ApiProvider";
-import { useProject } from "../../../providers/ProjectProvider";
+import { projectAtom } from "../../../providers/ProjectProvider";
 import { StorageCard } from "./StorageCard";
 import { StorageForm } from "./StorageForm";
+import { useAtomValue } from "jotai";
+import { useQuery } from "@tanstack/react-query";
 
 export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
   const api = useContext(ApiContext);
-  const { project } = useProject();
-  const [storages, setStorages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [storageTypes, setStorageTypes] = useState([]);
+  const project = useAtomValue(projectAtom);
+  const storageTypesQueryKey = ["storage-types", target];
+  const storagesQueryKey = ["storages", target, project?.id];
 
-  useEffect(() => {
-    api
-      .callApi("storageTypes", {
+  const {
+    data: storageTypes,
+    isLoading: storageTypesLoading,
+    isSuccess: storageTypesLoaded,
+    refetch: reloadStorageTypes,
+  } = useQuery({
+    queryKey: storageTypesQueryKey,
+    async queryFn() {
+      const result = await api.callApi("storageTypes", {
         params: {
           target,
         },
-      })
-      .then((types) => {
-        setStorageTypes(types ?? []);
+        errorFilter() {
+          return true;
+        },
       });
-  }, []);
+
+      if (!result.$meta.ok) return [];
+
+      return result;
+    },
+  });
+
+  const {
+    data: storages,
+    isLoading: storagesLoading,
+    isSuccess: storagesLoaded,
+    refetch: reloadStoragesList,
+  } = useQuery({
+    queryKey: storagesQueryKey,
+    async queryFn() {
+      const result = await api.callApi("listStorages", {
+        params: {
+          project: project.id,
+          target,
+        },
+        errorFilter() {
+          return true;
+        },
+      });
+
+      if (!result.$meta.ok) return [];
+
+      return result;
+    },
+  });
+
+  const loading = useMemo(() => storageTypesLoading || storagesLoading);
+  const loaded = useMemo(() => storageTypesLoaded || storagesLoaded);
 
   const fetchStorages = useCallback(async () => {
-    if (!project.id) {
-      console.warn("Project ID not provided");
-      return;
-    }
-
-    setLoading(true);
-    const result = await api.callApi("listStorages", {
-      params: {
-        project: project.id,
-        target,
-      },
-    });
-
-    const storageTypes = await api.callApi("storageTypes", {
-      params: {
-        target,
-      },
-    });
-
-    setStorageTypes(storageTypes);
-
-    if (result !== null) {
-      setStorages(result);
-      setLoaded(true);
-    }
-
-    setLoading(false);
+    reloadStoragesList({ queryKey: storagesQueryKey });
+    reloadStorageTypes({ queryKey: storageTypesQueryKey });
   }, [project]);
 
   const showStorageFormModal = useCallback(
@@ -135,8 +148,8 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
         <div className={rootClass.elem("empty")}>
           <Spinner size={32} />
         </div>
-      ) : storages.length === 0 ? null : (
-        storages.map((storage) => (
+      ) : storagesLoaded && storages.length === 0 ? null : (
+        storages?.map?.((storage) => (
           <StorageCard
             key={storage.id}
             storage={storage}
