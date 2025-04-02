@@ -4,7 +4,7 @@ import { Block, Elem } from "../../utils/bem";
 import { DetailsPanel } from "./DetailsPanel/DetailsPanel";
 import { OutlinerPanel } from "./OutlinerPanel/OutlinerPanel";
 
-import { IconDetails, IconHamburger } from "../../assets/icons";
+import { IconDetails, IconHamburger } from "@humansignal/icons";
 import { useMedia } from "../../hooks/useMedia";
 import ResizeObserver from "../../utils/resize-observer";
 import { clamp } from "../../utils/utilities";
@@ -192,7 +192,7 @@ const SidePanelsComponent: FC<SidePanelsProps> = ({ currentEntity, panelsHidden,
     const panel = panelData[name];
     const parentWidth = rootRef.current?.clientWidth ?? 0;
     const height = panel.detached
-      ? visible ?? panel.visible
+      ? (visible ?? panel.visible)
         ? panel.height
         : PANEL_HEADER_HEIGHT_PADDED
       : panel.height;

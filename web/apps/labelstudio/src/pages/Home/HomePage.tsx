@@ -1,7 +1,7 @@
 import type { Page } from "../types/Page";
 import { Button } from "@humansignal/shad/components/ui/button";
-import { IconFolder, SimpleCard, Spinner } from "@humansignal/ui";
-import { IconExternal, IconFolderAdd, IconHumanSignal, IconUserAdd } from "@humansignal/icons";
+import { SimpleCard, Spinner } from "@humansignal/ui";
+import { IconExternal, IconFolderAdd, IconHumanSignal, IconUserAdd, IconFolderOpen } from "@humansignal/icons";
 import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
 import { useQuery } from "@tanstack/react-query";
 import { useAPI } from "../../providers/ApiProvider";
@@ -9,6 +9,8 @@ import { useState } from "react";
 import { CreateProject } from "../CreateProject/CreateProject";
 import { InviteLink } from "../Organization/PeoplePage/InviteLink";
 import { Heading, Sub } from "@humansignal/typography";
+import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
 
 const PROJECTS_TO_SHOW = 10;
 
@@ -52,6 +54,7 @@ type Action = (typeof actions)[number]["type"];
 
 export const HomePage: Page = () => {
   const api = useAPI();
+  const history = useHistory();
   const [creationDialogOpen, setCreationDialogOpen] = useState(false);
   const [invitationOpen, setInvitationOpen] = useState(false);
   const { data, isFetching, isSuccess, isError } = useQuery({
@@ -89,11 +92,11 @@ export const HomePage: Page = () => {
               return (
                 <Button
                   key={action.title}
-                  className="flex-grow-0 text-lsLabelMedium text-lsPrimaryContent text-left justify-start min-w-[250px] [&_svg]:w-6 [&_svg]:h-6"
+                  className="flex-grow-0 text-16/24 text-primary-content text-left justify-start min-w-[250px] [&_svg]:w-6 [&_svg]:h-6"
                   variant="lsOutline"
                   onClick={handleActions(action.type)}
                 >
-                  <action.icon className="text-lsPrimaryIcon" />
+                  <action.icon className="text-primary-icon" />
                   {action.title}
                 </Button>
               );
@@ -119,13 +122,13 @@ export const HomePage: Page = () => {
             ) : isError ? (
               <div className="h-64 flex justify-center items-center">can't load projects</div>
             ) : isSuccess && data.results.length === 0 ? (
-              <div className="flex flex-col justify-center items-center border border-lsBorderSubtle bg-lsPrimaryEmphasisSubtle rounded-lg h-64">
+              <div className="flex flex-col justify-center items-center border border-primary-border-subtle bg-primary-emphasis-subtle rounded-lg h-64">
                 <div
                   className={
-                    "rounded-full w-12 h-12 flex justify-center items-center bg-lsAccentGrapeSubtle text-lsPrimaryIcon"
+                    "rounded-full w-12 h-12 flex justify-center items-center bg-accent-grape-subtle text-primary-icon"
                   }
                 >
-                  <IconFolder />
+                  <IconFolderOpen />
                 </div>
                 <Heading size={2}>Create your first project</Heading>
                 <Sub>Import your data and set up the labeling interface to start annotating</Sub>
@@ -151,12 +154,12 @@ export const HomePage: Page = () => {
                   <li key={link.title}>
                     <a
                       href={link.url}
-                      className="py-2 px-1 flex justify-between items-center text-lsNeutralContent"
+                      className="py-2 px-1 flex justify-between items-center text-neutral-content"
                       target="_blank"
                       rel="noreferrer"
                     >
                       {link.title}
-                      <IconExternal className="text-lsPrimaryIcon" />
+                      <IconExternal className="text-primary-icon" />
                     </a>
                   </li>
                 );
@@ -165,11 +168,11 @@ export const HomePage: Page = () => {
           </SimpleCard>
           <div className="flex gap-2 items-center">
             <IconHumanSignal />
-            <span className="text-lsNeutralContentSubtle">Label Studio Version: Community</span>
+            <span className="text-neutral-content-subtle">Label Studio Version: Community</span>
           </div>
         </section>
       </div>
-      {creationDialogOpen && <CreateProject redirect={false} onClose={() => setCreationDialogOpen(false)} />}
+      {creationDialogOpen && <CreateProject onClose={() => setCreationDialogOpen(false)} />}
       <InviteLink opened={invitationOpen} onClosed={() => setInvitationOpen(false)} />
     </main>
   );
@@ -184,28 +187,32 @@ function ProjectSimpleCard({
 }: {
   project: APIProject;
 }) {
-  const finished = project.queue_done ?? 0;
-  const total = project.queue_total ?? 0;
+  const finished = project.finished_task_number ?? 0;
+  const total = project.task_number ?? 0;
   const progress = (total > 0 ? finished / total : 0) * 100;
   const white = "#FFFFFF";
   const color = project.color && project.color !== white ? project.color : "#E1DED5";
 
   return (
-    <a href={`/projects/${project.id}`} className="block even:bg-lsNeutralSurface rounded-sm overflow-hidden">
+    <Link
+      to={`/projects/${project.id}`}
+      className="block even:bg-neutral-surface rounded-sm overflow-hidden"
+      data-external
+    >
       <div
         className="grid grid-cols-[minmax(0,1fr)_150px] p-2 py-3 items-center border-l-[3px]"
         style={{ borderLeftColor: color }}
       >
         <div className="flex flex-col gap-1">
-          <span className="text-lsNeutralContent">{project.title}</span>
-          <div className="text-lsNeutralContentSubtler text-sm">
+          <span className="text-neutral-content">{project.title}</span>
+          <div className="text-neutral-content-subtler text-sm">
             {finished} of {total} Tasks ({total > 0 ? Math.round((finished / total) * 100) : 0}%)
           </div>
         </div>
-        <div className="bg-lsNeutralSurface rounded-full overflow-hidden w-full h-2 shadow-lsNeutralBorderSubtle shadow-border-1">
-          <div className="bg-lsPositiveSurfaceHover h-full" style={{ maxWidth: `${progress}%` }} />
+        <div className="bg-neutral-surface rounded-full overflow-hidden w-full h-2 shadow-neutral-border-subtle shadow-border-1">
+          <div className="bg-positive-surface-hover h-full" style={{ maxWidth: `${progress}%` }} />
         </div>
       </div>
-    </a>
+    </Link>
   );
 }
