@@ -146,6 +146,7 @@ Scenario("Drawing with ctrl pressed", async ({ I, LabelStudio, AtOutliner, AtIma
     const [outerRegion, innerRegion] = regionPair;
 
     LabelStudio.init(params);
+    AtDetailsPanel.collapsePanel();
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     I.say(`Drawing ${innerRegion.shape} on ${outerRegion.shape}`);
