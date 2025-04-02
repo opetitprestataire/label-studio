@@ -141,7 +141,7 @@ export const Select = forwardRef(
             {...triggerProps}
           >
             <span className="flex flex-1 text-left gap-2 leading-none" data-testid="select-display-value">
-              {isDefined(value) ? (
+              {selectedOptions?.length ? (
                 <>
                   {selectedOptions?.map((option, index) => {
                     const optionValue = option?.value ?? option;
