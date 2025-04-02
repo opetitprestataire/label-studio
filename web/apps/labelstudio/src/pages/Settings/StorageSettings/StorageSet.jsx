@@ -7,7 +7,7 @@ import { projectAtom } from "../../../providers/ProjectProvider";
 import { StorageCard } from "./StorageCard";
 import { StorageForm } from "./StorageForm";
 import { useAtomValue } from "jotai";
-import { useQuery } from "@tanstack/react-query";
+import { useStorageCard } from "./hooks/useStorageCard";
 
 export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
   const api = useContext(ApiContext);
@@ -16,59 +16,19 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
   const storagesQueryKey = ["storages", target, project?.id];
 
   const {
-    data: storageTypes,
-    isLoading: storageTypesLoading,
-    isSuccess: storageTypesLoaded,
-    refetch: reloadStorageTypes,
-  } = useQuery({
-    queryKey: storageTypesQueryKey,
-    async queryFn() {
-      const result = await api.callApi("storageTypes", {
-        params: {
-          target,
-        },
-        errorFilter() {
-          return true;
-        },
-      });
-
-      if (!result.$meta.ok) return [];
-
-      return result;
-    },
-  });
-
-  const {
-    data: storages,
-    isLoading: storagesLoading,
-    isSuccess: storagesLoaded,
-    refetch: reloadStoragesList,
-  } = useQuery({
-    queryKey: storagesQueryKey,
-    async queryFn() {
-      const result = await api.callApi("listStorages", {
-        params: {
-          project: project.id,
-          target,
-        },
-        errorFilter() {
-          return true;
-        },
-      });
-
-      if (!result.$meta.ok) return [];
-
-      return result;
-    },
-  });
+    storageTypes,
+    storageTypesLoading,
+    storageTypesLoaded,
+    reloadStorageTypes,
+    storages,
+    storagesLoading,
+    storagesLoaded,
+    reloadStoragesList,
+    fetchStorages,
+  } = useStorageCard(target, project?.id);
 
   const loading = useMemo(() => storageTypesLoading || storagesLoading);
   const loaded = useMemo(() => storageTypesLoaded || storagesLoaded);
-
-  const fetchStorages = useCallback(async () => {
-    reloadStoragesList({ queryKey: storagesQueryKey });
-    reloadStorageTypes({ queryKey: storageTypesQueryKey });
-  }, [project]);
 
   const showStorageFormModal = useCallback(
     (storage) => {
