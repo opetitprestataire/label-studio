@@ -11,14 +11,15 @@
   position: absolute;
   left: 0;
   top: 0;
-  border: 1px solid var(--primary_link);
-  color: var(--primary_link);
+  border: 1px solid var(--color-primary-border);
+  color: var(--color-primary-content);
   border-radius: var(--corner-radius-smaller);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--spacing-tight);
-  background-color: var(--white);
+  transition: all 150ms ease-out;
+  outline: none;
 }
 
 .inputWrapper {
@@ -31,7 +32,16 @@
   align-items: center;
   outline: none;
 
+  & input::before {
+    visibility: hidden;
+  }
+
+  & .labelContent:hover {
+    color: var(--color-primary-surface-hover);
+    background-color: var(--color-primary-emphasis-subtle);
+  }
+
   &:focus-within .labelContent {
-    outline: 2px solid var(--primary_link);
+    box-shadow: 0 0 0 4px var(--color-primary-surface-content-subtle);
   }
 }
