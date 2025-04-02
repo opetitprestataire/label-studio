@@ -1,23 +1,27 @@
 .codeEditor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   textarea,
-  .react-codemirror2 {
+  :global(.react-codemirror2) {
+    height: 100%;
     flex: 1;
     font-family: var(--font-mono);
     caret-color: var(--color-neutral-content);
 
-    .CodeMirror {
+    :global(.CodeMirror) {
       height: 100%;
       background: var(--color-neutral-background);
       color: var(--color-neutral-content-subtle);
       border-radius: var(--corner-radius-small);
-      border: 1px solid var(--color-neutral-border);
     }
 
-    .CodeMirror-hints {
+    :global(.CodeMirror-hints) {
       z-index: 3000;
     }
 
-    .CodeMirror-hint-tag {
+    :global(.CodeMirror-hint-tag) {
       white-space: normal;
       line-height: 1.4em;
       max-height: 3em;
@@ -26,50 +30,54 @@
       text-overflow: ellipsis;
     }
 
-    .CodeMirror-hint-name {
+    :global(.CodeMirror-hint-name) {
       font-weight: 500;
       color: darkgoldenrod;
       font-family: var(--font-mono);
     }
 
-    .CodeMirror-hint-active .CodeMirror-hint-name {
+    :global(.CodeMirror-hint-active) :global(.CodeMirror-hint-name) {
       color: blanchedalmond;
     }
 
-    .CodeMirror-hint-type {
+    :global(.CodeMirror-hint-type) {
       font-style: italic;
       color: #aaa;
     }
 
-    .CodeMirror-hint-active .CodeMirror-hint-type {
+    :global(.CodeMirror-hint-active) :global(.CodeMirror-hint-type) {
       color: #ddd;
     }
 
-    .CodeMirror-cursor {
+    :global(.CodeMirror-cursor) {
       border-color: var(--color-neutral-content);
     }
 
-    .cm-attribute {
+    :global(.cm-attribute) {
       color: var(--color-accent-blueberry-bold);
     }
 
-    .cm-tag,
-    .cm-bracket {
+    :global(.cm-tag),
+    :global(.cm-bracket) {
       color: var(--color-accent-kale-bold);
     }
 
-    .cm-string {
+    :global(.cm-string) {
       color: var(--color-accent-persimmon-bold);
     }
 
-    .cm-comment {
+    :global(.cm-comment) {
       color: var(--color-accent-sand-bold);
     }
 
-    .CodeMirror-gutters {
+    :global(.CodeMirror-gutters) {
       background-color: var(--color-neutral-surface-inset);
       color: var(--color-neutral-content-subtlest);
       border-right: 1px solid var(--color-neutral-border);
     }
   }
+}
+
+.border :global(.CodeMirror) {
+  border: 1px solid var(--color-neutral-border);
 }
