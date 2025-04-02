@@ -36,6 +36,7 @@ export const Select = forwardRef(
       isInProgress = false,
       triggerProps,
       className,
+      size,
       ...props
     }: SelectProps<T, A>,
     ref: ForwardedRef<HTMLSelectElement>,
@@ -127,6 +128,9 @@ export const Select = forwardRef(
             className={clsx(isInline ? "" : "w-full", className ?? "", styles.selectTrigger, {
               [styles.isOpen]: isOpen,
               [styles.isDisabled]: disabled,
+              [styles.sizeSmall]: size === "small",
+              [styles.sizeMedium]: size === "medium",
+              [styles.sizeLarge]: size === "large",
             })}
             type="button"
             data-testid={props?.dataTestid ?? "select-trigger"}

@@ -1,4 +1,7 @@
 .selectTrigger {
+  --select-trigger-height: 40px;
+  --select-trigger-font-size: var(--font-size-16);
+
   display: flex;
   align-items: center;
   padding: var(--spacing-small) var(--spacing-small) var(--spacing-small) var(--spacing-base);
@@ -7,10 +10,10 @@
   overflow: hidden;
   color: var(--color-neutral-content-subtler);
   text-overflow: ellipsis;
-  height: 40px;
+  height: var(--select-trigger-height);
 
   /* body/medium */
-  font-size: var(--font-size-16);
+  font-size: var(--select-trigger-font-size);
   font-style: normal;
   font-weight: var(--font-weight-400);
   line-height: var(--line-height-24); /* 150% */
@@ -42,6 +45,16 @@
     box-shadow: 0 1px 2px 1px rgb(0 0 0 / 6%) inset;
     filter: none;
     cursor: not-allowed;
+  }
+
+  &.sizeSmall {
+    --select-trigger-height: 24px;
+    --select-trigger-font-size: var(--font-size-12);
+  }
+
+  &.sizeLarge {
+    --select-trigger-height: 60px;
+    --select-trigger-font-size: var(--font-size-20);
   }
 }
 
