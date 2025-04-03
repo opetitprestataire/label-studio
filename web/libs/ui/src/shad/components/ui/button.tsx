@@ -19,7 +19,7 @@ const buttonVariants = cva(
           "border-solid border-primary-icon text-primary-content hover:bg-primary-emphasis-subtle hover:text-primary-content-hover disabled:bg-neutral-surface disabled:border-neutral-border disabled:text-neutral-content-subtlest",
       },
       size: {
-        default: "h-10 px-4 py-2",
+        default: "h-10 px-4 py-2  pl-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
