@@ -49,7 +49,7 @@ class JWTSettings(models.Model):
             return False
 
         # open-source
-        if not is_enterprise():
+        if is_community():
             return True
 
         # enterprise
