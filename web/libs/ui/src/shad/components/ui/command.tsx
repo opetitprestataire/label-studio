@@ -1,9 +1,8 @@
-import type * as React from "react";
+import React from "react";
 import { Command as CommandPrimitive } from "cmdk";
 import { IconSearch } from "@humansignal/icons";
 
 import { cn } from "@humansignal/shad/utils";
-import { Dialog } from "@humansignal/shad/components/ui/dialog";
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return (
@@ -18,38 +17,15 @@ function Command({ className, ...props }: React.ComponentProps<typeof CommandPri
   );
 }
 
-function CommandDialog({
-  title = "Command Palette",
-  description = "Search for a command to run...",
-  children,
-  ...props
-}: React.ComponentProps<typeof Dialog> & {
-  title?: string;
-  description?: string;
-}) {
-  return (
-    <Dialog {...props}>
-      {/* <DialogHeader className="sr-only">
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
-      <DialogContent className="overflow-hidden p-0">
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground **:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-          {children}
-        </Command>
-      </DialogContent> */}
-    </Dialog>
-  );
-}
-
 function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
+  const ref = React.useRef<HTMLInputElement>(null);
   return (
-    <div data-slot="command-input-wrapper" className="flex items-center gap-2 p-1">
-      <IconSearch className="size-4 shrink-0 opacity-50" />
+    <div data-slot="command-input-wrapper" className="flex items-center gap-2 px-1 m-1 focus-within:border-primary-focus-outline border-2 outline-none border-transparent rounded-smaller" ref={ref}>
+      <IconSearch className="text-primary-icon" />
       <CommandPrimitive.Input
         data-slot="command-input"
         className={cn(
-          "placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+          "placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none",
           className,
         )}
         {...props}
@@ -120,7 +96,6 @@ function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) 
 
 export {
   Command,
-  CommandDialog,
   CommandInput,
   CommandList,
   CommandEmpty,

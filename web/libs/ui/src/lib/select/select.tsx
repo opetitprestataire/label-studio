@@ -183,7 +183,6 @@ export const Select = forwardRef(
             <Command shouldFilter={false}>
               {searchable && (
                 <CommandInput
-                  className="p-2 border border-gray-300"
                   placeholder={searchPlaceholder ?? "Search"}
                   onChangeCapture={onSearchInputHandler}
                   data-testid="select-search-field"
