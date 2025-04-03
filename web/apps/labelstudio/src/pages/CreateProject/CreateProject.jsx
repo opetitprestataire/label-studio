@@ -26,20 +26,24 @@ const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, 
         onSubmit();
       }}
     >
-      <div className="field field--wide">
-        <label htmlFor="project_name">Project Name</label>
+      <div className="w-full flex flex-col gap-2">
+        <label className="w-full" htmlFor="project_name">
+          Project Name
+        </label>
         <Input
           name="name"
           id="project_name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onBlur={onSaveName}
-          className="project-title"
+          className="project-title w-full"
         />
-        {error && <span className="error">{error}</span>}
+        {error && <span className="-mt-1 text-negative-content">{error}</span>}
       </div>
-      <div className="field field--wide">
-        <label htmlFor="project_description">Description</label>
+      <div className="w-full flex flex-col gap-2">
+        <label className="w-full" htmlFor="project_description">
+          Description
+        </label>
         <TextArea
           name="description"
           id="project_description"
@@ -48,11 +52,11 @@ const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, 
           style={{ minHeight: 100 }}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="project-description"
+          className="project-description w-full"
         />
       </div>
       {isFF(FF_LSDV_E_297) && (
-        <div className="field field--wide">
+        <div className="w-full flex flex-col gap-2">
           <label>
             Workspace
             <EnterpriseBadge className="ml-2" />
