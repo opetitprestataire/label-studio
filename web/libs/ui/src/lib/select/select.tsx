@@ -140,7 +140,7 @@ export const Select = forwardRef(
             data-value={value ?? ""}
             {...triggerProps}
           >
-            <span className="flex flex-1 text-left gap-2 leading-none" data-testid="select-display-value">
+            <span className="flex flex-1 text-left gap-2 leading-none max-w-full" data-testid="select-display-value">
               {selectedOptions?.length ? (
                 <>
                   {selectedOptions?.map((option, index) => {
@@ -153,7 +153,7 @@ export const Select = forwardRef(
                   })}
                 </>
               ) : (
-                (props?.placeholder ?? "")
+                <span className="truncate w-full">{props?.placeholder ?? ""}</span>
               )}
             </span>
             {isOpen ? (
@@ -253,7 +253,7 @@ export const Select = forwardRef(
             </Command>
           )}
         </PopoverContent>
-        <input name={props?.name} value={value ?? ""} ref={ref} disabled={disabled} className="hidden" />
+        <input name={props?.name} value={value ?? ""} ref={ref} disabled={disabled} className={styles.valueInput} />
       </Popover>
     );
 

@@ -20,6 +20,7 @@
   letter-spacing: var(--letter-spacing-base);
   border-radius: var(--corner-radius-smaller);
   border: 1px solid var(--color-neutral-border);
+  max-width: 100%;
 
   &:hover:not(.isDisabled) {
     border: 1px solid var(--color-neutral-border-bold);
@@ -64,4 +65,8 @@
     padding: var(--spacing-small);
 
   }
+}
+
+.valueInput {
+  display: none !important;
 }
