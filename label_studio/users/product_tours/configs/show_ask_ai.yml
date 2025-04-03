@@ -1,0 +1,8 @@
+steps:
+  - target: '[data-testid="ask-ai-button"]'
+    placement: bottom
+    title: 'Can we help you?'
+    content: Click here for AI Assistance with Label Studio
+    disableBeacon: true
+    locale:
+      last: "OK"
