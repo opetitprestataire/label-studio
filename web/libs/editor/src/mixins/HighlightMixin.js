@@ -138,6 +138,7 @@ export const HighlightMixin = types
         self.parent?.removeSpansInGlobalOffsets(self._spans, self.globalOffsets);
       }
       self.parent?.removeStyles([self.identifier]);
+      self._spans = null;
     },
 
     /**
