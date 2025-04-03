@@ -37,6 +37,8 @@ export const Select = forwardRef(
       triggerProps,
       className,
       size,
+      searchFilter,
+      onSearch,
       ...props
     }: SelectProps<T, A>,
     ref: ForwardedRef<HTMLSelectElement>,
@@ -95,16 +97,16 @@ export const Select = forwardRef(
     const _options = useMemo(() => {
       if (!searchable || !query.trim()) return options;
 
-      const filterHandler = (option: any) => {
+      const filterHandler = (option: any, queryString: string) => {
         const value = option?.value ?? option;
         const label = option?.label ?? option?.value ?? option;
         return (
-          label?.toString()?.toLowerCase().includes(query.toLowerCase()) ||
-          value?.toString()?.toLowerCase().includes(query.toLowerCase())
+          label?.toString()?.toLowerCase().includes(queryString.toLowerCase()) ||
+          value?.toString()?.toLowerCase().includes(queryString.toLowerCase())
         );
       };
-      return flatOptions.filter(filterHandler);
-    }, [options, flatOptions, searchable, query]);
+      return flatOptions.filter((option => (searchFilter ?? filterHandler)(option, query)));
+    }, [options, flatOptions, searchable, query, searchFilter]);
 
     const isSelected = useCallback(
       (val: any) => {
@@ -119,6 +121,15 @@ export const Select = forwardRef(
     const selectedOptions = useMemo(() => {
       return flatOptions.filter((option) => isSelected(option));
     }, [flatOptions, isSelected, value, multiple]);
+
+    const onSearchInputHandler = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setQuery(val);
+        onSearch?.(val);
+      },
+      [setQuery, onSearch],
+    );
 
     const combobox = (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -174,7 +185,7 @@ export const Select = forwardRef(
                 <CommandInput
                   className="p-2 border border-gray-300"
                   placeholder={searchPlaceholder ?? "Search"}
-                  onChangeCapture={(e) => setQuery(e.currentTarget.value)}
+                  onChangeCapture={onSearchInputHandler}
                   data-testid="select-search-field"
                 />
               )}

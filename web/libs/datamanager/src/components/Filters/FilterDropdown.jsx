@@ -15,6 +15,7 @@ export const FilterDropdown = observer(
     optionRender,
     dropdownClassName,
     outputFormat,
+    searchFilter,
   }) => {
     const parseItems = useCallback(
       (item) => {
@@ -50,6 +51,7 @@ export const FilterDropdown = observer(
         options={options}
         searchable={true}
         className="whitespace-nowrap"
+        searchFilter={searchFilter}
       />
     );
   },

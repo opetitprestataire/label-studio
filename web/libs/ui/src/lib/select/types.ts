@@ -57,7 +57,7 @@ export type SelectProps<T, A extends SelectOption<T>[]> = {
   optionRenderer?: FC<{ option: A[number]; index: number }>;
   dropdown?: any;
   testId?: string;
-  searchFilter?: (value: A[number]) => boolean;
+  searchFilter?: (option: any, queryString: string) => boolean;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void | false;
   setValue?: (value: ExtractOption<A>) => void;
   header?: string | FC | JSX.Element;
@@ -68,6 +68,7 @@ export type SelectProps<T, A extends SelectOption<T>[]> = {
   isInProgress?: boolean;
   dataTestid?: string;
   size?: "small" | "medium" | "large";
+  onSearch?: (value: string) => void;
 } & SelectVirtualizedProps &
   Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value" | "placeholder">;
 

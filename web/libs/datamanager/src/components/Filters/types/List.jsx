@@ -28,6 +28,7 @@ export const VariantSelect = observer(({ filter, schema, onChange, multiple, val
             }
           : undefined
       }
+      searchFilter={filter.cellView?.searchFilter}
       onChange={(value) => onChange(value)}
     />
   );
