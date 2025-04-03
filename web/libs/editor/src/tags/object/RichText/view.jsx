@@ -104,6 +104,18 @@ class RichTextPieceView extends Component {
   };
 
   /**
+   * When we finished region adjustment, or if we just clicked somewhere, we should reset all the flags
+   */
+  _resetDragParams() {
+    const { item } = this.props;
+
+    item.initializedDrag = false;
+    this.draggableRegion = undefined;
+    this.currentSelection = undefined;
+    this.dragBackwards = false;
+  }
+
+  /**
    * Check if the target is a handle and prepare dragging if it is. Set the `draggableRegion` to mark this.
    * @param {Event} ev Mouse down event
    */
@@ -154,46 +166,57 @@ class RichTextPieceView extends Component {
    * If we just clicked somewhere or we were not resizing the region, we should
    * just reset all the flags and remove the selection style.
    * @param {HTMLElement} root
+   * @returns {boolean} true if we adjusted the region, false otherwise
    */
-  _checkDragAndHighlight = (root) => {
+  _checkDragAndAdjustRegion = (root) => {
     const { item } = this.props;
 
     if (item.initializedDrag) {
       const area = this.draggableRegion;
-      const range = window.getSelection().getRangeAt(0);
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+
+      // so no visual glitches on the screen, selection was just a helper here, we don't need it anymore
+      selection.removeAllRanges();
 
       area._range = range;
 
-      // @TODO: Maybe it could be solved by domManager
+      // we have to calculate offsets before we remove spans, because it will break the range
       const [soff, eoff] = rangeToGlobalOffset(range, root);
 
-      area.updateGlobalOffsets(soff, eoff);
+      // clear visuals and remove spans before updating internals
+      area.detachHandles();
+      area.removeHighlight();
 
+      area.updateGlobalOffsets(soff, eoff);
       if (range.isText) {
         area.updateTextOffsets(soff, eoff);
       } else {
         area.updateXPathsFromGlobalOffsets();
       }
 
-      area.detachHandles();
-      area.removeHighlight();
+      // recreating spans + attach handles because region stays selected
       area.applyHighlight();
       area.attachHandles();
 
       area.notifyDrawingFinished();
       area.updateHighlightedText();
+
+      return true;
     }
 
     if (this.draggableRegion) {
-      item.initializedDrag = false;
-      this.draggableRegion = undefined;
-      this.currentSelection = undefined;
-
+      this._resetDragParams();
       this._removeSelectionStyle();
     }
+
+    return false;
   }
 
   _onMouseDown = (ev) => {
+    // we definitelly not in a process of adjusting any other region anymore, so reset flags
+    this._resetDragParams();
+    // but might start to adjust this one
     this._checkHandlesAndStartDragging(ev);
   };
 
@@ -220,7 +243,8 @@ class RichTextPieceView extends Component {
     const rootEl = item.mountNodeRef.current;
     const root = rootEl?.contentDocument?.body ?? rootEl;
 
-    this._checkDragAndHighlight(root);
+    // if we adjusted the region, we should not create a new one
+    if (this._checkDragAndAdjustRegion(root)) return;
 
     if (!states || states.length === 0 || ev.ctrlKey || ev.metaKey)
       return this._selectRegions(ev.ctrlKey || ev.metaKey);
