@@ -79,4 +79,7 @@ h6 { font-size: 0.67em; }
   a {
     @apply text-primary-content;
   }
+  a:hover {
+    @apply text-primary-content-hover;
+  }
 }
