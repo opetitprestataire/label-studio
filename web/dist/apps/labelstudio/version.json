@@ -1,6 +1,6 @@
 {
-  "message": "fix: OPTIC-1858: Wait for the store and currentAnnotation before proceeding to complete task initialization in Datamanager Quickview (#7299)",
-  "commit": "0c2c0d84d7070e65b403dc39ce914a61df6bca10",
-  "date": "2025-03-28T13:07:14.000Z",
+  "message": "fix: DIA-1431: [FE] Storage type dropdown sometimes loads as blank (on Add/ Edit Source Storage modal) (#7322)",
+  "commit": "4f60206e2e35087e7a7d84517a3c64eaea9e1d61",
+  "date": "2025-04-03T11:21:58.000Z",
   "branch": "develop"
 }
