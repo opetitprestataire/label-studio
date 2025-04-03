@@ -1,6 +1,6 @@
 {
-  "message": "fix: DIA-1925: fix payload for sample task in data import (#7276)",
-  "commit": "5fbf4df499d7fe0542cd751b1b51380aa961b7d4",
-  "date": "2025-03-25T17:11:11.000Z",
+  "message": "fix: DIA-1431: [FE] Storage type dropdown sometimes loads as blank (on Add/ Edit Source Storage modal) (#7322)",
+  "commit": "4f60206e2e35087e7a7d84517a3c64eaea9e1d61",
+  "date": "2025-04-03T11:21:58.000Z",
   "branch": "develop"
 }
