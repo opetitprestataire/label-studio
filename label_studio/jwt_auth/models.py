@@ -2,7 +2,7 @@ from datetime import timedelta
 from typing import Any
 
 from annoying.fields import AutoOneToOneField
-from core.utils.common import is_enterprise
+from core.utils.common import is_community
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from organizations.models import Organization
