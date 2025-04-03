@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const RAW_COLOR_VALUE_TOKENS = ["primary", "shadow", "outline", "surface"];
+const RAW_COLOR_VALUE_TOKENS = ["primary", "shadow", "outline", "surface", "accent"];
 
 const shouldGenerateRawColorValue = (name) => {
   return RAW_COLOR_VALUE_TOKENS.some((token) => name.includes(token));
