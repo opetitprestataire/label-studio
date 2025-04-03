@@ -752,17 +752,17 @@ def get_ttl_hash(seconds: int = 60) -> int:
     return round(time.time() / seconds)
 
 
-def is_enterprise():
-    """Determine if the current Label Studio instance is Enterprise (LSE) or open-source (LSO).
+def is_community():
+    """Determine if the current Label Studio instance is the community edition (aka LSO).
 
     Returns
     -------
     bool
-        True if running Label Studio Enterprise, False if running open-source Label Studio
+        True if running open-source Label Studio, False otherwise.
     """
     try:
         import label_studio_enterprise  # noqa: F401
 
-        return True
-    except ImportError:
         return False
+    except ImportError:
+        return True
