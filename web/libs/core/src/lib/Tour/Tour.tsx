@@ -10,19 +10,11 @@ interface TourProps extends BaseProps {
   autoStart?: boolean;
   /** Delay in milliseconds before the tour starts when autoStart is true. Defaults to 0 */
   delay?: number;
-  /** Whether to finish the tour when the overlay is clicked. Defaults to false */
-  finishOnOverlayClick?: boolean;
 
   /* Check all other props here https://docs.react-joyride.com/props */
 }
 
-export const Tour: React.FC<TourProps> = ({
-  name,
-  autoStart = false,
-  delay = 0,
-  finishOnOverlayClick = false,
-  ...props
-}) => {
+export const Tour: React.FC<TourProps> = ({ name, autoStart = false, delay = 0, ...props }) => {
   const tourContext = useContext(TourContext);
   if (!tourContext) {
     console.error("Tour context not found");
@@ -91,18 +83,16 @@ export const Tour: React.FC<TourProps> = ({
       index: number;
       type: string;
       status: string;
-      origin: string;
     }) => {
-      const { action, index, type, status, origin } = data;
+      const { action, index, type, status } = data;
 
       // tour ends when
       const shouldEndTour =
         (status === STATUS.SKIPPED && state.run) || action === ACTIONS.CLOSE || status === STATUS.FINISHED;
 
       if (shouldEndTour) {
-        const shouldFinishOnOverlayClick = finishOnOverlayClick && action === ACTIONS.CLOSE && origin === "overlay";
         // mark tour as viewed and update onboarding state if it's the final step or the tour was skipped
-        if (status === STATUS.SKIPPED || status === STATUS.FINISHED || shouldFinishOnOverlayClick) {
+        if (status === STATUS.SKIPPED || status === STATUS.FINISHED) {
           tourContext?.setTourViewed(name, status === STATUS.SKIPPED, { index, action, type, status });
         }
         dispatch({ type: "STOP" });
