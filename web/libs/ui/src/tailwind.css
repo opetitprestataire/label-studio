@@ -19,6 +19,14 @@ h4 { font-size: 1em; }
 h5 { font-size: 0.83em; }
 h6 { font-size: 0.67em; }
 
+a {
+  @apply text-primary-content;
+}
+
+a:hover {
+  @apply text-primary-content-hover;
+}
+
 /* third-party libraries CSS */
 @layer base {
   :root {
@@ -74,12 +82,5 @@ h6 { font-size: 0.67em; }
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-  }
-
-  a {
-    @apply text-primary-content;
-  }
-  a:hover {
-    @apply text-primary-content-hover;
   }
 }

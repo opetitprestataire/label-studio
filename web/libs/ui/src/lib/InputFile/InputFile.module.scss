@@ -1,16 +1,18 @@
 .input {
   border: 0 none;
   padding: 0;
-  display: block;
-  width: 100%;
+  display: inline;
+  width: auto;
   cursor: pointer;
   outline: none;
 }
 
+.input::file-selector-button {
+  visibility: hidden;
+  width: 0;
+}
+
 .labelContent {
-  position: absolute;
-  left: 0;
-  top: 0;
   border: 1px solid var(--color-primary-border);
   color: var(--color-primary-content);
   border-radius: var(--corner-radius-smaller);
@@ -20,13 +22,13 @@
   padding: var(--spacing-tight);
   transition: all 150ms ease-out;
   outline: none;
+  flex-shrink: 0;
 }
 
 .inputWrapper {
-  position: relative;
   display: flex;
+  width: auto;
   height: 42px;
-  width: 100%;
   margin: 0;
   cursor: pointer;
   align-items: center;
