@@ -486,4 +486,4 @@ Scenario("Panels manipulations", async ({ I, LabelStudio, AtPanels }) => {
   AtDetailsPanel.seePanelBody();
   AtDetailsPanel.seeСollapseButton();
   AtDetailsPanel.dontSeeExpandButton();
-});
+}).tag("@this");
