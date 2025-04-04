@@ -34,7 +34,7 @@ export function SampleDatasetSelect({
         <SelectTrigger className="!h-10 min-w-52 rounded-sm border-neutral-border-bold data-[placeholder]:!text-[#000] data-[placeholder]:text-[16px] text-[16px] [&_svg]:stroke-[#000]">
           {title}
         </SelectTrigger>
-        <SelectContent className="z-99999 min-w-90 p-2">
+        <SelectContent className="z-99999 w-fit min-w-[400px] p-2">
           <SelectGroup>
             {samples.map((sample) => (
               <SelectItem value={sample.url} key={sample.url} className="hover:bg-neutral-surface-active">
