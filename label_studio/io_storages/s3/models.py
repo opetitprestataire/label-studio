@@ -1,5 +1,6 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
+
 import json
 import logging
 import re
@@ -20,7 +21,11 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.s3.utils import catch_and_reraise_from_none, get_client_and_resource, resolve_s3_url
+from io_storages.s3.utils import (
+    catch_and_reraise_from_none,
+    get_client_and_resource,
+    resolve_s3_url,
+)
 from io_storages.utils import storage_can_resolve_bucket_url
 from tasks.models import Annotation
 from tasks.validation import ValidationError as TaskValidationError
@@ -38,14 +43,22 @@ class S3StorageMixin(models.Model):
     bucket = models.TextField(_('bucket'), null=True, blank=True, help_text='S3 bucket name')
     prefix = models.TextField(_('prefix'), null=True, blank=True, help_text='S3 bucket prefix')
     regex_filter = models.TextField(
-        _('regex_filter'), null=True, blank=True, help_text='Cloud storage regex for filtering objects'
+        _('regex_filter'),
+        null=True,
+        blank=True,
+        help_text='Cloud storage regex for filtering objects',
     )
     use_blob_urls = models.BooleanField(
-        _('use_blob_urls'), default=False, help_text='Interpret objects as BLOBs and generate URLs'
+        _('use_blob_urls'),
+        default=False,
+        help_text='Interpret objects as BLOBs and generate URLs',
     )
     aws_access_key_id = models.TextField(_('aws_access_key_id'), null=True, blank=True, help_text='AWS_ACCESS_KEY_ID')
     aws_secret_access_key = models.TextField(
-        _('aws_secret_access_key'), null=True, blank=True, help_text='AWS_SECRET_ACCESS_KEY'
+        _('aws_secret_access_key'),
+        null=True,
+        blank=True,
+        help_text='AWS_SECRET_ACCESS_KEY',
     )
     aws_session_token = models.TextField(_('aws_session_token'), null=True, blank=True, help_text='AWS_SESSION_TOKEN')
     aws_sse_kms_key_id = models.TextField(
@@ -125,7 +138,9 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
         _('presign_ttl'), default=1, help_text='Presigned URLs TTL (in minutes)'
     )
     recursive_scan = models.BooleanField(
-        _('recursive scan'), default=False, help_text=_('Perform recursive scan over the bucket content')
+        _('recursive scan'),
+        default=False,
+        help_text=_('Perform recursive scan over the bucket content'),
     )
 
     @catch_and_reraise_from_none
@@ -162,19 +177,35 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
         return parsed_data
 
     @catch_and_reraise_from_none
-    def get_data(self, key):
+    def get_data(self, key) -> list[dict]:
         uri = f'{self.url_scheme}://{self.bucket}/{key}'
         if self.use_blob_urls:
             data_key = settings.DATA_UNDEFINED_NAME
-            return {data_key: uri}
+            return [{data_key: uri}]
 
         # read task json from bucket and validate it
         _, s3 = self.get_client_and_resource()
         bucket = s3.Bucket(self.bucket)
         obj = s3.Object(bucket.name, key).get()['Body'].read().decode('utf-8')
-        value = json.loads(obj)
-        if not isinstance(value, dict):
-            raise ValueError(f'Error on key {key}: For S3 your JSON file must be a dictionary with one task')
+        try:
+            value = json.loads(obj)
+            if isinstance(value, dict):
+                return [value]
+            elif isinstance(value, list):
+                for idx, item in enumerate(value):
+                    if not isinstance(item, dict):
+                        raise ValueError(
+                            f'Error on key {key} item {idx}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
+                        )
+            else:
+                raise ValueError(
+                    f'Error on key {key}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
+                )
+        except json.decoder.JSONDecodeError:
+            raise ValueError(
+                f"Can't import JSON-formatted tasks from {key}. If you're trying to import binary objects, "
+                f'perhaps you\'ve forgot to enable "Treat every bucket object as a source file" option?'
+            )
 
         value = self._get_validated_task(value, key)
         return value
@@ -224,7 +255,8 @@ class S3ExportStorage(S3StorageMixin, ExportStorage):
 
         self.cached_user = getattr(self, 'cached_user', self.project.organization.created_by)
         if flag_set(
-            'fflag_feat_back_lsdv_3958_server_side_encryption_for_target_storage_short', user=self.cached_user
+            'fflag_feat_back_lsdv_3958_server_side_encryption_for_target_storage_short',
+            user=self.cached_user,
         ):
             if self.aws_sse_kms_key_id:
                 additional_params['SSEKMSKeyId'] = self.aws_sse_kms_key_id
