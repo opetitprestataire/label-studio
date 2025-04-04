@@ -452,10 +452,10 @@ export const ImportPage = ({
                           <Button
                             size="icon"
                             look="destructive"
-                            style={{ height: 26, width: 26, padding: 0 }}
+                            rawClassName="h-6 w-6 p-0"
                             onClick={() => onSampleDatasetSelect(undefined)}
                           >
-                            <IconTrash style={{ width: 12, height: 12 }} />
+                            <IconTrash className="w-3 h-3" />
                           </Button>
                         </td>
                       </tr>
