@@ -280,10 +280,10 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
 
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
-    AtDetailsPanel.seeExpandButton();
-    I.wait(ONE_RENDER_CYCLE);
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
+    AtDetailsPanel.seeExpandButton();
+    I.wait(ONE_RENDER_CYCLE);
     await AtImageView.lookForStage();
     const naturalSize = await AtImageView.getNaturalSize();
     const canvasSize = await AtImageView.getCanvasSize();
