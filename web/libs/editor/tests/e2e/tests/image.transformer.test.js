@@ -4,6 +4,8 @@ const Helpers = require("./helpers");
 
 Feature("Image transformer");
 
+const ONE_RENDER_CYCLE = 1 / 60;
+
 const IMAGE = "https://data.heartex.net/open-images/train_0/mini/0030019819f25b28.jpg";
 
 const annotationEmpty = {
@@ -60,7 +62,13 @@ const shapes = {
     byBBox(x, y, width, height) {
       return {
         params: [x + width / 2, y + height / 2, width / 2, height / 2],
-        result: { radiusX: width / 2, radiusY: height / 2, rotation: 0, x: x + width / 2, y: y + height / 2 },
+        result: {
+          radiusX: width / 2,
+          radiusY: height / 2,
+          rotation: 0,
+          x: x + width / 2,
+          y: y + height / 2,
+        },
       };
     },
   },
@@ -272,6 +280,8 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
 
     LabelStudio.init(getParamsWithShape(shapeName, Shape.params));
     AtDetailsPanel.collapsePanel();
+    AtDetailsPanel.seeExpandButton();
+    I.wait(ONE_RENDER_CYCLE);
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     await AtImageView.lookForStage();
