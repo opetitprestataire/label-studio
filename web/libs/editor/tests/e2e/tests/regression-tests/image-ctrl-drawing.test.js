@@ -3,6 +3,8 @@ const Asserts = require("../../utils/asserts");
 
 Feature("Creating regions over other regions").tag("@regress");
 
+const ONE_RENDER_CYCLE = 1 / 60;
+
 const IMAGE =
   "https://htx-pub.s3.us-east-1.amazonaws.com/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg";
 
@@ -117,8 +119,10 @@ Scenario("Drawing with ctrl pressed", async ({ I, LabelStudio, AtOutliner, AtIma
   I.amOnPage("/");
   LabelStudio.init(params);
   AtDetailsPanel.collapsePanel();
+  AtDetailsPanel.seeExpandButton();
   LabelStudio.waitForObjectsReady();
   AtOutliner.seeRegions(0);
+  I.wait(ONE_RENDER_CYCLE);
   const canvasSize = await AtImageView.getCanvasSize();
   const size = Math.min(canvasSize.width, canvasSize.height);
   const convertToImageSize = Helpers.getSizeConvertor(canvasSize.width, canvasSize.height);
@@ -148,6 +152,8 @@ Scenario("Drawing with ctrl pressed", async ({ I, LabelStudio, AtOutliner, AtIma
     LabelStudio.init(params);
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
+    AtDetailsPanel.seeExpandButton();
+    I.wait(ONE_RENDER_CYCLE);
     I.say(`Drawing ${innerRegion.shape} on ${outerRegion.shape}`);
     await AtImageView.lookForStage();
     I.pressKey(outerRegion.hotKey);
