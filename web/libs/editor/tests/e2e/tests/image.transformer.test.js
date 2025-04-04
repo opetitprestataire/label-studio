@@ -4,8 +4,6 @@ const Helpers = require("./helpers");
 
 Feature("Image transformer");
 
-const ONE_RENDER_CYCLE = 1 / 60;
-
 const IMAGE = "https://data.heartex.net/open-images/train_0/mini/0030019819f25b28.jpg";
 
 const annotationEmpty = {
@@ -283,7 +281,6 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
     LabelStudio.waitForObjectsReady();
     AtOutliner.seeRegions(0);
     AtDetailsPanel.seeExpandButton();
-    I.wait(ONE_RENDER_CYCLE);
     await AtImageView.lookForStage();
     const naturalSize = await AtImageView.getNaturalSize();
     const canvasSize = await AtImageView.getCanvasSize();
