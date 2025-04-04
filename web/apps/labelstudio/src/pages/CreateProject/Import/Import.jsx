@@ -15,7 +15,7 @@ import { sampleDatasetAtom } from "../utils/atoms";
 import "./Import.scss";
 import samples from "./samples.json";
 import { importFiles } from "./utils";
-import { CodeBlock, SimpleCard } from "@humansignal/ui";
+import { CodeBlock, SimpleCard, Spinner } from "@humansignal/ui";
 
 const importClass = cn("upload_page");
 const dropzoneClass = cn("dropzone");
@@ -484,11 +484,21 @@ export const ImportPage = ({
 
             <div className="min-w-[650px]">
               {projectConfigured && ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
-                <CodeBlock
-                  title="Expected input preview"
-                  code={sampleConfig?.data ?? ""}
-                  className="w-full max-w-[650px] h-full"
-                />
+                <SimpleCard title="Expected input preview" className="w-full max-w-[650px] h-full">
+                  {sampleConfig.data ? (
+                    <CodeBlock
+                      title="Expected input preview"
+                      code={sampleConfig?.data ?? ""}
+                      className="w-full max-w-[650px] h-full"
+                    />
+                  ) : sampleConfig.isLoading ? (
+                    <div className="w-full flex justify-center py-12">
+                      <Spinner className="h-6 w-6" />
+                    </div>
+                  ) : sampleConfig.isError ? (
+                    <div className="w-full pt-4 text-lg text-negative-content">Unable to load sample data</div>
+                  ) : null}
+                </SimpleCard>
               ) : ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
                 <SimpleCard title="Expected input preview" className="w-full max-w-[650px] h-full">
                   Set up your{" "}
