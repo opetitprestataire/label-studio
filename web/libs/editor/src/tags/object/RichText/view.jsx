@@ -216,7 +216,7 @@ class RichTextPieceView extends Component {
     }
 
     return false;
-  }
+  };
 
   _onMouseDown = (ev) => {
     // we definitelly not in a process of adjusting any other region anymore, so reset flags
