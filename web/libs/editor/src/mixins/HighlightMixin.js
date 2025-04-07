@@ -10,6 +10,9 @@ const LABEL_COLOR_ALPHA = 0.3;
 
 export const HighlightMixin = types
   .model()
+  .volatile(() => ({
+    _spans: null,
+  }))
   .views((self) => ({
     get _hasSpans() {
       // @todo is it possible that only some spans are connected?
@@ -86,10 +89,16 @@ export const HighlightMixin = types
     updateSpans() {
       // @TODO: Is `_hasSpans` some artifact from the old version?
       if (self._hasSpans || self._spans?.length) {
-        const lastSpan = self._spans[self._spans.length - 1];
+        const firstSpan = self._spans[0];
+        const lastSpan = self._spans.at(-1);
+        const offsets = self.globalOffsets;
 
         // @TODO: Should we manage it in domManager?
+        // update label tag (index + attached labels) which sits in the last span
         Utils.Selection.applySpanStyles(lastSpan, { index: self.region_index, label: self.getLabels() });
+        // store offsets in spans for further comparison if region got resized
+        firstSpan.setAttribute("data-start", offsets.start);
+        lastSpan.setAttribute("data-end", offsets.end);
       }
     },
 
@@ -112,14 +121,20 @@ export const HighlightMixin = types
      * Update region's appearance if the label was changed
      */
     updateAppearenceFromState() {
-      if (!self._spans?.length) {
-        return;
+      if (!self._spans?.length) return;
+
+      const start = self._spans[0].getAttribute("data-start");
+      const end = self._spans.at(-1).getAttribute("data-end");
+      const offsets = self.globalOffsets;
+
+      // if spans have different offsets stored, then we resized the region and need to recreate spans
+      if (isDefined(start) && (+start !== offsets.start || +end !== offsets.end)) {
+        self.removeHighlight();
+        self.applyHighlight();
+      } else {
+        self.parent.setStyles?.({ [self.identifier]: self.styles });
+        self.updateSpans();
       }
-
-      const lastSpan = self._spans[self._spans.length - 1];
-
-      self.parent.setStyles?.({ [self.identifier]: self.styles });
-      Utils.Selection.applySpanStyles(lastSpan, { index: self.region_index, label: self.getLabels() });
     },
 
     /**
