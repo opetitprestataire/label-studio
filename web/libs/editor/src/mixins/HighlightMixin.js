@@ -55,39 +55,6 @@ export const HighlightMixin = types
           color: ${Utils.Colors.contrastColor(initialActiveColor)} !important;
           background-color: ${initialActiveColor} !important;
         }
-        .${className} area {
-          position: absolute;
-          width: 1px;
-          height: 1.25em;
-          padding: 0 2px;
-          cursor: col-resize;
-          box-sizing: content-box;
-          margin-left: -2px;
-        }
-        .${className} area::before {
-          position: absolute;
-          content: '';
-          width: 1px;
-          height: 100%;
-          background: red;
-        }
-        .${className} area:hover::before {
-          width: 100%;
-          left: 0;
-        }
-        .${className} area::after {
-          content: '';
-          position: absolute;
-          width: 7px;
-          height: 7px;
-          background: red;
-          top: -7px;
-          left: -1px;
-          z-index: 100;
-        }
-        .${className} area:hover::after {
-          outline: 1px solid red;
-        }
       `;
     },
   }))

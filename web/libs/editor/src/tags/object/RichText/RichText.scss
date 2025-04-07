@@ -83,6 +83,57 @@
       }
     }
   }
+
+  :global(.htx-highlight) {
+    // resize handles around selected region,
+    // they look like popsicles, normal one at the beginning, upside down one at the end
+    area {
+      $handle_r: 3px;
+      $hitbox_w: 2px;
+
+      position: absolute;
+      width: 1px;
+      // line-height
+      height: 1.25em;
+      // hitbox
+      padding: 0 $hitbox_w;
+      cursor: col-resize;
+      box-sizing: content-box;
+      margin-left: -$hitbox_w - 1px;
+
+      // popsicle stick
+      &::before {
+        position: absolute;
+        content: '';
+        width: 1px;
+        height: 100%;
+        background: var(--grape_500);
+      }
+      &:hover::before {
+        width: 100%;
+        left: 0;
+      }
+      // popsicle sphere
+      &::after {
+        content: '';
+        position: absolute;
+        width: $handle_r * 2 + 1px;
+        height: $handle_r * 2 + 1px;
+        background: var(--grape_500);
+        top: -($handle_r * 2 + 1px);
+        left: $hitbox_w - $handle_r;
+        z-index: 100;
+        border-radius: 2px;
+      }
+      &:global(.__resize_right)::after {
+        top: unset;
+        bottom: -($handle_r * 2 + 1px);
+      }
+      &:hover::after {
+        outline: 1px solid var(--grape_500);
+      }
+    }
+  }
 }
 
 :global(.htx-no-label)::after {
