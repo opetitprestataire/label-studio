@@ -375,6 +375,7 @@ const HtxDateTime = inject("store")(
             placeholder="Month..."
             onChange={(val) => (disabled ? undefined : item.onMonthChange(val))}
             options={item.months.map((month, index) => ({ value: index + 1, label: month }))}
+            isInline={true}
           />
         )}
         {item.showYear && (
@@ -386,6 +387,7 @@ const HtxDateTime = inject("store")(
             placeholder="Year..."
             onChange={(val) => (disabled ? undefined : item.onYearChange(val))}
             options={item.years}
+            isInline={true}
           />
         )}
         {item.showDate && (

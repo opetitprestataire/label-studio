@@ -19,7 +19,7 @@ export type OptionProps = {
   multiple?: boolean;
   onSelect?: () => void;
   isIndeterminate?: boolean;
-  classname?: string;
+  className?: string;
 };
 
 type ExtractStructOption<T> = T extends SelectOptionData ? T["value"] : never;

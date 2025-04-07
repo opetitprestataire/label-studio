@@ -137,7 +137,7 @@ export const Select = forwardRef(
           <button
             variant="outline"
             aria-expanded={isOpen}
-            className={clsx(isInline ? "" : "w-full", className ?? "", styles.selectTrigger, {
+            className={clsx(isInline ? "w-auto" : "w-full", className ?? "", styles.selectTrigger, {
               [styles.isOpen]: isOpen,
               [styles.isDisabled]: disabled,
               [styles.sizeSmall]: size === "small",
@@ -295,6 +295,22 @@ const Option = ({
         e.preventDefault();
         e.stopPropagation();
         onSelect?.(value);
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        e.stopPropagation();
+        const nextElement = e.currentTarget.nextElementSibling;
+        if (nextElement) {
+          nextElement.focus();
+        }
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        e.stopPropagation();
+        const prevElement = e.currentTarget.previousElementSibling;
+        if (prevElement) {
+          prevElement.focus();
+        }
       }
     },
     [onSelect, value],
