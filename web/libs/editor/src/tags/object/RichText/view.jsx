@@ -202,7 +202,7 @@ class RichTextPieceView extends Component {
       area.attachHandles();
 
       area.notifyDrawingFinished();
-      area.updateHighlightedText();
+      area.updateHighlightedText({ force: true });
 
       return true;
     }

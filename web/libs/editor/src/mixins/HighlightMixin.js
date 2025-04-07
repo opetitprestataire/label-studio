@@ -80,8 +80,15 @@ export const HighlightMixin = types
       return void 0;
     },
 
-    updateHighlightedText() {
-      if (!self.text) {
+    /**
+     * Get text from object tag by region offsets and set it to the region.
+     * Normally it would only set it initially for better performance.
+     * But when we edit the region we need to update it on every change.
+     * @param {object} options
+     * @param {boolean} options.force - always update the text
+     */
+    updateHighlightedText({ force = false } = {}) {
+      if (!self.text || force) {
         self.text = self.parent.getTextFromGlobalOffsets(self.globalOffsets);
       }
     },
