@@ -188,9 +188,10 @@ class RichTextPieceView extends Component {
       area.detachHandles();
       area.removeHighlight();
 
+      // we update multiple props of the region here, so easier to just freeze the history during these updates
+      item.annotation.history.freeze("richtext:resize");
+
       area.updateGlobalOffsets(soff, eoff);
-      // `updateGlobalOffsets()` already added a new history item, so we need to update the same item with finall offsets
-      item.annotation.history.setReplaceNextUndoState(true);
       if (range.isText) {
         area.updateTextOffsets(soff, eoff);
       } else {
@@ -203,6 +204,8 @@ class RichTextPieceView extends Component {
 
       area.notifyDrawingFinished();
       area.updateHighlightedText({ force: true });
+
+      item.annotation.history.unfreeze("richtext:resize");
 
       return true;
     }
