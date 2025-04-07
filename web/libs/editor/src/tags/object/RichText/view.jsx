@@ -189,6 +189,8 @@ class RichTextPieceView extends Component {
       area.removeHighlight();
 
       area.updateGlobalOffsets(soff, eoff);
+      // `updateGlobalOffsets()` already added a new history item, so we need to update the same item with finall offsets
+      item.annotation.history.setReplaceNextUndoState(true);
       if (range.isText) {
         area.updateTextOffsets(soff, eoff);
       } else {
