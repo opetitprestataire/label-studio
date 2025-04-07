@@ -20,12 +20,16 @@ function Command({ className, ...props }: React.ComponentProps<typeof CommandPri
 function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   const ref = React.useRef<HTMLInputElement>(null);
   return (
-    <div data-slot="command-input-wrapper" className="flex items-center gap-2 px-1 m-1 focus-within:border-primary-focus-outline border-2 outline-none border-transparent rounded-smaller" ref={ref}>
+    <div
+      data-slot="command-input-wrapper"
+      className="flex items-center gap-2 px-1 m-1 focus-within:border-primary-focus-outline border-2 outline-none border-transparent rounded-smaller"
+      ref={ref}
+    >
       <IconSearch className="text-primary-icon" />
       <CommandPrimitive.Input
         data-slot="command-input"
         className={cn(
-          "placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none",
+          "placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none border-0",
           className,
         )}
         {...props}

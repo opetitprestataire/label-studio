@@ -105,7 +105,7 @@ export const Select = forwardRef(
           value?.toString()?.toLowerCase().includes(queryString.toLowerCase())
         );
       };
-      return flatOptions.filter((option => (searchFilter ?? filterHandler)(option, query)));
+      return flatOptions.filter((option) => (searchFilter ?? filterHandler)(option, query));
     }, [options, flatOptions, searchable, query, searchFilter]);
 
     const isSelected = useCallback(

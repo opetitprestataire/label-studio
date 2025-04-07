@@ -90,9 +90,11 @@ Annotators.FilterItem = UsersInjector(({ users, item }) => {
 
 Annotators.searchFilter = (option, queryString) => {
   const user = DM.users.find((u) => u.id === option?.value);
-  return user.id?.toString().toLowerCase().includes(queryString.toLowerCase()) ||
+  return (
+    user.id?.toString().toLowerCase().includes(queryString.toLowerCase()) ||
     user.email.toLowerCase().includes(queryString.toLowerCase()) ||
-    user.displayName.toLowerCase().includes(queryString.toLowerCase());
+    user.displayName.toLowerCase().includes(queryString.toLowerCase())
+  );
 };
 
 Annotators.filterable = true;
