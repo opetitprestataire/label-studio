@@ -276,7 +276,9 @@ class Task(TaskMixin, models.Model):
         """
         from projects.functions.next_task import get_next_task_logging_level
 
-        if self.project.show_ground_truth_first:
+        if self.project.show_ground_truth_first and flag_set(
+            'fflag_feat_all_leap_1825_annotator_evaluation_short', user='auto'
+        ):
             # in show_ground_truth_first mode(onboarding)
             # we ignore overlap setting for ground_truth tasks
             # https://humansignal.atlassian.net/browse/LEAP-1963

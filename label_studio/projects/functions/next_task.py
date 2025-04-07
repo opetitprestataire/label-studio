@@ -178,7 +178,10 @@ def get_not_solved_tasks_qs(
             prioritized_on_agreement, not_solved_tasks = _prioritize_low_agreement_tasks(not_solved_tasks, lse_project)
 
         # otherwise, filtering out completed tasks is sufficient
-        elif not project.show_ground_truth_first:
+        elif (
+            flag_set('fflag_feat_all_leap_1825_annotator_evaluation_short', user='auto')
+            and not project.show_ground_truth_first
+        ):
             not_solved_tasks = not_solved_tasks.filter(is_labeled=False)
 
     if not flag_set('fflag_fix_back_lsdv_4523_show_overlap_first_order_27022023_short'):
