@@ -1,6 +1,6 @@
 {
-  "message": "feat: DIA-2075: [FE] Homepage projects list perf optimization (#7281)",
-  "commit": "852d53c32fb96f6c831d3fcddc30a9e31d011d2f",
-  "date": "2025-04-02T15:11:48.000Z",
+  "message": "fix: DIA-2071: [BE,FE] AttributeError: 'AnonymousUser' object has no attribute 'active_organization' (#7311)",
+  "commit": "8785410f32bf8ff40e17d1d54dcd9c98d12e5024",
+  "date": "2025-04-07T11:54:58.000Z",
   "branch": "develop"
 }
