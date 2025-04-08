@@ -22,14 +22,14 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
   return (
     <div
       data-slot="command-input-wrapper"
-      className="flex items-center gap-2 px-1 m-1 focus-within:border-primary-focus-outline border-2 outline-none border-transparent rounded-smaller"
+      className="flex items-center gap-2 px-2 m-1 focus-within:border-neutral-border-bold border outline-none border-neutral-border-subtle rounded-smaller hover:border-neutral-border-bold shadow-inner"
       ref={ref}
     >
-      <IconSearch className="text-primary-icon" />
+      <IconSearch className="text-neutral-content-subtlest" />
       <CommandPrimitive.Input
         data-slot="command-input"
         className={cn(
-          "placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none border-0",
+          "placeholder:text-neutral-content-subtler flex h-10 w-full rounded-md bg-transparent py-3 outline-hidden disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none border-0",
           className,
         )}
         {...props}
@@ -53,16 +53,7 @@ function CommandEmpty({ ...props }: React.ComponentProps<typeof CommandPrimitive
 }
 
 function CommandGroup({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) {
-  return (
-    <CommandPrimitive.Group
-      data-slot="command-group"
-      className={cn(
-        "text-foreground [&_[cmdk-group-heading]]:text-muted-foreground overflow-hidden [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium",
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <CommandPrimitive.Group data-slot="command-group" className={cn(className)} {...props} />;
 }
 
 function CommandSeparator({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Separator>) {
@@ -76,16 +67,7 @@ function CommandSeparator({ className, ...props }: React.ComponentProps<typeof C
 }
 
 function CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
-  return (
-    <CommandPrimitive.Item
-      data-slot="command-item"
-      className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none [&_svg]:pointer-events-none",
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <CommandPrimitive.Item data-slot="command-item" className={cn(className)} {...props} />;
 }
 
 function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {

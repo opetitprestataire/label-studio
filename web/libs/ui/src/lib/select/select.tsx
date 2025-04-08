@@ -190,7 +190,7 @@ export const Select = forwardRef(
               )}
               <CommandList label="Select an option">
                 <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
-                <CommandGroup className="p-2">
+                <CommandGroup>
                   {_options.map((option, index) => {
                     const optionValue = option?.value ?? option;
                     const label = option?.label ?? optionValue;
@@ -263,7 +263,17 @@ export const Select = forwardRef(
             </Command>
           )}
         </PopoverContent>
-        <input name={props?.name} value={value ?? ""} ref={ref} disabled={disabled} className={styles.valueInput} />
+        <input
+          name={props?.name}
+          value={value ?? ""}
+          ref={ref}
+          disabled={disabled}
+          className={styles.valueInput}
+          onChange={() => {
+            console.log("value changed", value);
+            props?.onChange?.(value);
+          }}
+        />
       </Popover>
     );
 
@@ -320,7 +330,6 @@ const Option = ({
       value={value}
       onSelect={onSelect}
       disabled={disabled}
-      {...(disabled ? { "data-disabled": true } : {})}
       {...(style ? { style } : {})}
       data-value={value}
       data-selected={isOptionSelected}
@@ -329,15 +338,46 @@ const Option = ({
       onKeyDown={keyDownHandler}
       className={clsx(
         className,
-        isOptionSelected && ["bg-accent-grape-subtle"],
-        ["hover:bg-accent-grape-subtlest", "hover:cursor-pointer"],
-        ["active:bg-sky-200", "active:text-sky-700"],
-        ["data-[disabled=true]:opacity-50"],
+        [
+          "rounded-4",
+          "text-neutral-content",
+          "[&_[cmdk-group-heading]]:text-muted-foreground",
+          "overflow-hidden",
+          "p-1",
+          "[&_[cmdk-group-heading]]:text-xs",
+          "[&_[cmdk-group-heading]]:font-medium",
+          "focus-within:outline-none",
+          "focus-within:bg-primary-focus-outline",
+          "group",
+        ],
+        [
+          "data-[disabled=true]:opacity-50",
+          "data-[disabled=true]:cursor-not-allowed",
+          "data-[disabled=true]:bg-transparent",
+        ],
       )}
     >
-      {multiple && <Checkbox tabIndex={-1} checked={isOptionSelected} indeterminate={isIndeterminate} readOnly />}
-      <div data-testid="select-option-label" className="w-full truncate">
-        {label}
+      <div
+        className={clsx(
+          [
+            "w-full",
+            "px-4",
+            "py-1",
+            "hover:bg-primary-emphasis-subtle",
+            "hover:cursor-pointer",
+            "group-focus-within:bg-accent-grape-subtlest",
+            "rounded-4",
+            "hover:data-[disabled=true]:bg-transparent",
+            "hover:data-[disabled=true]:cursor-not-allowed",
+          ],
+          isOptionSelected && ["bg-primary-emphasis"],
+        )}
+        data-disabled={disabled}
+      >
+        {multiple && <Checkbox tabIndex={-1} checked={isOptionSelected} indeterminate={isIndeterminate} readOnly />}
+        <div data-testid="select-option-label" className="w-full truncate">
+          {label}
+        </div>
       </div>
     </CommandItem>
   );
