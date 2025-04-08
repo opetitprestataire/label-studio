@@ -198,6 +198,19 @@
 }
 
 /// SIZES
+
+.size-medium {
+  @apply p-tight text-16 h-[40px];
+
+  & > span {
+    @apply px-tight
+  }
+
+  & > svg {
+    @apply h-6;
+  }
+}
+
 .size-small {
   @apply p-tighter text-14 h-[32px];
 
