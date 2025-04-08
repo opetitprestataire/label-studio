@@ -40,7 +40,7 @@ export function buttonVariant(
   {
     variant = "primary",
     look = "filled",
-    size = "medium",
+    size = "small",
     waiting = false,
   }: {
     variant?: keyof typeof variants;
@@ -50,7 +50,8 @@ export function buttonVariant(
   },
   className?: string,
 ) {
-  const buttonStyles = [styles.base, variants[variant ?? "primary"], looks[look ?? "filled"], sizes[size ?? "default"]];
+  const buttonStyles = [styles.base, variants[variant], looks[look], sizes[size]];
+  console.log(buttonStyles, { size });
   return cn(
     "inline-flex items-center rounded-smaller border text-shadow-button p-tight box-border border transition-all",
     ...buttonStyles,
@@ -82,7 +83,7 @@ function Button({
   trailing = null,
   variant = "primary",
   look = "filled",
-  size = "default",
+  size = "medium",
   waiting = false,
   ...buttonProps
 }: PropsWithChildren<ButtonProps>) {
