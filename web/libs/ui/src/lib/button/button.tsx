@@ -18,9 +18,9 @@ const looks = {
 };
 
 const sizes = {
-  default: styles["size-default"],
-  compact: styles["size-compact"],
-  comfortable: styles["size-comfortable"],
+  medium: styles["size-medium"], // 40px
+  small: styles["size-small"], // 32px
+  smaller: styles["size-smaller"], // 24px
 };
 
 /**
@@ -40,7 +40,7 @@ export function buttonVariant(
   {
     variant = "primary",
     look = "filled",
-    size = "default",
+    size = "medium",
     waiting = false,
   }: {
     variant?: keyof typeof variants;
