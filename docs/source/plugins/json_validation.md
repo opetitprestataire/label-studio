@@ -8,13 +8,13 @@ meta_title: Validate JSON
 meta_description: Checks that the introduced text is a valid JSON
 ---
 
-This script parses the contexts of a TextArea field to check for valid JSON. If the JSON is invalid, it shows an error and prevents the annotation from being saved.
+This plugin parses the contexts of a `TextArea` field to check for valid JSON. If the JSON is invalid, it shows an error and prevents the annotation from being saved.
 
 This is an example of a "hard" block, meaning that the user must resolve the issue before they can proceed. 
 
 ![Screenshot of JSON error message](/images/project/script_json.png)
 
-## Script
+## Plugin
 
 ```javascript
  LSI.on("beforeSaveAnnotation", (store, annotation) => {
@@ -75,3 +75,13 @@ This is an example of a "hard" block, meaning that the user must resolve the iss
 * [RectangleLabels](/tags/rectanglelabels.html)
 * [TextArea](/tags/textarea.html)
 * [Labels](/tags/labels.html)
+
+## Data
+
+```json
+[
+  {
+    "image": "https://labelstud.io/demo/Datasets/Image/Object Detection/Image_66.jpg"
+  }
+]
+```

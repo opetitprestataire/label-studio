@@ -38,7 +38,7 @@ To unpause an annotator, use the [Members dashboard](/guide/quality#Pause-an-ann
 
     ![Screenshot of hover](/images/project/scripts_pause_hover.png)
 
-## Script
+## Plugin
 
 ```javascript
 /****** CONFIGURATION FOR PAUSING RULES ******/
@@ -224,3 +224,25 @@ This labeling config presents users with text and asks them to:
 * [Header](/tags/header.html)
 * [Choices](/tags/choices.html)
 * [TextArea](/tags/textarea.html)
+
+## Data
+
+```json
+[
+  {
+    "data": {
+      "text": "I recently purchased a portable Bluetooth speaker and have been impressed with its clear sound and long battery life. The speaker is compact and easy to use, making it perfect for outdoor adventures."
+    }
+  },
+  {
+    "data": {
+      "text": "I bought a smartwatch from this vendor and it has exceeded my expectations. The device offers an intuitive user interface and tracks my daily activities accurately while looking very stylish on my wrist."
+    }
+  },
+  {
+    "data": {
+      "text": "I ordered a pair of noise-cancelling headphones and they don't do anything to cancel out noise. Waste of money."
+    }
+  }
+]
+```
