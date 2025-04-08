@@ -187,6 +187,16 @@ class ProjectSerializer(FlexFieldsModelSerializer):
 
         return data
 
+    def validate_color(self, value):
+        # color : "#FF4C25"
+        if not value.startswith('#') or len(value) != 7:
+            raise serializers.ValidationError('Color must be in "#RRGGBB" format')
+        try:
+            int(value[1:], 16)
+        except ValueError:
+            raise serializers.ValidationError('Color must be in "#RRGGBB" format')
+        return value
+
     class Meta:
         model = Project
         extra_kwargs = {
