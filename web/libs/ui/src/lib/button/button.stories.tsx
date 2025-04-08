@@ -1,29 +1,64 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { action } from "@storybook/addon-actions";
 import { Button } from "./button";
+import { IconAnnotationGroundTruth } from "@humansignal/icons";
 
 const meta: Meta<typeof Button> = {
   component: Button,
   title: "UI/Button",
   tags: ["autodocs"],
   argTypes: {
-    onClick: { action: "clicked" },
     disabled: { control: "boolean" },
+    waiting: { control: "boolean" },
+    look: { control: "select" },
+    size: { control: "select" },
+    leading: { control: { type: false } },
+    trailing: { control: { type: false } },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-export const Default: Story = {
+export const Primary: Story = {
   args: {
-    children: "Default Checkbox",
+    children: "Default Button",
   },
 };
 
-export const WithChangeHandler: Story = {
+export const WithDisabledState: Story = {
   args: {
-    children: "Checkbox with Change Handler",
-    onChange: action("Checkbox changed"),
+    children: "Disabled Button",
+    disabled: true,
+  },
+};
+
+export const WithWaitingState: Story = {
+  args: {
+    children: "Waiting Button",
+    waiting: true,
+  },
+};
+
+export const WithLeadingIcon: Story = {
+  args: {
+    children: "Button with icon",
+    leading: <IconAnnotationGroundTruth />,
+  },
+};
+
+export const WithTrailingIcon: Story = {
+  args: {
+    children: "Button with icon",
+    trailing: <IconAnnotationGroundTruth />,
+  },
+};
+
+export const IconButton: Story = {
+  render: () => {
+    return (
+      <Button>
+        <IconAnnotationGroundTruth />
+      </Button>
+    );
   },
 };

@@ -1,18 +1,220 @@
 .base {
+  @apply border box-content transition-all;
+
+  --background-image: none;
+  --background-color: var(--color-primary-surface);
+  --border-color: var(--color-primary-border-bold);
+  --border-color-hover: var(--border-color);
+  --text-color: var(--color-primary-surface-content);
+  --focus-outline: var(--color-primary-focus-outline);
+  --background-color-hover: var(--color-primary-surface-hover);
+  --background-color-active: var(--color-primary-surface-active);
+  --wait-color-value: var(--color-primary-emphasis-subtle);
+  --wait-color-value-outline: var(--color-primary-emphasis);
+  --wait-color-opacity: 10%;
+  --wait-color: color-mix(in lab, var(--wait-color-value) var(--wait-color-opacity), transparent);
+
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%), inset 0 -1px 0 rgb(0 0 0 / 10%);
+  background-color: var(--background-color);
+  background-image: var(--background-image);
+  border-color: var(--border-color);
+  color: var(--text-color);
+
+  & > span:has(> svg:only-child){
+    @apply px-0;
+  }
+
+  &:hover {
+    background-color: var(--background-color-hover);
+    border-color: var(--border-color-hover);
+  }
 
   &:active {
     box-shadow: inset 0 -1px 0 rgb(255 255 255 / 5%), inset 0 1px 0 rgb(0 0 0 / 10%);
+    background-color: var(--background-color-active);
+    border-color: var(--border-color-hover);
+  }
+
+  &:focus{
+    box-shadow: 0 0 0 4px var(--focus-outline);
+  }
+
+  &:disabled, &:disabled:hover{
+    --background-color: var(--color-neutral-surface);
+    --border-color: var(--color-neutral-border);
+    --text-color: var(--color-neutral-content-subtlest);
+
+    box-shadow: none;
+    text-shadow: none;
+    cursor: not-allowed;
   }
 }
 
+/// VARIANTS
 .variant-primary {
-  @apply bg-primary-surface text-primary-surface-content box-content;
-  @apply border border-primary-border-bold;
-  @apply hover:bg-primary-surface-hover;
-  @apply active:bg-primary-surface-active;
+  --background-color: var(--color-primary-surface);
+  --border-color: var(--color-primary-border-bold);
+  --text-color: var(--color-primary-surface-content);
+  --background-color-hover: var(--color-primary-surface-hover);
+  --background-color-active: var(--color-primary-surface-active);
+  --focus-outline: var(--color-primary-focus-outline);
+  --background-color-hover-outline: var(--color-primary-emphasis-subtle);
+  --background-color-active-outline: var(--color-primary-emphasis);
+  --border-outline: var(--color-primary-border);
+  --text-outline: var(--color-primary-content);
+  --wait-color-value: var(--color-primary-emphasis-subtle);
+  --wait-color-value-outline: var(--color-primary-emphasis);
+  --wait-color-opacity: 10%;
+}
+
+.variant-neutral {
+  --background-color: var(--color-neutral-surface);
+  --border-color: var(--color-neutral-border-bold);
+  --text-color: var(--color-neutral-surface-content);
+  --background-color-hover: var(--color-neutral-surface-hover);
+  --background-color-active: var(--color-neutral-surface-active);
+  --focus-outline: var(--color-neutral-focus-outline);
+  --background-color-hover-outline: var(--color-neutral-emphasis-subtle);
+  --background-color-active-outline: var(--color-neutral-emphasis);
+  --border-outline: var(--color-neutral-border);
+  --text-outline: var(--color-neutral-content);
+  --wait-color-value: var(--color-neutral-emphasis-subtle);
+  --wait-color-value-outline: var(--color-neutral-emphasis);
+  --wait-color-opacity: 10%;
+}
+
+.variant-negative {
+  --background-color: var(--color-negative-surface);
+  --border-color: var(--color-negative-border-bold);
+  --text-color: var(--color-negative-surface-content);
+  --background-color-hover: var(--color-negative-surface-hover);
+  --background-color-active: var(--color-negative-surface-active);
+  --focus-outline: var(--color-negative-focus-outline);
+  --background-color-hover-outline: var(--color-negative-emphasis-subtle);
+  --background-color-active-outline: var(--color-negative-emphasis);
+  --border-outline: var(--color-negative-border);
+  --text-outline: var(--color-negative-content);
+  --wait-color-value: var(--color-negative-emphasis-subtle);
+  --wait-color-value-outline: var(--color-negative-emphasis);
+  --wait-color-opacity: 10%;
+}
+
+.variant-positive {
+  --background-color: var(--color-positive-surface);
+  --border-color: var(--color-positive-border-bold);
+  --text-color: var(--color-positive-surface-content);
+  --background-color-hover: var(--color-positive-surface-hover);
+  --background-color-active: var(--color-positive-surface-active);
+  --focus-outline: var(--color-positive-focus-outline);
+  --background-color-hover-outline: var(--color-positive-emphasis-subtle);
+  --background-color-active-outline: var(--color-positive-emphasis);
+  --border-outline: var(--color-positive-border);
+  --text-outline: var(--color-positive-content);
+  --wait-color-value: var(--color-positive-emphasis-subtle);
+  --wait-color-value-outline: var(--color-positive-emphasis);
+  --wait-color-opacity: 10%;
+}
+
+.variant-warning {
+  --background-color: var(--color-warning-surface);
+  --border-color: var(--color-warning-border-bold);
+  --text-color: var(--color-warning-surface-content);
+  --background-color-hover: var(--color-warning-surface-hover);
+  --background-color-active: var(--color-warning-surface-active);
+  --focus-outline: var(--color-warning-focus-outline);
+  --background-color-hover-outline: var(--color-warning-emphasis-subtle);
+  --background-color-active-outline: var(--color-warning-emphasis);
+  --border-outline: var(--color-warning-border);
+  --text-outline: var(--color-warning-content);
+  --wait-color-value: var(--color-warning-emphasis-subtle);
+  --wait-color-value-outline: var(--color-warning-emphasis);
+  --wait-color-opacity: 10%;
+}
+
+.variant-neutral-interted {
+  --background-color: var(--color-neutral-inverted-surface);
+  --border-color: var(--color-neutral-inverted-border-bold);
+  --text-color: var(--color-neutral-inverted-content);
+  --background-color-hover: var(--color-neutral-inverted-surface-hover);
+  --background-color-active: var(--color-neutral-inverted-surface-active);
+  --focus-outline: var(--color-neutral-inverted-focus-outline);
+  --background-color-hover-outline: var(--color-neutral-inverted-emphasis-subtle);
+  --background-color-active-outline: var(--color-neutral-inverted-emphasis);
+  --border-outline: var(--color-neutral-inverted-border);
+  --text-outline: var(--color-neutral-inverted-content);
+  --wait-color-value: var(--color-neutral-inverted-emphasis-subtle);
+  --wait-color-value-outline: var(--color-neutral-inverted-emphasis);
+  --wait-color-opacity: 10%;
+}
+
+/// VARIANT LOOK
+.look-outlined {
+  text-shadow: none;
+  box-shadow: none;
+
+  &:not(&:disabled){
+    @apply bg-transparent;
+
+    --background-color-hover: var(--background-color-hover-outline);
+    --background-color-active: var(--background-color-active-outline);
+    --wait-color-value: var(--wait-color-value-outline);
+    --wait-color-opacity: 40%;
+
+    border-color: var(--border-outline);
+    color: var(--text-outline);
+  }
+
+  &:active {
+    box-shadow: inset 0 1px 0 rgb(0 0 0 / 10%);
+  }
 }
 
 .look-string {
-  @apply border-none;
+  --background-color-hover: var(--background-color-hover-outline);
+  --background-color-active: var(--background-color-active-outline);
+  --wait-color-value: var(--wait-color-value-outline);
+  --wait-color-opacity: 40%;
+
+  border-color: transparent;
+  background-color: transparent;
+  box-shadow: none;
+  text-shadow: none;
+
+  &:not(&:disabled) {
+    color: var(--text-outline);
+  }
+
+  &:focus{
+    border-color: var(--border-color-hover);
+  }
+}
+
+/// STATES
+.waiting {
+  --background-image: repeating-linear-gradient(
+      -63.43deg,
+    transparent 1px,
+    var(--wait-color) 2px,
+    var(--wait-color) 7px,
+    transparent 8px,
+    transparent 12px
+  );
+
+  border-color: var(--border-color);
+  background-repeat: repeat;
+  background-position: 40px;
+  background-size: 37px 100%;
+  animation: button-waiting 1s linear infinite;
+  cursor: wait;
+  pointer-events: none;
+}
+
+@keyframes button-waiting {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 37px 0;
+  }
 }

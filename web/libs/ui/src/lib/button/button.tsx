@@ -1,44 +1,63 @@
 import { cn } from "../../utils/utils";
-import type { HTMLAttributes, PropsWithChildren } from "react";
+import type { ButtonHTMLAttributes, PropsWithChildren } from "react";
 import styles from "./button.module.scss";
 
 const variants = {
   primary: styles["variant-primary"],
+  neutral: styles["variant-neutral"],
+  negative: styles["variant-negative"],
+  positive: styles["variant-positive"],
+  warning: styles["variant-warning"],
+  inverted: styles["variant-neutral-interted"],
 };
 
-const look = {};
+const looks = {
+  filled: styles["look-filled"],
+  string: styles["look-string"],
+  outlined: styles["look-outlined"],
+};
 
-const size = {};
+const sizes = {
+  default: styles["size-default"],
+  compact: styles["size-compact"],
+  comfortable: styles["size-comfortable"],
+};
 
 export type ButtonProps = {
   variant?: keyof typeof variants;
-  look?: keyof typeof look;
-  size?: keyof typeof size;
-  leadingIcon?: React.ReactNode;
-  trailingIcon?: React.ReactNode;
+  look?: keyof typeof looks;
+  size?: keyof typeof sizes;
+  leading?: React.ReactNode;
+  trailing?: React.ReactNode;
   waiting?: boolean;
-} & HTMLAttributes<HTMLButtonElement>;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
 function Button({
   children,
-  className,
-  leadingIcon,
-  trailingIcon,
-  variant,
-  look,
-  size,
+  className = "",
+  leading = null,
+  trailing = null,
+  variant = "primary",
+  look = "filled",
+  size = "default",
+  waiting = false,
   ...buttonProps
 }: PropsWithChildren<ButtonProps>) {
-  const buttonStyles = [styles.base, variants[variant ?? "primary"], styles[`style-${look}`], styles[`size-${look}`]];
-  const rootClassName = cn("flex rounded-smaller border", ...buttonStyles, className);
+  const buttonStyles = [styles.base, variants[variant ?? "primary"], looks[look ?? "filled"], sizes[size ?? "default"]];
+  const rootClassName = cn(
+    "flex items-center rounded-smaller border text-shadow-button p-tight",
+    ...buttonStyles,
+    className,
+    {
+      [styles.waiting]: waiting,
+    },
+  );
 
   return (
     <button {...buttonProps} className={rootClassName}>
-      <span className="flex p-tight">
-        {leadingIcon}
-        <span className="block px-tight text-shadow-button">{children}</span>
-      </span>
-      {trailingIcon}
+      {leading}
+      <span className="flex-1 px-tight">{children}</span>
+      {trailing}
     </button>
   );
 }
