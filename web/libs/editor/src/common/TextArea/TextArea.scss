@@ -14,6 +14,7 @@
     align-items: center;
     min-height: var(--textarea-min-height) !important;
     border: var(--textarea-border-size) solid var(--textarea-border-color) !important;
+    outline-color: var(--color-primary-border) !important;
     border-radius: var(--textarea-border-radius) !important;
     background-color: var(--textarea-surface-color) !important;
     padding: var(--textarea-padding) !important;
@@ -43,4 +44,3 @@
   border-color: var(--color-neutral-border);
   border-radius: var(--corner-radius-smaller);
 }
-

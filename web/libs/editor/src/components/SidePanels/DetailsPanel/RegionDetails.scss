@@ -20,7 +20,7 @@
     align-items: flex-start;
     word-break: break-word;
 
-    & + span {
+    &+span {
       color: var(--color-neutral-content);
 
       &::before {
@@ -46,7 +46,7 @@
   }
 
   &__index_value {
-    color: var(--color-neutral-background);
+    color: var(--color-sand-000);
   }
 
   &__result {
