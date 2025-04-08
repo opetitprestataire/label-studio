@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams as useRouterParams } from "react-router";
 import { Redirect } from "react-router-dom";
-import { Button } from "../../components";
+import { Button } from "@humansignal/ui";
 import { Oneof } from "../../components/Oneof/Oneof";
 import { Spinner } from "../../components/Spinner/Spinner";
 import { ApiContext } from "../../providers/ApiProvider";
@@ -10,9 +10,9 @@ import { Block, Elem } from "../../utils/bem";
 import { CreateProject } from "../CreateProject/CreateProject";
 import { DataManagerPage } from "../DataManager/DataManager";
 import { SettingsPage } from "../Settings";
-import "./Projects.scss";
 import { EmptyProjectsList, ProjectsList } from "./ProjectsList";
 import { useAbortController } from "@humansignal/core";
+import "./Projects.scss";
 
 const getCurrentPage = () => {
   const pageNumberFromURL = new URLSearchParams(location.search).get("page");
