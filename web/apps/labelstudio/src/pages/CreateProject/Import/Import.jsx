@@ -482,14 +482,14 @@ export const ImportPage = ({
               </div>
             )}
 
-            <div className="min-w-[650px]">
+            <div className="w-[650px]">
               {projectConfigured && ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
-                <SimpleCard title="Expected input preview" className="w-full max-w-[650px] h-full">
+                <SimpleCard title="Expected input preview" className="w-[650px] h-full">
                   {sampleConfig.data ? (
                     <CodeBlock
                       title="Expected input preview"
                       code={sampleConfig?.data ?? ""}
-                      className="w-full max-w-[650px] h-full"
+                      className="w-[650px] h-full"
                     />
                   ) : sampleConfig.isLoading ? (
                     <div className="w-full flex justify-center py-12">
@@ -500,7 +500,7 @@ export const ImportPage = ({
                   ) : null}
                 </SimpleCard>
               ) : ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
-                <SimpleCard title="Expected input preview" className="w-full max-w-[650px] h-full">
+                <SimpleCard title="Expected input preview" className="w-[650px] h-full">
                   Set up your{" "}
                   <button
                     type="button"
