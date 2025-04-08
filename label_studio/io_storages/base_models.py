@@ -1,9 +1,12 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
 import base64
+import concurrent.futures
 import json
 import logging
+import os
 import traceback as tb
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Union
 from urllib.parse import urljoin
@@ -551,15 +554,16 @@ class ExportStorage(Storage, ProjectStorageMixin):
         self.info_set_in_progress()
         self.cached_user = self.project.organization.created_by
 
-        for annotation in Annotation.objects.filter(project=self.project).iterator(
-            chunk_size=settings.STORAGE_EXPORT_CHUNK_SIZE
-        ):
-            annotation.cached_user = self.cached_user
-            self.save_annotation(annotation)
+        max_workers = min(32, (os.cpu_count() or 4) * 4)
 
-            # update progress counters
-            annotation_exported += 1
-            self.info_update_progress(last_sync_count=annotation_exported, total_annotations=total_annotations)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = []
+            for annotation in Annotation.objects.filter(project=self.project).iterator(chunk_size=settings.STORAGE_EXPORT_CHUNK_SIZE):
+                futures.append(executor.submit(self.save_annotation, annotation))
+
+            for future in concurrent.futures.as_completed(futures):
+                annotation_exported += 1
+                self.info_update_progress(last_sync_count=annotation_exported, total_annotations=total_annotations)
 
         self.info_set_completed(last_sync_count=annotation_exported, total_annotations=total_annotations)
 
