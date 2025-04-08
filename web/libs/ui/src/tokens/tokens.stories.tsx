@@ -5,61 +5,13 @@ import LinkTo from "@storybook/addon-links/react";
 import type { Meta } from "@storybook/react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import { evaluatedThemeAtom } from "../../../storybook/addons/theme-toggle/atoms";
 // @ts-ignore: JS module without types
 import designTokens from "./tokens";
 
 // Define types for design tokens
 type DesignTokenValue = string | Record<string, any>;
 type FlattenedTokens = Record<string, string>;
-
-// Create an atom for theme (light/dark)
-const themeAtom = atomWithStorage("tokensTheme", "light");
-
-// ThemeToggle component
-const ThemeToggle = () => {
-  const [theme, setTheme] = useAtom(themeAtom);
-
-  useEffect(() => {
-    // Apply theme to document when it changes
-    document.body.dataset.colorScheme = theme;
-
-    // Clean up when component unmounts
-    return () => {
-      // Remove data-color-scheme attribute when unmounting
-      delete document.body.dataset.colorScheme;
-    };
-  }, [theme]);
-
-  return (
-    <div className="mb-6 flex items-center gap-4">
-      <span className="text-sm font-medium">Theme:</span>
-      <div className="flex border border-neutral-border rounded overflow-hidden">
-        <button
-          type="button"
-          className={`px-4 py-2 text-sm ${
-            theme === "light"
-              ? "bg-primary-surface border-primary-border text-primary-surface-content"
-              : "bg-neutral-surface border-neutral-border"
-          }`}
-          onClick={() => setTheme("light")}
-        >
-          Light
-        </button>
-        <button
-          type="button"
-          className={`px-4 py-2 text-sm ${
-            theme === "dark"
-              ? "bg-primary-surface border-primary-border text-primary-surface-content"
-              : "bg-neutral-surface border-neutral-border"
-          }`}
-          onClick={() => setTheme("dark")}
-        >
-          Dark
-        </button>
-      </div>
-    </div>
-  );
-};
 
 const pxToRem = (px: number) => `${px / 16}rem`;
 
@@ -84,7 +36,8 @@ const colorSubcategoryDescriptions: Record<string, string> = {
 
 // Component to render a token value
 const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) => {
-  const theme = useAtomValue(themeAtom);
+  const theme = useAtomValue(evaluatedThemeAtom);
+
   // Determine token type
   const isColor = typeof token === "string" && token.includes("--color-");
   const isSpacing = typeof token === "string" && token.includes("--spacing-");
@@ -325,9 +278,7 @@ const TokenCatalog = () => {
   );
 
   return (
-    <div className="token-catalog p-8 bg-neutral-background">
-      <ThemeToggle />
-
+    <div className="token-catalog p-8">
       <div className="mb-6">
         <input
           type="text"
@@ -740,9 +691,7 @@ const TokenCategorized = () => {
   };
 
   return (
-    <div className="p-8 bg-neutral-background">
-      <ThemeToggle />
-
+    <div className="p-8">
       <h1 className="text-2xl mb-6">Design Tokens</h1>
       <p className="mb-6">
         Browse through our design tokens organized by category. These tokens are the foundation of our design system.
