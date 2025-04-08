@@ -2,7 +2,8 @@ import { formatDistanceToNow, format, parseISO } from "date-fns";
 import { useCallback, useContext } from "react";
 
 import truncate from "truncate-middle";
-import { Button, Dropdown, Menu } from "../../../components";
+import { Dropdown, Menu } from "../../../components";
+import { Button } from "@humansignal/ui";
 import { confirm } from "../../../components/Modal/Modal";
 import { Oneof } from "../../../components/Oneof/Oneof";
 import { IconEllipsis } from "@humansignal/icons";

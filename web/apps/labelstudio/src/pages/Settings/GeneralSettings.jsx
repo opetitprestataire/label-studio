@@ -1,6 +1,6 @@
 import { EnterpriseBadge } from "@humansignal/ui";
 import { useCallback, useContext } from "react";
-import { Button } from "../../components";
+import { Button } from "@humansignal/ui";
 import { Form, Input, Select, TextArea } from "../../components/Form";
 import { RadioGroup } from "../../components/Form/Elements/RadioGroup/RadioGroup";
 import { ProjectContext } from "../../providers/ProjectProvider";
@@ -111,7 +111,7 @@ export const GeneralSettings = () => {
               <Form.Indicator>
                 <span case="success">Saved!</span>
               </Form.Indicator>
-              <Button type="submit" look="primary" style={{ width: 120 }}>
+              <Button type="submit" className="w-[150px]">
                 Save
               </Button>
             </Form.Actions>

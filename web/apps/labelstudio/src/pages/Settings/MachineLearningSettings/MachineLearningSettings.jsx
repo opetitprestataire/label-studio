@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Button, Spinner } from "../../../components";
+import { Button, Spinner } from "@humansignal/ui";
 import { Description } from "../../../components/Description/Description";
 import { Form, Label, Toggle } from "../../../components/Form";
 import { modal } from "../../../components/Modal/Modal";
