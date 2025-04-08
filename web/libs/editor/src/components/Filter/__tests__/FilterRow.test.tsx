@@ -114,23 +114,27 @@ describe("FilterRow", () => {
     // Select field
     fireEvent.click(fieldDropdown);
     fireEvent.click(screen.getByText("Annotation results"));
-    
+
     // Verify onChange was called with the correct field
-    expect(mockOnChange).toHaveBeenCalledWith(expect.objectContaining({
-      field: "labelName",
-      logic: "and",
-    }));
-    
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        field: "labelName",
+        logic: "and",
+      }),
+    );
+
     // Select operation
     fireEvent.click(operationDropdown);
     fireEvent.click(screen.getByText("not contains"));
-    
+
     // Verify onChange was called with the correct operation
-    expect(mockOnChange).toHaveBeenCalledWith(expect.objectContaining({
-      field: "labelName",
-      operation: "not_contains",
-      logic: "and",
-    }));
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        field: "labelName",
+        operation: "not_contains",
+        logic: "and",
+      }),
+    );
 
     // Verify the UI shows the selected values
     expect(fieldDropdown.textContent).toBe("Annotation results");
@@ -153,7 +157,7 @@ describe("FilterRow", () => {
 
     const filterInput = getByTestId("filter-input");
     fireEvent.change(filterInput, { target: { value: "test value" } });
-    
+
     expect(mockOnChange).toHaveBeenCalledWith({
       field: "labelName",
       operation: "contains",
@@ -178,7 +182,7 @@ describe("FilterRow", () => {
 
     const deleteButton = getByLabelText("Delete filter");
     fireEvent.click(deleteButton);
-    
+
     expect(mockOnDelete).toHaveBeenCalled();
   });
 });
