@@ -66,7 +66,7 @@ export const IconButton: Story = {
 export const StyledLink: Story = {
   render({ children }) {
     return (
-      <a href="#" className={buttonVariant({ variant: "primary" })}>
+      <a href="/?path=/story/ui-button--styled-link" className={buttonVariant({ variant: "primary" })}>
         <span className="flex-1 px-tight">Link with button styles</span>
       </a>
     );
