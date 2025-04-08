@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "./button";
+import { Button, buttonVariant } from "./button";
 import { IconAnnotationGroundTruth } from "@humansignal/icons";
 
 const meta: Meta<typeof Button> = {
@@ -59,6 +59,16 @@ export const IconButton: Story = {
       <Button>
         <IconAnnotationGroundTruth />
       </Button>
+    );
+  },
+};
+
+export const StyledLink: Story = {
+  render({ children }) {
+    return (
+      <a href="#" className={buttonVariant({ variant: "primary" })}>
+        <span className="flex-1 px-tight">Link with button styles</span>
+      </a>
     );
   },
 };

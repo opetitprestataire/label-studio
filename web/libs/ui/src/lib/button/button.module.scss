@@ -1,6 +1,4 @@
 .base {
-  @apply border box-content transition-all;
-
   --background-image: none;
   --background-color: var(--color-primary-surface);
   --border-color: var(--color-primary-border-bold);
@@ -24,6 +22,10 @@
     @apply px-0;
   }
 
+  svg {
+    @apply w-6 h-6;
+  }
+
   &:hover {
     background-color: var(--background-color-hover);
     border-color: var(--border-color-hover);
@@ -40,6 +42,8 @@
   }
 
   &:disabled, &:disabled:hover{
+    --background-color-hover: var(--color-neutral-surface);
+    --border-color-hover: var(--color-neutral-border);
     --background-color: var(--color-neutral-surface);
     --border-color: var(--color-neutral-border);
     --text-color: var(--color-neutral-content-subtlest);
