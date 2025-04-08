@@ -2,6 +2,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+const camelCase = (str) => {
+  return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+};
+
 // Get current file directory for resolving paths
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -71,7 +75,6 @@ function processDesignVariables(variables) {
   if (variables["@color"] && variables["@color"].$color) {
     processColorTokens(variables["@color"].$color, "", result, variables);
   }
-
   // Process primitives
   if (variables["@primitives"] && variables["@primitives"].$color) {
     processPrimitiveColors(variables["@primitives"].$color, result, variables);
@@ -92,21 +95,14 @@ function processDesignVariables(variables) {
     processPrimitiveCornerRadius(variables["@primitives"]["$corner-radius"], result);
   }
 
-  // Process spacing
-  if (variables["@sizing"] && variables["@sizing"].$spacing) {
-    processSpacingTokens(variables["@sizing"].$spacing, result, variables);
+  // Process sizing tokens
+  if (variables["@sizing"]) {
+    processSizingTokens(variables["@sizing"], result, variables);
   }
 
   // Process typography
   if (variables["@typography"]) {
     processTypographyTokens(variables["@typography"], result, variables);
-  }
-
-  // Process corner-radius (fixing the "corder-radius" typo if it exists)
-  if (variables["@sizing"] && variables["@sizing"]["$corner-radius"]) {
-    processCornerRadiusTokens(variables["@sizing"]["$corner-radius"], result, variables);
-  } else if (variables["@sizing"] && variables["@sizing"]["$corder-radius"]) {
-    processCornerRadiusTokens(variables["@sizing"]["$corder-radius"], result, variables);
   }
 
   // Post-process for Tailwind compatibility
@@ -295,27 +291,61 @@ function processPrimitiveCornerRadius(cornerRadiusObj, result) {
 }
 
 /**
- * Process spacing tokens from design variables
- * @param {Object} spacingObj - The spacing object from design variables
+ * Process sizing tokens from design variables
+ * @param {Object} sizingObj - The spacing object from design variables
  * @param {Object} result - The result object to populate
  * @param {Object} variables - The variables object for reference resolution
+ * @param {String} parentKey - The parent key for nested tokens
  */
-function processSpacingTokens(spacingObj, result, variables) {
-  for (const key in spacingObj) {
-    if (spacingObj[key].$type === "number" && spacingObj[key].$value !== undefined) {
+function processSizingTokens(sizingObj, result, variables, parentKey = "") {
+  for (const key in sizingObj) {
+    if (key.startsWith("$")) {
+      // process nested keys
+      processSizingTokens(
+        sizingObj[key],
+        result,
+        variables,
+        // Fix the variable name from corder to corner
+        `${parentKey ? `${parentKey}-` : ""}${key.replace("$", "").replace("corder", "corner")}`,
+      );
+      continue;
+    }
+
+    if (sizingObj[key].$type === "number" && sizingObj[key].$value !== undefined) {
       const name = key.replace("$", "");
-      const value = resolveReference(spacingObj[key].$value, variables);
-      const cssVarName = `--spacing-${name}`;
+      const value = sizingObj[key].$value;
+      const tokenKey = parentKey || key;
+      const jsTokenKey = camelCase(tokenKey.replace("$", ""));
+      const cssVarName = `--${tokenKey}-${name}`;
 
-      // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
+      let resolvedValue;
+      if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
+        const reference = value.substring(1, value.length - 1);
+        const parts = reference.split(".");
 
-      // Add to JavaScript tokens
-      if (!result.jsTokens.spacing) {
-        result.jsTokens.spacing = {};
+        // If it's a reference to a primitive spacing value, directly use the corresponding CSS variable
+        if (parts[0] === "@primitives") {
+          const collectionKey = parts[1].replace("$", "");
+          const valueKey = parts[2].replace("$", "");
+          resolvedValue = `var(--${collectionKey}-${valueKey})`;
+          result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
+        } else {
+          // Otherwise, try to resolve the value normally
+          resolvedValue = resolveReference(value, variables);
+          result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
+        }
+      } else {
+        // Not a reference, use directly
+        resolvedValue = value;
+        result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
       }
 
-      result.jsTokens.spacing[name] = `var(${cssVarName})`;
+      // Add to JavaScript tokens
+      if (!result.jsTokens[jsTokenKey]) {
+        result.jsTokens[jsTokenKey] = {};
+      }
+
+      result.jsTokens[jsTokenKey][name] = `var(${cssVarName})`;
     }
   }
 }
@@ -382,22 +412,54 @@ function processFontFamilyTokens(fontObj, result) {
  * @param {Object} fontSizeObj - The font size object from typography
  * @param {Object} result - The result object to populate
  * @param {Object} variables - The variables object for reference resolution
+ * @param {String} parentKey - The parent key for nested tokens
  */
-function processFontSizeTokens(fontSizeObj, result, variables) {
+function processFontSizeTokens(fontSizeObj, result, variables, parentKey = "font-size") {
   for (const key in fontSizeObj) {
+    if (key.startsWith("$")) {
+      // process nested keys
+      processFontSizeTokens(
+        fontSizeObj[key],
+        result,
+        variables,
+        `${parentKey ? `${parentKey}-` : ""}${key.replace("$", "")}`,
+      );
+      continue;
+    }
+
     if (fontSizeObj[key].$type === "number" && fontSizeObj[key].$value !== undefined) {
       const name = key.replace("$", "");
-      const value = resolveReference(fontSizeObj[key].$value, variables);
-      const cssVarName = `--font-size-${name}`;
+      const value = fontSizeObj[key].$value;
+      const cssVarName = `--${parentKey}-${name}`;
 
-      // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
+      let resolvedValue;
+      if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
+        const reference = value.substring(1, value.length - 1);
+        const parts = reference.replace("$typography.", "").split(".");
+
+        // If it's a reference to a primitive spacing value, directly use the corresponding CSS variable
+        if (parts[0] === "@primitives") {
+          const collectionKey = parts[1].replace("$", "");
+          const valueKey = parts[2].replace("$", "");
+          resolvedValue = `var(--${collectionKey}-${valueKey})`;
+          result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
+        } else {
+          // Otherwise, try to resolve the value normally
+          resolvedValue = resolveReference(value, variables);
+          result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
+        }
+      } else {
+        // Not a reference, use directly
+        resolvedValue = value;
+        result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
+      }
 
       // Add to JavaScript tokens
       if (!result.jsTokens.typography.fontSize) {
         result.jsTokens.typography.fontSize = {};
       }
-      result.jsTokens.typography.fontSize[name] = `var(${cssVarName})`;
+      result.jsTokens.typography.fontSize[`${parentKey ? `${parentKey.replace("font-size-", "")}-` : ""}${name}`] =
+        `var(${cssVarName})`;
     }
   }
 }
@@ -473,52 +535,6 @@ function processLetterSpacingTokens(letterSpacingObj, result, variables) {
         result.jsTokens.typography.letterSpacing = {};
       }
       result.jsTokens.typography.letterSpacing[name] = `var(${cssVarName})`;
-    }
-  }
-}
-
-/**
- * Process corner radius tokens (correcting 'corder-radius' to 'corner-radius')
- * @param {Object} cornerRadiusObj - The corner radius object from sizing
- * @param {Object} result - The result object to populate
- * @param {Object} variables - The variables object for reference resolution
- */
-function processCornerRadiusTokens(cornerRadiusObj, result, variables) {
-  for (const key in cornerRadiusObj) {
-    if (cornerRadiusObj[key].$type === "number" && cornerRadiusObj[key].$value !== undefined) {
-      const name = key.replace("$", "");
-      const refValue = cornerRadiusObj[key].$value;
-      // Fix the variable name from corder to corner
-      const cssVarName = `--corner-radius-${name}`;
-
-      // For corner radius tokens, we need to handle the special case of it referencing spacing values
-      let resolvedValue;
-      if (typeof refValue === "string" && refValue.startsWith("{") && refValue.endsWith("}")) {
-        const reference = refValue.substring(1, refValue.length - 1);
-        const parts = reference.split(".");
-
-        // If it's a reference to a primitive spacing value, directly use the corresponding CSS variable
-        if (parts[0] === "@primitives") {
-          const collectionKey = parts[1].replace("$", "");
-          const valueKey = parts[2].replace("$", "");
-          resolvedValue = `var(--${collectionKey}-${valueKey})`;
-          result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
-        } else {
-          // Otherwise, try to resolve the value normally
-          resolvedValue = resolveReference(refValue, variables);
-          result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
-        }
-      } else {
-        // Not a reference, use directly
-        resolvedValue = refValue;
-        result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
-      }
-
-      // Add to JavaScript tokens
-      if (!result.jsTokens.cornerRadius) {
-        result.jsTokens.cornerRadius = {};
-      }
-      result.jsTokens.cornerRadius[name] = `var(${cssVarName})`;
     }
   }
 }
