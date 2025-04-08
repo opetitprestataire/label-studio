@@ -285,7 +285,7 @@ const TokenCatalog = () => {
           placeholder="Search tokens by name or value..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 rounded border border-neutral-border bg-neutral-background text-neutral-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-focus-outline focus-visible:border-primary-focus-outline w-full text-sm mb-4"
+          className="p-2 rounded border border-neutral-border bg-neutral-background text-neutral-content focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-focus-outline w-full text-sm mb-4"
         />
 
         <div className="flex gap-2 mb-4 flex-wrap">
