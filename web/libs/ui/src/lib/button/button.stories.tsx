@@ -64,10 +64,14 @@ export const IconButton: Story = {
 };
 
 export const StyledLink: Story = {
+  args: {
+    children: "Link with button style",
+  },
   render({ children }) {
     return (
-      <a href="/?path=/story/ui-button--styled-link" className={buttonVariant({ variant: "primary" })}>
-        <span className="flex-1 px-tight">Link with button styles</span>
+      // biome-ignore lint: We don't need a real link here
+      <a href="#" className={buttonVariant({ variant: "primary" })}>
+        <span className="flex-1 px-tight">{children}</span>
       </a>
     );
   },
