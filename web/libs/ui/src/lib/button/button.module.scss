@@ -43,7 +43,10 @@
     box-shadow: 0 0 0 4px var(--focus-outline);
   }
 
-  &:disabled, &:disabled:hover{
+  &:disabled,
+  &:disabled:hover,
+  &:disabled:focus,
+  &:disabled:active {
     --background-color-hover: var(--color-neutral-surface);
     --background-color-active: var(--color-neutral-surface);
     --border-color-hover: var(--color-neutral-border);
@@ -156,21 +159,18 @@
 
 /// VARIANT LOOK
 .look-outlined {
-  text-shadow: none;
+  @apply bg-transparent;
+
   box-shadow: none;
 
-  &:not(&:disabled){
-    @apply bg-transparent;
+  --background-color-hover: var(--background-color-hover-outline);
+  --background-color-active: var(--background-color-active-outline);
+  --wait-color-value: var(--wait-color-value-outline);
+  --wait-color-opacity: 40%;
 
-    --background-color-hover: var(--background-color-hover-outline);
-    --background-color-active: var(--background-color-active-outline);
-    --wait-color-value: var(--wait-color-value-outline);
-    --wait-color-opacity: 40%;
-
-    border-color: var(--border-outline);
-    text-shadow: none;
-    color: var(--text-outline);
-  }
+  border-color: var(--border-outline);
+  text-shadow: none;
+  color: var(--text-outline);
 
   &:active {
     box-shadow: inset 0 1px 0 rgb(0 0 0 / 10%);
