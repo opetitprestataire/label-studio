@@ -188,7 +188,7 @@ task_create_response_scheme = {
 
             ```bash
             curl -H 'Authorization: Token abc123' \\
-            -X POST '{host}/api/projects/1/import' -F ‘file=@path/to/my_file.csv’
+            -X POST '{host}/api/projects/1/import' -F 'file=@path/to/my_file.csv'
             ```
 
             ### 3\. **POST with URL**
@@ -784,22 +784,77 @@ class PresignAPIMixin:
         if resolved.get('presign_ttl'):
             max_age = resolved.get('presign_ttl') * 60
 
-        # Proxy to presigned url
-        response = HttpResponseRedirect(redirect_to=url, status=status.HTTP_303_SEE_OTHER)
-        response.headers['Cache-Control'] = f'no-store, max-age={max_age}'
-
-        return response
+        # Get the storage object to check if proxy_data is enabled (when presign=False)
+        storage = instance.storage if hasattr(instance, 'storage') else None
+        
+        if storage and hasattr(storage, 'presign') and not storage.presign:
+            return self.proxy_data_from_storage(request, url, storage)
+        else:
+            # Proxy to presigned url
+            response = HttpResponseRedirect(redirect_to=url, status=status.HTTP_303_SEE_OTHER)
+            response.headers['Cache-Control'] = f'no-store, max-age={max_age}'
+            return response
+            
+    def proxy_data_from_storage(self, request, url, storage):
+        """Proxy the data through Label Studio instead of redirecting"""
+        try:
+            # Handle data URIs (data:image/jpeg;base64,...)
+            if url.startswith('data:'):
+                import io
+                import base64
+                
+                # Parse the data URI
+                content_type = url.split(';')[0].split(':')[1]
+                base64_data = url.split(',')[1]
+                
+                # Decode the base64 data
+                binary_data = base64.b64decode(base64_data)
+                
+                # Create a file-like object
+                data_file = io.BytesIO(binary_data)
+                
+                # Return the response
+                return RangedFileResponse(request, data_file, content_type=content_type)
+            
+            # Handle regular HTTP URLs
+            import requests
+            
+            response = requests.get(url, stream=True)
+            
+            if response.status_code != 200:
+                return Response(status=response.status_code)
+            
+            # Determine content type
+            content_type = response.headers.get('Content-Type')
+            if not content_type:
+                content_type, _ = mimetypes.guess_type(url)
+                content_type = content_type or 'application/octet-stream'
+                
+            # Create a streaming response
+            return RangedFileResponse(
+                request,
+                response.raw,
+                content_type=content_type
+            )
+            
+        except Exception as e:
+            logger.error(f"Error proxying data from storage: {e}")
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class TaskPresignStorageData(PresignAPIMixin, APIView):
-    """A file proxy to presign storage urls at the task level."""
+    """A file proxy to presign storage urls at the task level.
+    
+    If the storage has presign=False, it will proxy the data through Label Studio
+    instead of redirecting to presigned URLs.
+    """
 
     swagger_schema = None
     http_method_names = ['get']
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-        """Get the presigned url for a given fileuri"""
+        """Get the presigned url for a given fileuri or proxy data through Label Studio"""
         request = self.request
         task_id = kwargs.get('task_id')
         fileuri = request.GET.get('fileuri')
@@ -816,14 +871,18 @@ class TaskPresignStorageData(PresignAPIMixin, APIView):
 
 
 class ProjectPresignStorageData(PresignAPIMixin, APIView):
-    """A file proxy to presign storage urls at the project level."""
+    """A file proxy to presign storage urls at the project level.
+    
+    If the storage has presign=False, it will proxy the data through Label Studio
+    instead of redirecting to presigned URLs.
+    """
 
     swagger_schema = None
     http_method_names = ['get']
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-        """Get the presigned url for a given fileuri"""
+        """Get the presigned url for a given fileuri or proxy data through Label Studio"""
         request = self.request
         project_id = kwargs.get('project_id')
         fileuri = request.GET.get('fileuri')
