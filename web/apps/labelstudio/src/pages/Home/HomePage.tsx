@@ -1,5 +1,5 @@
 import type { Page } from "../types/Page";
-import { Button } from "@humansignal/shad/components/ui/button";
+import { Button } from "@humansignal/ui";
 import { SimpleCard, Spinner } from "@humansignal/ui";
 import { IconExternal, IconFolderAdd, IconHumanSignal, IconUserAdd, IconFolderOpen } from "@humansignal/icons";
 import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
@@ -93,10 +93,10 @@ export const HomePage: Page = () => {
                 <Button
                   key={action.title}
                   className="flex-grow-0 text-16/24 text-primary-content text-left justify-start min-w-[250px] [&_svg]:w-6 [&_svg]:h-6"
-                  variant="lsOutline"
+                  look="outlined"
                   onClick={handleActions(action.type)}
+                  leading={<action.icon className="text-primary-icon" />}
                 >
-                  <action.icon className="text-primary-icon" />
                   {action.title}
                 </Button>
               );
@@ -121,7 +121,7 @@ export const HomePage: Page = () => {
               </div>
             ) : isError ? (
               <div className="h-64 flex justify-center items-center">can't load projects</div>
-            ) : isSuccess && data.results.length === 0 ? (
+            ) : isSuccess && data && data.results.length === 0 ? (
               <div className="flex flex-col justify-center items-center border border-primary-border-subtle bg-primary-emphasis-subtle rounded-lg h-64">
                 <div
                   className={
@@ -136,7 +136,7 @@ export const HomePage: Page = () => {
                   Create Project
                 </Button>
               </div>
-            ) : isSuccess && data.results.length > 0 ? (
+            ) : isSuccess && data && data.results.length > 0 ? (
               <div className="flex flex-col gap-1">
                 {data.results.map((project) => {
                   return <ProjectSimpleCard key={project.id} project={project} />;
