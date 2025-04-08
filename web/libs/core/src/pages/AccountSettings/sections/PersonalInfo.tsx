@@ -12,7 +12,7 @@ import { useAtomValue } from "jotai";
  * each one of these eventually has to be migrated to core or ui
  */
 import { Input } from "apps/labelstudio/src/components/Form/Elements";
-import { Button } from "apps/labelstudio/src/components/Button/Button";
+import { Button } from "@humansignal/ui";
 
 const updateUserAvatarAtom = atomWithMutation(() => ({
   mutationKey: ["update-user"],
@@ -116,7 +116,7 @@ export const PersonalInfo = () => {
             />
           </form>
           {user?.avatar && (
-            <Button type="submit" look="danger" onClick={deleteUserAvatar}>
+            <Button type="submit" variant="negative" look="outlined" size="medium" onClick={deleteUserAvatar}>
               Delete
             </Button>
           )}

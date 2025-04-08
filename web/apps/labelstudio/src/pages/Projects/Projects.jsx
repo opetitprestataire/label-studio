@@ -160,7 +160,7 @@ ProjectsPage.routes = ({ store }) => [
 ProjectsPage.context = ({ openModal, showButton }) => {
   if (!showButton) return null;
   return (
-    <Button onClick={openModal} look="primary" size="compact">
+    <Button onClick={openModal} look="primary" size="small">
       Create
     </Button>
   );

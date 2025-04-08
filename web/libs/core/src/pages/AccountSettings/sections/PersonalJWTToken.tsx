@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { useCopyText } from "../../../lib/hooks/useCopyText";
+import { Button } from "@humansignal/ui";
 import styles from "./PersonalJWTToken.module.scss";
 
 /**
@@ -14,7 +15,6 @@ import styles from "./PersonalJWTToken.module.scss";
  */
 import { API } from "apps/labelstudio/src/providers/ApiProvider";
 import { modal, confirm } from "apps/labelstudio/src/components/Modal/Modal";
-import { Button } from "apps/labelstudio/src/components/Button/Button";
 import { Input, Label } from "apps/labelstudio/src/components/Form/Elements";
 import { Tooltip } from "@humansignal/ui";
 
@@ -159,7 +159,7 @@ export function PersonalJWTToken() {
                       </div>
                       <div className={styles.tokenString}>{token.token}</div>
                     </div>
-                    <Button look="destructive" onClick={() => revoke(token.token)}>
+                    <Button variant="negative" look="outlined" size="medium" onClick={() => revoke(token.token)}>
                       Revoke
                     </Button>
                   </div>
