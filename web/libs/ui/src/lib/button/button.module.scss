@@ -24,6 +24,8 @@
 
   svg {
     @apply w-6 h-6;
+
+    aspect-ratio: 1;
   }
 
   &:hover {
@@ -43,6 +45,7 @@
 
   &:disabled, &:disabled:hover{
     --background-color-hover: var(--color-neutral-surface);
+    --background-color-active: var(--color-neutral-surface);
     --border-color-hover: var(--color-neutral-border);
     --background-color: var(--color-neutral-surface);
     --border-color: var(--color-neutral-border);
@@ -191,6 +194,31 @@
 
   &:focus{
     border-color: var(--border-color-hover);
+  }
+}
+
+/// SIZES
+.size-small {
+  @apply p-tighter text-14 h-[32px];
+
+  & > span {
+    @apply px-tighter
+  }
+
+  & > svg {
+    @apply h-4;
+  }
+}
+
+.size-smaller {
+  @apply p-tightest text-12 h-[24px];
+
+  & > span {
+    @apply px-tightest
+  }
+
+  & > svg {
+    @apply h-4;
   }
 }
 
