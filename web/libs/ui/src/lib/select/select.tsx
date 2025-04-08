@@ -83,9 +83,11 @@ export const Select = forwardRef(
         } else {
           setValue(val);
         }
-        props?.onChange?.(val);
         !multiple && setIsOpen(false);
-        ref?.current?.dispatchEvent?.(new Event("change", { target: { value: val } }));
+        setTimeout(() => {
+          const changeEvent = new Event("change", { bubbles: true, target: ref?.current, currentTarget: ref?.current });
+          ref?.current?.dispatchEvent?.(changeEvent);
+        }, 0);
       },
       [props?.onChange, multiple, disabled],
     );
@@ -130,6 +132,10 @@ export const Select = forwardRef(
       },
       [setQuery, onSearch],
     );
+
+    const selectChangeHandler = useCallback(() => {
+      props?.onChange?.(value);
+    }, [value, props?.onChange]);
 
     const combobox = (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -263,17 +269,17 @@ export const Select = forwardRef(
             </Command>
           )}
         </PopoverContent>
-        <input
+        <select
           name={props?.name}
           value={value ?? ""}
           ref={ref}
           disabled={disabled}
           className={styles.valueInput}
-          onChange={() => {
-            console.log("value changed", value);
-            props?.onChange?.(value);
-          }}
-        />
+          onChange={selectChangeHandler}
+          onSelect={selectChangeHandler}
+        >
+          <option value={value} selected />
+        </select>
       </Popover>
     );
 
