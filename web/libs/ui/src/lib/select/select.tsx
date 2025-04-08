@@ -278,7 +278,9 @@ export const Select = forwardRef(
           onChange={selectChangeHandler}
           onSelect={selectChangeHandler}
         >
-          <option value={value} selected />
+          {selectedOptions?.map((option, index) => (
+            <option key={`${option?.value}_${index}`} value={option?.value ?? option} selected />
+          ))}
         </select>
       </Popover>
     );
