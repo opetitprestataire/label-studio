@@ -6,6 +6,7 @@ cat: validation
 order: 120
 meta_title: Spellcheck
 meta_description: Detect misspelled words in the template text areas
+tier: enterprise
 ---
 
 <img src="/images/plugins/spellcheck-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />

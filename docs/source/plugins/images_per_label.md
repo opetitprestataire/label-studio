@@ -6,6 +6,7 @@ cat: visualization
 order: 220
 meta_title: Dynamic Image Swap
 meta_description: Changes active image based on conditions
+tier: enterprise
 ---
 
 <img src="/images/plugins/dynamic-images-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />

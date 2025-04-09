@@ -6,6 +6,7 @@ cat: visualization
 order: 210
 meta_title: Markdown to HTML
 meta_description: Converts markdown to HTML format
+tier: enterprise
 ---
 
 <img src="/images/plugins/markdown-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />

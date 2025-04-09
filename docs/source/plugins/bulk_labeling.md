@@ -6,6 +6,7 @@ cat: workflow
 order: 10
 meta_title: Bulk Labeling for Text Spans
 meta_description: Assigns labels to all occurrences of the selected text at once
+tier: enterprise
 ---
 
 <img src="/images/plugins/bulk-labeling-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />

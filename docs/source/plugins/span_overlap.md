@@ -6,6 +6,7 @@ cat: validation
 order: 110
 meta_title: Text span overlap validation
 meta_description: Prevents overlap of text spans
+tier: enterprise
 ---
 
 <img src="/images/plugins/ner-overlap-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />

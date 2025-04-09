@@ -6,6 +6,7 @@ cat: validation
 order: 100
 meta_title: Validate JSON
 meta_description: Checks that the introduced text is a valid JSON
+tier: enterprise
 ---
 
 <img src="/images/plugins/json-validate-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />

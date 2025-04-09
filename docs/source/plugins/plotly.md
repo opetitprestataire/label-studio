@@ -6,6 +6,7 @@ cat: visualization
 order: 200
 meta_title: Data Visualization with Plotly
 meta_description: Display a Plotly chart to annotators
+tier: enterprise
 ---
 
 <img src="/images/plugins/plotly-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />

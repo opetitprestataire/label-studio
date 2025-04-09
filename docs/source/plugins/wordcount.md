@@ -6,6 +6,7 @@ cat: validation
 order: 130
 meta_title: Text Area Word Count
 meta_description: Validates the length of a text area based on its word count
+tier: enterprise
 ---
 
 <img src="/images/plugins/wordcount-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />

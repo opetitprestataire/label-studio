@@ -6,6 +6,7 @@ cat: workflow
 order: 20
 meta_title: Spam and Bot Detection
 meta_description: Pauses an annotator if bot behavior in detected
+tier: enterprise
 ---
 
 <img src="/images/plugins/pause-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />

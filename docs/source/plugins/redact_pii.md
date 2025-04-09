@@ -6,6 +6,7 @@ cat: workflow
 order: 30
 meta_title: Redact Annotator PII
 meta_description: Anonymize the annotator to reduce bias
+tier: enterprise
 ---
 
 <img src="/images/plugins/redact-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
