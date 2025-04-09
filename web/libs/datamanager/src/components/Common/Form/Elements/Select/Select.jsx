@@ -18,7 +18,7 @@ const Select = ({
   ...props
 }) => {
   const rootClass = cn("form-select");
-  const [value, setValue] = useValueTracker(props.value, defaultValue ?? options[0]?.value ?? options[0]);
+  const [value, setValue] = useValueTracker(props.value, defaultValue);
 
   const selectWrapper = (
     <FormField
