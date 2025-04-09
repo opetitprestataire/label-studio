@@ -3,7 +3,7 @@ title: Spam and Bot Detection
 type: plugins
 category: Workflow
 cat: workflow
-order: 703
+order: 20
 meta_title: Spam and Bot Detection
 meta_description: Pauses an annotator if bot behavior in detected
 ---

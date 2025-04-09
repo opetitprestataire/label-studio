@@ -3,7 +3,7 @@ title: Bulk Labeling for Text Spans
 type: plugins
 category: Workflow
 cat: workflow
-order: 703
+order: 10
 meta_title: Bulk Labeling for Text Spans
 meta_description: Assigns labels to all occurrences of the selected text at once
 ---

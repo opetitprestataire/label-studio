@@ -3,7 +3,7 @@ title: Text Span Overlap Validation
 type: plugins
 category: Validation
 cat: validation
-order: 220
+order: 110
 meta_title: Text span overlap validation
 meta_description: Prevents overlap of text spans
 ---

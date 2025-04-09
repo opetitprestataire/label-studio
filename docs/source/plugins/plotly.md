@@ -3,7 +3,7 @@ title: Data Visualization with Plotly
 type: plugins
 category: Visualization
 cat: visualization
-order: 703
+order: 200
 meta_title: Data Visualization with Plotly
 meta_description: Display a Plotly chart to annotators
 ---
@@ -55,7 +55,6 @@ For example:
 * [View](/tags/view.html)
 * [Text](/tags/text.html)
 * [Choices](/tags/choices.html)
-* [Choice](/tags/choice.html)
 
 ## Data
 

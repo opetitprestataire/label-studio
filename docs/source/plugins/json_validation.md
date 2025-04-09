@@ -3,7 +3,7 @@ title: Validate JSON
 type: plugins
 category: Validation
 cat: validation
-order: 703
+order: 100
 meta_title: Validate JSON
 meta_description: Checks that the introduced text is a valid JSON
 ---

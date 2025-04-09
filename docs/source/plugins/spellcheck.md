@@ -3,7 +3,7 @@ title: Spellcheck
 type: plugins
 category: Validation
 cat: validation
-order: 210
+order: 120
 meta_title: Spellcheck
 meta_description: Detect misspelled words in the template text areas
 ---
