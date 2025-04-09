@@ -29,7 +29,7 @@ if (window.Plotly && data) {
 
 **Related LSI instance methods:**
 
-* [import(url, integrity)](/guide/scripts#import-url-integrity)
+* [import(url, integrity)](/guide/plugins#import-url-integrity)
 
 
 ## Labeling config

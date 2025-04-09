@@ -55,8 +55,8 @@ LSI.on('beforeSaveAnnotation', async (store, annotation) => {
 
 **Related LSI instance methods:**
 
-* [import(url, integrity)](/guide/scripts#import-url-integrity)
-* [on(eventName, handler)](/guide/scripts#on-eventName-handler)
+* [import(url, integrity)](/guide/plugins#import-url-integrity)
+* [on(eventName, handler)](/guide/plugins#on-eventName-handler)
   
 **Related frontend events:**
 

@@ -184,7 +184,7 @@ function pause(verbose_reason) {
 
 **Related LSI instance methods:**
 
-* [on(eventName, handler)](/guide/scripts#on-eventName-handler)
+* [on(eventName, handler)](/guide/plugins#on-eventName-handler)
   
 **Related frontend events:**
 
