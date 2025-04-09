@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Filter } from "../Filter";
 
@@ -133,20 +133,26 @@ describe("Filter", () => {
     await act(async () => {
       fireEvent.click(fieldDropdown);
     });
+    await waitFor(() => {
+      expect(screen.getByText("not contains")).toBeDefined();
+    });
     await act(async () => {
       fireEvent.click(screen.getByText("not contains"));
     });
+    let filterInput;
+    await waitFor(() => {
+      filterInput = filter.getByTestId("filter-input");
+      expect(filterInput).toBeDefined();
+      expect(fieldDropdown.textContent).toBe("Annotation results");
+      expect(operationDropdown.textContent).toBe("not contains");
+    });
 
-    const filterInput = filter.getByTestId("filter-input");
-
-    expect(filterInput).toBeDefined();
-
-    expect(fieldDropdown.textContent).toBe("Annotation results");
-    expect(operationDropdown.textContent).toBe("not contains");
-
-    fireEvent.change(filterInput, { target: { value: "Plane" } });
-
-    expect(filteredContent).toStrictEqual([{ labelName: "Car" }, { labelName: "AirCar" }]);
+    await act(async () => {
+      fireEvent.change(filterInput, { target: { value: "Plane" } });
+    });
+    await waitFor(() => {
+      expect(filteredContent).toStrictEqual([{ labelName: "Car" }, { labelName: "AirCar" }]);
+    });
   });
 
   test("Should hide dropdown filter", async () => {
