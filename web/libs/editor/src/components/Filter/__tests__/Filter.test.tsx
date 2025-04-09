@@ -1,157 +1,245 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import '@testing-library/jest-dom';
 import { Filter } from "../Filter";
-
-// Fix the ResizeObserver mock structure
-const resizeObserverMock = () => ({
-  observe: jest.fn(),
-  disconnect: jest.fn(),
-  unobserve: jest.fn(),
-});
-
-window.ResizeObserver = jest.fn().mockImplementation(resizeObserverMock);
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
 describe("Filter", () => {
   const mockOnChange = jest.fn();
-  const filterData = [{ labelName: "AirPlane" }, { labelName: "Car" }, { labelName: "AirCar" }];
-
-  const availableFilters = [
+  const filterData = [
     {
-      label: "Annotation results",
-      path: "labelName",
-      type: "String",
+      labelName: "AirPlane",
     },
     {
-      label: "Confidence score",
-      path: "score",
-      type: "Number",
+      labelName: "Car",
+    },
+    {
+      labelName: "AirCar",
     },
   ];
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   test("Validate if filter is rendering", () => {
-    render(<Filter onChange={mockOnChange} filterData={filterData} availableFilters={availableFilters} />);
+    const filter = render(
+      <Filter
+        onChange={mockOnChange}
+        filterData={filterData}
+        availableFilters={[
+          {
+            label: "Annotation results",
+            path: "labelName",
+            type: "String",
+          },
+          {
+            label: "Confidence score",
+            path: "score",
+            type: "Number",
+          },
+        ]}
+      />,
+    );
 
-    expect(screen.getByText("Filter")).toBeInTheDocument();
+    const whereText = filter.getByText("Filter");
+
+    expect(whereText).toBeDefined();
   });
 
   test("Should delete row when delete button is clicked", () => {
-    render(<Filter onChange={mockOnChange} filterData={filterData} availableFilters={availableFilters} />);
+    const filter = render(
+      <Filter
+        onChange={mockOnChange}
+        filterData={filterData}
+        availableFilters={[
+          {
+            label: "Annotation results",
+            path: "labelName",
+            type: "String",
+          },
+          {
+            label: "Confidence score",
+            path: "score",
+            type: "Number",
+          },
+        ]}
+      />,
+    );
 
-    // Open filter dropdown
-    fireEvent.click(screen.getByText("Filter"));
+    const FilterButton = filter.getByText("Filter");
 
-    // Add two filter rows
-    const addButton = screen.getByText("Add Filter");
-    fireEvent.click(addButton);
-    fireEvent.click(addButton);
+    fireEvent.click(FilterButton);
 
-    // Check and change logic selector
-    const selectBox = screen.getByTestId("logic-dropdown");
-    expect(selectBox).toHaveTextContent("And");
+    const AddButton = filter.getByText("Add Filter");
+
+    fireEvent.click(AddButton);
+    fireEvent.click(AddButton);
+
+    const selectBox = filter.getByTestId("logic-dropdown");
+
+    expect(selectBox.textContent).toBe("And");
 
     fireEvent.click(selectBox);
     fireEvent.click(screen.getByText("Or"));
-    expect(selectBox).toHaveTextContent("Or");
 
-    // Delete one row and check if only one remains
+    expect(selectBox.textContent).toBe("Or");
+
     fireEvent.click(screen.getByTestId("delete-row-1"));
-    expect(screen.getAllByTestId("filter-row")).toHaveLength(1);
+
+    expect(filter.getAllByTestId("filter-row")).toHaveLength(1);
   });
 
   test("Should filter the content", () => {
     let filteredContent: any;
 
-    render(
+    const filter = render(
       <Filter
         onChange={(value) => {
           filteredContent = value;
         }}
         filterData={filterData}
-        availableFilters={availableFilters}
+        availableFilters={[
+          {
+            label: "Annotation results",
+            path: "labelName",
+            type: "String",
+          },
+          {
+            label: "Confidence score",
+            path: "score",
+            type: "Number",
+          },
+        ]}
       />,
     );
 
-    // Open filter dropdown
-    fireEvent.click(screen.getByText("Filter"));
-    expect(screen.getByText("No filters applied")).toBeInTheDocument();
+    const FilterButton = filter.getByText("Filter");
 
-    // Add filter row
-    fireEvent.click(screen.getByText("Add Filter"));
+    fireEvent.click(FilterButton);
 
-    // Check dropdowns have correct initial values
-    const fieldDropdown = screen.getByTestId("field-dropdown");
-    const operationDropdown = screen.getByTestId("operation-dropdown");
-    expect(fieldDropdown).toHaveTextContent("Annotation results");
+    expect(screen.getByText("No filters applied")).toBeDefined();
 
-    // Select operation
+    const AddButton = filter.getByText("Add Filter");
+
+    fireEvent.click(AddButton);
+
+    const fieldDropdown = filter.getByTestId("field-dropdown");
+    const operationDropdown = filter.getByTestId("operation-dropdown");
+
     fireEvent.click(operationDropdown);
     fireEvent.click(screen.getByText("not contains"));
-    expect(operationDropdown).toHaveTextContent("not contains");
 
-    // Input filter value
-    const filterInput = screen.getByTestId("filter-input");
-    expect(filterInput).toBeInTheDocument();
+    const filterInput = filter.getByTestId("filter-input");
+
+    expect(filterInput).toBeDefined();
+
+    expect(fieldDropdown.textContent).toBe("Annotation results");
+    expect(operationDropdown.textContent).toBe("not contains");
+
     fireEvent.change(filterInput, { target: { value: "Plane" } });
 
-    // Verify filtered content
     expect(filteredContent).toStrictEqual([{ labelName: "Car" }, { labelName: "AirCar" }]);
   });
 
   test("Should hide dropdown filter", async () => {
-    render(
-      <Filter onChange={mockOnChange} filterData={filterData} animated={false} availableFilters={availableFilters} />,
+    const filter = render(
+      <Filter
+        onChange={mockOnChange}
+        filterData={filterData}
+        animated={false}
+        availableFilters={[
+          {
+            label: "Annotation results",
+            path: "labelName",
+            type: "String",
+          },
+          {
+            label: "Confidence score",
+            path: "score",
+            type: "Number",
+          },
+        ]}
+      />,
     );
 
-    // Open filter dropdown
-    const filterButton = screen.getByText("Filter");
-    fireEvent.click(filterButton);
+    const FilterButton = await filter.getByText("Filter");
 
-    // Wait for dropdown to appear
-    const dropdown = await screen.findByTestId("dropdown");
+    fireEvent.click(FilterButton);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const dropdown = await filter.getByTestId("dropdown");
+
     expect(dropdown.classList.contains("dm-visible")).toBe(true);
 
-    // Add filter and close dropdown
-    fireEvent.click(screen.getByText("Add Filter"));
-    fireEvent.click(filterButton);
+    const AddButton = await filter.getByText("Add Filter");
 
-    // Wait for dropdown to disappear
-    await waitFor(() => {
-      expect(dropdown.classList.contains("dm-visible")).toBe(false);
-    });
+    fireEvent.click(AddButton);
+
+    fireEvent.click(FilterButton);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(dropdown.classList.contains("dm-before-appear")).toBe(false);
+    expect(dropdown.classList.contains("dm-visible")).toBe(false);
     expect(dropdown.classList.contains("dm-before-disappear")).toBe(false);
   });
 
   test("Should show filter length badge", () => {
-    render(<Filter onChange={mockOnChange} filterData={filterData} availableFilters={availableFilters} />);
+    const filter = render(
+      <Filter
+        onChange={mockOnChange}
+        filterData={filterData}
+        availableFilters={[
+          {
+            label: "Annotation results",
+            path: "labelName",
+            type: "String",
+          },
+          {
+            label: "Confidence score",
+            path: "score",
+            type: "Number",
+          },
+        ]}
+      />,
+    );
 
-    // Open filter dropdown
-    fireEvent.click(screen.getByText("Filter"));
-    expect(screen.getByText("No filters applied")).toBeInTheDocument();
+    const FilterButton = filter.getByText("Filter");
 
-    // Add two filter rows
-    const addButton = screen.getByText("Add Filter");
-    fireEvent.click(addButton);
-    fireEvent.click(addButton);
+    fireEvent.click(FilterButton);
 
-    // Check badge shows correct count
-    const filterLength = screen.getByTestId("filter-length");
-    expect(filterLength).toHaveTextContent("2");
+    expect(screen.getByText("No filters applied")).toBeDefined();
+
+    const AddButton = filter.getByText("Add Filter");
+
+    fireEvent.click(AddButton);
+    fireEvent.click(AddButton);
+
+    const filterLength = filter.getByTestId("filter-length");
+
+    expect(filterLength.textContent).toBe("2");
   });
 
-  test("Filter button should be selected when active", () => {
-    render(<Filter onChange={mockOnChange} filterData={filterData} availableFilters={availableFilters} />);
+  test("Filter button should be selected", () => {
+    const filter = render(
+      <Filter
+        onChange={mockOnChange}
+        filterData={filterData}
+        availableFilters={[
+          {
+            label: "Annotation results",
+            path: "labelName",
+            type: "String",
+          },
+          {
+            label: "Confidence score",
+            path: "score",
+            type: "Number",
+          },
+        ]}
+      />,
+    );
 
-    // Click filter button
-    const filterButton = screen.getByTestId("filter-button");
-    fireEvent.click(filterButton);
+    const FilterButton = filter.getByTestId("filter-button");
 
-    // Check active class is applied
-    expect(filterButton.classList.contains("dm-filter-button_active")).toBe(true);
+    fireEvent.click(FilterButton);
+
+    expect(FilterButton.classList.contains("dm-filter-button_active")).toBe(true);
   });
 });
