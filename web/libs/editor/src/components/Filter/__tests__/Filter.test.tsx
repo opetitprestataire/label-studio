@@ -1,11 +1,11 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Filter } from "../Filter";
 
+// Fix the ResizeObserver mock structure
 const resizeObserverMock = () => ({
-  observe: () => null,
-  disconnect: () => null,
-  unobserve: () => null,
-  scrollIntoView: () => null,
+  observe: jest.fn(),
+  disconnect: jest.fn(),
+  unobserve: jest.fn(),
 });
 
 window.ResizeObserver = jest.fn().mockImplementation(resizeObserverMock);
@@ -13,242 +13,145 @@ window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
 describe("Filter", () => {
   const mockOnChange = jest.fn();
-  const filterData = [
+  const filterData = [{ labelName: "AirPlane" }, { labelName: "Car" }, { labelName: "AirCar" }];
+
+  const availableFilters = [
     {
-      labelName: "AirPlane",
+      label: "Annotation results",
+      path: "labelName",
+      type: "String",
     },
     {
-      labelName: "Car",
-    },
-    {
-      labelName: "AirCar",
+      label: "Confidence score",
+      path: "score",
+      type: "Number",
     },
   ];
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test("Validate if filter is rendering", () => {
-    const filter = render(
-      <Filter
-        onChange={mockOnChange}
-        filterData={filterData}
-        availableFilters={[
-          {
-            label: "Annotation results",
-            path: "labelName",
-            type: "String",
-          },
-          {
-            label: "Confidence score",
-            path: "score",
-            type: "Number",
-          },
-        ]}
-      />,
-    );
+    render(<Filter onChange={mockOnChange} filterData={filterData} availableFilters={availableFilters} />);
 
-    const whereText = filter.getByText("Filter");
-
-    expect(whereText).toBeDefined();
+    expect(screen.getByText("Filter")).toBeInTheDocument();
   });
 
   test("Should delete row when delete button is clicked", () => {
-    const filter = render(
-      <Filter
-        onChange={mockOnChange}
-        filterData={filterData}
-        availableFilters={[
-          {
-            label: "Annotation results",
-            path: "labelName",
-            type: "String",
-          },
-          {
-            label: "Confidence score",
-            path: "score",
-            type: "Number",
-          },
-        ]}
-      />,
-    );
+    render(<Filter onChange={mockOnChange} filterData={filterData} availableFilters={availableFilters} />);
 
-    const FilterButton = filter.getByText("Filter");
+    // Open filter dropdown
+    fireEvent.click(screen.getByText("Filter"));
 
-    fireEvent.click(FilterButton);
+    // Add two filter rows
+    const addButton = screen.getByText("Add Filter");
+    fireEvent.click(addButton);
+    fireEvent.click(addButton);
 
-    const AddButton = filter.getByText("Add Filter");
-
-    fireEvent.click(AddButton);
-    fireEvent.click(AddButton);
-
-    const selectBox = filter.getByTestId("logic-dropdown");
-
-    expect(selectBox.textContent).toBe("And");
+    // Check and change logic selector
+    const selectBox = screen.getByTestId("logic-dropdown");
+    expect(selectBox).toHaveTextContent("And");
 
     fireEvent.click(selectBox);
     fireEvent.click(screen.getByText("Or"));
+    expect(selectBox).toHaveTextContent("Or");
 
-    expect(selectBox.textContent).toBe("Or");
-
+    // Delete one row and check if only one remains
     fireEvent.click(screen.getByTestId("delete-row-1"));
-
-    expect(filter.getAllByTestId("filter-row")).toHaveLength(1);
+    expect(screen.getAllByTestId("filter-row")).toHaveLength(1);
   });
 
   test("Should filter the content", () => {
     let filteredContent: any;
 
-    const filter = render(
+    render(
       <Filter
         onChange={(value) => {
           filteredContent = value;
         }}
         filterData={filterData}
-        availableFilters={[
-          {
-            label: "Annotation results",
-            path: "labelName",
-            type: "String",
-          },
-          {
-            label: "Confidence score",
-            path: "score",
-            type: "Number",
-          },
-        ]}
+        availableFilters={availableFilters}
       />,
     );
 
-    const FilterButton = filter.getByText("Filter");
+    // Open filter dropdown
+    fireEvent.click(screen.getByText("Filter"));
+    expect(screen.getByText("No filters applied")).toBeInTheDocument();
 
-    fireEvent.click(FilterButton);
+    // Add filter row
+    fireEvent.click(screen.getByText("Add Filter"));
 
-    expect(screen.getByText("No filters applied")).toBeDefined();
+    // Check dropdowns have correct initial values
+    const fieldDropdown = screen.getByTestId("field-dropdown");
+    const operationDropdown = screen.getByTestId("operation-dropdown");
+    expect(fieldDropdown).toHaveTextContent("Annotation results");
 
-    const AddButton = filter.getByText("Add Filter");
-
-    fireEvent.click(AddButton);
-
-    const fieldDropdown = filter.getByTestId("field-dropdown");
-    const operationDropdown = filter.getByTestId("operation-dropdown");
-
+    // Select operation
     fireEvent.click(operationDropdown);
     fireEvent.click(screen.getByText("not contains"));
+    expect(operationDropdown).toHaveTextContent("not contains");
 
-    const filterInput = filter.getByTestId("filter-input");
-
-    expect(filterInput).toBeDefined();
-
-    expect(fieldDropdown.textContent).toBe("Annotation results");
-    expect(operationDropdown.textContent).toBe("not contains");
-
+    // Input filter value
+    const filterInput = screen.getByTestId("filter-input");
+    expect(filterInput).toBeInTheDocument();
     fireEvent.change(filterInput, { target: { value: "Plane" } });
 
+    // Verify filtered content
     expect(filteredContent).toStrictEqual([{ labelName: "Car" }, { labelName: "AirCar" }]);
   });
 
   test("Should hide dropdown filter", async () => {
-    const filter = render(
-      <Filter
-        onChange={mockOnChange}
-        filterData={filterData}
-        animated={false}
-        availableFilters={[
-          {
-            label: "Annotation results",
-            path: "labelName",
-            type: "String",
-          },
-          {
-            label: "Confidence score",
-            path: "score",
-            type: "Number",
-          },
-        ]}
-      />,
+    render(
+      <Filter onChange={mockOnChange} filterData={filterData} animated={false} availableFilters={availableFilters} />,
     );
 
-    const FilterButton = await filter.getByText("Filter");
+    // Open filter dropdown
+    const filterButton = screen.getByText("Filter");
+    fireEvent.click(filterButton);
 
-    fireEvent.click(FilterButton);
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    const dropdown = await filter.getByTestId("dropdown");
-
+    // Wait for dropdown to appear
+    const dropdown = await screen.findByTestId("dropdown");
     expect(dropdown.classList.contains("dm-visible")).toBe(true);
 
-    const AddButton = await filter.getByText("Add Filter");
+    // Add filter and close dropdown
+    fireEvent.click(screen.getByText("Add Filter"));
+    fireEvent.click(filterButton);
 
-    fireEvent.click(AddButton);
-
-    fireEvent.click(FilterButton);
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // Wait for dropdown to disappear
+    await waitFor(() => {
+      expect(dropdown.classList.contains("dm-visible")).toBe(false);
+    });
 
     expect(dropdown.classList.contains("dm-before-appear")).toBe(false);
-    expect(dropdown.classList.contains("dm-visible")).toBe(false);
     expect(dropdown.classList.contains("dm-before-disappear")).toBe(false);
   });
 
   test("Should show filter length badge", () => {
-    const filter = render(
-      <Filter
-        onChange={mockOnChange}
-        filterData={filterData}
-        availableFilters={[
-          {
-            label: "Annotation results",
-            path: "labelName",
-            type: "String",
-          },
-          {
-            label: "Confidence score",
-            path: "score",
-            type: "Number",
-          },
-        ]}
-      />,
-    );
+    render(<Filter onChange={mockOnChange} filterData={filterData} availableFilters={availableFilters} />);
 
-    const FilterButton = filter.getByText("Filter");
+    // Open filter dropdown
+    fireEvent.click(screen.getByText("Filter"));
+    expect(screen.getByText("No filters applied")).toBeInTheDocument();
 
-    fireEvent.click(FilterButton);
+    // Add two filter rows
+    const addButton = screen.getByText("Add Filter");
+    fireEvent.click(addButton);
+    fireEvent.click(addButton);
 
-    expect(screen.getByText("No filters applied")).toBeDefined();
-
-    const AddButton = filter.getByText("Add Filter");
-
-    fireEvent.click(AddButton);
-    fireEvent.click(AddButton);
-
-    const filterLength = filter.getByTestId("filter-length");
-
-    expect(filterLength.textContent).toBe("2");
+    // Check badge shows correct count
+    const filterLength = screen.getByTestId("filter-length");
+    expect(filterLength).toHaveTextContent("2");
   });
 
-  test("Filter button should be selected", () => {
-    const filter = render(
-      <Filter
-        onChange={mockOnChange}
-        filterData={filterData}
-        availableFilters={[
-          {
-            label: "Annotation results",
-            path: "labelName",
-            type: "String",
-          },
-          {
-            label: "Confidence score",
-            path: "score",
-            type: "Number",
-          },
-        ]}
-      />,
-    );
+  test("Filter button should be selected when active", () => {
+    render(<Filter onChange={mockOnChange} filterData={filterData} availableFilters={availableFilters} />);
 
-    const FilterButton = filter.getByTestId("filter-button");
+    // Click filter button
+    const filterButton = screen.getByTestId("filter-button");
+    fireEvent.click(filterButton);
 
-    fireEvent.click(FilterButton);
-
-    expect(FilterButton.classList.contains("dm-filter-button_active")).toBe(true);
+    // Check active class is applied
+    expect(filterButton.classList.contains("dm-filter-button_active")).toBe(true);
   });
 });
