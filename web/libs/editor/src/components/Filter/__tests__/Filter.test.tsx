@@ -2,6 +2,16 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Filter } from "../Filter";
 
+// Add a proper ResizeObserver mock
+const resizeObserverMock = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
+window.ResizeObserver = resizeObserverMock;
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
 describe("Filter", () => {
   const mockOnChange = jest.fn();
   const filterData = [
