@@ -18,7 +18,7 @@
   border-color: var(--border-color);
   color: var(--text-color);
 
-  & > span:has(> svg:only-child){
+  & > span:has(> svg:only-child) {
     @apply px-0;
   }
 
@@ -39,7 +39,7 @@
     border-color: var(--border-color-hover);
   }
 
-  &:focus{
+  &:focus {
     box-shadow: 0 0 0 4px var(--focus-outline);
   }
 
