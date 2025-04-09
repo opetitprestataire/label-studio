@@ -190,7 +190,7 @@ task_create_response_scheme = {
 
             ```bash
             curl -H 'Authorization: Token abc123' \\
-            -X POST '{host}/api/projects/1/import' -F ‘file=@path/to/my_file.csv’
+            -X POST '{host}/api/projects/1/import' -F 'file=@path/to/my_file.csv'
             ```
 
             ### 3\. **POST with URL**
@@ -787,7 +787,7 @@ class PresignAPIMixin:
         # Check if storage should use presigned URLs; 
         if storage.presign:
             # Redirect to presigned URL (original flow)
-            return self.redirect_to_presign_url(request, fileuri, instance, model_name)
+            return self.redirect_to_presign_url(fileuri, instance, model_name)
         else:
             # Direct proxy from storage
             return self.proxy_data_from_storage(request, fileuri, storage)

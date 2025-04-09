@@ -485,7 +485,7 @@ class Task(TaskMixin, models.Model):
         # maybe task has storage link
         # TODO: this is bad idea to use storage from storage_link, 
         # because storage resolver will be limited to this storage, 
-        # however, we may need to use other storages to resolve the uri. 
+        # however, we may need to use other storages to resolve the uri.
         storage_link = self.get_storage_link()
         if storage_link:
             return storage_link.storage
