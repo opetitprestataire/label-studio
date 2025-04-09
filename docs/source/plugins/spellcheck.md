@@ -8,6 +8,13 @@ meta_title: Spellcheck
 meta_description: Detect misspelled words in the template text areas
 ---
 
+<img src="/images/plugins/spellcheck-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
+!!! note
+    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+## About
+
 This script checks for spelling errors in content that is within text areas. If a user tries to submit their work while there is a spelling error in the text area, they receive an error message:
 
 ![Screenshot of warning](/images/plugins/spellcheck.png)

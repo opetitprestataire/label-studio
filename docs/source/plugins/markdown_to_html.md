@@ -8,6 +8,13 @@ meta_title: Markdown to HTML
 meta_description: Converts markdown to HTML format
 ---
 
+<img src="/images/plugins/markdown-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
+!!! note
+    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+## About
+
 This plugin renders basic markdown as HTML. 
 
 ![Screenshot of markdown formatting](/images/plugins/markdown.png)

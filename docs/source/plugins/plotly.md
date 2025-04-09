@@ -10,10 +10,10 @@ meta_description: Display a Plotly chart to annotators
 
 <img src="/images/plugins/plotly-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
 
-## About
-
 !!! note
     For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+## About
 
 Use [Plotly](https://plotly.com/) to insert charts and graphs into your labeling interface. Charts are rendered in every annotation opened by a user. 
 

@@ -8,6 +8,13 @@ meta_title: Spam and Bot Detection
 meta_description: Pauses an annotator if bot behavior in detected
 ---
 
+<img src="/images/plugins/pause-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
+!!! note
+    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+## About
+
 You can manually [pause an annotator](/guide/quality#Pause-an-annotator) to prevent stop them from completing tasks and revoke their project access. 
 
 This script automatically pauses an annotator who breaks any of the following rules and customizes the message that appears:
@@ -16,19 +23,19 @@ This script automatically pauses an annotator who breaks any of the following ru
 
     Checks if the last three submitted annotations in the `TextArea` field (`comment`) all have the same value. If they do, it returns a custom warning message. 
 
-    ![Screenshot of warning](/images/project/scripts_pause1.png)
+    ![Screenshot of warning](/images/plugins/pause1.png)
 
 * Too many similar values `tooSimilar()`: 
 
     For the `Choices` options (`sentiment`), it computes a deviation over the past values. If the deviation is below a threshold (meaning the values are too uniform/similar), it returns a custom warning message. 
 
-    ![Screenshot of warning](/images/project/scripts_pause2.png)
+    ![Screenshot of warning](/images/plugins/pause2.png)
  
 * Too many submissions over a period of time `tooFast()`: 
 
     Monitors the overall speed of annotations. It checks if, for example, 20 annotations were submitted in less than 10 minutes. If so, a custom warning appears. 
 
-    ![Screenshot of warning](/images/project/scripts_pause3.png)
+    ![Screenshot of warning](/images/plugins/pause3.png)
 
 To unpause an annotator, use the [Members dashboard](/guide/quality#Pause-an-annotator). 
 
@@ -36,7 +43,7 @@ To unpause an annotator, use the [Members dashboard](/guide/quality#Pause-an-ann
 
     If you hover over the **Paused** indicator, you can see the message that was shown to the user when they were paused. If a user was manually paused, it also shows who initiated the action.  
 
-    ![Screenshot of hover](/images/project/scripts_pause_hover.png)
+    ![Screenshot of hover](/images/plugins/pause_hover.png)
 
 ## Plugin
 

@@ -8,6 +8,13 @@ meta_title: Text span overlap validation
 meta_description: Prevents overlap of text spans
 ---
 
+<img src="/images/plugins/ner-overlap-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
+!!! note
+    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+## About
+
 This plugin displays an error message if text spans overlap:
 
 ![Screenshot of warning](/images/plugins/ner-overlap.png)

@@ -19,7 +19,7 @@ This plugin automatically applies the same label to all matching text spans.
 
 For example, if you apply the `PER` label to the text span `Smith`, this plugin will automatically find all instances of `Smith` in the text and apply the `PER` label to them. 
 
-![Screenshot of bulk text labeling](/images/project/autolabeling.gif)
+![Screenshot of bulk text labeling](/images/plugins/bulk-labeling.gif)
 
 ## Plugin
 
