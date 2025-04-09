@@ -11,6 +11,7 @@
   color: var(--color-neutral-content-subtler);
   text-overflow: ellipsis;
   height: var(--select-trigger-height);
+  width: 100%;
 
   /* body/medium */
   font-size: var(--select-trigger-font-size);
@@ -56,6 +57,11 @@
   &.sizeLarge {
     --select-trigger-height: 60px;
     --select-trigger-font-size: var(--font-size-20);
+  }
+
+  &.isInline {
+    display: inline-flex;
+    width: auto;
   }
 }
 

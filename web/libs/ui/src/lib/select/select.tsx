@@ -144,7 +144,8 @@ export const Select = forwardRef(
           <button
             variant="outline"
             aria-expanded={isOpen}
-            className={clsx(isInline ? "w-auto" : "w-full", className ?? "", styles.selectTrigger, {
+            className={clsx(className ?? "", styles.selectTrigger, {
+              [styles.isInline]: isInline,
               [styles.isOpen]: isOpen,
               [styles.isDisabled]: disabled,
               [styles.sizeSmall]: size === "small",
