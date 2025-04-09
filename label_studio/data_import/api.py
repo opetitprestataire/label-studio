@@ -812,10 +812,11 @@ class PresignAPIMixin:
         max_age = 0
         if resolved.get('presign_ttl'):
             max_age = resolved.get('presign_ttl') * 60
-            
+
         # Proxy to presigned url
         response = HttpResponseRedirect(redirect_to=url, status=status.HTTP_303_SEE_OTHER)
         response.headers['Cache-Control'] = f'no-store, max-age={max_age}'
+        
         return response
             
     def proxy_data_from_storage(self, request, uri, storage):
