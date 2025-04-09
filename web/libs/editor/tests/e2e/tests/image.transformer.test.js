@@ -282,8 +282,6 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
     AtOutliner.seeRegions(0);
     AtDetailsPanel.seeExpandButton();
     await AtImageView.lookForStage();
-    const naturalSize = await AtImageView.getNaturalSize();
-    const canvasSize = await AtImageView.getCanvasSize();
 
     // Draw a region in bbox {x1:50,y1:50,x2:150,y2:150}
     I.pressKey(Shape.hotKey);
@@ -301,9 +299,10 @@ Data(shapesTable.filter(({ shapeName }) => shapes[shapeName].hasMoveToolTransfor
 
     assert.strictEqual(isTransformerExist, true);
 
-    // we display an image to fit to canvas size on page load, so initial zoom is not 1;
-    // to do an x3 zoom we have to calculate current zoom and multiply it by 3
-    AtImageView.setZoom((3 * canvasSize.width) / naturalSize.width, 0, 0);
+    // it won't be real zoom scale, so we have to compensate it,
+    // and in the current specific situation it should be done my maxScale
+    const { maxScale } = await AtImageView.getZoomProps();
+    AtImageView.setZoom(3 * maxScale, 0, 0);
 
     await AtImageView.lookForStage();
     const prevRegionBBox = await Regions.getBBoxByRegionIdx(0);

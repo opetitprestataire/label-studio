@@ -110,7 +110,11 @@ module.exports = {
 
   setZoom(scale, x, y) {
     I.executeScript(Helpers.setZoom, [scale, x, y]);
-    I.wait(2);
+    I.wait(1);
+  },
+
+  async getZoomProps() {
+    return await I.executeScript(Helpers.getZoomProps);
   },
 
   /**
