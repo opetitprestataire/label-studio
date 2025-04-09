@@ -19,7 +19,7 @@ const pxToRem = (px: number) => `${px / 16}rem`;
 const categoryDescriptions: Record<string, string> = {
   colors: "Color tokens for UI elements including semantic, and scale colors",
   spacing: "Spacing values for layout, padding, margins, and positioning",
-  typography: "Typography tokens for font sizes, line heights, and letter spacing",
+  typography: "Typography tokens for font families, font sizes, font weights, line heights, and letter spacing",
   cornerRadius: "Corner radius values for UI components with rounded edges",
 };
 
@@ -43,7 +43,11 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
   const isSpacing = typeof token === "string" && token.includes("--spacing-");
   const isTypography =
     typeof token === "string" &&
-    (token.includes("--font-size-") || token.includes("--line-height-") || token.includes("--letter-spacing-"));
+    (token.includes("--font-size-") ||
+      token.includes("--line-height-") ||
+      token.includes("--letter-spacing-") ||
+      token.includes("--font-family-") ||
+      token.includes("--font-weight-"));
   const isCornerRadius = typeof token === "string" && token.includes("--corner-radius-");
 
   // Create a ref to access computed values
@@ -162,6 +166,28 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
               }}
             >
               LETTER SPACING
+            </div>
+          )}
+
+          {token.includes("--font-family-") && (
+            <div
+              className="text-sm relative px-4"
+              style={{
+                fontFamily: token,
+              }}
+            >
+              Font Family
+            </div>
+          )}
+
+          {token.includes("--font-weight-") && (
+            <div
+              className="text-sm relative px-4"
+              style={{
+                fontWeight: token,
+              }}
+            >
+              Font Weight
             </div>
           )}
         </div>
