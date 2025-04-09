@@ -282,7 +282,7 @@ class ImportStorage(Storage):
                     logger.debug(f'No storage info found for URI={uri}')
                     return
 
-                if task is not None:
+                if self.presign and task is not None:
                     proxy_url = urljoin(
                         settings.HOSTNAME,
                         reverse('data_import:task-storage-data-presign', kwargs={'task_id': task.id})
