@@ -14,7 +14,7 @@ Use [Plotly](https://plotly.com/) to insert charts and graphs into your labeling
     Plotly should be loaded first from CDN: https://cdn.plot.ly/plotly-2.26.0.min.js. For security reasons, it's better to use a hash for script integrity. 
 
 
-![Screenshot of Plotly graph in Label Studio](/images/project/plotly.png)
+![Screenshot of Plotly graph in Label Studio](/images/plugins/plotly.png)
 
 ## Plugin
 
