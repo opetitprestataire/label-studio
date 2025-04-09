@@ -61,7 +61,7 @@
     &_selected:hover,
     &_selected.select-dm__option_focused {
       background-color: hsl(var(--color-primary-emphasis), 10%);
-      color: var(--accent_color);
+      color: var(--color-neutral-content);
     }
   }
 
@@ -82,7 +82,7 @@
 
     &-label {
       padding: 4px 16px;
-      color: rgb(var(--black-raw) / 60%);
+      color: va(--color-neutral-content-subtler);
     }
   }
 
