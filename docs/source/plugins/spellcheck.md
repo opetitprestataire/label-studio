@@ -79,6 +79,7 @@ LSI.on('beforeSaveAnnotation', async (store, annotation) => {
 **Related tags:**
 
 * [View](/tags/view.html)
+* [Header](/tags/header.html)
 * [Image](/tags/image.html)
 * [TextArea](/tags/textarea.html)
 

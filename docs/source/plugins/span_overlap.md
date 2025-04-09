@@ -104,8 +104,20 @@ LSI.on("beforeSaveAnnotation", (store, annotation) => {
 
 ```json
 [
-  {
-    "text": "Opossums are marsupials, meaning they carry and nurse their young in a pouch. Baby opossums, called joeys, stay in the pouch for about two months after birth."
-  }
+   {
+      "data": {
+         "text": "Opossums are nocturnal animals that are often seen scavenging for food at night. They have a prehensile tail that helps them climb trees and navigate their environment."
+      }
+   },
+   {
+      "data": {
+         "text": "Opossums are known for their ability to play dead when threatened, a behavior known as 'playing possum'. This act can deter predators and give the opossum a chance to escape."
+      }
+   },
+   {
+      "data": {
+         "text": "Opossums are marsupials, meaning they carry and nurse their young in a pouch. Baby opossums, called joeys, stay in the pouch for about two months after birth."
+      }
+   }
 ]
 ```

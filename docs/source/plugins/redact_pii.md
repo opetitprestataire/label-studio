@@ -8,16 +8,14 @@ meta_title: Redact Annotator PII
 meta_description: Anonymize the annotator to reduce bias
 ---
 
-The sample labeling config provided below includes CSS that will hide annotator information in the review stream, for example:
+Hiding annotator information can help reduce bias. The sample labeling config provided below includes CSS that will hide annotator information in the labeling and review streams, for example:
 
 ![Screenshot of warning](/images/plugins/redact.png)
 
-Hiding annotator information can help reduce bias. 
-
-This script will unhide annotator information, but only if the user is in an Administrator role.  
+This script will then unhide annotator information, but only if the user is in an Administrator role.  
 
 !!! note
-    This only hides information from the review stream. It does not hide information from the Data Manager. However, you can use the [project settings](project_settings_lse#Review) to disallow Reviewers from accessing the Data Manager. 
+    This only hides information from the labeling and review streams. It does not hide information from the Data Manager. However, you can use the [project settings](/guide/project_settings_lse#Review) to disallow Annotators and Reviewers from accessing the Data Manager. 
 
 ## Plugin
 

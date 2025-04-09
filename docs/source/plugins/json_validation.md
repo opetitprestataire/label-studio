@@ -8,6 +8,9 @@ meta_title: Validate JSON
 meta_description: Checks that the introduced text is a valid JSON
 ---
 
+!!! note
+    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
 This plugin parses the contexts of a `TextArea` field to check for valid JSON. If the JSON is invalid, it shows an error and prevents the annotation from being saved.
 
 This is an example of a "hard" block, meaning that the user must resolve the issue before they can proceed. 
