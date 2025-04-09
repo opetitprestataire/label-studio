@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { Select } from "@humansignal/ui";
+import { Select } from "../Common/Form";
 import { useCallback, useMemo } from "react";
 
 export const FilterDropdown = observer(

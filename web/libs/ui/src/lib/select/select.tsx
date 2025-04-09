@@ -41,10 +41,12 @@ export const Select = forwardRef(
       onSearch,
       ...props
     }: SelectProps<T, A>,
-    ref: ForwardedRef<HTMLSelectElement>,
+    _ref: ForwardedRef<HTMLSelectElement>,
   ) => {
+    const ref = _ref ?? useRef<HTMLSelectElement>();
     const triggerRef = useRef<HTMLDivElement>();
     const [query, setQuery] = useState<string>("");
+    const valueRef = useRef<any>();
     let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
 
     if (multiple) {
@@ -55,6 +57,7 @@ export const Select = forwardRef(
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [value, setValue] = useState<any>(initialValue);
 
+    valueRef.current = value;
     useEffect(() => {
       if (!isDefined(externalValue)) return;
       let val = externalValue?.value ?? externalValue;
@@ -83,10 +86,15 @@ export const Select = forwardRef(
         } else {
           setValue(val);
         }
+        valueRef.current = val;
         !multiple && setIsOpen(false);
         props?.onChange?.(val);
         setTimeout(() => {
-          const changeEvent = new Event("change", { bubbles: true, target: ref?.current, currentTarget: ref?.current });
+          const changeEvent = new Event("change", {
+            bubbles: true,
+            target: { ...ref?.current, value: valueRef.current },
+            currentTarget: { ...ref?.current, value: valueRef.current },
+          });
           ref?.current?.dispatchEvent?.(changeEvent);
         }, 0);
       },
@@ -133,10 +141,6 @@ export const Select = forwardRef(
       },
       [setQuery, onSearch],
     );
-
-    const selectChangeHandler = useCallback(() => {
-      props?.onChange?.(value);
-    }, [value, props?.onChange]);
 
     const combobox = (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -273,12 +277,10 @@ export const Select = forwardRef(
         </PopoverContent>
         <select
           name={props?.name}
-          value={value ?? ""}
+          value={selectedOptions.join(",") ?? ""}
           ref={ref}
           disabled={disabled}
           className={styles.valueInput}
-          onChange={selectChangeHandler}
-          onSelect={selectChangeHandler}
         >
           {selectedOptions?.map((option, index) => (
             <option key={`${option?.value}_${index}`} value={option?.value ?? option} selected />
@@ -375,7 +377,7 @@ const Option = ({
             "py-1",
             "hover:bg-primary-emphasis-subtle",
             "hover:cursor-pointer",
-            "group-focus-within:bg-accent-grape-subtlest",
+            "group-focus-within:bg-primary-emphasis-subtle",
             "rounded-4",
             "hover:data-[disabled=true]:bg-transparent",
             "hover:data-[disabled=true]:cursor-not-allowed",

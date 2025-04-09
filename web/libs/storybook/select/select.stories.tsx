@@ -120,6 +120,7 @@ const meta: Meta<typeof Select> = {
               "Pineapple",
             ]}
             multiple={true}
+            searchable={true}
             {...args}
           />
         </div>

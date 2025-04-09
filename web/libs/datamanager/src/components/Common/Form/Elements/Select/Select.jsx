@@ -44,6 +44,7 @@ const Select = ({
             }}
             className={rootClass.elem("list").toString()}
             options={options?.toJSON ? options.toJSON() : options}
+            size={size}
           />
         );
       }}
