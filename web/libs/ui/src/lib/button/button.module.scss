@@ -295,7 +295,11 @@
     @apply w-full justify-start text-center;
 
     &:has(svg) {
-      @apply grid-cols-[min-content_1fr_min-content];
+      @apply grid-cols-[1fr_min-content];
+    }
+
+    &:has(svg:last-child) {
+      @apply justify-between;
     }
   }
 }
@@ -321,7 +325,7 @@
     @apply justify-end text-right;
 
     &:has(svg) {
-      @apply grid-cols-[min-content_1fr_min-content];
+      @apply grid-cols-[min-1fr_min-content];
     }
   }
 }
