@@ -22,6 +22,9 @@ export function SampleDatasetSelect({
 
   const onSelect = useCallback(
     (value: string) => {
+      if ("__lsa" in window) {
+        __lsa("sample.select", { dataset: value });
+      }
       onSampleApplied(samples.find((s) => s.url === value));
     },
     [samples, onSampleApplied],
@@ -38,11 +41,22 @@ export function SampleDatasetSelect({
       ),
     }));
   }, [samples]);
+  const onClick = () => {
+    if ("__lsa" in window) {
+      __lsa("sample.open");
+    }
+  };
 
   return (
     <div className="flex gap-3 items-center">
       <span className="text-neutral-content-subtler">or use a sample dataset</span>
-      <Select value={sample?.url ?? undefined} placeholder="Select sample" onChange={onSelect} options={options} />
+      <Select
+        value={sample?.url ?? undefined}
+        placeholder="Select sample"
+        onChange={onSelect}
+        triggerProps={{ onClick }}
+        options={options}
+      />
     </div>
   );
 }
