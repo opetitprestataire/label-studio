@@ -281,17 +281,31 @@ class ImportStorage(Storage):
                 if not self.can_resolve_url(extracted_uri):
                     logger.debug(f'No storage info found for URI={uri}')
                     return
+                
+                if flag_set('fflag_optic_all_optic_1938_storage_proxy', user=self.project.organization.created_by):
+                    if task is None:
+                        
 
-                if task is not None:
                     proxy_url = urljoin(
                         settings.HOSTNAME,
-                        reverse('data_import:task-storage-data-presign', kwargs={'task_id': task.id})
+                        reverse('storages:task-storage-data-resolve', kwargs={'task_id': task.id})
                         + f'?fileuri={base64.urlsafe_b64encode(extracted_uri.encode()).decode()}',
                     )
                     return uri.replace(extracted_uri, proxy_url)
+                
+                # old logic without proxy
                 else:
-                    # resolve uri to url using storages
-                    http_url = self.generate_http_url(extracted_uri)
+                    print(f'===> OLD resolving uri={extracted_uri} for task={task.id}')
+                    if self.presign and task is not None:
+                        proxy_url = urljoin(
+                            settings.HOSTNAME,
+                            reverse('storages:task-storage-data-presign', kwargs={'task_id': task.id})
+                            + f'?fileuri={base64.urlsafe_b64encode(extracted_uri.encode()).decode()}',
+                        )
+                        return uri.replace(extracted_uri, proxy_url)
+                    else:
+                        # resolve uri to url using storages
+                        http_url = self.generate_http_url(extracted_uri)
 
                 return uri.replace(extracted_uri, http_url)
             except Exception:
