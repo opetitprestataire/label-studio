@@ -93,10 +93,6 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
     [fetchStorages],
   );
 
-  useEffect(() => {
-    fetchStorages();
-  }, [fetchStorages]);
-
   return (
     <Columns.Column title={title}>
       <div className={rootClass.elem("controls")}>
