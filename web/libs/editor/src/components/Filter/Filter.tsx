@@ -105,6 +105,7 @@ export const Filter: FC<FilterInterface> = ({ availableFilters, filterData, onCh
     setActive(isOpen);
   }, []);
 
+  
   return (
     <Dropdown.Trigger content={renderFilter} dataTestId={"dropdown"} animated={animated} onToggle={onToggle}>
       <Block data-testid={"filter-button"} name={"filter-button"} mod={{ active }}>
