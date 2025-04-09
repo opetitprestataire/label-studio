@@ -11,8 +11,6 @@ const meta: Meta<typeof Button> = {
     waiting: { control: "boolean" },
     look: { control: "select" },
     size: { control: "select" },
-    leading: { control: { type: false } },
-    trailing: { control: { type: false } },
   },
 };
 
@@ -42,21 +40,68 @@ export const WithWaitingState: Story = {
 export const WithLeadingIcon: Story = {
   args: {
     children: "Button with icon",
-    leading: <IconAnnotationGroundTruth />,
+  },
+  render: ({ children, ...props }) => {
+    return (
+      <Button {...props} className="w-48">
+        <IconAnnotationGroundTruth />
+        hello
+      </Button>
+    );
   },
 };
 
 export const WithTrailingIcon: Story = {
   args: {
     children: "Button with icon",
-    trailing: <IconAnnotationGroundTruth />,
+  },
+  render: ({ children, ...props }) => {
+    return (
+      <Button {...props} className="w-48">
+        hello
+        <IconAnnotationGroundTruth />
+      </Button>
+    );
+  },
+};
+
+export const WideButton: Story = {
+  args: {
+    children: "Wide button",
+    align: "default",
+  },
+  render: ({ children, ...props }) => {
+    return (
+      <Button {...props} className="w-48">
+        <IconAnnotationGroundTruth />
+        {children}
+        <IconAnnotationGroundTruth />
+      </Button>
+    );
+  },
+};
+
+export const WithComplexChildren: Story = {
+  args: {
+    children: "Button with a",
+    align: "default",
+  },
+  render: ({ children, ...props }) => {
+    return (
+      <Button {...props}>
+        <IconAnnotationGroundTruth />
+        {children}
+        <span className="max-h-6 px-tight rounded-4 bg-primary-surface-hover">badge</span>
+        <IconAnnotationGroundTruth />
+      </Button>
+    );
   },
 };
 
 export const IconButton: Story = {
-  render: () => {
+  render: ({ children: _, ...props }) => {
     return (
-      <Button>
+      <Button {...props}>
         <IconAnnotationGroundTruth />
       </Button>
     );
@@ -67,10 +112,10 @@ export const StyledLink: Story = {
   args: {
     children: "Link with button style",
   },
-  render({ children }) {
+  render({ children, ...props }) {
     return (
       // biome-ignore lint: We don't need a real link here
-      <a href="#" className={buttonVariant({ variant: "primary" })}>
+      <a href="#" className={buttonVariant({ ...props })}>
         <span className="flex-1 px-tight">{children}</span>
       </a>
     );
