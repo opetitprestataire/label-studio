@@ -53,7 +53,7 @@
   &__empty {
     padding: 0 var(--spacing-tight);
     font-size: 14px;
-    color: #585858;
+    color: var(--color-neutral-content-subtler);
   }
 
   &__list {
