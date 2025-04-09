@@ -232,6 +232,17 @@ class ImportStorage(Storage):
     def generate_http_url(self, url):
         raise NotImplementedError
 
+    def get_bytes_stream(self, uri):
+        """Get file bytes from storage as a stream and content type.
+        
+        Args:
+            uri: The URI of the file to retrieve
+            
+        Returns:
+            Tuple of (BytesIO stream, content_type)
+        """
+        raise NotImplementedError
+
     def can_resolve_url(self, url: Union[str, None]) -> bool:
         return self.can_resolve_scheme(url)
 

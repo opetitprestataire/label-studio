@@ -1,5 +1,6 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
+import io
 import json
 import logging
 import re
@@ -164,8 +165,46 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
 
     def get_blob_metadata(self, key):
         return AZURE.get_blob_metadata(
-            key, self.container, account_name=self.account_name, account_key=self.account_key
+            key, self.container,
+            conn_string=self.connection_string,
         )
+
+    def get_bytes_stream(self, uri):
+        """Get file bytes from Azure Blob storage as a stream and content type.
+        
+        Args:
+            uri: The Azure URI of the file to retrieve
+            
+        Returns:
+            Tuple of (BytesIO stream, content_type)
+        """
+        # Parse URI to get container and blob name
+        parsed_uri = urlparse(uri, allow_fragments=False)
+        container_name = parsed_uri.netloc
+        blob_name = parsed_uri.path.lstrip('/')
+        
+        try:
+            # Get Azure client
+            client = self.get_client()
+            
+            # Get the blob client for this specific blob
+            from azure.storage.blob import BlobClient
+            blob_client = BlobClient.from_connection_string(
+                conn_str=client.connection_string,
+                container_name=container_name,
+                blob_name=blob_name
+            )
+
+            # Download the blob
+            download_stream = blob_client.download_blob()
+            content_type = download_stream.properties.content_settings.content_type
+            data = io.BytesIO(download_stream.readall())
+            
+            return data, content_type
+            
+        except Exception as e:
+            logger.error(f"Error getting bytes from Azure for uri {uri}: {e}", exc_info=True)
+            return None, None
 
     class Meta:
         abstract = True

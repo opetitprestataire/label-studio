@@ -1,8 +1,10 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
+import io
 import json
 import logging
 from typing import Union
+from urllib.parse import urlparse
 
 from core.redis import start_job_async_or_sync
 from django.conf import settings
@@ -107,6 +109,32 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
             google_application_credentials=self.google_application_credentials,
             google_project_id=self.google_project_id,
         )
+        
+    def get_bytes_stream(self, uri):
+        """Get file bytes from GCS storage as a stream and content type.
+        
+        Args:
+            uri: The GCS URI of the file to retrieve
+            
+        Returns:
+            Tuple of (BytesIO stream, content_type)
+        """
+        # Parse URI to get bucket and key
+        parsed_uri = urlparse(uri, allow_fragments=False)
+        bucket_name = parsed_uri.netloc
+        
+        try:
+            # Use the get_data_with_content_type method to get data and content type
+            return GCS.get_data_with_content_type(
+                uri, 
+                bucket_name, 
+                google_project_id=self.google_project_id,
+                google_application_credentials=self.google_application_credentials
+            )
+        except Exception as e:
+            logger.error(f"Error getting bytes from GCS for uri {uri}: {e}", exc_info=True)
+            return None, None
+
 
     class Meta:
         abstract = True

@@ -9,6 +9,7 @@ from functools import lru_cache
 from json import JSONDecodeError
 from typing import Optional, Union
 from urllib.parse import urlparse
+import io
 
 import google.auth
 import google.cloud.storage as gcs
@@ -342,3 +343,38 @@ class GCS(object):
                 logger.debug(blob.name + ' matches file pattern')
                 return ''
         return 'No objects found matching the provided glob pattern'
+
+    @classmethod
+    def get_data_with_content_type(
+        cls,
+        url: str,
+        bucket_name: str,
+        google_project_id: str = None,
+        google_application_credentials: Union[str, dict] = None,
+    ) -> tuple:
+        """
+        Gets blob data and content type directly from GCS
+        :param url: input URI
+        :param bucket_name: bucket name
+        :param google_project_id: Google project ID
+        :param google_application_credentials: Google application credentials
+        :return: Tuple of (data stream, content_type)
+        """
+        r = urlparse(url, allow_fragments=False)
+        blob_name = r.path.lstrip('/')
+        
+        client = cls.get_client(
+            google_application_credentials=google_application_credentials, 
+            google_project_id=google_project_id
+        )
+        bucket = client.get_bucket(bucket_name)
+        blob = bucket.blob(blob_name)
+        
+        # Get the content type
+        blob.reload()
+        content_type = blob.content_type or 'application/octet-stream'
+        
+        # Download as a stream
+        data = io.BytesIO(blob.download_as_bytes())
+        
+        return data, content_type
