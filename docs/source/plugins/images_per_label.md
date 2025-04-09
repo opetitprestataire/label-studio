@@ -1,9 +1,9 @@
 ---
 title: Dynamic Image Swap
 type: plugins
-category: Workflow
-cat: workflow
-order: 50
+category: Visualization
+cat: visualization
+order: 220
 meta_title: Dynamic Image Swap
 meta_description: Changes active image based on conditions
 ---

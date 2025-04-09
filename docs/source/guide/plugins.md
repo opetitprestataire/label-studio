@@ -44,7 +44,7 @@ Plugins allow you to enhance and tailor your labeling interface and workflow. Fo
 
     Examples: Feedback loops for annotators, conditional routing/assignment, progressive sampling, notifications regarding project progress. 
 
-For examples of how some of these use cases can be implemented, see [Custom plugin examples](plugin_examples). 
+For examples of how some of these use cases can be implemented, see our [Plugin gallery](/plugins). 
 
 ## How plugins work
 
