@@ -122,19 +122,20 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
         # Parse URI to get bucket and key
         parsed_uri = urlparse(uri, allow_fragments=False)
         bucket_name = parsed_uri.netloc
+        blob_name = parsed_uri.path.lstrip('/')
         
         try:
-            # Use the get_data_with_content_type method to get data and content type
-            return GCS.get_data_with_content_type(
-                uri, 
-                bucket_name, 
-                google_project_id=self.google_project_id,
-                google_application_credentials=self.google_application_credentials
-            )
+            # Get client and bucket using existing methods
+            client = self.get_client()
+            bucket = client.get_bucket(bucket_name)
+            blob = bucket.blob(blob_name)
+            blob.reload()
+            content_type = blob.content_type or 'application/octet-stream'
+            data = io.BytesIO(blob.download_as_bytes())
+            return data, content_type
         except Exception as e:
             logger.error(f"Error getting bytes from GCS for uri {uri}: {e}", exc_info=True)
             return None, None
-
 
     class Meta:
         abstract = True
