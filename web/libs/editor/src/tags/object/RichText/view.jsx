@@ -179,8 +179,18 @@ class RichTextPieceView extends Component {
       const selection = window.getSelection();
       const range = selection.getRangeAt(0);
 
+      // don't collapse region into nothing
+      if (selection.isCollapsed) return false;
+
       // so no visual glitches on the screen, selection was just a helper here, we don't need it anymore
       selection.removeAllRanges();
+
+      // @todo would be more convenient to try to reduce the range to be within the root,
+      // @todo so for example if we drag to the left and the range is outside of the root, we would
+      // @todo just reduce it to the left edge of the root,
+      // @todo but that would be a bit more complicated, so let's just check if the range is within the root for now.
+      if (!root.contains(range.startContainer) || !root.contains(range.endContainer)) return false;
+      if (!area) return false;
 
       area._range = range;
 
@@ -241,18 +251,30 @@ class RichTextPieceView extends Component {
         const doc = tag?.contentDocument ?? tag?.ownerDocument ?? tag;
         this.currentSelection = window.getSelection();
         this._hightlightRegion(doc, this.draggableRegion);
+        // attach global event for mouseup to always catch the end of dragging, even outside of the tag;
+        // will be called after mouseup on the text tag
+        document.addEventListener("mouseup", this._onMouseUpGlobal, { once: true });
       }
     }
   };
 
-  _onMouseUp = (ev) => {
+  _onMouseUpGlobal = () => {
     const { item } = this.props;
-    const states = item.activeStates();
     const rootEl = item.mountNodeRef.current;
     const root = rootEl?.contentDocument?.body ?? rootEl;
 
-    // if we adjusted the region, we should not create a new one
-    if (this._checkDragAndAdjustRegion(root)) return;
+    this._checkDragAndAdjustRegion(root);
+  };
+
+  _onMouseUp = (ev) => {
+    const { item } = this.props;
+
+    // if we are adjusting the region, we should not create a new one
+    if (item.initializedDrag) return;
+
+    const states = item.activeStates();
+    const rootEl = item.mountNodeRef.current;
+    const root = rootEl?.contentDocument?.body ?? rootEl;
 
     if (!states || states.length === 0 || ev.ctrlKey || ev.metaKey)
       return this._selectRegions(ev.ctrlKey || ev.metaKey);
