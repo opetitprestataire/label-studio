@@ -534,6 +534,7 @@ class RichTextPieceView extends Component {
           <Elem
             key="root"
             name="container"
+            mod={{ canResizeSpans: item.canResizeSpans }}
             ref={(el) => {
               item.mountNodeRef.current = el;
               el && this.markObjectAsLoaded();
