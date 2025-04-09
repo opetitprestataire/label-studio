@@ -84,6 +84,7 @@ export const Select = forwardRef(
           setValue(val);
         }
         !multiple && setIsOpen(false);
+        props?.onChange?.(val);
         setTimeout(() => {
           const changeEvent = new Event("change", { bubbles: true, target: ref?.current, currentTarget: ref?.current });
           ref?.current?.dispatchEvent?.(changeEvent);
