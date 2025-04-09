@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Filter } from "../Filter";
 
@@ -94,7 +94,7 @@ describe("Filter", () => {
     expect(filter.getAllByTestId("filter-row")).toHaveLength(1);
   });
 
-  test("Should filter the content", () => {
+  test("Should filter the content", async () => {
     let filteredContent: any;
 
     const filter = render(
@@ -130,9 +130,12 @@ describe("Filter", () => {
 
     const fieldDropdown = filter.getByTestId("field-dropdown");
     const operationDropdown = filter.getByTestId("operation-dropdown");
-
-    fireEvent.click(operationDropdown);
-    fireEvent.click(screen.getByText("not contains"));
+    await act(async () => {
+      fireEvent.click(fieldDropdown);
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByText("not contains"));
+    });
 
     const filterInput = filter.getByTestId("filter-input");
 
