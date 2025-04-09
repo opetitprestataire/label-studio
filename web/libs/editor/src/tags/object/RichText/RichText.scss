@@ -115,7 +115,7 @@
         content: '';
         width: 1px;
         height: 100%;
-        background: var(--grape_500);
+        background: var(--color-primary-content-subtle);
       }
 
       &:hover::before {
@@ -129,7 +129,7 @@
         position: absolute;
         width: $handle-radius * 2 + 1px;
         height: $handle-radius * 2 + 1px;
-        background: var(--grape_500);
+        background: var(--color-primary-content-subtle);
         top: -($handle-radius * 2 + 1px);
         left: $hitbox-width - $handle-radius;
         z-index: 100;
@@ -147,7 +147,7 @@
       }
 
       &:hover::after {
-        outline: 1px solid var(--grape_500);
+        outline: 1px solid var(--color-primary-border-subtle);
       }
     }
   }
