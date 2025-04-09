@@ -284,8 +284,9 @@ class ImportStorage(Storage):
                 
                 if flag_set('fflag_optic_all_optic_1938_storage_proxy', user=self.project.organization.created_by):
                     if task is None:
+                        logger.error(f'Task is required to resolve URI={uri}', exc_info=True)
+                        raise ValueError(f'Task is required to resolve URI={uri}')
                         
-
                     proxy_url = urljoin(
                         settings.HOSTNAME,
                         reverse('storages:task-storage-data-resolve', kwargs={'task_id': task.id})
@@ -293,9 +294,8 @@ class ImportStorage(Storage):
                     )
                     return uri.replace(extracted_uri, proxy_url)
                 
-                # old logic without proxy
+                # ff off: old logic without proxy
                 else:
-                    print(f'===> OLD resolving uri={extracted_uri} for task={task.id}')
                     if self.presign and task is not None:
                         proxy_url = urljoin(
                             settings.HOSTNAME,
@@ -304,7 +304,9 @@ class ImportStorage(Storage):
                         )
                         return uri.replace(extracted_uri, proxy_url)
                     else:
-                        # resolve uri to url using storages
+                        # this branch is our old approach:
+                        # it generates presigned URLs if storage.presign=True;
+                        # or it inserts base64 media into task data if storage.presign=False
                         http_url = self.generate_http_url(extracted_uri)
 
                 return uri.replace(extracted_uri, http_url)

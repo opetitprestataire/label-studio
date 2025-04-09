@@ -112,7 +112,36 @@ class S3StorageMixin(models.Model):
 
     @property
     def type_full(self):
-        return 'Amazon AWS S3'
+        return 'Amazon AWS S3'    
+
+    @catch_and_reraise_from_none
+    def get_bytes_stream(self, uri):
+        """Get file bytes from S3 storage as a stream and content type.
+        
+        Args:
+            uri: The S3 URI of the file to retrieve
+            
+        Returns:
+            Tuple of (BytesIO stream, content_type)
+        """
+        # Parse URI to get bucket and key
+        parsed_uri = urlparse(uri, allow_fragments=False)
+        bucket_name = parsed_uri.netloc
+        key = parsed_uri.path.lstrip('/')
+        
+        # Get S3 client
+        client = self.get_client()
+        
+        try:
+            # Get the object from S3
+            object_response = client.get_object(Bucket=bucket_name, Key=key)
+            content_type = object_response.get('ContentType')
+            data = io.BytesIO(object_response['Body'].read())
+            return data, content_type
+            
+        except Exception as e:
+            logger.error(f"Error getting bytes from S3 for uri {uri}: {e}", exc_info=True)
+            return None, None
 
     class Meta:
         abstract = True
@@ -200,35 +229,6 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
             region_name=self.region_name,
             s3_endpoint=self.s3_endpoint,
         )
-
-    @catch_and_reraise_from_none
-    def get_bytes_stream(self, uri):
-        """Get file bytes from S3 storage as a stream and content type.
-        
-        Args:
-            uri: The S3 URI of the file to retrieve
-            
-        Returns:
-            Tuple of (BytesIO stream, content_type)
-        """
-        # Parse URI to get bucket and key
-        parsed_uri = urlparse(uri, allow_fragments=False)
-        bucket_name = parsed_uri.netloc
-        key = parsed_uri.path.lstrip('/')
-        
-        # Get S3 client
-        client = self.get_client()
-        
-        try:
-            # Get the object from S3
-            object_response = client.get_object(Bucket=bucket_name, Key=key)
-            content_type = object_response.get('ContentType')
-            data = io.BytesIO(object_response['Body'].read())
-            return data, content_type
-            
-        except Exception as e:
-            logger.error(f"Error getting bytes from S3 for uri {uri}: {e}", exc_info=True)
-            return None, None
 
     class Meta:
         abstract = True
