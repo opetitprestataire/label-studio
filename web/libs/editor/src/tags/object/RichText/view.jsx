@@ -76,16 +76,14 @@ class RichTextPieceView extends Component {
    **/
 
   /**
-   * Adjust selection style to mimic region's style; this is done by creating a style tag
+   * Adjust selection style to mimic region's style but with a lighter color; this is done by creating a style tag.
+   * Region style is also adjusted to be lighter so the combination of two will look like original selected region.
    * @param {*} region to mimic
    * @param {Document} doc document to apply style to
    */
   _setSelectionStyle = (region, doc) => {
-    const styleMap = region._spans[0].computedStyleMap();
-    const background = styleMap.get("background-color").toString();
-    const color = styleMap.get("color").toString();
-
-    const rules = [`background: ${background};`, `color: ${color};`];
+    const colors = region.getColors();
+    const rules = [`background: ${colors.resizeBackground};`, `color: ${colors.activeText};`];
 
     if (!this.selectionStyle) {
       this.selectionStyle = doc.createElement("style");
@@ -93,14 +91,16 @@ class RichTextPieceView extends Component {
       doc.head.appendChild(this.selectionStyle);
     }
 
-    this.selectionStyle.innerText = `::selection {${rules.join("\n")}}`;
+    this.selectionStyle.innerText = `::selection {${rules.join(" ")}}`;
+    this.props.item.setStyles?.({ [region.identifier]: region.resizeStyles });
   };
 
   /**
-   * Reset selection style to default
+   * Reset selection style and region style to default
    */
-  _removeSelectionStyle = () => {
+  _removeSelectionStyle = (region) => {
     if (this.selectionStyle) this.selectionStyle.innerText = "";
+    if (region) this.props.item.setStyles?.({ [region.identifier]: region.styles });
   };
 
   /**
@@ -171,6 +171,9 @@ class RichTextPieceView extends Component {
   _checkDragAndAdjustRegion = (root) => {
     const { item } = this.props;
 
+    // always reset the styles, so we won't stuck with unexpected colors
+    this._removeSelectionStyle(this.draggableRegion);
+
     if (item.initializedDrag) {
       const area = this.draggableRegion;
       const selection = window.getSelection();
@@ -212,7 +215,6 @@ class RichTextPieceView extends Component {
 
     if (this.draggableRegion) {
       this._resetDragParams();
-      this._removeSelectionStyle();
     }
 
     return false;
@@ -221,6 +223,7 @@ class RichTextPieceView extends Component {
   _onMouseDown = (ev) => {
     // we definitelly not in a process of adjusting any other region anymore, so reset flags
     this._resetDragParams();
+    this._removeSelectionStyle();
     // but might start to adjust this one
     this._checkHandlesAndStartDragging(ev);
   };

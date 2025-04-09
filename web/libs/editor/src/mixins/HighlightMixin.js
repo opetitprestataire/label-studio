@@ -7,6 +7,7 @@ import { isDefined } from "../utils/utilities";
 const HIGHLIGHT_CN = "htx-highlight";
 const HIGHLIGHT_NO_LABEL_CN = "htx-no-label";
 const LABEL_COLOR_ALPHA = 0.3;
+const LABEL_COLOR_ALPHA_ACTIVE = 0.8;
 
 export const HighlightMixin = types
   .model()
@@ -43,22 +44,32 @@ export const HighlightMixin = types
 
       return classNames;
     },
-    get styles() {
-      const { className } = self;
-      const activeColorOpacity = 0.8;
-      const color = self.getLabelColor();
-      const initialActiveColor = Utils.Colors.rgbaChangeAlpha(color, activeColorOpacity);
-
+    /**
+     * Generate styles for region and active region, but with a lighter background is that's a resized region,
+     * so the selection of the same color will give the original color of active region.
+     * @see getColors
+     * @param {string} className
+     * @param {object} colors see `getColors()`
+     * @param {boolean} resize lighter background for resized region or original one for active region
+     * @returns {string} styles to apply to the region
+     */
+    generateStyles(className, colors, resize = false) {
       return `
         .${className} {
-          background-color: ${color} !important;
+          background-color: ${colors.background} !important;
           border: 1px dashed transparent;
         }
         .${className}.${STATE_CLASS_MODS.active}:not(.${STATE_CLASS_MODS.hidden}) {
-          color: ${Utils.Colors.contrastColor(initialActiveColor)} !important;
-          background-color: ${initialActiveColor} !important;
+          color: ${colors.activeText} !important;
+          background-color: ${resize ? colors.resizeBackground : colors.activeBackground} !important;
         }
       `;
+    },
+    get styles() {
+      return this.generateStyles(self.className, self.getColors());
+    },
+    get resizeStyles() {
+      return this.generateStyles(self.className, self.getColors(), true);
     },
   }))
   .actions((self) => ({
@@ -227,10 +238,27 @@ export const HighlightMixin = types
       return [index, text].filter(Boolean).join(":");
     },
 
-    getLabelColor() {
+    // @todo should not this be a view?
+    getColors() {
       const labelColor = self.parent.highlightcolor || (self.style || self.tag || defaultStyle).fillcolor;
 
-      return Utils.Colors.convertToRGBA(labelColor ?? "#DA935D", LABEL_COLOR_ALPHA);
+      const background = Utils.Colors.convertToRGBA(labelColor ?? "#DA935D", LABEL_COLOR_ALPHA);
+      const activeBackground = Utils.Colors.convertToRGBA(labelColor ?? "#DA935D", LABEL_COLOR_ALPHA_ACTIVE);
+      // Extended/reduced parts of the region should be colored differently in a lighter color.
+      // With extension it's simple, because it's the browser selection, so we just set a different color to it.
+      // But to color the reduced part we use opacity of overlayed blocks — region hightlight and browser selection,
+      // and multiplication of them should be the same as original activeBackground.
+      // Region color should also be different from the original one, and for simplicity we use just one color.
+      // So this color should have an opacity twice closer to 1 than the original one: 1 - (1 - alpha) * 2
+      const resizeBackground = Utils.Colors.convertToRGBA(labelColor ?? "#DA935D", 2 * LABEL_COLOR_ALPHA_ACTIVE - 1);
+      const activeText = Utils.Colors.contrastColor(activeBackground);
+
+      return {
+        background,
+        activeBackground,
+        resizeBackground,
+        activeText,
+      };
     },
 
     find(span) {
