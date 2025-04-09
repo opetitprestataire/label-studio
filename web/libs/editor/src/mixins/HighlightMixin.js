@@ -1,4 +1,5 @@
 import { types } from "mobx-state-tree";
+import { ff } from "@humansignal/core";
 
 import Utils from "../utils";
 import { defaultStyle } from "../core/Constants";
@@ -141,14 +142,19 @@ export const HighlightMixin = types
     updateAppearenceFromState() {
       if (!self._spans?.length) return;
 
-      const start = self._spans[0].getAttribute("data-start");
-      const end = self._spans.at(-1).getAttribute("data-end");
-      const offsets = self.globalOffsets;
+      if (ff.isActive(ff.FF_ADJUSTABLE_SPANS) && self.parent?.isText) {
+        const start = self._spans[0].getAttribute("data-start");
+        const end = self._spans.at(-1).getAttribute("data-end");
+        const offsets = self.globalOffsets;
 
-      // if spans have different offsets stored, then we resized the region and need to recreate spans
-      if (isDefined(start) && (+start !== offsets.start || +end !== offsets.end)) {
-        self.removeHighlight();
-        self.applyHighlight();
+        // if spans have different offsets stored, then we resized the region and need to recreate spans
+        if (isDefined(start) && (+start !== offsets.start || +end !== offsets.end)) {
+          self.removeHighlight();
+          self.applyHighlight();
+        } else {
+          self.parent.setStyles?.({ [self.identifier]: self.styles });
+          self.updateSpans();
+        }
       } else {
         self.parent.setStyles?.({ [self.identifier]: self.styles });
         self.updateSpans();
@@ -189,7 +195,9 @@ export const HighlightMixin = types
 
       if (!first) return;
 
-      self.attachHandles();
+      if (ff.isActive(ff.FF_ADJUSTABLE_SPANS) && self.parent?.isText) {
+        self.attachHandles();
+      }
 
       if (first.scrollIntoViewIfNeeded) {
         first.scrollIntoViewIfNeeded();
@@ -203,7 +211,10 @@ export const HighlightMixin = types
      */
     afterUnselectRegion() {
       self.removeClass(STATE_CLASS_MODS.active);
-      self.detachHandles();
+
+      if (ff.isActive(ff.FF_ADJUSTABLE_SPANS) && self.parent?.isText) {
+        self.detachHandles();
+      }
     },
 
     /**

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { ff } from "@humansignal/core";
 import { htmlEscape, matchesSelector } from "../../../utils/html";
 import ObjectTag from "../../../components/Tags/Object";
 import * as xpath from "xpath-range";
@@ -231,18 +232,20 @@ class RichTextPieceView extends Component {
   };
 
   _onMouseDown = (ev) => {
-    // we definitelly not in a process of adjusting any other region anymore, so reset flags
-    this._resetDragParams();
-    this._removeSelectionStyle();
-    // but might start to adjust this one
-    this._checkHandlesAndStartDragging(ev);
+    if (ff.isActive(ff.FF_ADJUSTABLE_SPANS) && this.props.item.isText) {
+      // we definitelly not in a process of adjusting any other region anymore, so reset flags
+      this._resetDragParams();
+      this._removeSelectionStyle();
+      // but might start to adjust this one
+      this._checkHandlesAndStartDragging(ev);
+    }
   };
 
   _onMouseMove = (ev) => {
-    const { item } = this.props;
-
     if (this.draggableRegion) {
       ev.preventDefault();
+
+      const { item } = this.props;
 
       if (!item.initializedDrag) {
         item.initializedDrag = true;
