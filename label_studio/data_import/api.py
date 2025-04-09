@@ -190,7 +190,7 @@ task_create_response_scheme = {
 
             ```bash
             curl -H 'Authorization: Token abc123' \\
-            -X POST '{host}/api/projects/1/import' -F 'file=@path/to/my_file.csv'
+            -X POST '{host}/api/projects/1/import' -F ‘file=@path/to/my_file.csv’
             ```
 
             ### 3\. **POST with URL**
