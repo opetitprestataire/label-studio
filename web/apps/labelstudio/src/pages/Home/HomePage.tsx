@@ -92,7 +92,7 @@ export const HomePage: Page = () => {
               return (
                 <Button
                   key={action.title}
-                  className="flex-grow-0 text-16/24 text-primary-content text-left justify-start min-w-[250px] [&_svg]:w-6 [&_svg]:h-6"
+                  className="flex-grow-0 text-16/24 text-primary-content text-left justify-start min-w-[250px] [&_svg]:w-6 [&_svg]:h-6 pl-2"
                   variant="lsOutline"
                   onClick={handleActions(action.type)}
                 >
