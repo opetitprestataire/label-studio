@@ -143,7 +143,7 @@ Scenario(
     I.see("2022");
     // exactly the same as max, should be correct
     I.click("div[data-testid='select-option-2022']");
-    assert.strictEqual("2022", await I.grabValueFrom("input[name=year-year]"));
+    assert.strictEqual("2022", await I.grabValueFrom("select[name=year-year]"));
     I.pressKey("Escape");
 
     const results = await I.executeScript(serialize);
