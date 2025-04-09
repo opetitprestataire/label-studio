@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { ff } from "@humansignal/core";
 import { htmlEscape, matchesSelector } from "../../../utils/html";
 import ObjectTag from "../../../components/Tags/Object";
 import * as xpath from "xpath-range";
@@ -232,7 +231,7 @@ class RichTextPieceView extends Component {
   };
 
   _onMouseDown = (ev) => {
-    if (ff.isActive(ff.FF_ADJUSTABLE_SPANS) && this.props.item.isText) {
+    if (this.props.item.canResizeSpans) {
       // we definitelly not in a process of adjusting any other region anymore, so reset flags
       this._resetDragParams();
       this._removeSelectionStyle();

@@ -1,5 +1,4 @@
 import { types } from "mobx-state-tree";
-import { ff } from "@humansignal/core";
 
 import Utils from "../utils";
 import { defaultStyle } from "../core/Constants";
@@ -142,7 +141,7 @@ export const HighlightMixin = types
     updateAppearenceFromState() {
       if (!self._spans?.length) return;
 
-      if (ff.isActive(ff.FF_ADJUSTABLE_SPANS) && self.parent?.isText) {
+      if (self.parent?.canResizeSpans) {
         const start = self._spans[0].getAttribute("data-start");
         const end = self._spans.at(-1).getAttribute("data-end");
         const offsets = self.globalOffsets;
@@ -195,7 +194,7 @@ export const HighlightMixin = types
 
       if (!first) return;
 
-      if (ff.isActive(ff.FF_ADJUSTABLE_SPANS) && self.parent?.isText) {
+      if (self.parent?.canResizeSpans) {
         self.attachHandles();
       }
 
@@ -212,7 +211,7 @@ export const HighlightMixin = types
     afterUnselectRegion() {
       self.removeClass(STATE_CLASS_MODS.active);
 
-      if (ff.isActive(ff.FF_ADJUSTABLE_SPANS) && self.parent?.isText) {
+      if (self.parent?.canResizeSpans) {
         self.detachHandles();
       }
     },

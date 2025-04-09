@@ -1,5 +1,6 @@
 import { destroy as destroyNode, flow, types } from "mobx-state-tree";
 import { createRef } from "react";
+import { ff } from "@humansignal/core";
 import { customTypes } from "../../../core/CustomTypes";
 import { errorBuilder } from "../../../core/DataValidator/ConfigValidator";
 import { AnnotationMixin } from "../../../mixins/AnnotationMixin";
@@ -81,6 +82,9 @@ const Model = types
     _value: types.optional(types.maybeNull(types.string), null),
   })
   .views((self) => ({
+    get canResizeSpans() {
+      return ff.isActive(ff.FF_ADJUSTABLE_SPANS) && self.type === "text";
+    },
     get hasStates() {
       const states = self.states();
 
