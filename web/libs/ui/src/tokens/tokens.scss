@@ -434,6 +434,8 @@
   --letter-spacing--20: -0.0125rem;
   --letter-spacing--15: -0.0094rem;
   --letter-spacing--10: -0.0063rem;
+  --font-family-base: "Figtree";
+  --font-family-mono: "IBMPlexMono";
   --corner-radius-0: var(--spacing-0);
   --corner-radius-2: var(--spacing-50);
   --corner-radius-4: var(--spacing-100);
@@ -468,6 +470,9 @@
   --corner-radius-large: var(--corner-radius-16);
   --corner-radius-larger: var(--corner-radius-18);
   --corner-radius-largest: var(--corner-radius-24);
+  --font-family-body: var(--font-family-base);
+  --font-family-headings: var(--font-family-base);
+  --font-family-monospace: var(--font-family-mono);
   --font-size-body-tinier: var(--font-size-8);
   --font-size-body-tiny: var(--font-size-9);
   --font-size-body-smallest: var(--font-size-10);
@@ -489,13 +494,41 @@
   --font-size-display-small: var(--font-size-36);
   --font-size-display-medium: var(--font-size-48);
   --font-size-display-large: var(--font-size-56);
-  --letter-spacing-densest: -0.0125rem;
-  --letter-spacing-denser: -0.0094rem;
-  --letter-spacing-dense: -0.0063rem;
-  --letter-spacing-base: 0;
-  --letter-spacing-wide: 0.0094rem;
-  --letter-spacing-wider: 0.0156rem;
-  --letter-spacing-widest: 0.0313rem;
+  --font-weight-light: 300;
+  --font-weight-light-italic: light italic;
+  --font-weight-regular: 400;
+  --font-weight-regular-italic: italic;
+  --font-weight-medium: 500;
+  --font-weight-medium-italic: medium italic;
+  --font-weight-semibold: 600;
+  --font-weight-semibold-italic: semibold italic;
+  --font-weight-bold: 700;
+  --font-weight-bold-italic: bold italic;
+  --line-height-auto: auto;
+  --line-height-body-smallest: var(--line-height-12);
+  --line-height-body-smaller: var(--line-height-16);
+  --line-height-body-small: var(--line-height-18);
+  --line-height-body-medium: var(--line-height-24);
+  --line-height-label-smallest: var(--line-height-16);
+  --line-height-label-smaller: var(--line-height-16);
+  --line-height-label-small: var(--line-height-18);
+  --line-height-label-medium: var(--line-height-24);
+  --line-height-title-small: var(--line-height-20);
+  --line-height-title-medium: var(--line-height-24);
+  --line-height-title-large: var(--line-height-28);
+  --line-height-headline-small: var(--line-height-32);
+  --line-height-headline-medium: var(--line-height-36);
+  --line-height-headline-large: var(--line-height-40);
+  --line-height-display-small: var(--line-height-48);
+  --line-height-display-medium: var(--line-height-56);
+  --line-height-display-large: var(--line-height-72);
+  --letter-spacing-densest: var(--letter-spacing--20);
+  --letter-spacing-denser: var(--letter-spacing--15);
+  --letter-spacing-dense: var(--letter-spacing--10);
+  --letter-spacing-base: var(--letter-spacing-0);
+  --letter-spacing-wide: var(--letter-spacing-15);
+  --letter-spacing-wider: var(--letter-spacing-25);
+  --letter-spacing-widest: var(--letter-spacing-50);
 }
 
 [data-color-scheme="dark"] {

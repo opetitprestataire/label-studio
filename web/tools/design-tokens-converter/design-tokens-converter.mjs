@@ -245,6 +245,29 @@ function processPrimitiveTypography(typographyObj, result) {
       }
     }
   }
+
+  // Process font families
+  if (typographyObj["$font-family"]) {
+    for (const key in typographyObj["$font-family"]) {
+      if (typographyObj["$font-family"][key].$value !== undefined) {
+        const name = key.replace("$", "");
+        const value = typographyObj["$font-family"][key].$value;
+        const cssVarName = `--font-family-${name}`;
+
+        // Add to CSS variables
+        result.cssVariables.light.push(`${cssVarName}: "${value}";`);
+
+        // Add to JavaScript tokens
+        if (!result.jsTokens.typography.fontFamily) {
+          result.jsTokens.typography.fontFamily = {};
+        }
+        if (!result.jsTokens.typography.fontFamily.primitive) {
+          result.jsTokens.typography.fontFamily.primitive = {};
+        }
+        result.jsTokens.typography.fontFamily.primitive[name] = `var(${cssVarName})`;
+      }
+    }
+  }
 }
 
 /**
@@ -350,6 +373,101 @@ function processSizingTokens(sizingObj, result, variables, parentKey = "") {
   }
 }
 
+function processTokenCollection(collectionKey, subCollectionKey) {
+  const collectionJsKey = camelCase(collectionKey);
+  const subCollectionJsKey = camelCase(subCollectionKey);
+  const subCollectionKeyRegex = new RegExp(`${subCollectionKey}\\-?`, "g");
+  return function process(tokenCollection, result, variables, parentKey = subCollectionKey) {
+    for (const key in tokenCollection) {
+      if (key.startsWith("$")) {
+        // process nested keys
+        process(tokenCollection[key], result, variables, `${parentKey ? `${parentKey}-` : ""}${key.replace("$", "")}`);
+        continue;
+      }
+
+      if (tokenCollection[key].$value !== undefined) {
+        const isNumber = tokenCollection[key].$type === "number";
+        const name = key.replace("$", "");
+        const value = tokenCollection[key].$value;
+        const cssVarName = `--${parentKey}-${name}`;
+
+        let resolvedValue;
+        if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
+          const reference = value.substring(1, value.length - 1);
+          const parts = reference.replace(`$${collectionKey}.`, "").split(".");
+
+          // If it's a reference to a primitive spacing value, directly use the corresponding CSS variable
+          if (parts[0] === "@primitives") {
+            const collectionKey = parts[1].replace("$", "");
+            const valueKey = parts[2].replace("$", "");
+            resolvedValue = `var(--${collectionKey}-${valueKey})`;
+            result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
+          } else {
+            // Otherwise, try to resolve the value normally
+            resolvedValue = resolveReference(value, variables);
+            result.cssVariables.light.push(`${cssVarName}: ${isNumber ? convertToRem(resolvedValue) : resolvedValue};`);
+          }
+        } else {
+          // Not a reference, use directly
+          resolvedValue = value;
+          result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
+        }
+
+        // Add to JavaScript tokens
+        if (!result.jsTokens[collectionJsKey]) {
+          result.jsTokens[collectionJsKey] = {};
+        }
+        if (!result.jsTokens[collectionJsKey][subCollectionJsKey]) {
+          result.jsTokens[collectionJsKey][subCollectionJsKey] = {};
+        }
+        const jsKey = `${parentKey ? `${parentKey}-` : ""}${name}`;
+        result.jsTokens[collectionJsKey][subCollectionJsKey][jsKey.replace(subCollectionKeyRegex, "")] =
+          `var(${cssVarName})`;
+      }
+    }
+  };
+}
+
+/**
+ * Process font size tokens
+ * @param {Object} fontSizeObj - The font size object from typography
+ * @param {Object} result - The result object to populate
+ * @param {Object} variables - The variables object for reference resolution
+ * @param {String} parentKey - The parent key for nested tokens
+ */
+const processFontSizeTokens = processTokenCollection("typography", "font-size");
+
+/**
+ * Process font weight tokens
+ * @param {Object} fontWeightObj - The font weight object from typography
+ * @param {Object} result - The result object to populate
+ * @param {Object} variables - The variables object for reference resolution
+ */
+const processFontWeightTokens = processTokenCollection("typography", "font-weight");
+
+/**
+ * Process line height tokens
+ * @param {Object} lineHeightObj - The line height object from typography
+ * @param {Object} result - The result object to populate
+ * @param {Object} variables - The variables object for reference resolution
+ */
+const processLineHeightTokens = processTokenCollection("typography", "line-height");
+
+/**
+ * Process letter spacing tokens
+ * @param {Object} letterSpacingObj - The letter spacing object from typography
+ * @param {Object} result - The result object to populate
+ * @param {Object} variables - The variables object for reference resolution
+ */
+const processLetterSpacingTokens = processTokenCollection("typography", "letter-spacing");
+
+/**
+ * Process font family tokens
+ * @param {Object} fontObj - The font family object from typography
+ * @param {Object} result - The result object to populate
+ */
+const processFontFamilyTokens = processTokenCollection("typography", "font-family");
+
 /**
  * Process typography tokens from design variables
  * @param {Object} typographyObj - The typography object from design variables
@@ -358,8 +476,8 @@ function processSizingTokens(sizingObj, result, variables, parentKey = "") {
  */
 function processTypographyTokens(typographyObj, result, variables) {
   // Process font families
-  if (typographyObj.$font) {
-    processFontFamilyTokens(typographyObj.$font, result);
+  if (typographyObj["$font-family"]) {
+    processFontFamilyTokens(typographyObj["$font-family"], result, variables);
   }
 
   // Process font sizes
@@ -380,162 +498,6 @@ function processTypographyTokens(typographyObj, result, variables) {
   // Process letter spacing
   if (typographyObj["$letter-spacing"]) {
     processLetterSpacingTokens(typographyObj["$letter-spacing"], result, variables);
-  }
-}
-
-/**
- * Process font family tokens
- * @param {Object} fontObj - The font family object from typography
- * @param {Object} result - The result object to populate
- */
-function processFontFamilyTokens(fontObj, result) {
-  for (const key in fontObj) {
-    if (fontObj[key].$type === "string" && fontObj[key].$value) {
-      const name = key.replace("$", "");
-      const value = fontObj[key].$value;
-      const cssVarName = `--font-family-${name}`;
-
-      // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${value};`);
-
-      // Add to JavaScript tokens
-      if (!result.jsTokens.typography.fontFamily) {
-        result.jsTokens.typography.fontFamily = {};
-      }
-      result.jsTokens.typography.fontFamily[name] = `var(${cssVarName})`;
-    }
-  }
-}
-
-/**
- * Process font size tokens
- * @param {Object} fontSizeObj - The font size object from typography
- * @param {Object} result - The result object to populate
- * @param {Object} variables - The variables object for reference resolution
- * @param {String} parentKey - The parent key for nested tokens
- */
-function processFontSizeTokens(fontSizeObj, result, variables, parentKey = "font-size") {
-  for (const key in fontSizeObj) {
-    if (key.startsWith("$")) {
-      // process nested keys
-      processFontSizeTokens(
-        fontSizeObj[key],
-        result,
-        variables,
-        `${parentKey ? `${parentKey}-` : ""}${key.replace("$", "")}`,
-      );
-      continue;
-    }
-
-    if (fontSizeObj[key].$type === "number" && fontSizeObj[key].$value !== undefined) {
-      const name = key.replace("$", "");
-      const value = fontSizeObj[key].$value;
-      const cssVarName = `--${parentKey}-${name}`;
-
-      let resolvedValue;
-      if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
-        const reference = value.substring(1, value.length - 1);
-        const parts = reference.replace("$typography.", "").split(".");
-
-        // If it's a reference to a primitive spacing value, directly use the corresponding CSS variable
-        if (parts[0] === "@primitives") {
-          const collectionKey = parts[1].replace("$", "");
-          const valueKey = parts[2].replace("$", "");
-          resolvedValue = `var(--${collectionKey}-${valueKey})`;
-          result.cssVariables.light.push(`${cssVarName}: ${resolvedValue};`);
-        } else {
-          // Otherwise, try to resolve the value normally
-          resolvedValue = resolveReference(value, variables);
-          result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
-        }
-      } else {
-        // Not a reference, use directly
-        resolvedValue = value;
-        result.cssVariables.light.push(`${cssVarName}: ${convertToRem(resolvedValue)};`);
-      }
-
-      // Add to JavaScript tokens
-      if (!result.jsTokens.typography.fontSize) {
-        result.jsTokens.typography.fontSize = {};
-      }
-      result.jsTokens.typography.fontSize[`${parentKey ? `${parentKey.replace("font-size-", "")}-` : ""}${name}`] =
-        `var(${cssVarName})`;
-    }
-  }
-}
-
-/**
- * Process font weight tokens
- * @param {Object} fontWeightObj - The font weight object from typography
- * @param {Object} result - The result object to populate
- * @param {Object} variables - The variables object for reference resolution
- */
-function processFontWeightTokens(fontWeightObj, result, variables) {
-  for (const key in fontWeightObj) {
-    if (fontWeightObj[key].$type === "number" && fontWeightObj[key].$value !== undefined) {
-      const name = key.replace("$", "");
-      const value = resolveReference(fontWeightObj[key].$value, variables);
-      const cssVarName = `--font-weight-${name}`;
-
-      // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${value};`);
-
-      // Add to JavaScript tokens
-      if (!result.jsTokens.typography.fontWeight) {
-        result.jsTokens.typography.fontWeight = {};
-      }
-      result.jsTokens.typography.fontWeight[name] = `var(${cssVarName})`;
-    }
-  }
-}
-
-/**
- * Process line height tokens
- * @param {Object} lineHeightObj - The line height object from typography
- * @param {Object} result - The result object to populate
- * @param {Object} variables - The variables object for reference resolution
- */
-function processLineHeightTokens(lineHeightObj, result, variables) {
-  for (const key in lineHeightObj) {
-    if (lineHeightObj[key].$type === "number" && lineHeightObj[key].$value !== undefined) {
-      const name = key.replace("$", "");
-      const value = resolveReference(lineHeightObj[key].$value, variables);
-      const cssVarName = `--line-height-${name}`;
-
-      // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
-
-      // Add to JavaScript tokens
-      if (!result.jsTokens.typography.lineHeight) {
-        result.jsTokens.typography.lineHeight = {};
-      }
-      result.jsTokens.typography.lineHeight[name] = `var(${cssVarName})`;
-    }
-  }
-}
-
-/**
- * Process letter spacing tokens
- * @param {Object} letterSpacingObj - The letter spacing object from typography
- * @param {Object} result - The result object to populate
- * @param {Object} variables - The variables object for reference resolution
- */
-function processLetterSpacingTokens(letterSpacingObj, result, variables) {
-  for (const key in letterSpacingObj) {
-    if (letterSpacingObj[key].$type === "number" && letterSpacingObj[key].$value !== undefined) {
-      const name = key.replace("$", "");
-      const value = resolveReference(letterSpacingObj[key].$value, variables);
-      const cssVarName = `--letter-spacing-${name}`;
-
-      // Add to CSS variables
-      result.cssVariables.light.push(`${cssVarName}: ${convertToRem(value)};`);
-
-      // Add to JavaScript tokens
-      if (!result.jsTokens.typography.letterSpacing) {
-        result.jsTokens.typography.letterSpacing = {};
-      }
-      result.jsTokens.typography.letterSpacing[name] = `var(${cssVarName})`;
-    }
   }
 }
 
@@ -1042,7 +1004,8 @@ const designTokensConverter = async () => {
 
       return { success: true };
     } catch (parseError) {
-      console.error("Error parsing design tokens JSON:", parseError.message);
+      console.error("Error parsing design tokens JSON:");
+      console.trace(parseError);
       console.log("Please ensure your design-tokens.json file contains valid JSON");
       return { success: false, error: "JSON parsing error" };
     }
