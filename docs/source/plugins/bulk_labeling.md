@@ -10,10 +10,10 @@ meta_description: Assigns labels to all occurrences of the selected text at once
 
 <img src="/images/plugins/bulk-labeling-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
 
-## About
-
 !!! note
     For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+## About
 
 This plugin automatically applies the same label to all matching text spans. 
 

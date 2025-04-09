@@ -8,8 +8,12 @@ meta_title: Dynamic Image Swap
 meta_description: Changes active image based on conditions
 ---
 
+<img src="/images/plugins/dynamic-images-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
 !!! note
     For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+## About
 
 This plugin dynamically adds an image element to the bottom of the annotation interface and updates that image based on which class label is clicked:
 

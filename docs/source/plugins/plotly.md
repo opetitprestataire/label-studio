@@ -8,15 +8,21 @@ meta_title: Data Visualization with Plotly
 meta_description: Display a Plotly chart to annotators
 ---
 
-Use [Plotly](https://plotly.com/) to insert charts and graphs into your labeling interface. Charts are rendered in every annotation opened by a user. 
+<img src="/images/plugins/plotly-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
+## About
 
 !!! note
-    Plotly should be loaded first from CDN: https://cdn.plot.ly/plotly-2.26.0.min.js. For security reasons, it's better to use a hash for script integrity. 
+    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
 
+Use [Plotly](https://plotly.com/) to insert charts and graphs into your labeling interface. Charts are rendered in every annotation opened by a user. 
 
 ![Screenshot of Plotly graph in Label Studio](/images/plugins/plotly.png)
 
 ## Plugin
+
+!!! note
+    Plotly should be loaded first from CDN: https://cdn.plot.ly/plotly-2.26.0.min.js. For security reasons, it's better to use a hash for script integrity. 
 
 ```javascript
 await LSI.import('https://cdn.plot.ly/plotly-2.26.0.min.js', 'sha384-xuh4dD2xC9BZ4qOrUrLt8psbgevXF2v+K+FrXxV4MlJHnWKgnaKoh74vd/6Ik8uF',);

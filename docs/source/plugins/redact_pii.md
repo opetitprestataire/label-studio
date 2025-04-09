@@ -8,6 +8,13 @@ meta_title: Redact Annotator PII
 meta_description: Anonymize the annotator to reduce bias
 ---
 
+<img src="/images/plugins/redact-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
+!!! note
+    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+## About
+
 Hiding annotator information can help reduce bias. The sample labeling config provided below includes CSS that will hide annotator information in the labeling and review streams, for example:
 
 ![Screenshot of warning](/images/plugins/redact.png)

@@ -8,6 +8,13 @@ meta_title: Text Area Word Count
 meta_description: Validates the length of a text area based on its word count
 ---
 
+<img src="/images/plugins/wordcount-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
+!!! note
+    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+## About
+
 This plugin validates whether users have exceeded a word count restriction. 
 
 ![Screenshot of warning](/images/plugins/wordcount.png)
