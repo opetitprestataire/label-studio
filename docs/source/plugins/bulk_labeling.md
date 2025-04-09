@@ -8,7 +8,16 @@ meta_title: Bulk Labeling for Text Spans
 meta_description: Assigns labels to all occurrences of the selected text at once
 ---
 
-This plugin automatically applies the same label to all matching text spans. For example, if you apply the `PER` label to the text span `Smith`, this plugin will automatically find all instances of `Smith` in the text and apply the `PER` label to them. 
+<img src="/images/plugins/bulk-labeling-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
+## About
+
+!!! note
+    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+
+This plugin automatically applies the same label to all matching text spans. 
+
+For example, if you apply the `PER` label to the text span `Smith`, this plugin will automatically find all instances of `Smith` in the text and apply the `PER` label to them. 
 
 ![Screenshot of bulk text labeling](/images/project/autolabeling.gif)
 
