@@ -29,6 +29,112 @@
             }
           }
         },
+        "$on-dark": {
+          "surface": {
+            "$type": "color",
+            "$value": "{@primitives.$color.$sand.900}",
+            "$description": "",
+            "$variable_metadata": {
+              "name": "color/neutral/on-dark/surface",
+              "figmaId": "VariableID:4125:3574",
+              "modes": {
+                "light": "{@primitives.$color.$sand.900}",
+                "dark": "{@primitives.$color.$sand.900}"
+              }
+            }
+          },
+          "surface-hover": {
+            "$type": "color",
+            "$value": "{@primitives.$color.$sand.800}",
+            "$description": "",
+            "$variable_metadata": {
+              "name": "color/neutral/on-dark/surface-hover",
+              "figmaId": "VariableID:4125:3575",
+              "modes": {
+                "light": "{@primitives.$color.$sand.800}",
+                "dark": "{@primitives.$color.$sand.800}"
+              }
+            }
+          },
+          "surface-active": {
+            "$type": "color",
+            "$value": "{@primitives.$color.$sand.900}",
+            "$description": "",
+            "$variable_metadata": {
+              "name": "color/neutral/on-dark/surface-active",
+              "figmaId": "VariableID:4125:3576",
+              "modes": {
+                "light": "{@primitives.$color.$sand.900}",
+                "dark": "{@primitives.$color.$sand.900}"
+              }
+            }
+          },
+          "content": {
+            "$type": "color",
+            "$value": "{@primitives.$color.$sand.300}",
+            "$description": "",
+            "$variable_metadata": {
+              "name": "color/neutral/on-dark/content",
+              "figmaId": "VariableID:4125:2218",
+              "modes": {
+                "light": "{@primitives.$color.$sand.300}",
+                "dark": "{@primitives.$color.$sand.300}"
+              }
+            }
+          },
+          "content-subtle": {
+            "$type": "color",
+            "$value": "{@primitives.$color.$sand.400}",
+            "$description": "",
+            "$variable_metadata": {
+              "name": "color/neutral/on-dark/content-subtle",
+              "figmaId": "VariableID:4125:3571",
+              "modes": {
+                "light": "{@primitives.$color.$sand.400}",
+                "dark": "{@primitives.$color.$sand.400}"
+              }
+            }
+          },
+          "background": {
+            "$type": "color",
+            "$value": "{@primitives.$color.$sand.800}",
+            "$description": "Use as the default background for more surfaces",
+            "$variable_metadata": {
+              "name": "color/neutral/on-dark/background",
+              "figmaId": "VariableID:4125:3572",
+              "modes": {
+                "light": "{@primitives.$color.$sand.800}",
+                "dark": "{@primitives.$color.$sand.800}"
+              }
+            }
+          },
+          "background-bold": {
+            "$type": "color",
+            "$value": "{@primitives.$color.$sand.900}",
+            "$description": "",
+            "$variable_metadata": {
+              "name": "color/neutral/on-dark/background-bold",
+              "figmaId": "VariableID:4125:3573",
+              "modes": {
+                "light": "{@primitives.$color.$sand.900}",
+                "dark": "{@primitives.$color.$sand.900}"
+              }
+            }
+          },
+          "border": {
+            "$type": "color",
+            "$value": "{@primitives.$color.$sand.700}",
+            "$description": "",
+            "$variable_metadata": {
+              "name": "color/neutral/on-dark/border",
+              "figmaId": "VariableID:4125:3577",
+              "modes": {
+                "light": "{@primitives.$color.$sand.700}",
+                "dark": "{@primitives.$color.$sand.700}"
+              }
+            }
+          }
+        },
         "surface-hover": {
           "$type": "color",
           "$value": "{@primitives.$color.$sand.000}",
@@ -4556,6 +4662,128 @@
           }
         }
       }
+    },
+    "$shadow": {
+      "opacity-none": {
+        "$type": "number",
+        "$value": 0,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-none",
+          "figmaId": "VariableID:4109:3988",
+          "modes": {
+            "value": 0
+          }
+        }
+      },
+      "opacity-4": {
+        "$type": "number",
+        "$value": 4,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-4",
+          "figmaId": "VariableID:4109:3989",
+          "modes": {
+            "value": 4
+          }
+        }
+      },
+      "opacity-8": {
+        "$type": "number",
+        "$value": 8,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-8",
+          "figmaId": "VariableID:4109:3990",
+          "modes": {
+            "value": 8
+          }
+        }
+      },
+      "opacity-16": {
+        "$type": "number",
+        "$value": 16,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-16",
+          "figmaId": "VariableID:4109:3991",
+          "modes": {
+            "value": 16
+          }
+        }
+      },
+      "opacity-24": {
+        "$type": "number",
+        "$value": 24,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-24",
+          "figmaId": "VariableID:4109:3992",
+          "modes": {
+            "value": 24
+          }
+        }
+      },
+      "opacity-32": {
+        "$type": "number",
+        "$value": 32,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-32",
+          "figmaId": "VariableID:4109:3993",
+          "modes": {
+            "value": 32
+          }
+        }
+      },
+      "opacity-48": {
+        "$type": "number",
+        "$value": 48,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-48",
+          "figmaId": "VariableID:4109:3994",
+          "modes": {
+            "value": 48
+          }
+        }
+      },
+      "opacity-56": {
+        "$type": "number",
+        "$value": 56,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-56",
+          "figmaId": "VariableID:4109:3995",
+          "modes": {
+            "value": 56
+          }
+        }
+      },
+      "opacity-72": {
+        "$type": "number",
+        "$value": 72,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-72",
+          "figmaId": "VariableID:4109:3996",
+          "modes": {
+            "value": 72
+          }
+        }
+      },
+      "opacity-100": {
+        "$type": "number",
+        "$value": 100,
+        "$description": "",
+        "$variable_metadata": {
+          "name": "shadow/opacity-100",
+          "figmaId": "VariableID:4109:3997",
+          "modes": {
+            "value": 100
+          }
+        }
+      }
     }
   },
   "@sizing": {
@@ -4566,14 +4794,6 @@
         {
           "key": "default",
           "name": "default"
-        },
-        {
-          "key": "compact",
-          "name": "compact"
-        },
-        {
-          "key": "comfortable",
-          "name": "comfortable"
         }
       ]
     },
@@ -4586,9 +4806,7 @@
           "name": "spacing/none",
           "figmaId": "VariableID:1847:12091",
           "modes": {
-            "default": "{@primitives.$spacing.0}",
-            "compact": "{@primitives.$spacing.0}",
-            "comfortable": "{@primitives.$spacing.0}"
+            "default": "{@primitives.$spacing.0}"
           }
         }
       },
@@ -4600,9 +4818,7 @@
           "name": "spacing/tightest",
           "figmaId": "VariableID:1828:290",
           "modes": {
-            "default": "{@primitives.$spacing.50}",
-            "compact": "{@primitives.$spacing.50}",
-            "comfortable": "{@primitives.$spacing.100}"
+            "default": "{@primitives.$spacing.50}"
           }
         }
       },
@@ -4614,9 +4830,7 @@
           "name": "spacing/tighter",
           "figmaId": "VariableID:1828:286",
           "modes": {
-            "default": "{@primitives.$spacing.100}",
-            "compact": "{@primitives.$spacing.50}",
-            "comfortable": "{@primitives.$spacing.200}"
+            "default": "{@primitives.$spacing.100}"
           }
         }
       },
@@ -4628,9 +4842,7 @@
           "name": "spacing/tight",
           "figmaId": "VariableID:1531:4142",
           "modes": {
-            "default": "{@primitives.$spacing.200}",
-            "compact": "{@primitives.$spacing.100}",
-            "comfortable": "{@primitives.$spacing.300}"
+            "default": "{@primitives.$spacing.200}"
           }
         }
       },
@@ -4642,9 +4854,7 @@
           "name": "spacing/base",
           "figmaId": "VariableID:1525:3706",
           "modes": {
-            "default": "{@primitives.$spacing.400}",
-            "compact": "{@primitives.$spacing.200}",
-            "comfortable": "{@primitives.$spacing.300}"
+            "default": "{@primitives.$spacing.400}"
           }
         }
       },
@@ -4656,9 +4866,7 @@
           "name": "spacing/wide",
           "figmaId": "VariableID:1828:287",
           "modes": {
-            "default": "{@primitives.$spacing.600}",
-            "compact": "{@primitives.$spacing.400}",
-            "comfortable": "{@primitives.$spacing.600}"
+            "default": "{@primitives.$spacing.600}"
           }
         }
       },
@@ -4670,9 +4878,7 @@
           "name": "spacing/wider",
           "figmaId": "VariableID:1828:288",
           "modes": {
-            "default": "{@primitives.$spacing.800}",
-            "compact": "{@primitives.$spacing.600}",
-            "comfortable": "{@primitives.$spacing.800}"
+            "default": "{@primitives.$spacing.800}"
           }
         }
       },
@@ -4684,25 +4890,21 @@
           "name": "spacing/widest",
           "figmaId": "VariableID:1828:289",
           "modes": {
-            "default": "{@primitives.$spacing.1000}",
-            "compact": "{@primitives.$spacing.800}",
-            "comfortable": "{@primitives.$spacing.1000}"
+            "default": "{@primitives.$spacing.1000}"
           }
         }
       }
     },
-    "$corder-radius": {
+    "$corner-radius": {
       "none": {
         "$type": "number",
         "$value": "{@primitives.$corner-radius.0}",
         "$description": "",
         "$variable_metadata": {
-          "name": "corder-radius/none",
+          "name": "corner-radius/none",
           "figmaId": "VariableID:2395:51180",
           "modes": {
-            "default": "{@primitives.$corner-radius.0}",
-            "compact": "{@primitives.$corner-radius.0}",
-            "comfortable": "{@primitives.$corner-radius.0}"
+            "default": "{@primitives.$corner-radius.0}"
           }
         }
       },
@@ -4711,12 +4913,10 @@
         "$value": "{@primitives.$corner-radius.2}",
         "$description": "",
         "$variable_metadata": {
-          "name": "corder-radius/smallest",
+          "name": "corner-radius/smallest",
           "figmaId": "VariableID:2395:51181",
           "modes": {
-            "default": "{@primitives.$corner-radius.2}",
-            "compact": "{@primitives.$corner-radius.1}",
-            "comfortable": "{@primitives.$corner-radius.4}"
+            "default": "{@primitives.$corner-radius.2}"
           }
         }
       },
@@ -4725,12 +4925,10 @@
         "$value": "{@primitives.$corner-radius.4}",
         "$description": "",
         "$variable_metadata": {
-          "name": "corder-radius/smaller",
+          "name": "corner-radius/smaller",
           "figmaId": "VariableID:2395:51182",
           "modes": {
-            "default": "{@primitives.$corner-radius.4}",
-            "compact": "{@primitives.$corner-radius.1}",
-            "comfortable": "{@primitives.$corner-radius.4}"
+            "default": "{@primitives.$corner-radius.4}"
           }
         }
       },
@@ -4739,12 +4937,10 @@
         "$value": "{@primitives.$corner-radius.8}",
         "$description": "",
         "$variable_metadata": {
-          "name": "corder-radius/small",
+          "name": "corner-radius/small",
           "figmaId": "VariableID:2395:51183",
           "modes": {
-            "default": "{@primitives.$corner-radius.8}",
-            "compact": "{@primitives.$corner-radius.2}",
-            "comfortable": "{@primitives.$corner-radius.8}"
+            "default": "{@primitives.$corner-radius.8}"
           }
         }
       },
@@ -4753,12 +4949,10 @@
         "$value": "{@primitives.$corner-radius.12}",
         "$description": "",
         "$variable_metadata": {
-          "name": "corder-radius/medium",
+          "name": "corner-radius/medium",
           "figmaId": "VariableID:2724:7806",
           "modes": {
-            "default": "{@primitives.$corner-radius.12}",
-            "compact": "{@primitives.$corner-radius.2}",
-            "comfortable": "{@primitives.$corner-radius.12}"
+            "default": "{@primitives.$corner-radius.12}"
           }
         }
       },
@@ -4767,12 +4961,10 @@
         "$value": "{@primitives.$corner-radius.16}",
         "$description": "",
         "$variable_metadata": {
-          "name": "corder-radius/large",
+          "name": "corner-radius/large",
           "figmaId": "VariableID:2724:7808",
           "modes": {
-            "default": "{@primitives.$corner-radius.16}",
-            "compact": "{@primitives.$corner-radius.4}",
-            "comfortable": "{@primitives.$corner-radius.16}"
+            "default": "{@primitives.$corner-radius.16}"
           }
         }
       },
@@ -4781,12 +4973,10 @@
         "$value": "{@primitives.$corner-radius.18}",
         "$description": "",
         "$variable_metadata": {
-          "name": "corder-radius/larger",
+          "name": "corner-radius/larger",
           "figmaId": "VariableID:2724:20617",
           "modes": {
-            "default": "{@primitives.$corner-radius.18}",
-            "compact": "{@primitives.$corner-radius.8}",
-            "comfortable": "{@primitives.$corner-radius.18}"
+            "default": "{@primitives.$corner-radius.18}"
           }
         }
       },
@@ -4795,12 +4985,10 @@
         "$value": "{@primitives.$corner-radius.24}",
         "$description": "",
         "$variable_metadata": {
-          "name": "corder-radius/largest",
+          "name": "corner-radius/largest",
           "figmaId": "VariableID:2724:20618",
           "modes": {
-            "default": "{@primitives.$corner-radius.24}",
-            "compact": "{@primitives.$corner-radius.12}",
-            "comfortable": "{@primitives.$corner-radius.24}"
+            "default": "{@primitives.$corner-radius.24}"
           }
         }
       }
