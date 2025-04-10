@@ -99,4 +99,9 @@
   --button-waiting-animation-bg: repeating-linear-gradient(-63.43deg, hsl(60deg 20% 99% / 20%) 1px, #efefef 2px, #efefef 6px, hsl(60deg 20% 99% / 20%) 7px, hsl(60deg 20% 99% / 20%) 12px);
   --project-title-icon-primary-color: rgba(var(--black-raw), 0.35);
   --project-title-icon-alternate-color: rgba(var(--white-raw), 0.35);
+  --shadow-intensity: 1;
+}
+
+[data-color-scheme=dark] {
+  --shadow-intensity: 2;
 }
