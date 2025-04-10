@@ -538,6 +538,9 @@ class ExportStorage(Storage, ProjectStorageMixin):
     can_delete_objects = models.BooleanField(
         _('can_delete_objects'), null=True, blank=True, help_text='Deletion from storage enabled'
     )
+    # Use 8 threads, unless we know we only have a single core
+    # TODO from testing, more than 8 seems to cause problems. revisit to add more parallelism.
+    max_workers = min(8, (os.cpu_count() or 2) * 4)
 
     def _get_serialized_data(self, annotation):
         user = self.project.organization.created_by
@@ -565,11 +568,7 @@ class ExportStorage(Storage, ProjectStorageMixin):
         self.info_set_in_progress()
         self.cached_user = self.project.organization.created_by
 
-        # Use 8 threads, unless we know we only have a single core
-        # TODO from testing, more than 8 seems to cause problems. revisit to add more parallelism.
-        max_workers = min(8, (os.cpu_count() or 2) * 4)
-
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             futures = []
             # Batch annotations so that we update progress before having to submit every future.
             # Updating progress in thread requires coordinating on count and db writes, so just
