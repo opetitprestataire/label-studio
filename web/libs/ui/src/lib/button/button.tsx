@@ -1,5 +1,5 @@
 import { cn } from "../../utils/utils";
-import type { ButtonHTMLAttributes, PropsWithChildren } from "react";
+import type { ButtonHTMLAttributes, PropsWithChildren, ReactNode } from "react";
 import styles from "./button.module.scss";
 
 const variants = {
@@ -74,6 +74,8 @@ export type ButtonProps = {
   size?: keyof typeof sizes;
   waiting?: boolean;
   align?: keyof typeof alignment;
+  leading?: ReactNode;
+  trailing?: ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 /**
@@ -91,6 +93,8 @@ function Button({
   size = "medium",
   waiting = false,
   align = "default",
+  leading,
+  trailing,
   ...buttonProps
 }: PropsWithChildren<ButtonProps>) {
   return (
@@ -99,7 +103,9 @@ function Button({
       disabled={buttonProps.disabled || waiting}
       className={buttonVariant({ variant, look, size, waiting, align }, className)}
     >
+      {leading}
       <span>{children}</span>
+      {trailing}
     </button>
   );
 }

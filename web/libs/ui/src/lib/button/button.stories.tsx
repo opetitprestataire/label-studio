@@ -20,6 +20,7 @@ type Story = StoryObj<typeof Button>;
 export const Primary: Story = {
   args: {
     children: "Default Button",
+    className: "w-[200px]",
   },
 };
 
@@ -37,30 +38,46 @@ export const WithWaitingState: Story = {
   },
 };
 
-export const WithLeadingIcon: Story = {
-  args: {
-    children: "Button with icon",
-  },
+export const WithAlignment: Story = {
   render: ({ children, ...props }) => {
     return (
-      <Button {...props} className="w-48">
-        <IconAnnotationGroundTruth />
-        hello
-      </Button>
+      <div className="flex items-center gap-tight">
+        <Button {...props} className="w-48" leading={<IconAnnotationGroundTruth />}>
+          Default
+        </Button>
+        <Button {...props} className="w-48" align="left" leading={<IconAnnotationGroundTruth />}>
+          Left
+        </Button>
+        <Button {...props} className="w-48" align="center" leading={<IconAnnotationGroundTruth />}>
+          Center
+        </Button>
+        <Button {...props} className="w-48" align="right" leading={<IconAnnotationGroundTruth />}>
+          Right
+        </Button>
+      </div>
     );
   },
 };
 
-export const WithTrailingIcon: Story = {
-  args: {
-    children: "Button with icon",
-  },
+export const WithIcon: Story = {
   render: ({ children, ...props }) => {
     return (
-      <Button {...props} className="w-48">
-        hello
-        <IconAnnotationGroundTruth />
-      </Button>
+      <div className="flex gap-tight">
+        <Button {...props} className="w-48" leading={<IconAnnotationGroundTruth />}>
+          Leading
+        </Button>
+        <Button {...props} className="w-48" trailing={<IconAnnotationGroundTruth />}>
+          Trailing
+        </Button>
+        <Button
+          {...props}
+          className="w-48"
+          leading={<IconAnnotationGroundTruth />}
+          trailing={<IconAnnotationGroundTruth />}
+        >
+          Both
+        </Button>
+      </div>
     );
   },
 };
@@ -72,10 +89,13 @@ export const WideButton: Story = {
   },
   render: ({ children, ...props }) => {
     return (
-      <Button {...props} className="w-48">
-        <IconAnnotationGroundTruth />
+      <Button
+        {...props}
+        className="w-[250px]"
+        leading={<IconAnnotationGroundTruth />}
+        trailing={<IconAnnotationGroundTruth />}
+      >
         {children}
-        <IconAnnotationGroundTruth />
       </Button>
     );
   },
@@ -88,11 +108,9 @@ export const WithComplexChildren: Story = {
   },
   render: ({ children, ...props }) => {
     return (
-      <Button {...props}>
-        <IconAnnotationGroundTruth />
+      <Button {...props} leading={<IconAnnotationGroundTruth />} trailing={<IconAnnotationGroundTruth />}>
         {children}
         <span className="max-h-6 px-tight rounded-4 bg-primary-surface-hover">badge</span>
-        <IconAnnotationGroundTruth />
       </Button>
     );
   },
