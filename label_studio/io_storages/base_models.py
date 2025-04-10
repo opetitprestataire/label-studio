@@ -565,7 +565,9 @@ class ExportStorage(Storage, ProjectStorageMixin):
         self.info_set_in_progress()
         self.cached_user = self.project.organization.created_by
 
-        max_workers = min(32, (os.cpu_count() or 4) * 4)
+        # Use 8 threads, unless we know we only have a single core
+        # TODO from testing, more than 8 seems to cause problems. revisit to add more parallelism.
+        max_workers = min(8, (os.cpu_count() or 2) * 4)
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = []
