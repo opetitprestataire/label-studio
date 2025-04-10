@@ -68,15 +68,15 @@
 
     &:hover {
       textarea {
-        border-color: var(--sand_300);
+        border-color: var(--color-neutral-border);
         background-color: var(--color-neutral-background);
       }
     }
 
     &:focus {
       background-color: var(--color-neutral-background);
-      border-color: var(--grape_500);
-      box-shadow: 0 0 0 1px var(--grape_500);
+      border-color: var(--color-primary-border-subtle);
+      box-shadow: 0 0 0 1px var(--color-primary-border-subtle);
     }
 
     &:not(textarea) {
@@ -96,8 +96,8 @@
     align-items: center;
     padding: 8px;
     gap: 8px;
-    background: var(--canteloupe_0);
-    border: 1px solid var(--canteloupe_400);
+    background: var(--color-warning-background);
+    border: 1px solid var(--color-warning-border);
     border-radius: 4px;
     margin: 0 16px 8px;
     flex: none;
@@ -107,7 +107,7 @@
     svg {
       width: 20px;
       height: 17px;
-      fill: var(--incomplete-warning-color, var(--canteloupe_500));
+      fill: var(--incomplete-warning-color, var(--color-warning-icon));
     }
   }
 }

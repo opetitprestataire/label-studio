@@ -31,7 +31,7 @@
   }
 
   &__input {
-    color: var(--sand_700);
+    color: var(--color-neutral-content);
     background: transparent;
     font-size: 16px;
     line-height: 22px;
@@ -60,7 +60,7 @@
   }
 
   &_outliner {
-    --border-color: var(--sand_300);
+    --border-color: var(--color-neutral-border);
   }
 
   &_outliner &__item + &__item,
@@ -72,7 +72,6 @@
 
   &_outliner &__input {
     display: block;
-    background: none;
     font-size: 14px;
     line-height: normal;
     padding: 8px;
@@ -82,14 +81,14 @@
     background-color: var(--color-neutral-surface);
 
     &::placeholder {
-      color: var(--sand_500);
+      color: var(--color-neutral-content-subtler);
     }
   }
 
   &_outliner &__input:focus {
     background-color: var(--color-neutral-background);
     box-sizing: border-box;
-    border-color: var(--sand_300);
-    box-shadow: 0 0 0 3px var(--sand_300);
+    border-color: var(--color-neutral-border);
+    box-shadow: 0 0 0 3px var(--color-neutral-border);
   }
 }

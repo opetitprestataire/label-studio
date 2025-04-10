@@ -68,12 +68,12 @@
       transition-timing-function: ease;
 
       &:hover {
-        border-color: var(--sand_300);
+        border-color: var(--color-neutral-border);
       }
 
       &:focus {
-        border-color: var(--grape_500);
-        box-shadow: 0 0 0 1px var(--grape_500);
+        border-color: var(--color-primary-border-subtle);
+        box-shadow: 0 0 0 1px var(--color-primary-border-subtle);
       }
     }
   }

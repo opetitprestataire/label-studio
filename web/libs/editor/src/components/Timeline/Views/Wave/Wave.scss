@@ -2,13 +2,13 @@
 
 .wave {
   --container-edge-padding: 24px;
-  --border-color: var(--sand_300);
+  --border-color: var(--color-neutral-border);
 
   position: relative;
   user-select: none;
 
   &_compact {
-    --border-color: var(--sand_300);
+    --border-color: var(--color-neutral-border);
   }
 
   &__loader {
