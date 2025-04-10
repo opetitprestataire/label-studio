@@ -17,13 +17,24 @@
   background-image: var(--background-image);
   border-color: var(--border-color);
   color: var(--text-color);
+  text-align: center;
 
-  & > span:has(> svg:only-child) {
-    @apply px-0;
+
+  & > span {
+    @apply inline-flex flex-1 whitespace-pre items-center;
+
+
+    &:has(> svg:first-child) {
+      @apply pl-0;
+    }
+
+    &:has(> svg:last-child) {
+      @apply pr-0;
+    }
   }
 
   svg {
-    @apply w-6 h-6;
+    @apply w-6 h-6 inline-block;
 
     aspect-ratio: 1;
   }
@@ -43,10 +54,10 @@
     box-shadow: 0 0 0 4px var(--focus-outline);
   }
 
-  &:disabled,
-  &:disabled:hover,
-  &:disabled:focus,
-  &:disabled:active {
+  &:disabled:not(.waiting),
+  &:disabled:not(.waiting):hover,
+  &:disabled:not(.waiting):focus,
+  &:disabled:not(.waiting):active {
     --background-color-hover: var(--color-neutral-surface);
     --background-color-active: var(--color-neutral-surface);
     --border-color-hover: var(--color-neutral-border);
@@ -203,11 +214,11 @@
   @apply p-tight text-16 h-[40px];
 
   & > span {
-    @apply px-tight
+    @apply px-tight gap-tight;
   }
 
   & > svg {
-    @apply h-6;
+    @apply w-6 h-6;
   }
 }
 
@@ -215,11 +226,15 @@
   @apply p-tighter text-14 h-[32px];
 
   & > span {
-    @apply px-tighter
+    @apply px-tighter gap-tighter;
+  }
+
+  & > svg, & > span > svg {
+    @apply h-4;
   }
 
   & > svg {
-    @apply h-4;
+    @apply w-4;
   }
 }
 
@@ -227,16 +242,23 @@
   @apply p-tightest text-12 h-[24px];
 
   & > span {
-    @apply px-tightest
+    @apply px-tightest gap-tightest;
+  }
+
+  & > svg, & > span > svg {
+    @apply h-4;
   }
 
   & > svg {
-    @apply h-4;
+    @apply w-4;
   }
 }
 
 /// STATES
 .waiting {
+  --background-color-hover: var(--background-color);
+  --background-color-active: var(--background-color);
+  --border-color-hover: var(--border-color);
   --background-image: repeating-linear-gradient(
       -63.43deg,
     transparent 1px,
@@ -252,7 +274,6 @@
   background-size: 37px 100%;
   animation: button-waiting 1s linear infinite;
   cursor: wait;
-  pointer-events: none;
 }
 
 @keyframes button-waiting {
@@ -262,5 +283,33 @@
 
   100% {
     background-position: 37px 0;
+  }
+}
+
+/// ALIGN
+
+.align-default {
+  & > span {
+    @apply justify-center;
+  }
+}
+
+.align-center {
+  @apply justify-center;
+
+  & > span {
+    @apply flex-grow-0 justify-center;
+  }
+}
+
+.align-left {
+  & > span {
+    @apply justify-start;
+  }
+}
+
+.align-right {
+  & > span {
+    @apply justify-end;
   }
 }

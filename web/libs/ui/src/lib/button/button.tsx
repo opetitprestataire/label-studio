@@ -1,5 +1,5 @@
 import { cn } from "../../utils/utils";
-import type { ButtonHTMLAttributes, PropsWithChildren } from "react";
+import type { ButtonHTMLAttributes, PropsWithChildren, ReactNode } from "react";
 import styles from "./button.module.scss";
 
 const variants = {
@@ -23,6 +23,13 @@ const sizes = {
   smaller: styles["size-smaller"], // 24px
 };
 
+const alignment = {
+  default: styles["align-default"],
+  center: styles["align-center"],
+  left: styles["align-left"],
+  right: styles["align-right"],
+};
+
 /**
  * Generates a className string with button styling that can be applied to any element
  *
@@ -40,18 +47,19 @@ export function buttonVariant(
   {
     variant = "primary",
     look = "filled",
-    size = "small",
+    size = "medium",
+    align = "default",
     waiting = false,
   }: {
-    variant?: keyof typeof variants;
-    look?: keyof typeof looks;
-    size?: keyof typeof sizes;
+    variant?: ButtonProps["variant"];
+    look?: ButtonProps["look"];
+    size?: ButtonProps["size"];
+    align?: ButtonProps["align"];
     waiting?: boolean;
   },
   className?: string,
 ) {
-  const buttonStyles = [styles.base, variants[variant], looks[look], sizes[size]];
-  console.log(buttonStyles, { size });
+  const buttonStyles = [styles.base, variants[variant], looks[look], sizes[size], alignment[align]];
   return cn(
     "inline-flex items-center rounded-smaller border text-shadow-button p-tight box-border border transition-all",
     ...buttonStyles,
@@ -64,9 +72,10 @@ export type ButtonProps = {
   variant?: keyof typeof variants;
   look?: keyof typeof looks;
   size?: keyof typeof sizes;
-  leading?: React.ReactNode;
-  trailing?: React.ReactNode;
   waiting?: boolean;
+  align?: keyof typeof alignment;
+  leading?: ReactNode;
+  trailing?: ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 /**
@@ -79,18 +88,23 @@ export type ButtonProps = {
 function Button({
   children,
   className = "",
-  leading = null,
-  trailing = null,
   variant = "primary",
   look = "filled",
   size = "medium",
   waiting = false,
+  align = "default",
+  leading,
+  trailing,
   ...buttonProps
 }: PropsWithChildren<ButtonProps>) {
   return (
-    <button {...buttonProps} className={buttonVariant({ variant, look, size, waiting }, className)}>
+    <button
+      {...buttonProps}
+      disabled={buttonProps.disabled || waiting}
+      className={buttonVariant({ variant, look, size, waiting, align }, className)}
+    >
       {leading}
-      <span className="flex-1 px-tight">{children}</span>
+      <span>{children}</span>
       {trailing}
     </button>
   );
