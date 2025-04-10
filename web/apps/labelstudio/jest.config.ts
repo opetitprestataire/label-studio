@@ -8,7 +8,7 @@ export default {
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
   moduleNameMapper: {
-    "^apps/labelstudio/(.*)$": "<rootDir>/$1"
+    "^apps/labelstudio/(.*)$": "<rootDir>/$1",
   },
   coverageDirectory: "../../coverage/apps/labelstudio",
 };
