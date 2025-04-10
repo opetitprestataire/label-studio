@@ -31,7 +31,7 @@ export function SampleDatasetSelect({
     <div className="flex gap-3 items-center">
       <span className="text-neutral-content-subtler">or use a sample dataset</span>
       <Select value={sample?.url ?? undefined} onValueChange={onSelect}>
-        <SelectTrigger className="h-10 min-w-52 rounded-sm border-neutral-border-bold data-[placeholder]:text-[#000] text-[16px] [&_svg]:stroke-[#000]">
+        <SelectTrigger className="!h-10 min-w-52 rounded-sm border-neutral-border-bold data-[placeholder]:text-[#000] text-16 [&_svg]:stroke-[#000]">
           {title}
         </SelectTrigger>
         <SelectContent className="z-99999 min-w-90">

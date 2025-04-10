@@ -1,11 +1,11 @@
 import { useCallback, useRef, useState } from "react";
-import { Button } from "../../../components";
+import { Button } from "@humansignal/ui";
 import { LeaveBlocker, type LeaveBlockerCallbacks } from "../../../components/LeaveBlocker/LeaveBlocker";
 import { modal } from "../../../components/Modal/Modal";
 import { Space } from "../../../components/Space/Space";
 
 type SaveAndLeaveButtonProps = {
-  onSave: () => void;
+  onSave: () => Promise<void>;
   text?: string;
 };
 const SaveAndLeaveButton = ({ onSave, text = "Save and Leave" }: SaveAndLeaveButtonProps) => {
@@ -16,7 +16,7 @@ const SaveAndLeaveButton = ({ onSave, text = "Save and Leave" }: SaveAndLeaveBut
     setSaving(false);
   }, [onSave]);
   return (
-    <Button onClick={saveHandler} size="compact" look="primary" waiting={saving}>
+    <Button onClick={saveHandler} size="small" waiting={saving}>
       {text}
     </Button>
   );

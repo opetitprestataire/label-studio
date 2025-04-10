@@ -4,7 +4,7 @@ import { IconError, IconFileUpload, IconInfo, IconTrash, IconUpload } from "@hum
 import { Badge } from "@humansignal/shad/components/ui/badge";
 import { cn as scn } from "@humansignal/shad/utils";
 import { CodeBlock, SimpleCard } from "@humansignal/ui";
-import { Button } from "apps/labelstudio/src/components";
+import { Button } from "@humansignal/ui";
 import { useAtomValue } from "jotai";
 import Input from "libs/datamanager/src/components/Common/Input/Input";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
@@ -351,19 +351,21 @@ export const ImportPage = ({
       <input id="file-input" type="file" name="file" multiple onChange={onUpload} style={{ display: "none" }} />
 
       <header className="flex gap-4">
-        <form className={`${importClass.elem("url-form")} inline-flex`} method="POST" onSubmit={onLoadURL}>
-          <Input placeholder="Dataset URL" name="url" ref={urlRef} style={{ height: 40 }} />
-          <Button type="submit" look="primary">
-            Add URL
-          </Button>
+        <form
+          className={`${importClass.elem("url-form")} inline-flex items-stretch`}
+          method="POST"
+          onSubmit={onLoadURL}
+        >
+          <Input placeholder="Dataset URL" name="url" ref={urlRef} rawClassName="h-[40px]" />
+          <Button type="submit">Add URL</Button>
         </form>
         <span>or</span>
         <Button
           type="button"
           onClick={() => document.getElementById("file-input").click()}
           className={importClass.elem("upload-button")}
+          leading={<IconUpload />}
         >
-          <IconUpload width="16" height="16" className={importClass.elem("upload-icon")} />
           Upload {files.uploaded.length ? "More " : ""}Files
         </Button>
         {ff.isActive(ff.FF_SAMPLE_DATASETS) && (

@@ -37,10 +37,7 @@
 
     button {
       margin-left: -1px;
-      border-radius: 0 5px 5px 0;
-      background: var(--grape_500);
-      color: var(--sand_0);
-      cursor: pointer;
+      border-radius: 0 var(--corner-radius-smaller) var(--corner-radius-smaller) 0;
     }
 
     & + span {

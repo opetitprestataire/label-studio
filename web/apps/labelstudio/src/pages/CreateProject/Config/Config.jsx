@@ -6,7 +6,8 @@ import CM from "codemirror";
 import "codemirror/addon/hint/show-hint";
 import "codemirror/addon/hint/show-hint.css";
 
-import { Button, ToggleItems } from "../../../components";
+import { ToggleItems } from "../../../components";
+import { Button } from "@humansignal/ui";
 import { Form } from "../../../components/Form";
 import { useAPI } from "../../../providers/ApiProvider";
 import { Block, cn, Elem } from "../../../utils/bem";
@@ -106,7 +107,7 @@ const ConfigureControl = ({ control, template }) => {
         <h4>{tagname === "Choices" ? "Add choices" : "Add label names"}</h4>
         <span>Use new line as a separator to add multiple labels</span>
         <textarea name="labels" id="" cols="50" rows="5" ref={refLabels} onKeyPress={onKeyPress} className="p-2 px-3" />
-        <Button type="button" size="compact" onClick={onAddLabels}>
+        <Button type="button" size="small" look="outlined" onClick={onAddLabels}>
           Add
         </Button>
       </form>
@@ -473,7 +474,7 @@ const Configurator = ({
       <div className={configClass.elem("container")}>
         <h1>Labeling Interface{hasChanges ? " *" : ""}</h1>
         <header>
-          <Button type="button" data-leave={true} onClick={onBrowse} size="compact">
+          <Button type="button" data-leave={true} onClick={onBrowse} size="small" look="outlined">
             Browse Templates
           </Button>
           <ToggleItems items={{ code: "Code", visual: "Visual" }} active={configure} onSelect={onSelect} />
@@ -533,7 +534,7 @@ const Configurator = ({
                 </Elem>
               </Block>
             )}
-            <Button look="primary" size="compact" style={{ width: 120 }} onClick={onSave} waiting={waiting}>
+            <Button size="small" style={{ width: 120 }} onClick={onSave} waiting={waiting}>
               {waiting ? "Saving..." : "Save"}
             </Button>
             {isFF(FF_UNSAVED_CHANGES) && <UnsavedChanges hasChanges={hasChanges} onSave={onSave} />}

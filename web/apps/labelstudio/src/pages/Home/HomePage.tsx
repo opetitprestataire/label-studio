@@ -92,8 +92,9 @@ export const HomePage: Page = () => {
               return (
                 <Button
                   key={action.title}
-                  className="flex-grow-0 text-16/24 text-left justify-start min-w-[250px] [&_svg]:w-6 [&_svg]:h-6"
+                  className="flex-grow-0 text-16/24 min-w-[250px]"
                   look="outlined"
+                  align="center"
                   onClick={handleActions(action.type)}
                   leading={<action.icon />}
                 >
