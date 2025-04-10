@@ -1,5 +1,11 @@
 import { cn } from "../../utils/utils";
-import { forwardRef, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from "react";
+import {
+  type CSSProperties,
+  forwardRef,
+  type ButtonHTMLAttributes,
+  type PropsWithChildren,
+  type ReactNode,
+} from "react";
 import styles from "./button.module.scss";
 
 const variants = {
@@ -124,4 +130,25 @@ const Button = forwardRef(
   },
 );
 
-export { Button };
+const ButtonGroup = ({
+  children,
+  className,
+  style,
+  collapsed = true,
+}: PropsWithChildren<{
+  style?: CSSProperties;
+  className?: string;
+  collapsed?: boolean;
+}>) => {
+  const compoundClassName = cn(styles["button-group"], className, {
+    [styles["button-group-collapsed"]]: collapsed,
+  });
+
+  return (
+    <div className={compoundClassName} style={style}>
+      {children}
+    </div>
+  );
+};
+
+export { Button, ButtonGroup };

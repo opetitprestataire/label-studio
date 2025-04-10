@@ -1,7 +1,7 @@
 import { inject } from "mobx-react";
 import { useCallback, useState } from "react";
 import { IconMinus, IconPlus } from "@humansignal/icons";
-import { Button } from "../../Common/Button/Button";
+import { Button, ButtonGroup } from "@humansignal/ui";
 import { Icon } from "../../Common/Icon/Icon";
 import { Space } from "../../Common/Space/Space";
 
@@ -30,20 +30,14 @@ export const GridWidthButton = injector(({ view, gridWidth, size }) => {
   return view.type === "grid" ? (
     <Space style={{ fontSize: 12 }}>
       Columns: {width}
-      <Button.Group>
-        <Button
-          size={size}
-          icon={<Icon icon={IconMinus} size="12" color="#595959" />}
-          onClick={() => setGridWidth(width - 1)}
-          disabled={width === 3}
-        />
-        <Button
-          size={size}
-          icon={<Icon icon={IconPlus} size="12" color="#595959" />}
-          onClick={() => setGridWidth(width + 1)}
-          disabled={width === 10}
-        />
-      </Button.Group>
+      <ButtonGroup>
+        <Button size={size} onClick={() => setGridWidth(width - 1)} disabled={width === 3}>
+          <Icon icon={IconMinus} size="12" color="#595959" />
+        </Button>
+        <Button size={size} onClick={() => setGridWidth(width + 1)} disabled={width === 10}>
+          <Icon icon={IconPlus} size="12" color="#595959" />
+        </Button>
+      </ButtonGroup>
     </Space>
   ) : null;
 });

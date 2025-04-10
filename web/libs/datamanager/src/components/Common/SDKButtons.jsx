@@ -1,5 +1,5 @@
 import { useSDK } from "../../providers/SDKProvider";
-import { Button } from "./Button/Button";
+import { Button } from "@humansignal/ui";
 
 const SDKButton = ({ eventName, ...props }) => {
   const sdk = useSDK();
@@ -7,6 +7,9 @@ const SDKButton = ({ eventName, ...props }) => {
   return sdk.hasHandler(eventName) ? (
     <Button
       {...props}
+      size="small"
+      look="outlined"
+      variant="neutral"
       onClick={() => {
         sdk.invoke(eventName);
       }}

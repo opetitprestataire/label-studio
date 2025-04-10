@@ -3,7 +3,7 @@ import { useCallback, useRef } from "react";
 import { IconChevronRight, IconChevronDown, IconTrash } from "@humansignal/icons";
 import { Block, Elem } from "../../../utils/bem";
 import { FF_LOPS_E_3, isFF } from "../../../utils/feature-flags";
-import { Button } from "../../Common/Button/Button";
+import { Button } from "@humansignal/ui";
 import { Dropdown } from "../../Common/Dropdown/DropdownComponent";
 import Form from "../../Common/Form/Form";
 import { Menu } from "../../Common/Menu/Menu";
@@ -134,7 +134,7 @@ export const ActionsButton = injector(
         openUpwardForShortViewport={false}
         disabled={!hasSelected}
       >
-        <Button size={size} disabled={!hasSelected} {...rest}>
+        <Button size="small" disabled={!hasSelected} {...rest}>
           {selectedCount > 0 ? `${selectedCount} ${recordTypeLabel}${selectedCount > 1 ? "s" : ""}` : "Actions"}
           <IconChevronDown style={{ marginLeft: 4, marginRight: -7 }} />
         </Button>

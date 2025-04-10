@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { IconChevronDown } from "@humansignal/icons";
 import { Filters } from "../Filters/Filters";
 import { Badge } from "./Badge/Badge";
-import { Button } from "./Button/Button";
+import { Button } from "@humansignal/ui";
 import { Dropdown } from "./Dropdown/Dropdown";
 
 const buttonInjector = inject(({ store }) => {
@@ -22,7 +22,14 @@ export const FiltersButton = buttonInjector(
       const hasFilters = activeFiltersNumber > 0;
 
       return (
-        <Button ref={ref} size={size} onClick={() => sidebarEnabled && viewsStore.toggleSidebar()} {...rest}>
+        <Button
+          ref={ref}
+          size="small"
+          variant="neutral"
+          look="outlined"
+          onClick={() => sidebarEnabled && viewsStore.toggleSidebar()}
+          {...rest}
+        >
           Filters{" "}
           {hasFilters && (
             <Badge size="small" style={{ marginLeft: 5 }}>

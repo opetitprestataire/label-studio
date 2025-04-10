@@ -24,6 +24,7 @@
   &__list {
     display: flex;
     min-width: 0;
+    align-items: center;
   }
 
   &__item {
@@ -119,7 +120,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    position: absolute; 
+    position: absolute;
     bottom: 0;
     z-index: 1000;
     width: 100%;

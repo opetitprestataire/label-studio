@@ -1,8 +1,7 @@
 import { inject } from "mobx-react";
 import React from "react";
 import { Block, cn, Elem } from "../../utils/bem";
-import { Button } from "../Common/Button/Button";
-import { Icon } from "../Common/Icon/Icon";
+import { Button } from "@humansignal/ui";
 import { Tooltip } from "@humansignal/ui";
 import { FilterLine } from "./FilterLine/FilterLine";
 import { IconChevronRight, IconPlus } from "@humansignal/icons";
@@ -70,20 +69,21 @@ export const Filters = injector(({ views, currentView, filters }) => {
         )}
       </Elem>
       <Elem name="actions">
-        <Button type="primary" size="small" onClick={() => currentView.createFilter()} icon={<IconPlus />}>
+        <Button size="smaller" onClick={() => currentView.createFilter()} leading={<IconPlus className="!h-3 !w-3" />}>
           Add {filters.length ? "Another Filter" : "Filter"}
         </Button>
 
         {!sidebarEnabled ? (
           <Tooltip title="Pin to sidebar">
             <Button
+              look="outlined"
               type="link"
-              size="small"
+              size="smaller"
               about="Pin to sidebar"
               onClick={() => views.expandFilters()}
-              style={{ display: "inline-flex", alignItems: "center" }}
-              icon={<Icon icon={IconChevronRight} size={18} />}
-            />
+            >
+              <IconChevronRight className="!w-4 !h-4" />
+            </Button>
           </Tooltip>
         ) : null}
       </Elem>

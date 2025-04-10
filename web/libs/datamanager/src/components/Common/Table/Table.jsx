@@ -5,7 +5,7 @@ import { VariableSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import { useSDK } from "../../../providers/SDKProvider";
 import { isDefined } from "../../../utils/utils";
-import { Button } from "../Button/Button";
+import { Button } from "@humansignal/ui";
 import { Icon } from "../Icon/Icon";
 import { modal } from "../Modal/Modal";
 import { IconCode, IconGear, IconGearNewUI } from "@humansignal/icons";
@@ -135,8 +135,7 @@ export const Table = observer(
         return (
           <Tooltip title="Show task source">
             <Button
-              type="link"
-              style={{ width: 32, height: 32, padding: 0 }}
+              look="string"
               onClick={() => {
                 modal({
                   title: `Source for task ${out?.id}`,
@@ -144,8 +143,9 @@ export const Table = observer(
                   body: <TaskSourceView content={out} onTaskLoad={onTaskLoad} sdkType={type} />,
                 });
               }}
-              icon={<Icon icon={IconCode} />}
-            />
+            >
+              <Icon icon={IconCode} />
+            </Button>
           </Tooltip>
         );
       },

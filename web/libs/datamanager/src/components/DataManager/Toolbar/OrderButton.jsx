@@ -1,6 +1,6 @@
-import { inject } from "mobx-react";
 import { IconSortDown, IconSortUp } from "@humansignal/icons";
-import { Button } from "../../Common/Button/Button";
+import { Button, ButtonGroup } from "@humansignal/ui";
+import { inject } from "mobx-react";
 import { FieldsButton } from "../../Common/FieldsButton";
 import { Space } from "../../Common/Space/Space";
 
@@ -16,7 +16,7 @@ const injector = inject(({ store }) => {
 export const OrderButton = injector(({ size, ordering, view, ...rest }) => {
   return (
     <Space style={{ fontSize: 12 }}>
-      <Button.Group collapsed {...rest}>
+      <ButtonGroup collapsed {...rest}>
         <FieldsButton
           size={size}
           style={{ minWidth: 67, textAlign: "left", marginRight: -1 }}
@@ -46,13 +46,15 @@ export const OrderButton = injector(({ size, ordering, view, ...rest }) => {
         />
 
         <Button
-          size={size}
-          style={{ color: "#595959" }}
+          size="small"
+          look="outlined"
+          variant="neutral"
           disabled={!!ordering === false}
-          icon={ordering?.desc ? <IconSortUp /> : <IconSortDown />}
           onClick={() => view.setOrdering(ordering?.field)}
-        />
-      </Button.Group>
+        >
+          {ordering?.desc ? <IconSortUp /> : <IconSortDown />}
+        </Button>
+      </ButtonGroup>
     </Space>
   );
 });

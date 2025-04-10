@@ -1,10 +1,9 @@
+import { Button, Checkbox, Tooltip } from "@humansignal/ui";
 import { inject, observer } from "mobx-react";
 import React from "react";
-import { Button } from "./Button/Button";
-import { Checkbox, Tooltip } from "@humansignal/ui";
+import { Elem } from "../../utils/bem";
 import { Dropdown } from "./Dropdown/Dropdown";
 import { Menu } from "./Menu/Menu";
-import { Elem } from "../../utils/bem";
 
 const injector = inject(({ store }) => {
   return {
@@ -80,7 +79,7 @@ export const FieldsButton = injector(
 
     const renderButton = () => {
       return (
-        <Button size={size} icon={icon} extra={trailingIcon} style={style} className={className}>
+        <Button variant="neutral" size="small" look="outlined" leading={icon} trailing={trailingIcon}>
           {content.length ? content : null}
         </Button>
       );
