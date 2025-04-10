@@ -455,51 +455,48 @@ Scenario(
 
     AtOutliner.seeRegions(1);
 
-      const hateTextFound = I.executeScript(() => {
-        return !!document.evaluate(
-          "//*[contains(@class,'text--')]//text()[contains(.,'hate that')]",
-          document,
-          null,
-          XPathResult.FIRST_ORDERED_NODE_TYPE,
-          null,
-        ).singleNodeValue;
+    const hateTextFound = I.executeScript(() => {
+      return !!document.evaluate(
+        "//*[contains(@class,'text--')]//text()[contains(.,'hate that')]",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null,
+      ).singleNodeValue;
+    });
+
+    const uncomfortableTextFound = I.executeScript(() => {
+      return !!document.evaluate(
+        "//*[contains(@class,'text--')]//text()[contains(.,'Uncomfortable silences')]",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null,
+      ).singleNodeValue;
+    });
+
+    if (hateTextFound && uncomfortableTextFound) {
+      AtParagraphs.setSelection(
+        AtParagraphs.locateText("hate that?"),
+        10,
+        AtParagraphs.locateText("Uncomfortable silences"),
+        5,
+      );
+    } else {
+      I.say("Could not find specific phrases, selecting between any visible phrases");
+      // Select between any two visible phrases
+      const visiblePhrases = I.executeScript(() => {
+        return Array.from(
+          document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
+        ).map((el) => el.textContent);
       });
 
-      const uncomfortableTextFound = I.executeScript(() => {
-        return !!document.evaluate(
-          "//*[contains(@class,'text--')]//text()[contains(.,'Uncomfortable silences')]",
-          document,
-          null,
-          XPathResult.FIRST_ORDERED_NODE_TYPE,
-          null,
-        ).singleNodeValue;
-      });
+      if (visiblePhrases.length >= 2) {
+        const phrase1 = visiblePhrases[0].substring(0, 10); // First few chars of first phrase
+        const phrase2 = visiblePhrases[1].substring(0, 10); // First few chars of second phrase
 
-      if (hateTextFound && uncomfortableTextFound) {
-        AtParagraphs.setSelection(
-          AtParagraphs.locateText("hate that?"),
-          10,
-          AtParagraphs.locateText("Uncomfortable silences"),
-          5,
-        );
-      } else {
-        I.say("Could not find specific phrases, selecting between any visible phrases");
-        // Select between any two visible phrases
-        const visiblePhrases = I.executeScript(() => {
-          return Array.from(
-            document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
-          ).map((el) => el.textContent);
-        });
-
-        if (visiblePhrases.length >= 2) {
-          const phrase1 = visiblePhrases[0].substring(0, 10); // First few chars of first phrase
-          const phrase2 = visiblePhrases[1].substring(0, 10); // First few chars of second phrase
-
-          AtParagraphs.setSelection(AtParagraphs.locateText(phrase1), 5, AtParagraphs.locateText(phrase2), 0);
-        }
+        AtParagraphs.setSelection(AtParagraphs.locateText(phrase1), 5, AtParagraphs.locateText(phrase2), 0);
       }
-    } catch (e) {
-      I.say(`Error during selection: ${e.message}`);
     }
 
     I.wait(1);
