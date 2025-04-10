@@ -211,6 +211,7 @@ export const Select = forwardRef(
               <CommandList label="Select an option">
                 <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
                 <CommandGroup>
+                  {props.header ? props.header : null}
                   {_options.map((option, index) => {
                     const optionValue = option?.value ?? option;
                     const label = option?.label ?? optionValue;
