@@ -80,7 +80,7 @@ const FEATURE_FLAGS = {
 
 Scenario(
   "Create two results using excluding a phrase  by the filter",
-  async ({ I, LabelStudio, AtSidebar, AtParagraphs, AtLabels }) => {
+  async ({ I, LabelStudio, AtOutliner, AtParagraphs, AtLabels }) => {
     const params = {
       data: DATA,
       config: CONFIG,
@@ -90,7 +90,7 @@ Scenario(
 
     LabelStudio.setFeatureFlags(FEATURE_FLAGS);
     LabelStudio.init(params);
-    AtSidebar.seeRegions(0);
+    AtOutliner.seeRegions(0);
 
     I.say("Select 2 regions in the consecutive phrases of the one person");
 
@@ -104,14 +104,14 @@ Scenario(
       AtParagraphs.locateText("I dont know. Thats a good question."),
       11,
     );
-    AtSidebar.seeRegions(2);
+    AtOutliner.seeRegions(2);
 
     I.say("Take a snapshot");
     const twoActionsResult = LabelStudio.serialize();
 
     I.say("Reset to initial state");
     LabelStudio.init(params);
-    AtSidebar.seeRegions(0);
+    AtOutliner.seeRegions(0);
 
     I.say("Filter the phrases by that person.");
     AtParagraphs.clickFilter("Vincent Vega:");
@@ -126,7 +126,7 @@ Scenario(
       AtParagraphs.locateText("I dont know. Thats a good question."),
       11,
     );
-    AtSidebar.seeRegions(2);
+    AtOutliner.seeRegions(2);
 
     I.say("Take a second snapshot");
     const oneActionResult = LabelStudio.serialize();
@@ -137,7 +137,7 @@ Scenario(
   },
 );
 
-Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagraphs, AtLabels }) => {
+Scenario("Check different cases ", async ({ I, LabelStudio, AtOutliner, AtParagraphs, AtLabels }) => {
   const dialogue = [
     1, // 1
     3, // 2
@@ -167,7 +167,7 @@ Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagra
 
   LabelStudio.setFeatureFlags(FEATURE_FLAGS);
   LabelStudio.init(params);
-  AtSidebar.seeRegions(0);
+  AtOutliner.seeRegions(0);
 
   I.say("Select only Authors 1 and 2");
   AtParagraphs.clickFilter("Author 1", "Author 2");
@@ -187,8 +187,8 @@ Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagra
   // Select from the first visible message to the last visible message we can find
   AtParagraphs.setSelection(AtParagraphs.locateText("Message 1"), 0, AtParagraphs.locateText("Message 8"), 9);
 
-  I.say("There should be regions created");
-  I.wait(1); // Wait for regions to be created
+  I.say("There should be 4 new regions");
+  AtOutliner.seeRegions(4);
   {
     const result = await LabelStudio.serialize();
 
@@ -215,7 +215,7 @@ Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagra
   I.say("Test creating another selection with a different label");
   AtLabels.clickLabel("Important Stuff");
   AtParagraphs.setSelection(AtParagraphs.locateText("Message 3"), 4, AtParagraphs.locateText("Message 8"), 4);
-  I.wait(1); // Wait for regions to be created
+  AtOutliner.seeRegions(6);
 
   {
     const result = await LabelStudio.serialize();
@@ -253,9 +253,8 @@ Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagra
 
   I.say("Create regions with a different filter");
   AtLabels.clickLabel("Important Stuff");
-  // Select text we can find in the filtered view
-  AtParagraphs.setSelection(AtParagraphs.locateText("Message 4"), 4, AtParagraphs.locateText("Message 7"), 5);
-  I.wait(1); // Wait for regions to be created
+  AtParagraphs.setSelection(AtParagraphs.locateText("age 3"), 4, AtParagraphs.locateText("age 8"), 3);
+  AtOutliner.seeRegions(9);
 
   {
     const result = await LabelStudio.serialize();
@@ -279,7 +278,7 @@ Scenario("Check different cases ", async ({ I, LabelStudio, AtSidebar, AtParagra
 // This scenario has been adapted to work with the new select component behavior
 Scenario(
   "Check start and end indices do not leak to other lines",
-  async ({ I, LabelStudio, AtSidebar, AtParagraphs, AtLabels }) => {
+  async ({ I, LabelStudio, AtOutliner, AtParagraphs, AtLabels }) => {
     const dialogue = [
       1, // 1
       3, // 2
@@ -313,14 +312,14 @@ Scenario(
     I.amOnPage("/");
 
     LabelStudio.init(params);
-    AtSidebar.seeRegions(0);
+    AtOutliner.seeRegions(0);
 
     I.say(
       "Test selection from the end of one turn to end of the one below correctly creates a single region with proper start,startOffset,end,endOffset",
     );
     AtLabels.clickLabel("Random talk");
     AtParagraphs.setSelection(AtParagraphs.locateText("Message 8"), 9, AtParagraphs.locateText("Message 9"), 9);
-    AtSidebar.seeRegions(1);
+    AtOutliner.seeRegions(1);
 
     {
       const result = await LabelStudio.serialize();
@@ -342,7 +341,7 @@ Scenario(
     );
     AtLabels.clickLabel("Random talk");
     AtParagraphs.setSelection(AtParagraphs.locateText("Message 8"), 9, AtParagraphs.locateText("Message 10"), 0);
-    AtSidebar.seeRegions(2);
+    AtOutliner.seeRegions(2);
 
     {
       const result = await LabelStudio.serialize();
@@ -365,20 +364,8 @@ Scenario(
     AtParagraphs.clickFilter("Author 2", "Author 3");
     I.wait(2); // Wait for filter to take effect
     AtLabels.clickLabel("Important Stuff");
-    I.wait(1);
-
-    // Debug visible messages
-    I.executeScript(() => {
-      const visibleTexts = Array.from(
-        document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
-      ).map((el) => el.textContent);
-      console.log("Visible messages:", visibleTexts);
-      return visibleTexts;
-    });
-
-    // Find messages that are visible
-    AtParagraphs.setSelection(AtParagraphs.locateText("Message 4"), 0, AtParagraphs.locateText("Message 7"), 9);
-    I.wait(1);
+    AtParagraphs.setSelection(AtParagraphs.locateText("Message 2"), 9, AtParagraphs.locateText("Message 8"), 9);
+    AtOutliner.seeRegions(4);
 
     {
       const result = await LabelStudio.serialize();
@@ -401,11 +388,8 @@ Scenario(
       "Test selection from the end of one turn to very start of ones below across collapsed text correctly creates creates regions with proper start,startOffset,end,endOffset",
     );
     AtLabels.clickLabel("Other");
-    I.wait(1); // Wait for label selection to take effect
-
-    // Try to select from visible content
-    AtParagraphs.setSelection(AtParagraphs.locateText("Message 4"), 0, AtParagraphs.locateText("Message 7"), 0);
-    I.wait(1);
+    AtParagraphs.setSelection(AtParagraphs.locateText("Message 2"), 9, AtParagraphs.locateText("Message 8"), 0);
+    AtOutliner.seeRegions(6);
 
     {
       const result = await LabelStudio.serialize();
@@ -428,54 +412,8 @@ Scenario(
 
     I.say("Test selection from Message 11 to Message 14");
     AtLabels.clickLabel("Random talk");
-    I.wait(1);
-
-    // Try to find messages 11-14 and select if possible
-    try {
-      const msg11Found = I.executeScript(() => {
-        return !!document.evaluate(
-          "//*[contains(@class,'text--')]//text()[contains(.,'Message 11')]",
-          document,
-          null,
-          XPathResult.FIRST_ORDERED_NODE_TYPE,
-          null,
-        ).singleNodeValue;
-      });
-
-      const msg14Found = I.executeScript(() => {
-        return !!document.evaluate(
-          "//*[contains(@class,'text--')]//text()[contains(.,'Message 14')]",
-          document,
-          null,
-          XPathResult.FIRST_ORDERED_NODE_TYPE,
-          null,
-        ).singleNodeValue;
-      });
-
-      if (msg11Found && msg14Found) {
-        AtParagraphs.setSelection(AtParagraphs.locateText("Message 11"), 0, AtParagraphs.locateText("Message 14"), 0);
-        I.wait(1);
-      } else {
-        I.say("Could not find Message 11 or Message 14, selecting different visible messages");
-        // Find any two visible messages and select between them
-        const visibleMsgs = I.executeScript(() => {
-          return Array.from(
-            document.querySelectorAll('.lsf-paragraphs [class^="phrase--"] [class^="dialoguetext--"]'),
-          ).map((el) => el.textContent);
-        });
-
-        if (visibleMsgs.length >= 2) {
-          // Select between the first and last visible messages
-          const firstMsg = visibleMsgs[0].trim();
-          const lastMsg = visibleMsgs[visibleMsgs.length - 1].trim();
-          AtParagraphs.setSelection(AtParagraphs.locateText(firstMsg), 0, AtParagraphs.locateText(lastMsg), 5);
-        }
-      }
-    } catch (e) {
-      I.say(`Error trying to select: ${e.message}`);
-    }
-
-    I.wait(1);
+    AtParagraphs.setSelection(AtParagraphs.locateText("Message 11"), 10, AtParagraphs.locateText("Message 14"), 0);
+    AtOutliner.seeRegions(7);
 
     {
       const result = await LabelStudio.serialize();
@@ -491,7 +429,7 @@ Scenario(
 // Updated to work with new select component behavior
 Scenario(
   "Selecting the end character on a paragraph phrase to the very start of other phrases includes all selected phrases",
-  async ({ I, LabelStudio, AtSidebar, AtParagraphs, AtLabels }) => {
+  async ({ I, LabelStudio, AtOutliner, AtParagraphs, AtLabels }) => {
     const params = {
       data: DATA,
       config: CONFIG,
@@ -501,7 +439,7 @@ Scenario(
 
     LabelStudio.setFeatureFlags(FEATURE_FLAGS);
     LabelStudio.init(params);
-    AtSidebar.seeRegions(0);
+    AtOutliner.seeRegions(0);
 
     I.say("Select across phrases to test selection behavior");
     I.wait(1);
@@ -515,10 +453,7 @@ Scenario(
       return visibleTexts;
     });
 
-    // Try to find and select from "Dont you hate that?" to the next phrase
-    try {
-      AtLabels.clickLabel("Random talk");
-      I.wait(0.5);
+    AtOutliner.seeRegions(1);
 
       const hateTextFound = I.executeScript(() => {
         return !!document.evaluate(
@@ -589,7 +524,7 @@ Scenario(
 // Updated for the new select component behavior
 Scenario(
   "Selecting the end character on a paragraph phrase to the very start of other phrases includes all selected phrases except the very last one",
-  async ({ I, LabelStudio, AtSidebar, AtParagraphs, AtLabels }) => {
+  async ({ I, LabelStudio, AtOutliner, AtParagraphs, AtLabels }) => {
     const params = {
       data: {
         ...DATA,
@@ -602,7 +537,7 @@ Scenario(
 
     LabelStudio.setFeatureFlags(FEATURE_FLAGS);
     LabelStudio.init(params);
-    AtSidebar.seeRegions(0);
+    AtOutliner.seeRegions(0);
 
     I.say("Select between phrases with filtering");
     AtParagraphs.clickFilter("Vincent Vega:");
@@ -620,8 +555,7 @@ Scenario(
     AtLabels.clickLabel("Random talk");
     I.wait(0.5);
 
-    // Log what we found
-    I.say(`Found ${visibleTexts.length} visible texts: ${JSON.stringify(visibleTexts)}`);
+    AtOutliner.seeRegions(2);
 
     // Try creating a simple region with label
     try {
@@ -690,7 +624,7 @@ Scenario(
 // Updated for new select component behavior - fixed for missing data-testid values
 Scenario(
   "Initializing a paragraph region range should not include author names in text",
-  async ({ I, LabelStudio, AtSidebar }) => {
+  async ({ I, LabelStudio, AtOutliner }) => {
     const params = {
       data: DATA,
       annotations: ANNOTATIONS,
@@ -708,7 +642,7 @@ Scenario(
     const { paragraphlabels: _paragraphlabels, ...value } = region.value;
 
     LabelStudio.init(params);
-    I.wait(1);
+    AtOutliner.seeRegions(1);
 
     // Check that regions appear
     const result = await LabelStudio.serialize();
