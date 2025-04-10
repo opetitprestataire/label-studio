@@ -1,7 +1,8 @@
 import { type FormEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { InputFile, ToastType, useToast, Userpic } from "@humansignal/ui";
-import { API } from "apps/labelstudio/src/providers/ApiProvider";
+// @todo we should not use anything from `apps` in `libs`
+import { API } from "../../../../../../apps/labelstudio/src/providers/ApiProvider";
 import styles from "../AccountSettings.module.scss";
 import { useCurrentUserAtom } from "@humansignal/core/lib/hooks/useCurrentUser";
 import { atomWithMutation } from "jotai-tanstack-query";
@@ -11,8 +12,8 @@ import { useAtomValue } from "jotai";
  * FIXME: This is legacy imports. We're not supposed to use such statements
  * each one of these eventually has to be migrated to core or ui
  */
-import { Input } from "apps/labelstudio/src/components/Form/Elements";
-import { Button } from "apps/labelstudio/src/components/Button/Button";
+import { Input } from "../../../../../../apps/labelstudio/src/components/Form/Elements";
+import { Button } from "../../../../../../apps/labelstudio/src/components/Button/Button";
 
 const updateUserAvatarAtom = atomWithMutation(() => ({
   mutationKey: ["update-user"],
