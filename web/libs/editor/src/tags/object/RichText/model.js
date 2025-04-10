@@ -1,6 +1,6 @@
 import { destroy as destroyNode, flow, types } from "mobx-state-tree";
 import { createRef } from "react";
-import { ff } from "@humansignal/core";
+import * as ff from "@humansignal/core/lib/utils/feature-flags/ff";
 import { customTypes } from "../../../core/CustomTypes";
 import { errorBuilder } from "../../../core/DataValidator/ConfigValidator";
 import { AnnotationMixin } from "../../../mixins/AnnotationMixin";
