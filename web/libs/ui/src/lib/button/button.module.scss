@@ -11,8 +11,11 @@
   --wait-color-value-outline: var(--color-primary-emphasis);
   --wait-color-opacity: 10%;
   --wait-color: color-mix(in lab, var(--wait-color-value) var(--wait-color-opacity), transparent);
+  --focus-shadow: 0 0 0 4px var(--focus-outline);
+  --emboss-shadow: inset 0 1px 0 rgb(255 255 255 / 10%), inset 0 -1px 0 rgb(0 0 0 / 10%);
+  --emboss-shadow-active: inset 0 -1px 0 rgb(255 255 255 / 5%), inset 0 1px 0 rgb(0 0 0 / 10%);
 
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%), inset 0 -1px 0 rgb(0 0 0 / 10%);
+  box-shadow: var(--emboss-shadow);
   background-color: var(--background-color);
   background-image: var(--background-image);
   border-color: var(--border-color);
@@ -45,13 +48,14 @@
   }
 
   &:active {
-    box-shadow: inset 0 -1px 0 rgb(255 255 255 / 5%), inset 0 1px 0 rgb(0 0 0 / 10%);
+    --emboss-shadow: var(--emboss-shadow-active);
+
     background-color: var(--background-color-active);
     border-color: var(--border-color-hover);
   }
 
   &:focus {
-    box-shadow: 0 0 0 4px var(--focus-outline);
+    box-shadow:  var(--emboss-shadow),var(--focus-shadow);
   }
 
   &:disabled:not(.waiting),
@@ -172,8 +176,6 @@
 .look-outlined {
   &:not(:disabled),
   &.waiting {
-    box-shadow: none;
-
     --background-color: transparent;
     --border-color: var(--border-outline);
     --text-color: var(--text-outline);
@@ -181,6 +183,7 @@
     --background-color-active: var(--background-color-active-outline);
     --wait-color-value: var(--wait-color-value-outline);
     --wait-color-opacity: 40%;
+    --emboss-shadow: 0 0 0 transparent;
 
     text-shadow: none;
 
