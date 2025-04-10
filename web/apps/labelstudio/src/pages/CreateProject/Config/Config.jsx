@@ -171,6 +171,7 @@ const ConfigureSettings = ({ template }) => {
               options={options.type}
               label={options.title}
               isInline={true}
+              dataTestid={`select-trigger-${options.title.replace(/\s+/g, "-").replace(":", "").toLowerCase()}-${value}`}
             />
           </li>
         );
@@ -304,6 +305,7 @@ const ConfigureColumn = ({ template, obj, columns }) => {
           </>
         }
         labelProps={{ className: "inline-flex" }}
+        dataTestid={`select-trigger-use-image-from-field-${isManual ? "-" : value}`}
       />
       {isManual && <Input value={newValue} onChange={handleChange} onBlur={handleBlur} onKeyDown={handleKeyDown} />}
     </>
