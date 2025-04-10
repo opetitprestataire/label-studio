@@ -11,6 +11,9 @@ const meta: Meta<typeof Button> = {
     waiting: { control: "boolean" },
     look: { control: "select" },
     size: { control: "select" },
+    align: { control: "select" },
+    leading: { control: false },
+    trailing: { control: false },
   },
 };
 

@@ -72,8 +72,8 @@ export type ButtonProps = {
   variant?: keyof typeof variants;
   look?: keyof typeof looks;
   size?: keyof typeof sizes;
-  waiting?: boolean;
   align?: keyof typeof alignment;
+  waiting?: boolean;
   leading?: ReactNode;
   trailing?: ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;

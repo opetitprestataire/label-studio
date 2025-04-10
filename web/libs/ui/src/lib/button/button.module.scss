@@ -15,6 +15,8 @@
   --emboss-shadow: inset 0 1px 0 rgb(var(--white-raw) / 10%), inset 0 -1px 0 rgb(var(--black-raw) / 10%);
   --emboss-shadow-active: inset 0 -1px 0 rgb(var(--white-raw) / 5%), inset 0 1px 0 rgb(var(--black-raw) / 10%);
 
+  @apply text-label-medium font-medium;
+
   box-shadow: var(--emboss-shadow);
   background-color: var(--background-color);
   background-image: var(--background-image);
@@ -224,7 +226,7 @@
 /// SIZES
 
 .size-medium {
-  @apply p-tight text-16 h-[40px];
+  @apply p-tight text-label-medium h-[40px];
 
   & > span {
     @apply px-tight gap-tight;
@@ -236,7 +238,7 @@
 }
 
 .size-small {
-  @apply p-tighter text-14 h-[32px];
+  @apply p-tighter text-label-small h-[32px];
 
   & > span {
     @apply px-tighter gap-tighter;
@@ -252,7 +254,7 @@
 }
 
 .size-smaller {
-  @apply p-tightest text-12 h-[24px];
+  @apply p-tightest text-label-small h-[24px];
 
   & > span {
     @apply px-tightest gap-tightest;
@@ -300,7 +302,6 @@
 }
 
 /// ALIGN
-
 .align-default {
   & > span {
     @apply justify-center;
