@@ -360,12 +360,7 @@ export const ImportPage = ({
           <Button type="submit">Add URL</Button>
         </form>
         <span>or</span>
-        <Button
-          type="button"
-          onClick={() => document.getElementById("file-input").click()}
-          className={importClass.elem("upload-button")}
-          leading={<IconUpload />}
-        >
+        <Button type="button" onClick={() => document.getElementById("file-input").click()} leading={<IconUpload />}>
           Upload {files.uploaded.length ? "More " : ""}Files
         </Button>
         {ff.isActive(ff.FF_SAMPLE_DATASETS) && (

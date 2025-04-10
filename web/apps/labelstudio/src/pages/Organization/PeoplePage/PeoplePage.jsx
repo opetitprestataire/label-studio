@@ -101,8 +101,12 @@ export const PeoplePage = () => {
           <Space />
 
           <Space>
-            {isFF(FF_AUTH_TOKENS) && <Button onClick={showApiTokenSettingsModal}>API Tokens Settings</Button>}
-            <Button leading={<IconPlus className="!h-4" />} primary onClick={() => setInvitationOpen(true)}>
+            {isFF(FF_AUTH_TOKENS) && (
+              <Button look="outlined" onClick={showApiTokenSettingsModal}>
+                API Tokens Settings
+              </Button>
+            )}
+            <Button leading={<IconPlus className="!h-4" />} onClick={() => setInvitationOpen(true)}>
               Add People
             </Button>
           </Space>

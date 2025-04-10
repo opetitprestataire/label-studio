@@ -102,6 +102,7 @@ function Button({
       {...buttonProps}
       disabled={buttonProps.disabled || waiting}
       className={buttonVariant({ variant, look, size, waiting, align }, className)}
+      data-ignore-uikit
     >
       {leading}
       <span>{children}</span>

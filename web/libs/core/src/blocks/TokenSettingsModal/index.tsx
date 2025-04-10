@@ -1,9 +1,9 @@
 import { useAtomValue } from "jotai";
 import { settingsAtom, TOKEN_SETTINGS_KEY } from "@humansignal/core/pages/AccountSettings/atoms";
 import { queryClientAtom } from "jotai-tanstack-query";
+import { Button } from "@humansignal/ui";
 
 import { Form, Input, Toggle } from "apps/labelstudio/src/components/Form";
-import { Button } from "apps/labelstudio/src/components/Button/Button";
 import type { AuthTokenSettings } from "@humansignal/core/pages/AccountSettings/types";
 import { type ChangeEvent, useState } from "react";
 

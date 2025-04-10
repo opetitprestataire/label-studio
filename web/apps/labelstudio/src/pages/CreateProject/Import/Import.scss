@@ -99,21 +99,6 @@
     background:  rgb(255 255 255 / 50%);
   }
 
-  &__upload-button {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border: 1px solid var(--grape_500);
-    background: var(--grape_0);
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  &__upload-icon {
-    height: 20px;
-    width: 20px;
-  }
-
   &__info-icon {
     vertical-align: -5px;
     height: 20px;

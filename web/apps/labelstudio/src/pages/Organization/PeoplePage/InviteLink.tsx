@@ -7,7 +7,7 @@ import { API } from "apps/labelstudio/src/providers/ApiProvider";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { useAtomValue } from "jotai";
 import { Modal } from "apps/labelstudio/src/components/Modal/ModalPopup";
-import { Button } from "apps/labelstudio/src/components";
+import { Button } from "@humansignal/ui";
 
 const linkAtom = atomWithQuery(() => ({
   queryKey: ["invite-link"],
@@ -84,12 +84,12 @@ const InvitationFooter = () => {
   return (
     <Space spread>
       <Space>
-        <Button variant="secondary" style={{ width: 170 }} onClick={() => refetch()}>
+        <Button look="outlined" style={{ width: 170 }} onClick={() => refetch()}>
           Reset Link
         </Button>
       </Space>
       <Space>
-        <Button look="primary" style={{ width: 170 }} onClick={() => copyText(link!)}>
+        <Button variant={copied ? "positive" : "primary"} style={{ width: 170 }} onClick={() => copyText(link!)}>
           {copied ? "Copied!" : "Copy link"}
         </Button>
       </Space>
