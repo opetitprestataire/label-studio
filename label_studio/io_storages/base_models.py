@@ -497,7 +497,7 @@ def export_sync_background(storage_class, storage_id, **kwargs):
 
 
 @job('low', timeout=settings.RQ_LONG_JOB_TIMEOUT)
-def export_sync_background_only_new(storage_class, storage_id, **kwargs):
+def export_sync_only_new_background(storage_class, storage_id, **kwargs):
     storage = storage_class.objects.get(id=storage_id)
     storage.save_only_new_annotations()
 
@@ -583,7 +583,7 @@ class ExportStorage(Storage, ProjectStorageMixin):
 
     def sync(self, save_only_new_annotations: bool = False):
         if save_only_new_annotations:
-            export_sync_fn = export_sync_background_only_new
+            export_sync_fn = export_sync_only_new_background
         else:
             export_sync_fn = export_sync_background
 
