@@ -158,7 +158,10 @@ export const Select = forwardRef(
               [styles.sizeLarge]: size === "large",
             })}
             type="button"
-            data-testid={props?.dataTestid ?? `select-trigger${value ? `-${value}` : ""}`}
+            data-testid={
+              props?.dataTestid ??
+              `select-trigger${props?.name ? `-${props?.name?.replace?.(/\s/g, "-")}` : ""}${value ? `-${value}` : ""}`
+            }
             ref={triggerRef}
             data-name={props?.name}
             data-value={value ?? ""}
