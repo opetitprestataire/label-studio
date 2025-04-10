@@ -85,7 +85,9 @@ const ProjectCard = ({ project }) => {
                   </Menu>
                 }
               >
-                <Button size="small" type="text" icon={<IconEllipsis />} />
+                <Button size="smaller" look="string">
+                  <IconEllipsis />
+                </Button>
               </Dropdown.Trigger>
             </Elem>
           </Elem>

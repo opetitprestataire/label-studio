@@ -1,5 +1,5 @@
 import { cn } from "../../utils/utils";
-import type { ButtonHTMLAttributes, PropsWithChildren, ReactNode } from "react";
+import { forwardRef, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from "react";
 import styles from "./button.module.scss";
 
 const variants = {
@@ -85,30 +85,43 @@ export type ButtonProps = {
  * with support for different visual variants, looks, and sizes. It can include
  * leading and trailing elements for additional visual context.
  */
-function Button({
-  children,
-  className = "",
-  variant = "primary",
-  look = "filled",
-  size = "medium",
-  waiting = false,
-  align = "default",
-  leading,
-  trailing,
-  ...buttonProps
-}: PropsWithChildren<ButtonProps>) {
-  return (
-    <button
-      {...buttonProps}
-      disabled={buttonProps.disabled || waiting}
-      className={buttonVariant({ variant, look, size, waiting, align }, className)}
-      data-ignore-uikit
-    >
-      {leading}
-      <span>{children}</span>
-      {trailing}
-    </button>
-  );
-}
+const Button = forwardRef(
+  (
+    {
+      children,
+      className = "",
+      variant = "primary",
+      look = "filled",
+      size = "medium",
+      waiting = false,
+      align = "default",
+      leading,
+      trailing,
+      ...buttonProps
+    }: PropsWithChildren<ButtonProps>,
+
+    ref,
+  ) => {
+    return (
+      <button
+        ref={(el) => {
+          if (ref instanceof Function) {
+            ref(el);
+          } else if (ref) {
+            ref.current = el;
+          }
+        }}
+        {...buttonProps}
+        disabled={buttonProps.disabled || waiting}
+        className={buttonVariant({ variant, look, size, waiting, align }, className)}
+        data-ignore-uikit
+      >
+        {leading}
+        <span>{children}</span>
+        {trailing}
+      </button>
+    );
+  },
+);
 
 export { Button };

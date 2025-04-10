@@ -39,8 +39,9 @@
   svg {
     @apply w-6 h-6 inline-block;
 
-    aspect-ratio: 1;
+    aspect-ratio: 1 / 1;
   }
+
 
   &:hover {
     background-color: var(--background-color-hover);
