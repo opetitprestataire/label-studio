@@ -2,6 +2,7 @@
 """
 import base64
 import concurrent.futures
+import itertools
 import json
 import logging
 import os
@@ -523,6 +524,16 @@ def storage_background_failure(*args, **kwargs):
     storage.info_set_failed()
 
 
+# note: this is available in python 3.12 , #TODO to switch to builtin function when we move to it.
+def _batched(iterable, n):
+    # batched('ABCDEFG', 3) --> ABC DEF G
+    if n < 1:
+        raise ValueError('n must be at least one')
+    it = iter(iterable)
+    while batch := tuple(itertools.islice(it, n)):
+        yield batch
+
+
 class ExportStorage(Storage, ProjectStorageMixin):
     can_delete_objects = models.BooleanField(
         _('can_delete_objects'), null=True, blank=True, help_text='Deletion from storage enabled'
@@ -558,12 +569,21 @@ class ExportStorage(Storage, ProjectStorageMixin):
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = []
-            for annotation in Annotation.objects.filter(project=self.project).iterator(chunk_size=settings.STORAGE_EXPORT_CHUNK_SIZE):
-                futures.append(executor.submit(self.save_annotation, annotation))
+            # Batch annotations so that we update progress before having to submit every future.
+            # Updating progress in thread requires coordinating on count and db writes, so just
+            # batching to keep it simpler.
+            for annotation_batch in _batched(
+                Annotation.objects.filter(project=self.project).iterator(
+                    chunk_size=settings.STORAGE_EXPORT_CHUNK_SIZE
+                ),
+                settings.STORAGE_EXPORT_CHUNK_SIZE,
+            ):
+                for annotation in annotation_batch:
+                    futures.append(executor.submit(self.save_annotation, annotation))
 
-            for future in concurrent.futures.as_completed(futures):
-                annotation_exported += 1
-                self.info_update_progress(last_sync_count=annotation_exported, total_annotations=total_annotations)
+                for future in concurrent.futures.as_completed(futures):
+                    annotation_exported += 1
+                    self.info_update_progress(last_sync_count=annotation_exported, total_annotations=total_annotations)
 
         self.info_set_completed(last_sync_count=annotation_exported, total_annotations=total_annotations)
 
