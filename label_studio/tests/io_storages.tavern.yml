@@ -127,7 +127,7 @@ stages:
   response:
     json:
       data:
-        image_url: !re_match "https://pytest-s3-images.s3.amazonaws.com.+X-Amz-Security-Token=testing"
+        image_url: !re_match "https://pytest-s3-images.s3.amazonaws.com/.+"
     status_code: 200
 
 - name: Set the first view in the project
@@ -150,7 +150,7 @@ stages:
     json:
       tasks:
         - data:
-            image_url: !re_match "https://pytest-s3-images.s3.amazonaws.com.+X-Amz-Security-Token=testing"
+            image_url: !re_match "https://pytest-s3-images.s3.amazonaws.com/.+"
     status_code: 200
 
 - name: Get storage list
@@ -458,7 +458,7 @@ stages:
   response:
     json:
       data:
-        image_url: !re_match "https://storage.googleapis.com/test-gs-bucket/.+"
+        image_url: !re_match "gs://test-gs-bucket/test-gs-bucket/abc"
     status_code: 200
 - name: Patch storage with synchronizable false
   request:
@@ -650,20 +650,19 @@ stages:
     response:
       json:
         data:
-          image: !re_match "https://storage.googleapis.com/test-gs-bucket_JSON/manual.link.+"
+          pdf: !re_match "<embed src='gs://heartex-test/file.pdf'/>"
           dict:
-            key1: !re_match "https://storage.googleapis.com/test-gs-bucket_JSON/manual.link.+"
+            key1: !re_match "https://storage.googleapis.com/heartex-test/file.pdf.+?"
             array:
-              - !re_match "https://storage.googleapis.com/test-gs-bucket_JSON/manual.link.+"
-              - !re_match "https://storage.googleapis.com/test-gs-bucket_JSON/manual.link.+"
+              - !re_match "https://storage.googleapis.com/heartex-test/file.pdf.+?"
+              - !re_match "https://storage.googleapis.com/heartex-test/file.pdf.+?"
           array:
-            - item1: !re_match "https://storage.googleapis.com/test-gs-bucket_JSON/manual.link.+"
-              some: 'some text'
-            - item2: !re_match "https://storage.googleapis.com/test-gs-bucket_JSON/manual.link.+"
-              some: 'some text'
-            # This link should remain unresolved - no matching bucket
-            - item3: !re_match "gs://bad-bucket/manual.link.+"
-              some: 'some text'
+            - item1: !re_match "https://storage.googleapis.com/heartex-test/file.pdf.+?"
+              some: "some text"
+            - item2: !re_match "https://storage.googleapis.com/heartex-test/file.pdf.+?"
+              some: "some text"
+            - item3: !re_match "gs://bad-bucket/manual.link.+?"
+              some: "some text"
       status_code: 200
 
 ---
@@ -1253,7 +1252,7 @@ stages:
   response:
     json:
       data:
-        image_url: !re_match "https://testing.blob.core.windows.net/pytest-azure-images/.+"
+        image_url: !re_match "azure-blob://pytest-azure-images/abc"
     status_code: 200
 - name: stage
   request:
@@ -1539,7 +1538,7 @@ stages:
   response:
     json:
       data:
-        pdf: !re_match "<embed src='https://storage.googleapis.com/heartex-test/file.pdf?.*"
+        pdf: !re_match "<embed src='gs://heartex-test/file.pdf'/>"
     status_code: 200
 
 ---
@@ -1605,7 +1604,7 @@ stages:
   response:
     json:
       data:
-        text: !re_match "<a href=\"https://pytest-s3-jsons-hypertext.s3.amazonaws.com/file%20with%20/spaces%20and%27%20/%20%27%20/%20quotes.jpg.+X-Amz-Security-Token=testing"
+        text: !re_match "<a href=\"s3://pytest-s3-jsons-hypertext/file%20with%20/spaces%20and%27%20/%20%27%20/%20quotes.jpg\"/>"
     status_code: 200
 
 ---

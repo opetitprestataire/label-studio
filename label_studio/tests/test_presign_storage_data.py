@@ -2,7 +2,7 @@ import base64
 from unittest.mock import MagicMock
 
 import pytest
-from data_import.api import ProjectPresignStorageData, TaskPresignStorageData
+from io_storages.proxy_api import ProjectResolveStorageUri, TaskResolveStorageUri
 from django.urls import reverse
 from projects.models import Project
 from rest_framework import status
@@ -12,10 +12,10 @@ from users.models import User
 
 
 @pytest.mark.django_db
-class TestTaskPresignStorageData:
+class TestTaskResolveStorageUri:
     @pytest.fixture
     def view(self):
-        view = TaskPresignStorageData.as_view()
+        view = TaskResolveStorageUri.as_view()
         view.authentication_classes = []
         view.permission_classes = []
         return view
@@ -201,10 +201,10 @@ class TestTaskPresignStorageData:
 
 
 @pytest.mark.django_db
-class TestProjectPresignStorageData:
+class TestProjectResolveStorageUri:
     @pytest.fixture
     def view(self):
-        view = ProjectPresignStorageData.as_view()
+        view = ProjectResolveStorageUri.as_view()
         view.authentication_classes = []
         view.permission_classes = []
         return view
