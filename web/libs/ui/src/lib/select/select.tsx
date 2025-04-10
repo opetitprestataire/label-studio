@@ -188,9 +188,9 @@ export const Select = forwardRef(
               )}
             </span>
             {isOpen ? (
-              <IconChevron className="ml-2 h-4 w-4 shrink-0 opacity-50 pointer-events-none" />
+              <IconChevron className="h-4 w-4 shrink-0 opacity-50 pointer-events-none" />
             ) : (
-              <IconChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 pointer-events-none" />
+              <IconChevronDown className="h-4 w-4 shrink-0 opacity-50 pointer-events-none" />
             )}
           </button>
         </PopoverTrigger>
@@ -360,7 +360,7 @@ const Option = ({
         className,
         [
           "rounded-4",
-          "text-neutral-content",
+          "text-neutral-content-subtle",
           "[&_[cmdk-group-heading]]:text-muted-foreground",
           "overflow-hidden",
           "p-1",
@@ -380,6 +380,8 @@ const Option = ({
       <div
         className={clsx(
           [
+            "flex",
+            "gap-2",
             "w-full",
             "px-4",
             "py-1",
