@@ -1,4 +1,4 @@
-import { type ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { type ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Command,
@@ -39,6 +39,7 @@ export const Select = forwardRef(
       size,
       searchFilter,
       onSearch,
+      selectedValueRenderer,
       ...props
     }: SelectProps<T, A>,
     _ref: ForwardedRef<HTMLSelectElement>,
@@ -167,9 +168,16 @@ export const Select = forwardRef(
               {selectedOptions?.length ? (
                 <>
                   {selectedOptions?.map((option, index) => {
+                    if (selectedValueRenderer) {
+                      return (
+                        <React.Fragment key={`${option?.value}_${index}`}>
+                          {selectedValueRenderer(option)}
+                        </React.Fragment>
+                      );
+                    }
                     const optionValue = option?.value ?? option;
                     return (
-                      <span key={`${optionValue}_${index}`} className="truncate">
+                      <span key={`${optionValue}_${index}`} className="truncate only:w-full">
                         {option?.label ?? optionValue}
                       </span>
                     );
