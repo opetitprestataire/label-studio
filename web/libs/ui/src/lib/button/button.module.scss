@@ -172,18 +172,17 @@
 .look-outlined {
   &:not(:disabled),
   &.waiting {
-    @apply bg-transparent;
-
     box-shadow: none;
 
+    --background-color: transparent;
+    --border-color: var(--border-outline);
+    --text-color: var(--text-outline);
     --background-color-hover: var(--background-color-hover-outline);
     --background-color-active: var(--background-color-active-outline);
     --wait-color-value: var(--wait-color-value-outline);
     --wait-color-opacity: 40%;
 
-    border-color: var(--border-outline);
     text-shadow: none;
-    color: var(--text-outline);
 
     &:active {
       box-shadow: inset 0 1px 0 rgb(0 0 0 / 10%);
@@ -194,16 +193,16 @@
 .look-string {
   &:not(:disabled),
   &.waiting {
+    --border-color: transparent;
+    --background-color: transparent;
+    --text-color: var(--text-outline);
     --background-color-hover: var(--background-color-hover-outline);
     --background-color-active: var(--background-color-active-outline);
     --wait-color-value: var(--wait-color-value-outline);
     --wait-color-opacity: 40%;
 
-    border-color: transparent;
-    background-color: transparent;
     box-shadow: none;
     text-shadow: none;
-    color: var(--text-outline);
 
     &.waiting {
       border-color: var(--border-outline);
