@@ -43,13 +43,13 @@ async function handlePresignedUrl(event) {
   // even when it is not expired.
   // This is so the server can just naively proxy the presign request
   // and the performance is not degraded.
-  const requestsPathToCache = ["/presign/", "/resolve/"];
+  const requestsPathToCache = /\/presign\/|\/resolve\//;
 
   // Check if the request URL doesn't match the specified path part
   // or if it is not a request to the same origin we will just fetch it
   if (
     !event.request.url.startsWith(self.location.origin) ||
-    requestsPathToCache.every(path => !event.request.url.includes(path)) ||
+    !requestsPathToCache.test(event.request.url) ||
     // This is to avoid an error trying to load a direct presign URL in a new tab
     !event.request.referrer ||
     // Easier to leave this uncached as if we were to handle this caching
