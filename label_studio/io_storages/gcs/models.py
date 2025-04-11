@@ -87,7 +87,7 @@ class GCSStorageMixin(models.Model):
             data = io.BytesIO(blob.download_as_bytes())
             return data, content_type
         except Exception as e:
-            logger.error(f"Error getting bytes from GCS for uri {uri}: {e}", exc_info=True)
+            logger.error(f'Error getting bytes from GCS for uri {uri}: {e}', exc_info=True)
             return None, None
 
 

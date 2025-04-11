@@ -123,11 +123,11 @@ class AzureBlobStorageMixin(models.Model):
             download_stream = blob_client.download_blob()
             content_type = download_stream.properties.content_settings.content_type
             data = io.BytesIO(download_stream.readall())
-            
+
             return data, content_type
-            
+
         except Exception as e:
-            logger.error(f"Error getting bytes from Azure for uri {uri}: {e}", exc_info=True)
+            logger.error(f'Error getting bytes from Azure for uri {uri}: {e}', exc_info=True)
             return None, None
 
 
