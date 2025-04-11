@@ -19,7 +19,7 @@ You can extend your Labeling Configuration by implementing a custom JavaScript p
 
 Plugins are defined in the project settings under the Labeling Interface section: 
 
-![Screenshot of script option](/images/project/scripts.png)
+![Screenshot of plugin panel](/images/plugins/plugin-panel.png)
 
 !!! note
     Only users who are in the Admin, Owner, or Manager role can access the project settings to configure plugins. 
@@ -44,7 +44,11 @@ Plugins allow you to enhance and tailor your labeling interface and workflow. Fo
 
     Examples: Feedback loops for annotators, conditional routing/assignment, progressive sampling, notifications regarding project progress. 
 
-For examples of how some of these use cases can be implemented, see our [Plugin gallery](/plugins). 
+## More information and resources
+
+* See our [Plugin gallery](/plugins) for descriptions of the plugins we offer out-of-the box. 
+* See our [Plugins repo](https://github.com/HumanSignal/label-studio-plugins) for information about contributing to the out-of-the-box plugins. 
+* See [Plugins FAQ](/plugins/faq) for frequently asked questions on plugins.  
 
 ## How plugins work
 
