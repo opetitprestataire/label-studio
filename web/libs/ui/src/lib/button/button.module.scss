@@ -27,21 +27,14 @@
 
   & > span {
     @apply inline-flex flex-1 whitespace-pre items-center;
-
-
-    &:has(> svg:first-child) {
-      @apply pl-0;
-    }
-
-    &:has(> svg:last-child) {
-      @apply pr-0;
-    }
   }
 
   svg {
-    @apply w-6 h-6 inline-block;
+    @apply h-6 inline-block aspect-square;
+  }
 
-    aspect-ratio: 1 / 1;
+  & > span:has(svg:only-child) {
+    @apply h-full w-full p-0 aspect-square;
   }
 
 
@@ -236,7 +229,7 @@
   }
 
   & > svg {
-    @apply w-6 h-6;
+    @apply h-6;
   }
 }
 
@@ -249,12 +242,8 @@
     @apply px-tighter gap-tighter;
   }
 
-  & > svg, & > span > svg {
-    @apply h-4;
-  }
-
   & > svg {
-    @apply w-4;
+    @apply h-4;
   }
 }
 
