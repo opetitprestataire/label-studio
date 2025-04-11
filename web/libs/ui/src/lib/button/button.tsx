@@ -61,7 +61,7 @@ export function buttonVariant(
 ) {
   const buttonStyles = [styles.base, variants[variant], looks[look], sizes[size], alignment[align]];
   return cn(
-    "inline-flex items-center rounded-smaller border text-shadow-button p-tight box-border border transition-all",
+    "inline-flex items-center rounded-smaller border text-shadow-button box-border border transition-all",
     ...buttonStyles,
     { [styles.waiting]: waiting },
     className,
