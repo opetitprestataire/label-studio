@@ -64,8 +64,21 @@
       border-color: var(--color-neutral-content);
     }
 
-    :global(.cm-attribute) {
+    :global(.cm-attribute),
+    :global(.cm-keyword) {
       color: var(--color-accent-blueberry-bold);
+    }
+
+    :global(.cm-def) {
+      color: var(--color-accent-grape-bold);
+    }
+
+    :global(.cm-builtin) {
+      color: var(--color-accent-canteloupe-bold);
+    }
+
+    :global(.cm-number) {
+      color: var(--color-accent-kiwi-bold);
     }
 
     :global(.cm-tag),
