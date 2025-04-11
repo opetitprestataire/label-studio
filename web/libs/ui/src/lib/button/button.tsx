@@ -1,5 +1,5 @@
 import { cn } from "../../utils/utils";
-import type { ButtonHTMLAttributes, PropsWithChildren, ReactNode } from "react";
+import { forwardRef, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from "react";
 import styles from "./button.module.scss";
 
 const variants = {
@@ -85,29 +85,48 @@ export type ButtonProps = {
  * with support for different visual variants, looks, and sizes. It can include
  * leading and trailing elements for additional visual context.
  */
-function Button({
-  children,
-  className = "",
-  variant = "primary",
-  look = "filled",
-  size = "medium",
-  waiting = false,
-  align = "default",
-  leading,
-  trailing,
-  ...buttonProps
-}: PropsWithChildren<ButtonProps>) {
-  return (
-    <button
-      {...buttonProps}
-      disabled={buttonProps.disabled ?? waiting}
-      className={buttonVariant({ variant, look, size, waiting, align }, className)}
-    >
-      {leading}
-      <span>{children}</span>
-      {trailing}
-    </button>
-  );
-}
+const Button = forwardRef(
+  (
+    {
+      children,
+      className = "",
+      variant = "primary",
+      look = "filled",
+      size = "medium",
+      waiting = false,
+      align = "default",
+      leading,
+      trailing,
+      ...buttonProps
+    }: PropsWithChildren<ButtonProps>,
+    ref,
+  ) => {
+    return (
+      <button
+        {...buttonProps}
+        ref={(el) => {
+          if (ref instanceof Function) {
+            ref(el);
+          } else if (ref) {
+            ref.current = el;
+          }
+        }}
+        disabled={buttonProps.disabled ?? waiting}
+        className={buttonVariant({ variant, look, size, waiting, align }, className)}
+      >
+        {leading}
+        <span>{children}</span>
+        {trailing}
+      </button>
+    );
+  },
+);
 
-export { Button };
+const ButtonGroup = ({ children, collapsed = true }: PropsWithChildren<{ collapsed?: boolean }>) => {
+  const className = cn("inline-flex", styles["button-group"], {
+    [styles["button-group-collapsed"]]: collapsed,
+  });
+  return <div className={className}>{children}</div>;
+};
+
+export { Button, ButtonGroup };
