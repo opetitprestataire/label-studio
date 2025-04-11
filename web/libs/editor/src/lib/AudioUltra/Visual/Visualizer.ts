@@ -10,6 +10,9 @@ import type { Cursor } from "../Cursor/Cursor";
 import type { Padding } from "../Common/Style";
 import type { TimelineOptions } from "../Timeline/Timeline";
 import "./Loader";
+import FFT from 'fft.js';
+import { WindowFunctionType, applyWindowFunction } from './WindowFunctions';
+import { ColorMapper, COLOR_SCHEMES, type ColorScheme } from './ColorMapper';
 
 // Amount of data samples to buffer on either side of the renderable area
 const BUFFER_SAMPLES = 2;
@@ -26,25 +29,15 @@ interface VisualizerEvents {
   heightAdjusted: (Visualizer: Visualizer) => void;
 }
 
-export type VisualizerOptions = Pick<
-  WaveformOptions,
-  | "zoomToCursor"
-  | "autoCenter"
-  | "splitChannels"
-  | "cursorWidth"
-  | "zoom"
-  | "amp"
-  | "padding"
-  | "playhead"
-  | "timeline"
-  | "height"
-  | "waveHeight"
-  | "gridWidth"
-  | "gridColor"
-  | "waveColor"
-  | "backgroundColor"
-  | "container"
->;
+export type VisualizerOptions = Partial<WaveformOptions> & {
+  spectrogramFftSamples?: number;
+  numberOfMelBands?: number;
+  spectrogramWindowingFunction?: string;
+  spectrogramMinDb?: number;
+  spectrogramMaxDb?: number;
+  spectrogramColorScheme?: string;
+  container: string | HTMLElement;
+};
 
 export class Visualizer extends Events<VisualizerEvents> {
   private wrapper!: HTMLElement;
@@ -79,6 +72,18 @@ export class Visualizer extends Events<VisualizerEvents> {
   private lastRenderedScrollLeftPx = 0;
   private _container!: HTMLElement;
   private _loader!: HTMLElement;
+  private spectrogramFftSamples = 512;
+  private numberOfMelBands = 64;
+  private spectrogramWindowingFunction: WindowFunctionType = 'hann';
+  private spectrogramMinDb: number = -50;
+  private spectrogramMaxDb: number = -10;
+  private spectrogramColorScheme: ColorScheme = COLOR_SCHEMES.VIRIDIS;
+  private fft: any;
+  private drawQueue: number | null = null;
+  private isDrawingQueued = false;
+  private melFilterbank: number[][] | undefined;
+  private activeColormap: number[][] = [];
+  private colorMapper: ColorMapper;
 
   timelineHeight: number = defaults.timelineHeight;
   timelinePlacement: TimelineOptions["placement"] = "top";
@@ -108,6 +113,15 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.backgroundColor = options.backgroundColor ? rgba(options.backgroundColor) : this.backgroundColor;
     this.zoom = options.zoom ?? this.zoom;
     this.amp = options.amp ?? this.amp;
+    this.spectrogramFftSamples = options.spectrogramFftSamples ?? this.spectrogramFftSamples;
+    this.numberOfMelBands = options.numberOfMelBands ?? this.numberOfMelBands;
+    this.spectrogramWindowingFunction = options.spectrogramWindowingFunction as WindowFunctionType ?? this.spectrogramWindowingFunction;
+    this.spectrogramMinDb = options.spectrogramMinDb ?? this.spectrogramMinDb;
+    this.spectrogramMaxDb = options.spectrogramMaxDb ?? this.spectrogramMaxDb;
+    this.spectrogramColorScheme = options.spectrogramColorScheme as ColorScheme ?? this.spectrogramColorScheme;
+    this.colorMapper = new ColorMapper(this.spectrogramColorScheme);
+
+    this.melFilterbank = undefined
     this.playhead = new Playhead(
       {
         ...options.playhead,
@@ -119,6 +133,8 @@ export class Visualizer extends Events<VisualizerEvents> {
       this,
       this.wf,
     );
+
+    this.initFFT();
 
     this.initialRender();
     this.attachEvents();
@@ -138,6 +154,147 @@ export class Visualizer extends Events<VisualizerEvents> {
 
     this.invoke("initialized", [this]);
   }
+
+  private async initFFT() {
+    try {
+      // Create FFT instance with the current size
+      this.fft = new FFT(this.spectrogramFftSamples);
+      console.log(`Visualizer: FFT initialized/re-initialized with size ${this.spectrogramFftSamples}`);
+    } catch (error) {
+      console.warn('Failed to initialize FFT:', error);
+      this.fft = null;
+    }
+  }
+
+  /**
+   * Update FFT parameters and reinitialize if necessary.
+   * Triggers a redraw of the spectrogram layer.
+   */
+  public updateFFTParameters(params: {
+    fftSamples?: number;
+    melBands?: number;
+    windowingFunction?: string;
+    colorScheme?: string;
+    minDb?: number;
+    maxDb?: number;
+  }) {
+    let needsRedraw = false;
+    let needsFFTReinit = false;
+    let needsMelReinit = false;
+
+    // Update FFT Samples
+    if (params.fftSamples && params.fftSamples !== this.spectrogramFftSamples) {
+      console.log(`Visualizer: Updating FFT Samples to ${params.fftSamples}`);
+      this.spectrogramFftSamples = params.fftSamples;
+      needsFFTReinit = true;
+      needsRedraw = true;
+    }
+
+    // Update Mel Bands
+    if (params.melBands && params.melBands !== this.numberOfMelBands) {
+      console.log(`Visualizer: Updating Mel Bands to ${params.melBands}`);
+      this.numberOfMelBands = params.melBands;
+      needsMelReinit = true;
+      needsRedraw = true;
+    }
+
+    // Update Windowing Function
+    if (params.windowingFunction && params.windowingFunction !== this.spectrogramWindowingFunction) {
+      console.log(`Visualizer: Updating Windowing Function to ${params.windowingFunction}`);
+      this.spectrogramWindowingFunction = params.windowingFunction as WindowFunctionType;
+      // No reinit needed, applied during calculateFFT
+      needsRedraw = true;
+    }
+
+    // Update Color Scheme
+    if (params.colorScheme && params.colorScheme !== this.spectrogramColorScheme) {
+      console.log(`Visualizer: Updating Colors Scheme Function to ${params.colorScheme}`);
+      this.setColorScheme(params.colorScheme as ColorScheme);
+      // No reinit needed, applied during color scheme change
+      needsRedraw = true;
+    }
+
+    // Update dB Range
+    if ((params.minDb !== undefined && params.minDb !== this.spectrogramMinDb) ||
+        (params.maxDb !== undefined && params.maxDb !== this.spectrogramMaxDb)) {
+      console.log(`Visualizer: Updating dB Range to ${params.minDb} - ${params.maxDb}`);
+      if (params.minDb !== undefined) this.spectrogramMinDb = params.minDb;
+      if (params.maxDb !== undefined) this.spectrogramMaxDb = params.maxDb;
+      // No reinit needed, applied during rendering
+      needsRedraw = true;
+    }
+
+    // Perform reinitializations if needed
+    if (needsFFTReinit) {
+      this.initFFT();
+    }
+
+    if (needsMelReinit) {
+      // Force recreation of mel filterbank on next calculation
+      this.melFilterbank = undefined;
+    }
+
+    // Trigger redraw if any parameter changed
+    if (needsRedraw) {
+      const spectrogramLayer = this.getLayer("spectrogram");
+      if (spectrogramLayer?.isVisible) {
+        console.log("Visualizer: Redrawing spectrogram due to parameter change.");
+        spectrogramLayer.clear();
+        this.resetWaveformRender(); // Reset cached render state
+        this.draw(); // Schedule a draw call
+      } else {
+         console.log("Visualizer: Spectrogram layer not visible, skipping redraw.");
+      }
+    }
+  }
+
+  /**
+   * Calculate FFT using fft.js library, return LINEAR magnitudes.
+   * Assumes buffer might not be exact fftSize, handles padding/truncating.
+   */
+  private calculateFFT(buffer: Float32Array): Float32Array {
+    if (!this.fft) {
+      const fallbackBins = (this.spectrogramFftSamples || 512) / 2 + 1;
+      return new Float32Array(fallbackBins).fill(0);
+    }
+
+    const fftSize = this.spectrogramFftSamples;
+    let inputBuffer = new Float32Array(fftSize);
+    const usableLength = Math.min(buffer.length, fftSize);
+    if (usableLength > 0) {
+      inputBuffer.set(buffer.slice(0, usableLength));
+    }
+
+    applyWindowFunction(inputBuffer, this.spectrogramWindowingFunction);
+
+    const complexOutput = this.fft.createComplexArray();
+    this.fft.realTransform(complexOutput, inputBuffer);
+
+    const numBins = fftSize / 2 + 1;
+    const magnitudes = new Float32Array(numBins);
+    const normFactor = fftSize;
+
+    for (let i = 0; i < numBins; i++) {
+      const real = complexOutput[i * 2];
+      const imag = complexOutput[i * 2 + 1];
+      magnitudes[i] = normFactor > 0 ? (Math.sqrt(real * real + imag * imag) / normFactor) : 0;
+    }
+
+    const processedMagnitudes = (this.numberOfMelBands > 0 && this.audio)
+        ? this.convertToMelScale(magnitudes)
+        : magnitudes;
+
+    return processedMagnitudes;
+  }
+
+  /**
+   * Convert Hz to Mel scale
+   */
+  private hzToMel(hz: number): number { return 2595 * Math.log10(1 + hz / 700); }
+  /**
+   * Convert Mel scale to Hz
+   */
+  private melToHz(mel: number): number { return 700 * (Math.pow(10, mel / 2595) - 1); }
 
   setLoading(loading: boolean) {
     if (loading) {
@@ -225,30 +382,63 @@ export class Visualizer extends Events<VisualizerEvents> {
 
   draw(dry = false, forceDraw = false) {
     if (this.isDestroyed) return;
-    if (this.drawing && !forceDraw) return warn("Concurrent render detected");
 
+    // If we are already drawing and not forcing, queue the request
+    if (this.drawing && !forceDraw) {
+        // If a draw is not already queued, queue this one
+        if (!this.isDrawingQueued) {
+            this.isDrawingQueued = true;
+            // Cancel any previous queued animation frame if it exists
+            if (this.drawQueue !== null) cancelAnimationFrame(this.drawQueue);
+            // Queue the next draw call
+            this.drawQueue = requestAnimationFrame(() => {
+                this.drawQueue = null;
+                this.isDrawingQueued = false; // Reset queue flag before executing
+                this.draw(dry, false); // Re-call draw, it will now proceed if not drawing
+            });
+        }
+        // If a draw is already queued, do nothing, let the queued one run.
+        return;
+    }
+
+    // --- Proceed with drawing ---
     this.drawing = true;
+    // Cancel any queued frame because we are proceeding now
+    if (this.drawQueue !== null) {
+        cancelAnimationFrame(this.drawQueue);
+        this.drawQueue = null;
+        this.isDrawingQueued = false; // Reset flag as we are drawing now
+    }
 
-    setTimeout(async () => {
+
+    const renderFrame = async () => {
+        try {
       if (!dry) {
         this.drawMiddleLine();
 
         if (this.wf.playing && this.autoCenter) {
           this.centerToCurrentTime();
         }
-
-        // Render all available channels
-        await this.renderAvailableChannels();
+                await this.renderAvailableChannels(); // The main async part
       }
-
       this.renderCursor();
-
       this.invoke("draw", [this]);
-
       this.transferImage();
-
+        } catch (error) {
+             console.error("Error during rendering frame:", error);
+        } finally {
       this.drawing = false;
-    });
+             // Important: Check if a draw was queued *while* this one was running
+             if (this.isDrawingQueued) {
+                 // We should probably trigger the queued draw now,
+                 // but let's rely on the requestAnimationFrame queue for simplicity first.
+                 // If issues persist, we might need to explicitly call draw() here.
+             }
+        }
+    };
+
+    // Execute the render frame logic asynchronously
+    renderFrame();
   }
 
   redrawCursor() {
@@ -308,11 +498,15 @@ export class Visualizer extends Events<VisualizerEvents> {
   private async renderAvailableChannels() {
     if (!this.audio) return;
 
-    const layer = this.getLayer("waveform");
+    const waveformLayer = this.getLayer("waveform");
+    const spectrogramLayer = this.getLayer("spectrogram");
 
-    if (!layer || !layer.isVisible) {
+    if (!waveformLayer || !waveformLayer.isVisible) {
       this.lastRenderedWidth = 0;
-      return;
+    }
+
+    if (!spectrogramLayer || !spectrogramLayer.isVisible) {
+      this.lastRenderedWidth = 0;
     }
 
     this.renderId = performance.now();
@@ -333,13 +527,27 @@ export class Visualizer extends Events<VisualizerEvents> {
       amp !== this.lastRenderedAmp ||
       renderableData < CACHE_RENDER_THRESHOLD
     ) {
+      const renderPromises = [];
       for (let i = 0; i < this.audio.channelCount; i++) {
-        await this.renderWave(i, layer, iStart, iEnd);
+        if (waveformLayer?.isVisible) {
+          renderPromises.push(this.renderWave(i, waveformLayer, iStart, iEnd));
+        }
+        if (spectrogramLayer?.isVisible) {
+          renderPromises.push(this.renderSpectrogram(i, spectrogramLayer, iStart, iEnd));
+        }
       }
+      await Promise.all(renderPromises);
     }
     // Render partial waveform, only the change in scroll position's channel data.
     else {
-      await this.renderPartialWave(layer, iStart, iEnd);
+      const renderPromises = [];
+      if (waveformLayer?.isVisible) {
+        renderPromises.push(this.renderPartialWave(waveformLayer, iStart, iEnd));
+      }
+      if (spectrogramLayer?.isVisible) {
+        renderPromises.push(this.renderPartialSpectrogram(spectrogramLayer, iStart, iEnd));
+      }
+      await Promise.all(renderPromises);
     }
   }
 
@@ -365,6 +573,49 @@ export class Visualizer extends Events<VisualizerEvents> {
         layer.clear();
       }
       const renderIterator = this.renderSlice(layer, height, iStart, iEnd, channelNumber, x);
+
+      // Render iterator, allowing it to be cancelled if a new render is requested
+      const render = () => {
+        if (this.renderId !== renderId) return resolve(false);
+
+        const next = renderIterator.next();
+
+        if (!next.done) {
+          requestAnimationFrame(render);
+        } else {
+          this.lastRenderedWidth = this.width;
+          this.lastRenderedZoom = zoom;
+          this.lastRenderedAmp = amp;
+          this.lastRenderedScrollLeftPx = scrollLeftPx;
+          resolve(true);
+        }
+      };
+
+      render();
+    });
+  }
+
+  /**
+   * Render the spectrogram for a single channel
+   */
+  private renderSpectrogram(channelNumber: number, layer: Layer, iStart: number, iEnd: number): Promise<boolean> {
+    const renderId = this.renderId;
+    const height = this.baseWaveHeight / (this.audio?.channelCount ?? 1);
+    const scrollLeftPx = this.getScrollLeftPx();
+
+    const zoom = this.zoom;
+    const amp = this.amp;
+
+    const x = 0;
+
+    return new Promise((resolve) => {
+      if (this.isDestroyed || !this.audio) return resolve(false);
+
+      // The spectrogram layer should be cleared during the render of the first channel
+      if (channelNumber === 0) {
+        layer.clear();
+      }
+      const renderIterator = this.renderSpectrogramSlice(layer, height, iStart, iEnd, channelNumber, x);
 
       // Render iterator, allowing it to be cancelled if a new render is requested
       const render = () => {
@@ -431,6 +682,66 @@ export class Visualizer extends Events<VisualizerEvents> {
         sEnd = clamp(sEnd + this.samplesPerPx * BUFFER_SAMPLES, 0, dataLength);
 
         const renderIterator = this.renderSlice(layer, height, sStart, sEnd, channelNumber, x);
+
+        // Render iterator, allowing it to be cancelled if a new render is requested
+        const render = () => {
+          if (this.renderId !== renderId) return resolve(false);
+
+          const next = renderIterator.next();
+
+          if (!next.done) {
+            requestAnimationFrame(render);
+          } else {
+            resolve(true);
+          }
+        };
+
+        render();
+      });
+    }
+  }
+
+  /**
+   * Render a partial spectrogram for all available channels
+   */
+  private async renderPartialSpectrogram(layer: Layer, iStart: number, iEnd: number) {
+    const renderId = this.renderId;
+    let x = 0;
+    const channelCount = this.audio?.channelCount ?? 1;
+    const height = this.baseWaveHeight / channelCount;
+    const scrollLeftPx = this.getScrollLeftPx();
+    const dataLength = this.dataLength;
+    let deltaX = this.lastRenderedScrollLeftPx - scrollLeftPx;
+
+    if ((deltaX < 1 && deltaX > -1) || !this.audio) return false;
+
+    deltaX = Math.round(deltaX);
+    const diff = deltaX * this.samplesPerPx;
+
+    this.lastRenderedScrollLeftPx = scrollLeftPx;
+
+    // Move the canvas to the left by deltaX
+    layer.shift(deltaX, 0);
+
+    for (let channelNumber = 0; channelNumber < channelCount; channelNumber++) {
+      await new Promise((resolve) => {
+        let sStart = iStart;
+        let sEnd = iEnd;
+
+        // Spectrogram visually moving to the right
+        if (deltaX > 0) {
+          // Draw the new data on the left
+          sEnd = iStart + diff;
+          x = 0;
+        } else {
+          // Draw the new data on the right
+          sStart = iEnd + diff;
+          x = clamp(this.width + deltaX - BUFFER_SAMPLES, 0, this.width);
+        }
+
+        sEnd = clamp(sEnd + this.samplesPerPx * BUFFER_SAMPLES, 0, dataLength);
+
+        const renderIterator = this.renderSpectrogramSlice(layer, height, sStart, sEnd, channelNumber, x);
 
         // Render iterator, allowing it to be cancelled if a new render is requested
         const render = () => {
@@ -586,6 +897,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     let height = 0;
     const timelineLayer = this.getLayer("timeline");
     const waveformLayer = this.getLayer("waveform");
+    const spectrogramLayer = this.getLayer("spectrogram");
     const waveformHeight =
       Math.max(
         this.originalWaveHeight,
@@ -598,6 +910,7 @@ export class Visualizer extends Events<VisualizerEvents> {
 
     height += timelineLayer?.isVisible ? this.timelineHeight : 0;
     height += waveformLayer?.isVisible ? waveformHeight : 0;
+    height += spectrogramLayer?.isVisible ? waveformHeight : 0;
     return height;
   }
 
@@ -658,6 +971,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     const mainLayer = this.createLayer({ name: "main" });
     this.createLayer({ name: "background", offscreen: true, zIndex: 0, isVisible: false });
     this.createLayer({ name: "waveform", offscreen: true, zIndex: 100 });
+    this.createLayer({ name: "spectrogram", offscreen: true, zIndex: 100, isVisible: false });
     this.createLayerGroup({ name: "regions", offscreen: true, zIndex: 101, compositeOperation: "source-over" });
     const controlsLayer = this.createLayer({ name: "controls", offscreen: true, zIndex: 1000 });
 
@@ -675,10 +989,12 @@ export class Visualizer extends Events<VisualizerEvents> {
     const mainLayer = this.getLayer("main") as Layer;
     // The parent element scrolls natively, and the canvas is redrawn accordingly.
     // To maintain its position during scrolling, the element must use "sticky" positioning.
+    if (mainLayer.canvas instanceof HTMLCanvasElement) {
     mainLayer.canvas.style.position = "sticky";
     mainLayer.canvas.style.top = "0";
     mainLayer.canvas.style.left = "0";
     mainLayer.canvas.style.zIndex = "2";
+    }
     // Adds a scroll filler element to adjust the size of the scrollable area
     this.scrollFiller = document.createElement("div");
     this.scrollFiller.style.position = "absolute";
@@ -686,7 +1002,9 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.scrollFiller.style.height = `${BROWSER_SCROLLBAR_WIDTH}px`;
     this.scrollFiller.style.top = "100%";
     this.scrollFiller.style.minHeight = "1px";
+    if (mainLayer.canvas instanceof HTMLCanvasElement) {
     mainLayer.canvas.style.zIndex = "1";
+    }
     this.wrapper.appendChild(this.scrollFiller);
   }
 
@@ -878,7 +1196,7 @@ export class Visualizer extends Events<VisualizerEvents> {
 
   private playHeadMove = (e: MouseEvent, cursor: Cursor) => {
     if (!this.wf.loaded) return;
-    if (e.target && this.container.contains(e.target)) {
+    if (e.target && this.container.contains(e.target as Node)) {
       const { x, y } = cursor;
       const { playhead, playheadPadding, height } = this;
       const playHeadTop = this.reservedSpace - playhead.capHeight - playhead.capPadding;
@@ -905,7 +1223,7 @@ export class Visualizer extends Events<VisualizerEvents> {
 
     const mainLayer = this.getLayer("main");
 
-    if (!this.wf.loaded || this.seekLocked || !(e.target && mainLayer?.canvas?.contains(e.target))) return;
+    if (!this.wf.loaded || this.seekLocked || !(e.target && mainLayer?.canvas && mainLayer.canvas instanceof HTMLCanvasElement && mainLayer.canvas.contains(e.target as Node))) return;
     const offset = this.wrapper.getBoundingClientRect().left;
     const x = e.clientX - offset;
     const duration = this.wf.duration;
@@ -1028,7 +1346,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.lastRenderedScrollLeftPx = 0;
   }
 
-  private transferImage(layers: string[] = ["background", "waveform", "regions", "controls"]) {
+  private transferImage(layers: string[] = ["background", "waveform", "spectrogram", "regions", "controls"]) {
     const main = this.layers.get("main")!;
 
     main.clear();
@@ -1045,5 +1363,326 @@ export class Visualizer extends Events<VisualizerEvents> {
         layer.transferTo(main);
       });
     }
+  }
+
+  /**
+   * Retrieves a slice of audio data for a specific channel across a sample range.
+   * This function handles data that may be split across multiple chunks in the audio buffer.
+   * 
+   * @param channelIndex - The index of the audio channel to read from
+   * @param startSample - The starting sample index (inclusive)
+   * @param endSample - The ending sample index (exclusive)
+   * @returns A new Float32Array containing the requested samples, or null if:
+   *          - The audio is not loaded
+   *          - The channel index is invalid
+   *          - The sample range is invalid (start >= end)
+   * 
+   * The returned array will be of length (endSample - startSample) and will contain:
+   * - The actual audio data where available
+   * - Zeros for any portions of the requested range that fall outside the available data
+   */
+  private getChannelDataSlice(channelIndex: number, startSample: number, endSample: number): Float32Array | null {
+    if (!this.audio || !this.audio.chunks || !this.audio.chunks[channelIndex] || startSample >= endSample) {
+        return null;
+    }
+
+    const sourceChunks = this.audio.chunks[channelIndex];
+    const requestedLength = endSample - startSample;
+    const outputBuffer = new Float32Array(requestedLength); // Initialize with zeros
+
+    let outputPos = 0;
+    let currentSampleOffset = 0; // Tracks the start sample index of the current sourceChunk
+
+    for (const sourceChunk of sourceChunks) {
+        const chunkStartSample = currentSampleOffset;
+        const chunkEndSample = chunkStartSample + sourceChunk.length;
+        currentSampleOffset = chunkEndSample; // Update for next chunk
+
+        // Calculate overlap between the requested range [startSample, endSample)
+        // and the current chunk's range [chunkStartSample, chunkEndSample)
+        const overlapStart = Math.max(startSample, chunkStartSample);
+        const overlapEnd = Math.min(endSample, chunkEndSample);
+
+        if (overlapStart < overlapEnd) { // If there is an overlap
+            const copyLength = overlapEnd - overlapStart;
+            const sourceStartIndex = overlapStart - chunkStartSample; // Index within sourceChunk
+            const outputStartIndex = overlapStart - startSample; // Index within outputBuffer
+
+            // Copy the overlapping data segment
+            const segment = sourceChunk.slice(sourceStartIndex, sourceStartIndex + copyLength);
+            outputBuffer.set(segment, outputStartIndex);
+            outputPos += copyLength; // Track how much we've filled (optional)
+        }
+
+        // Optimization: If we've filled the buffer or passed the requested range
+        if (outputPos >= requestedLength || chunkEndSample >= endSample) {
+            break;
+        }
+    }
+
+    // Return the buffer (might be partially zero-filled if request went out of bounds)
+    return outputBuffer;
+  }
+
+  /**
+   * Renders a slice of the spectrogram by processing audio data through FFT analysis.
+   * This generator function processes the audio data pixel by pixel, yielding periodically to maintain UI responsiveness.
+   * 
+   * @param layer - The canvas layer to render the spectrogram on
+   * @param height - The height allocated for each channel's spectrogram
+   * @param iStart - Starting sample index in the audio data
+   * @param iEnd - Ending sample index in the audio data
+   * @param channelNumber - The audio channel being processed (0 = left, 1 = right, etc.)
+   * @param startX - Starting X coordinate for rendering (used for partial renders)
+   * @yields When processing time exceeds 16ms (maintains ~60fps)
+   * 
+   * The function:
+   * 1. Calculates vertical positioning based on channel layout and visible components
+   * 2. For each pixel column:
+   *    - Centers an FFT window on the corresponding audio samples
+   *    - Applies FFT and smoothing to the frequency data
+   *    - Renders the resulting spectrum as a vertical column
+   * 3. Yields periodically to maintain UI responsiveness
+   */
+  private *renderSpectrogramSlice(
+    layer: Layer,
+    height: number,
+    iStart: number,
+    iEnd: number,
+    channelNumber: number,
+    startX = 0,
+  ): Generator<any, void, any> {
+    // --- Safety Checks ---
+    if (!this.audio || height <= 0 || this.samplesPerPx <= 0 || this.width <= 0 || !this.fft) {
+      return;
+    }
+
+    const paddingLeft = this.padding?.left ?? 0;
+    const fftSize = this.spectrogramFftSamples;
+    const dataLength = this.audio.dataLength ?? 0;
+    const currentSamplesPerPx = this.getSamplesPerPx();
+    const fftWindowHalf = Math.floor(fftSize / 2);
+
+    // --- Calculate Vertical Position (yZero) --- (Copied from previous fix, verify layout)
+    const waveformLayer = this.getLayer("waveform");
+    const timelineLayer = this.getLayer("timeline");
+    const timelineOffset = (timelineLayer?.isVisible && this.timelinePlacement === 'top') ? this.timelineHeight : 0;
+    let yZeroOffset = 0;
+    if (this.splitChannels && this.audio.channelCount > 0) {
+        const heightPerDisplayChannel = this.baseWaveHeight / this.audio.channelCount;
+        const waveHeightContribution = waveformLayer?.isVisible ? heightPerDisplayChannel : 0;
+        // Spectrogram height per channel IS the 'height' parameter passed in.
+        yZeroOffset = (waveHeightContribution + height) * channelNumber;
+    } else if (waveformLayer?.isVisible) {
+        // If not splitting, but waveform is visible, spectrogram is below it
+        yZeroOffset = this.baseWaveHeight;
+    }
+     const zero = timelineOffset + yZeroOffset;
+    // --- End yZero Calculation ---
+
+    layer.save();
+    const renderStartTime = performance.now();
+    let lastYieldTime = renderStartTime;
+
+    // --- Iterate through PIXELS horizontally ---
+    const renderEndPixel = Math.min(startX + (iEnd - iStart) / currentSamplesPerPx, this.width); // Calculate end pixel more accurately
+
+    for (let x = startX; x < renderEndPixel; x++) {
+      // Calculate the *center* sample index corresponding to this pixel column
+      const centerSample = Math.floor(iStart + (x - startX + 0.5) * currentSamplesPerPx);
+
+      // Determine sample range for the FFT window centered on this pixel
+      const windowStartSample = centerSample - fftWindowHalf;
+      const windowEndSample = windowStartSample + fftSize; // Fetch exactly fftSize
+
+      // Fetch the audio data chunk for the FFT window
+      // Uses the placeholder/example function above - ENSURE IT WORKS!
+      const chunk = this.getChannelDataSlice(channelNumber, windowStartSample, windowEndSample);
+
+      if (!chunk) {
+         continue; // Skip if no data (e.g., out of bounds)
+      }
+
+      // --- Calculate FFT ---
+      const fftData = this.calculateFFT(chunk); // Should be linear magnitudes
+
+      // --- Apply Smoothing to Mel/FFT Data --- START (Moved here)
+      const smoothedFftData = new Float32Array(fftData.length);
+      if (fftData.length > 2) {
+          smoothedFftData[0] = (fftData[0] + fftData[1]) / 2; // Smooth first bin
+          for (let i = 1; i < fftData.length - 1; i++) {
+              smoothedFftData[i] = (fftData[i-1] + fftData[i] + fftData[i+1]) / 3;
+          }
+          smoothedFftData[fftData.length - 1] = (fftData[fftData.length - 2] + fftData[fftData.length - 1]) / 2; // Smooth last bin
+      } else {
+          smoothedFftData.set(fftData); // No smoothing if too few bins
+      }
+      // --- Apply Smoothing - END
+
+      // --- Render the vertical FFT column --- (Pass smoothed data)
+      this.renderFFTData(smoothedFftData, layer, height, x + paddingLeft, zero);
+
+      // --- Check for Responsiveness ---
+      const now = performance.now();
+      if (now - lastYieldTime > 16) { // Yield roughly every 60fps
+        yield;
+        lastYieldTime = now;
+      }
+    } // End loop through pixels
+
+    layer.restore();
+  }
+
+  /**
+   * Renders a single vertical column of the spectrogram using FFT magnitude data.
+   * Converts linear magnitude values to decibels and maps them to colors using the current color scheme.
+   * 
+   * @param fftData - Array of FFT magnitude values (linear scale)
+   * @param layer - The canvas layer to render on
+   * @param height - Available height for rendering
+   * @param x - X-coordinate for the column
+   * @param zero - Y-coordinate offset for positioning
+   * 
+   * The function:
+   * 1. Converts magnitude values to decibels
+   * 2. Normalizes values within the configured dB range
+   * 3. Maps normalized values to colors using the active color scheme
+   * 4. Renders each frequency bin as a colored rectangle
+   * 5. Ensures minimum visibility by enforcing 1px minimum height
+   */
+  private renderFFTData(fftData: Float32Array, layer: Layer, height: number, x: number, zero: number) {
+    const binCount = fftData.length;
+    if (binCount <= 0 || height <= 0) return;
+
+    const minDb = this.spectrogramMinDb;
+    const maxDb = this.spectrogramMaxDb;
+    const dbRange = maxDb - minDb;
+    if (dbRange <= 0) return;
+
+    const binScreenHeightExact = height / binCount;
+
+    for (let i = 0; i < binCount; i++) {
+      const magnitude = fftData[i];
+      const magDB = 10 * Math.log10(Math.max(1e-9, magnitude));
+      const normalizedDb = Math.max(0, Math.min(1, (magDB - minDb) / dbRange));
+      const color = this.colorMapper.magnitudeToColor(normalizedDb);
+
+      const yBottom = zero + height * (1 - i / binCount);
+      const yTop = zero + height * (1 - (i + 1) / binCount);
+      const rectHeight = Math.max(1, Math.ceil(binScreenHeightExact));
+
+      layer.fillStyle = color;
+      layer.fillRect(
+        Math.floor(x),
+        Math.floor(yTop),
+        1,
+        rectHeight
+      );
+    }
+  }
+
+  /**
+   * Update the color scheme, regenerate the cache, and trigger a redraw.
+   * @param schemeName Name of the color scheme (e.g., 'viridis', 'grayscale', 'hot')
+   */
+  public setColorScheme(schemeName: ColorScheme) {
+    if (this.spectrogramColorScheme !== schemeName) {
+      this.spectrogramColorScheme = schemeName;
+      this.colorMapper.setColorScheme(schemeName);
+      
+      // Find the spectrogram layer and redraw it
+      const spectrogramLayer = this.getLayer('spectrogram');
+      if (spectrogramLayer?.isVisible) {
+        spectrogramLayer.clear();
+        this.resetWaveformRender();
+        this.draw(false, true);
+      }
+    }
+  }
+
+  /**
+   * Convert linear frequency spectrum to mel scale
+   */
+  private convertToMelScale(linearSpectrum: Float32Array): Float32Array {
+    if (this.numberOfMelBands <= 0 || !this.audio) return linearSpectrum;
+
+    const melBands = new Float32Array(this.numberOfMelBands);
+    const linearBinCount = linearSpectrum.length;
+
+    // Ensure filterbank is cached or created only when necessary
+    if (!this.melFilterbank || this.melFilterbank.length !== this.numberOfMelBands || this.melFilterbank[0]?.length !== linearBinCount) {
+      console.log(`Creating Mel filterbank: ${this.audio.sampleRate}Hz, ${linearBinCount} linear bins, ${this.numberOfMelBands} mel bands`);
+      this.melFilterbank = this.createMelFilterbank(this.audio.sampleRate, linearBinCount, this.numberOfMelBands);
+    }
+
+    const melFilters = this.melFilterbank;
+    if (!melFilters) return linearSpectrum; // Safety check
+
+    for (let i = 0; i < this.numberOfMelBands; i++) {
+        let melEnergy = 0;
+        const filter = melFilters[i];
+        if (!filter) continue; // Safety check for filter array
+
+        const N = Math.min(filter.length, linearBinCount); // Ensure we don't go out of bounds
+        for (let j = 0; j < N; j++) {
+            melEnergy += linearSpectrum[j] * filter[j];
+        }
+        melBands[i] = melEnergy;
+    }
+    return melBands;
+  }
+
+  /** Create a mel filterbank */
+  private createMelFilterbank(sampleRate: number, linearBinCount: number, numBands: number): number[][] {
+    if (numBands <= 0 || linearBinCount <= 1 || sampleRate <= 0) {
+        console.warn("Invalid parameters for Mel filterbank creation.");
+        return [];
+    }
+
+    const filters: number[][] = [];
+    const minFreq = 0;
+    const maxFreq = sampleRate / 2;
+    const minMel = this.hzToMel(minFreq);
+    const maxMel = this.hzToMel(maxFreq);
+
+    if (minMel >= maxMel) {
+        console.warn("Min Mel frequency is not less than Max Mel frequency.");
+        return [];
+    }
+
+    const melStep = (maxMel - minMel) / (numBands + 1);
+    if (melStep <= 0) {
+        console.warn("Calculated Mel step is not positive.");
+        return [];
+    }
+
+    // Calculate Mel points and corresponding Hz points and bin indices
+    const melPoints = new Array(numBands + 2).fill(0).map((_, i) => minMel + i * melStep);
+    const hzPoints = melPoints.map(m => this.melToHz(m));
+    const binFreq = maxFreq / (linearBinCount - 1); // Frequency resolution of linear bins
+    const binIndices = hzPoints.map(h => Math.floor(h / binFreq));
+
+    // Create triangular filters
+    for (let i = 0; i < numBands; i++) {
+        const filter = new Array(linearBinCount).fill(0);
+        const startBin = binIndices[i];
+        const centerBin = binIndices[i + 1];
+        const endBin = binIndices[i + 2];
+
+        // Ascending slope
+        for (let j = startBin; j < centerBin; j++) {
+            if (j >= 0 && j < linearBinCount && centerBin > startBin) {
+                filter[j] = (j - startBin) / (centerBin - startBin);
+            }
+        }
+        // Descending slope
+        for (let j = centerBin; j < endBin; j++) {
+            if (j >= 0 && j < linearBinCount && endBin > centerBin) {
+                filter[j] = (endBin - j) / (endBin - centerBin);
+            }
+        }
+        filters.push(filter);
+    }
+    return filters;
   }
 }

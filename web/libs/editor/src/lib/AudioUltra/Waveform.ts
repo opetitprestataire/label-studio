@@ -600,4 +600,20 @@ export class Waveform extends Events<WaveformEventTypes> {
       this.tooltip.hide();
     }
   };
+
+  /**
+   * Update spectrogram parameters
+   */
+  public updateSpectrogramParameters(params: {
+    fftSamples?: number;
+    melBands?: number;
+    windowingFunction?: string;
+    colorScheme?: string;
+    minDb?: number;
+    maxDb?: number;
+  }) {
+    if (this.visualizer) {
+      this.visualizer.updateFFTParameters(params);
+    }
+  }
 }
