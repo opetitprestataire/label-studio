@@ -5,6 +5,7 @@ import { Filters } from "../Filters/Filters";
 import { Badge } from "./Badge/Badge";
 import { Button } from "@humansignal/ui";
 import { Dropdown } from "./Dropdown/Dropdown";
+import { Icon } from "./Icon/Icon";
 
 const buttonInjector = inject(({ store }) => {
   const { viewsStore, currentView } = store;
@@ -28,6 +29,7 @@ export const FiltersButton = buttonInjector(
           variant="neutral"
           look="outlined"
           onClick={() => sidebarEnabled && viewsStore.toggleSidebar()}
+          trailing={<Icon icon={IconChevronDown} />}
           {...rest}
         >
           Filters{" "}
@@ -36,7 +38,6 @@ export const FiltersButton = buttonInjector(
               {activeFiltersNumber}
             </Badge>
           )}
-          <IconChevronDown style={{ marginLeft: 8, marginRight: -7 }} />
         </Button>
       );
     }),

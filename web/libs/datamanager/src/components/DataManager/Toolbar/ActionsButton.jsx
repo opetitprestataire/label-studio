@@ -9,6 +9,7 @@ import Form from "../../Common/Form/Form";
 import { Menu } from "../../Common/Menu/Menu";
 import { Modal } from "../../Common/Modal/ModalPopup";
 import "./ActionsButton.scss";
+import { Icon } from "../../Common/Icon/Icon";
 
 const isFFLOPSE3 = isFF(FF_LOPS_E_3);
 const injector = inject(({ store }) => ({
@@ -134,9 +135,15 @@ export const ActionsButton = injector(
         openUpwardForShortViewport={false}
         disabled={!hasSelected}
       >
-        <Button size="small" disabled={!hasSelected} {...rest}>
+        <Button
+          size="small"
+          variant="neutral"
+          look="outlined"
+          disabled={!hasSelected}
+          trailing={<Icon icon={IconChevronDown} />}
+          {...rest}
+        >
           {selectedCount > 0 ? `${selectedCount} ${recordTypeLabel}${selectedCount > 1 ? "s" : ""}` : "Actions"}
-          <IconChevronDown style={{ marginLeft: 4, marginRight: -7 }} />
         </Button>
       </Dropdown.Trigger>
     );
