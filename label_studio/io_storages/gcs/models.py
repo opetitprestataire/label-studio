@@ -63,6 +63,33 @@ class GCSStorageMixin(models.Model):
             None if 'Export' in self.__class__.__name__ else self.prefix,
         )
 
+    def get_bytes_stream(self, uri):
+        """Get file bytes from GCS storage as a stream and content type.
+        
+        Args:
+            uri: The GCS URI of the file to retrieve
+            
+        Returns:
+            Tuple of (BytesIO stream, content_type)
+        """
+        # Parse URI to get bucket and key
+        parsed_uri = urlparse(uri, allow_fragments=False)
+        bucket_name = parsed_uri.netloc
+        blob_name = parsed_uri.path.lstrip('/')
+        
+        try:
+            # Get client and bucket using existing methods
+            client = self.get_client()
+            bucket = client.get_bucket(bucket_name)
+            blob = bucket.blob(blob_name)
+            blob.reload()
+            content_type = blob.content_type or 'application/octet-stream'
+            data = io.BytesIO(blob.download_as_bytes())
+            return data, content_type
+        except Exception as e:
+            logger.error(f"Error getting bytes from GCS for uri {uri}: {e}", exc_info=True)
+            return None, None
+
 
 class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
     url_scheme = 'gs'
@@ -109,33 +136,6 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
             google_application_credentials=self.google_application_credentials,
             google_project_id=self.google_project_id,
         )
-        
-    def get_bytes_stream(self, uri):
-        """Get file bytes from GCS storage as a stream and content type.
-        
-        Args:
-            uri: The GCS URI of the file to retrieve
-            
-        Returns:
-            Tuple of (BytesIO stream, content_type)
-        """
-        # Parse URI to get bucket and key
-        parsed_uri = urlparse(uri, allow_fragments=False)
-        bucket_name = parsed_uri.netloc
-        blob_name = parsed_uri.path.lstrip('/')
-        
-        try:
-            # Get client and bucket using existing methods
-            client = self.get_client()
-            bucket = client.get_bucket(bucket_name)
-            blob = bucket.blob(blob_name)
-            blob.reload()
-            content_type = blob.content_type or 'application/octet-stream'
-            data = io.BytesIO(blob.download_as_bytes())
-            return data, content_type
-        except Exception as e:
-            logger.error(f"Error getting bytes from GCS for uri {uri}: {e}", exc_info=True)
-            return None, None
 
     class Meta:
         abstract = True
