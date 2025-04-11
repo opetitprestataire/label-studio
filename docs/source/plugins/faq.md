@@ -40,13 +40,19 @@ No, they are only available in Label Studio Enterprise.
 
 Yes! The plugins available out-of-the-box are intended as starting points that can be modified to suit your needs. 
 
+Changes you make to the provided plugins stay within the context of the project. To update the plugin source, you would need to make a pull request to the [Plugins repo](https://github.com/HumanSignal/label-studio-plugins). 
+
 
 ### Can I write my own?
 
 Yes! Instead of choosing an out-of-the box plugin to modify, you can write your own from scratch. See [Build Your Own Custom Plugins](custom).
 
 !!! note
-    If you build a plugin that you'd be willing to share with other Label Studio Enterprise users, we invite you to submit it to the [Plugins repo](https://github.com/HumanSignal/label-studio-plugins).
+    If you build a plugin that you'd be willing to share with other Label Studio Enterprise users, we invite you to submit it to the [Plugins repo](https://github.com/HumanSignal/label-studio-plugins). 
+
+### Can I insert multiple plugins?
+
+Yes, they stack. 
 
 
 ### Where can I learn more?
