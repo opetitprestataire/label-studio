@@ -1,13 +1,12 @@
 import { IconInfoOutline, IconSettings } from "@humansignal/icons";
-import { Tooltip } from "@humansignal/ui";
-import { Button } from "../../common/Button/Button";
+import { Button, Tooltip } from "@humansignal/ui";
 import { Elem } from "../../utils/bem";
 import { isSelfServe } from "../../utils/billing";
 import { FF_BULK_ANNOTATION } from "../../utils/feature-flags";
-import { EditingHistory } from "./HistoryActions";
-import { DynamicPreannotationsToggle } from "../AnnotationTab/DynamicPreannotationsToggle";
 import { AutoAcceptToggle } from "../AnnotationTab/AutoAcceptToggle";
+import { DynamicPreannotationsToggle } from "../AnnotationTab/DynamicPreannotationsToggle";
 import { GroundTruth } from "../CurrentEntity/GroundTruth";
+import { EditingHistory } from "./HistoryActions";
 
 export const Actions = ({ store }) => {
   const annotationStore = store.annotationStore;
@@ -23,16 +22,14 @@ export const Actions = ({ store }) => {
       {store.description && store.hasInterface("instruction") && (
         <Tooltip alignment="top-left" title="Show instructions">
           <Button
-            icon={<IconInfoOutline style={{ width: 20, height: 20 }} />}
             type="text"
             aria-label="Instructions"
+            size="small"
+            variant="neutral"
             onClick={() => store.toggleDescription()}
-            style={{
-              height: 36,
-              width: 36,
-              padding: 0,
-            }}
-          />
+          >
+            <IconInfoOutline />
+          </Button>
         </Tooltip>
       )}
       <Tooltip alignment="top-left" title="Settings">
@@ -40,13 +37,12 @@ export const Actions = ({ store }) => {
           icon={<IconSettings />}
           type="text"
           aria-label="Settings"
+          size="small"
+          variant="neutral"
           onClick={() => store.toggleSettings()}
-          style={{
-            height: 36,
-            width: 36,
-            padding: 0,
-          }}
-        />
+        >
+          <IconSettings />
+        </Button>
       </Tooltip>
 
       {store.hasInterface("ground-truth") && !isBulkMode && <GroundTruth entity={entity} />}

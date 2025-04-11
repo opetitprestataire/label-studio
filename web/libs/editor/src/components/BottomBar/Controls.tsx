@@ -8,8 +8,7 @@ import { observer } from "mobx-react";
 import type React from "react";
 import { useCallback, useState } from "react";
 
-import { IconBan, IconChevron } from "@humansignal/ui";
-import { Button } from "../../common/Button/Button";
+import { Button, IconBan, IconChevron } from "@humansignal/ui";
 import { Dropdown } from "../../common/Dropdown/Dropdown";
 import type { CustomButtonType } from "../../stores/CustomButton";
 import { Block, cn, Elem } from "../../utils/bem";
@@ -50,13 +49,7 @@ const ControlButton = observer(({ button, disabled, onClick }: ControlButtonProp
   const look = button.disabled || disabled ? "disabled" : button.look;
 
   const result = (
-    <Button
-      {...button.props}
-      aria-label={button.ariaLabel}
-      disabled={button.disabled || disabled}
-      look={look}
-      onClick={onClick}
-    >
+    <Button {...button.props} aria-label={button.ariaLabel} disabled={button.disabled || disabled} onClick={onClick}>
       {button.title}
     </Button>
   );

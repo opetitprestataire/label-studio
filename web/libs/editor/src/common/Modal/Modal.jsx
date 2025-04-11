@@ -1,7 +1,7 @@
 import { createRef } from "react";
 import { render } from "react-dom";
 import { cn } from "../../utils/bem";
-import { Button } from "../Button/Button";
+import { Button } from "@humansignal/ui";
 import { Space } from "../Space/Space";
 import { Modal } from "./ModalPopup";
 
@@ -51,7 +51,8 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
             onCancel?.();
             modal.close();
           }}
-          size="compact"
+          size="small"
+          look="outlined"
           autoFocus
         >
           {cancelText ?? "Cancel"}
@@ -62,7 +63,7 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
             onOk?.();
             modal.close();
           }}
-          size="compact"
+          size="small"
           look={buttonLook ?? "primary"}
         >
           {okText ?? "OK"}
@@ -84,8 +85,7 @@ export const info = ({ okText, onOkPress, ...props }) => {
             onOkPress?.();
             modal.close();
           }}
-          look="primary"
-          size="compact"
+          size="small"
         >
           {okText ?? "OK"}
         </Button>
