@@ -26,7 +26,7 @@
 
 
   & > span {
-    @apply inline-flex flex-1 whitespace-pre items-center;
+    @apply inline-flex flex-1 whitespace-pre items-center px-tight;
   }
 
   svg {
@@ -94,14 +94,14 @@
   --text-color: var(--color-neutral-surface-content);
   --background-color-hover: var(--color-neutral-surface-hover);
   --background-color-active: var(--color-neutral-surface-active);
-  --focus-outline: var(--color-neutral-focus-outline);
+  --focus-outline: var(--color-primary-focus-outline);
   --background-color-hover-outline: var(--color-neutral-emphasis-subtle);
   --background-color-active-outline: var(--color-neutral-emphasis);
   --border-outline: var(--color-neutral-border);
   --text-outline: var(--color-neutral-content);
-  --wait-color-value: var(--color-neutral-emphasis-subtle);
-  --wait-color-value-outline: var(--color-neutral-emphasis);
-  --wait-color-opacity: 10%;
+  --wait-color-value: var(--color-neutral-inverted-surface);
+  --wait-color-value-outline: var(--color-neutral-inverted-surface);
+  --wait-color-opacity: 5%;
 }
 
 .variant-negative {
@@ -248,7 +248,7 @@
 }
 
 .size-smaller {
-  @apply p-tightest text-label-small h-[24px];
+  @apply p-tightest text-label-smaller h-[24px];
 
   & > span {
     @apply px-tightest gap-tightest;
@@ -265,9 +265,6 @@
 
 /// STATES
 .waiting {
-  --background-color-hover: var(--background-color);
-  --background-color-active: var(--background-color);
-  --border-color-hover: var(--border-color);
   --background-image: repeating-linear-gradient(
       -63.43deg,
     transparent 1px,
@@ -282,7 +279,14 @@
   background-position: 40px;
   background-size: 37px 100%;
   animation: button-waiting 1s linear infinite;
-  cursor: wait;
+
+  &:disabled {
+  --background-color-hover: var(--background-color);
+  --background-color-active: var(--background-color);
+  --border-color-hover: var(--border-color);
+
+    cursor: wait;
+  }
 }
 
 @keyframes button-waiting {

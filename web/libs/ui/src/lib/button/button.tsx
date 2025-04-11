@@ -1,11 +1,5 @@
 import { cn } from "../../utils/utils";
-import {
-  type CSSProperties,
-  forwardRef,
-  type ButtonHTMLAttributes,
-  type PropsWithChildren,
-  type ReactNode,
-} from "react";
+import type { ButtonHTMLAttributes, PropsWithChildren, ReactNode } from "react";
 import styles from "./button.module.scss";
 
 const variants = {
@@ -91,64 +85,29 @@ export type ButtonProps = {
  * with support for different visual variants, looks, and sizes. It can include
  * leading and trailing elements for additional visual context.
  */
-const Button = forwardRef(
-  (
-    {
-      children,
-      className = "",
-      variant = "primary",
-      look = "filled",
-      size = "medium",
-      waiting = false,
-      align = "default",
-      leading,
-      trailing,
-      ...buttonProps
-    }: PropsWithChildren<ButtonProps>,
-
-    ref,
-  ) => {
-    return (
-      <button
-        ref={(el) => {
-          if (ref instanceof Function) {
-            ref(el);
-          } else if (ref) {
-            ref.current = el;
-          }
-        }}
-        {...buttonProps}
-        disabled={buttonProps.disabled || waiting}
-        className={buttonVariant({ variant, look, size, waiting, align }, className)}
-        data-ignore-uikit
-      >
-        {leading}
-        <span>{children}</span>
-        {trailing}
-      </button>
-    );
-  },
-);
-
-const ButtonGroup = ({
+function Button({
   children,
-  className,
-  style,
-  collapsed = true,
-}: PropsWithChildren<{
-  style?: CSSProperties;
-  className?: string;
-  collapsed?: boolean;
-}>) => {
-  const compoundClassName = cn(styles["button-group"], className, {
-    [styles["button-group-collapsed"]]: collapsed,
-  });
-
+  className = "",
+  variant = "primary",
+  look = "filled",
+  size = "medium",
+  waiting = false,
+  align = "default",
+  leading,
+  trailing,
+  ...buttonProps
+}: PropsWithChildren<ButtonProps>) {
   return (
-    <div className={compoundClassName} style={style}>
-      {children}
-    </div>
+    <button
+      {...buttonProps}
+      disabled={buttonProps.disabled ?? waiting}
+      className={buttonVariant({ variant, look, size, waiting, align }, className)}
+    >
+      {leading}
+      <span>{children}</span>
+      {trailing}
+    </button>
   );
-};
+}
 
-export { Button, ButtonGroup };
+export { Button };
