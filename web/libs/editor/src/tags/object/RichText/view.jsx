@@ -5,7 +5,7 @@ import * as xpath from "xpath-range";
 import { inject, observer } from "mobx-react";
 import { STATE_CLASS_MODS } from "../../../mixins/HighlightMixin";
 import Utils from "../../../utils";
-import { fixCodePointsInRange, rangeToGlobalOffset } from "../../../utils/selection-tools";
+import { applyTextGranularity, fixCodePointsInRange, rangeToGlobalOffset } from "../../../utils/selection-tools";
 import "./RichText.scss";
 import { isAlive } from "mobx-state-tree";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -177,6 +177,9 @@ class RichTextPieceView extends Component {
     if (item.initializedDrag) {
       const area = this.draggableRegion;
       const selection = window.getSelection();
+
+      applyTextGranularity(selection, item.granularity);
+
       const range = selection.getRangeAt(0);
 
       // don't collapse region into nothing

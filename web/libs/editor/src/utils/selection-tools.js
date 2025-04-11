@@ -233,7 +233,7 @@ export const captureSelection = (
  * @param {Selection} selection
  * @param {string} granularity
  */
-const applyTextGranularity = (selection, granularity) => {
+export const applyTextGranularity = (selection, granularity) => {
   if (!selection.modify || !granularity || granularity === "symbol") return;
 
   try {
