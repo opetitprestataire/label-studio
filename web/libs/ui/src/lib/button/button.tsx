@@ -100,7 +100,7 @@ function Button({
   return (
     <button
       {...buttonProps}
-      disabled={buttonProps.disabled || waiting}
+      disabled={buttonProps.disabled ?? waiting}
       className={buttonVariant({ variant, look, size, waiting, align }, className)}
     >
       {leading}
