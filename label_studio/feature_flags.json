@@ -4297,7 +4297,7 @@
     },
     "fflag_optic_all_optic_1938_storage_proxy": {
       "key": "fflag_optic_all_optic_1938_storage_proxy",
-      "on": false,
+      "on": true,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
