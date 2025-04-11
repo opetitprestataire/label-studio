@@ -33,7 +33,7 @@
     @apply h-6 inline-block aspect-square;
   }
 
-  & > span:has(svg:only-child) {
+  & > span:not(:has(text)):has(svg:only-child) {
     @apply h-full w-full p-0 aspect-square;
   }
 
