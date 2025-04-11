@@ -26,7 +26,7 @@
 
 
   & > span {
-    @apply inline-flex flex-1 whitespace-pre items-center;
+    @apply inline-flex flex-1 whitespace-pre items-center px-tight;
   }
 
   svg {
@@ -98,9 +98,9 @@
   --background-color-active-outline: var(--color-neutral-emphasis);
   --border-outline: var(--color-neutral-border);
   --text-outline: var(--color-neutral-content);
-  --wait-color-value: var(--color-neutral-emphasis-subtle);
-  --wait-color-value-outline: var(--color-neutral-emphasis);
-  --wait-color-opacity: 10%;
+  --wait-color-value: var(--color-neutral-inverted-surface);
+  --wait-color-value-outline: var(--color-neutral-inverted-surface);
+  --wait-color-opacity: 5%;
 }
 
 .variant-negative {
@@ -243,7 +243,7 @@
 }
 
 .size-smaller {
-  @apply p-tightest text-label-small h-[24px];
+  @apply p-tightest text-label-smaller h-[24px];
 
   & > span {
     @apply px-tightest gap-tightest;
