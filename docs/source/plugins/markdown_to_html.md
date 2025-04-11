@@ -12,7 +12,9 @@ tier: enterprise
 <img src="/images/plugins/markdown-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
 
 !!! note
-    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+     For information about modifying this plugin or creating your own custom plugins, see [Customize and Build Your Own Plugins](custom).
+
+     For general plugin information, see [Plugins for projects](/guide/plugins) and [Plugin FAQ](faq).
 
 ## About
 
@@ -43,7 +45,7 @@ if (sumBlock) {
 
 **Related LSI instance methods:**
 
-* [import(url, integrity)](/guide/plugins#import-url-integrity)
+* [import(url, integrity)](custom#LSI-import-url-integrity)
 
 ## Labeling config
 
@@ -101,7 +103,7 @@ This labeling config displays a chat transcript on the left and choices on the r
 * [Header](/tags/header.html)
 * [Choices](/tags/choices.html)
 
-## Data
+## Sample data
 
 ```json
 {

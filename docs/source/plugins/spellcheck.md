@@ -12,7 +12,9 @@ tier: enterprise
 <img src="/images/plugins/spellcheck-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
 
 !!! note
-    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+     For information about modifying this plugin or creating your own custom plugins, see [Customize and Build Your Own Plugins](custom).
+
+     For general plugin information, see [Plugins for projects](/guide/plugins) and [Plugin FAQ](faq).
 
 ## About
 
@@ -63,8 +65,8 @@ LSI.on('beforeSaveAnnotation', async (store, annotation) => {
 
 **Related LSI instance methods:**
 
-* [import(url, integrity)](/guide/plugins#import-url-integrity)
-* [on(eventName, handler)](/guide/plugins#on-eventName-handler)
+* [import(url, integrity)](custom#LSI-import-url-integrity)
+* [on(eventName, handler)](custom#LSI-on-eventName-handler)
   
 **Related frontend events:**
 
@@ -92,7 +94,7 @@ LSI.on('beforeSaveAnnotation', async (store, annotation) => {
 * [TextArea](/tags/textarea.html)
 
 
-## Data
+## Sample data
 
 ```json
 [

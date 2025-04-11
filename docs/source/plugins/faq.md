@@ -2,9 +2,9 @@
 title: Plugins Frequently Asked Questions
 short: Plugins FAQ
 type: plugins
-category: About Plugins
-cat: about-plugins
-order: 1
+category: Overview
+cat: overview
+order: 5
 meta_title: Plugins Frequently Asked Questions
 tier: enterprise
 ---
@@ -13,7 +13,7 @@ tier: enterprise
 
 Plugins allow you to run custom JavaScript code directly within the labeling interface. 
 
-This feature empowers you to extend and customize Label Studio’s behavior. For example, you can add data validations, dynamic UI enhancements, or integrating external libraries, thereby tailoring the labeling workflow to your specific requirements. By leveraging the [LSI (Label Studio Interface) object](/guide/plugins#Label-Studio-Interface-LSI), you can manage events, import additional scripts, and access task and annotation data on the fly, ensuring that your custom logic executes each time an annotation is rendered.
+This feature empowers you to extend and customize Label Studio’s behavior. For example, you can add data validations, dynamic UI enhancements, or integrating external libraries, thereby tailoring the labeling workflow to your specific requirements. By leveraging the [LSI (Label Studio Interface) object](custom#Label-Studio-Interface-LSI), you can manage events, import additional scripts, and access task and annotation data on the fly, ensuring that your custom logic executes each time an annotation is rendered.
 
 Plugins are configured on a per-project basis from **Project > Settings > Labeling Interface**. 
 
@@ -43,12 +43,15 @@ Yes! The plugins available out-of-the-box are intended as starting points that c
 
 ### Can I write my own?
 
-Yes! Instead of choosing an out-of-the box plugin to modify, you can write your own from scratch. Refer to our documentation for information on using the [LSI (Label Studio Interface) object](/guide/plugins#Label-Studio-Interface-LSI). 
+Yes! Instead of choosing an out-of-the box plugin to modify, you can write your own from scratch. See [Build Your Own Custom Plugins](custom).
+
+!!! note
+    If you build a plugin that you'd be willing to share with other Label Studio Enterprise users, we invite you to submit it to the [Plugins repo](https://github.com/HumanSignal/label-studio-plugins).
 
 
 ### Where can I learn more?
 
-* [Plugins documentation](/guide/plugins)
+* [Plugins for projects](/guide/plugins)
 * [Plugins repo](https://github.com/HumanSignal/label-studio-plugins)
 * [Label Studio Frontend reference](/guide/frontend_reference.html#Available-events)
 

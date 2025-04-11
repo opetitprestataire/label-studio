@@ -12,7 +12,9 @@ tier: enterprise
 <img src="/images/plugins/dynamic-images-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
 
 !!! note
-    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+     For information about modifying this plugin or creating your own custom plugins, see [Customize and Build Your Own Plugins](custom).
+
+     For general plugin information, see [Plugins for projects](/guide/plugins) and [Plugin FAQ](faq).
 
 ## About
 
@@ -122,7 +124,7 @@ appendCheckImg();
 * [Rectangle](/tags/rectangle.html)
 * [Header](/tags/header.html)
 
-## Data
+## Sample data
 
 ```json
 {

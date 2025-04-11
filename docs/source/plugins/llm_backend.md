@@ -38,7 +38,7 @@ async function fetchLLM(prompt) {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			// No auth needed because the API is currently open
+			// No auth needed because the API is open
 		},
 	});
 
@@ -130,6 +130,11 @@ setup();
 
 ```
 
+**Related LSI instance methods:**
+
+* [.annotation)](custom#LSI-annotation)
+
+
 ## Labeling config
 
 !!! info Tip
@@ -213,7 +218,7 @@ setup();
 * [TextArea](/tags/textarea.html)
 * [Choices](/tags/choices.html)
 
-## Data
+## Sample data
 
 ```json
 [

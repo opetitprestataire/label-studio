@@ -12,7 +12,9 @@ tier: enterprise
 <img src="/images/plugins/json-validate-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
 
 !!! note
-    For information about modifying this plugin or creating your own custom plugins, see [Plugins](/guide/plugins).
+     For information about modifying this plugin or creating your own custom plugins, see [Customize and Build Your Own Plugins](custom).
+
+     For general plugin information, see [Plugins for projects](/guide/plugins) and [Plugin FAQ](faq).
 
 ## About
 This plugin parses the contexts of a `TextArea` field to check for valid JSON. If the JSON is invalid, it shows an error and prevents the annotation from being saved.
@@ -40,7 +42,7 @@ This is an example of a "hard" block, meaning that the user must resolve the iss
 
 **Related LSI instance methods:**
 
-* [on(eventName, handler)](/guide/plugins#on-eventName-handler)
+* [on(eventName, handler)](custom#LSI-on-eventName-handler)
 
 **Related frontend events:**
 
@@ -83,7 +85,7 @@ This is an example of a "hard" block, meaning that the user must resolve the iss
 * [TextArea](/tags/textarea.html)
 * [Labels](/tags/labels.html)
 
-## Data
+## Sample data
 
 ```json
 [
