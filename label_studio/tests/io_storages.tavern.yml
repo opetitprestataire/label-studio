@@ -1663,7 +1663,7 @@ stages:
     status_code: 200
     json:
       data:
-        image: '/tasks/1/resolve/?fileuri=czM6Ly9weXRlc3QtczMtanNvbnMtdW5leGlzdGVkX2xpbmtzL3NvbWUtdW5leGlzdGVkLWltYWdlLmpwZw=='
+        image: '/tasks/\\d+/resolve/?fileuri=czM6Ly9weXRlc3QtczMtanNvbnMtdW5leGlzdGVkX2xpbmtzL3NvbWUtdW5leGlzdGVkLWltYWdlLmpwZw=='
 
 ---
 test_name: test_connection_to_import_redis_storage
