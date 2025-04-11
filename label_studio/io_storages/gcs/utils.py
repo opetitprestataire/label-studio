@@ -9,7 +9,6 @@ from functools import lru_cache
 from json import JSONDecodeError
 from typing import Optional, Union
 from urllib.parse import urlparse
-import io
 
 import google.auth
 import google.cloud.storage as gcs

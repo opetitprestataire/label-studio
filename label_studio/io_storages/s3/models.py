@@ -5,6 +5,7 @@ import json
 import logging
 import re
 from typing import Union
+from urllib.parse import urlparse
 
 import boto3
 from core.feature_flags import flag_set
@@ -14,7 +15,6 @@ from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-from urllib.parse import urlparse
 from io_storages.base_models import (
     ExportStorage,
     ExportStorageLink,
@@ -112,15 +112,15 @@ class S3StorageMixin(models.Model):
 
     @property
     def type_full(self):
-        return 'Amazon AWS S3'    
+        return 'Amazon AWS S3'
 
     @catch_and_reraise_from_none
     def get_bytes_stream(self, uri):
         """Get file bytes from S3 storage as a stream and content type.
-        
+
         Args:
             uri: The S3 URI of the file to retrieve
-            
+
         Returns:
             Tuple of (BytesIO stream, content_type)
         """
@@ -128,19 +128,19 @@ class S3StorageMixin(models.Model):
         parsed_uri = urlparse(uri, allow_fragments=False)
         bucket_name = parsed_uri.netloc
         key = parsed_uri.path.lstrip('/')
-        
+
         # Get S3 client
         client = self.get_client()
-        
+
         try:
             # Get the object from S3
             object_response = client.get_object(Bucket=bucket_name, Key=key)
             content_type = object_response.get('ContentType')
             data = io.BytesIO(object_response['Body'].read())
             return data, content_type
-            
+
         except Exception as e:
-            logger.error(f"Error getting bytes from S3 for uri {uri}: {e}", exc_info=True)
+            logger.error(f'Error getting bytes from S3 for uri {uri}: {e}', exc_info=True)
             return None, None
 
     class Meta:

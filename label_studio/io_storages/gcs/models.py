@@ -65,10 +65,10 @@ class GCSStorageMixin(models.Model):
 
     def get_bytes_stream(self, uri):
         """Get file bytes from GCS storage as a stream and content type.
-        
+
         Args:
             uri: The GCS URI of the file to retrieve
-            
+
         Returns:
             Tuple of (BytesIO stream, content_type)
         """
@@ -76,7 +76,7 @@ class GCSStorageMixin(models.Model):
         parsed_uri = urlparse(uri, allow_fragments=False)
         bucket_name = parsed_uri.netloc
         blob_name = parsed_uri.path.lstrip('/')
-        
+
         try:
             # Get client and bucket using existing methods
             client = self.get_client()

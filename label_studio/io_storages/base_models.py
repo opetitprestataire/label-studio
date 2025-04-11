@@ -234,10 +234,10 @@ class ImportStorage(Storage):
 
     def get_bytes_stream(self, uri):
         """Get file bytes from storage as a stream and content type.
-        
+
         Args:
             uri: The URI of the file to retrieve
-            
+
         Returns:
             Tuple of (BytesIO stream, content_type)
         """
@@ -281,19 +281,19 @@ class ImportStorage(Storage):
                 if not self.can_resolve_url(extracted_uri):
                     logger.debug(f'No storage info found for URI={uri}')
                     return
-                
+
                 if flag_set('fflag_optic_all_optic_1938_storage_proxy', user=self.project.organization.created_by):
                     if task is None:
                         logger.error(f'Task is required to resolve URI={uri}', exc_info=True)
                         raise ValueError(f'Task is required to resolve URI={uri}')
-                        
+
                     proxy_url = urljoin(
                         settings.HOSTNAME,
                         reverse('storages:task-storage-data-resolve', kwargs={'task_id': task.id})
                         + f'?fileuri={base64.urlsafe_b64encode(extracted_uri.encode()).decode()}',
                     )
                     return uri.replace(extracted_uri, proxy_url)
-                
+
                 # ff off: old logic without proxy
                 else:
                     if self.presign and task is not None:

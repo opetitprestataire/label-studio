@@ -100,10 +100,10 @@ class AzureBlobStorageMixin(models.Model):
 
     def get_bytes_stream(self, uri):
         """Get file bytes from Azure Blob storage as a stream and content type.
-        
+
         Args:
             uri: The Azure URI of the file to retrieve
-            
+
         Returns:
             Tuple of (BytesIO stream, content_type)
         """
@@ -111,11 +111,11 @@ class AzureBlobStorageMixin(models.Model):
         parsed_uri = urlparse(uri, allow_fragments=False)
         container_name = parsed_uri.netloc
         blob_name = parsed_uri.path.lstrip('/')
-        
+
         try:
             # Get the Azure client
             client, _ = self.get_client_and_container()
-            
+
             # Get a blob client for the requested blob
             blob_client = client.get_blob_client(container=container_name, blob=blob_name)
 
@@ -197,7 +197,8 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
 
     def get_blob_metadata(self, key):
         return AZURE.get_blob_metadata(
-            key, self.container,
+            key,
+            self.container,
             conn_string=self.connection_string,
         )
 

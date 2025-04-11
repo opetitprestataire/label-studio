@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext } from "react";
 import { Button, Columns } from "../../../components";
 import { confirm, modal } from "../../../components/Modal/Modal";
 import { Spinner } from "../../../components/Spinner/Spinner";

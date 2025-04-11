@@ -1,15 +1,10 @@
 import base64
-import json
 import logging
-import mimetypes
-import time
-import io
 from typing import Union
-from urllib.parse import unquote, urlparse
+from urllib.parse import unquote
 
 from core.feature_flags import flag_set
 from django.http import HttpRequest, HttpResponseRedirect
-from drf_yasg.utils import swagger_auto_schema
 from projects.models import Project
 from ranged_fileresponse import RangedFileResponse
 from rest_framework import status
@@ -19,7 +14,6 @@ from rest_framework.views import APIView
 from tasks.models import Task
 
 from label_studio.io_storages.functions import get_storage_by_url
-
 
 logger = logging.getLogger(__name__)
 
@@ -60,21 +54,16 @@ class ResolveStorageUriAPIMixin:
         # Check if storage should use presigned URLs;
         # It's important to have this check here, because it increases security:
         # If storage.presign is False, it means an admin doesn't want to expose presigned URLs anyhow,
-        # and all files are proxied through Label Studio using LS auth and RBAC control.  
-        
+        # and all files are proxied through Label Studio using LS auth and RBAC control.
+
         if presign:
             # Redirect to presigned URL (original flow)
             return self.redirect_to_presign_url(fileuri, instance, model_name)
         else:
             # Direct proxy from storage
             return self.proxy_data_from_storage(request, fileuri, storage)
-            
-    def redirect_to_presign_url(
-        self, 
-        fileuri: str, 
-        instance: Union[Task, Project], 
-        model_name: str
-    ) -> Response:
+
+    def redirect_to_presign_url(self, fileuri: str, instance: Union[Task, Project], model_name: str) -> Response:
         """Generate and redirect to a presigned URL for the given file URI"""
         try:
             resolved = instance.resolve_storage_uri(fileuri)
@@ -95,13 +84,13 @@ class ResolveStorageUriAPIMixin:
         response.headers['Cache-Control'] = f'no-store, max-age={max_age}'
 
         return response
-            
+
     def proxy_data_from_storage(self, request, uri, storage):
         """Proxy the data directly from storage without redirecting"""
         try:
             # Use the storage-specific method to get data stream and content type
             data, content_type = storage.get_bytes_stream(uri)
-            
+
             # If we have the data and content type, return the response
             if data is not None:
                 content_type = content_type or 'application/octet-stream'
@@ -109,15 +98,15 @@ class ResolveStorageUriAPIMixin:
             else:
                 logger.error(f'Failed to get data from storage {storage}')
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
+
         except Exception as e:
-            logger.error(f"Error proxying data from storage: {e}", exc_info=True)
+            logger.error(f'Error proxying data from storage: {e}', exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class TaskResolveStorageUri(ResolveStorageUriAPIMixin, APIView):
     """A file proxy to presign storage urls at the task level.
-    
+
     If the storage has presign=False, it will proxy the data through Label Studio
     instead of redirecting to presigned URLs.
     """
@@ -145,7 +134,7 @@ class TaskResolveStorageUri(ResolveStorageUriAPIMixin, APIView):
 
 class ProjectResolveStorageUri(ResolveStorageUriAPIMixin, APIView):
     """A file proxy to presign storage urls at the project level.
-    
+
     If the storage has presign=False, it will proxy the data through Label Studio
     instead of redirecting to presigned URLs.
     """

@@ -2,8 +2,8 @@ import base64
 from unittest.mock import MagicMock
 
 import pytest
-from io_storages.proxy_api import ProjectResolveStorageUri, TaskResolveStorageUri
 from django.urls import reverse
+from io_storages.proxy_api import ProjectResolveStorageUri, TaskResolveStorageUri
 from projects.models import Project
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
@@ -78,8 +78,10 @@ class TestTaskResolveStorageUri:
         # Add a mock storage that will match the URI
         mock_storage = MagicMock()
         mock_storage.presign = True
+
         def mock_can_resolve(url):
             return True  # Match any URL
+
         mock_storage.can_resolve_url = MagicMock(side_effect=mock_can_resolve)
         project.get_all_import_storage_objects = [mock_storage]
 
@@ -151,8 +153,10 @@ class TestTaskResolveStorageUri:
 
         mock_storage = MagicMock()
         mock_storage.presign = True
+
         def mock_can_resolve(url):
             return url == valid_decoded_uri
+
         mock_storage.can_resolve_url = MagicMock(side_effect=mock_can_resolve)
 
         project.get_all_import_storage_objects = [mock_storage]
@@ -175,8 +179,7 @@ class TestTaskResolveStorageUri:
         monkeypatch.setattr('tasks.models.Task.objects', obj)
 
         request = APIRequestFactory().get(
-            reverse('storages:task-storage-data-resolve', kwargs={'task_id': 1})
-            + f'?fileuri={encoded_fileuri}'
+            reverse('storages:task-storage-data-resolve', kwargs={'task_id': 1}) + f'?fileuri={encoded_fileuri}'
         )
         request.user = user
         force_authenticate(request, user)
@@ -195,8 +198,10 @@ class TestTaskResolveStorageUri:
 
         mock_storage = MagicMock()
         mock_storage.presign = True
+
         def mock_can_resolve(url):
             return url == longest_uri
+
         mock_storage.can_resolve_url = MagicMock(side_effect=mock_can_resolve)
 
         project.get_all_import_storage_objects = [mock_storage]
@@ -213,6 +218,7 @@ class TestTaskResolveStorageUri:
                 return task
             else:
                 raise Task.DoesNotExist
+
         obj = MagicMock()
         obj.get = mock_task_get
         monkeypatch.setattr('tasks.models.Task.objects', obj)
@@ -267,9 +273,7 @@ class TestProjectResolveStorageUri:
         return user
 
     def test_missing_parameters(self, view, user):
-        request = APIRequestFactory().get(
-            reverse('storages:project-storage-data-resolve', kwargs={'project_id': 1})
-        )
+        request = APIRequestFactory().get(reverse('storages:project-storage-data-resolve', kwargs={'project_id': 1}))
 
         request.user = user
         force_authenticate(request, user)
@@ -306,8 +310,10 @@ class TestProjectResolveStorageUri:
         # Add a mock storage that will match the URI
         mock_storage = MagicMock()
         mock_storage.presign = True
+
         def mock_can_resolve(url):
             return True  # Match any URL
+
         mock_storage.can_resolve_url = MagicMock(side_effect=mock_can_resolve)
         project.get_all_import_storage_objects = [mock_storage]
 
@@ -375,8 +381,10 @@ class TestProjectResolveStorageUri:
 
         mock_storage = MagicMock()
         mock_storage.presign = True
+
         def mock_can_resolve(url):
             return url == valid_decoded_uri
+
         mock_storage.can_resolve_url = MagicMock(side_effect=mock_can_resolve)
 
         project.get_all_import_storage_objects = [mock_storage]
@@ -392,13 +400,13 @@ class TestProjectResolveStorageUri:
                 return project
             else:
                 raise Project.DoesNotExist
+
         obj = MagicMock()
         obj.get = mock_project_get
         monkeypatch.setattr('projects.models.Project.objects', obj)
 
         request = APIRequestFactory().get(
-            reverse('storages:project-storage-data-resolve', kwargs={'project_id': 1})
-            + f'?fileuri={encoded_fileuri}'
+            reverse('storages:project-storage-data-resolve', kwargs={'project_id': 1}) + f'?fileuri={encoded_fileuri}'
         )
         request.user = user
         force_authenticate(request, user)
@@ -416,8 +424,10 @@ class TestProjectResolveStorageUri:
 
         mock_storage = MagicMock()
         mock_storage.presign = True
+
         def mock_can_resolve(url):
             return url == longest_uri
+
         mock_storage.can_resolve_url = MagicMock(side_effect=mock_can_resolve)
 
         project.get_all_import_storage_objects = [mock_storage]
@@ -433,6 +443,7 @@ class TestProjectResolveStorageUri:
                 return project
             else:
                 raise Project.DoesNotExist
+
         obj = MagicMock()
         obj.get = mock_project_get
         monkeypatch.setattr('projects.models.Project.objects', obj)
