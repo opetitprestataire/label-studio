@@ -5,7 +5,7 @@
   position: absolute;
   box-sizing: border-box;
   background-color: var(--color-neutral-background);
-  box-shadow: 0 5px 16px rgba(var(--color-neutral-shadow-raw) / 8%), 0 4px 8px rgba(var(--color-neutral-shadow-raw) / 16%);
+  box-shadow: 0 5px 16px rgba(var(--color-neutral-shadow-raw) / calc(8% * var(--shadow-intensity) )), 0 4px 8px rgba(var(--color-neutral-shadow-raw) / calc(16% * var(--shadow-intensity)));
   will-change: transform, opacity;
   border-radius: var(--corner-radius-smaller);
 
