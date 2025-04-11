@@ -49,7 +49,7 @@ async function handlePresignedUrl(event) {
   // or if it is not a request to the same origin we will just fetch it
   if (
     !event.request.url.startsWith(self.location.origin) ||
-    !requestsPathToCache.every(path => !event.request.url.includes(path)) ||
+    requestsPathToCache.every(path => !event.request.url.includes(path)) ||
     // This is to avoid an error trying to load a direct presign URL in a new tab
     !event.request.referrer ||
     // Easier to leave this uncached as if we were to handle this caching
