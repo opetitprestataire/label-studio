@@ -57,8 +57,9 @@ const Label = ({ label, template, color }) => {
         />
       </label>
       <span>{value}</span>
-      <button
+      <Button
         type="button"
+        look="outlined"
         className={configClass.elem("delete-label")}
         onClick={() => template.removeLabel(label)}
         aria-label="delete label"
@@ -77,7 +78,7 @@ const Label = ({ label, template, color }) => {
           <path d="M2 12L12 2" />
           <path d="M12 12L2 2" />
         </svg>
-      </button>
+      </Button>
     </li>
   );
 };

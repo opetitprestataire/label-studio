@@ -498,14 +498,14 @@ export const ImportPage = ({
               ) : ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
                 <SimpleCard title="Expected input preview" className="w-[650px] h-full">
                   Set up your{" "}
-                  <button
+                  <Button
                     type="button"
-                    look="link"
+                    look="string"
                     onClick={openConfig}
                     className="border-none bg-none p-0 m-0 text-primary-content underline"
                   >
                     labeling configuration
-                  </button>{" "}
+                  </Button>{" "}
                   to generate an input preview.
                 </SimpleCard>
               ) : null}
