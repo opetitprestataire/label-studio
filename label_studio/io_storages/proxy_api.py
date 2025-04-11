@@ -7,6 +7,7 @@ import io
 from typing import Union
 from urllib.parse import unquote, urlparse
 
+from core.feature_flags import flag_set
 from django.http import HttpRequest, HttpResponseRedirect
 from drf_yasg.utils import swagger_auto_schema
 from projects.models import Project
@@ -41,23 +42,27 @@ class ResolveStorageUriAPIMixin:
             fileuri = unquote(fileuri)
 
         # Try to find storage by URL
-        project = instance if isinstance(instance, Project) else instance.project
-        storage_objects = project.get_all_import_storage_objects
-        storage = get_storage_by_url(fileuri, storage_objects)
-        if not storage:
-            logger.error(f'Could not find storage for URI {fileuri}')
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        # Not all storages support presigned URLs
-        if not hasattr(storage, 'presign'):
-            logger.error(f'Storage {storage} does not support presign URLs')
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        if flag_set('fflag_optic_all_optic_1938_storage_proxy', user='auto'):
+            project = instance if isinstance(instance, Project) else instance.project
+            storage_objects = project.get_all_import_storage_objects
+            storage = get_storage_by_url(fileuri, storage_objects)
+            if not storage:
+                logger.error(f'Could not find storage for URI {fileuri}')
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            # Not all storages support presigned URLs
+            if not hasattr(storage, 'presign'):
+                logger.error(f'Storage {storage} does not support presign URLs')
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            presign = storage.presign
+        else:
+            presign = True
 
         # Check if storage should use presigned URLs;
         # It's important to have this check here, because it increases security:
         # If storage.presign is False, it means an admin doesn't want to expose presigned URLs anyhow,
         # and all files are proxied through Label Studio using LS auth and RBAC control.  
         
-        if storage.presign:
+        if presign:
             # Redirect to presigned URL (original flow)
             return self.redirect_to_presign_url(fileuri, instance, model_name)
         else:
