@@ -1,131 +1,43 @@
-import io
 import unittest
-from unittest.mock import MagicMock
-from urllib.parse import urlparse
+from unittest.mock import MagicMock, patch
+
+# Add Django models import
+from django.db import models
+from io_storages.azure_blob.models import AzureBlobStorageMixin
+from io_storages.gcs.models import GCSStorageMixin
+from io_storages.s3.models import S3StorageMixin
 
 
-# Simple implementation of get_bytes_stream from S3StorageMixin, without Django dependencies
-class S3StorageTester:
-    def __init__(self):
-        self.client = None
-
-    def get_client(self):
-        return self.client
-
-    def get_bytes_stream(self, uri):
-        """Get file bytes from S3 storage as a stream and content type.
-
-        Args:
-            uri: The S3 URI of the file to retrieve
-
-        Returns:
-            Tuple of (BytesIO stream, content_type)
-        """
-        # Parse URI to get bucket and key
-        parsed_uri = urlparse(uri, allow_fragments=False)
-        bucket_name = parsed_uri.netloc
-        key = parsed_uri.path.lstrip('/')
-
-        # Get S3 client
-        client = self.get_client()
-
-        try:
-            # Get the object from S3
-            object_response = client.get_object(Bucket=bucket_name, Key=key)
-            content_type = object_response.get('ContentType')
-            data = io.BytesIO(object_response['Body'].read())
-            return data, content_type
-
-        except Exception:
-            return None, None
+# Define concrete classes inheriting from the mixins
+# Abstract models cannot be instantiated directly, so we create
+# simple concrete models for testing purposes.
+class ConcreteS3Storage(S3StorageMixin, models.Model):
+    class Meta:
+        app_label = 'tests'
 
 
-# Simple implementation of get_bytes_stream from AzureBlobStorageMixin, without Django dependencies
-class AzureBlobStorageTester:
-    def __init__(self):
-        self.client = None
-        self.container = None
-
-    def get_client_and_container(self):
-        return self.client, self.container
-
-    def get_bytes_stream(self, uri):
-        """Get file bytes from Azure Blob storage as a stream and content type.
-
-        Args:
-            uri: The Azure URI of the file to retrieve
-
-        Returns:
-            Tuple of (BytesIO stream, content_type)
-        """
-        # Parse URI to get container and blob name
-        parsed_uri = urlparse(uri, allow_fragments=False)
-        container_name = parsed_uri.netloc
-        blob_name = parsed_uri.path.lstrip('/')
-
-        try:
-            # Get the Azure client
-            client, _ = self.get_client_and_container()
-
-            # Get a blob client for the requested blob
-            blob_client = client.get_blob_client(container=container_name, blob=blob_name)
-
-            # Download the blob
-            download_stream = blob_client.download_blob()
-            content_type = download_stream.properties.content_settings.content_type
-            data = io.BytesIO(download_stream.readall())
-
-            return data, content_type
-
-        except Exception:
-            return None, None
+class ConcreteAzureBlobStorage(AzureBlobStorageMixin, models.Model):
+    class Meta:
+        app_label = 'tests'
 
 
-# Simple implementation of get_bytes_stream from GCSStorageMixin, without Django dependencies
-class GCSStorageTester:
-    def __init__(self):
-        self.client = None
-
-    def get_client(self):
-        return self.client
-
-    def get_bytes_stream(self, uri):
-        """Get file bytes from GCS storage as a stream and content type.
-
-        Args:
-            uri: The GCS URI of the file to retrieve
-
-        Returns:
-            Tuple of (BytesIO stream, content_type)
-        """
-        # Parse URI to get bucket and key
-        parsed_uri = urlparse(uri, allow_fragments=False)
-        bucket_name = parsed_uri.netloc
-        blob_name = parsed_uri.path.lstrip('/')
-
-        try:
-            # Get client and bucket using existing methods
-            client = self.get_client()
-            bucket = client.get_bucket(bucket_name)
-            blob = bucket.blob(blob_name)
-            blob.reload()
-            content_type = blob.content_type or 'application/octet-stream'
-            data = io.BytesIO(blob.download_as_bytes())
-            return data, content_type
-        except Exception:
-            return None, None
+class ConcreteGCSStorage(GCSStorageMixin, models.Model):
+    class Meta:
+        app_label = 'tests'
 
 
 class TestS3StorageMixinGetBytesStream(unittest.TestCase):
     """Test the get_bytes_stream method in S3StorageMixin"""
 
     def setUp(self):
-        # Create an instance of our tester class
-        self.storage = S3StorageTester()
+        # Create an instance of the concrete class
+        self.storage = ConcreteS3Storage()
         # Setup mock client
         self.mock_client = MagicMock()
-        # Set the mock client
-        self.storage.client = self.mock_client
+        # Patch the get_client method to return our mock client
+        self.get_client_patcher = patch.object(self.storage, 'get_client', return_value=self.mock_client)
+        self.get_client_patcher.start()
+        self.addCleanup(self.get_client_patcher.stop)
 
     def test_get_bytes_stream_success(self):
         # Create a mock response for get_object
@@ -135,7 +47,7 @@ class TestS3StorageMixinGetBytesStream(unittest.TestCase):
         # Set up the mock get_object response
         self.mock_client.get_object.return_value = {'Body': mock_body, 'ContentType': 'text/plain'}
 
-        # Call the get_bytes_stream method
+        # Call the real get_bytes_stream method
         uri = 's3://test-bucket/test-file.txt'
         result_stream, result_content_type = self.storage.get_bytes_stream(uri)
 
@@ -148,7 +60,7 @@ class TestS3StorageMixinGetBytesStream(unittest.TestCase):
         # Set up the mock to raise an exception
         self.mock_client.get_object.side_effect = Exception('Connection error')
 
-        # Call the get_bytes_stream method
+        # Call the real get_bytes_stream method
         uri = 's3://test-bucket/test-file.txt'
         result_stream, result_content_type = self.storage.get_bytes_stream(uri)
 
@@ -162,14 +74,17 @@ class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):
     """Test the get_bytes_stream method in AzureBlobStorageMixin"""
 
     def setUp(self):
-        # Create an instance of our tester class
-        self.storage = AzureBlobStorageTester()
+        # Create an instance of the concrete class
+        self.storage = ConcreteAzureBlobStorage()
         # Setup mock client and container
         self.mock_client = MagicMock()
         self.mock_container = MagicMock()
-        # Set the mock client and container
-        self.storage.client = self.mock_client
-        self.storage.container = self.mock_container
+        # Patch the get_client_and_container method
+        self.get_client_patcher = patch.object(
+            self.storage, 'get_client_and_container', return_value=(self.mock_client, self.mock_container)
+        )
+        self.get_client_patcher.start()
+        self.addCleanup(self.get_client_patcher.stop)
 
     def test_get_bytes_stream_success(self):
         # Mock the blob client and download_blob
@@ -182,7 +97,7 @@ class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):
         mock_download_stream.properties.content_settings.content_type = 'image/jpeg'
         mock_download_stream.readall.return_value = b'fake image data'
 
-        # Call the get_bytes_stream method
+        # Call the real get_bytes_stream method
         uri = 'azure-blob://test-container/test-image.jpg'
         result_stream, result_content_type = self.storage.get_bytes_stream(uri)
 
@@ -196,7 +111,7 @@ class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):
         # Set up mock client to raise an exception
         self.mock_client.get_blob_client.side_effect = Exception('Azure connection error')
 
-        # Call the get_bytes_stream method
+        # Call the real get_bytes_stream method
         uri = 'azure-blob://test-container/test-image.jpg'
         result_stream, result_content_type = self.storage.get_bytes_stream(uri)
 
@@ -209,12 +124,14 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
     """Test the get_bytes_stream method in GCSStorageMixin"""
 
     def setUp(self):
-        # Create an instance of our tester class
-        self.storage = GCSStorageTester()
+        # Create an instance of the concrete class
+        self.storage = ConcreteGCSStorage()
         # Setup mock client
         self.mock_client = MagicMock()
-        # Set the mock client
-        self.storage.client = self.mock_client
+        # Patch the get_client method
+        self.get_client_patcher = patch.object(self.storage, 'get_client', return_value=self.mock_client)
+        self.get_client_patcher.start()
+        self.addCleanup(self.get_client_patcher.stop)
 
     def test_get_bytes_stream_success(self):
         # Mock bucket and blob
@@ -228,7 +145,7 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         mock_blob.content_type = 'application/pdf'
         mock_blob.download_as_bytes.return_value = b'fake pdf data'
 
-        # Call the get_bytes_stream method
+        # Call the real get_bytes_stream method
         uri = 'gs://test-bucket/test-document.pdf'
         result_stream, result_content_type = self.storage.get_bytes_stream(uri)
 
@@ -243,7 +160,7 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         # Set up mock client to raise an exception
         self.mock_client.get_bucket.side_effect = Exception('GCS connection error')
 
-        # Call the get_bytes_stream method
+        # Call the real get_bytes_stream method
         uri = 'gs://test-bucket/test-document.pdf'
         result_stream, result_content_type = self.storage.get_bytes_stream(uri)
 
@@ -263,7 +180,7 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         mock_blob.content_type = None
         mock_blob.download_as_bytes.return_value = b'test data'
 
-        # Call the get_bytes_stream method
+        # Call the real get_bytes_stream method
         uri = 'gs://test-bucket/test-file'
         result_stream, result_content_type = self.storage.get_bytes_stream(uri)
 
