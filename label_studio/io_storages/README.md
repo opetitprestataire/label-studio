@@ -116,3 +116,28 @@ All these states are present in both the open-source and enterprise editions for
 5. Job was removed from RQ Queue => it's not a failure, but we need to update storage status somehow. 
 
 To handle these cases correctly, all these conditions must be checked in ensure_storage_status when the Storage List API is retrieved.
+
+## Storage Proxy API
+
+The Storage Proxy API is a critical component that handles access to files stored in cloud storages (S3, GCS, Azure, etc.). It serves two main purposes:
+
+1. **Security & Access Control**: It acts as a secure gateway to cloud storage resources, enforcing Label Studio's permission model and preventing direct exposure of cloud credentials to the client.
+
+2. **Flexible Content Delivery**: It supports two modes of operation based on the storage configuration:
+   - **Redirect Mode** (`presign=True`): Generates pre-signed URLs with temporary access and redirects the client to them. This is efficient as content flows directly from the storage to the client.
+   - **Proxy Mode** (`presign=False`): Streams content through the Label Studio server. This provides additional security and is useful when storage providers don't support pre-signed URLs or when administrators want to enforce stricter access control.
+
+### How It Works
+
+1. When tasks contain references to cloud storage URIs (e.g., `s3://bucket/file.jpg`), these are converted to proxy URLs (`/tasks/{task_id}/resolve/?fileuri=base64encodeduri`).
+
+2. When a client requests this URL, the Proxy API:
+   - Decodes the URI and locates the appropriate storage connection
+   - Validates user permissions for the task/project
+   - Either redirects to a pre-signed URL or streams the content directly, based on the storage's `presign` setting
+
+3. The API handles both task-level and project-level resources through dedicated endpoints:
+   - `/tasks/<task_id>/resolve/` - for resolving files referenced in tasks
+   - `/projects/<project_id>/resolve/` - for resolving project-level resources
+
+This architecture ensures secure, controlled access to cloud storage resources while maintaining flexibility for different deployment scenarios and security requirements.
