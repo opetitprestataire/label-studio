@@ -36,15 +36,16 @@ To avoid multiple event subscriptions (and, consequently, multiple handler trigg
 
 It is important to test and refine plugins using a test project first to avoid any disruptions on live projects. 
 
-When you add a plugin, the **Testing** panel appears below the script field. You can use this to test the plugin with sample data, trigger events, and see what events are triggered when you interact with the sample data. 
+When you add a plugin, the **Testing** panel appears below the script field. You can use this to test the plugin with sample data, manually trigger events, and see what events are triggered as you interact with the sample data. 
 
-![Gif of testing panel](/images/plugins/testing.gif)
+<video src="../images/plugins/test.mp4" controls="controls" style="max-width: 800px;" class="gif-border" />
 
 Note the following:
 
+* The **Testing** panel does not appear until you add a plugin and does not appear if you have validation errors in your labeling config, so check the **Code** panel to ensure there are no errors. 
 * You can also use the Console tab in your web browser’s developer tools to check for errors and verify the plugin is running. 
 * You can check the Network tab (plugin information is returned with the `/project/:id` API call).
-* If necessary, ou can add [`debugger`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/debugger) to your script to have a convenient breakpoint to debug the plugin using your web browser’s developer tools. 
+* If necessary, you can add [`debugger`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/debugger) to your script to have a convenient breakpoint to debug the plugin using your web browser’s developer tools. 
 
 ## Label Studio Interface (LSI)
 
