@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button, buttonVariant } from "./button";
-import { IconAnnotationGroundTruth } from "@humansignal/icons";
+import { IconAnnotationGroundTruth, IconCrossAlt } from "@humansignal/icons";
 
 const meta: Meta<typeof Button> = {
   component: Button,
@@ -162,9 +162,15 @@ export const WithExtra: Story = {
 export const IconButton: Story = {
   render: ({ children: _, ...props }) => {
     return (
-      <Button {...props}>
-        <IconAnnotationGroundTruth />
-      </Button>
+      <div className="flex gap-4">
+        <Button {...props}>
+          <IconAnnotationGroundTruth />
+        </Button>
+
+        <Button {...props}>
+          <IconCrossAlt />
+        </Button>
+      </div>
     );
   },
 };

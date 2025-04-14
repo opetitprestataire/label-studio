@@ -8,6 +8,7 @@ import "codemirror/addon/hint/show-hint.css";
 
 import { ToggleItems } from "../../../components";
 import { Button } from "@humansignal/ui";
+import { IconTrash } from "@humansignal/icons";
 import { Form } from "../../../components/Form";
 import { useAPI } from "../../../providers/ApiProvider";
 import { Block, cn, Elem } from "../../../utils/bem";
@@ -48,36 +49,27 @@ const Label = ({ label, template, color }) => {
 
   return (
     <li className={configClass.elem("label").mod({ choice: label.tagName === "Choice" })}>
-      <label style={{ background: color }}>
-        <input
-          type="color"
-          className={configClass.elem("label-color")}
-          value={colorNames[color] || color}
-          onChange={(e) => template.changeLabel(label, { background: e.target.value })}
-        />
-      </label>
-      <span>{value}</span>
+      <span className="flex">
+        <label style={{ background: color }}>
+          <input
+            type="color"
+            className={configClass.elem("label-color")}
+            value={colorNames[color] || color}
+            onChange={(e) => template.changeLabel(label, { background: e.target.value })}
+          />
+        </label>
+        <span>{value}</span>
+      </span>
       <Button
         type="button"
-        look="outlined"
-        className={configClass.elem("delete-label")}
+        look="string"
+        size="smaller"
+        variant="neutral"
         onClick={() => template.removeLabel(label)}
         aria-label="delete label"
+        className="relative z-10 hover:!bg-transparent"
       >
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 14 14"
-          fill="none"
-          stroke="red"
-          strokeWidth="2"
-          strokeLinecap="square"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <title>Delete label</title>
-          <path d="M2 12L12 2" />
-          <path d="M12 12L2 2" />
-        </svg>
+        <IconTrash className="min-w-4 min-h-4 text-negative-content" />
       </Button>
     </li>
   );

@@ -382,6 +382,7 @@ $scroll-width: 5px;
   .configure__label {
     display: flex;
     align-items: stretch;
+    justify-content: space-between;
     position: relative;
 
     &:not(:first-child) {
