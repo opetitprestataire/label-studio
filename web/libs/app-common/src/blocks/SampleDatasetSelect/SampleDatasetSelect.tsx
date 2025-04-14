@@ -47,6 +47,10 @@ export function SampleDatasetSelect({
     }
   };
 
+  const selectedValueRenderer = useCallback((option: any) => {
+    return samples.find((o => o.url === option.value))?.title ?? option?.label;
+  }, [samples]);
+
   return (
     <div className="flex gap-3 items-center">
       <span className="text-neutral-content-subtler">or use a sample dataset</span>
@@ -56,6 +60,7 @@ export function SampleDatasetSelect({
         onChange={onSelect}
         triggerProps={{ onClick }}
         options={options}
+        selectedValueRenderer={selectedValueRenderer}
       />
     </div>
   );
