@@ -47,9 +47,12 @@ export function SampleDatasetSelect({
     }
   };
 
-  const selectedValueRenderer = useCallback((option: any) => {
-    return samples.find((o => o.url === option.value))?.title ?? option?.label;
-  }, [samples]);
+  const selectedValueRenderer = useCallback(
+    (option: any) => {
+      return samples.find((o) => o.url === option.value)?.title ?? option?.label;
+    },
+    [samples],
+  );
 
   return (
     <div className="flex gap-3 items-center">
