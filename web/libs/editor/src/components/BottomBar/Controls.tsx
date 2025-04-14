@@ -49,7 +49,14 @@ const ControlButton = observer(({ button, disabled, onClick }: ControlButtonProp
   const look = button.disabled || disabled ? "disabled" : button.look;
 
   const result = (
-    <Button {...button.props} aria-label={button.ariaLabel} disabled={button.disabled || disabled} onClick={onClick}>
+    <Button
+      {...button.props}
+      size="small"
+      className="w-[150px]"
+      aria-label={button.ariaLabel}
+      disabled={button.disabled || disabled}
+      onClick={onClick}
+    >
       {button.title}
     </Button>
   );
@@ -199,6 +206,8 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
           <Button
             name="submit-option"
             look="primary"
+            size="small"
+            className="w-[150px]"
             onClick={async (event) => {
               event.preventDefault();
 
@@ -233,6 +242,8 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
               <Button
                 aria-label="submit"
                 name="submit"
+                size="small"
+                className="w-[150px]"
                 disabled={isDisabled}
                 look={look}
                 mod={{ has_icon: useExitOption, disabled: isDisabled }}
@@ -274,6 +285,8 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
             <Button
               aria-label="submit"
               name="submit"
+              size="small"
+              className="w-[150px]"
               disabled={isUpdateDisabled}
               look={look}
               mod={{ has_icon: useExitOption, disabled: isUpdateDisabled }}

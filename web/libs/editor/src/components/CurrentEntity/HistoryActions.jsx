@@ -1,10 +1,9 @@
-import { observer } from "mobx-react";
-import { Button } from "../../common/Button/Button";
 import { IconRedo, IconRemove, IconUndo } from "@humansignal/icons";
-import { Tooltip } from "@humansignal/ui";
+import { Button, Tooltip } from "@humansignal/ui";
+import { observer } from "mobx-react";
+import { Hotkey } from "../../core/Hotkey";
 import { Block, Elem } from "../../utils/bem";
 import "./HistoryActions.scss";
-import { Hotkey } from "../../core/Hotkey";
 
 export const HistoryActions = observer(({ annotation }) => {
   const { history } = annotation;

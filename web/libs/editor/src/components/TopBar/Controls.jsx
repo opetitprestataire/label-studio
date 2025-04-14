@@ -3,9 +3,8 @@
  */
 
 import { inject, observer } from "mobx-react";
-import { Button } from "../../common/Button/Button";
 import { IconBan } from "@humansignal/icons";
-import { Tooltip } from "@humansignal/ui";
+import { Button, Tooltip } from "@humansignal/ui";
 import { Block, Elem } from "../../utils/bem";
 import { isDefined } from "../../utils/utilities";
 

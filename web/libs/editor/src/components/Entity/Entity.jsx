@@ -4,17 +4,15 @@
 
 import React, { Fragment } from "react";
 import { observer } from "mobx-react";
-import { Badge, Form, Input } from "antd";
+import { Badge, Form, Input, Typography } from "antd";
 import { CompressOutlined, DeleteOutlined, LinkOutlined, PlusOutlined } from "@ant-design/icons";
-import { Typography } from "antd";
 import { CREATE_RELATION_MODE } from "../../stores/Annotation/LinkingModes";
 
 import { NodeDebug, NodeMinimal } from "../Node/Node";
 import Hint from "../Hint/Hint";
 import styles from "./Entity.module.scss";
 import { IconWarning } from "@humansignal/icons";
-import { Tooltip } from "@humansignal/ui";
-import { Button } from "../../common/Button/Button";
+import { Tooltip, Button } from "@humansignal/ui";
 import { Tag } from "../../common/Tag/Tag";
 import { Space } from "../../common/Space/Space";
 import { Block, cn, Elem } from "../../utils/bem";

@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { Button, type ButtonProps } from "../../../common/Button/Button";
+import { Button, type ButtonProps } from "@humansignal/ui";
 
 export const RegionControlButton: FC<ButtonProps> = ({ children, onClick, ...props }) => {
   return (
@@ -9,8 +9,9 @@ export const RegionControlButton: FC<ButtonProps> = ({ children, onClick, ...pro
         e.stopPropagation();
         onClick?.(e);
       }}
-      type="text"
-      style={{ padding: 0, width: 24, height: 24, ...(props.style ?? {}) }}
+      look="string"
+      size="smaller"
+      style={{ ...(props.style ?? {}) }}
     >
       {children}
     </Button>

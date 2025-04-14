@@ -1,9 +1,9 @@
 import { List } from "antd";
 import { observer } from "mobx-react";
-import { Button } from "../../common/Button/Button";
+import { Button } from "@humansignal/ui";
 import { Block, Elem } from "../../utils/bem";
 import { Space } from "../../common/Space/Space";
-import { IconInvisible, IconVisible } from "@humansignal/ui";
+import { IconInvisible, IconVisible } from "@humansignal/icons";
 import { Label } from "../Label/Label";
 import { asVars } from "../../utils/styles";
 import "./LabelItem.scss";

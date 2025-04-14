@@ -15,7 +15,7 @@ import {
   IconTimelinePause,
   IconTimelinePlay,
 } from "@humansignal/icons";
-import { Button, type ButtonProps } from "../../common/Button/Button";
+import { Button, type ButtonProps } from "@humansignal/ui";
 import { Space } from "../../common/Space/Space";
 import { Hotkey } from "../../core/Hotkey";
 import { Block, Elem } from "../../utils/bem";

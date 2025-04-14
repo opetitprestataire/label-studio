@@ -114,9 +114,9 @@ const Button = forwardRef(
         disabled={buttonProps.disabled ?? waiting}
         className={buttonVariant({ variant, look, size, waiting, align }, className)}
       >
-        {leading}
+        {leading && <em>{leading}</em>}
         <span>{children}</span>
-        {trailing}
+        {trailing && <em>{trailing}</em>}
       </button>
     );
   },

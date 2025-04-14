@@ -2,7 +2,7 @@ import chroma from "chroma-js";
 import { observer } from "mobx-react";
 import { type FC, useMemo, useState } from "react";
 import { IconRelationLink, IconPlus, IconTrash, IconWarning, IconEyeClosed, IconEyeOpened } from "@humansignal/icons";
-import { Button, type ButtonProps } from "../../../common/Button/Button";
+import { Button, type ButtonProps } from "@humansignal/ui";
 import { CREATE_RELATION_MODE } from "../../../stores/Annotation/LinkingModes";
 import { Block, Elem } from "../../../utils/bem";
 import { NodeIcon } from "../../Node/Node";
@@ -98,8 +98,8 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
   entityButtons.push(
     <RegionActionButton
       key="relation"
-      icon={<IconRelationLink />}
-      primary={annotation.isLinkingMode}
+      variant={annotation.isLinkingMode ? "primary" : "neutral"}
+      look={annotation.isLinkingMode ? "filled" : "outlined"}
       onClick={(_e: any, hotkey?: any) => {
         // If this is triggered by a hotkey, defer to the global bound handler for relations to avoid contention.
         if (hotkey) return;
@@ -111,18 +111,21 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
       }}
       hotkey="region:relation"
       aria-label="Create Relation"
-    />,
+    >
+      <IconRelationLink />
+    </RegionActionButton>,
   );
 
   entityButtons.push(
     <RegionActionButton
       key="meta"
-      icon={<IconPlus />}
       primary={editMode}
       onClick={() => onEditModeChange(!editMode)}
       hotkey="region:meta"
       aria-label="Edit region's meta"
-    />,
+    >
+      <IconPlus />
+    </RegionActionButton>,
   );
 
   return (
@@ -141,16 +144,16 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
           look="alt"
           style={{ width: 36, height: 32 }}
         />
+        <RegionActionButton onClick={region.toggleHidden}>
+          {region.hidden ? <IconEyeClosed /> : <IconEyeOpened />}
+        </RegionActionButton>
         <RegionActionButton
-          icon={region.hidden ? <IconEyeClosed /> : <IconEyeOpened />}
-          onClick={region.toggleHidden}
-        />
-        <RegionActionButton
-          danger
+          variant="negative"
           disabled={region.isReadOnly()}
-          icon={<IconTrash />}
           onClick={() => annotation.deleteRegion(region)}
-        />
+        >
+          <IconTrash />
+        </RegionActionButton>
       </Elem>
     </Block>
   );
@@ -158,7 +161,7 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
 
 const RegionActionButton: FC<ButtonProps> = ({ children, ...props }) => {
   return (
-    <Button {...props} look="alt" style={{ padding: 0 }}>
+    <Button variant="neutral" look="outlined" {...props} size="small">
       {children}
     </Button>
   );

@@ -1,4 +1,4 @@
-import { Button } from "../../common/Button/Button";
+import { Button } from "@humansignal/ui";
 import { IconCopy, IconInfo, IconViewAll, IconTrash, IconSettings } from "@humansignal/icons";
 import { Tooltip } from "@humansignal/ui";
 import { Elem } from "../../utils/bem";

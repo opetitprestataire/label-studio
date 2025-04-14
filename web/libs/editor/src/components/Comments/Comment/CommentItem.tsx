@@ -3,7 +3,7 @@ import type React from "react";
 import { type FC, useCallback, useContext, useMemo, useState } from "react";
 import { Tooltip, Userpic } from "@humansignal/ui";
 import { IconCheck, IconEllipsis } from "@humansignal/icons";
-import { Button } from "../../../common/Button/Button";
+import { Button } from "@humansignal/ui";
 import { Dropdown } from "../../../common/Dropdown/Dropdown";
 import { Menu } from "../../../common/Menu/Menu";
 import { Space } from "../../../common/Space/Space";

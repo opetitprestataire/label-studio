@@ -7,8 +7,7 @@
 import { inject, observer } from "mobx-react";
 import type React from "react";
 import { memo, type ReactElement } from "react";
-import { Button } from "../../common/Button/Button";
-import { Tooltip } from "@humansignal/ui";
+import { Tooltip, Button } from "@humansignal/ui";
 
 type MixedInParams = {
   store: MSTStore;

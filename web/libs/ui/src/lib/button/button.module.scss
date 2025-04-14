@@ -24,13 +24,16 @@
   color: var(--text-color);
   text-align: center;
 
+  & > em {
+    @apply inline-flex gap-tight not-italic items-center;
+  }
 
   & > span {
     @apply inline-flex flex-1 whitespace-pre items-center px-tight;
   }
 
   svg {
-    @apply h-6 inline-block aspect-square;
+    @apply h-full inline-block aspect-square;
   }
 
   & > span:not(:has(text)):has(svg:only-child) {
@@ -222,28 +225,25 @@
 .size-medium {
   @apply p-tight text-label-medium h-[40px];
 
-  font-size: var(--font-size-label-small);
-
   & > span {
     @apply px-tight gap-tight;
   }
 
-  & > svg {
-    @apply h-6;
+  & > em {
+    @apply gap-tight;
   }
 }
 
 .size-small {
   @apply p-tighter text-label-small h-[32px];
 
-  font-size: var(--font-size-label-small);
 
   & > span {
     @apply px-tighter gap-tighter;
   }
 
-  & > svg {
-    @apply h-4;
+  & > em {
+    @apply gap-tighter;
   }
 }
 
@@ -254,12 +254,8 @@
     @apply px-tightest gap-tightest;
   }
 
-  & > svg, & > span > svg {
-    @apply h-4;
-  }
-
-  & > svg {
-    @apply w-4;
+  & > em {
+    @apply gap-tighter;
   }
 }
 

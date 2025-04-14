@@ -1,8 +1,7 @@
 import { observer } from "mobx-react";
 
-import { Button } from "../../common/Button/Button";
 import { IconViewAll, IconPlus } from "@humansignal/icons";
-import { Tooltip } from "@humansignal/ui";
+import { Button, Tooltip } from "@humansignal/ui";
 import { Block, Elem } from "../../utils/bem";
 import { isSelfServe } from "../../utils/billing";
 import { FF_BULK_ANNOTATION, FF_DEV_3873, isFF } from "../../utils/feature-flags";
@@ -33,42 +32,34 @@ export const TopBar = observer(({ store }) => {
           {store.hasInterface("annotations:view-all") && (
             <Tooltip title="Compare all annotations">
               <Button
-                className={"topbar__button"}
-                icon={<IconViewAll width={20} height={20} />}
+                className="topbar__button"
                 type="text"
                 aria-label="Compare all annotations"
                 onClick={annotationStore.toggleViewingAllAnnotations}
-                primary={isViewAll}
-                size="medium"
-                style={{
-                  height: 28,
-                  width: 28,
-                  padding: 0,
-                  marginRight: "var(--spacing-small, 8px)",
-                }}
-              />
+                variant={isViewAll ? "primary" : "neutral"}
+                size="small"
+              >
+                <IconViewAll />
+              </Button>
             </Tooltip>
           )}
           {store.hasInterface("annotations:add-new") && (
             <Tooltip title="Create a new annotation" style={{ "--offset-x": "11px" }}>
               <Button
-                icon={<IconPlus />}
                 className={"topbar__button"}
                 type="text"
                 aria-label="Create an annotation"
+                variant="neutral"
+                size="small"
                 onClick={(event) => {
                   event.preventDefault();
                   const created = store.annotationStore.createAnnotation();
 
                   store.annotationStore.selectAnnotation(created.id);
                 }}
-                style={{
-                  height: 28,
-                  width: 28,
-                  padding: 0,
-                  marginRight: "var(--spacing-small, 8px)",
-                }}
-              />
+              >
+                <IconPlus />
+              </Button>
             </Tooltip>
           )}
           {!isViewAll && (

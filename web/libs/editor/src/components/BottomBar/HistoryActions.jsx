@@ -25,7 +25,6 @@ export const EditingHistory = observer(({ entity }) => {
           variant="neutral"
           size="small"
           aria-label="Redo"
-          className="p-0"
           disabled={!history?.canRedo}
           onClick={() => entity.redo()}
         >

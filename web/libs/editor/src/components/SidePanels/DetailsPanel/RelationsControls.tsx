@@ -1,7 +1,7 @@
 import { type FC, useCallback } from "react";
 import { observer } from "mobx-react";
 import { Block, Elem } from "../../../utils/bem";
-import { Button } from "../../../common/Button/Button";
+import { Button } from "@humansignal/ui";
 import "./RelationsControls.scss";
 import { IconOutlinerEyeClosed, IconOutlinerEyeOpened, IconSortUp, IconSortDown } from "@humansignal/icons";
 

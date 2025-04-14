@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { type FC, useState } from "react";
-import { Tooltip, Userpic } from "@humansignal/ui";
+import { Tooltip, Userpic, Button } from "@humansignal/ui";
 import { IconCheck, IconEllipsis } from "@humansignal/icons";
 import { Space } from "../../../common/Space/Space";
 import { Dropdown } from "../../../common/Dropdown/Dropdown";
@@ -10,7 +10,6 @@ import { humanDateDiff, userDisplayName } from "../../../utils/utilities";
 import { CommentFormBase } from "../CommentFormBase";
 
 import "./CommentItem.scss";
-import { Button } from "../../../common/Button/Button";
 
 interface Comment {
   comment: {

@@ -1,7 +1,6 @@
 import { observer } from "mobx-react";
-import { Button } from "../../common/Button/Button";
 import { IconStar, IconStarOutline } from "@humansignal/icons";
-import { Tooltip } from "@humansignal/ui";
+import { Button, Tooltip } from "@humansignal/ui";
 import { BemWithSpecifiContext } from "../../utils/bem";
 import { FF_DEV_3873, isFF } from "../../utils/feature-flags";
 import "./GroundTruth.scss";

@@ -1,7 +1,7 @@
 import { Badge, List } from "antd";
 import { observer } from "mobx-react";
 import { isAlive } from "mobx-state-tree";
-import { Button } from "../../common/Button/Button";
+import { Button } from "@humansignal/ui";
 import { Node, NodeIcon } from "../Node/Node";
 import { IconCollapse, IconExpandTool, IconInvisible, IconSparks, IconVisible } from "@humansignal/icons";
 import styles from "./Entities.module.scss";

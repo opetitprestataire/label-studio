@@ -62,6 +62,24 @@ export const WithAlignment: Story = {
   },
 };
 
+export const WithSize: Story = {
+  render: ({ children, ...props }) => {
+    return (
+      <div className="flex items-center gap-tight">
+        <Button {...props} size="medium" className="w-48" leading={<IconAnnotationGroundTruth />}>
+          Medium
+        </Button>
+        <Button {...props} size="small" className="w-48" align="left" leading={<IconAnnotationGroundTruth />}>
+          Small
+        </Button>
+        <Button {...props} size="smaller" className="w-48" align="center" leading={<IconAnnotationGroundTruth />}>
+          Smaller
+        </Button>
+      </div>
+    );
+  },
+};
+
 export const WithIcon: Story = {
   render: ({ children, ...props }) => {
     return (
@@ -114,6 +132,28 @@ export const WithComplexChildren: Story = {
       <Button {...props} leading={<IconAnnotationGroundTruth />} trailing={<IconAnnotationGroundTruth />}>
         {children}
         <span className="max-h-6 px-tight rounded-4 bg-primary-surface-hover">badge</span>
+      </Button>
+    );
+  },
+};
+
+export const WithExtra: Story = {
+  args: {
+    children: "Button with an",
+    align: "default",
+  },
+  render: ({ children, ...props }) => {
+    return (
+      <Button
+        {...props}
+        trailing={
+          <>
+            <span className="max-h-6 px-tight rounded-4 bg-primary-surface-hover">extra badge</span>
+            <IconAnnotationGroundTruth />
+          </>
+        }
+      >
+        {children}
       </Button>
     );
   },

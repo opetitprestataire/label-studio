@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
-import { Button } from "../../common/Button/Button";
+import { Button } from "@humansignal/ui";
 import { Block, Elem } from "../../utils/bem";
 import { FF_DEV_3873, FF_DEV_4174, FF_LEAP_1173, FF_TASK_COUNT_FIX, isFF } from "../../utils/feature-flags";
 import { guidGenerator } from "../../utils/unique";
@@ -87,6 +87,7 @@ export const CurrentTask = observer(({ store }) => {
               disabled={!historyEnabled || !store.canGoPrevTask}
               onClick={store.prevTask}
               style={{ background: !isFF(FF_DEV_3873) && "none", backgroundColor: isFF(FF_DEV_3873) && "none" }}
+              variant="neutral"
             />
             <Elem
               tag={Button}
@@ -102,6 +103,7 @@ export const CurrentTask = observer(({ store }) => {
               disabled={!store.canGoNextTask && !canPostpone}
               onClick={store.canGoNextTask ? store.nextTask : store.postponeTask}
               style={{ background: !isFF(FF_DEV_3873) && "none", backgroundColor: isFF(FF_DEV_3873) && "none" }}
+              variant="neutral"
             />
           </Elem>
         )}
