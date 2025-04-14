@@ -91,6 +91,7 @@ def predictions_to_annotations_form(user, project):
                     'name': 'model_version',
                     'label': 'Choose predictions',
                     'options': versions,
+                    'value': first,
                 }
             ],
         }
