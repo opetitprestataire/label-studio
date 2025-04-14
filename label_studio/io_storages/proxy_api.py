@@ -4,6 +4,7 @@ from typing import Union
 from urllib.parse import unquote
 
 from core.feature_flags import flag_set
+from django.conf import settings
 from django.http import HttpRequest, HttpResponseRedirect
 from projects.models import Project
 from ranged_fileresponse import RangedFileResponse
@@ -36,6 +37,7 @@ class ResolveStorageUriAPIMixin:
             fileuri = unquote(fileuri)
 
         # Try to find storage by URL
+        project = None
         if flag_set('fflag_optic_all_optic_1938_storage_proxy', user='auto'):
             project = instance if isinstance(instance, Project) else instance.project
             storage_objects = project.get_all_import_storage_objects
@@ -61,7 +63,7 @@ class ResolveStorageUriAPIMixin:
             return self.redirect_to_presign_url(fileuri, instance, model_name)
         else:
             # Direct proxy from storage
-            return self.proxy_data_from_storage(request, fileuri, storage)
+            return self.proxy_data_from_storage(request, fileuri, project, storage)
 
     def redirect_to_presign_url(self, fileuri: str, instance: Union[Task, Project], model_name: str) -> Response:
         """Generate and redirect to a presigned URL for the given file URI"""
@@ -85,7 +87,7 @@ class ResolveStorageUriAPIMixin:
 
         return response
 
-    def proxy_data_from_storage(self, request, uri, storage):
+    def proxy_data_from_storage(self, request, uri, project, storage):
         """Proxy the data directly from storage without redirecting"""
         try:
             # Use the storage-specific method to get data stream and content type
@@ -94,7 +96,23 @@ class ResolveStorageUriAPIMixin:
             # If we have the data and content type, return the response
             if data is not None:
                 content_type = content_type or 'application/octet-stream'
-                return RangedFileResponse(request, data, content_type=content_type)
+                response = RangedFileResponse(request, data, content_type=content_type)
+                
+                # Set cache control with moderate timeout
+                max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT  # 1 hour cache
+                
+                # Generate an ETag based on user ID and user is_active status
+                # This ensures cache is invalidated when user status changes
+                user = request.user
+                has_access = project.has_permission(user)
+                user_status_tag = f"{user.id}:{has_access}"
+                # "ETag" is a standard HTTP header defined in the HTTP/1.1 specification (RFC 7232).
+                #  It stands for "Entity Tag" and is specifically designed for cache validation
+                response.headers['ETag'] = f'"{hash(user_status_tag)}"'
+                # Allow caching but require revalidation
+                response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
+                
+                return response
             else:
                 logger.error(f'Failed to get data from storage {storage}')
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
