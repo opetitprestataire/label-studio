@@ -98,11 +98,12 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
         mock_storage = MagicMock()
         mock_storage.presign = False
         mock_get_storage.return_value = mock_storage
+        project = self.task.project
 
         with patch.object(self.mixin, 'proxy_data_from_storage') as mock_proxy:
             mock_proxy.return_value = Response()
             self.mixin.resolve(self.request, 'fileuri', self.task)
-            mock_proxy.assert_called_once_with(self.request, 'fileuri', mock_storage)
+            mock_proxy.assert_called_once_with(self.request, 'fileuri', project, mock_storage)
 
     def test_redirect_to_presign_url_success(self):
         self.task.resolve_storage_uri.return_value = {'url': 'https://example.com/file.jpg', 'presign_ttl': 60}
@@ -125,27 +126,33 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
     def test_proxy_data_from_storage_success(self):
         mock_storage = MagicMock()
         mock_storage.get_bytes_stream.return_value = (io.BytesIO(b'test data'), 'image/jpeg')
+        mock_project = MagicMock()
 
-        with patch('io_storages.proxy_api.RangedFileResponse') as mock_response:
-            mock_response.return_value = 'mocked response'
-            result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_storage)
+        with patch('io_storages.proxy_api.RangedFileResponse') as mock_response_class:
+            mock_response = MagicMock()
+            mock_response.headers = {}
+            mock_response_class.return_value = mock_response
+
+            result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_project, mock_storage)
 
             mock_storage.get_bytes_stream.assert_called_once_with('uri')
-            mock_response.assert_called_once()
-            assert result == 'mocked response'
+            mock_response_class.assert_called_once()
+            assert result == mock_response
 
     def test_proxy_data_from_storage_no_data(self):
         mock_storage = MagicMock()
         mock_storage.get_bytes_stream.return_value = (None, None)
+        mock_project = MagicMock()
 
-        result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_storage)
+        result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_project, mock_storage)
         assert result.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
     def test_proxy_data_from_storage_exception(self):
         mock_storage = MagicMock()
         mock_storage.get_bytes_stream.side_effect = Exception('Storage error')
+        mock_project = MagicMock()
 
-        result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_storage)
+        result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_project, mock_storage)
         assert result.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
 

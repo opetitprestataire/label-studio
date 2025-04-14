@@ -105,7 +105,7 @@ class ResolveStorageUriAPIMixin:
                 # This ensures cache is invalidated when user status changes
                 user = request.user
                 has_access = project.has_permission(user)
-                user_status_tag = f"{user.id}:{has_access}"
+                user_status_tag = f'{user.id}:{has_access}'
                 # "ETag" is a standard HTTP header defined in the HTTP/1.1 specification (RFC 7232).
                 #  It stands for "Entity Tag" and is specifically designed for cache validation
                 response.headers['ETag'] = f'"{hash(user_status_tag)}"'
