@@ -534,7 +534,7 @@ Scenario(
     AtOutliner.seeRegions(0);
 
     I.say("Select 2 regions in the consecutive phrases of the one person");
-    AtParagraphs.clickFilter("Vincent Vega");
+    AtParagraphs.clickFilter("Vincent Vega:");
     AtLabels.clickLabel("Random talk");
     AtParagraphs.setSelection(
       AtParagraphs.locateText("Hate what?2"),

@@ -36,13 +36,12 @@ module.exports = {
   },
 
   clickFilter(...authors) {
+    // Open dropdown and wait for it to appear
+    I.click(locate(this._filterSelector));
+    I.wait(0.5);
     // For the new select component, we need to select each author
     // and the dropdown is managed automatically
     for (const author of authors) {
-      // Open dropdown and wait for it to appear
-      I.click(locate(this._filterSelector));
-      I.wait(0.5);
-
       // We may or may not have a search field depending on number of options
       const hasSearchField = I.executeScript(() => {
         return !!document.querySelector("input[data-testid='select-search-field']");
