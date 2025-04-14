@@ -1,6 +1,8 @@
 import { cn } from "../../utils/utils";
 import { forwardRef, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from "react";
 import styles from "./button.module.scss";
+import { setRef } from "@humansignal/core/lib/utils/unwrapRef";
+import { Tooltip } from "../Tooltip/Tooltip";
 
 const variants = {
   primary: styles["variant-primary"],
@@ -76,6 +78,8 @@ export type ButtonProps = {
   waiting?: boolean;
   leading?: ReactNode;
   trailing?: ReactNode;
+  tooltip?: string;
+  tooltipTheme?: "light" | "dark";
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 /**
@@ -97,20 +101,16 @@ const Button = forwardRef(
       align = "default",
       leading,
       trailing,
+      tooltip,
+      tooltipTheme,
       ...buttonProps
     }: PropsWithChildren<ButtonProps>,
     ref,
   ) => {
-    return (
+    const buttonBody = (
       <button
         {...buttonProps}
-        ref={(el) => {
-          if (ref instanceof Function) {
-            ref(el);
-          } else if (ref) {
-            ref.current = el;
-          }
-        }}
+        ref={(el) => setRef(ref, el)}
         disabled={buttonProps.disabled ?? waiting}
         className={buttonVariant({ variant, look, size, waiting, align }, className)}
       >
@@ -119,6 +119,16 @@ const Button = forwardRef(
         {trailing && <em>{trailing}</em>}
       </button>
     );
+
+    if (tooltip) {
+      return (
+        <Tooltip title={tooltip} theme={tooltipTheme}>
+          {buttonBody}
+        </Tooltip>
+      );
+    }
+
+    return buttonBody;
   },
 );
 
