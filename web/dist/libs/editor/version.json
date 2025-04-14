@@ -1,6 +1,6 @@
 {
-  "message": "chore: OPTIC-1935: Generate all required css variables from design tokens (#7352)",
-  "commit": "5e0ae305f7292c9de23d0f9ceda34a698ccafe56",
-  "date": "2025-04-09T18:25:03.000Z",
+  "message": "chore: OPTIC-1956: Update Menubar to have the proper new import of pages from app-common (#7369)",
+  "commit": "86f1f1ffe01927e533107993cea4341935840dd6",
+  "date": "2025-04-14T16:31:19.000Z",
   "branch": "develop"
 }

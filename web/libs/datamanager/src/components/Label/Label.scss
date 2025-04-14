@@ -89,12 +89,9 @@
       --main-bg-color: var(--color-neutral-surface);
 
       flex: 1;
-      height: auto;
-    }
-
-    &_outliner>div {
       height: 100%;
     }
+
   }
 
   &__lsf-toolbar {
