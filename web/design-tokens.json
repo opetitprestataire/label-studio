@@ -84,14 +84,14 @@
           },
           "icon": {
             "$type": "color",
-            "$value": "{@primitives.$color.$sand.100}",
+            "$value": "{@primitives.$color.$sand.000}",
             "$description": "",
             "$variable_metadata": {
               "name": "color/neutral/on-dark/icon",
               "figmaId": "VariableID:4174:7982",
               "modes": {
-                "light": "{@primitives.$color.$sand.100}",
-                "dark": "{@primitives.$color.$sand.100}"
+                "light": "{@primitives.$color.$sand.000}",
+                "dark": "{@primitives.$color.$sand.000}"
               }
             }
           },
@@ -248,7 +248,7 @@
             "figmaId": "VariableID:3368:5642",
             "modes": {
               "light": "{@primitives.$color.$sand.700}",
-              "dark": "{@primitives.$color.$sand.400}"
+              "dark": "{@primitives.$color.$sand.100}"
             }
           }
         },
