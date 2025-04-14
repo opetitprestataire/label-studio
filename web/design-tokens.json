@@ -82,6 +82,19 @@
               }
             }
           },
+          "icon": {
+            "$type": "color",
+            "$value": "{@primitives.$color.$sand.100}",
+            "$description": "",
+            "$variable_metadata": {
+              "name": "color/neutral/on-dark/icon",
+              "figmaId": "VariableID:4174:7982",
+              "modes": {
+                "light": "{@primitives.$color.$sand.100}",
+                "dark": "{@primitives.$color.$sand.100}"
+              }
+            }
+          },
           "content-subtle": {
             "$type": "color",
             "$value": "{@primitives.$color.$sand.300}",

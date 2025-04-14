@@ -21,6 +21,7 @@ const designTokens = {
             DEFAULT: "var(--color-neutral-on-dark-content)",
             subtle: "var(--color-neutral-on-dark-content-subtle)",
           },
+          icon: "var(--color-neutral-on-dark-icon)",
           background: {
             DEFAULT: "var(--color-neutral-on-dark-background)",
             bold: "var(--color-neutral-on-dark-background-bold)",
