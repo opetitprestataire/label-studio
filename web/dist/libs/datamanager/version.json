@@ -1,6 +1,6 @@
 {
-  "message": "fix: LEAP-1433: Remove deprecated feature flag FF_DEV_1170 (#7264)",
-  "commit": "51e652c5859e9e04e1d5d3029fc5feb0f7292092",
-  "date": "2025-04-10T15:01:50.000Z",
+  "message": "chore: OPTIC-1956: Update Menubar to have the proper new import of pages from app-common (#7369)",
+  "commit": "86f1f1ffe01927e533107993cea4341935840dd6",
+  "date": "2025-04-14T16:31:19.000Z",
   "branch": "develop"
 }
