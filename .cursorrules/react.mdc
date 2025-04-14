@@ -110,8 +110,9 @@ alwaysApply: false
 - UI components live within `web/libs/ui`
 - Application components that are shared across applications such as certain page-level blocks live within `web/libs/app-common`
 - Code in `web/apps` can only import code from `web/libs` and `web/libs` cannot import from `web/apps`
+- Code in `web/libs/app-common` can only import code from other `web/libs` or `web/apps`. No other `web/libs` can import from `web/libs/app-common`
 - Keep atoms in a global atoms folder with the name of the file matching the entity or intent of state
-- Add all components and there states to Storybook by co-locating the story file next to the component file ie. `list-item.stories.tsx`
+- Add all components and their states to Storybook by co-locating the story file next to the component file ie. `list-item.stories.tsx`
 - Use the `@humansignal/ui` package for UI components
 - Use the `@humansignal/icons` package for icons
 - Use the `@humansignal/core` package for core utilities/functions
