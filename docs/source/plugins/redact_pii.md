@@ -1,9 +1,9 @@
 ---
 title: Redact Annotator PII
 type: plugins
-category: Workflow
-cat: workflow
-order: 30
+category: Visualization
+cat: visualization
+order: 230
 meta_title: Redact Annotator PII
 meta_description: Anonymize the annotator to reduce bias
 tier: enterprise

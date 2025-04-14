@@ -1,12 +1,21 @@
 ---
-title: Connect to LLM backend
+title: Connect to LLM Backend
 type: plugins
-category: Workflow
-cat: workflow
+category: Automation
+cat: automation
 order: 40
-meta_title: Connect to LLM backend
+meta_title: Connect to LLM Backend
 meta_description: Sends prompts to an LLM URL
 ---
+
+<img src="/images/plugins/llm-backend-thumb.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
+!!! note
+     For information about modifying this plugin or creating your own custom plugins, see [Customize and Build Your Own Plugins](custom).
+
+     For general plugin information, see [Plugins for projects](/guide/plugins) and [Plugin FAQ](faq).
+
+## About
 
 This plugin connects to an open LLM endpoint, allowing you to generate responses as part of the annotation workflow. 
 
