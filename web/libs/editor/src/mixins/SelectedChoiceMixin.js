@@ -26,7 +26,6 @@ const SelectedChoiceMixin = types.model().views((self) => ({
     if (choiceValue?.length) {
       // grab the string value; for taxonomy, it's the last value in the array
       const selectedValues = self.selectedValues().map((s) => (Array.isArray(s) ? s.at(-1) : s));
-
       return choiceValue.some((value) => selectedValues.includes(value));
     }
 
@@ -40,6 +39,12 @@ const SelectedChoiceMixin = types.model().views((self) => ({
       // as they are using alias lookups for choices. For now we will keep it as is since it works for all the
       // other cases currently.
       if (self.findLabel) {
+        // For Taxonomy, we need to check if any of the selected paths contain any of the choice values
+        if (self.type === "taxonomy") {
+          return selectedValues.some(path =>
+            Array.isArray(path) && choiceValue.some(value => path.includes(value))
+          );
+        }
         return choiceValue.map((v) => self.findLabel(v)).some((c) => c && c.sel);
       }
 
