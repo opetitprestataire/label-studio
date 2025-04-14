@@ -8,6 +8,10 @@ import styles from "./Paragraphs.module.scss";
 const AuthorTag = ({ name, selected }) => {
   const itemStyle = { border: `2px solid ${Utils.Colors.convertToRGBA(ColorScheme.make_color({ seed: name })[0])}` };
 
+  if (name === "all") {
+    return <>Show all authors</>;
+  }
+
   return (
     <span
       className={[styles.authorFilter__select__item, selected && styles.authorFilter__select__item_selected].join(" ")}
@@ -32,18 +36,18 @@ const renderMultipleSelected = (selected) => {
 
 export const AuthorFilter = observer(({ item, onChange }) => {
   const placeholder = useMemo(() => <span className={styles.authorFilter__placeholder}>Show all authors</span>, []);
-  const initialValue = { value: "all", label: "Show all authors" };
+  const initialValue = "all";
   const options = useMemo(() => {
     const authorOptions = item._value
       .reduce((all, v) => (all.includes(v[item.namekey]) ? all : [...all, v[item.namekey]]), [])
-      .sort();
-    authorOptions.unshift(initialValue);
-    return authorOptions;
+      .sort()
+      .map((name) => ({
+        value: name,
+        label: <AuthorTag name={name} />,
+      }));
+    return [{ value: initialValue, label: <AuthorTag name={initialValue} />, children: authorOptions }];
   }, [item._value, item.namekey, initialValue]);
 
-  const filteredOptions = item.searchAuthor
-    ? options.filter((o) => o.toLowerCase().includes(item.searchAuthor.toLowerCase()))
-    : options;
   const onFilterChange = useCallback(
     (next) => {
       const nextVal = next?.value ?? next;
@@ -63,11 +67,10 @@ export const AuthorFilter = observer(({ item, onChange }) => {
     <div className={styles.authorFilter}>
       <Select
         placeholder={placeholder}
-        defaultValue={initialValue}
         options={options}
         onChange={onFilterChange}
         size="compact"
-        // multiple={true}
+        multiple={true}
         searchable={true}
       />
     </div>

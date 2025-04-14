@@ -58,7 +58,7 @@ export type SelectProps<T, A extends SelectOption<T>[]> = {
   dropdown?: any;
   testId?: string;
   searchFilter?: (option: any, queryString: string) => boolean;
-  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void | false;
+  onChange?: (value: any) => void | false;
   setValue?: (value: ExtractOption<A>) => void;
   header?: string | FC | JSX.Element;
   multiple?: boolean;

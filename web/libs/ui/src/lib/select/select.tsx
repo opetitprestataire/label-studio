@@ -77,19 +77,20 @@ export const Select = forwardRef(
       (val: string, isSelected: boolean) => {
         if (disabled) return;
 
+        let selectedOptions = [];
         if (multiple) {
           setValue((prev = []) => {
             if (isSelected) {
-              return [...prev.filter((v) => v !== val)];
+              return (selectedOptions = [...prev.filter((v) => v !== val)]);
             }
-            return [...prev, val];
+            return (selectedOptions = [...prev, val]);
           });
         } else {
           setValue(val);
         }
         valueRef.current = val;
         !multiple && setIsOpen(false);
-        props?.onChange?.(val);
+        props?.onChange?.(multiple ? (selectedOptions ?? []) : val);
         setTimeout(() => {
           const changeEvent = new Event("change", {
             bubbles: true,
