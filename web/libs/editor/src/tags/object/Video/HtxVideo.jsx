@@ -572,7 +572,7 @@ const HtxVideoView = ({ item, store }) => {
                         </Menu>
                       }
                     >
-                      <Button size="small" nopadding>
+                      <Button size="small">
                         <IconZoomIn />
                       </Button>
                     </Dropdown.Trigger>

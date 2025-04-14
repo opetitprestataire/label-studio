@@ -880,7 +880,15 @@ const _Annotation = types
       // Hotkeys setup
       self.traverseTree((node) => {
         if (node && node.onHotKey && node.hotkey) {
-          hotkeys.addKey(node.hotkey, node.onHotKey, undefined, node.hotkeyScope);
+          hotkeys.addKey(
+            node.hotkey,
+            () => {
+              console.log("fired", node.hotkey);
+              node.onHotKey();
+            },
+            undefined,
+            node.hotkeyScope,
+          );
         }
       });
 

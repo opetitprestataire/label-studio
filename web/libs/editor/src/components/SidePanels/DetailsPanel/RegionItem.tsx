@@ -1,6 +1,6 @@
 import chroma from "chroma-js";
 import { observer } from "mobx-react";
-import { type FC, useMemo, useState } from "react";
+import { type FC, forwardRef, useMemo, useState } from "react";
 import { IconRelationLink, IconPlus, IconTrash, IconWarning, IconEyeClosed, IconEyeOpened } from "@humansignal/icons";
 import { Button, type ButtonProps } from "@humansignal/ui";
 import { CREATE_RELATION_MODE } from "../../../stores/Annotation/LinkingModes";
@@ -8,6 +8,7 @@ import { Block, Elem } from "../../../utils/bem";
 import { NodeIcon } from "../../Node/Node";
 import { LockButton } from "../Components/LockButton";
 import { RegionLabels } from "./RegionLabels";
+import { WithHotkey } from "libs/editor/src/common/Hotkey/WithHotkey";
 
 interface RegionItemProps {
   region: any;
@@ -96,36 +97,39 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
   const entityButtons: JSX.Element[] = [];
 
   entityButtons.push(
-    <RegionActionButton
-      key="relation"
-      variant={annotation.isLinkingMode ? "primary" : "neutral"}
-      look={annotation.isLinkingMode ? "filled" : "outlined"}
-      onClick={(_e: any, hotkey?: any) => {
-        // If this is triggered by a hotkey, defer to the global bound handler for relations to avoid contention.
-        if (hotkey) return;
-        if (annotation.isLinkingMode) {
-          annotation.stopLinkingMode();
-        } else {
-          annotation.startLinkingMode(CREATE_RELATION_MODE, region);
-        }
-      }}
-      hotkey="region:relation"
-      aria-label="Create Relation"
-    >
-      <IconRelationLink />
-    </RegionActionButton>,
+    <WithHotkey binging="region:relation">
+      <RegionActionButton
+        key="relation"
+        variant={annotation.isLinkingMode ? "primary" : "neutral"}
+        look={annotation.isLinkingMode ? "filled" : "outlined"}
+        onClick={(_e: any, hotkey?: any) => {
+          // If this is triggered by a hotkey, defer to the global bound handler for relations to avoid contention.
+          if (hotkey) return;
+          if (annotation.isLinkingMode) {
+            annotation.stopLinkingMode();
+          } else {
+            annotation.startLinkingMode(CREATE_RELATION_MODE, region);
+          }
+        }}
+        aria-label="Create Relation"
+      >
+        <IconRelationLink />
+      </RegionActionButton>
+    </WithHotkey>,
   );
 
   entityButtons.push(
-    <RegionActionButton
-      key="meta"
-      primary={editMode}
-      onClick={() => onEditModeChange(!editMode)}
-      hotkey="region:meta"
-      aria-label="Edit region's meta"
-    >
-      <IconPlus />
-    </RegionActionButton>,
+    <WithHotkey binging="region:meta">
+      <RegionActionButton
+        key="meta"
+        look={editMode ? "filled" : "outlined"}
+        variant={editMode ? "primary" : "neutral"}
+        onClick={() => onEditModeChange(!editMode)}
+        aria-label="Edit region's meta"
+      >
+        <IconPlus />
+      </RegionActionButton>
+    </WithHotkey>,
   );
 
   return (
@@ -141,7 +145,6 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
           locked={region?.locked}
           onClick={() => region.setLocked(!region.locked)}
           hotkey="region:lock"
-          look="alt"
           style={{ width: 36, height: 32 }}
         />
         <RegionActionButton onClick={region.toggleHidden}>
@@ -160,10 +163,10 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
   );
 });
 
-const RegionActionButton: FC<ButtonProps> = ({ children, ...props }) => {
+const RegionActionButton: FC<ButtonProps> = forwardRef(({ children, ...props }, ref) => {
   return (
-    <Button variant="neutral" look="outlined" {...props} size="small">
+    <Button ref={ref} variant="neutral" look="outlined" {...props} size="small">
       {children}
     </Button>
   );
-};
+});
