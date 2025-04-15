@@ -1,5 +1,6 @@
 import { destroy as destroyNode, flow, types } from "mobx-state-tree";
 import { createRef } from "react";
+import * as ff from "@humansignal/core/lib/utils/feature-flags/ff";
 import { customTypes } from "../../../core/CustomTypes";
 import { errorBuilder } from "../../../core/DataValidator/ConfigValidator";
 import { AnnotationMixin } from "../../../mixins/AnnotationMixin";
@@ -10,11 +11,11 @@ import Utils from "../../../utils";
 import { parseValue } from "../../../utils/data";
 import { sanitizeHtml } from "../../../utils/html";
 import messages from "../../../utils/messages";
-import { findRangeNative, rangeToGlobalOffset } from "../../../utils/selection-tools";
+import { rangeToGlobalOffset } from "../../../utils/selection-tools";
 import { escapeHtml, isValidObjectURL } from "../../../utils/utilities";
 import ObjectBase from "../Base";
 import { cloneNode } from "../../../core/Helpers";
-import { FF_LSDV_4620_3, FF_SAFE_TEXT, isFF } from "../../../utils/feature-flags";
+import { FF_SAFE_TEXT, isFF } from "../../../utils/feature-flags";
 import DomManager from "./domManager";
 import { STATE_CLASS_MODS } from "../../../mixins/HighlightMixin";
 import Constants from "../../../core/Constants";
@@ -81,6 +82,9 @@ const Model = types
     _value: types.optional(types.maybeNull(types.string), null),
   })
   .views((self) => ({
+    get canResizeSpans() {
+      return ff.isActive(ff.FF_ADJUSTABLE_SPANS) && self.type === "text";
+    },
     get hasStates() {
       const states = self.states();
 
@@ -144,33 +148,28 @@ const Model = types
       }
       `;
     },
+    // This is not a real getter as it is dependant on ref which cannot be cached in the right way
+    getIframeBodyNode() {
+      const mountNode = self.mountNodeRef.current;
+      return mountNode?.contentDocument?.body;
+    },
+    // This is not a real getter as it is dependant on ref which cannot be cached in the right way
+    getRootNode() {
+      return self.getIframeBodyNode() ?? self.mountNodeRef.current;
+    },
   }))
   .volatile(() => ({
-    // the only visible iframe/div
-    visibleNodeRef: createRef(),
-    // regions highlighting is much faster in a hidden iframe/div; applyHighlights() works here
-    workingNodeRef: createRef(),
-    // xpaths should be calculated over original document without regions' spans
-    originalContentRef: createRef(),
-    // toggle showing which node to modify — visible or working
-    useWorkingNode: false,
+    // the only visible iframe/div, that contains rendered value
+    mountNodeRef: createRef(),
 
     _isReady: false,
-
-    regsObserverDisposer: null,
     _isLoaded: false,
     _loadedForAnnotation: null,
   }))
   .actions((self) => {
-    let beforeNeedsUpdateCallback;
-    let afterNeedsUpdateCallback;
     let domManager;
 
     return {
-      setWorkingMode(mode) {
-        self.useWorkingNode = mode;
-      },
-
       setLoaded(value = true) {
         if (value) self.onLoaded();
 
@@ -179,8 +178,8 @@ const Model = types
       },
 
       onLoaded() {
-        if (self.visibleNodeRef.current && isFF(FF_LSDV_4620_3)) {
-          domManager = new DomManager(self.visibleNodeRef.current);
+        if (self.mountNodeRef.current) {
+          domManager = new DomManager(self.mountNodeRef.current);
         }
       },
 
@@ -265,20 +264,9 @@ const Model = types
       },
 
       beforeDestroy() {
-        self.regsObserverDisposer?.();
-        if (isFF(FF_LSDV_4620_3)) {
-          domManager?.removeStyles(self.name);
-          domManager?.destroy();
-          beforeNeedsUpdateCallback = null;
-          afterNeedsUpdateCallback = null;
-          domManager = null;
-        }
-      },
-
-      // callbacks to switch render to working node for better performance
-      setNeedsUpdateCallbacks(beforeCalback, afterCalback) {
-        beforeNeedsUpdateCallback = beforeCalback;
-        afterNeedsUpdateCallback = afterCalback;
+        domManager?.removeStyles(self.name);
+        domManager?.destroy();
+        domManager = null;
       },
 
       needsUpdate() {
@@ -286,46 +274,22 @@ const Model = types
 
         self.setReady(false);
 
-        if (isFF(FF_LSDV_4620_3)) {
-          const styles = {
-            [self.name]: self.styles,
-          };
+        const styles = {
+          [self.name]: self.styles,
+        };
 
-          self.regs.forEach((region) => {
-            try {
-              // will be initialized only once
-              region.initRangeAndOffsets();
-              region.applyHighlight(true);
-              region.updateHighlightedText();
-              styles[region.identifier] = region.styles;
-            } catch (err) {
-              console.error(err);
-            }
-          });
-          self.setStyles(styles);
-        } else {
-          // init and render regions into working node, then move them to visible one
-          beforeNeedsUpdateCallback?.();
-          self.regs.forEach((region) => {
-            try {
-              // will be initialized only once
-              region.initRangeAndOffsets();
-              region.applyHighlight();
-            } catch (err) {
-              console.error(err);
-            }
-          });
-          afterNeedsUpdateCallback?.();
-
-          // node texts can be only retrieved from the visible node
-          self.regs.forEach((region) => {
-            try {
-              region.updateHighlightedText();
-            } catch (err) {
-              console.error(err);
-            }
-          });
-        }
+        self.regs.forEach((region) => {
+          try {
+            // will be initialized only once
+            region.initRangeAndOffsets();
+            region.applyHighlight(true);
+            region.updateHighlightedText();
+            styles[region.identifier] = region.styles;
+          } catch (err) {
+            console.error(err);
+          }
+        });
+        self.setStyles(styles);
 
         self.setReady(true);
       },
@@ -430,8 +394,7 @@ const Model = types
         const restSelectedStates = rest.map((state) => cloneNode(state));
 
         const area = self.annotation.createResult(range, labels, control, self);
-        const rootEl = self.visibleNodeRef.current;
-        const root = rootEl?.contentDocument?.body ?? rootEl;
+        const root = self.getRootNode();
 
         //when user is using two different labels tag to draw a region, the other labels will be added to the region
         restSelectedStates.forEach((state) => {
@@ -441,6 +404,7 @@ const Model = types
 
         area._range = range._range;
 
+        // @TODO: Maybe it could be solved by domManager
         const [soff, eoff] = rangeToGlobalOffset(range._range, root);
 
         area.updateGlobalOffsets(soff, eoff);
@@ -448,16 +412,7 @@ const Model = types
         if (range.isText) {
           area.updateTextOffsets(soff, eoff);
         } else {
-          if (isFF(FF_LSDV_4620_3)) {
-            area.updateXPathsFromGlobalOffsets();
-          } else {
-            // reapply globalOffsets to original document to get correct xpaths and offsets
-            const original = area._getRootNode(true);
-            const originalRange = findRangeNative(soff, eoff, original);
-
-            // @todo if originalRange is missed we are really fucked up
-            if (originalRange) area._fixXPaths(originalRange, original);
-          }
+          area.updateXPathsFromGlobalOffsets();
         }
 
         area.applyHighlight();

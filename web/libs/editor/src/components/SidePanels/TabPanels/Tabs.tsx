@@ -1,12 +1,11 @@
 import { useRef, useState } from "react";
-import { IconOutlinerDrag } from "../../../assets/icons";
+import { IconOutlinerDrag } from "@humansignal/ui";
 import { useDrag } from "../../../hooks/useDrag";
 import { Block, Elem } from "../../../utils/bem";
 import { DEFAULT_PANEL_HEIGHT } from "../constants";
 import "./Tabs.scss";
 import { type BaseProps, Side, type TabProps } from "./types";
 import { determineDroppableArea, determineLeftOrRight } from "./utils";
-import { FF_OUTLINER_OPTIM, isFF } from "../../../utils/feature-flags";
 
 const classAddedTabs: (Element | undefined)[] = [];
 
@@ -163,7 +162,7 @@ const Tab = ({
       name="tab"
       mod={{ active: locked ? tabIndex === breakPointActiveTab : active }}
     >
-      {!locked && <Elem name="icon" tag={IconOutlinerDrag} width={8} />}
+      {!locked && <Elem name="icon" tag={IconOutlinerDrag} />}
       {tabText}
     </Elem>
   );
@@ -197,7 +196,7 @@ export const Tabs = (props: BaseProps) => {
 
   return (
     <>
-      <Block name="tabs" mix={isFF(FF_OUTLINER_OPTIM) ? "ff_outliner_optim" : void 0}>
+      <Block name="tabs">
         <Elem name="tabs-row">
           {props.panelViews.map((view, index) => {
             const { component: Component } = view;

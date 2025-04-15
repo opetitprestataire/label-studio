@@ -1,7 +1,5 @@
 import { observer } from "mobx-react";
 import { createContext, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FaCode } from "react-icons/fa";
-import { RiCodeLine } from "react-icons/ri";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { VariableSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
@@ -10,7 +8,8 @@ import { isDefined } from "../../../utils/utils";
 import { Button } from "../Button/Button";
 import { Icon } from "../Icon/Icon";
 import { modal } from "../Modal/Modal";
-import { Tooltip } from "../Tooltip/Tooltip";
+import { IconCode, IconGear, IconGearNewUI } from "@humansignal/icons";
+import { Tooltip } from "@humansignal/ui";
 import "./Table.scss";
 import { TableCheckboxCell } from "./TableCheckbox";
 import { tableCN, TableContext } from "./TableContext";
@@ -19,8 +18,7 @@ import { TableRow } from "./TableRow/TableRow";
 import { prepareColumns } from "./utils";
 import { cn } from "../../../utils/bem";
 import { FieldsButton } from "../FieldsButton";
-import { LsGear, LsGearNewUI } from "../../../assets/icons";
-import { FF_DEV_3873, FF_LOPS_E_10, FF_LOPS_E_3, isFF } from "../../../utils/feature-flags";
+import { FF_DEV_3873, FF_LOPS_E_3, isFF } from "../../../utils/feature-flags";
 
 const Decorator = (decoration) => {
   return {
@@ -58,48 +56,50 @@ export const Table = observer(
     const tableHead = useRef();
     const [colOrder, setColOrder] = useState(JSON.parse(localStorage.getItem(colOrderKey)) ?? {});
     const listRef = useRef();
-    const columns = prepareColumns(props.columns, props.hiddenColumns);
     const Decoration = useMemo(() => Decorator(decoration), [decoration]);
     const { api, type } = useSDK();
 
-    useEffect(() => {
-      localStorage.setItem(colOrderKey, JSON.stringify(colOrder));
-    }, [colOrder]);
+    const headerCheckboxCell = useCallback(() => {
+      return (
+        <TableCheckboxCell
+          checked={selectedItems.isAllSelected}
+          indeterminate={selectedItems.isIndeterminate}
+          onChange={() => props.onSelectAll()}
+          className="select-all"
+          ariaLabel={`${selectedItems.isAllSelected ? "Unselect" : "Select"} all rows`}
+        />
+      );
+    }, [props.onSelectAll, selectedItems]);
 
-    if (props.onSelectAll && props.onSelectRow) {
-      columns.unshift({
-        id: "select",
-        headerClassName: "table__select-all",
-        cellClassName: "select-row",
-        style: {
-          width: 40,
-          maxWidth: 40,
-          justifyContent: "center",
-        },
-        onClick: (e) => e.stopPropagation(),
-        Header: () => {
-          return (
-            <TableCheckboxCell
-              checked={selectedItems.isAllSelected}
-              indeterminate={selectedItems.isIndeterminate}
-              onChange={() => props.onSelectAll()}
-              className="select-all"
-              ariaLabel={`${selectedItems.isAllSelected ? "Unselect" : "Select"} all rows`}
-            />
-          );
-        },
-        Cell: ({ data }) => {
-          const isChecked = selectedItems.isSelected(data.id);
-          return (
-            <TableCheckboxCell
-              checked={isChecked}
-              onChange={() => props.onSelectRow(data.id)}
-              ariaLabel={`${isChecked ? "Unselect" : "Select"} Task ${data.id}`}
-            />
-          );
-        },
-      });
-    }
+    const rowCheckBoxCell = useCallback(
+      ({ data }) => {
+        const isChecked = selectedItems.isSelected(data.id);
+        return (
+          <TableCheckboxCell
+            checked={isChecked}
+            onChange={() => props.onSelectRow(data.id)}
+            ariaLabel={`${isChecked ? "Unselect" : "Select"} Task ${data.id}`}
+          />
+        );
+      },
+      [props.onSelectRow, selectedItems],
+    );
+
+    const columns = prepareColumns(props.columns, props.hiddenColumns);
+
+    columns.unshift({
+      id: "select",
+      headerClassName: "table__select-all",
+      cellClassName: "select-row",
+      style: {
+        width: 40,
+        maxWidth: 40,
+        justifyContent: "center",
+      },
+      onClick: (e) => e.stopPropagation(),
+      Header: headerCheckboxCell,
+      Cell: rowCheckBoxCell,
+    });
 
     columns.push({
       id: "show-source",
@@ -144,13 +144,7 @@ export const Table = observer(
                   body: <TaskSourceView content={out} onTaskLoad={onTaskLoad} sdkType={type} />,
                 });
               }}
-              icon={
-                isFF(FF_LOPS_E_10) ? (
-                  <Icon icon={RiCodeLine} style={{ width: 24, height: 24 }} />
-                ) : (
-                  <Icon icon={FaCode} />
-                )
-              }
+              icon={<Icon icon={IconCode} />}
             />
           </Tooltip>
         );
@@ -162,6 +156,9 @@ export const Table = observer(
         return colOrder[a.id] < colOrder[b.id] ? -1 : 1;
       });
     }
+    useEffect(() => {
+      localStorage.setItem(colOrderKey, JSON.stringify(colOrder));
+    }, [colOrder]);
 
     const contextValue = {
       columns,
@@ -299,14 +296,14 @@ export const Table = observer(
               <FieldsButton
                 className={columnsSelectorCN.elem("button-new").toString()}
                 wrapper={FieldsButton.Checkbox}
-                icon={<LsGearNewUI />}
+                icon={<IconGearNewUI />}
                 style={{ padding: "0" }}
                 tooltip={"Customize Columns"}
               />
             ) : (
               <FieldsButton
                 wrapper={FieldsButton.Checkbox}
-                icon={<LsGear />}
+                icon={<IconGear />}
                 style={{
                   padding: 0,
                   zIndex: 1000,

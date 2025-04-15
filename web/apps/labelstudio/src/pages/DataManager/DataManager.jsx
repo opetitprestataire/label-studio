@@ -7,15 +7,14 @@ import { modal } from "../../components/Modal/Modal";
 import { Space } from "../../components/Space/Space";
 import { useAPI } from "../../providers/ApiProvider";
 import { useProject } from "../../providers/ProjectProvider";
-import { useContextProps, useFixedLocation, useParams } from "../../providers/RoutesProvider";
-import { addAction, addCrumb, deleteAction, deleteCrumb } from "../../services/breadrumbs";
+import { useContextProps, useParams } from "../../providers/RoutesProvider";
+import { addCrumb, deleteCrumb } from "../../services/breadrumbs";
 import { Block, Elem } from "../../utils/bem";
 import { isDefined } from "../../utils/helpers";
 import { ImportModal } from "../CreateProject/Import/ImportModal";
 import { ExportPage } from "../ExportPage/ExportPage";
 import { APIConfig } from "./api-config";
-import { ToastContext } from "@humansignal/ui";
-import { FF_OPTIC_2, isFF } from "../../utils/feature-flags";
+import { ToastContext, ToastType } from "@humansignal/ui";
 
 import "./DataManager.scss";
 
@@ -60,7 +59,7 @@ const buildLink = (path, params) => {
 };
 
 export const DataManagerPage = ({ ...props }) => {
-  const dependencies = useMemo(loadDependencies);
+  const dependencies = useMemo(loadDependencies, []);
   const toast = useContext(ToastContext);
   const root = useRef();
   const params = useParams();
@@ -96,7 +95,29 @@ export const DataManagerPage = ({ ...props }) => {
 
     Object.assign(window, { dataManager });
 
-    dataManager.on("crash", () => setCrashed());
+    dataManager.on("crash", (details) => {
+      const error = details?.error;
+      const isMissingTaskError = error?.startsWith("Task ID:");
+      const isMissingProjectError = error?.startsWith("Project ID:");
+
+      if (isMissingTaskError || isMissingProjectError) {
+        const message = `The ${
+          isMissingTaskError ? "task" : "project"
+        } you are trying to access does not exist or is no longer available.`;
+
+        toast.show({
+          message,
+          type: ToastType.error,
+          duration: 10000,
+        });
+      }
+
+      if (isMissingTaskError) {
+        history.push(buildLink("", { id: params.id }));
+      } else if (isMissingProjectError) {
+        history.push("/projects");
+      }
+    });
 
     dataManager.on("settingsClicked", () => {
       history.push(buildLink("/settings/labeling", { id: params.id }));
@@ -122,7 +143,7 @@ export const DataManagerPage = ({ ...props }) => {
       const target = route.replace(/^projects/, "");
 
       if (target) history.push(buildLink(target, { id: params.id }));
-      else history.push("/projects/");
+      else history.push("/projects");
     });
 
     if (interactiveBacked) {
@@ -170,32 +191,18 @@ export const DataManagerPage = ({ ...props }) => {
       dataManagerRef.current.destroy();
       dataManagerRef.current = null;
     }
-  }, [dataManagerRef]);
+  }, []);
 
   useEffect(() => {
     Promise.all(dependencies)
       .then(() => setLoading(false))
       .then(init);
+  }, [init]);
 
+  useEffect(() => {
+    // destroy the data manager when the component is unmounted
     return () => destroyDM();
-  }, [root, init]);
-
-  if (loading) {
-    return (
-      <div
-        style={{
-          flex: 1,
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Spinner size={64} />
-      </div>
-    );
-  }
+  }, []);
 
   return crashed ? (
     <Block name="crash">
@@ -204,7 +211,15 @@ export const DataManagerPage = ({ ...props }) => {
       <Button to="/projects">Back to projects</Button>
     </Block>
   ) : (
-    <Block ref={root} name="datamanager" />
+    <>
+      {loading && (
+        <div className="flex-1 absolute inset-0 flex items-center justify-center">
+          <Spinner size={64} />
+        </div>
+      )}
+      {/* Allow this to exist before the DataManager is initialized as the async app.fetchData call eventually calls startLabeling, and that requires the root element to exist */}
+      <Block ref={root} name="datamanager" />
+    </>
   );
 };
 
@@ -214,7 +229,6 @@ DataManagerPage.pages = {
   ImportModal,
 };
 DataManagerPage.context = ({ dmRef }) => {
-  const location = useFixedLocation();
   const { project } = useProject();
   const [mode, setMode] = useState(dmRef?.mode ?? "explorer");
 
@@ -224,19 +238,10 @@ DataManagerPage.context = ({ dmRef }) => {
 
   const updateCrumbs = (currentMode) => {
     const isExplorer = currentMode === "explorer";
-    const dmPath = location.pathname.replace(DataManagerPage.path, "");
 
     if (isExplorer) {
-      deleteAction(dmPath);
       deleteCrumb("dm-crumb");
     } else {
-      if (!isFF(FF_OPTIC_2)) {
-        addAction(dmPath, (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          dmRef?.store?.closeLabeling?.();
-        });
-      }
       addCrumb({
         key: "dm-crumb",
         title: "Labeling",

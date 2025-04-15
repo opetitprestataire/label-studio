@@ -1,13 +1,13 @@
-import { FaAngleDown, FaCaretDown } from "react-icons/fa";
+import { IconChevronDown } from "@humansignal/icons";
 import { Block } from "../../../utils/bem";
-import { FF_LOPS_E_10, FF_SELF_SERVE, isFF } from "../../../utils/feature-flags";
+import { FF_SELF_SERVE, isFF } from "../../../utils/feature-flags";
 import { ErrorBox } from "../../Common/ErrorBox";
 import { FieldsButton } from "../../Common/FieldsButton";
 import { FiltersPane } from "../../Common/FiltersPane";
 import { Icon } from "../../Common/Icon/Icon";
 import { Interface } from "../../Common/Interface";
 import { ExportButton, ImportButton } from "../../Common/SDKButtons";
-import { Tooltip } from "../../Common/Tooltip/Tooltip";
+import { Tooltip } from "@humansignal/ui";
 import { ActionsButton } from "./ActionsButton";
 import { GridWidthButton } from "./GridWidthButton";
 import { LabelButton } from "./LabelButton";
@@ -71,18 +71,12 @@ export const instruments = {
   },
   columns: ({ size }) => {
     const iconProps = {
-      size: 16,
       style: {
         marginRight: 4,
       },
-      icon: FaAngleDown,
-      color: "#566fcf",
+      icon: IconChevronDown,
+      color: "var(--black)",
     };
-    if (isFF(FF_LOPS_E_10)) {
-      iconProps.size = 12;
-      iconProps.style.marginRight = 3;
-      iconProps.icon = FaCaretDown;
-    }
     return (
       <FieldsButton
         wrapper={FieldsButton.Checkbox}

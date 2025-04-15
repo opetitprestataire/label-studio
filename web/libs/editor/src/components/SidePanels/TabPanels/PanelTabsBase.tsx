@@ -1,12 +1,12 @@
 import { type FC, type MouseEvent as RMouseEvent, useCallback, useMemo, useRef, useState } from "react";
 import { Block, Elem } from "../../../utils/bem";
 import {
-  IconArrowLeftSmall,
-  IconArrowRightSmall,
+  IconChevronLeft,
+  IconChevronRight,
   IconOutlinerDrag,
-  LsCollapseSmall,
-  LsExpandSmall,
-} from "../../../assets/icons";
+  IconCollapseSmall,
+  IconExpandSmall,
+} from "@humansignal/icons";
 import { useDrag } from "../../../hooks/useDrag";
 import { clamp, isDefined } from "../../../utils/utilities";
 import { DEFAULT_PANEL_HEIGHT, DEFAULT_PANEL_MIN_HEIGHT, DEFAULT_PANEL_WIDTH, PANEL_HEADER_HEIGHT } from "../constants";
@@ -88,11 +88,11 @@ export const PanelTabsBase: FC<BaseProps> = ({
   const style = useMemo(() => {
     const dynamicStyle = visible
       ? {
-          height: locked ? DEFAULT_PANEL_HEIGHT : collapsed ? "100%" : height ?? "100%",
-          width: locked ? "100%" : !collapsed ? width ?? "100%" : PANEL_HEADER_HEIGHT,
+          height: locked ? DEFAULT_PANEL_HEIGHT : collapsed ? "100%" : (height ?? "100%"),
+          width: locked ? "100%" : !collapsed ? (width ?? "100%") : PANEL_HEADER_HEIGHT,
         }
       : {
-          width: collapsed ? "100%" : width ?? DEFAULT_PANEL_WIDTH,
+          width: collapsed ? "100%" : (width ?? DEFAULT_PANEL_WIDTH),
           height: collapsed ? "100%" : PANEL_HEADER_HEIGHT,
         };
 
@@ -115,7 +115,7 @@ export const PanelTabsBase: FC<BaseProps> = ({
     return {
       detached: locked ? false : detached,
       hidden: !visible,
-      alignment: detached ? "left" : alignment ?? "left",
+      alignment: detached ? "left" : (alignment ?? "left"),
       disabled: locked,
       collapsed,
       dragTop: dragTop && attachedKeys && attachedKeys[0] === key,
@@ -306,7 +306,7 @@ export const PanelTabsBase: FC<BaseProps> = ({
               name="header"
             >
               <Elem name="header-left">
-                {!collapsed && <Elem name="icon" style={{ pointerEvents: "none" }} tag={IconOutlinerDrag} width={8} />}
+                {!collapsed && <Elem name="icon" style={{ pointerEvents: "none" }} tag={IconOutlinerDrag} />}
                 {!visible && !collapsed && <Elem name="title">{panelViews.map((view) => view.title).join(" ")}</Elem>}
               </Elem>
               <Elem name="header-right">
@@ -317,7 +317,7 @@ export const PanelTabsBase: FC<BaseProps> = ({
                     onClick={handleGroupPanelToggle}
                     data-tooltip={`${tooltipText} Group`}
                   >
-                    {Side.left === alignment ? <IconArrowLeftSmall /> : <IconArrowRightSmall />}
+                    {Side.left === alignment ? <IconChevronLeft /> : <IconChevronRight />}
                   </Elem>
                 )}
                 {!collapsed && (
@@ -327,7 +327,7 @@ export const PanelTabsBase: FC<BaseProps> = ({
                     onClick={handlePanelToggle}
                     data-tooltip={tooltipText}
                   >
-                    {visible ? <LsCollapseSmall /> : <LsExpandSmall />}
+                    {visible ? <IconCollapseSmall /> : <IconExpandSmall />}
                   </Elem>
                 )}
               </Elem>

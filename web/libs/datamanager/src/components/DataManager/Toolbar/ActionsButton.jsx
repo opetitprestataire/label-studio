@@ -1,8 +1,8 @@
 import { inject, observer } from "mobx-react";
-import { useCallback, useRef, useState } from "react";
-import { FaAngleDown, FaChevronDown, FaChevronRight, FaChevronUp, FaTrash } from "react-icons/fa";
+import { useCallback, useRef } from "react";
+import { IconChevronRight, IconChevronDown, IconTrash } from "@humansignal/icons";
 import { Block, Elem } from "../../../utils/bem";
-import { FF_LOPS_E_10, FF_LOPS_E_3, isFF } from "../../../utils/feature-flags";
+import { FF_LOPS_E_3, isFF } from "../../../utils/feature-flags";
 import { Button } from "../../Common/Button/Button";
 import { Dropdown } from "../../Common/Dropdown/DropdownComponent";
 import Form from "../../Common/Form/Form";
@@ -11,7 +11,6 @@ import { Modal } from "../../Common/Modal/ModalPopup";
 import "./ActionsButton.scss";
 
 const isFFLOPSE3 = isFF(FF_LOPS_E_3);
-const isNewUI = isFF(FF_LOPS_E_10);
 const injector = inject(({ store }) => ({
   store,
   hasSelected: store.currentView?.selected?.hasSelected ?? false,
@@ -33,7 +32,6 @@ const buildDialogContent = (text, form, formRef) => {
 export const ActionsButton = injector(
   observer(({ store, size, hasSelected, ...rest }) => {
     const formRef = useRef();
-    const [isOpen, setIsOpen] = useState(false);
     const selectedCount = store.currentView.selectedCount;
     const actions = store.availableActions.filter((a) => !a.hidden).sort((a, b) => a.order - b.order);
 
@@ -91,7 +89,7 @@ export const ActionsButton = injector(
         >
           <Elem name="titleContainer" {...(action.disabled ? { title: action.disabledReason } : {})}>
             <Elem name="title">{action.title}</Elem>
-            {hasChildren ? <Elem name="icon" tag={FaChevronRight} /> : null}
+            {hasChildren ? <Elem name="icon" tag={IconChevronRight} /> : null}
           </Elem>
         </Block>
       );
@@ -103,22 +101,8 @@ export const ActionsButton = injector(
           toggle={false}
           ref={submenuRef}
           content={
-            <Block name="actionButton-submenu" tag="ul" mod={{ newUI: isNewUI }}>
+            <Block name="actionButton-submenu" tag="ul">
               {action.children.map(ActionButton, parentRef)}
-            </Block>
-          }
-        >
-          {titleContainer}
-        </Dropdown.Trigger>
-      ) : isNewUI ? (
-        <Dropdown.Trigger
-          key={action.id}
-          align="top-right-outside"
-          toggle={false}
-          ref={submenuRef}
-          content={
-            <Block name="actionButton-submenu" tag="ul" mod={{ newUI: isNewUI }}>
-              {(action?.children ?? []).map(ActionButton, parentRef)}
             </Block>
           }
         >
@@ -133,7 +117,7 @@ export const ActionsButton = injector(
           className={`actionButton${action.isSeparator ? "_isSeparator" : action.isTitle ? "_isTitle" : ""} ${
             action.disabled ? "actionButton_disabled" : ""
           }`}
-          icon={isDeleteAction && <FaTrash />}
+          icon={isDeleteAction && <IconTrash />}
           title={action.disabled ? action.disabledReason : null}
         >
           {action.title}
@@ -146,30 +130,13 @@ export const ActionsButton = injector(
 
     return (
       <Dropdown.Trigger
-        content={
-          isNewUI ? (
-            <Block tag={Menu} name="actionmenu" size="compact" mod={{ newUI: isNewUI }}>
-              {actionButtons}
-            </Block>
-          ) : (
-            <Menu size="compact">{actionButtons}</Menu>
-          )
-        }
+        content={<Menu size="compact">{actionButtons}</Menu>}
         openUpwardForShortViewport={false}
         disabled={!hasSelected}
-        onToggle={(visible) => isFFLOPSE3 && setIsOpen(visible)}
       >
-        <Button {...(isNewUI ? { className: "actionButtonPrime" } : {})} size={size} disabled={!hasSelected} {...rest}>
+        <Button size={size} disabled={!hasSelected} {...rest}>
           {selectedCount > 0 ? `${selectedCount} ${recordTypeLabel}${selectedCount > 1 ? "s" : ""}` : "Actions"}
-          {isNewUI ? (
-            isOpen ? (
-              <FaChevronUp size="12" style={{ marginLeft: 4, marginRight: -7 }} />
-            ) : (
-              <FaChevronDown size="12" style={{ marginLeft: 4, marginRight: -7 }} />
-            )
-          ) : (
-            <FaAngleDown size="16" style={{ marginLeft: 4 }} color="#566fcf" />
-          )}
+          <IconChevronDown style={{ marginLeft: 4, marginRight: -7 }} />
         </Button>
       </Dropdown.Trigger>
     );

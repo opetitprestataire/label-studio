@@ -2,7 +2,7 @@ import keymaster from "keymaster";
 import { inject } from "mobx-react";
 import { observer } from "mobx-react";
 import { createElement, Fragment } from "react";
-import { Tooltip } from "../common/Tooltip/Tooltip";
+import { Tooltip } from "@humansignal/ui";
 import Hint from "../components/Hint/Hint";
 import { Block, Elem } from "../utils/bem";
 import { FF_MULTI_OBJECT_HOTKEYS, isFF } from "../utils/feature-flags";
@@ -275,7 +275,7 @@ export const Hotkey = (namespace = "global", description = "Hotkeys") => {
       const hotkey = Hotkey.keymap[name];
 
       if (isDefined(hotkey)) {
-        const shortcut = isMacOS() ? hotkey.mac ?? hotkey.key : hotkey.key;
+        const shortcut = isMacOS() ? (hotkey.mac ?? hotkey.key) : hotkey.key;
 
         this.addKey(shortcut, func, hotkey.description, scope);
 
@@ -294,7 +294,7 @@ export const Hotkey = (namespace = "global", description = "Hotkeys") => {
       const hotkey = Hotkey.keymap[name];
 
       if (isDefined(hotkey)) {
-        const shortcut = isMacOS() ? hotkey.mac ?? hotkey.key : hotkey.key;
+        const shortcut = isMacOS() ? (hotkey.mac ?? hotkey.key) : hotkey.key;
 
         this.removeKey(shortcut, scope);
 
@@ -316,7 +316,7 @@ export const Hotkey = (namespace = "global", description = "Hotkeys") => {
       const hotkey = Hotkey.keymap[name];
 
       if (isDefined(hotkey)) {
-        const shortcut = isMacOS() ? hotkey.mac ?? hotkey.key : hotkey.key;
+        const shortcut = isMacOS() ? (hotkey.mac ?? hotkey.key) : hotkey.key;
 
         this.overwriteKey(shortcut, func, hotkey.description, scope);
 
@@ -426,7 +426,7 @@ Hotkey.Tooltip = inject("store")(
     const enabled = store.settings.enableTooltips && store.settings.enableHotkeys;
 
     if (isDefined(hotkey)) {
-      const shortcut = isMacOS() ? hotkey.mac ?? hotkey.key : hotkey.key;
+      const shortcut = isMacOS() ? (hotkey.mac ?? hotkey.key) : hotkey.key;
 
       const description = props.title ?? hotkey.description;
       const hotkeys: JSX.Element[] = [];
@@ -482,7 +482,7 @@ Hotkey.Hint = inject("store")(
     const enabled = store.settings.enableTooltips && store.settings.enableHotkeys;
 
     if (isDefined(hotkey) && enabled) {
-      const shortcut = isMacOS() ? hotkey.mac ?? hotkey.key : hotkey.key;
+      const shortcut = isMacOS() ? (hotkey.mac ?? hotkey.key) : hotkey.key;
 
       return createElement(Hint, {}, [shortcut]);
     }

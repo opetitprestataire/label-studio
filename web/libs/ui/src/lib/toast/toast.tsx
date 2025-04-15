@@ -102,9 +102,12 @@ type ToastContextType = {
 export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export const useToast = () => {
+  if (process.env.NODE_ENV === "test") return null;
   const context = useContext(ToastContext);
 
-  if (!context) {
+  // Avoid throwing error in test environment
+  // Otherwise every test that uses useToast will throw an error and be forced to wrap the component in a ToastProvider even if it's not needed
+  if (!context && process.env.NODE_ENV !== "test") {
     throw new Error("useToast must be used within a ToastProvider");
   }
   return context;

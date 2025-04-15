@@ -276,6 +276,15 @@ class Task(TaskMixin, models.Model):
         """
         from projects.functions.next_task import get_next_task_logging_level
 
+        if self.project.show_ground_truth_first and flag_set(
+            'fflag_feat_all_leap_1825_annotator_evaluation_short', user='auto'
+        ):
+            # in show_ground_truth_first mode(onboarding)
+            # we ignore overlap setting for ground_truth tasks
+            # https://humansignal.atlassian.net/browse/LEAP-1963
+            if self.annotations.filter(ground_truth=True).exists():
+                return False
+
         q = self.get_lock_exclude_query(user)
 
         num_locks = self.num_locks_user(user=user)
@@ -415,7 +424,7 @@ class Task(TaskMixin, models.Model):
         project = self.project
 
         if not storage:
-            storage_objects = project.get_all_storage_objects(type_='import')
+            storage_objects = project.get_all_import_storage_objects
             storage = get_storage_by_url(url, storage_objects)
 
         if storage:
@@ -440,7 +449,7 @@ class Task(TaskMixin, models.Model):
                 protected_data[key] = value
             return protected_data
         else:
-            storage_objects = project.get_all_storage_objects(type_='import')
+            storage_objects = project.get_all_import_storage_objects
 
             # try resolve URLs via storage associated with that task
             for field in task_data:
@@ -1180,6 +1189,9 @@ class PredictionMeta(models.Model):
                 completion_tokens_count=data.get('completion_tokens'),
                 total_tokens_count=data.get('prompt_tokens', 0) + data.get('completion_tokens', 0),
                 inference_time=data.get('inference_time'),
+                extra={
+                    'message_counts': data.get('message_counts', {}),
+                },
             )
             if isinstance(prediction, Prediction):
                 prediction_meta.prediction = prediction

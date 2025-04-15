@@ -26,11 +26,11 @@ from core.utils.common import (
     merge_labels_counters,
 )
 from core.utils.db import fast_first
-from core.utils.exceptions import LabelStudioValidationErrorSentryIgnored
 from django.conf import settings
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models, transaction
 from django.db.models import Avg, BooleanField, Case, Count, JSONField, Max, Q, Sum, Value, When
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from label_studio_sdk._extensions.label_studio_tools.core.label_config import parse_config
 from labels_manager.models import Label
@@ -46,6 +46,7 @@ from projects.functions import (
 )
 from projects.functions.utils import make_queryset_from_iterable
 from projects.signals import ProjectSignals
+from rest_framework.exceptions import ValidationError
 from tasks.models import (
     Annotation,
     AnnotationDraft,
@@ -546,7 +547,7 @@ class Project(ProjectMixin, models.Model):
             fields_from_data.discard(settings.DATA_UNDEFINED_NAME)
             if fields_from_data and not fields_from_config.issubset(fields_from_data):
                 different_fields = list(fields_from_config.difference(fields_from_data))
-                raise LabelStudioValidationErrorSentryIgnored(
+                raise ValidationError(
                     f'These fields are not present in the data: {",".join(different_fields)}'
                 )"""
 
@@ -585,7 +586,7 @@ class Project(ProjectMixin, models.Model):
                     )
             if len(diff_str) > 0:
                 diff_str = '\n'.join(diff_str)
-                raise LabelStudioValidationErrorSentryIgnored(
+                raise ValidationError(
                     f'Created annotations are incompatible with provided labeling schema, we found:\n{diff_str}'
                 )
 
@@ -611,7 +612,7 @@ class Project(ProjectMixin, models.Model):
                 )
                 and not check_control_in_config_by_regex(config_string, control_tag_from_data)
             ):
-                raise LabelStudioValidationErrorSentryIgnored(
+                raise ValidationError(
                     f'There are {sum(labels_from_data.values(), 0)} annotation(s) created with tag '
                     f'"{control_tag_from_data}", you can\'t remove it'
                 )
@@ -651,7 +652,7 @@ class Project(ProjectMixin, models.Model):
                     )
                 ):
                     # raise error if labels not dynamic and not in regex rules
-                    raise LabelStudioValidationErrorSentryIgnored(
+                    raise ValidationError(
                         f'These labels still exist in annotations or drafts:\n{diff_str}'
                         f'Please add labels to tag with name="{str(control_tag_from_data)}".'
                     )
@@ -997,23 +998,45 @@ class Project(ProjectMixin, models.Model):
 
         return self.get_ml_backends(state=MLBackendState.CONNECTED)
 
-    def get_all_storage_objects(self, type_='import'):
+    @cached_property
+    def get_all_import_storage_objects(self):
         from io_storages.models import get_storage_classes
 
-        if hasattr(self, '_storage_objects'):
-            return self._storage_objects
-
         storage_objects = []
-        for storage_class in get_storage_classes(type_):
+        for storage_class in get_storage_classes('import'):
             storage_objects += list(storage_class.objects.filter(project=self))
 
-        self._storage_objects = storage_objects
         return storage_objects
+
+    @cached_property
+    def get_all_export_storage_objects(self):
+        from io_storages.models import get_storage_classes
+
+        storage_objects = []
+        for storage_class in get_storage_classes('export'):
+            storage_objects += list(storage_class.objects.filter(project=self))
+
+        return storage_objects
+
+    @cached_property
+    def multipage_labeling_values(self):
+        """
+        Check if the project's label config contains an Image tag with a valueList attribute,
+        which indicates multipage labeling.
+        """
+        config = self.get_parsed_config()
+        values = []
+        for tag in config.values():
+            for object_tag in tag.get('inputs', []):
+                if object_tag.get('type') == 'Image':
+                    if object_tag.get('valueList') is not None:
+                        values.append(object_tag.get('valueList'))
+        return values
 
     def resolve_storage_uri(self, url: str) -> Optional[Mapping[str, Any]]:
         from io_storages.functions import get_storage_by_url
 
-        storage_objects = self.get_all_storage_objects()
+        storage_objects = self.get_all_import_storage_objects
         storage = get_storage_by_url(url, storage_objects)
 
         if storage:

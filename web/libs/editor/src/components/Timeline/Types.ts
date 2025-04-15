@@ -40,8 +40,8 @@ export interface TimelineProps<D extends ViewTypes = "frames"> {
   onToggleVisibility?: (id: string, visibility: boolean) => void;
   onAddRegion?: (region: Record<string, any>) => any;
   onDeleteRegion?: (id: string) => void;
-  onStartDrawing?: (frame: number) => void;
-  onFinishDrawing?: () => void;
+  onStartDrawing?: (options: { frame: number; region?: string }) => MSTTimelineRegion | undefined;
+  onFinishDrawing?: (options: { mode?: "new" | "edit" }) => void;
   onZoom?: (zoom: number) => void;
   onSelectRegion?: (event: MouseEvent<HTMLDivElement>, id: string, select?: boolean) => void;
   onAction?: (event: MouseEvent, action: string, data?: any) => void;
@@ -83,6 +83,14 @@ export interface TimelineViewProps {
   onSpeedChange?: TimelineProps["onSpeedChange"];
 }
 
+// Full region stored in MST store
+export interface MSTTimelineRegion {
+  id: string;
+  ranges: { start: number; end: number }[];
+  object: { length: number }; // Video tag
+  setRange: (range: [number, number], options?: { mode?: "new" | "edit" }) => void;
+}
+
 export interface TimelineRegion {
   id: string;
   index?: number;
@@ -109,6 +117,7 @@ export interface TimelineContextValue {
   visibleWidth: number;
   seekOffset: number;
   settings?: TimelineSettings;
+  changeSetting?: (key: string, value: any) => void;
   data?: any;
 }
 
@@ -131,6 +140,8 @@ export type TimelineSettings = {
   fastTravelSize?: TimelineStepFunction;
   stepSize?: TimelineStepFunction;
   leftOffset?: number;
+  loopRegion?: boolean;
+  autoPlayNewSegments?: boolean;
 };
 
 export type TimelineStepFunction = (

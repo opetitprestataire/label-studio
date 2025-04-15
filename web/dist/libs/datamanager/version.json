@@ -1,6 +1,6 @@
 {
-  "message": "fix: DIA-2022: UI&UX | Issue with zoom functionality in Label Studio labelling UI (#7182)",
-  "commit": "f59505dbbe1b9f4eb7433a872f6f354fbc8b1f43",
-  "date": "2025-03-07T18:30:10.000Z",
+  "message": "chore: OPTIC-1956: Update Menubar to have the proper new import of pages from app-common (#7369)",
+  "commit": "86f1f1ffe01927e533107993cea4341935840dd6",
+  "date": "2025-04-14T16:31:19.000Z",
   "branch": "develop"
 }

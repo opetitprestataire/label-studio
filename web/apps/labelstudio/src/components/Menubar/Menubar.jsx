@@ -6,11 +6,12 @@ import {
   IconPersonInCircle,
   IconPin,
   IconTerminal,
-  LsDoor,
-  LsGitHub,
-  LsSettings,
-  LsSlack,
-} from "../../assets/icons";
+  IconDoor,
+  IconGithub,
+  IconSettings,
+  IconSlack,
+} from "@humansignal/icons";
+import { Userpic } from "@humansignal/ui";
 import { useConfig } from "../../providers/ConfigProvider";
 import { useContextComponent, useFixedLocation } from "../../providers/RoutesProvider";
 import { useCurrentUser } from "../../providers/CurrentUser";
@@ -20,14 +21,13 @@ import { Breadcrumbs } from "../Breadcrumbs/Breadcrumbs";
 import { Dropdown } from "../Dropdown/Dropdown";
 import { Hamburger } from "../Hamburger/Hamburger";
 import { Menu } from "../Menu/Menu";
-import { Userpic } from "../Userpic/Userpic";
 import { VersionNotifier, VersionProvider } from "../VersionNotifier/VersionNotifier";
 import "./Menubar.scss";
 import "./MenuContent.scss";
 import "./MenuSidebar.scss";
 import { FF_HOMEPAGE } from "../../utils/feature-flags";
 import { IconHome } from "@humansignal/ui";
-import { pages } from "@humansignal/core";
+import { pages } from "@humansignal/app-common";
 import { isFF } from "../../utils/feature-flags";
 
 export const MenubarContext = createContext();
@@ -151,9 +151,13 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
             align="right"
             content={
               <Menu>
-                <Menu.Item icon={<LsSettings />} label="Account &amp; Settings" href={pages.AccountSettingsPage.path} />
+                <Menu.Item
+                  icon={<IconSettings />}
+                  label="Account &amp; Settings"
+                  href={pages.AccountSettingsPage.path}
+                />
                 {/* <Menu.Item label="Dark Mode"/> */}
-                <Menu.Item icon={<LsDoor />} label="Log Out" href={absoluteURL("/logout")} data-external />
+                <Menu.Item icon={<IconDoor />} label="Log Out" href={absoluteURL("/logout")} data-external />
                 {showNewsletterDot && (
                   <>
                     <Menu.Divider />
@@ -204,14 +208,14 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
                 <Menu.Item
                   label="GitHub"
                   href="https://github.com/HumanSignal/label-studio"
-                  icon={<LsGitHub />}
+                  icon={<IconGithub />}
                   target="_blank"
                   rel="noreferrer"
                 />
                 <Menu.Item
                   label="Slack Community"
                   href="https://slack.labelstud.io/?source=product-menu"
-                  icon={<LsSlack />}
+                  icon={<IconSlack />}
                   target="_blank"
                   rel="noreferrer"
                 />

@@ -1,12 +1,11 @@
 import { cloneElement, forwardRef, useMemo } from "react";
 import { Block, Elem } from "../../../utils/bem";
-import { FF_LOPS_E_10, isFF } from "../../../utils/feature-flags";
 import { isDefined } from "../../../utils/utils";
 import "./Button.scss";
 
 export const Button = forwardRef(
   ({ children, type, extra, className, href, size, waiting, icon, tag, look, ...rest }, ref) => {
-    const finalTag = tag ?? href ? "a" : "button";
+    const finalTag = (tag ?? href) ? "a" : "button";
 
     const mods = {
       size,
@@ -16,7 +15,6 @@ export const Button = forwardRef(
       withIcon: !!icon,
       withExtra: !!extra,
       disabled: !!rest.disabled,
-      newUI: isFF(FF_LOPS_E_10),
     };
 
     const iconElem = useMemo(() => {
@@ -53,7 +51,7 @@ export const Button = forwardRef(
               {children}
             </Elem>
           ) : (
-            children ?? null
+            (children ?? null)
           )}
           {isDefined(extra) ? <Elem name="extra">{extra}</Elem> : null}
         </>

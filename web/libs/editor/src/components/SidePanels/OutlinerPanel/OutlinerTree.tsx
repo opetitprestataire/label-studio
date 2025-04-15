@@ -13,14 +13,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { IconWarning, LsSparks } from "../../../assets/icons";
-import { IconChevronLeft, IconEyeClosed, IconEyeOpened } from "../../../assets/icons/timeline";
-import { IconArrow } from "../../../assets/icons/tree";
-import { Tooltip } from "../../../common/Tooltip/Tooltip";
+import { IconArrow, IconChevronLeft, IconEyeClosed, IconEyeOpened, IconWarning, IconSparks } from "@humansignal/icons";
+import { Tooltip } from "@humansignal/ui";
 import Registry from "../../../core/Registry";
 import { PER_REGION_MODES } from "../../../mixins/PerRegionModes";
 import { Block, cn, Elem } from "../../../utils/bem";
-import { FF_DEV_2755, FF_DEV_3873, FF_OUTLINER_OPTIM, FF_PER_FIELD_COMMENTS, isFF } from "../../../utils/feature-flags";
+import { FF_DEV_2755, FF_DEV_3873, FF_PER_FIELD_COMMENTS, isFF } from "../../../utils/feature-flags";
 import { flatten, isDefined, isMacOS } from "../../../utils/utilities";
 import { NodeIcon } from "../../Node/Node";
 import { LockButton } from "../Components/LockButton";
@@ -164,8 +162,8 @@ const OutlinerInnerTreeComponent: FC<OutlinerInnerTreeProps> = observer(({ regio
   }
 
   return (
-    <Block name="outliner-tree" {...(isFF(FF_OUTLINER_OPTIM) ? { ref: setRef } : {})}>
-      {(!!height || !isFF(FF_OUTLINER_OPTIM)) && (
+    <Block name="outliner-tree" ref={setRef}>
+      {!!height && (
         <Tree
           key={regions.group}
           draggable={regions.group === "manual"}
@@ -180,13 +178,9 @@ const OutlinerInnerTreeComponent: FC<OutlinerInnerTreeProps> = observer(({ regio
           selectedKeys={selectedKeys}
           icon={iconGetter}
           switcherIcon={switcherIconGetter}
-          {...(isFF(FF_OUTLINER_OPTIM)
-            ? {
-                virtual: true,
-                itemHeight: MIN_REGIONS_TREE_ROW_HEIGHT,
-                height,
-              }
-            : {})}
+          virtual
+          itemHeight={MIN_REGIONS_TREE_ROW_HEIGHT}
+          height={height}
           {...eventHandlers}
           {...(isPersistCollapseEnabled
             ? {
@@ -436,7 +430,8 @@ const RootTitle: FC<any> = observer(
             toggleCollapsed={toggleCollapsed}
           />
         </Elem>
-        {hasControls && isArea && (
+
+        {!collapsed && hasControls && isArea && (
           <Elem name="ocr">
             <RegionItemDesc
               item={item}
@@ -510,7 +505,7 @@ const RegionControls: FC<RegionControlsProps> = injector(
           <Tooltip title={"Confidence Score"}>
             <Elem name="control-wrapper">
               <Elem name="control" mod={{ type: "predict" }}>
-                {item?.origin === "prediction" && <LsSparks style={{ width: 18, height: 18 }} />}
+                {item?.origin === "prediction" && <IconSparks style={{ width: 18, height: 18 }} />}
               </Elem>
               <Elem name="control" mod={{ type: "score" }}>
                 {isDefined(item?.score) && item.score.toFixed(2)}
@@ -526,7 +521,7 @@ const RegionControls: FC<RegionControlsProps> = injector(
               {/* dirtyness is not implemented yet */}
             </Elem>
             <Elem name="control" mod={{ type: "predict" }}>
-              {item?.origin === "prediction" && <LsSparks style={{ width: 18, height: 18 }} />}
+              {item?.origin === "prediction" && <IconSparks style={{ width: 18, height: 18 }} />}
             </Elem>
           </>
         )}
@@ -548,11 +543,19 @@ const RegionControls: FC<RegionControlsProps> = injector(
           <Elem name="control" mod={{ type: "visibility" }}>
             {isFF(FF_DEV_3873) ? (
               <RegionControlButton onClick={onToggleHidden} style={hidden ? undefined : { display: "none" }}>
-                {hidden ? <IconEyeClosed /> : <IconEyeOpened />}
+                {hidden ? (
+                  <IconEyeClosed style={{ width: 20, height: 20 }} />
+                ) : (
+                  <IconEyeOpened style={{ width: 20, height: 20 }} />
+                )}
               </RegionControlButton>
             ) : (
               <RegionControlButton onClick={onToggleHidden}>
-                {hidden ? <IconEyeClosed /> : <IconEyeOpened />}
+                {hidden ? (
+                  <IconEyeClosed style={{ width: 20, height: 20 }} />
+                ) : (
+                  <IconEyeOpened style={{ width: 20, height: 20 }} />
+                )}
               </RegionControlButton>
             )}
           </Elem>
@@ -617,6 +620,7 @@ const RegionItemDesc: FC<RegionItemOCSProps> = observer(({ item, collapsed, setC
               setCollapsed={setCollapsed}
               color={css}
               outliner
+              canDelete={false}
             />
           ) : null;
         })}

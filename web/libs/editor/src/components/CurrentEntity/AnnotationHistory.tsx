@@ -1,7 +1,6 @@
 import { when } from "mobx";
 import { inject, observer } from "mobx-react";
 import { type FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Tooltip } from "antd";
 import {
   IconAnnotationAccepted,
   IconAnnotationImported,
@@ -13,10 +12,10 @@ import {
   IconAnnotationSubmitted,
   IconCheck,
   IconDraftCreated,
-  LsSparks,
-} from "../../assets/icons";
+  IconSparks,
+} from "@humansignal/icons";
+import { Tooltip, Userpic } from "@humansignal/ui";
 import { Space } from "../../common/Space/Space";
-import { Userpic } from "../../common/Userpic/Userpic";
 import { Block, Elem } from "../../utils/bem";
 import { humanDateDiff, userDisplayName } from "../../utils/utilities";
 import "./AnnotationHistory.scss";
@@ -61,8 +60,12 @@ const DraftState: FC<{
   const [hasUnsavedChanges, setChanges] = useState(false);
 
   // turn it on when changes just made; off when they we saved
-  useEffect(() => setChanges(true), [annotation.history.history.length]);
-  useEffect(() => setChanges(false), [annotation.draftSaved]);
+  useEffect(() => {
+    setChanges(true);
+  }, [annotation.history.history.length]);
+  useEffect(() => {
+    setChanges(false);
+  }, [annotation.draftSaved]);
 
   if (!hasChanges && !annotation.versions.draft) return null;
 
@@ -239,7 +242,7 @@ const HistoryItemComponent: FC<{
             username={isPrediction ? entity.createdBy : null}
             mod={{ prediction: isPrediction }}
           >
-            {isPrediction && <LsSparks style={{ width: 16, height: 16 }} />}
+            {isPrediction && <IconSparks style={{ width: 16, height: 16 }} />}
           </Elem>
           <Elem name="name" tag="span">
             {isPrediction ? entity.createdBy : userDisplayName(user)}
@@ -251,8 +254,8 @@ const HistoryItemComponent: FC<{
             {extra && <Elem name="date">{extra}</Elem>}
             {date && (
               <Elem name="date">
-                <Tooltip placement="topRight" title={new Date(date).toLocaleString()}>
-                  {humanDateDiff(date)}
+                <Tooltip alignment="top-right" title={new Date(date).toLocaleString()}>
+                  <>{humanDateDiff(date)}</>
                 </Tooltip>
               </Elem>
             )}

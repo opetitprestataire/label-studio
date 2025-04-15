@@ -1,7 +1,8 @@
 import { format } from "date-fns";
 import { NavLink } from "react-router-dom";
-import { IconCross } from "@humansignal/ui";
-import { Button, Userpic } from "../../../components";
+import { IconCross } from "@humansignal/icons";
+import { Userpic } from "@humansignal/ui";
+import { Button } from "../../../components";
 import { Block, Elem } from "../../../utils/bem";
 import "./SelectedUser.scss";
 

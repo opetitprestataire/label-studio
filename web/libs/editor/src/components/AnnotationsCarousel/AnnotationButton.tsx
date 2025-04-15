@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { inject, observer } from "mobx-react";
+import { useCopyText } from "@humansignal/core/lib/hooks/useCopyText";
+import { isDefined, userDisplayName } from "@humansignal/core/lib/utils/helpers";
 import { Block, cn, Elem } from "../../utils/bem";
-import { Userpic } from "../../common/Userpic/Userpic";
 import {
   IconAnnotationGroundTruth,
   IconAnnotationSkipped2,
@@ -9,19 +10,15 @@ import {
   IconDuplicate,
   IconLink,
   IconTrashRect,
-  LsCommentResolved,
-  LsCommentUnresolved,
-  LsSparks,
-  LsStar,
-  LsStarOutline,
-} from "../../assets/icons";
-import { userDisplayName } from "../../utils/utilities";
+  IconCommentResolved,
+  IconCommentUnresolved,
+  IconSparks,
+  IconStar,
+  IconStarOutline,
+} from "@humansignal/icons";
+import { Tooltip, Userpic, ToastType, useToast } from "@humansignal/ui";
 import { TimeAgo } from "../../common/TimeAgo/TimeAgo";
 import { useDropdown } from "../../common/Dropdown/DropdownTrigger";
-import { isDefined } from "../../utils/utilities";
-import { Tooltip } from "./../../common/Tooltip/Tooltip";
-import { ToastType, useToast } from "@humansignal/ui/lib/toast/toast";
-import { useCopyText } from "@humansignal/core/lib/hooks/useCopyText";
 
 // eslint-disable-next-line
 // @ts-ignore
@@ -39,10 +36,10 @@ interface AnnotationButtonInterface {
 
 const renderCommentIcon = (ent: any) => {
   if (ent.unresolved_comment_count > 0) {
-    return LsCommentUnresolved;
+    return IconCommentUnresolved;
   }
   if (ent.comment_count > 0) {
-    return LsCommentResolved;
+    return IconCommentResolved;
   }
 
   return null;
@@ -172,9 +169,9 @@ export const AnnotationButton = observer(
               label: `${isGroundTruth ? "Unset " : "Set "} as Ground Truth`,
               onClick: setGroundTruth,
               icon: isGroundTruth ? (
-                <LsStar color="#FFC53D" width={iconSize} height={iconSize} />
+                <IconStar color="#FFC53D" width={iconSize} height={iconSize} />
               ) : (
-                <LsStarOutline width={iconSize} height={iconSize} />
+                <IconStarOutline width={iconSize} height={iconSize} />
               ),
               enabled: showGroundTruth,
             },
@@ -227,7 +224,7 @@ export const AnnotationButton = observer(
               mod={{ prediction: isPrediction }}
               size={24}
             >
-              {isPrediction && <LsSparks style={{ width: 18, height: 18 }} />}
+              {isPrediction && <IconSparks style={{ width: 18, height: 18 }} />}
             </Elem>
             {/* to do: return these icons when we have a better way to grab the history action type */}
             {/* {historyActionType === 'accepted' && <Elem name='status' mod={{ approved: true }}><IconCheckBold /></Elem>}
@@ -267,21 +264,21 @@ export const AnnotationButton = observer(
           {!isPrediction && (
             <Elem name="icons">
               {entity.draftId > 0 && (
-                <Tooltip title={"Draft"}>
+                <Tooltip title="Draft">
                   <Elem name="icon" mod={{ draft: true }}>
                     <IconDraftCreated2 color="#617ADA" />
                   </Elem>
                 </Tooltip>
               )}
               {entity.skipped && (
-                <Tooltip title={"Skipped"}>
+                <Tooltip title="Skipped">
                   <Elem name="icon" mod={{ skipped: true }}>
                     <IconAnnotationSkipped2 color="#DD0000" />
                   </Elem>
                 </Tooltip>
               )}
               {isGroundTruth && (
-                <Tooltip title={"Ground-truth"}>
+                <Tooltip title="Ground-truth">
                   <Elem name="icon" mod={{ groundTruth: true }}>
                     <IconAnnotationGroundTruth />
                   </Elem>
