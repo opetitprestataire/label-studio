@@ -120,7 +120,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
       ],
     );
 
-    if (annotation.isNonEditableDraft) return null;
+    if (annotation.isNonEditableDraft) return <></>;
 
     const buttonsBefore = customButtons.get("_before");
     const buttonsReplacement = customButtons.get("_replace");
@@ -183,7 +183,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
     } else if (annotation.skipped) {
       buttons.push(
         <Elem name="skipped-info" key="skipped">
-          <IconBan color="#d00" /> Was skipped
+          <IconBan /> Was skipped
         </Elem>,
       );
       buttons.push(<UnskipButton key="unskip" disabled={disabled} store={store} />);
@@ -197,7 +197,6 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
       }
 
       const isDisabled = disabled || submitDisabled;
-      const look = isDisabled ? "disabled" : "primary";
 
       const useExitOption = !isDisabled && isNotQuickView;
 
@@ -205,7 +204,6 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
         return (
           <Button
             name="submit-option"
-            look="primary"
             size="small"
             className="w-[150px]"
             onClick={async (event) => {
@@ -245,8 +243,6 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                 size="small"
                 className="w-[150px]"
                 disabled={isDisabled}
-                look={look}
-                mod={{ has_icon: useExitOption, disabled: isDisabled }}
                 onClick={async (event) => {
                   if ((event.target as HTMLButtonElement).classList.contains(dropdownTrigger)) return;
                   const selected = store.annotationStore?.selected;
@@ -255,7 +251,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                   await store.commentStore.commentFormSubmit();
                   store.submitAnnotation();
                 }}
-                icon={
+                leading={
                   useExitOption ? (
                     <Dropdown.Trigger
                       alignment="top-right"
@@ -265,7 +261,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                         <IconChevron />
                       </div>
                     </Dropdown.Trigger>
-                  ) : undefined
+                  ) : null
                 }
               >
                 Submit
@@ -288,8 +284,6 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
               size="small"
               className="w-[150px]"
               disabled={isUpdateDisabled}
-              look={look}
-              mod={{ has_icon: useExitOption, disabled: isUpdateDisabled }}
               onClick={async (event) => {
                 if ((event.target as HTMLButtonElement).classList.contains(dropdownTrigger)) return;
                 const selected = store.annotationStore?.selected;
@@ -298,7 +292,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                 await store.commentStore.commentFormSubmit();
                 store.updateAnnotation();
               }}
-              icon={
+              leading={
                 useExitOption ? (
                   <Dropdown.Trigger
                     alignment="top-right"
@@ -308,7 +302,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                       <IconChevron />
                     </div>
                   </Dropdown.Trigger>
-                ) : undefined
+                ) : null
               }
             >
               {isUpdate ? "Update" : "Submit"}

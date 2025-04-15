@@ -79,7 +79,6 @@ export type ButtonProps = {
   leading?: ReactNode;
   trailing?: ReactNode;
   tooltip?: string;
-  tooltipTheme?: "light" | "dark";
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 /**
@@ -102,7 +101,6 @@ const Button = forwardRef(
       leading,
       trailing,
       tooltip,
-      tooltipTheme,
       ...buttonProps
     }: PropsWithChildren<ButtonProps>,
     ref,
@@ -121,11 +119,7 @@ const Button = forwardRef(
     );
 
     if (tooltip) {
-      return (
-        <Tooltip title={tooltip} theme={tooltipTheme}>
-          {buttonBody}
-        </Tooltip>
-      );
+      return <Tooltip title={tooltip}>{buttonBody}</Tooltip>;
     }
 
     return buttonBody;

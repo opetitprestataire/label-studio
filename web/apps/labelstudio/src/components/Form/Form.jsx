@@ -524,7 +524,7 @@ Form.Builder = React.forwardRef(
         {children}
         {props.autosubmit !== true && withActions === true && (
           <Form.Actions>
-            <Button type="submit" style={{ width: 120 }}>
+            <Button type="submit" className="w-[120px]">
               Save
             </Button>
           </Form.Actions>

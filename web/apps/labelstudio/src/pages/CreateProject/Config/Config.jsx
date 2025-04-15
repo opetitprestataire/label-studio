@@ -527,7 +527,7 @@ const Configurator = ({
                 </Elem>
               </Block>
             )}
-            <Button size="small" style={{ width: 120 }} onClick={onSave} waiting={waiting}>
+            <Button size="small" className="w-[120px]" onClick={onSave} waiting={waiting}>
               {waiting ? "Saving..." : "Save"}
             </Button>
             {isFF(FF_UNSAVED_CHANGES) && <UnsavedChanges hasChanges={hasChanges} onSave={onSave} />}

@@ -1,9 +1,8 @@
-import type { Page } from "../../types/Page";
-import { Space } from "@humansignal/ui";
+import { buttonVariant, Space } from "@humansignal/ui";
 import { Block } from "apps/labelstudio/src/utils/bem";
-import { EmptyList } from "./@components/EmptyList";
 import { Link } from "react-router-dom";
-import { buttonVariant } from "@humansignal/ui";
+import type { Page } from "../../types/Page";
+import { EmptyList } from "./@components/EmptyList";
 
 export const ModelsPage: Page = () => {
   return (

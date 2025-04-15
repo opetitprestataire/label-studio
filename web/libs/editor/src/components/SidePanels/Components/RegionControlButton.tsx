@@ -1,6 +1,6 @@
 import { forwardRef, type FC } from "react";
 import { Button, type ButtonProps } from "@humansignal/ui";
-import { WithHotkey } from "libs/editor/src/common/Hotkey/WithHotkey";
+import { WithHotkey } from "../../../common/Hotkey/WithHotkey";
 import type { HotkeyList } from "libs/editor/src/core/Hotkey";
 
 export const RegionControlButton: FC<

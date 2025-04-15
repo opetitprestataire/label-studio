@@ -198,7 +198,7 @@ export default observer(({ store, annotation }) => {
 
       {editMode && (
         <Form
-          style={{ marginTop: "0.5em", marginBottom: "0.5em" }}
+          className="my-2"
           onFinish={() => {
             // `normInput` is undefined, but this component is not used in the new interface anyway
             node.setMetaText(node.normInput);
@@ -212,11 +212,11 @@ export default observer(({ store, annotation }) => {
 
               node.setMetaText(value);
             }}
-            style={{ marginBottom: "0.5em" }}
+            className="mb-2"
             placeholder="Meta Information"
           />
 
-          <Button type="primary" htmlType="submit" style={{ marginRight: "0.5em" }}>
+          <Button type="primary" htmlType="submit" className="mr-2">
             Add
           </Button>
 

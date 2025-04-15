@@ -4,6 +4,7 @@ import styles from "./toast.module.scss";
 import clsx from "clsx";
 import { IconCross } from "../../assets/icons";
 import { Button } from "../button/button";
+import { cn } from "@humansignal/shad/utils";
 
 export type ToastViewportProps = ToastPrimitive.ToastViewportProps & any;
 export interface ToastProps extends Omit<ToastPrimitive.ToastProps, "type"> {
@@ -85,13 +86,12 @@ export interface ToastActionProps extends ToastPrimitive.ToastActionProps {
   onClose?: () => void;
 }
 export const ToastAction: FC<ToastActionProps> = ({ children, onClose, altText, ...props }) => (
-  <ToastPrimitive.Action altText={altText} asChild style={{ pointerEvents: "none" }}>
+  <ToastPrimitive.Action altText={altText} asChild className="pointer-events-none">
     <Button
       look="string"
       size="small"
-      className={styles.toast__action}
+      className={cn(styles.toast__action, "pointer-events-all")}
       onClick={onClose}
-      style={{ pointerEvents: "all" }}
       {...props}
     >
       {children}

@@ -225,7 +225,6 @@ export const Hotkey = (namespace = "global", description = "Hotkeys") => {
             func(...args);
           };
 
-          console.log("added", keyName, handler);
           addKeyHandlerRef(scope, keyName, handler);
           keymaster(keyName, scope, handler);
         });

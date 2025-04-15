@@ -1,16 +1,15 @@
-import type { Page } from "../types/Page";
-import { Button } from "@humansignal/ui";
-import { SimpleCard, Spinner } from "@humansignal/ui";
-import { IconExternal, IconFolderAdd, IconHumanSignal, IconUserAdd, IconFolderOpen } from "@humansignal/icons";
-import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
-import { useQuery } from "@tanstack/react-query";
-import { useAPI } from "../../providers/ApiProvider";
-import { useState } from "react";
-import { CreateProject } from "../CreateProject/CreateProject";
-import { InviteLink } from "../Organization/PeoplePage/InviteLink";
+import { IconExternal, IconFolderAdd, IconFolderOpen, IconHumanSignal, IconUserAdd } from "@humansignal/icons";
 import { Heading, Sub } from "@humansignal/typography";
+import { Button, SimpleCard, Spinner } from "@humansignal/ui";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
+import { useAPI } from "../../providers/ApiProvider";
+import { CreateProject } from "../CreateProject/CreateProject";
+import { InviteLink } from "../Organization/PeoplePage/InviteLink";
+import type { Page } from "../types/Page";
 
 const PROJECTS_TO_SHOW = 10;
 

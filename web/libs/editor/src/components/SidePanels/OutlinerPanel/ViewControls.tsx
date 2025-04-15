@@ -273,12 +273,10 @@ const ToggleRegionsVisibilityButton = observer<FC<ToggleRegionsVisibilityButton>
 
   return (
     <Button
-      tag={Button}
       variant="neutral"
       size="smaller"
       disabled={isDisabled}
       onClick={toggleRegionsVisibility}
-      mod={{ hidden: isAllHidden }}
       aria-label={isAllHidden ? "Show all regions" : "Hide all regions"}
       tooltip={isAllHidden ? "Show all regions" : "Hide all regions"}
       tooltipTheme="dark"

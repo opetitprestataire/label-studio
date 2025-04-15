@@ -16,7 +16,7 @@ export const WithHotkey = forwardRef<HTMLElement, HotkeyProps>(
     Children.only(children);
 
     const { onClick, tooltip } = children.props;
-    const clone = cloneElement(children, { ref, tooltip: undefined, tooltipTheme: "dark" });
+    const clone = cloneElement(children, { ref, tooltip: undefined });
 
     useHotkey(hotkey, onClick as unknown as Keymaster.KeyHandler, hotkeyScope);
 

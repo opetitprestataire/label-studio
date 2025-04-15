@@ -1,4 +1,4 @@
-import { Button, IconChevron } from "@humansignal/ui";
+import { Button, IconChevronLeft, IconChevronRight } from "@humansignal/ui";
 import { observer } from "mobx-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Block, Elem } from "../../utils/bem";
@@ -90,7 +90,7 @@ export const AnnotationsCarousel = observer(({ store, annotationStore }: Annotat
             variant="neutral"
             onClick={(e) => !isLeftDisabled && updatePosition(e, true)}
           >
-            <IconChevron style={{ rotate: "-90deg" }} />
+            <IconChevronLeft />
           </Button>
           <Button
             disabled={isRightDisabled}
@@ -99,7 +99,7 @@ export const AnnotationsCarousel = observer(({ store, annotationStore }: Annotat
             variant="neutral"
             onClick={(e) => !isRightDisabled && updatePosition(e, false)}
           >
-            <IconChevron style={{ rotate: "90deg" }} />
+            <IconChevronRight />
           </Button>
         </Elem>
       )}

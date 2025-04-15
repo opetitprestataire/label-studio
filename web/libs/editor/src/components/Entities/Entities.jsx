@@ -1,4 +1,3 @@
-import { Dropdown } from "antd";
 import { observer } from "mobx-react";
 
 import "./Entities.scss";
@@ -13,6 +12,7 @@ import "./Entities.scss";
 import { confirm } from "../../common/Modal/Modal";
 import { IconInvisible, IconTrash, IconVisible } from "@humansignal/icons";
 import { Button, Tooltip } from "@humansignal/ui";
+import { Dropdown } from "../../common/Dropdown/Dropdown";
 
 export default observer(({ regionStore, annotation }) => {
   const { classifications, regions, view } = regionStore;
@@ -48,11 +48,7 @@ export default observer(({ regionStore, annotation }) => {
                 type="text"
                 aria-label="Delete All Regions"
                 icon={<IconTrash />}
-                style={{
-                  height: 36,
-                  width: 36,
-                  padding: 0,
-                }}
+                className="w-8 h-8 p-0"
                 onClick={() => {
                   confirm({
                     title: "Removing all regions",
@@ -71,14 +67,14 @@ export default observer(({ regionStore, annotation }) => {
         <Elem name="header">
           <Space spread align={view === "regions" ? null : "end"}>
             {view === "regions" && (
-              <Dropdown overlay={<SortMenu regionStore={regionStore} />} placement="bottomLeft">
+              <Dropdown.Trigger content={<SortMenu regionStore={regionStore} />} placement="bottomLeft">
                 <Elem name="sort" onClick={(e) => e.preventDefault()}>
                   <Elem name="sort-icon">
                     <SortMenuIcon sortKey={regionStore.sort} />
                   </Elem>{" "}
                   {`Sorted by ${regionStore.sort[0].toUpperCase()}${regionStore.sort.slice(1)}`}
                 </Elem>
-              </Dropdown>
+              </Dropdown.Trigger>
             )}
 
             <Space size="small" align="end">

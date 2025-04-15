@@ -95,7 +95,8 @@ describe("Controls", () => {
   });
 
   test("When skip button is clicked, if there is no currentComment and annotators doesn't need to leave a comment on skip, it must submit", async () => {
-    mockStore.hasInterface = (a: string) => a === "skip" ?? true;
+    mockStore.hasInterface = (a: string) => a === "skip";
+
     const { getByLabelText } = render(
       <Provider store={mockStore}>
         <Controls history={mockHistory} annotation={mockAnnotation} />

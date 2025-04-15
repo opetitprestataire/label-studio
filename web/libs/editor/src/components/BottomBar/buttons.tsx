@@ -124,7 +124,6 @@ export const UnskipButton = memo(
         <Button
           aria-label="cancel-skip"
           disabled={disabled}
-          look="primary"
           onClick={async () => {
             const selected = store.annotationStore?.selected;
 

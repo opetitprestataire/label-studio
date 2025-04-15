@@ -8,7 +8,7 @@ import { Block, Elem } from "../../../utils/bem";
 import { NodeIcon } from "../../Node/Node";
 import { LockButton } from "../Components/LockButton";
 import { RegionLabels } from "./RegionLabels";
-import { WithHotkey } from "libs/editor/src/common/Hotkey/WithHotkey";
+import { WithHotkey } from "../../../common/Hotkey/WithHotkey";
 
 interface RegionItemProps {
   region: any;
