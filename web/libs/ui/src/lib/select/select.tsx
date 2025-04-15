@@ -48,16 +48,14 @@ export const Select = forwardRef(
     const triggerRef = useRef<HTMLDivElement>();
     const [query, setQuery] = useState<string>("");
     const valueRef = useRef<any>();
-    const firstOption = options?.[0];
     let initialValue =
       defaultValue?.value ??
       defaultValue ??
       externalValue?.value ??
-      externalValue ??
-      (props?.placeholder ? (firstOption?.value ?? firstOption) : undefined);
+      externalValue;
 
     if (multiple) {
-      initialValue = Array.isArray(initialValue) ? (initialValue ?? []) : [initialValue];
+      initialValue = initialValue ? (Array.isArray(initialValue) ? (initialValue ?? []) : [initialValue]) : [];
     } else if (Array.isArray(initialValue)) {
       initialValue = initialValue[0];
     }
@@ -239,7 +237,6 @@ export const Select = forwardRef(
                               label={label}
                               isIndeterminate={!isOptionSelected && isIndeterminate}
                               isOptionSelected={isOptionSelected}
-                              className="pl-0"
                               onSelect={() => {
                                 children.forEach((child: SelectOption<T>) => {
                                   const childVal = child?.value ?? child;
@@ -378,7 +375,6 @@ const Option = ({
           "[&_[cmdk-group-heading]]:text-xs",
           "[&_[cmdk-group-heading]]:font-medium",
           "focus-within:outline-none",
-          // "focus-within:bg-primary-focus-outline",
           "group",
         ],
         [
@@ -394,7 +390,7 @@ const Option = ({
             "flex",
             "gap-2",
             "w-full",
-            "px-4",
+            multiple ? "pl-2 pr-4" : "px-4",
             "py-1",
             "hover:bg-primary-emphasis-subtle",
             "hover:cursor-pointer",
