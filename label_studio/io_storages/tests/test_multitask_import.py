@@ -83,7 +83,8 @@ class TestMultiTaskImport(TestCase):
                 GCSImportStorageFactory,
                 self.common_task_data,
                 # bucket name just has to end in "_JSON" for the mock to work
-                bucket='test-gs-bucket_JSON',
+                # and to not collide with other tests
+                bucket='unique-bucket-name_JSON',
                 use_blob_urls=False,
             )
 
