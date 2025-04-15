@@ -97,10 +97,10 @@ class ResolveStorageUriAPIMixin:
             if data is not None:
                 content_type = content_type or 'application/octet-stream'
                 response = RangedFileResponse(request, data, content_type=content_type)
-                
+
                 # Set cache control with moderate timeout
                 max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT  # 1 hour cache
-                
+
                 # Generate an ETag based on user ID and user is_active status
                 # This ensures cache is invalidated when user status changes
                 user = request.user
@@ -111,7 +111,7 @@ class ResolveStorageUriAPIMixin:
                 response.headers['ETag'] = f'"{hash(user_status_tag)}"'
                 # Allow caching but require revalidation
                 response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
-                
+
                 return response
             else:
                 logger.error(f'Failed to get data from storage {storage}')
