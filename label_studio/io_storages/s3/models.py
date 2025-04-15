@@ -168,14 +168,6 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
     def scan_and_create_links(self):
         return self._scan_and_create_links(S3ImportStorageLink)
 
-    def _get_validated_task(self, parsed_data, key):
-        """Validate parsed data with labeling config and task structure"""
-        if not isinstance(parsed_data, dict):
-            raise TaskValidationError(
-                'Error at ' + str(key) + ':\n' 'Cloud storage supports one task (one dict object) per JSON file only. '
-            )
-        return parsed_data
-
     @catch_and_reraise_from_none
     def get_data(self, key) -> list[dict]:
         uri = f'{self.url_scheme}://{self.bucket}/{key}'
@@ -194,11 +186,13 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
             elif isinstance(value, list):
                 for idx, item in enumerate(value):
                     if not isinstance(item, dict):
-                        raise ValueError(
+                        raise TaskValidationError(
                             f'Error on key {key} item {idx}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
                         )
+                return value
+
             else:
-                raise ValueError(
+                raise TaskValidationError(
                     f'Error on key {key}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
                 )
         except json.decoder.JSONDecodeError:
@@ -206,9 +200,6 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
                 f"Can't import JSON-formatted tasks from {key}. If you're trying to import binary objects, "
                 f'perhaps you\'ve forgot to enable "Treat every bucket object as a source file" option?'
             )
-
-        value = self._get_validated_task(value, key)
-        return value
 
     @catch_and_reraise_from_none
     def generate_http_url(self, url):

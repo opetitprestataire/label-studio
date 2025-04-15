@@ -102,6 +102,7 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
                     raise ValueError(
                         f'Error on key {key} item {idx}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
                     )
+            return data
         else:
             raise ValueError(
                 f'Error on key {key}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
