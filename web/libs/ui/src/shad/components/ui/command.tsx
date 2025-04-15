@@ -22,14 +22,14 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
   return (
     <div
       data-slot="command-input-wrapper"
-      className="flex items-center gap-2 px-2 h-10 m-1 focus-within:border-neutral-border-bold border outline-none border-neutral-border-subtle rounded-smaller hover:border-neutral-border-bold shadow-inner box-border"
+      className="flex items-center gap-2 h-8 px-2 m-1 focus-within:border-neutral-border-bold border outline-none border-neutral-border rounded-smaller hover:border-neutral-border-bold shadow-inner box-border"
       ref={ref}
     >
       <IconSearch className="text-neutral-content-subtlest w-6 h-6 flex-none" />
       <CommandPrimitive.Input
         data-slot="command-input"
         className={cn(
-          "placeholder:text-neutral-content-subtler flex h-9 w-full rounded-md bg-transparent py-3 outline-hidden disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none border-0",
+          "placeholder:text-neutral-content-subtler flex h-8 w-full rounded-md bg-transparent py-3 outline-hidden disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none border-0",
           className,
         )}
         {...props}
@@ -42,7 +42,7 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
   return (
     <CommandPrimitive.List
       data-slot="command-list"
-      className={cn("max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto", className)}
+      className={cn("max-h-[300px] scroll-py-2 overflow-x-hidden overflow-y-auto", className)}
       {...props}
     />
   );

@@ -215,7 +215,7 @@ export const Select = forwardRef(
                   data-testid="select-search-field"
                 />
               )}
-              <CommandList label="Select an option">
+              <CommandList label="Select an option" className={searchable ? "shadow-inner border-t" : ""}>
                 <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
                 <CommandGroup>
                   {props.header ? props.header : null}
@@ -244,7 +244,7 @@ export const Select = forwardRef(
                               }}
                             />
                           ) : (
-                            <div className="pl-1 font-bold">{label}</div>
+                            <div className="pl-3 font-bold text-neutral-content-subtler pt-2">{label}</div>
                           )}
                           <div className="pl-2">
                             {children.map((item, i) => {
@@ -373,8 +373,9 @@ const Option = ({
           "p-1",
           "[&_[cmdk-group-heading]]:text-xs",
           "[&_[cmdk-group-heading]]:font-medium",
-          "focus-within:outline-none",
+          "outline-none",
           "group",
+          "duration-150 ease-out",
         ],
         [
           "data-[disabled=true]:opacity-50",
@@ -397,6 +398,7 @@ const Option = ({
             "rounded-4",
             "hover:data-[disabled=true]:bg-transparent",
             "hover:data-[disabled=true]:cursor-not-allowed",
+            "duration-150 ease-out",
           ],
           isOptionSelected && ["bg-primary-emphasis"],
         )}
