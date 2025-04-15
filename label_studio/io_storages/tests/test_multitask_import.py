@@ -14,6 +14,13 @@ from tests.utils import gcs_client_mock, azure_client_mock, redis_client_mock
 
 
 class TestMultiTaskImport(TestCase):
+    storage_types = {
+        's3': S3ImportStorageFactory,
+        'gcs': GCSImportStorageFactory,
+        'azure': AzureBlobImportStorageFactory,
+        'redis': RedisImportStorageFactory,
+    }
+
     @classmethod
     def setUpTestData(cls):
         # Setup project with simple config
@@ -34,13 +41,7 @@ class TestMultiTaskImport(TestCase):
 
         # Setup storage with required credentials
 
-        storage_types = {
-            's3': S3ImportStorageFactory,
-            'gcs': GCSImportStorageFactory,
-            'azure': AzureBlobImportStorageFactory,
-            'redis': RedisImportStorageFactory,
-        }
-        storage = storage_types[storage_type](project=self.project, **storage_kwargs)
+        storage = self.storage_types[storage_type](project=self.project, **storage_kwargs)
 
         # Validate connection before sync
         try:
