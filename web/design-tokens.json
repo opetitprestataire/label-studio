@@ -71,13 +71,13 @@
           },
           "content": {
             "$type": "color",
-            "$value": "{@primitives.$color.$sand.100}",
+            "$value": "{@primitives.$color.$sand.000}",
             "$description": "",
             "$variable_metadata": {
               "name": "color/neutral/on-dark/content",
               "figmaId": "VariableID:4125:2218",
               "modes": {
-                "light": "{@primitives.$color.$sand.100}",
+                "light": "{@primitives.$color.$sand.000}",
                 "dark": "{@primitives.$color.$sand.100}"
               }
             }
@@ -196,7 +196,7 @@
             "figmaId": "VariableID:1733:4970",
             "modes": {
               "light": "{@primitives.$color.$sand.800}",
-              "dark": "{@primitives.$color.$sand.200}"
+              "dark": "{@primitives.$color.$sand.100}"
             }
           }
         },
