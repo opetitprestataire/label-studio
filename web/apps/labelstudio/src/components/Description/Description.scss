@@ -4,10 +4,11 @@
 
   & a {
     color: var(--color-primary-content);
-    text-decoration: underline;
 
     &:hover {
+      color: var(--color-primary-content-subtle);
       text-decoration: none;
+      text-decoration: underline;
     }
   }
 
