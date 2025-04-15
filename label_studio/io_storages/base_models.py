@@ -399,6 +399,8 @@ class ImportStorage(Storage):
                 )
 
             for task_data in tasks_data:
+                # TODO: batch this loop body with add_task -> add_tasks in a single bulk write.
+                # Also have to handle any mismatch between len(tasks_data) and settings.WEBHOOK_BATCH_SIZE
                 task = self.add_task(task_data, self.project, maximum_annotations, max_inner_id, self, key, link_class)
                 max_inner_id += 1
 
