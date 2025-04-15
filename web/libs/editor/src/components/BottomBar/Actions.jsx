@@ -34,7 +34,6 @@ export const Actions = ({ store }) => {
       )}
       <Tooltip alignment="top-left" title="Settings">
         <Button
-          icon={<IconSettings />}
           type="text"
           aria-label="Settings"
           size="small"

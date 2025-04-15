@@ -76,6 +76,10 @@ export type ButtonProps = {
   size?: keyof typeof sizes;
   align?: keyof typeof alignment;
   waiting?: boolean;
+  /**
+   * @deprecated Use `leading` instead
+   */
+  icon?: ReactNode;
   leading?: ReactNode;
   trailing?: ReactNode;
   tooltip?: string;
@@ -98,22 +102,24 @@ const Button = forwardRef(
       size = "medium",
       waiting = false,
       align = "default",
-      leading,
+      icon,
+      leading = icon,
       trailing,
       tooltip,
       ...buttonProps
     }: PropsWithChildren<ButtonProps>,
     ref,
   ) => {
+    const buttonClassName = buttonVariant({ variant, look, size, waiting, align }, className)
     const buttonBody = (
       <button
         {...buttonProps}
         ref={(el) => setRef(ref, el)}
         disabled={buttonProps.disabled ?? waiting}
-        className={buttonVariant({ variant, look, size, waiting, align }, className)}
+        className={buttonClassName}
       >
-        {leading && <em>{leading}</em>}
-        <span>{children}</span>
+        {leading && children && <em>{leading}</em>}
+        <span>{children ?? leading ?? ""}</span>
         {trailing && <em>{trailing}</em>}
       </button>
     );

@@ -8,7 +8,8 @@ import { observer } from "mobx-react";
 import type React from "react";
 import { useCallback, useState } from "react";
 
-import { Button, IconBan, IconChevron } from "@humansignal/ui";
+import { Button } from "@humansignal/ui";
+import { IconBan, IconChevron, IconChevronLeft, IconChevronRight } from "@humansignal/icons"
 import { Dropdown } from "../../common/Dropdown/Dropdown";
 import type { CustomButtonType } from "../../stores/CustomButton";
 import { Block, cn, Elem } from "../../utils/bem";
@@ -46,12 +47,11 @@ export const EMPTY_SUBMIT_TOOLTIP = "Empty annotations denied in this project";
  * Custom action button component, rendering buttons from store.customButtons
  */
 const ControlButton = observer(({ button, disabled, onClick }: ControlButtonProps) => {
-  const look = button.disabled || disabled ? "disabled" : button.look;
-
-  const result = (
+  return (
     <Button
       {...button.props}
       size="small"
+      tooltip={button.tooltip}
       className="w-[150px]"
       aria-label={button.ariaLabel}
       disabled={button.disabled || disabled}
@@ -59,14 +59,6 @@ const ControlButton = observer(({ button, disabled, onClick }: ControlButtonProp
     >
       {button.title}
     </Button>
-  );
-  if (!button.tooltip) {
-    return result;
-  }
-  return (
-    <ButtonTooltip title={button.tooltip}>
-      <Elem name="tooltip-wrapper">{result}</Elem>
-    </ButtonTooltip>
   );
 });
 
@@ -78,7 +70,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
     const { userGenerate, sentUserGenerate, versions, results, editable: annotationEditable } = annotation;
     const dropdownTrigger = cn("dropdown").elem("trigger").toClassName();
     const customButtons: CustomButtonsField = store.customButtons;
-    const buttons = [];
+    const buttons: React.ReactNode[] = [];
 
     const [isInProgress, setIsInProgress] = useState(false);
     const disabled = !annotationEditable || store.isSubmitting || historySelected || isInProgress;
@@ -153,6 +145,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
 
     if (buttonsReplacement) {
       // do nothing as all custom buttons are rendered already and we don't need internal buttons
+      return <Block name="controls">{buttons}</Block>;
     } else if (isReview) {
       const customRejectButtons = toArray(customButtons.get("reject"));
       const hasCustomReject = customRejectButtons.length > 0;

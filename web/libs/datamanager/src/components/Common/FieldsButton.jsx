@@ -105,9 +105,10 @@ export const FieldsButton = injector(
       >
         {tooltip ? (
           <Elem name={"field-button"} style={{ zIndex: 1000 }}>
-            <Tooltip title={tooltip} theme={tooltipTheme}>
-              {renderButton()}
-            </Tooltip>
+
+            <Button tooltip={tooltip} variant="neutral" size="small" look="outlined" leading={icon} trailing={trailingIcon}>
+              {content.length ? content : null}
+            </Button>
           </Elem>
         ) : (
           renderButton()
