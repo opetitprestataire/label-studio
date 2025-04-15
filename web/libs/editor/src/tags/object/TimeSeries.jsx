@@ -21,6 +21,7 @@ import {
 } from "./TimeSeries/helpers";
 import { AnnotationMixin } from "../../mixins/AnnotationMixin";
 import PersistentStateMixin from "../../mixins/PersistentState";
+import { SyncableMixin } from "../../mixins/Syncable";
 import { parseCSV, parseValue, tryToParseJSON } from "../../utils/data";
 import { fixMobxObserve } from "../../utils/utilities";
 
@@ -85,10 +86,11 @@ const TagAttrs = types.model({
   multiaxis: types.optional(types.boolean, false), // show channels in the same view
   // visibilitycontrols: types.optional(types.boolean, false), // show channel visibility controls
   hotkey: types.maybeNull(types.string),
+  sync: types.maybeNull(types.string),
 });
 
 const Model = types
-  .model("TimeSeriesModel", {
+  .model("TimeSeriesBaseModel", {
     type: "timeseries",
     children: Types.unionArray(["channel", "timeseriesoverview", "view", "hypertext"]),
 
@@ -105,12 +107,23 @@ const Model = types
     zoomedRange: 0,
     scale: 1,
     headers: [],
+    canvasWidth: 0,
+    seekTo: null,
+    isPlaying: false,
+    playStartTime: null,
+    playStartPosition: null,
+    animationFrameId: null,
   }))
   .views((self) => ({
     get regionsTimeRanges() {
       return self.regs.map((r) => {
         return [r.start, r.end];
       });
+    },
+
+    get centerTime() {
+      if (!self.brushRange || self.brushRange.length !== 2) return null;
+      return (self.brushRange[0] + self.brushRange[1]) / 2;
     },
 
     get defaultOverviewWidth() {
@@ -338,8 +351,16 @@ const Model = types
       self.scale = scale;
     },
 
+    updateCanvasWidth(width) {
+      self.canvasWidth = width;
+    },
+
     updateView() {
       self._needsUpdate = self._needsUpdate + 1;
+    },
+
+    resetSeekTo() {
+      self.seekTo = null;
     },
 
     scrollToRegion(r) {
@@ -381,6 +402,7 @@ const Model = types
       self.setZoomedRange(tr[1] - tr[0]);
       self.setScale(scale);
       self.updateView();
+      self.emitSeekSync(); // Emit sync when view range changes
     },
 
     throttledRangeUpdate() {
@@ -541,6 +563,225 @@ const Model = types
     },
 
     onHotKey() {},
+
+    _handleSeek(data) {
+      const [minKey, maxKey] = self.keysRange;
+      const timeRangeDuration = maxKey - minKey; // Total duration in time domain
+
+      // Ensure necessary info is available
+      if (self.canvasWidth <= 0 || timeRangeDuration <= 0 || data.time === undefined) return;
+
+      const seekTime = data.time;
+      // Ignore seek if time is outside the range
+      if (seekTime < minKey || seekTime > maxKey) {
+           console.warn(`TimeSeries Sync: Seek time ${seekTime} is outside the range [${minKey}, ${maxKey}]. Ignoring.`);
+           return;
+      }
+
+      // Calculate the pixel position corresponding to the seek time
+      const centerPx = ((seekTime - minKey) / timeRangeDuration) * self.canvasWidth;
+
+      // Get the current brush width IN TIME DOMAIN
+      let currentBrushWidthTime = self.brushRange[1] - self.brushRange[0];
+      if (currentBrushWidthTime <= 0) {
+          // Use a default time width if current is invalid (e.g., 10% of total time range)
+          currentBrushWidthTime = timeRangeDuration * 0.1;
+          if (currentBrushWidthTime <= 0) {
+             console.warn("TimeSeries Sync: Cannot determine valid time width.");
+             return; // Cannot determine width
+          }
+      }
+
+      // Calculate the current brush width IN PIXELS
+      const currentPixelWidth = (currentBrushWidthTime / timeRangeDuration) * self.canvasWidth;
+      if (currentPixelWidth <= 0) {
+         console.warn("TimeSeries Sync: Cannot determine valid pixel width.");
+         return; // Invalid width
+      }
+
+
+      // Calculate new start/end pixels centered around centerPx
+      let newPixelStart = centerPx - currentPixelWidth / 2;
+      let newPixelEnd = centerPx + currentPixelWidth / 2;
+
+      // Constrain pixels to be within the canvas bounds [0, canvasWidth]
+      if (newPixelStart < 0) {
+        const widthPx = newPixelEnd - newPixelStart; // Keep width constant
+        newPixelStart = 0;
+        newPixelEnd = Math.min(widthPx, self.canvasWidth);
+      }
+      if (newPixelEnd > self.canvasWidth) {
+        const widthPx = newPixelEnd - newPixelStart; // Keep width constant
+        newPixelEnd = self.canvasWidth;
+        newPixelStart = Math.max(0, self.canvasWidth - widthPx);
+      }
+      // Final clamp and sanity check for pixels
+      newPixelStart = Math.max(0, newPixelStart);
+      newPixelEnd = Math.min(self.canvasWidth, newPixelEnd);
+      if (newPixelStart >= newPixelEnd) {
+          // Fallback to a default pixel width if clamping failed
+          const defaultPixelWidth = Math.max(10, self.canvasWidth * 0.1);
+          newPixelStart = centerPx - defaultPixelWidth / 2;
+          newPixelEnd = centerPx + defaultPixelWidth / 2;
+          // Re-constrain
+          if (newPixelStart < 0) { newPixelEnd -= newPixelStart; newPixelStart = 0; }
+          if (newPixelEnd > self.canvasWidth) { newPixelStart -= (newPixelEnd - self.canvasWidth); newPixelEnd = self.canvasWidth; }
+          newPixelStart = Math.max(0, newPixelStart);
+          newPixelEnd = Math.min(self.canvasWidth, newPixelEnd);
+          if (newPixelStart >= newPixelEnd) {
+             console.error("TimeSeries Sync: Failed to calculate valid pixel range even with fallback.");
+             return; // Give up
+          }
+      }
+
+
+      // Convert the final pixel range back to the time domain
+      let newTimeStart = minKey + (newPixelStart / self.canvasWidth) * timeRangeDuration;
+      let newTimeEnd = minKey + (newPixelEnd / self.canvasWidth) * timeRangeDuration;
+
+       // Additional check for time domain validity & fallback
+       if (!isFinite(newTimeStart) || !isFinite(newTimeEnd) || newTimeStart >= newTimeEnd) {
+            console.warn(`TimeSeries Sync: Calculated invalid time range [${newTimeStart}, ${newTimeEnd}]. Recalculating.`);
+            // Try centering the original time width around the seek time
+            newTimeStart = seekTime - currentBrushWidthTime / 2;
+            newTimeEnd = seekTime + currentBrushWidthTime / 2;
+            // Constrain time to domain
+            if (newTimeStart < minKey) { newTimeEnd -= (newTimeStart - minKey); newTimeStart = minKey; }
+            if (newTimeEnd > maxKey) { newTimeStart -= (newTimeEnd - maxKey); newTimeEnd = maxKey; }
+            newTimeStart = Math.max(minKey, newTimeStart);
+            newTimeEnd = Math.min(maxKey, newTimeEnd);
+
+            if (!isFinite(newTimeStart) || !isFinite(newTimeEnd) || newTimeStart >= newTimeEnd) {
+                console.error("TimeSeries Sync: Failed to calculate fallback time range.");
+                return; // Give up if fallback also fails
+            }
+       }
+
+      // Apply the new TIME range
+      if (isFinite(newTimeStart) && isFinite(newTimeEnd)) {
+        // Use self.updateTR with the converted time range
+        self.updateTR([newTimeStart, newTimeEnd], self.scale);
+        self.seekTo = seekTime;
+      }
+    },
+
+    _handlePlay(data) {
+      console.log("Sync Play received in TimeSeries:", data);
+      self.isPlaying = true;
+      self.playStartTime = performance.now();
+      self.playStartPosition = data.time;
+      
+      if (self.animationFrameId) {
+        cancelAnimationFrame(self.animationFrameId);
+      }
+      self.playbackLoop();
+    },
+
+    _handlePause(data) {
+      console.log("Sync Pause received in TimeSeries:", data);
+      self.isPlaying = false;
+      self.playStartTime = null;
+      self.playStartPosition = null;
+      
+      if (self.animationFrameId) {
+        cancelAnimationFrame(self.animationFrameId);
+        self.animationFrameId = null;
+      }
+      self._updateViewForTime(data.time);
+    },
+
+    playbackLoop() {
+      if (!self.isPlaying) {
+        self.animationFrameId = null;
+        return;
+      }
+
+      const currentTime = performance.now();
+      const elapsedSeconds = (currentTime - self.playStartTime) / 1000;
+      const newTime = self.playStartPosition + elapsedSeconds;
+      
+      self._updateViewForTime(newTime);
+      
+      self.animationFrameId = requestAnimationFrame(self.playbackLoop);
+    },
+
+    _updateViewForTime(time) {
+      if (time === null || !isFinite(time)) return;
+
+      const [minKey, maxKey] = self.keysRange;
+      const timeRangeDuration = maxKey - minKey;
+
+      if (self.canvasWidth <= 0 || timeRangeDuration <= 0) return;
+
+      const seekTime = Math.max(minKey, Math.min(maxKey, time));
+      const centerPx = ((seekTime - minKey) / timeRangeDuration) * self.canvasWidth;
+
+      let currentBrushWidthTime = self.brushRange[1] - self.brushRange[0];
+      if (currentBrushWidthTime <= 0) {
+        currentBrushWidthTime = timeRangeDuration * 0.1;
+        if (currentBrushWidthTime <= 0) return;
+      }
+
+      const currentPixelWidth = (currentBrushWidthTime / timeRangeDuration) * self.canvasWidth;
+      if (currentPixelWidth <= 0) return;
+
+      let newPixelStart = centerPx - currentPixelWidth / 2;
+      let newPixelEnd = centerPx + currentPixelWidth / 2;
+
+      if (newPixelStart < 0) {
+        const widthPx = newPixelEnd - newPixelStart;
+        newPixelStart = 0;
+        newPixelEnd = Math.min(widthPx, self.canvasWidth);
+      }
+      if (newPixelEnd > self.canvasWidth) {
+        const widthPx = newPixelEnd - newPixelStart;
+        newPixelEnd = self.canvasWidth;
+        newPixelStart = Math.max(0, self.canvasWidth - widthPx);
+      }
+      newPixelStart = Math.max(0, newPixelStart);
+      newPixelEnd = Math.min(self.canvasWidth, newPixelEnd);
+      if (newPixelStart >= newPixelEnd) {
+        const defaultPixelWidth = Math.max(10, self.canvasWidth * 0.1);
+        newPixelStart = centerPx - defaultPixelWidth / 2;
+        newPixelEnd = centerPx + defaultPixelWidth / 2;
+        if (newPixelStart < 0) { newPixelEnd -= newPixelStart; newPixelStart = 0; }
+        if (newPixelEnd > self.canvasWidth) { newPixelStart -= (newPixelEnd - self.canvasWidth); newPixelEnd = self.canvasWidth; }
+        newPixelStart = Math.max(0, newPixelStart);
+        newPixelEnd = Math.min(self.canvasWidth, newPixelEnd);
+        if (newPixelStart >= newPixelEnd) return;
+      }
+
+      let newTimeStart = minKey + (newPixelStart / self.canvasWidth) * timeRangeDuration;
+      let newTimeEnd = minKey + (newPixelEnd / self.canvasWidth) * timeRangeDuration;
+
+      if (!isFinite(newTimeStart) || !isFinite(newTimeEnd) || newTimeStart >= newTimeEnd) {
+        newTimeStart = seekTime - currentBrushWidthTime / 2;
+        newTimeEnd = seekTime + currentBrushWidthTime / 2;
+        if (newTimeStart < minKey) { newTimeEnd -= (newTimeStart - minKey); newTimeStart = minKey; }
+        if (newTimeEnd > maxKey) { newTimeStart -= (newTimeEnd - maxKey); newTimeEnd = maxKey; }
+        newTimeStart = Math.max(minKey, newTimeStart);
+        newTimeEnd = Math.min(maxKey, newTimeEnd);
+        if (!isFinite(newTimeStart) || !isFinite(newTimeEnd) || newTimeStart >= newTimeEnd) return;
+      }
+
+      if (isFinite(newTimeStart) && isFinite(newTimeEnd)) {
+        self.updateTR([newTimeStart, newTimeEnd], self.scale);
+        self.seekTo = seekTime;
+      }
+    },
+
+    registerSyncHandlers() {
+      self.syncHandlers.set("seek", self._handleSeek);
+      self.syncHandlers.set("play", self._handlePlay);
+      self.syncHandlers.set("pause", self._handlePause);
+    },
+
+    emitSeekSync() {
+      const centerTime = self.centerTime;
+      if (centerTime !== null && self.sync && !self.isPlaying) {
+        self.syncSend({ time: centerTime }, "seek");
+      }
+    },
   }));
 
 function useWidth() {
@@ -805,6 +1046,24 @@ const Overview = observer(({ item, data, series }) => {
     node && drawRegions(regions);
   });
 
+  // Add useEffect to listen for seekTo changes
+  React.useEffect(() => {
+    if (item.seekTo !== null && gb.current) {
+      const seekTime = item.seekTo;
+      const [minKey, maxKey] = item.keysRange;
+      const timeRangeDuration = maxKey - minKey;
+      const centerPx = ((seekTime - minKey) / timeRangeDuration) * width;
+      const range = item.brushRange.map(x);
+      const half = (range[1] - range[0]) / 2;
+      let moved = [centerPx - half, centerPx + half];
+
+      if (moved[0] < 0) moved = [0, half * 2];
+      if (moved[1] > width) moved = [width - half * 2, width];
+      gb.current.call(brush.move, moved);
+      item.resetSeekTo(); // Use the action instead of direct modification
+    }
+  }, [item.seekTo, width]);
+
   item.regs.map((r) => fixMobxObserve(r.start, r.end, r.selected, r.hidden, r.style?.fillcolor));
 
   return <div className="htx-timeseries-overview" ref={ref} />;
@@ -816,6 +1075,20 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
   React.useEffect(() => {
     if (item?.brushRange?.length) {
       item._nodeReference = ref.current;
+      
+      // Update canvas width when the component mounts or resizes
+      const updateWidth = () => {
+        if (ref.current) {
+          item.updateCanvasWidth(ref.current.offsetWidth);
+        }
+      };
+      
+      updateWidth();
+      window.addEventListener('resize', updateWidth);
+      
+      return () => {
+        window.removeEventListener('resize', updateWidth);
+      };
     }
   }, [item, ref]);
 
@@ -839,11 +1112,12 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
 
 const TimeSeriesModel = types.compose(
   "TimeSeriesModel",
+  SyncableMixin,
   ObjectBase,
   PersistentStateMixin,
   AnnotationMixin,
   TagAttrs,
-  Model,
+  Model
 );
 const HtxTimeSeries = inject("store")(observer(HtxTimeSeriesViewRTS));
 
