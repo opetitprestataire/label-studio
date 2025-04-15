@@ -13,6 +13,7 @@ import { confirm } from "../../common/Modal/Modal";
 import { IconInvisible, IconTrash, IconVisible } from "@humansignal/icons";
 import { Button, Tooltip } from "@humansignal/ui";
 import { Dropdown } from "../../common/Dropdown/Dropdown";
+import { cn } from "@humansignal/ui";
 
 export default observer(({ regionStore, annotation }) => {
   const { classifications, regions, view } = regionStore;
@@ -44,10 +45,9 @@ export default observer(({ regionStore, annotation }) => {
           {annotation.isReadOnly() && (
             <Tooltip title="Delete All Regions">
               <Button
-                look="danger"
-                type="text"
+                variant="negative"
+                look="string"
                 aria-label="Delete All Regions"
-                icon={<IconTrash />}
                 className="w-8 h-8 p-0"
                 onClick={() => {
                   confirm({
@@ -57,7 +57,9 @@ export default observer(({ regionStore, annotation }) => {
                     onOk: () => annotation.deleteAllRegions(),
                   });
                 }}
-              />
+              >
+                <IconTrash />
+              </Button>
             </Tooltip>
           )}
         </Space>
@@ -79,17 +81,14 @@ export default observer(({ regionStore, annotation }) => {
 
             <Space size="small" align="end">
               {regions.length > 0 ? (
-                <Elem
-                  name="visibility"
-                  tag={Button}
+                <Button
                   size="small"
-                  type="link"
-                  style={{ padding: 0 }}
+                  look="string"
+                  className={cn({ hidden: regionStore.isAllHidden })}
                   onClick={toggleVisibility}
-                  mod={{ hidden: regionStore.isAllHidden }}
                 >
                   {regionStore.isAllHidden ? <IconInvisible /> : <IconVisible />}
-                </Elem>
+                </Button>
               ) : null}
             </Space>
           </Space>
