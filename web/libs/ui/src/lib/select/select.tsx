@@ -378,7 +378,7 @@ const Option = ({
           "[&_[cmdk-group-heading]]:text-xs",
           "[&_[cmdk-group-heading]]:font-medium",
           "focus-within:outline-none",
-          "focus-within:bg-primary-focus-outline",
+          // "focus-within:bg-primary-focus-outline",
           "group",
         ],
         [
