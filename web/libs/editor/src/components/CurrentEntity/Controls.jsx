@@ -56,7 +56,7 @@ export const Controls = controlsInjector(
     } else if (annotation.skipped) {
       buttons.push(
         <Elem name="skipped-info" key="skipped">
-          <IconBan color="#d00" /> Annotation skipped
+          <IconBan /> Annotation skipped
         </Elem>,
       );
     } else {
