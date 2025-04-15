@@ -14,13 +14,6 @@ from tests.utils import gcs_client_mock, azure_client_mock, redis_client_mock
 
 
 class TestMultiTaskImport(TestCase):
-    storage_types = {
-        's3': S3ImportStorageFactory,
-        'gcs': GCSImportStorageFactory,
-        'azure': AzureBlobImportStorageFactory,
-        'redis': RedisImportStorageFactory,
-    }
-
     @classmethod
     def setUpTestData(cls):
         # Setup project with simple config
@@ -32,7 +25,7 @@ class TestMultiTaskImport(TestCase):
             {'data': {'image_url': 'http://ggg.com/image2.jpg', 'text': 'Task 2 text'}},
         ]
 
-    def _test_storage_import(self, storage_type, task_data, **storage_kwargs):
+    def _test_storage_import(self, storage_class, task_data, **storage_kwargs):
         """Helper to test import for a specific storage type"""
 
         # can't do this in the classmethod for some reason, or self.client != cls.client
@@ -41,7 +34,7 @@ class TestMultiTaskImport(TestCase):
 
         # Setup storage with required credentials
 
-        storage = self.storage_types[storage_type](project=self.project, **storage_kwargs)
+        storage = storage_class(project=self.project, **storage_kwargs)
 
         # Validate connection before sync
         try:
@@ -74,16 +67,12 @@ class TestMultiTaskImport(TestCase):
             s3.put_object(Bucket=bucket_name, Key='test.json', Body=json.dumps(self.common_task_data))
 
             self._test_storage_import(
-                's3',
+                S3ImportStorageFactory,
                 self.common_task_data,
                 bucket='pytest-s3-jsons',
                 aws_access_key_id='example',
                 aws_secret_access_key='example',
-                # regex_filter='',
                 use_blob_urls=False,
-                # presign=True,
-                # presign_ttl=3600,
-                # title='Test S3 Storage',
             )
 
     def test_import_multiple_tasks_gcs(self):
@@ -91,14 +80,11 @@ class TestMultiTaskImport(TestCase):
         with gcs_client_mock(sample_json_contents=self.common_task_data, sample_json_blob_names=['test.json']) as gcs:
 
             self._test_storage_import(
-                'gcs',
+                GCSImportStorageFactory,
                 self.common_task_data,
                 # bucket name just has to end in "_JSON" for the mock to work
                 bucket='test-gs-bucket_JSON',
-                # prefix='',
-                # regex_filter='',
                 use_blob_urls=False,
-                # title='Test GCS storage import',
             )
 
     def test_import_multiple_tasks_azure(self):
@@ -108,10 +94,8 @@ class TestMultiTaskImport(TestCase):
         ) as azure:
 
             self._test_storage_import(
-                'azure',
+                AzureBlobImportStorageFactory,
                 self.common_task_data,
-                # this name is arbitrary
-                # container='pytest-azure',
                 use_blob_urls=False,
             )
 
@@ -121,12 +105,8 @@ class TestMultiTaskImport(TestCase):
             redis.set('test.json', json.dumps(self.common_task_data))
 
             self._test_storage_import(
-                'redis',
+                RedisImportStorageFactory,
                 self.common_task_data,
                 path='',
-                host='localhost',
-                port=6379,
-                password='',
-                db=1,
-                title='Testing Redis storage',
+                use_blob_urls=False,
             )
