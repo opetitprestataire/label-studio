@@ -7,8 +7,11 @@ export * from "./lib/label/label";
 export * from "./lib/toggle/toggle";
 export * from "./lib/Tooltip/Tooltip";
 export * from "./lib/Userpic/Userpic";
+export * from "./lib/code-block/code-block";
 
 export * from "./lib/spinner/spinner";
 export * from "./lib/space/space";
 export * from "./lib/simple-card";
 export * from "./assets/icons";
+
+export * from "./shadcn";

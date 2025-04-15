@@ -1,6 +1,6 @@
 {
-  "message": "refactor: LEAP-1772: Remove FF_OPTIC_2 feature flag and associated logic (#7211)",
-  "commit": "b023a3c9ded3ebd699d4b31829b8fd135eb0cc2e",
-  "date": "2025-03-19T01:13:24.000Z",
+  "message": "chore: OPTIC-1956: Update Menubar to have the proper new import of pages from app-common (#7369)",
+  "commit": "86f1f1ffe01927e533107993cea4341935840dd6",
+  "date": "2025-04-14T16:31:19.000Z",
   "branch": "develop"
 }
