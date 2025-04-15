@@ -33,18 +33,17 @@ const SelectedChoiceMixin = types.model().views((self) => ({
   },
   hasChoiceSelection(choiceValue, selectedValues = []) {
     if (choiceValue?.length) {
+      // For Taxonomy, we need to check if any of the selected paths contain any of the choice values
+      if (self.type === "taxonomy") {
+        return selectedValues.some((path) => choiceValue.some((value) => path.includes(value)));
+      }
+
       // @todo Revisit this and make it more consistent, and refactor this
       // behaviour out of the SelectedModel mixin and use a singular approach.
       // This is the original behaviour of other SelectedModel mixin usages
       // as they are using alias lookups for choices. For now we will keep it as is since it works for all the
       // other cases currently.
       if (self.findLabel) {
-        // For Taxonomy, we need to check if any of the selected paths contain any of the choice values
-        if (self.type === "taxonomy") {
-          return selectedValues.some(path =>
-            Array.isArray(path) && choiceValue.some(value => path.includes(value))
-          );
-        }
         return choiceValue.map((v) => self.findLabel(v)).some((c) => c && c.sel);
       }
 
