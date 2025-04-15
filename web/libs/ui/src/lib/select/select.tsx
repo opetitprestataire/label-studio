@@ -48,11 +48,7 @@ export const Select = forwardRef(
     const triggerRef = useRef<HTMLDivElement>();
     const [query, setQuery] = useState<string>("");
     const valueRef = useRef<any>();
-    let initialValue =
-      defaultValue?.value ??
-      defaultValue ??
-      externalValue?.value ??
-      externalValue;
+    let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
 
     if (multiple) {
       initialValue = initialValue ? (Array.isArray(initialValue) ? (initialValue ?? []) : [initialValue]) : [];
