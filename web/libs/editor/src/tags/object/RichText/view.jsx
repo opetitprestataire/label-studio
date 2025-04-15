@@ -178,21 +178,26 @@ class RichTextPieceView extends Component {
       const area = this.draggableRegion;
       const selection = window.getSelection();
 
-      applyTextGranularity(selection, item.granularity);
-
-      const range = selection.getRangeAt(0);
-
       // don't collapse region into nothing
       if (selection.isCollapsed) return false;
 
-      // so no visual glitches on the screen, selection was just a helper here, we don't need it anymore
-      selection.removeAllRanges();
+      let range = selection.getRangeAt(0);
 
       // @todo would be more convenient to try to reduce the range to be within the root,
       // @todo so for example if we drag to the left and the range is outside of the root, we would
       // @todo just reduce it to the left edge of the root,
       // @todo but that would be a bit more complicated, so let's just check if the range is within the root for now.
-      if (!root.contains(range.startContainer) || !root.contains(range.endContainer)) return false;
+      if (!root.contains(range.startContainer) || !root.contains(range.endContainer)) {
+        selection.removeAllRanges();
+        return false;
+      }
+
+      // update range to respect granularity
+      applyTextGranularity(selection, item.granularity);
+      range = selection.getRangeAt(0);
+
+      // so no visual glitches on the screen, selection was just a helper here, we don't need it anymore
+      selection.removeAllRanges();
       if (!area) return false;
 
       area._range = range;
@@ -224,10 +229,6 @@ class RichTextPieceView extends Component {
       item.annotation.history.unfreeze("richtext:resize");
 
       return true;
-    }
-
-    if (this.draggableRegion) {
-      this._resetDragParams();
     }
 
     return false;
@@ -269,6 +270,10 @@ class RichTextPieceView extends Component {
     const root = rootEl?.contentDocument?.body ?? rootEl;
 
     this._checkDragAndAdjustRegion(root);
+
+    if (this.draggableRegion) {
+      this._resetDragParams();
+    }
   };
 
   _onMouseUp = (ev) => {
