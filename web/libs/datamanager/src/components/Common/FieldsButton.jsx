@@ -97,14 +97,11 @@ export const FieldsButton = injector(
             resetTitle={resetTitle}
           />
         }
-        style={{
-          maxHeight: 280,
-          overflow: "auto",
-        }}
+        rawClassName="max-h-[280px] overflow-auto"
         openUpwardForShortViewport={openUpwardForShortViewport}
       >
         {tooltip ? (
-          <Elem name={"field-button"} style={{ zIndex: 1000 }}>
+          <Elem name={"field-button"} style={{ zIndex: 1000 }} rawClassName="h-[40px] flex items-center">
             <Button
               tooltip={tooltip}
               variant="neutral"

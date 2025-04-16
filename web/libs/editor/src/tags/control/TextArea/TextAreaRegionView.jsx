@@ -78,9 +78,11 @@ const HtxTextAreaResultLine = forwardRef(
         {canDelete && !collapsed && !readOnly && (
           <Elem
             name="action"
+            size="small"
+            look="string"
             aria-label="Delete Region"
             tag={Button}
-            icon={<IconTrash />}
+            leading={<IconTrash />}
             size="small"
             type="text"
             onClick={() => {

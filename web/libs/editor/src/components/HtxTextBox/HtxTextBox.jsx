@@ -181,31 +181,36 @@ export class HtxTextBox extends React.Component {
         <Paragraph {...props}>
           <span ref={this.textRef}>{text}</span>
         </Paragraph>
-        {isEditable && onChange && (
-          <Button
-            type="text"
-            className={styles.button}
-            tooltip="Edit"
-            tooltipTheme="Dark"
-            style={{ padding: 0 }}
-            icon={<IconEdit />}
-            aria-label="Edit Region"
-            onClick={this.startEditing}
-          />
-        )}
-        {isDeleteable && onDelete && (
-          <Button
-            type="text"
-            look="danger"
-            className={styles.button}
-            tooltip="Delete"
-            tooltipTheme="Dark"
-            style={{ padding: 0 }}
-            icon={<IconTrashAlt />}
-            aria-label="Delete Region"
-            onClick={onDelete}
-          />
-        )}
+        <div className="flex gap-tight pr-tight">
+          {isEditable && onChange && (
+            <Button
+              type="text"
+              variant="neutral"
+              look="outlined"
+              size="small"
+              className={styles.button}
+              tooltip="Edit"
+              tooltipTheme="Dark"
+              leading={<IconEdit />}
+              aria-label="Edit Region"
+              onClick={this.startEditing}
+            />
+          )}
+          {isDeleteable && onDelete && (
+            <Button
+              type="text"
+              variant="negative"
+              look="outlined"
+              size="small"
+              className={styles.button}
+              tooltip="Delete"
+              tooltipTheme="Dark"
+              leading={<IconTrashAlt />}
+              aria-label="Delete Region"
+              onClick={onDelete}
+            />
+          )}
+        </div>
       </>
     );
   }
