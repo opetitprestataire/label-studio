@@ -1,5 +1,6 @@
 import { useCallback, useRef } from "react";
-import { Button, Form } from "antd";
+import { Form } from "antd";
+import { Button } from "@humansignal/ui";
 
 import { observer } from "mobx-react";
 
@@ -57,9 +58,15 @@ const DebugComponent = ({ store }) => {
       <br />
       <h2>Debug</h2>
       <div>
-        <Button onClick={serializeAll}>↓ Serialize All Annotations</Button>
-        <Button onClick={serializeCurrent}>↓ Serialize Current Annotation</Button>
-        <Button onClick={loadTask}>↑ Simulate Loading Task</Button>
+        <Button size="small" onClick={serializeAll}>
+          ↓ Serialize All Annotations
+        </Button>
+        <Button size="small" onClick={serializeCurrent}>
+          ↓ Serialize Current Annotation
+        </Button>
+        <Button size="small" onClick={loadTask}>
+          ↑ Simulate Loading Task
+        </Button>
       </div>
 
       <Form>
