@@ -1,4 +1,4 @@
-import { Button, Checkbox, Tooltip } from "@humansignal/ui";
+import { Button, Checkbox } from "@humansignal/ui";
 import { inject, observer } from "mobx-react";
 import React from "react";
 import { Elem } from "../../utils/bem";
@@ -105,8 +105,14 @@ export const FieldsButton = injector(
       >
         {tooltip ? (
           <Elem name={"field-button"} style={{ zIndex: 1000 }}>
-
-            <Button tooltip={tooltip} variant="neutral" size="small" look="outlined" leading={icon} trailing={trailingIcon}>
+            <Button
+              tooltip={tooltip}
+              variant="neutral"
+              size="small"
+              look="outlined"
+              leading={icon}
+              trailing={trailingIcon}
+            >
               {content.length ? content : null}
             </Button>
           </Elem>

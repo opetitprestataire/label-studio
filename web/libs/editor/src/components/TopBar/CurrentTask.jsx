@@ -87,7 +87,9 @@ export const CurrentTask = observer(({ store }) => {
               onClick={store.prevTask}
               style={{ background: !isFF(FF_DEV_3873) && "none", backgroundColor: isFF(FF_DEV_3873) && "none" }}
               variant="neutral"
-            ><IconChevronLeft/></Button>
+            >
+              <IconChevronLeft />
+            </Button>
             <Button
               data-testid="next-task"
               aria-label="Next task"
@@ -96,7 +98,9 @@ export const CurrentTask = observer(({ store }) => {
               onClick={store.canGoNextTask ? store.nextTask : store.postponeTask}
               style={{ background: !isFF(FF_DEV_3873) && "none", backgroundColor: isFF(FF_DEV_3873) && "none" }}
               variant="neutral"
-            ><IconChevronRight/></Button>
+            >
+              <IconChevronRight />
+            </Button>
           </Elem>
         )}
       </Block>

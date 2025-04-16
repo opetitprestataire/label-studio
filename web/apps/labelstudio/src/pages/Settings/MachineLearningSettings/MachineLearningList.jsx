@@ -84,7 +84,9 @@ const BackendCard = ({ backend, onStartTrain, onEdit, onDelete, onTestRequest })
               </Menu>
             }
           >
-            <Button type="link" style={{ padding: "15px" }} ><IconEllipsis /></Button>
+            <Button type="link" style={{ padding: "15px" }}>
+              <IconEllipsis />
+            </Button>
           </Dropdown.Trigger>
         </div>
       </div>

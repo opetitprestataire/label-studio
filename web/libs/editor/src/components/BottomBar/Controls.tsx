@@ -9,7 +9,7 @@ import type React from "react";
 import { useCallback, useState } from "react";
 
 import { Button } from "@humansignal/ui";
-import { IconBan, IconChevron, IconChevronLeft, IconChevronRight } from "@humansignal/icons"
+import { IconBan, IconChevron } from "@humansignal/icons";
 import { Dropdown } from "../../common/Dropdown/Dropdown";
 import type { CustomButtonType } from "../../stores/CustomButton";
 import { Block, cn, Elem } from "../../utils/bem";
@@ -146,7 +146,9 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
     if (buttonsReplacement) {
       // do nothing as all custom buttons are rendered already and we don't need internal buttons
       return <Block name="controls">{buttons}</Block>;
-    } else if (isReview) {
+    }
+
+    if (isReview) {
       const customRejectButtons = toArray(customButtons.get("reject"));
       const hasCustomReject = customRejectButtons.length > 0;
       const originalRejectButton = RejectButtonDefinition;

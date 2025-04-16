@@ -33,13 +33,7 @@ export const Actions = ({ store }) => {
         </Tooltip>
       )}
       <Tooltip alignment="top-left" title="Settings">
-        <Button
-          type="text"
-          aria-label="Settings"
-          size="small"
-          variant="neutral"
-          onClick={() => store.toggleSettings()}
-        >
+        <Button type="text" aria-label="Settings" size="small" variant="neutral" onClick={() => store.toggleSettings()}>
           <IconSettings />
         </Button>
       </Tooltip>
