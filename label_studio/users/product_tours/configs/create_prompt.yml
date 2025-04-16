@@ -1,7 +1,7 @@
 steps:
 - target: body
   placement: center
-  title: '<div><img src="/static/images/prompts-tour-banner.svg" style="width: 100%; margin-bottom: 16px;"/><div style="font-size: 24px; color: var(--grape_500)">Auto-Label with AI</div></div>'
+  title: '<div><img src="/static/images/prompts-tour-banner.svg" style="width: 100%; margin-bottom: 16px;"/><div style="font-size: 24px; color: var(--color-primary-content)">Auto-Label with AI</div></div>'
   content: '<div style="width: 100%">We’ve set up an initial prompt and supplied some OpenAI credits to help you get started with auto-labeling your project.<br/><br/>Let us show you around!</div>'
 
 - target: .cm-editor
