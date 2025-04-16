@@ -210,6 +210,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                       onClick={stepHandlerWrapper(onStepBackward, settings.stepSize)}
                       hotkey={settings?.stepAltBack}
                       disabled={startReached}
+                      aria-label="Hop backward"
                     >
                       {<IconPrev />}
                     </ControlButton>
@@ -218,7 +219,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={stepHandlerWrapper(onStepBackward)}
                     hotkey={settings?.stepBackHotkey}
                     disabled={startReached}
-                    aria-label="Audio seek backward"
+                    aria-label="Seek backward"
                   >
                     <IconChevronLeft />
                   </ControlButton>
@@ -230,7 +231,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={() => onRewind?.()}
                     disabled={startReached}
                     hotkey={settings?.skipToBeginning}
-                    aria-label="Audio rewind"
+                    aria-label="Skip to start"
                   >
                     <IconRewind />
                   </ControlButton>
@@ -238,6 +239,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={() => onRewind?.(altHopSize)}
                     disabled={startReached}
                     hotkey={settings?.hopBackward}
+                    aria-label="Media rewind"
                   >
                     <IconBackward />
                   </ControlButton>
@@ -261,7 +263,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={stepHandlerWrapper(onStepForward)}
                     hotkey={settings?.stepForwardHotkey}
                     disabled={endReached}
-                    aria-label="Audio seek forward"
+                    aria-label="Seek backward"
                   >
                     <IconChevronRight />
                   </ControlButton>
@@ -270,6 +272,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                       disabled={endReached}
                       onClick={stepHandlerWrapper(onStepForward, settings.stepSize)}
                       hotkey={settings?.stepAltForward}
+                      aria-label="Hop backward"
                     >
                       <IconNext />
                     </ControlButton>
@@ -282,12 +285,12 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={() => onForward?.(altHopSize)}
                     disabled={endReached}
                     hotkey={settings?.hopForward}
-                    aria-label="Audio forward"
+                    aria-label="Media fast forward"
                   >
                     <IconForward />
                   </ControlButton>
                   <ControlButton
-                    aria-label="Audio fast forward"
+                    aria-label="Skip to end"
                     onClick={() => onForward?.()}
                     disabled={endReached}
                     hotkey={settings?.skipToEnd}

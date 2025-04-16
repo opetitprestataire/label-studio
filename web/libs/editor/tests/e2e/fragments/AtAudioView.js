@@ -18,9 +18,9 @@ module.exports = {
   _hideTimelineButtonSelector: ".lsf-audio-config__buttons > .lsf-audio-config__menu-button:nth-child(1)",
   _hideWaveformButtonSelector: ".lsf-audio-config__buttons > .lsf-audio-config__menu-button:nth-child(2)",
   _audioElementSelector: '[data-testid="waveform-audio"]',
-  _seekBackwardButtonSelector: "button[aria-label='Audio seek backward']",
+  _seekBackwardButtonSelector: "button[aria-label='Seek backward']",
   _playButtonSelector: "button[aria-label='Play']",
-  _seekForwardButtonSelector: "button[aria-label='Audio seek forward']",
+  _seekForwardButtonSelector: "button[aria-label='Seek forward']",
   _errorSelector: '[data-testid="error:audio"]',
   _httpErrorSelector: '[data-testid="error:http"]',
 
