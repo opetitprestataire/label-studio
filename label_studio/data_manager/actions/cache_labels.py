@@ -68,9 +68,13 @@ def extract_labels(annotation, control_tag):
                 if (
                     isinstance(region['value'][key], list)
                     and region['value'][key]
-                    and isinstance(region['value'][key][0], str)
+                    and isinstance(region['value'][key], list)
                 ):
-                    labels.extend(region['value'][key])
+                    for elem in region['value'][key]:
+                        if isinstance(elem, str): 
+                            labels.append(elem)  # eg Choices fields
+                        elif isinstance(elem, list):
+                            labels.append(elem[-1])  # Taxonomy fields
                     break
     return labels
 
