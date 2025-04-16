@@ -2,22 +2,28 @@ import { render, fireEvent } from "@testing-library/react";
 import { Provider } from "mobx-react";
 import { Controls } from "../Controls";
 
-jest.mock("@humansignal/ui", () => ({
-  Tooltip: ({ children }: { children: React.ReactNode }) => {
-    return <div data-testid="tooltip">{children}</div>;
-  },
-  Userpic: ({ children }: { children: React.ReactNode }) => {
-    return (
-      <div
-        data-testid="userpic"
-        className="userpic--tBKCQ"
-        style={{ background: "rgb(155, 166, 211)", color: "rgb(0, 0, 0)" }}
-      >
-        {children}
-      </div>
-    );
-  },
-}));
+jest.mock("@humansignal/ui", () => {
+  const { forwardRef } = jest.requireActual("react");
+  return {
+    Button: forwardRef(({ children, ...props }: { children: React.ReactNode }) => {
+      return <button {...props} data-testid="button">{children}</button>;
+    }),
+    Tooltip: ({ children }: { children: React.ReactNode }) => {
+      return <div data-testid="tooltip">{children}</div>;
+    },
+    Userpic: ({ children }: { children: React.ReactNode }) => {
+      return (
+        <div
+          data-testid="userpic"
+          className="userpic--tBKCQ"
+          style={{ background: "rgb(155, 166, 211)", color: "rgb(0, 0, 0)" }}
+        >
+          {children}
+        </div>
+      );
+    },
+  };
+});
 const mockStore = {
   hasInterface: jest.fn(),
   isSubmitting: false,
