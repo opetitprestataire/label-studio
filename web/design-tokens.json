@@ -616,19 +616,19 @@
             "figmaId": "VariableID:1525:3724",
             "modes": {
               "light": "{@primitives.$color.$grape.700}",
-              "dark": "{@primitives.$color.$grape.500}"
+              "dark": "{@primitives.$color.$grape.400}"
             }
           }
         },
         "content-hover": {
           "$type": "color",
-          "$value": "{@primitives.$color.$grape.500}",
+          "$value": "{@primitives.$color.$grape.400}",
           "$description": "",
           "$variable_metadata": {
             "name": "color/primary/content-hover",
             "figmaId": "VariableID:3420:32388",
             "modes": {
-              "light": "{@primitives.$color.$grape.500}",
+              "light": "{@primitives.$color.$grape.400}",
               "dark": "{@primitives.$color.$grape.300}"
             }
           }
@@ -655,7 +655,7 @@
             "figmaId": "VariableID:3367:1056",
             "modes": {
               "light": "{@primitives.$color.$grape.500}",
-              "dark": "{@primitives.$color.$grape.600}"
+              "dark": "{@primitives.$color.$grape.400}"
             }
           }
         },
@@ -917,7 +917,7 @@
             "figmaId": "VariableID:3368:5634",
             "modes": {
               "light": "{@primitives.$color.$persimmon.500}",
-              "dark": "{@primitives.$color.$persimmon.500}"
+              "dark": "{@primitives.$color.$persimmon.400}"
             }
           }
         },
@@ -1166,7 +1166,7 @@
             "figmaId": "VariableID:3368:5635",
             "modes": {
               "light": "{@primitives.$color.$kale.500}",
-              "dark": "{@primitives.$color.$kale.500}"
+              "dark": "{@primitives.$color.$kale.400}"
             }
           }
         },
@@ -1415,7 +1415,7 @@
             "figmaId": "VariableID:3368:5637",
             "modes": {
               "light": "{@primitives.$color.$canteloupe.500}",
-              "dark": "{@primitives.$color.$canteloupe.500}"
+              "dark": "{@primitives.$color.$canteloupe.400}"
             }
           }
         },
