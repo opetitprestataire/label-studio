@@ -1,5 +1,6 @@
 import base64
 import logging
+import socket
 from typing import Union
 from urllib.parse import unquote
 
@@ -17,6 +18,45 @@ from tasks.models import Task
 from label_studio.io_storages.functions import get_storage_by_url
 
 logger = logging.getLogger(__name__)
+
+
+class TimeoutRangedFileResponse(RangedFileResponse):
+    """
+    RangedFileResponse with configurable timeout and buffer size to prevent
+    worker blocking indefinitely during streaming responses.
+    """
+    def __init__(self, request, file_obj, content_type=None, buffer_size=8192, timeout=300):
+        super().__init__(request, file_obj, content_type)
+        self.buffer_size = buffer_size
+        self.timeout = timeout
+        
+        # Only set socket timeout if we have a real file with a descriptor and connection
+        try:
+            file_obj.fileno()
+            socket_obj = file_obj.raw.connection if hasattr(file_obj, 'raw') and hasattr(file_obj.raw, 'connection') else None
+            if socket_obj:
+                socket_obj.settimeout(self.timeout)
+        except (AttributeError, ValueError, IOError):
+            # Not all file objects will have fileno() or a socket connection
+            pass
+
+    def _set_streaming_content(self, value):
+        if self.timeout:
+            self.streaming_content = self._timeout_wrapper(value)
+        else:
+            self.streaming_content = value
+
+    def _timeout_wrapper(self, iterator):
+        """Wrap the iterator with timeout handling"""
+        try:
+            for chunk in iterator:
+                yield chunk
+        except socket.timeout:
+            logger.warning(f"Socket timeout after {self.timeout}s while streaming response")
+        except ConnectionError as e:
+            logger.warning(f"Connection error while streaming response: {e}")
+        except Exception as e:
+            logger.error(f"Error during streaming response: {e}", exc_info=True)
 
 
 class ResolveStorageUriAPIMixin:
@@ -96,7 +136,18 @@ class ResolveStorageUriAPIMixin:
             # If we have the data and content type, return the response
             if data is not None:
                 content_type = content_type or 'application/octet-stream'
-                response = RangedFileResponse(request, data, content_type=content_type)
+                
+                # Use timeout enabled response with configurable buffer size
+                buffer_size = getattr(settings, 'RESOLVER_PROXY_BUFFER_SIZE', 8192)
+                timeout = getattr(settings, 'RESOLVER_PROXY_TIMEOUT', 300)
+                
+                response = TimeoutRangedFileResponse(
+                    request, 
+                    data, 
+                    content_type=content_type,
+                    buffer_size=buffer_size,
+                    timeout=timeout
+                )
 
                 # Set cache control with moderate timeout
                 max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT  # 1 hour cache
