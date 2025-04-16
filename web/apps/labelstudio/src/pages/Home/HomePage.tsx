@@ -92,7 +92,7 @@ export const HomePage: Page = () => {
               return (
                 <Button
                   key={action.title}
-                  className="flex-grow-0 text-16/24 text-primary-content text-left justify-start min-w-[250px] [&_svg]:w-6 [&_svg]:h-6 pl-2"
+                  rawClassName="flex-grow-0 text-16/24 gap-2 text-primary-content text-left min-w-[250px] [&_svg]:w-6 [&_svg]:h-6 pl-2"
                   onClick={handleActions(action.type)}
                 >
                   <action.icon className="text-primary-icon" />
