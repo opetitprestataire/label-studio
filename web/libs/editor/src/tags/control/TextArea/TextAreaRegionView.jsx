@@ -83,8 +83,6 @@ const HtxTextAreaResultLine = forwardRef(
             aria-label="Delete Region"
             tag={Button}
             leading={<IconTrash />}
-            size="small"
-            type="text"
             onClick={() => {
               onDelete(idx);
             }}

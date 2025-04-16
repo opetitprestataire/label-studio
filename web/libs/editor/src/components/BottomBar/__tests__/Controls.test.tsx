@@ -6,7 +6,11 @@ jest.mock("@humansignal/ui", () => {
   const { forwardRef } = jest.requireActual("react");
   return {
     Button: forwardRef(({ children, ...props }: { children: React.ReactNode }) => {
-      return <button {...props} data-testid="button">{children}</button>;
+      return (
+        <button {...props} data-testid="button">
+          {children}
+        </button>
+      );
     }),
     Tooltip: ({ children }: { children: React.ReactNode }) => {
       return <div data-testid="tooltip">{children}</div>;
