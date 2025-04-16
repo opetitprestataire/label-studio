@@ -75,6 +75,7 @@
     border-bottom-left-radius: var(--corner-radius-small);
     border-bottom-right-radius: var(--corner-radius-small);
     overflow: hidden;
+    color: var(--color-neutral-content-subtler);
   }
 
   &_fullscreen &__content {
