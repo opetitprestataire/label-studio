@@ -8,7 +8,6 @@ from io_storages.proxy_api import (
     ProjectResolveStorageUri,
     ResolveStorageUriAPIMixin,
     TaskResolveStorageUri,
-    TimeoutRangedFileResponse,
 )
 from projects.models import Project
 from rest_framework import status
@@ -133,7 +132,7 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
             mock_response = MagicMock()
             mock_response.headers = {}
             mock_response_class.return_value = mock_response
-            
+
             result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_project, mock_storage)
 
             mock_storage.get_bytes_stream.assert_called_once_with('uri')
