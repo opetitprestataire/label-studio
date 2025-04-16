@@ -497,6 +497,7 @@ const Configurator = ({
                 autoCloseTags={true}
                 smartIndent={true}
                 detach
+                border
                 extensions={["hint", "xml-hint"]}
                 options={{
                   mode: "xml",
