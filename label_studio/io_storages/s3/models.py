@@ -136,11 +136,11 @@ class S3StorageMixin(models.Model):
             # Get the object from S3
             object_response = client.get_object(Bucket=bucket_name, Key=key)
             content_type = object_response.get('ContentType')
-            data = io.BytesIO(object_response['Body'].read())
-            return data, content_type
+            # data = io.BytesIO(object_response['Body'].read())
+            return object_response['Body'], content_type
 
         except Exception as e:
-            logger.error(f'Error getting bytes from S3 for uri {uri}: {e}', exc_info=True)
+            logger.error(f'Error getting stream from S3 for uri {uri}: {e}', exc_info=True)
             return None, None
 
     class Meta:
