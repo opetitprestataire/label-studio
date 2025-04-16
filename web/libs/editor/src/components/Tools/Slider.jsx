@@ -1,6 +1,6 @@
 import { Component, Fragment } from "react";
 import { Slider } from "antd";
-import { Button,cn, Tooltip } from "@humansignal/ui";
+import { Button, cn, Tooltip } from "@humansignal/ui";
 import { observer } from "mobx-react";
 
 import styles from "./Styles.module.scss";
