@@ -218,6 +218,17 @@
       border-color: var(--border-color-hover);
     }
   }
+
+  &:disabled:not(.waiting),
+  &:disabled:not(.waiting):hover,
+  &:disabled:not(.waiting):focus,
+  &:disabled:not(.waiting):active {
+    --background-color-hover: transparent;
+    --background-color-active: transparent;
+    --border-color-hover: transparent;
+    --background-color: transparent;
+    --border-color: transparent;
+  }
 }
 
 /// SIZES

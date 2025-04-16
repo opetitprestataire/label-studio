@@ -38,9 +38,9 @@
 }
 
 .sizeLarge {
-  grid-gap: 32px;
+  grid-gap: var(--spacing-wider);
 }
 
 .sizeSmall {
-  grid-gap: 12px;
+  grid-gap: var(--spacing-tight);
 }

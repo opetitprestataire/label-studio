@@ -425,7 +425,6 @@ Hotkey.Tooltip = inject("store")(
     const hotkey = Hotkey.keymap[name as keyof typeof Hotkey.keymap];
     const enabled = store.settings.enableTooltips && store.settings.enableHotkeys;
 
-    console.log(hotkey, enabled);
     if (isDefined(hotkey)) {
       const shortcut = isMacOS() ? (hotkey.mac ?? hotkey.key) : hotkey.key;
 
