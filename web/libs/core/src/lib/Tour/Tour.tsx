@@ -121,9 +121,9 @@ export const Tour: React.FC<TourProps> = ({ name, autoStart = false, delay = 0, 
           width: "468px",
         },
         options: {
-          primaryColor: "var(--primary_link)",
-          textColor: "var(--sand_900)",
-          overlayColor: "rgba(0, 0, 0, 0.5)",
+          primaryColor: "var(--color-primary-surface)",
+          textColor: "var(--color-neutral-content)",
+          overlayColor: "rgba(var(--color-neutral-shadow) / 50%)",
         },
       }}
       hideCloseButton={true}
