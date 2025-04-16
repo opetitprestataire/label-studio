@@ -110,7 +110,7 @@ const Button = forwardRef(
     }: PropsWithChildren<ButtonProps>,
     ref,
   ) => {
-    const buttonClassName = buttonVariant({ variant, look, size, waiting, align }, className)
+    const buttonClassName = buttonVariant({ variant, look, size, waiting, align }, className);
     const buttonBody = (
       <button
         {...buttonProps}

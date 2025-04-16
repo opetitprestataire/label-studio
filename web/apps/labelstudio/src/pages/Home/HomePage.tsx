@@ -1,4 +1,4 @@
-import { IconExternal, IconFolderAdd, IconFolderOpen, IconHumanSignal, IconUserAdd } from "@humansignal/icons";
+import { IconExternal, IconFolderAdd, IconHumanSignal, IconUserAdd, IconFolderOpen } from "@humansignal/icons";
 import { Heading, Sub } from "@humansignal/typography";
 import { Button, SimpleCard, Spinner } from "@humansignal/ui";
 import { useQuery } from "@tanstack/react-query";
