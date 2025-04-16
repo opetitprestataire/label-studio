@@ -84,3 +84,9 @@ a:hover {
     --chart-5: 340 75% 55%;
   }
 }
+
+@layer utilities {
+  .text-shadow-button {
+    text-shadow: 0 1px 1px rgb(var(--black-raw) / 15%);
+  }
+}
