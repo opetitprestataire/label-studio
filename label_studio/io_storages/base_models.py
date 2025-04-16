@@ -569,7 +569,6 @@ class ExportStorage(Storage, ProjectStorageMixin):
         self.cached_user = self.project.organization.created_by
 
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            futures = []
             # Batch annotations so that we update progress before having to submit every future.
             # Updating progress in thread requires coordinating on count and db writes, so just
             # batching to keep it simpler.
@@ -579,6 +578,7 @@ class ExportStorage(Storage, ProjectStorageMixin):
                 ),
                 settings.STORAGE_EXPORT_CHUNK_SIZE,
             ):
+                futures = []
                 for annotation in annotation_batch:
                     futures.append(executor.submit(self.save_annotation, annotation))
 
