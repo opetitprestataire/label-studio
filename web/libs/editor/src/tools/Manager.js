@@ -43,6 +43,10 @@ class ToolsManager {
     return window.localStorage.getItem(`selected-tool:${this.name}`);
   }
 
+  get root() {
+    return root;
+  }
+
   get obj() {
     return root.annotationStore.names.get(this.name);
   }
