@@ -16,7 +16,7 @@ const SaveAndLeaveButton = ({ onSave, text = "Save and Leave" }: SaveAndLeaveBut
     setSaving(false);
   }, [onSave]);
   return (
-    <Button onClick={saveHandler} size="small" waiting={saving}>
+    <Button size="small" onClick={saveHandler} waiting={saving}>
       {text}
     </Button>
   );
@@ -57,11 +57,12 @@ export const unsavedChangesModal = ({
     footer: (
       <Space align="end">
         <Button
+          look="outlined"
+          size="small"
           onClick={() => {
             onCancel?.();
             modalInstance?.close();
           }}
-          size="compact"
           autoFocus
         >
           {cancelText ?? "Cancel"}
@@ -69,12 +70,13 @@ export const unsavedChangesModal = ({
 
         {onDiscard && (
           <Button
+            variant="negative"
+            look="outlined"
             onClick={() => {
               onDiscard?.();
               modalInstance?.close();
             }}
-            size="compact"
-            look="danger"
+            size="small"
           >
             {discardText ?? "Discard and leave"}
           </Button>

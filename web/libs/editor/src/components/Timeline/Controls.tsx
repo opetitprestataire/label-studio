@@ -218,6 +218,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={stepHandlerWrapper(onStepBackward)}
                     hotkey={settings?.stepBackHotkey}
                     disabled={startReached}
+                    aria-label="Audio seek backward"
                   >
                     <IconChevronLeft />
                   </ControlButton>
@@ -229,6 +230,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={() => onRewind?.()}
                     disabled={startReached}
                     hotkey={settings?.skipToBeginning}
+                    aria-label="Audio rewind"
                   >
                     <IconRewind />
                   </ControlButton>
@@ -247,6 +249,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
               onClick={handlePlay}
               hotkey={settings?.playpauseHotkey}
               hotkeyScope={Hotkey.ALL_SCOPES}
+              aria-label="Play"
             >
               {playing ? <IconTimelinePause /> : <IconTimelinePlay />}
             </ControlButton>
@@ -258,9 +261,9 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={stepHandlerWrapper(onStepForward)}
                     hotkey={settings?.stepForwardHotkey}
                     disabled={endReached}
+                    aria-label="Audio seek forward"
                   >
                     <IconChevronRight />
-                    {}
                   </ControlButton>
                   {settings?.stepSize && !disableFrames && (
                     <ControlButton
@@ -279,10 +282,16 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={() => onForward?.(altHopSize)}
                     disabled={endReached}
                     hotkey={settings?.hopForward}
+                    aria-label="Audio forward"
                   >
                     <IconForward />
                   </ControlButton>
-                  <ControlButton onClick={() => onForward?.()} disabled={endReached} hotkey={settings?.skipToEnd}>
+                  <ControlButton
+                    aria-label="Audio fast forward"
+                    onClick={() => onForward?.()}
+                    disabled={endReached}
+                    hotkey={settings?.skipToEnd}
+                  >
                     <IconFastForward />
                   </ControlButton>
                 </>
