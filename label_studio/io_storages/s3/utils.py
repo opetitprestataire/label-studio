@@ -2,6 +2,7 @@
 """
 import base64
 import fnmatch
+import io
 import logging
 import re
 from urllib.parse import urlparse
@@ -169,3 +170,111 @@ def catch_and_reraise_from_none(func):
                 raise e
 
     return wrapper
+
+
+class S3StreamWrapper(io.BufferedIOBase):
+    """A seekable wrapper for S3 streaming body.
+
+    This implementation supports range requests by creating new S3 requests
+    for backward seeks, making it compatible with RangedFileResponse.
+    """
+
+    def __init__(self, client, bucket, key, initial_stream, content_length, chunk_size=8192):
+        self.client = client
+        self.bucket = bucket
+        self.key = key
+        self.streaming_body = initial_stream
+        self.content_length = content_length
+        self.chunk_size = chunk_size
+        self._pos = 0
+        self._eof = False
+
+    def readable(self):
+        return True
+
+    def seekable(self):
+        return True
+
+    def writable(self):
+        return False
+
+    def seek(self, offset, whence=io.SEEK_SET):
+        if whence == io.SEEK_SET:
+            if offset < 0:
+                raise ValueError('Cannot seek to negative position')
+
+            # Handle backward seeking by making a new request
+            if offset < self._pos:
+                self._pos = offset
+                range_header = f'bytes={offset}-'
+                try:
+                    response = self.client.get_object(Bucket=self.bucket, Key=self.key, Range=range_header)
+                    self.streaming_body = response['Body']
+                    self._eof = False
+                except Exception as e:
+                    logger.error(f'Error making ranged request: {e}')
+                    raise io.UnsupportedOperation('Failed to seek') from e
+            # Handle forward seeking
+            elif offset > self._pos:
+                # Read and discard data until we reach the desired position
+                self._read_until_position(offset)
+
+            return self._pos
+        elif whence == io.SEEK_CUR:
+            return self.seek(self._pos + offset, io.SEEK_SET)
+        elif whence == io.SEEK_END:
+            if self.content_length is None:
+                raise io.UnsupportedOperation('Cannot seek from end without content length')
+            return self.seek(self.content_length + offset, io.SEEK_SET)
+        else:
+            raise ValueError(f'Invalid whence value: {whence}')
+
+    def _read_until_position(self, position):
+        """Read and discard data until reaching the specified position."""
+        bytes_to_skip = position - self._pos
+        while bytes_to_skip > 0 and not self._eof:
+            skip_size = min(bytes_to_skip, self.chunk_size)
+            data = self.streaming_body.read(skip_size)
+            if not data:
+                self._eof = True
+                break
+            bytes_to_skip -= len(data)
+            self._pos += len(data)
+        return self._pos
+
+    def tell(self):
+        return self._pos
+
+    def read(self, size=-1):
+        if size < 0:
+            # Read to the end of file
+            chunks = []
+            while not self._eof:
+                chunk = self.streaming_body.read(self.chunk_size)
+                if not chunk:
+                    self._eof = True
+                    break
+                chunks.append(chunk)
+                self._pos += len(chunk)
+            return b''.join(chunks)
+
+        # Read exactly size bytes
+        result = bytearray()
+        bytes_remaining = size
+
+        while bytes_remaining > 0 and not self._eof:
+            chunk = self.streaming_body.read(min(bytes_remaining, self.chunk_size))
+            if not chunk:
+                self._eof = True
+                break
+            result.extend(chunk)
+            bytes_remaining -= len(chunk)
+            self._pos += len(chunk)
+
+        return bytes(result)
+
+    def read1(self, size=-1):
+        """Read up to size bytes, respecting buffer boundaries."""
+        if size < 0:
+            size = self.chunk_size
+        return self.read(size)

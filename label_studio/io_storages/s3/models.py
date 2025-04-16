@@ -1,6 +1,5 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
-import io
 import json
 import logging
 import re
@@ -22,7 +21,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.s3.utils import catch_and_reraise_from_none, get_client_and_resource, resolve_s3_url
+from io_storages.s3.utils import S3StreamWrapper, catch_and_reraise_from_none, get_client_and_resource, resolve_s3_url
 from io_storages.utils import storage_can_resolve_bucket_url
 from tasks.models import Annotation
 from tasks.validation import ValidationError as TaskValidationError
@@ -136,8 +135,18 @@ class S3StorageMixin(models.Model):
             # Get the object from S3
             object_response = client.get_object(Bucket=bucket_name, Key=key)
             content_type = object_response.get('ContentType')
-            # data = io.BytesIO(object_response['Body'].read())
-            return object_response['Body'], content_type
+            content_length = int(object_response.get('ContentLength', 0))
+
+            # Create a properly seekable stream wrapper
+            stream = S3StreamWrapper(
+                client=client,
+                bucket=bucket_name,
+                key=key,
+                initial_stream=object_response['Body'],
+                content_length=content_length,
+            )
+
+            return stream, content_type
 
         except Exception as e:
             logger.error(f'Error getting stream from S3 for uri {uri}: {e}', exc_info=True)

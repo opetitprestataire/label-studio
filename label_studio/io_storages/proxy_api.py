@@ -27,27 +27,28 @@ class TimeoutRangedFileResponse(RangedFileResponse):
     """
 
     def __init__(self, request, file_obj, content_type=None, buffer_size=8192, timeout=300):
-        super().__init__(request, file_obj, content_type)
-        self.buffer_size = buffer_size
-        self.timeout = timeout
+        # Initialize attributes before calling super().__init__
+        self._timeout = timeout
+        self._buffer_size = buffer_size
 
-        # Only set socket timeout if we have a real file with a descriptor and connection
+        # Call parent initialization
+        super().__init__(request, file_obj, content_type)
+
+        # Apply timeout wrapper after parent initializes streaming
+        if hasattr(self, '_streaming_content') and self._timeout:
+            self._streaming_content = self._timeout_wrapper(self._streaming_content)
+
+        # Set socket timeout if possible
         try:
             file_obj.fileno()
             socket_obj = (
                 file_obj.raw.connection if hasattr(file_obj, 'raw') and hasattr(file_obj.raw, 'connection') else None
             )
             if socket_obj:
-                socket_obj.settimeout(self.timeout)
+                socket_obj.settimeout(self._timeout)
         except (AttributeError, ValueError, IOError):
             # Not all file objects will have fileno() or a socket connection
             pass
-
-    def _set_streaming_content(self, value):
-        if self.timeout:
-            self.streaming_content = self._timeout_wrapper(value)
-        else:
-            self.streaming_content = value
 
     def _timeout_wrapper(self, iterator):
         """Wrap the iterator with timeout handling"""
@@ -55,7 +56,7 @@ class TimeoutRangedFileResponse(RangedFileResponse):
             for chunk in iterator:
                 yield chunk
         except socket.timeout:
-            logger.warning(f'Socket timeout after {self.timeout}s while streaming response')
+            logger.warning(f'Socket timeout after {self._timeout}s while streaming response')
         except ConnectionError as e:
             logger.warning(f'Connection error while streaming response: {e}')
         except Exception as e:
