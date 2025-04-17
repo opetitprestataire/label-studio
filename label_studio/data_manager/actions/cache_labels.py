@@ -20,7 +20,8 @@ def cache_labels_job(project, queryset, **kwargs):
     control_tag = request_data.get('custom_control_tag') or request_data.get('control_tag')
     with_counters = request_data.get('with_counters', 'Yes').lower() == 'yes'
     label_interface = LabelInterface(project.label_config)
-
+    label_interface_tags = {tag.name:tag for tag in label_interface.find_tags('control')}
+    
     if source == 'annotations':
         column_name = 'cache'
     else:
@@ -40,7 +41,7 @@ def cache_labels_job(project, queryset, **kwargs):
         task_labels = []
         annotations = source_class.objects.filter(task=task).only('result')
         for annotation in annotations:
-            labels = extract_labels(annotation, control_tag, label_interface)
+            labels = extract_labels(annotation, control_tag, label_interface_tags)
             task_labels.extend(labels)
 
         # cache labels in separate data column
@@ -59,7 +60,7 @@ def cache_labels_job(project, queryset, **kwargs):
     return {'response_code': 200, 'detail': f'Updated {len(tasks)} tasks'}
 
 
-def extract_labels(annotation, control_tag, label_interface=None):
+def extract_labels(annotation, control_tag, label_interface_tags=None):
     labels = []
     for region in annotation.result:
         # find regions with specific control tag name or just all regions if control tag is None
@@ -72,17 +73,18 @@ def extract_labels(annotation, control_tag, label_interface=None):
                     if key == 'taxonomy':
                         showFullPath = 'true'
                         pathSeparator = '/'
-                        if label_interface is not None and label_interface.find_tags('control', match_fn=lambda tag: tag.name==region['from_name']):
+                        if label_interface_tags is not None and region['from_name'] in label_interface_tags:
                             # if from_name is not a custom_control tag, then we can try to fetch taxonomy formatting params
-                            showFullPath = label_interface.get_control(region['from_name']).attr.get('showFullPath', 'false')
-                            pathSeparator = label_interface.get_control(region['from_name']).attr.get('pathSeparator', '/')
+                            label_interface_tag = label_interface_tags[region['from_name']]
+                            showFullPath = label_interface_tag.attr.get('showFullPath', 'false')
+                            pathSeparator = label_interface_tag.attr.get('pathSeparator', '/')
                             
                         if showFullPath == 'false':
                             for elems in region['value'][key]:
                                 labels.append( elems[-1] )  # just the leaf node of a taxonomy selection
                         else:
                             for elems in region['value'][key]:
-                                labels.append( pathSeparator.join(elems) )  # the full deliminated taxonomy path
+                                labels.append( pathSeparator.join(elems) )  # the full delimited taxonomy path
 
                     # other control tag types like Choices & TextAreas
                     elif isinstance(region['value'][key][0], str):
