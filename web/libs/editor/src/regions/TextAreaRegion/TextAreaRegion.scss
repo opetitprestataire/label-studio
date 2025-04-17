@@ -72,3 +72,21 @@
     }
   }
 }
+
+:global(.ant-typography-edit-content .ant-input) {
+  background-color: var(--color-neutral-background);
+  color: var(--color-neutral-content);
+  border-color: var(--color-neutral-border);
+}
+
+:global(.ant-typography-edit-content .ant-input:focus) {
+  border-color: var(--color-neutral-border-bold);
+  box-shadow: 0 0 0 4px var(--color-primary-focus-outline);
+}
+
+:global(.ant-typography-edit-content .ant-input:focus-visible) {
+  border-color: var(--color-neutral-border-bold);
+  box-shadow: 0 0 0 4px var(--color-primary-focus-outline);
+}
+
+

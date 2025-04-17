@@ -44,3 +44,75 @@
   border-color: var(--color-neutral-border);
   border-radius: var(--corner-radius-smaller);
 }
+
+:global(.ant-form-item .ant-form-item-control-input-content input) {
+  background: var(--color-neutral-surface);
+  color: var(--color-neutral-content);
+  border-color: var(--color-neutral-border);
+  border-radius: var(--corner-radius-smaller);
+}
+
+:global(.ant-form-item .ant-form-item-control-input-content input) {
+  background-color: var(--color-neutral-background);
+  color: var(--color-neutral-content);
+  border-color: var(--color-neutral-border);
+}
+
+:global(.ant-form-item .ant-form-item-control-input-content input:focus) {
+  border-color: var(--color-neutral-border-bold);
+  box-shadow: 0 0 0 4px var(--color-primary-focus-outline);
+}
+
+:global(.ant-form-item .ant-form-item-control-input-content input:focus-visible) {
+  border-color: var(--color-neutral-border-bold);
+  box-shadow: 0 0 0 4px var(--color-primary-focus-outline);
+}
+
+:global(.ant-form-item .ant-form-item-control-input-content input) {
+  background: var(--color-neutral-surface);
+  color: var(--color-neutral-content);
+  border-color: var(--color-neutral-border);
+  border-radius: var(--corner-radius-smaller);
+}
+
+:global(.ant-form-item .ant-form-item-control-input-content textarea) {
+  background: var(--color-neutral-surface);
+  color: var(--color-neutral-content);
+  border-color: var(--color-neutral-border);
+  border-radius: var(--corner-radius-smaller);
+}
+
+:global(.ant-form-item .ant-form-item-control-input-content textarea) {
+  background-color: var(--color-neutral-background);
+  color: var(--color-neutral-content);
+  border-color: var(--color-neutral-border);
+}
+
+:global(.ant-form-item .ant-form-item-control-input-content textarea:focus) {
+  border-color: var(--color-neutral-border-bold);
+  box-shadow: 0 0 0 4px var(--color-primary-focus-outline);
+}
+
+:global(.ant-form-item .ant-form-item-control-input-content textarea:focus-visible) {
+  border-color: var(--color-neutral-border-bold);
+  box-shadow: 0 0 0 4px var(--color-primary-focus-outline);
+}
+
+:global(.ant-form-item .ant-form-item-control .ant-btn-primary) {
+  background-color: var(--color-primary-surface);
+  color: var(--color-primary-surface-content);
+  border-color: var(--color-primary-border);
+  transition: all 150ms ease-out;
+}
+
+:global(.ant-form-item .ant-form-item-control .ant-btn-primary:hover) {
+  background-color: var(--color-primary-surface-hover);
+  color: var(--color-primary-surface-content);
+  border-color: var(--color-primary-border);
+}
+
+:global(.ant-form-item .ant-form-item-control .ant-btn-primary:active) {
+  background-color: var(--color-primary-surface-active);
+  color: var(--color-primary-surface-content);
+  border-color: var(--color-primary-border);
+}
