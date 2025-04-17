@@ -154,3 +154,11 @@ body {
     min-width: auto;
   }
 }
+
+:global(.ant-result-title) {
+  color: var(--color-neutral-content);
+}
+
+:global(.ant-result-success .ant-result-icon>.anticon) {
+  color: var(--color-positive-icon);
+}
