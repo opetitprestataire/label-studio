@@ -100,7 +100,7 @@
   --project-title-icon-primary-color: rgba(var(--black-raw), 0.35);
   --project-title-icon-alternate-color: rgba(var(--white-raw), 0.35);
   --shadow-intensity: 1;
-
+  --color-accent-gradient: var(--color-accent-canteloupe-base, linear-gradient(109deg, var(--color-accent-canteloupe-base) 0%, var(--color-accent-persimmon-base) 51.56%, var(--color-accent-plum-base) 100%));
 }
 
 [data-color-scheme="dark"] {
