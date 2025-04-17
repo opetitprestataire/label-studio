@@ -88,7 +88,7 @@ def extract_labels(annotation, control_tag, label_interface_tags=None):
 
                     # other control tag types like Choices & TextAreas
                     elif isinstance(region['value'][key][0], str):
-                        labels.extend( region['value'][key] ) 
+                        labels.extend(region['value'][key]) 
                         
                     break
     return labels
