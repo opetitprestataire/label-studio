@@ -6,7 +6,6 @@ import { cn } from "../../utils/bem";
 import { Spinner } from "../Common/Spinner";
 import { DataManager } from "../DataManager/DataManager";
 import { Labeling } from "../Label/Label";
-import "@humansignal/ui/src/tailwind.css";
 import "./App.scss";
 
 class ErrorBoundary extends React.Component {

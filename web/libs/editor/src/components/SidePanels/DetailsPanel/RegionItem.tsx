@@ -156,9 +156,9 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
         </RegionActionButton>
         <RegionActionButton
           variant="negative"
-          onClick={region.toggleHidden}
           aria-label="Delete selected region"
           disabled={region.isReadOnly()}
+          onClick={() => annotation.deleteRegion(region)}
         >
           <IconTrash />
         </RegionActionButton>
