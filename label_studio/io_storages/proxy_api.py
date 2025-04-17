@@ -1,6 +1,5 @@
 import base64
 import logging
-import socket
 import time
 from typing import Union
 from urllib.parse import unquote
@@ -102,14 +101,16 @@ class ResolveStorageUriAPIMixin:
                 current_time = time.monotonic()
                 # Check if we've exceeded our time limit
                 if current_time >= deadline:
-                    logger.warning(f'Time limit ({timeout}s) reached after yielding {chunks_yielded} chunks ({total_bytes} bytes)')
+                    logger.warning(
+                        f'Time limit ({timeout}s) reached after yielding {chunks_yielded} chunks ({total_bytes} bytes)'
+                    )
                     break
-                
+
                 # Track statistics
                 chunks_yielded += 1
                 total_bytes += len(chunk)
                 yield chunk
-                
+
         except Exception as e:
             logger.error(f'Error during time-limited streaming: {e}', exc_info=True)
         finally:
@@ -118,21 +119,23 @@ class ResolveStorageUriAPIMixin:
                 stream_body.close()
             except Exception as e:
                 logger.debug(f"Couldn't close stream: {e}")
-            logger.debug(f'Stream processing finished after {elapsed:.2f}s, yielded {chunks_yielded} chunks ({total_bytes} bytes)')
+            logger.debug(
+                f'Stream processing finished after {elapsed:.2f}s, yielded {chunks_yielded} chunks ({total_bytes} bytes)'
+            )
 
     def override_range_header(self, request):
         """
         Process and override Range header to limit stream size.
-        This function does a trick: limit stream chunk sizes to MAX_RANGE, 
+        This function does a trick: limit stream chunk sizes to MAX_RANGE,
         this way we free sync LSE workers for hanging too long,
         because the connection will be closed after the MAX_RANGE chunk is over.
-        
+
         This function handles several range request formats:
         1 'bytes=0-' and 'bytes=0-0': Passes through unchanged (header probes)
         2 'bytes=123456-' and 'bytes=123456-0': Limits to MAX_RANGE bytes
         3 'bytes=123456-789012': Limits the range if it exceeds MAX_RANGE
         4 'bytes=-1024': Handles negative start (not supported)
-        
+
         Returns:
             str: Modified range header in format "bytes=start-end" or None if no range header
         """
@@ -142,15 +145,15 @@ class ResolveStorageUriAPIMixin:
         if rng := request.headers.get('Range'):
             start, end = 0, ''
             try:
-                values = rng.split("=")[1].split("-")
+                values = rng.split('=')[1].split('-')
                 start = int(values[0])
                 if len(values) > 1:
                     end = values[1]
                     if end != '':
                         end = int(end)
-                logger.debug(f">> range read from request: start: {start}, end: {end}")
+                logger.debug(f'>> range read from request: start: {start}, end: {end}')
             except (IndexError, ValueError) as e:
-                logger.warning(f"Invalid range header: {rng}: {e}")
+                logger.warning(f'Invalid range header: {rng}: {e}')
                 start = 0
                 end = ''
 
@@ -176,19 +179,19 @@ class ResolveStorageUriAPIMixin:
                 end = start + max_range_size if end >= start + max_range_size else end
             # 'bytes=-1024'
             elif start < 0:
-                logger.warning(f"Start range is negative and not supported: {rng}")
+                logger.warning(f'Start range is negative and not supported: {rng}')
                 start = 0
                 end = start + max_range_size
             else:
-                logger.warning(f"Range is not covered by logic: {rng}")
+                logger.warning(f'Range is not covered by logic: {rng}')
                 start = 0
                 end = ''
 
-            range_header = f"bytes={start}-{end}"
-            logger.debug(f">> stream > start: {int(start)/1024/1024} MB")
-            logger.debug(f">> stream > end: {int(end or 0)/1024/1024} MB")
-            logger.debug(f">> stream > range_header: {range_header}")
-            
+            range_header = f'bytes={start}-{end}'
+            logger.debug(f'>> stream > start: {int(start)/1024/1024} MB')
+            logger.debug(f'>> stream > end: {int(end or 0)/1024/1024} MB')
+            logger.debug(f'>> stream > range_header: {range_header}')
+
         return range_header
 
     def prepare_headers(self, response, metadata, request, project):
@@ -200,10 +203,10 @@ class ResolveStorageUriAPIMixin:
             response.headers['Content-Range'] = metadata['ContentRange']
         if metadata.get('LastModified'):
             response.headers['Last-Modified'] = metadata['LastModified'].strftime('%a, %d %b %Y %H:%M:%S GMT')
-        
+
         # Always enable range requests
         response.headers['Accept-Ranges'] = 'bytes'
-        
+
         # Cache control
         max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT
         response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
@@ -220,13 +223,13 @@ class ResolveStorageUriAPIMixin:
             # use original ETag from storage
             response.headers['ETag'] += metadata['ETag'].strip('"')
         response.headers['ETag'] = f'"{response.headers["ETag"]}"'
-        
+
         return response
 
     def proxy_data_from_storage(self, request, uri, project, storage):
         """
         Proxy the data using iter_chunks directly from storage streaming object.
-        
+
         This implementation forwards Range headers to S3 and streams the response
         directly using StreamingHttpResponse. It avoids any intermediate buffering
         but doesn't support backward seeking.
@@ -234,29 +237,27 @@ class ResolveStorageUriAPIMixin:
         try:
             # Process and limit the range header for downloaded files
             range_header = self.override_range_header(request)
-            
+
             # Use the storage-specific method to get data stream and content type
             stream, content_type, metadata = storage.get_bytes_stream(uri, range_header=range_header)
-            
+
             if stream is None:
                 logger.error(f'Failed to get direct stream from storage {storage}')
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
+
             # Create time-limited stream
             time_limited_stream = self.time_limited_chunker(stream)
-            
+
             # Set up streaming response with S3's status code
             status_code = metadata.get('StatusCode', 200)
             response = StreamingHttpResponse(
-                time_limited_stream,
-                content_type=content_type or 'application/octet-stream',
-                status=status_code
+                time_limited_stream, content_type=content_type or 'application/octet-stream', status=status_code
             )
-            
+
             # Prepare response headers
             response = self.prepare_headers(response, metadata, request, project)
             return response
-            
+
         except Exception as e:
             logger.error(f'Error in direct proxy from storage: {e}', exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

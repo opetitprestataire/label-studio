@@ -1,8 +1,8 @@
 import base64
 import io
 import unittest
-from unittest.mock import MagicMock, patch
 from datetime import datetime
+from unittest.mock import MagicMock, patch
 
 import pytest
 from io_storages.proxy_api import (
@@ -129,44 +129,45 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
         mock_storage.get_bytes_stream.return_value = (io.BytesIO(b'test data'), 'image/jpeg')
         mock_project = MagicMock()
 
-        with patch('io_storages.proxy_api.StreamingHttpResponse') as mock_response_class, \
-             patch('django.conf.settings') as mock_settings:
+        with patch('io_storages.proxy_api.StreamingHttpResponse') as mock_response_class, patch(
+            'django.conf.settings'
+        ) as mock_settings:
             # Configure mock settings
             mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 1024 * 1024  # 1MB
             mock_settings.RESOLVER_PROXY_BUFFER_SIZE = 8192
             mock_settings.RESOLVER_PROXY_CACHE_TIMEOUT = 3600
-            
+
             # Set up mock stream and response
             mock_stream = MagicMock()
             mock_metadata = {
                 'StatusCode': 200,
                 'ContentLength': 1000,
                 'LastModified': datetime.now(),
-                'ETag': '"abcdef123456"'
+                'ETag': '"abcdef123456"',
             }
             mock_storage.get_direct_stream.return_value = (mock_stream, 'application/test', mock_metadata)
-            
+
             # Set up mock response
             mock_response = MagicMock()
             mock_response.headers = {}
             mock_response_class.return_value = mock_response
-            
+
             # Set up request with range header
             self.request.headers = {'Range': 'bytes=100-200'}
 
             # Call the method
             result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_project, mock_storage)
-            
+
             # Verify the correct range header was passed
             mock_storage.get_direct_stream.assert_called_once()
             call_args = mock_storage.get_direct_stream.call_args[0]
             self.assertEqual(call_args[0], 'uri')
             self.assertTrue(call_args[1].startswith('bytes='))
-            
+
             # Verify the response was created with the stream
             mock_response_class.assert_called_once()
             self.assertIn(mock_stream.iter_chunks(), mock_response_class.call_args[0])
-            
+
             # Verify correct headers are set
             self.assertEqual(result, mock_response)
             self.assertTrue('ETag' in mock_response.headers)

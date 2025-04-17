@@ -2,7 +2,6 @@
 """
 import base64
 import fnmatch
-import io
 import logging
 import re
 from urllib.parse import urlparse

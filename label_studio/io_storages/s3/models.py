@@ -116,16 +116,16 @@ class S3StorageMixin(models.Model):
     @catch_and_reraise_from_none
     def get_bytes_stream(self, uri, range_header=None):
         """Get file directly from S3 using iter_chunks without wrapper.
-        
+
         This method forwards Range headers directly to S3 and returns the raw stream.
         Note: The returned stream is NOT seekable and will break if seeking backwards.
-        
+
         Args:
             uri: The S3 URI of the file to retrieve
             range_header: Optional HTTP Range header to forward to S3
-            
+
         Returns:
-            Tuple of (stream, content_type, metadata) where metadata contains 
+            Tuple of (stream, content_type, metadata) where metadata contains
             important S3 headers like ETag, ContentLength, etc.
         """
         # Parse URI to get bucket and key
@@ -144,14 +144,14 @@ class S3StorageMixin(models.Model):
 
             # Get the object from S3
             response = client.get_object(**request_params)
-            
+
             # Extract metadata to return
             metadata = {
                 'ETag': response.get('ETag'),
                 'ContentLength': response.get('ContentLength'),
                 'ContentRange': response.get('ContentRange'),
                 'LastModified': response.get('LastModified'),
-                'StatusCode': response['ResponseMetadata']['HTTPStatusCode']
+                'StatusCode': response['ResponseMetadata']['HTTPStatusCode'],
             }
 
             # Return the streaming body directly
