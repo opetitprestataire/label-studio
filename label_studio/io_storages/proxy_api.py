@@ -230,7 +230,7 @@ class ResolveStorageUriAPIMixin:
         """
         Proxy the data using iter_chunks directly from storage streaming object.
 
-        This implementation forwards Range headers to S3 and streams the response
+        This implementation forwards Range headers to cloud storages and streams the response
         directly using StreamingHttpResponse. It avoids any intermediate buffering
         but doesn't support backward seeking.
         """
@@ -243,12 +243,15 @@ class ResolveStorageUriAPIMixin:
 
             if stream is None:
                 logger.error(f'Failed to get direct stream from storage {storage}')
-                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response(
+                    {"error": "Storage stream failed while proxying data", "detail": "Stream is None"},
+                    status=status.HTTP_424_FAILED_DEPENDENCY
+                )
 
             # Create time-limited stream
             time_limited_stream = self.time_limited_chunker(stream)
 
-            # Set up streaming response with S3's status code
+            # Set up streaming response with storage's status code
             status_code = metadata.get('StatusCode', 200)
             response = StreamingHttpResponse(
                 time_limited_stream, content_type=content_type or 'application/octet-stream', status=status_code
@@ -260,7 +263,10 @@ class ResolveStorageUriAPIMixin:
 
         except Exception as e:
             logger.error(f'Error in direct proxy from storage: {e}', exc_info=True)
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": "Storage stream failed while proxying data", "detail": str(e)},
+                status=status.HTTP_424_FAILED_DEPENDENCY
+            )
 
 
 class TaskResolveStorageUri(ResolveStorageUriAPIMixin, APIView):

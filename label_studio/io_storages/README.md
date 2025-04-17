@@ -141,3 +141,47 @@ The Storage Proxy API is a critical component that handles access to files store
    - `/projects/<project_id>/resolve/` - for resolving project-level resources
 
 This architecture ensures secure, controlled access to cloud storage resources while maintaining flexibility for different deployment scenarios and security requirements.
+
+### Proxy Mode Optimizations*
+
+The Proxy Mode has been optimized with several mechanisms to improve performance, reliability, and resource utilization:
+
+* *Range Header Processing*
+
+The `override_range_header` function processes and intelligently modifies Range headers to limit stream sizes:
+
+- It enforces a maximum size for range requests (controlled by `RESOLVER_PROXY_MAX_RANGE_SIZE`)
+- Converts unbounded range requests (`bytes=123456-`) to bounded ones
+- Handles various range request formats including header probes (`bytes=0-`)
+- Prevents worker exhaustion by chunking large file transfers
+
+* *Time-Limited Streaming*
+
+The `time_limited_chunker` generator provides controlled streaming with timeout protection:
+
+- Stops yielding chunks after a configurable timeout period (`RESOLVER_PROXY_TIMEOUT`)
+- Uses buffer-sized chunks (`RESOLVER_PROXY_BUFFER_SIZE`) for efficient memory usage
+- Tracks statistics about stream performance and reports on timeouts and print it as debug info
+- Properly closes streams to prevent resource leaks
+
+* *Response Header Management*
+
+The `prepare_headers` function manages HTTP response headers for optimal client handling:
+
+- Forwards important headers from storage providers (Content-Length, Content-Range, Last-Modified)
+- Enables range requests with Accept-Ranges header
+- Implements cache control with configurable TTL (`RESOLVER_PROXY_CACHE_TIMEOUT`)
+- Generates ETags based on user permissions to invalidate cache when access changes
+
+### *Environment Variables*
+
+The Storage Proxy API behavior can be configured using the following environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `RESOLVER_PROXY_BUFFER_SIZE` | Size in bytes of each chunk when streaming data | 64*1024 |
+| `RESOLVER_PROXY_TIMEOUT` | Maximum time in seconds a streaming connection can remain open | 10 |
+| `RESOLVER_PROXY_MAX_RANGE_SIZE` | Maximum size in bytes for a single range request | 7*1024*1024 |
+| `RESOLVER_PROXY_CACHE_TIMEOUT` | Cache TTL in seconds for proxy responses | 3600 |
+
+These optimizations ensure that the Proxy API remains responsive and resource-efficient, even when handling large files or many concurrent requests.
