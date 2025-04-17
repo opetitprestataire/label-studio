@@ -219,7 +219,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={stepHandlerWrapper(onStepBackward)}
                     hotkey={settings?.stepBackHotkey}
                     disabled={startReached}
-                    aria-label="Seek backward"
+                    aria-label="Step backward"
                   >
                     <IconChevronLeft />
                   </ControlButton>
@@ -263,7 +263,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={stepHandlerWrapper(onStepForward)}
                     hotkey={settings?.stepForwardHotkey}
                     disabled={endReached}
-                    aria-label="Seek backward"
+                    aria-label="Step forward"
                   >
                     <IconChevronRight />
                   </ControlButton>
@@ -272,7 +272,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                       disabled={endReached}
                       onClick={stepHandlerWrapper(onStepForward, settings.stepSize)}
                       hotkey={settings?.stepAltForward}
-                      aria-label="Hop backward"
+                      aria-label="Hop forward"
                     >
                       <IconNext />
                     </ControlButton>

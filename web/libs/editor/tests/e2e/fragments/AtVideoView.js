@@ -16,9 +16,9 @@ module.exports = {
   _trackSelector: ".lsf-seeker__track",
   _indicatorSelector: ".lsf-seeker__indicator",
   _positionSelector: ".lsf-seeker__position",
-  _seekStepForwardSelector: "button[aria-label='Seek forward']",
-  _seekStepBackwardSelector: "button[aria-label='Seek backward']",
-  _playButtonSelector: "button[aria-label='Play']",
+  _seekStepForwardSelector: 'button[aria-label="Step forward"]',
+  _seekStepBackwardSelector: 'button[aria-label="Step backward"]',
+  _playButtonSelector: 'button[aria-label="Play"]',
 
   locateRootSelector() {
     return locate(this._rootSelector);
