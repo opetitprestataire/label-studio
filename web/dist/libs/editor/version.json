@@ -1,6 +1,6 @@
 {
-  "message": "fix: LEAP-1433: Remove deprecated feature flag FF_DEV_1170 (#7264)",
-  "commit": "51e652c5859e9e04e1d5d3029fc5feb0f7292092",
-  "date": "2025-04-10T15:01:50.000Z",
+  "message": "chore(deps): bump http-proxy-middleware from 2.0.7 to 2.0.9 in /web (#7391)",
+  "commit": "015a17e2e73d60c33f31d17a3d5dc1e8cf986760",
+  "date": "2025-04-17T09:23:09.000Z",
   "branch": "develop"
 }
