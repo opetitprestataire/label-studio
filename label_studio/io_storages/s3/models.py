@@ -114,11 +114,12 @@ class S3StorageMixin(models.Model):
         return 'Amazon AWS S3'
 
     @catch_and_reraise_from_none
-    def get_bytes_stream(self, uri):
+    def get_bytes_stream(self, uri, range_header=None):
         """Get file bytes from S3 storage as a stream and content type.
 
         Args:
             uri: The S3 URI of the file to retrieve
+            range_header: Optional HTTP Range header to forward to S3
 
         Returns:
             Tuple of (BytesIO stream, content_type)
@@ -133,7 +134,11 @@ class S3StorageMixin(models.Model):
 
         try:
             # Get the object from S3
-            object_response = client.get_object(Bucket=bucket_name, Key=key)
+            request_params = {'Bucket': bucket_name, 'Key': key}
+            if range_header:
+                request_params['Range'] = range_header
+
+            object_response = client.get_object(**request_params)
             content_type = object_response.get('ContentType')
             content_length = int(object_response.get('ContentLength', 0))
 
@@ -151,6 +156,54 @@ class S3StorageMixin(models.Model):
         except Exception as e:
             logger.error(f'Error getting stream from S3 for uri {uri}: {e}', exc_info=True)
             return None, None
+
+    @catch_and_reraise_from_none
+    def get_direct_stream(self, uri, range_header=None):
+        """Get file directly from S3 using iter_chunks without wrapper.
+        
+        This method forwards Range headers directly to S3 and returns the raw stream.
+        Note: The returned stream is NOT seekable and will break if seeking backwards.
+        
+        Args:
+            uri: The S3 URI of the file to retrieve
+            range_header: Optional HTTP Range header to forward to S3
+            
+        Returns:
+            Tuple of (stream, content_type, metadata) where metadata contains 
+            important S3 headers like ETag, ContentLength, etc.
+        """
+        # Parse URI to get bucket and key
+        parsed_uri = urlparse(uri, allow_fragments=False)
+        bucket_name = parsed_uri.netloc
+        key = parsed_uri.path.lstrip('/')
+
+        # Get S3 client
+        client = self.get_client()
+
+        try:
+            # Forward Range header to S3 if provided
+            request_params = {'Bucket': bucket_name, 'Key': key}
+            if range_header:
+                request_params['Range'] = range_header
+
+            # Get the object from S3
+            response = client.get_object(**request_params)
+            
+            # Extract metadata to return
+            metadata = {
+                'ETag': response.get('ETag'),
+                'ContentLength': response.get('ContentLength'),
+                'ContentRange': response.get('ContentRange'),
+                'LastModified': response.get('LastModified'),
+                'StatusCode': response['ResponseMetadata']['HTTPStatusCode']
+            }
+            
+            # Return the streaming body directly
+            return response['Body'], response.get('ContentType'), metadata
+
+        except Exception as e:
+            logger.error(f'Error getting direct stream from S3 for uri {uri}: {e}', exc_info=True)
+            return None, None, {}
 
     class Meta:
         abstract = True

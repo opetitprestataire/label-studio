@@ -6,7 +6,7 @@ from urllib.parse import unquote
 
 from core.feature_flags import flag_set
 from django.conf import settings
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect, StreamingHttpResponse
 from projects.models import Project
 from ranged_fileresponse import RangedFileResponse
 from rest_framework import status
@@ -26,13 +26,13 @@ class TimeoutRangedFileResponse(RangedFileResponse):
     worker blocking indefinitely during streaming responses.
     """
 
-    def __init__(self, request, file_obj, content_type=None, buffer_size=8192, timeout=300):
+    def __init__(self, request, file_obj, content_type=None, buffer_size=8192, timeout=20):
         # Initialize attributes before calling super().__init__
         self._timeout = timeout
         self._buffer_size = buffer_size
 
-        # Call parent initialization
-        super().__init__(request, file_obj, content_type)
+        # Call parent initialization with block_size
+        super().__init__(request, file_obj, content_type, block_size=self._buffer_size)
 
         # Apply timeout wrapper after parent initializes streaming
         if hasattr(self, '_streaming_content') and self._timeout:
@@ -107,7 +107,12 @@ class ResolveStorageUriAPIMixin:
             return self.redirect_to_presign_url(fileuri, instance, model_name)
         else:
             # Direct proxy from storage
-            return self.proxy_data_from_storage(request, fileuri, project, storage)
+            # Use flag or setting to choose the proxy implementation
+            use_direct_stream = getattr(settings, 'USE_DIRECT_S3_STREAM', True)
+            if use_direct_stream:
+                return self.direct_proxy_data_from_storage(request, fileuri, project, storage)
+            else:
+                return self.proxy_data_from_storage(request, fileuri, project, storage)
 
     def redirect_to_presign_url(self, fileuri: str, instance: Union[Task, Project], model_name: str) -> Response:
         """Generate and redirect to a presigned URL for the given file URI"""
@@ -134,8 +139,11 @@ class ResolveStorageUriAPIMixin:
     def proxy_data_from_storage(self, request, uri, project, storage):
         """Proxy the data directly from storage without redirecting"""
         try:
+            # Extract range header if present and forward to S3
+            range_header = request.headers.get('Range')
+            
             # Use the storage-specific method to get data stream and content type
-            data, content_type = storage.get_bytes_stream(uri)
+            data, content_type = storage.get_bytes_stream(uri, range_header=range_header)
 
             # If we have the data and content type, return the response
             if data is not None:
@@ -170,6 +178,59 @@ class ResolveStorageUriAPIMixin:
 
         except Exception as e:
             logger.error(f'Error proxying data from storage: {e}', exc_info=True)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+    def direct_proxy_data_from_storage(self, request, uri, project, storage):
+        """
+        Proxy the data using iter_chunks directly without the S3StreamWrapper.
+        
+        This implementation forwards Range headers to S3 and streams the response
+        directly using StreamingHttpResponse. It avoids any intermediate buffering
+        but doesn't support backward seeking.
+        """
+        try:
+            # Extract range header if present
+            range_header = request.headers.get('Range')
+            
+            # Get direct stream and metadata from storage
+            stream, content_type, metadata = storage.get_direct_stream(uri, range_header=range_header)
+            
+            if stream is None:
+                logger.error(f'Failed to get direct stream from storage {storage}')
+                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            # Create streaming response with proper chunk size
+            chunk_size = getattr(settings, 'RESOLVER_PROXY_BUFFER_SIZE', 64*1024)
+            
+            # Set up streaming response with S3's status code
+            status_code = metadata.get('StatusCode', 200)
+            response = StreamingHttpResponse(
+                stream.iter_chunks(chunk_size=chunk_size),
+                content_type=content_type or 'application/octet-stream',
+                status=status_code
+            )
+            
+            # Copy important headers from S3
+            if metadata.get('ETag'):
+                response.headers['ETag'] = metadata['ETag']
+            if metadata.get('ContentLength'):
+                response.headers['Content-Length'] = str(metadata['ContentLength'])
+            if metadata.get('ContentRange'):
+                response.headers['Content-Range'] = metadata['ContentRange']
+            if metadata.get('LastModified'):
+                response.headers['Last-Modified'] = metadata['LastModified'].strftime('%a, %d %b %Y %H:%M:%S GMT')
+            
+            # Always enable range requests
+            response.headers['Accept-Ranges'] = 'bytes'
+            
+            # Cache control
+            max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT
+            response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
+            
+            return response
+            
+        except Exception as e:
+            logger.error(f'Error in direct proxy from storage: {e}', exc_info=True)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
