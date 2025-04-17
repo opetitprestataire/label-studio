@@ -215,7 +215,12 @@ export const Select = forwardRef(
                   data-testid="select-search-field"
                 />
               )}
-              <CommandList label="Select an option" className={searchable ? "shadow-inner border-t" : ""}>
+              <CommandList
+                label="Select an option"
+                className={
+                  searchable ? "shadow-inner shadow-neutral-surface-inset border-t border-neutral-border shadow-" : ""
+                }
+              >
                 <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
                 <CommandGroup>
                   {props.header ? props.header : null}
