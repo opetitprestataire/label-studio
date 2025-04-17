@@ -25,7 +25,7 @@
             "figmaId": "VariableID:1832:9658",
             "modes": {
               "light": "{@primitives.$color.$sand.100}",
-              "dark": "{@primitives.$color.$sand.900}"
+              "dark": "{@primitives.$color.$sand.850}"
             }
           }
         },
