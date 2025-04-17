@@ -45,16 +45,21 @@ class TestS3StorageMixinGetBytesStream(unittest.TestCase):
         mock_body.read.return_value = b'test file content'
 
         # Set up the mock get_object response
-        self.mock_client.get_object.return_value = {'Body': mock_body, 'ContentType': 'text/plain'}
+        self.mock_client.get_object.return_value = {
+            'Body': mock_body,
+            'ContentType': 'text/plain',
+            'ResponseMetadata': {'HTTPStatusCode': 200},
+        }
 
         # Call the real get_bytes_stream method
         uri = 's3://test-bucket/test-file.txt'
-        result_stream, result_content_type = self.storage.get_bytes_stream(uri)
+        result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri)
 
         # Assert method calls and results
         self.mock_client.get_object.assert_called_once_with(Bucket='test-bucket', Key='test-file.txt')
         self.assertEqual(result_content_type, 'text/plain')
         self.assertEqual(result_stream.read(), b'test file content')
+        self.assertIsInstance(metadata, dict)
 
     def test_get_bytes_stream_exception(self):
         # Set up the mock to raise an exception
@@ -62,12 +67,13 @@ class TestS3StorageMixinGetBytesStream(unittest.TestCase):
 
         # Call the real get_bytes_stream method
         uri = 's3://test-bucket/test-file.txt'
-        result_stream, result_content_type = self.storage.get_bytes_stream(uri)
+        result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri)
 
         # Assert method calls and results
         self.mock_client.get_object.assert_called_once_with(Bucket='test-bucket', Key='test-file.txt')
         self.assertIsNone(result_stream)
         self.assertIsNone(result_content_type)
+        self.assertEqual(metadata, {})
 
 
 class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):

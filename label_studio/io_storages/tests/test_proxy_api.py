@@ -126,7 +126,8 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
 
     def test_proxy_data_from_storage_success(self):
         mock_storage = MagicMock()
-        mock_storage.get_bytes_stream.return_value = (io.BytesIO(b'test data'), 'image/jpeg')
+        # Ensure get_bytes_stream returns a three-tuple, metadata can be empty initially
+        mock_storage.get_bytes_stream.return_value = (io.BytesIO(b'test data'), 'image/jpeg', {})
         mock_project = MagicMock()
 
         with patch('io_storages.proxy_api.StreamingHttpResponse') as mock_response_class, patch(
@@ -145,7 +146,7 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
                 'LastModified': datetime.now(),
                 'ETag': '"abcdef123456"',
             }
-            mock_storage.get_direct_stream.return_value = (mock_stream, 'application/test', mock_metadata)
+            mock_storage.get_bytes_stream.return_value = (mock_stream, 'application/test', mock_metadata)
 
             # Set up mock response
             mock_response = MagicMock()
@@ -159,14 +160,23 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
             result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_project, mock_storage)
 
             # Verify the correct range header was passed
-            mock_storage.get_direct_stream.assert_called_once()
-            call_args = mock_storage.get_direct_stream.call_args[0]
-            self.assertEqual(call_args[0], 'uri')
-            self.assertTrue(call_args[1].startswith('bytes='))
+            mock_storage.get_bytes_stream.assert_called_once()
+            args, kwargs = mock_storage.get_bytes_stream.call_args
+            # First positional argument should be the URI
+            self.assertEqual(args[0], 'uri')
+            # Range header should be passed as a keyword argument and start with 'bytes='
+            self.assertIn('range_header', kwargs)
+            self.assertTrue(kwargs['range_header'].startswith('bytes='))
 
             # Verify the response was created with the stream
             mock_response_class.assert_called_once()
-            self.assertIn(mock_stream.iter_chunks(), mock_response_class.call_args[0])
+            # The first positional argument should be a generator returned by time_limited_chunker
+            called_args, _ = mock_response_class.call_args
+            streaming_generator = called_args[0]
+            self.assertTrue(
+                hasattr(streaming_generator, '__next__') and hasattr(streaming_generator, '__iter__'),
+                'Expected a generator for streaming chunks',
+            )
 
             # Verify correct headers are set
             self.assertEqual(result, mock_response)
@@ -174,11 +184,12 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
 
     def test_proxy_data_from_storage_no_data(self):
         mock_storage = MagicMock()
-        mock_storage.get_bytes_stream.return_value = (None, None)
+        # Return three-tuple with empty metadata when no data is available
+        mock_storage.get_bytes_stream.return_value = (None, None, {})
         mock_project = MagicMock()
 
         result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_project, mock_storage)
-        assert result.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert result.status_code == status.HTTP_424_FAILED_DEPENDENCY
 
     def test_proxy_data_from_storage_exception(self):
         mock_storage = MagicMock()
@@ -186,7 +197,7 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
         mock_project = MagicMock()
 
         result = self.mixin.proxy_data_from_storage(self.request, 'uri', mock_project, mock_storage)
-        assert result.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert result.status_code == status.HTTP_424_FAILED_DEPENDENCY
 
 
 class TestTaskResolveStorageUri:
