@@ -149,7 +149,7 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
 
           <div className={menubarClass.elem("spacer").toString()} />
 
-          <ThemeToggle />
+          {ff.isActive(ff.FF_THEME_TOGGLE) && <ThemeToggle />}
 
           <Dropdown.Trigger
             ref={useMenuRef}
