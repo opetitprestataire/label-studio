@@ -443,6 +443,8 @@ export const VideoCanvas = memo(
 
         // Round to next closest browser precision frame time
         this.currentTime = this.frameSteppedTime(exactTime);
+
+        requestAnimationFrame(() => drawVideo());
       },
     };
 
