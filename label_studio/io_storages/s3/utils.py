@@ -203,20 +203,11 @@ class S3StreamWrapper(io.BufferedIOBase):
             if offset < 0:
                 raise ValueError('Cannot seek to negative position')
 
-            # Handle backward seeking by making a new request
-            if offset < self._pos:
-                self._pos = offset
-                range_header = f'bytes={offset}-'
-                try:
-                    response = self.client.get_object(Bucket=self.bucket, Key=self.key, Range=range_header)
-                    self.streaming_body = response['Body']
-                    self._eof = False
-                except Exception as e:
-                    logger.error(f'Error making ranged request: {e}')
-                    raise io.UnsupportedOperation('Failed to seek') from e
-            # Handle forward seeking
-            elif offset > self._pos:
-                # Read and discard data until we reach the desired position
+            LARGE_SKIP = 256 * 1024    # 256 kB
+
+            if offset < self._pos or (offset - self._pos) > LARGE_SKIP:
+                self._restart_at(offset)
+            else:
                 self._read_until_position(offset)
 
             return self._pos
@@ -278,3 +269,17 @@ class S3StreamWrapper(io.BufferedIOBase):
         if size < 0:
             size = self.chunk_size
         return self.read(size)
+
+    def close(self):
+        try:
+            self.streaming_body.close()
+        finally:
+            super().close()
+
+    def _restart_at(self, offset: int):
+        resp = self.client.get_object(
+            Bucket=self.bucket, Key=self.key, Range=f"bytes={offset}-"
+        )
+        self.streaming_body = resp["Body"]
+        self._pos = offset
+        self._eof = False
