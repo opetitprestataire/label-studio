@@ -16,10 +16,9 @@ module.exports = {
   _trackSelector: ".lsf-seeker__track",
   _indicatorSelector: ".lsf-seeker__indicator",
   _positionSelector: ".lsf-seeker__position",
-  _seekStepForwardSelector: ".lsf-timeline-controls__main-controls > div:nth-child(2) > button:nth-child(4)",
-  _seekStepBackwardSelector: ".lsf-timeline-controls__main-controls > div:nth-child(2) > button:nth-child(2)",
-  _playButtonSelector:
-    ".lsf-timeline-controls__main-controls > .lsf-timeline-controls__group:nth-child(2) > button:nth-child(2)",
+  _seekStepForwardSelector: "button[aria-label='Seek forward']",
+  _seekStepBackwardSelector: "button[aria-label='Seek backward']",
+  _playButtonSelector: "button[aria-label='Play']",
 
   locateRootSelector() {
     return locate(this._rootSelector);
