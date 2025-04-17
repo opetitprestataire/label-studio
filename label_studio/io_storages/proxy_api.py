@@ -106,13 +106,7 @@ class ResolveStorageUriAPIMixin:
             # Redirect to presigned URL (original flow)
             return self.redirect_to_presign_url(fileuri, instance, model_name)
         else:
-            # Direct proxy from storage
-            # Use flag or setting to choose the proxy implementation
-            use_direct_stream = getattr(settings, 'USE_DIRECT_S3_STREAM', True)
-            if use_direct_stream:
-                return self.direct_proxy_data_from_storage(request, fileuri, project, storage)
-            else:
-                return self.proxy_data_from_storage(request, fileuri, project, storage)
+            return self.proxy_data_from_storage(request, fileuri, project, storage)
 
     def redirect_to_presign_url(self, fileuri: str, instance: Union[Task, Project], model_name: str) -> Response:
         """Generate and redirect to a presigned URL for the given file URI"""
@@ -133,54 +127,10 @@ class ResolveStorageUriAPIMixin:
         # Proxy to presigned url
         response = HttpResponseRedirect(redirect_to=url, status=status.HTTP_303_SEE_OTHER)
         response.headers['Cache-Control'] = f'no-store, max-age={max_age}'
-
         return response
 
+            
     def proxy_data_from_storage(self, request, uri, project, storage):
-        """Proxy the data directly from storage without redirecting"""
-        try:
-            # Extract range header if present and forward to S3
-            range_header = request.headers.get('Range')
-            
-            # Use the storage-specific method to get data stream and content type
-            data, content_type = storage.get_bytes_stream(uri, range_header=range_header)
-
-            # If we have the data and content type, return the response
-            if data is not None:
-                content_type = content_type or 'application/octet-stream'
-
-                # Use timeout enabled response with configurable buffer size
-                buffer_size = getattr(settings, 'RESOLVER_PROXY_BUFFER_SIZE', 8192)
-                timeout = getattr(settings, 'RESOLVER_PROXY_TIMEOUT', 300)
-
-                response = TimeoutRangedFileResponse(
-                    request, data, content_type=content_type, buffer_size=buffer_size, timeout=timeout
-                )
-
-                # Set cache control with moderate timeout
-                max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT  # 1 hour cache
-
-                # Generate an ETag based on user ID and user is_active status
-                # This ensures cache is invalidated when user status changes
-                user = request.user
-                has_access = project.has_permission(user)
-                user_status_tag = f'{user.id}:{has_access}'
-                # "ETag" is a standard HTTP header defined in the HTTP/1.1 specification (RFC 7232).
-                #  It stands for "Entity Tag" and is specifically designed for cache validation
-                response.headers['ETag'] = f'"{hash(user_status_tag)}"'
-                # Allow caching but require revalidation
-                response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
-
-                return response
-            else:
-                logger.error(f'Failed to get data from storage {storage}')
-                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        except Exception as e:
-            logger.error(f'Error proxying data from storage: {e}', exc_info=True)
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-    def direct_proxy_data_from_storage(self, request, uri, project, storage):
         """
         Proxy the data using iter_chunks directly without the S3StreamWrapper.
         
@@ -189,10 +139,26 @@ class ResolveStorageUriAPIMixin:
         but doesn't support backward seeking.
         """
         try:
-            # Extract range header if present
-            range_header = request.headers.get('Range')
+            MAX_RANGE = settings.RESOLVER_PROXY_MAX_RANGE_SIZE
+            start = 0
+            end = '' # If no end is specified in the range header, read to the end of the file
             
-            # Get direct stream and metadata from storage
+            # Do a trick here: limit stream chunk sizes to MAX_RANGE,
+            # this way we free sync LSE workers for hanging too long,
+            # because the connection will be closed after the MAX_RANGE chunk is over.
+            if rng := request.headers.get('Range'):  # 'bytes=123456-'
+                try:
+                    values = rng.split("=")[1].split("-")
+                    start = int(values[0])
+                    end = int(values[1]) if len(values) > 1 else ''
+                except (IndexError, ValueError):
+                    start = 0
+                    end = ''
+                else:
+                    end = end if (end > start + MAX_RANGE) else (start + MAX_RANGE - 1)
+            range_header = f"bytes={start}-{end}"
+            
+            # Use the storage-specific method to get data stream and content type
             stream, content_type, metadata = storage.get_direct_stream(uri, range_header=range_header)
             
             if stream is None:
@@ -210,9 +176,7 @@ class ResolveStorageUriAPIMixin:
                 status=status_code
             )
             
-            # Copy important headers from S3
-            if metadata.get('ETag'):
-                response.headers['ETag'] = metadata['ETag']
+            # Copy important headers from storage
             if metadata.get('ContentLength'):
                 response.headers['Content-Length'] = str(metadata['ContentLength'])
             if metadata.get('ContentRange'):
@@ -226,6 +190,19 @@ class ResolveStorageUriAPIMixin:
             # Cache control
             max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT
             response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
+
+            # Generate an ETag based on user ID and user is_active status
+            # This ensures cache is invalidated when user status changes
+            # "ETag" is a standard HTTP header defined in the HTTP/1.1 specification (RFC 7232)
+            #  It stands for "Entity Tag" and is specifically designed for cache validation
+            user = request.user
+            has_access = project.has_permission(user)
+            user_status_tag = f'{user.id}:{has_access}'
+            response.headers['ETag'] = f'{hash(user_status_tag)}'
+            if metadata.get('ETag'):  
+                # use original ETag from storage
+                response.headers['ETag'] += '-' + metadata['ETag'].strip('"')
+            response.headers['ETag'] = f'"{response.headers["ETag"]}"'
             
             return response
             
