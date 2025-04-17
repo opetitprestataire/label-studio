@@ -72,7 +72,7 @@ def extract_labels(annotation, control_tag, label_interface=None):
                     if key == 'taxonomy':
                         showFullPath = 'true'
                         pathSeparator = '/'
-                        if label_interface.find_tags('control', match_fn=lambda tag: tag.name==region['from_name']):
+                        if label_interface is not None and label_interface.find_tags('control', match_fn=lambda tag: tag.name==region['from_name']):
                             # if from_name is not a custom_control tag, then we can try to fetch taxonomy formatting params
                             showFullPath = label_interface.get_control(region['from_name']).attr.get('showFullPath', 'false')
                             pathSeparator = label_interface.get_control(region['from_name']).attr.get('pathSeparator', '/')
