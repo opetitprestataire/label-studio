@@ -1,6 +1,7 @@
 import base64
 import logging
 import socket
+import time
 from typing import Union
 from urllib.parse import unquote
 
@@ -8,7 +9,6 @@ from core.feature_flags import flag_set
 from django.conf import settings
 from django.http import HttpRequest, HttpResponseRedirect, StreamingHttpResponse
 from projects.models import Project
-from ranged_fileresponse import RangedFileResponse
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -18,49 +18,6 @@ from tasks.models import Task
 from label_studio.io_storages.functions import get_storage_by_url
 
 logger = logging.getLogger(__name__)
-
-
-class TimeoutRangedFileResponse(RangedFileResponse):
-    """
-    RangedFileResponse with configurable timeout and buffer size to prevent
-    worker blocking indefinitely during streaming responses.
-    """
-
-    def __init__(self, request, file_obj, content_type=None, buffer_size=8192, timeout=20):
-        # Initialize attributes before calling super().__init__
-        self._timeout = timeout
-        self._buffer_size = buffer_size
-
-        # Call parent initialization with block_size
-        super().__init__(request, file_obj, content_type, block_size=self._buffer_size)
-
-        # Apply timeout wrapper after parent initializes streaming
-        if hasattr(self, '_streaming_content') and self._timeout:
-            self._streaming_content = self._timeout_wrapper(self._streaming_content)
-
-        # Set socket timeout if possible
-        try:
-            file_obj.fileno()
-            socket_obj = (
-                file_obj.raw.connection if hasattr(file_obj, 'raw') and hasattr(file_obj.raw, 'connection') else None
-            )
-            if socket_obj:
-                socket_obj.settimeout(self._timeout)
-        except (AttributeError, ValueError, IOError):
-            # Not all file objects will have fileno() or a socket connection
-            pass
-
-    def _timeout_wrapper(self, iterator):
-        """Wrap the iterator with timeout handling"""
-        try:
-            for chunk in iterator:
-                yield chunk
-        except socket.timeout:
-            logger.warning(f'Socket timeout after {self._timeout}s while streaming response')
-        except ConnectionError as e:
-            logger.warning(f'Connection error while streaming response: {e}')
-        except Exception as e:
-            logger.error(f'Error during streaming response: {e}', exc_info=True)
 
 
 class ResolveStorageUriAPIMixin:
@@ -129,34 +86,137 @@ class ResolveStorageUriAPIMixin:
         response.headers['Cache-Control'] = f'no-store, max-age={max_age}'
         return response
 
+    def time_limited_chunker(self, stream_body):
+        """
+        Generator that stops yielding chunks after timeout seconds without blocking.
+        """
+        chunk_size = settings.RESOLVER_PROXY_BUFFER_SIZE
+        timeout = settings.RESOLVER_PROXY_TIMEOUT
+        
+        start_time = time.monotonic()
+        deadline = start_time + timeout
+        chunks_yielded = 0
+        total_bytes = 0
+        
+        # Flag to indicate if timeout occurred
+        timed_out = False
+        
+        try:
+            for chunk in stream_body.iter_chunks(chunk_size=chunk_size):
+                print(f"==> chunk: {chunks_yielded}, {total_bytes}\n")
+                current_time = time.monotonic()
+                # Check if we've exceeded our time limit
+                if current_time >= deadline:
+                    timed_out = True
+                    logger.warning(f'Time limit ({timeout}s) reached after yielding {chunks_yielded} chunks ({total_bytes} bytes)')
+                    # DON'T call close() here - it's blocking!
+                    break
+                
+                # Track statistics
+                chunks_yielded += 1
+                total_bytes += len(chunk)
+                yield chunk
+                
+        except Exception as e:
+            logger.error(f'Error during time-limited streaming: {e}', exc_info=True)
+        finally:
+            elapsed = time.monotonic() - start_time
             
+            if timed_out:
+                # Log that we're force terminating without waiting for close()
+                logger.warning(f'Force terminating stream after timeout. Elapsed: {elapsed:.2f}s')
+                # The stream will eventually be garbage collected or cleaned up by boto3
+            else:
+                # Only try to close on normal completion (non-timeout case)
+                try:
+                    stream_body.close()
+                except Exception as e:
+                    logger.debug(f"Couldn't close stream: {e}")
+            
+            logger.debug(f'Stream processing finished after {elapsed:.2f}s, yielded {chunks_yielded} chunks ({total_bytes} bytes)')
+
+    def override_range_header(self, request):
+        """
+        Process and override Range header to limit stream size.
+        This function does a trick: limit stream chunk sizes to MAX_RANGE, 
+        this way we free sync LSE workers for hanging too long,
+        because the connection will be closed after the MAX_RANGE chunk is over.
+        
+        This function handles several range request formats:
+        1 'bytes=0-' and 'bytes=0-0': Passes through unchanged (header probes)
+        2 'bytes=123456-' and 'bytes=123456-0': Limits to MAX_RANGE bytes
+        3 'bytes=123456-789012': Limits the range if it exceeds MAX_RANGE
+        4 'bytes=-1024': Handles negative start (not supported)
+        
+        Returns:
+            str: Modified range header in format "bytes=start-end" or None if no range header
+        """
+        max_range_size = settings.RESOLVER_PROXY_MAX_RANGE_SIZE
+        range_header = None
+
+        if rng := request.headers.get('Range'):
+            start, end = 0, ''
+            try:
+                values = rng.split("=")[1].split("-")
+                start = int(values[0])
+                if len(values) > 1:
+                    end = values[1]
+                    if end != '':
+                        end = int(end)
+                logger.debug(f">> range read from request: start: {start}, end: {end}")
+            except (IndexError, ValueError) as e:
+                logger.warning(f"Invalid range header: {rng}: {e}")
+                start = 0
+                end = ''
+
+            """
+            Pass this range as is to storage:
+              - 'bytes=0-'  most likely, browser is requesting just headers
+              - 'bytes=0-0'  most likely, browser is requesting just headers
+            Limit stream to MAX_RANGE bytes:
+              - 'bytes=123456-'  browser is requesting from 123456 to the end of the file
+              - 'bytes=123456-0'  browser is requesting from 123456 to the end of the file
+              - 'bytes=123456-789012'  browser is requesting from 123456 to 789012
+            Not supported:
+              - 'bytes=-1024'  browser is requesting last 1024 bytes - we don't support this
+            """
+            # 'bytes=0-' + 'bytes=0-0'
+            if start == 0 and (end == '' or end == 0):
+                pass
+            # 'bytes=123456-' + 'bytes=123456-0'
+            elif start > 0 and (end == '' or end == 0):
+                end = start + max_range_size
+            # 'bytes=123456-' + 'bytes=123456-789012'
+            elif start >= 0 and end > 0:
+                end = start + max_range_size if end >= start + max_range_size else end
+            # 'bytes=-1024'
+            elif start < 0:
+                logger.warning(f"Start range is negative and not supported: {rng}")
+                start = 0
+                end = start + max_range_size
+            else:
+                logger.warning(f"Range is not covered by logic: {rng}")
+                start = 0
+                end = ''
+
+            range_header = f"bytes={start}-{end}"
+            logger.debug(f">> stream > start: {int(start)/1024/1024} MB")
+            logger.debug(f">> stream > end: {int(end or 0)/1024/1024} MB")
+            logger.debug(f">> stream > range_header: {range_header}")
+            
+        return range_header
+
     def proxy_data_from_storage(self, request, uri, project, storage):
         """
-        Proxy the data using iter_chunks directly without the S3StreamWrapper.
+        Proxy the data using iter_chunks directly from storage streaming object.
         
         This implementation forwards Range headers to S3 and streams the response
         directly using StreamingHttpResponse. It avoids any intermediate buffering
         but doesn't support backward seeking.
         """
         try:
-            MAX_RANGE = settings.RESOLVER_PROXY_MAX_RANGE_SIZE
-            start = 0
-            end = '' # If no end is specified in the range header, read to the end of the file
-            
-            # Do a trick here: limit stream chunk sizes to MAX_RANGE,
-            # this way we free sync LSE workers for hanging too long,
-            # because the connection will be closed after the MAX_RANGE chunk is over.
-            if rng := request.headers.get('Range'):  # 'bytes=123456-'
-                try:
-                    values = rng.split("=")[1].split("-")
-                    start = int(values[0])
-                    end = int(values[1]) if len(values) > 1 else ''
-                except (IndexError, ValueError):
-                    start = 0
-                    end = ''
-                else:
-                    end = end if (end > start + MAX_RANGE) else (start + MAX_RANGE - 1)
-            range_header = f"bytes={start}-{end}"
+            # Process and limit the range header for downloaded files
+            range_header = self.override_range_header(request)
             
             # Use the storage-specific method to get data stream and content type
             stream, content_type, metadata = storage.get_direct_stream(uri, range_header=range_header)
@@ -165,13 +225,13 @@ class ResolveStorageUriAPIMixin:
                 logger.error(f'Failed to get direct stream from storage {storage}')
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
-            # Create streaming response with proper chunk size
-            chunk_size = getattr(settings, 'RESOLVER_PROXY_BUFFER_SIZE', 64*1024)
+            # Create time-limited stream
+            time_limited_stream = self.time_limited_chunker(stream)
             
             # Set up streaming response with S3's status code
             status_code = metadata.get('StatusCode', 200)
             response = StreamingHttpResponse(
-                stream.iter_chunks(chunk_size=chunk_size),
+                time_limited_stream,
                 content_type=content_type or 'application/octet-stream',
                 status=status_code
             )
@@ -196,12 +256,12 @@ class ResolveStorageUriAPIMixin:
             # "ETag" is a standard HTTP header defined in the HTTP/1.1 specification (RFC 7232)
             #  It stands for "Entity Tag" and is specifically designed for cache validation
             user = request.user
-            has_access = project.has_permission(user)
-            user_status_tag = f'{user.id}:{has_access}'
-            response.headers['ETag'] = f'{hash(user_status_tag)}'
-            if metadata.get('ETag'):  
+            has_access = int(project.has_permission(user))
+            user_status_tag = f'{user.id}{has_access}'
+            response.headers['ETag'] = f'{user_status_tag}'
+            if metadata.get('ETag'):
                 # use original ETag from storage
-                response.headers['ETag'] += '-' + metadata['ETag'].strip('"')
+                response.headers['ETag'] += metadata['ETag'].strip('"')
             response.headers['ETag'] = f'"{response.headers["ETag"]}"'
             
             return response
