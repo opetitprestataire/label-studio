@@ -78,6 +78,7 @@ class RichTextPieceView extends Component {
   /**
    * Adjust selection style to mimic region's style but with a lighter color; this is done by creating a style tag.
    * Region style is also adjusted to be lighter so the combination of two will look like original selected region.
+   * Also sets cursor to "resize" for all document during resize.
    * @param {*} region to mimic
    * @param {Document} doc document to apply style to
    */
@@ -91,7 +92,11 @@ class RichTextPieceView extends Component {
       doc.head.appendChild(this.selectionStyle);
     }
 
-    this.selectionStyle.innerText = `::selection {${rules.join(" ")}}`;
+    this.selectionStyle.innerText = [
+      `::selection {${rules.join(" ")}}`, // set selection style to mimic region
+      `::-moz-selection {${rules.join(" ")}}`, // the same for Firefox
+      "body * { cursor: col-resize !important; }", // set cursor for all elements
+    ].join("\n");
     this.props.item.setStyles?.({ [region.identifier]: region.resizeStyles });
   };
 
