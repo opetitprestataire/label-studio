@@ -244,8 +244,8 @@ class ResolveStorageUriAPIMixin:
             if stream is None:
                 logger.error(f'Failed to get direct stream from storage {storage}')
                 return Response(
-                    {"error": "Storage stream failed while proxying data", "detail": "Stream is None"},
-                    status=status.HTTP_424_FAILED_DEPENDENCY
+                    {'error': 'Storage stream failed while proxying data', 'detail': 'Stream is None'},
+                    status=status.HTTP_424_FAILED_DEPENDENCY,
                 )
 
             # Create time-limited stream
@@ -264,8 +264,8 @@ class ResolveStorageUriAPIMixin:
         except Exception as e:
             logger.error(f'Error in direct proxy from storage: {e}', exc_info=True)
             return Response(
-                {"error": "Storage stream failed while proxying data", "detail": str(e)},
-                status=status.HTTP_424_FAILED_DEPENDENCY
+                {'error': 'Storage stream failed while proxying data', 'detail': str(e)},
+                status=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
 
