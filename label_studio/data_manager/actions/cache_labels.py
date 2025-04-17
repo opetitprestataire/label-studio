@@ -6,6 +6,7 @@ import logging
 from core.permissions import AllPermissions
 from core.redis import start_job_async_or_sync
 from tasks.models import Annotation, Prediction, Task
+from label_studio_sdk.label_interface import LabelInterface
 
 logger = logging.getLogger(__name__)
 all_permissions = AllPermissions()
@@ -18,6 +19,7 @@ def cache_labels_job(project, queryset, **kwargs):
     source_class = Annotation if source == 'annotations' else Prediction
     control_tag = request_data.get('custom_control_tag') or request_data.get('control_tag')
     with_counters = request_data.get('with_counters', 'Yes').lower() == 'yes'
+    label_interface = LabelInterface(project.label_config)
 
     if source == 'annotations':
         column_name = 'cache'
@@ -38,7 +40,7 @@ def cache_labels_job(project, queryset, **kwargs):
         task_labels = []
         annotations = source_class.objects.filter(task=task).only('result')
         for annotation in annotations:
-            labels = extract_labels(annotation, control_tag)
+            labels = extract_labels(annotation, control_tag, label_interface)
             task_labels.extend(labels)
 
         # cache labels in separate data column
@@ -57,24 +59,35 @@ def cache_labels_job(project, queryset, **kwargs):
     return {'response_code': 200, 'detail': f'Updated {len(tasks)} tasks'}
 
 
-def extract_labels(annotation, control_tag):
+def extract_labels(annotation, control_tag, label_interface=None):
     labels = []
     for region in annotation.result:
         # find regions with specific control tag name or just all regions if control tag is None
         if (control_tag is None or region['from_name'] == control_tag) and 'value' in region:
-            # scan value for a field with list of strings,
-            # as bonus it will work with textareas too
+            # scan value for a field with list of strings (eg choices, textareas) 
+            # or taxonomy (list of string-lists)
             for key in region['value']:
-                if (
-                    isinstance(region['value'][key], list)
-                    and region['value'][key]
-                    and isinstance(region['value'][key], list)
-                ):
-                    for elem in region['value'][key]:
-                        if isinstance(elem, str): 
-                            labels.append(elem)  # eg Choices fields
-                        elif isinstance(elem, list):
-                            labels.append(elem[-1])  # Taxonomy fields
+                if region['value'][key] and isinstance(region['value'][key], list):
+                    
+                    if key == 'taxonomy':
+                        showFullPath = 'true'
+                        pathSeparator = '/'
+                        if label_interface.find_tags('control', match_fn=lambda tag: tag.name==region['from_name']):
+                            # if from_name is not a custom_control tag, then we can try to fetch taxonomy formatting params
+                            showFullPath = label_interface.get_control(region['from_name']).attr.get('showFullPath', 'false')
+                            pathSeparator = label_interface.get_control(region['from_name']).attr.get('pathSeparator', '/')
+                            
+                        if showFullPath == 'false':
+                            for elems in region['value'][key]:
+                                labels.append( elems[-1] )  # just the leaf node of a taxonomy selection
+                        else:
+                            for elems in region['value'][key]:
+                                labels.append( pathSeparator.join(elems) )  # the full deliminated taxonomy path
+
+                    # other control tag types like Choices & TextAreas
+                    elif isinstance(region['value'][key][0], str):
+                        labels.extend( region['value'][key] ) 
+                        
                     break
     return labels
 
