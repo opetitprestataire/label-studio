@@ -88,28 +88,21 @@ class ResolveStorageUriAPIMixin:
 
     def time_limited_chunker(self, stream_body):
         """
-        Generator that stops yielding chunks after timeout seconds without blocking.
+        Generator that stops yielding chunks after timeout seconds.
         """
         chunk_size = settings.RESOLVER_PROXY_BUFFER_SIZE
         timeout = settings.RESOLVER_PROXY_TIMEOUT
-        
         start_time = time.monotonic()
         deadline = start_time + timeout
         chunks_yielded = 0
         total_bytes = 0
-        
-        # Flag to indicate if timeout occurred
-        timed_out = False
-        
+
         try:
             for chunk in stream_body.iter_chunks(chunk_size=chunk_size):
-                print(f"==> chunk: {chunks_yielded}, {total_bytes}\n")
                 current_time = time.monotonic()
                 # Check if we've exceeded our time limit
                 if current_time >= deadline:
-                    timed_out = True
                     logger.warning(f'Time limit ({timeout}s) reached after yielding {chunks_yielded} chunks ({total_bytes} bytes)')
-                    # DON'T call close() here - it's blocking!
                     break
                 
                 # Track statistics
@@ -121,18 +114,10 @@ class ResolveStorageUriAPIMixin:
             logger.error(f'Error during time-limited streaming: {e}', exc_info=True)
         finally:
             elapsed = time.monotonic() - start_time
-            
-            if timed_out:
-                # Log that we're force terminating without waiting for close()
-                logger.warning(f'Force terminating stream after timeout. Elapsed: {elapsed:.2f}s')
-                # The stream will eventually be garbage collected or cleaned up by boto3
-            else:
-                # Only try to close on normal completion (non-timeout case)
-                try:
-                    stream_body.close()
-                except Exception as e:
-                    logger.debug(f"Couldn't close stream: {e}")
-            
+            try:
+                stream_body.close()
+            except Exception as e:
+                logger.debug(f"Couldn't close stream: {e}")
             logger.debug(f'Stream processing finished after {elapsed:.2f}s, yielded {chunks_yielded} chunks ({total_bytes} bytes)')
 
     def override_range_header(self, request):
@@ -206,6 +191,38 @@ class ResolveStorageUriAPIMixin:
             
         return range_header
 
+    def prepare_headers(self, response, metadata, request, project):
+        """Prepare and set headers for the streaming response"""
+        # Copy important headers from storage
+        if metadata.get('ContentLength'):
+            response.headers['Content-Length'] = str(metadata['ContentLength'])
+        if metadata.get('ContentRange'):
+            response.headers['Content-Range'] = metadata['ContentRange']
+        if metadata.get('LastModified'):
+            response.headers['Last-Modified'] = metadata['LastModified'].strftime('%a, %d %b %Y %H:%M:%S GMT')
+        
+        # Always enable range requests
+        response.headers['Accept-Ranges'] = 'bytes'
+        
+        # Cache control
+        max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT
+        response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
+
+        # Generate an ETag based on user ID and user is_active status
+        # This ensures cache is invalidated when user status changes
+        # "ETag" is a standard HTTP header defined in the HTTP/1.1 specification (RFC 7232)
+        #  It stands for "Entity Tag" and is specifically designed for cache validation
+        user = request.user
+        has_access = int(project.has_permission(user))
+        user_status_tag = f'{user.id}{has_access}'
+        response.headers['ETag'] = f'{user_status_tag}'
+        if metadata.get('ETag'):
+            # use original ETag from storage
+            response.headers['ETag'] += metadata['ETag'].strip('"')
+        response.headers['ETag'] = f'"{response.headers["ETag"]}"'
+        
+        return response
+
     def proxy_data_from_storage(self, request, uri, project, storage):
         """
         Proxy the data using iter_chunks directly from storage streaming object.
@@ -219,7 +236,7 @@ class ResolveStorageUriAPIMixin:
             range_header = self.override_range_header(request)
             
             # Use the storage-specific method to get data stream and content type
-            stream, content_type, metadata = storage.get_direct_stream(uri, range_header=range_header)
+            stream, content_type, metadata = storage.get_bytes_stream(uri, range_header=range_header)
             
             if stream is None:
                 logger.error(f'Failed to get direct stream from storage {storage}')
@@ -236,34 +253,8 @@ class ResolveStorageUriAPIMixin:
                 status=status_code
             )
             
-            # Copy important headers from storage
-            if metadata.get('ContentLength'):
-                response.headers['Content-Length'] = str(metadata['ContentLength'])
-            if metadata.get('ContentRange'):
-                response.headers['Content-Range'] = metadata['ContentRange']
-            if metadata.get('LastModified'):
-                response.headers['Last-Modified'] = metadata['LastModified'].strftime('%a, %d %b %Y %H:%M:%S GMT')
-            
-            # Always enable range requests
-            response.headers['Accept-Ranges'] = 'bytes'
-            
-            # Cache control
-            max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT
-            response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
-
-            # Generate an ETag based on user ID and user is_active status
-            # This ensures cache is invalidated when user status changes
-            # "ETag" is a standard HTTP header defined in the HTTP/1.1 specification (RFC 7232)
-            #  It stands for "Entity Tag" and is specifically designed for cache validation
-            user = request.user
-            has_access = int(project.has_permission(user))
-            user_status_tag = f'{user.id}{has_access}'
-            response.headers['ETag'] = f'{user_status_tag}'
-            if metadata.get('ETag'):
-                # use original ETag from storage
-                response.headers['ETag'] += metadata['ETag'].strip('"')
-            response.headers['ETag'] = f'"{response.headers["ETag"]}"'
-            
+            # Prepare response headers
+            response = self.prepare_headers(response, metadata, request, project)
             return response
             
         except Exception as e:

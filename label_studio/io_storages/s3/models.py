@@ -21,7 +21,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.s3.utils import S3StreamWrapper, catch_and_reraise_from_none, get_client_and_resource, resolve_s3_url
+from io_storages.s3.utils import catch_and_reraise_from_none, get_client_and_resource, resolve_s3_url
 from io_storages.utils import storage_can_resolve_bucket_url
 from tasks.models import Annotation
 from tasks.validation import ValidationError as TaskValidationError
@@ -115,50 +115,6 @@ class S3StorageMixin(models.Model):
 
     @catch_and_reraise_from_none
     def get_bytes_stream(self, uri, range_header=None):
-        """Get file bytes from S3 storage as a stream and content type.
-
-        Args:
-            uri: The S3 URI of the file to retrieve
-            range_header: Optional HTTP Range header to forward to S3
-
-        Returns:
-            Tuple of (BytesIO stream, content_type)
-        """
-        # Parse URI to get bucket and key
-        parsed_uri = urlparse(uri, allow_fragments=False)
-        bucket_name = parsed_uri.netloc
-        key = parsed_uri.path.lstrip('/')
-
-        # Get S3 client
-        client = self.get_client()
-
-        try:
-            # Get the object from S3
-            request_params = {'Bucket': bucket_name, 'Key': key}
-            if range_header:
-                request_params['Range'] = range_header
-
-            object_response = client.get_object(**request_params)
-            content_type = object_response.get('ContentType')
-            content_length = int(object_response.get('ContentLength', 0))
-
-            # Create a properly seekable stream wrapper
-            stream = S3StreamWrapper(
-                client=client,
-                bucket=bucket_name,
-                key=key,
-                initial_stream=object_response['Body'],
-                content_length=content_length,
-            )
-
-            return stream, content_type
-
-        except Exception as e:
-            logger.error(f'Error getting stream from S3 for uri {uri}: {e}', exc_info=True)
-            return None, None
-
-    @catch_and_reraise_from_none
-    def get_direct_stream(self, uri, range_header=None):
         """Get file directly from S3 using iter_chunks without wrapper.
         
         This method forwards Range headers directly to S3 and returns the raw stream.
@@ -197,7 +153,7 @@ class S3StorageMixin(models.Model):
                 'LastModified': response.get('LastModified'),
                 'StatusCode': response['ResponseMetadata']['HTTPStatusCode']
             }
-            
+
             # Return the streaming body directly
             return response['Body'], response.get('ContentType'), metadata
 
