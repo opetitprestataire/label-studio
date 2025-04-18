@@ -289,10 +289,6 @@ const Model = types
         return self.regs.find((reg) => reg.cleanId === id);
       },
 
-      afterRegionSelected(region) {
-        setTimeout(() => self.setFrame(region.ranges[0].start));
-      },
-
       /**
        * Create a new timeline region at a given `frame` (only if labels are selected) or edit an existing one if `region` is provided
        * @param {Object} options
