@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from tasks.models import Task
 
 from label_studio.io_storages.functions import get_storage_by_url
+from label_studio.io_storages.utils import parse_range
 
 logger = logging.getLogger(__name__)
 
@@ -143,19 +144,8 @@ class ResolveStorageUriAPIMixin:
         range_header = None
 
         if rng := request.headers.get('Range'):
-            start, end = 0, ''
-            try:
-                values = rng.split('=')[1].split('-')
-                start = int(values[0])
-                if len(values) > 1:
-                    end = values[1]
-                    if end != '':
-                        end = int(end)
-                logger.debug(f'>> range read from request: start: {start}, end: {end}')
-            except (IndexError, ValueError) as e:
-                logger.warning(f'Invalid range header: {rng}: {e}')
-                start = 0
-                end = ''
+            start, end = parse_range(rng)
+            logger.debug(f'>> Range read from request: start: {start}, end: {end}')
 
             """
             Pass this range as is to storage:
@@ -209,7 +199,8 @@ class ResolveStorageUriAPIMixin:
 
         # Cache control
         max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT
-        response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
+        # response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
+        response.headers['access-control-max-age'] = str(max_age)
 
         # Generate an ETag based on user ID and user is_active status
         # This ensures cache is invalidated when user status changes
