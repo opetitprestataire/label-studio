@@ -2,6 +2,7 @@
 """
 import json
 import logging
+import types
 from typing import Union
 from urllib.parse import urlparse
 
@@ -62,94 +63,6 @@ class GCSStorageMixin(models.Model):
             None if 'Export' in self.__class__.__name__ else self.prefix,
         )
 
-    def get_bytes_stream_old_working_version(self, uri, range_header=None):
-        """Get file bytes from GCS storage as a streaming object with metadata.
-
-        Mirrors the S3 `get_bytes_stream` implementation but uses GCS's seek approach:
-        - Accepts optional `range_header` in format "bytes=start-end"
-        - Opens blob and seeks to starting position for ranged requests
-        - Uses fixed chunk size of 256 KiB (GCS requirement)
-        - Returns tuple of (stream_with_iter_chunks, content_type, metadata_dict)
-        """
-        # Parse URI to get bucket and blob name
-        parsed_uri = urlparse(uri, allow_fragments=False)
-        bucket_name = parsed_uri.netloc
-        blob_name = parsed_uri.path.lstrip('/')
-        streaming = True
-
-        try:
-            # Acquire client / bucket / blob
-            client = self.get_client()
-            bucket = client.get_bucket(bucket_name)
-            blob = bucket.blob(blob_name)
-            blob.reload()  # populate metadata
-
-            # Parse range header and do a trick for headers request
-            start, end = parse_range(range_header)
-            # browser is requesting simple file without streaming
-            if start is None and end is None:
-                streaming = False
-                start, end = 0, blob.size
-            # browser is requesting just headers for streaming
-            if start == 0 and (end == 0 or end == ''):
-                start, end = 0, 1
-
-            # Create a stream that supports iter_chunks method
-            class StreamWrapper:
-                def __init__(self, blob, start, end):
-                    self.blob = blob
-                    self.start = start
-                    self.end = end
-
-                def iter_chunks(self, chunk_size):
-                    # Calculate total bytes to download
-                    if self.end and self.end > 0:
-                        remaining = self.end - self.start
-                    else:
-                        remaining = float('inf')
-
-                    # For each chunk request
-                    while remaining > 0:
-                        read_size = min(chunk_size, remaining)
-                        current_end = self.start + read_size - 1
-                        chunk = self.blob.download_as_bytes(start=self.start, end=current_end)
-                        if not chunk:
-                            break
-
-                        self.start += len(chunk)
-                        remaining -= len(chunk)
-                        yield chunk
-
-                def read(self, size):
-                    return self.reader.read(size)
-
-                def close(self):
-                    try:
-                        self.reader.close()
-                    except Exception:
-                        pass
-
-            # Wrap the reader to provide iter_chunks method
-            stream = StreamWrapper(blob, start, end)
-
-            # Calculate content length and set appropriate status code
-            content_length = end - start
-            status_code = 206 if streaming else 200
-
-            # Build metadata dictionary matching S3 format
-            metadata = {
-                'ETag': blob.etag or '',
-                'ContentLength': content_length,
-                'ContentRange': f'bytes {start}-{end-1}/{blob.size or 0}',
-                'LastModified': blob.updated,
-                'StatusCode': status_code,
-            }
-            return stream, (blob.content_type or 'application/octet-stream'), metadata
-
-        except Exception as e:
-            logger.error(f'Error getting direct stream from GCS for uri {uri}: {e}', exc_info=True)
-            return None, None, {}
-
     def get_bytes_stream(self, uri, range_header=None):
         """Get file bytes from GCS storage as a streaming object with metadata.
 
@@ -185,11 +98,9 @@ class GCSStorageMixin(models.Model):
             if start == 0 and (end == 0 or end == ''):
                 start, end = 0, 1
 
-            # Build the direct download URL
+            # Build the direct download URL because GCS doesn't support streaming out of the box
             encoded = urllib.parse.quote(blob_name, safe='')
-            download_url = (
-                'https://storage.googleapis.com/download/storage/v1/b/' f'{bucket_name}/o/{encoded}?alt=media'
-            )
+            download_url = settings.RESOLVER_PROXY_GCS_DOWNLOAD_URL.format(bucket_name=bucket_name, blob_name=encoded)
 
             # Prepare headers for range request if needed
             headers = {}
@@ -201,44 +112,35 @@ class GCSStorageMixin(models.Model):
             # Make a single streaming request
             session = AuthorizedSession(client._credentials)
             logger.debug(f'Making streaming request to {download_url}')
-            resp = session.get(download_url, headers=headers, stream=True)
-            resp.raise_for_status()
-            logger.debug(f'Got response with status {resp.status_code}, headers: {resp.headers}')
+            stream = session.get(download_url, headers=headers, stream=True)
+            stream.raise_for_status()
+            logger.debug(f'Got response with status {stream.status_code}, headers: {stream.headers}')
 
-            # Create a wrapper with iter_chunks support
-            class StreamWrapper:
-                def __init__(self, response):
-                    self.response = response
-                    self._iter = None
+            # Define method to attach to the response
+            def _iter_chunks(self_resp, chunk_size=256 * 1024):
+                """Iterate over chunks from the single HTTP response"""
+                for chunk in self_resp.iter_content(chunk_size=chunk_size):
+                    if chunk:
+                        yield chunk
 
-                def iter_chunks(self, chunk_size=256 * 1024):
-                    """Iterate over chunks from the single HTTP response"""
-                    # Default chunk size of 256KB if not specified
-                    for chunk in self.response.iter_content(chunk_size=chunk_size):
-                        if chunk:  # filter out keep-alive chunks
-                            yield chunk
-
-                def close(self):
-                    if self.response:
-                        self.response.close()
-
-            # Create the stream wrapper
-            stream = StreamWrapper(resp)
+            # Monkey patch methods directly onto the response object
+            stream.iter_chunks = types.MethodType(_iter_chunks, stream)
+            stream.close = types.MethodType(lambda self: self.close() if hasattr(self, 'close') else None, stream)
 
             # Get content length from the response headers
-            total = int(resp.headers.get('Content-Length', '0'))
+            total = int(stream.headers.get('Content-Length', '0'))
 
             # Determine actual range of data we're getting
-            if 'Content-Range' in resp.headers:
+            if 'Content-Range' in stream.headers:
                 # Parse the Content-Range header (format: bytes start-end/total)
-                range_parts = resp.headers['Content-Range'].split(' ')[1].split('/')
+                range_parts = stream.headers['Content-Range'].split(' ')[1].split('/')
                 byte_range = range_parts[0].split('-')
                 actual_start = int(byte_range[0])
                 actual_end = int(byte_range[1])
                 file_size = int(range_parts[1])
             else:
                 actual_start = 0
-                actual_end = total - 1 if total else 0
+                actual_end = (total - 1) if total else 0
                 file_size = total
 
             # Build metadata matching S3 format
@@ -247,9 +149,8 @@ class GCSStorageMixin(models.Model):
                 'ContentLength': total,
                 'ContentRange': f'bytes {actual_start}-{actual_end}/{file_size}',
                 'LastModified': blob.updated,
-                'StatusCode': resp.status_code,
+                'StatusCode': stream.status_code,
             }
-
             return stream, (blob.content_type or 'application/octet-stream'), metadata
 
         except Exception as e:
