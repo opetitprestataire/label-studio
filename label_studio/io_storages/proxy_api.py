@@ -199,8 +199,7 @@ class ResolveStorageUriAPIMixin:
 
         # Cache control
         max_age = settings.RESOLVER_PROXY_CACHE_TIMEOUT
-        # response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
-        response.headers['access-control-max-age'] = str(max_age)
+        response.headers['Cache-Control'] = f'private, max-age={max_age}, must-revalidate'
 
         # Generate an ETag based on user ID and user is_active status
         # This ensures cache is invalidated when user status changes

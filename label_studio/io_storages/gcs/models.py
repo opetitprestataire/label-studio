@@ -1,6 +1,5 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
-import io
 import json
 import logging
 from typing import Union
@@ -20,7 +19,7 @@ from io_storages.base_models import (
     ProjectStorageMixin,
 )
 from io_storages.gcs.utils import GCS
-from io_storages.utils import storage_can_resolve_bucket_url, parse_range
+from io_storages.utils import parse_range, storage_can_resolve_bucket_url
 from tasks.models import Annotation
 
 logger = logging.getLogger(__name__)
@@ -72,10 +71,6 @@ class GCSStorageMixin(models.Model):
         - Uses fixed chunk size of 256 KiB (GCS requirement)
         - Returns tuple of (stream_with_iter_chunks, content_type, metadata_dict)
         """
-        # GCS requires chunk size to be multiple of 256 KiB
-        assert (
-            settings.RESOLVER_PROXY_BUFFER_SIZE % 256 * 1024 == 0
-        ), 'GCS requires chunk size to be multiple of 256 KiB'
         # Parse URI to get bucket and blob name
         parsed_uri = urlparse(uri, allow_fragments=False)
         bucket_name = parsed_uri.netloc
@@ -87,7 +82,6 @@ class GCSStorageMixin(models.Model):
             client = self.get_client()
             bucket = client.get_bucket(bucket_name)
             blob = bucket.blob(blob_name)
-            blob.chunk_size = settings.RESOLVER_PROXY_BUFFER_SIZE
             blob.reload()  # populate metadata
 
             # Parse range header and do a trick for headers request
@@ -107,30 +101,23 @@ class GCSStorageMixin(models.Model):
                     self.start = start
                     self.end = end
 
-                def iter_chunks(self, chunk_size=None):
-                    assert (
-                        chunk_size == settings.RESOLVER_PROXY_BUFFER_SIZE
-                    ), 'chunk_size must be the same as RESOLVER_PROXY_BUFFER_SIZE'
-                    
+                def iter_chunks(self, chunk_size):
                     # Calculate total bytes to download
                     if self.end and self.end > 0:
                         remaining = self.end - self.start
                     else:
                         remaining = float('inf')
-                    
+
                     # For each chunk request
                     while remaining > 0:
                         read_size = min(chunk_size, remaining)
                         current_end = self.start + read_size - 1
-                        chunk = self.blob.download_as_bytes(
-                            start=self.start,
-                            end=current_end
-                        )
+                        chunk = self.blob.download_as_bytes(start=self.start, end=current_end)
                         if not chunk:
                             break
 
                         self.start += len(chunk)
-                        remaining -= len(chunk)                        
+                        remaining -= len(chunk)
                         yield chunk
 
                 def read(self, size):
