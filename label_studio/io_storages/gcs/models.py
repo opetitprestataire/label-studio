@@ -4,8 +4,6 @@ import json
 import logging
 import types
 import urllib.parse
-
-from google.auth.transport.requests import AuthorizedSession
 from typing import Union
 from urllib.parse import urlparse
 
@@ -15,6 +13,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
+from google.auth.transport.requests import AuthorizedSession
 from io_storages.base_models import (
     ExportStorage,
     ExportStorageLink,
