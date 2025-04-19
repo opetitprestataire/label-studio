@@ -251,9 +251,7 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
 
     def get_blob_metadata(self, key):
         return AZURE.get_blob_metadata(
-            key,
-            self.container,
-            conn_string=self.connection_string,
+            key, self.container, account_name=self.account_name, account_key=self.account_key
         )
 
     class Meta:
