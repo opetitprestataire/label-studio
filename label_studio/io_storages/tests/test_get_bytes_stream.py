@@ -96,22 +96,40 @@ class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):
         # Mock the blob client and download_blob
         mock_blob_client = MagicMock()
         self.mock_client.get_blob_client.return_value = mock_blob_client
+        
+        # Mock properties
+        mock_properties = MagicMock()
+        mock_properties.size = 1024
+        mock_properties.etag = "mock-etag"
+        mock_properties.last_modified = "2023-04-19T12:00:00Z"
+        mock_properties.content_settings.content_type = 'image/jpeg'
+        mock_blob_client.get_blob_properties.return_value = mock_properties
 
-        # Mock the download stream
+        # Mock the download stream with ability to be monkey-patched
         mock_download_stream = MagicMock()
         mock_blob_client.download_blob.return_value = mock_download_stream
-        mock_download_stream.properties.content_settings.content_type = 'image/jpeg'
-        mock_download_stream.readall.return_value = b'fake image data'
-
+        
+        # Prepare stream to yield fake data when iterated
+        mock_chunk_iterator = MagicMock()
+        mock_chunk_iterator.__iter__.return_value = iter([b'fake image data'])
+        mock_download_stream.chunks.return_value = mock_chunk_iterator
+        
         # Call the real get_bytes_stream method
         uri = 'azure-blob://test-container/test-image.jpg'
-        result_stream, result_content_type = self.storage.get_bytes_stream(uri)
+        result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri)
 
         # Assert method calls and results
         self.mock_client.get_blob_client.assert_called_once_with(container='test-container', blob='test-image.jpg')
         mock_blob_client.download_blob.assert_called_once()
         self.assertEqual(result_content_type, 'image/jpeg')
-        self.assertEqual(result_stream.read(), b'fake image data')
+        
+        # Test the iter_chunks functionality
+        chunks = list(result_stream.iter_chunks())
+        self.assertEqual(chunks, [b'fake image data'])
+        
+        # Test metadata
+        self.assertIsInstance(metadata, dict)
+        self.assertEqual(metadata['ETag'], 'mock-etag')
 
     def test_get_bytes_stream_exception(self):
         # Set up mock client to raise an exception
@@ -119,11 +137,12 @@ class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):
 
         # Call the real get_bytes_stream method
         uri = 'azure-blob://test-container/test-image.jpg'
-        result_stream, result_content_type = self.storage.get_bytes_stream(uri)
+        result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri)
 
         # Assert results
         self.assertIsNone(result_stream)
         self.assertIsNone(result_content_type)
+        self.assertEqual(metadata, {})
 
 
 class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
@@ -146,21 +165,40 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
 
         mock_blob = MagicMock()
         mock_bucket.blob.return_value = mock_blob
-
-        # Set blob properties
         mock_blob.content_type = 'application/pdf'
-        mock_blob.download_as_bytes.return_value = b'fake pdf data'
+        mock_blob.etag = 'mock-etag'
+        mock_blob.updated = '2023-04-19T12:00:00Z'
+        mock_blob.size = 1024
 
-        # Call the real get_bytes_stream method
-        uri = 'gs://test-bucket/test-document.pdf'
-        result_stream, result_content_type = self.storage.get_bytes_stream(uri)
+        # Mock the requests session
+        from unittest.mock import patch
+        from google.auth.transport.requests import AuthorizedSession
+        mock_session = MagicMock()
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.headers = {'Content-Type': 'application/pdf', 'Content-Length': '1024'}
+        mock_response.iter_content.return_value = [b'fake pdf data']
+        mock_session.get.return_value = mock_response
+        
+        with patch('google.auth.transport.requests.AuthorizedSession', return_value=mock_session):
+            # Call the real get_bytes_stream method
+            uri = 'gs://test-bucket/test-document.pdf'
+            result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri)
 
-        # Assert method calls and results
-        self.mock_client.get_bucket.assert_called_once_with('test-bucket')
-        mock_bucket.blob.assert_called_once_with('test-document.pdf')
-        mock_blob.reload.assert_called_once()
-        self.assertEqual(result_content_type, 'application/pdf')
-        self.assertEqual(result_stream.read(), b'fake pdf data')
+            # Assert method calls and results
+            self.mock_client.get_bucket.assert_called_once_with('test-bucket')
+            mock_bucket.blob.assert_called_once_with('test-document.pdf')
+            mock_blob.reload.assert_called_once()
+            mock_session.get.assert_called_once()
+            
+            # Test streaming functionality
+            chunks = list(result_stream.iter_chunks(chunk_size=1024))
+            self.assertEqual(chunks, [b'fake pdf data'])
+            
+            # Check content type and metadata
+            self.assertEqual(result_content_type, 'application/pdf')
+            self.assertIsInstance(metadata, dict)
+            self.assertEqual(metadata['StatusCode'], 200)
 
     def test_get_bytes_stream_exception(self):
         # Set up mock client to raise an exception
@@ -168,11 +206,12 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
 
         # Call the real get_bytes_stream method
         uri = 'gs://test-bucket/test-document.pdf'
-        result_stream, result_content_type = self.storage.get_bytes_stream(uri)
+        result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri)
 
         # Assert results
         self.assertIsNone(result_stream)
         self.assertIsNone(result_content_type)
+        self.assertEqual(metadata, {})
 
     def test_get_bytes_stream_with_default_content_type(self):
         # Mock bucket and blob
@@ -181,15 +220,28 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
 
         mock_blob = MagicMock()
         mock_bucket.blob.return_value = mock_blob
-
-        # Set blob properties with None content_type
         mock_blob.content_type = None
-        mock_blob.download_as_bytes.return_value = b'test data'
+        mock_blob.etag = 'mock-etag'
+        mock_blob.updated = '2023-04-19T12:00:00Z'
+        mock_blob.size = 512
 
-        # Call the real get_bytes_stream method
-        uri = 'gs://test-bucket/test-file'
-        result_stream, result_content_type = self.storage.get_bytes_stream(uri)
+        # Mock the requests session
+        from unittest.mock import patch
+        from google.auth.transport.requests import AuthorizedSession
+        mock_session = MagicMock()
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.headers = {'Content-Length': '512'}
+        mock_response.iter_content.return_value = [b'test data']
+        mock_session.get.return_value = mock_response
+        
+        with patch('google.auth.transport.requests.AuthorizedSession', return_value=mock_session):
+            # Call the real get_bytes_stream method
+            uri = 'gs://test-bucket/test-file'
+            result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri)
 
-        # Assert results
-        self.assertEqual(result_content_type, 'application/octet-stream')
-        self.assertEqual(result_stream.read(), b'test data')
+            # Test the results
+            self.assertEqual(result_content_type, 'application/octet-stream')
+            chunks = list(result_stream.iter_chunks())
+            self.assertEqual(chunks, [b'test data'])
+            self.assertIsInstance(metadata, dict)
