@@ -112,7 +112,7 @@ class GCSStorageMixin(models.Model):
             # Make a single streaming request
             session = AuthorizedSession(client._credentials)
             logger.debug(f'Making streaming request to {download_url}')
-            stream = session.get(download_url, headers=headers, stream=True)
+            stream = session.get(download_url, headers=headers, stream=True, timeout=settings.RESOLVER_PROXY_GCS_HTTP_TIMEOUT)
             stream.raise_for_status()
             logger.debug(f'Got response with status {stream.status_code}, headers: {stream.headers}')
 

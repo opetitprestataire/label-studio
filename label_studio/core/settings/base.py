@@ -829,3 +829,4 @@ RESOLVER_PROXY_GCS_DOWNLOAD_URL = get_env(
     'RESOLVER_PROXY_GCS_DOWNLOAD_URL',
     'https://storage.googleapis.com/download/storage/v1/b/{bucket_name}/o/{blob_name}?alt=media',
 )
+RESOLVER_PROXY_GCS_HTTP_TIMEOUT = int(get_env('RESOLVER_PROXY_GCS_HTTP_TIMEOUT', 5))
