@@ -62,7 +62,7 @@ class GCSStorageMixin(models.Model):
             None if 'Export' in self.__class__.__name__ else self.prefix,
         )
 
-    def get_bytes_stream(self, uri, range_header=None):
+    def get_bytes_stream_old_working_version(self, uri, range_header=None):
         """Get file bytes from GCS storage as a streaming object with metadata.
 
         Mirrors the S3 `get_bytes_stream` implementation but uses GCS's seek approach:
@@ -144,6 +144,112 @@ class GCSStorageMixin(models.Model):
                 'LastModified': blob.updated,
                 'StatusCode': status_code,
             }
+            return stream, (blob.content_type or 'application/octet-stream'), metadata
+
+        except Exception as e:
+            logger.error(f'Error getting direct stream from GCS for uri {uri}: {e}', exc_info=True)
+            return None, None, {}
+
+    def get_bytes_stream(self, uri, range_header=None):
+        """Get file bytes from GCS storage as a streaming object with metadata.
+
+        Improved implementation that uses a single HTTP request with streaming response
+        instead of making multiple requests per chunk.
+
+        - Accepts ``range_header`` in format ``bytes=start-end``
+        - Makes a single HTTP request to GCS API with stream=True
+        - Returns a tuple of (stream_with_iter_chunks, content_type, metadata_dict)
+        """
+        # Parse URI to get bucket and blob name
+        parsed_uri = urlparse(uri, allow_fragments=False)
+        bucket_name = parsed_uri.netloc
+        blob_name = parsed_uri.path.lstrip('/')
+
+        try:
+            # Get the client and bucket
+            import urllib.parse
+
+            from google.auth.transport.requests import AuthorizedSession
+
+            client = self.get_client()
+            bucket = client.get_bucket(bucket_name)
+            blob = bucket.blob(blob_name)
+            blob.reload()  # populate metadata
+
+            # Parse range header
+            start, end = parse_range(range_header)
+            # Handle special cases for header requests
+            if start is None and end is None:
+                start, end = 0, blob.size
+            # Browser is requesting just headers for streaming
+            if start == 0 and (end == 0 or end == ''):
+                start, end = 0, 1
+
+            # Build the direct download URL
+            encoded = urllib.parse.quote(blob_name, safe='')
+            download_url = (
+                'https://storage.googleapis.com/download/storage/v1/b/' f'{bucket_name}/o/{encoded}?alt=media'
+            )
+
+            # Prepare headers for range request if needed
+            headers = {}
+            if start > 0 or (end is not None and end != blob.size):
+                end_str = str(end) if end is not None else ''
+                headers['Range'] = f'bytes={start}-{end_str}'
+                logger.debug(f"Using range header: {headers['Range']}")
+
+            # Make a single streaming request
+            session = AuthorizedSession(client._credentials)
+            logger.debug(f'Making streaming request to {download_url}')
+            resp = session.get(download_url, headers=headers, stream=True)
+            resp.raise_for_status()
+            logger.debug(f'Got response with status {resp.status_code}, headers: {resp.headers}')
+
+            # Create a wrapper with iter_chunks support
+            class StreamWrapper:
+                def __init__(self, response):
+                    self.response = response
+                    self._iter = None
+
+                def iter_chunks(self, chunk_size=256 * 1024):
+                    """Iterate over chunks from the single HTTP response"""
+                    # Default chunk size of 256KB if not specified
+                    for chunk in self.response.iter_content(chunk_size=chunk_size):
+                        if chunk:  # filter out keep-alive chunks
+                            yield chunk
+
+                def close(self):
+                    if self.response:
+                        self.response.close()
+
+            # Create the stream wrapper
+            stream = StreamWrapper(resp)
+
+            # Get content length from the response headers
+            total = int(resp.headers.get('Content-Length', '0'))
+
+            # Determine actual range of data we're getting
+            if 'Content-Range' in resp.headers:
+                # Parse the Content-Range header (format: bytes start-end/total)
+                range_parts = resp.headers['Content-Range'].split(' ')[1].split('/')
+                byte_range = range_parts[0].split('-')
+                actual_start = int(byte_range[0])
+                actual_end = int(byte_range[1])
+                file_size = int(range_parts[1])
+            else:
+                actual_start = 0
+                actual_end = total - 1 if total else 0
+                file_size = total
+
+            # Build metadata matching S3 format
+            metadata = {
+                'ETag': blob.etag or '',
+                'ContentLength': total,
+                'ContentRange': f'bytes {actual_start}-{actual_end}/{file_size}',
+                'LastModified': blob.updated,
+                'StatusCode': resp.status_code,
+            }
+
             return stream, (blob.content_type or 'application/octet-stream'), metadata
 
         except Exception as e:
