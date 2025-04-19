@@ -3,6 +3,9 @@
 import json
 import logging
 import types
+import urllib.parse
+
+from google.auth.transport.requests import AuthorizedSession
 from typing import Union
 from urllib.parse import urlparse
 
@@ -79,11 +82,6 @@ class GCSStorageMixin(models.Model):
         blob_name = parsed_uri.path.lstrip('/')
 
         try:
-            # Get the client and bucket
-            import urllib.parse
-
-            from google.auth.transport.requests import AuthorizedSession
-
             client = self.get_client()
             bucket = client.get_bucket(bucket_name)
             blob = bucket.blob(blob_name)
