@@ -145,6 +145,9 @@ class ResolveStorageUriAPIMixin:
 
         if rng := request.headers.get('Range'):
             start, end = parse_range(rng)
+            # Normalize None end to empty for consistent handling
+            if end is None:
+                end = ''
             logger.debug(f'>> Range read from request: start: {start}, end: {end}')
 
             """
@@ -242,7 +245,7 @@ class ResolveStorageUriAPIMixin:
             time_limited_stream = self.time_limited_chunker(stream)
 
             # Set up streaming response with storage's status code
-            status_code = metadata.get('StatusCode', 200)
+            status_code = metadata['StatusCode']
             response = StreamingHttpResponse(
                 time_limited_stream, content_type=content_type or 'application/octet-stream', status=status_code
             )
