@@ -204,165 +204,181 @@ class TestResolveStorageUriAPIMixin(unittest.TestCase):
         # Create a mock stream with iter_chunks method
         mock_stream = MagicMock()
         mock_stream.iter_chunks.return_value = [b'chunk1', b'chunk2', b'chunk3']
-        
+
         # Set up settings
         with patch('io_storages.proxy_api.settings') as mock_settings, patch('time.monotonic') as mock_time:
             # Mock settings
             mock_settings.RESOLVER_PROXY_BUFFER_SIZE = 8192
             mock_settings.RESOLVER_PROXY_TIMEOUT = 20
-            
+
             # Mock time to simulate being within timeout
             # Add an extra value for the 'finally' block
             mock_time.side_effect = [0, 1, 2, 3, 4]  # Start, three chunk iterations, finally
-            
+
             # Run the chunker and collect all chunks
             chunks = list(self.mixin.time_limited_chunker(mock_stream))
-            
+
             # Verify all chunks were yielded
             assert chunks == [b'chunk1', b'chunk2', b'chunk3']
             assert mock_stream.close.called
-    
+
     def test_time_limited_chunker_timeout(self):
         """Test time_limited_chunker when timeout is reached during processing"""
         # Create a mock stream with iter_chunks method
         mock_stream = MagicMock()
         mock_stream.iter_chunks.return_value = [b'chunk1', b'chunk2', b'chunk3', b'chunk4', b'chunk5']
-        
+
         # Set up settings
         with patch('io_storages.proxy_api.settings') as mock_settings, patch('time.monotonic') as mock_time:
             # Mock settings
             mock_settings.RESOLVER_PROXY_BUFFER_SIZE = 8192
             mock_settings.RESOLVER_PROXY_TIMEOUT = 10
-            
+
             # Mock time to simulate exceeding timeout after second chunk
             # Add an extra value for the 'finally' block
             mock_time.side_effect = [0, 5, 9, 15, 20, 25]  # Start time, chunk checks, finally
-            
+
             # Run the chunker and collect all chunks
             chunks = list(self.mixin.time_limited_chunker(mock_stream))
-            
+
             # Verify only the chunks before timeout were yielded
             assert chunks == [b'chunk1', b'chunk2']
             assert mock_stream.close.called
-    
+
     def test_time_limited_chunker_exception(self):
         """Test time_limited_chunker when an exception occurs during streaming"""
         # Create a mock stream with iter_chunks method that raises an exception
         mock_stream = MagicMock()
-        mock_stream.iter_chunks.side_effect = Exception("Streaming error")
-        
+        mock_stream.iter_chunks.side_effect = Exception('Streaming error')
+
         # Set up settings
         with patch('io_storages.proxy_api.settings') as mock_settings, patch('time.monotonic') as mock_time:
             # Mock settings
             mock_settings.RESOLVER_PROXY_BUFFER_SIZE = 8192
             mock_settings.RESOLVER_PROXY_TIMEOUT = 20
-            
+
             # Mock time - need two values: one for start and one for the finally block
             mock_time.side_effect = [0, 1]
-            
+
             # Run the chunker and collect all chunks (should be empty due to exception)
             chunks = list(self.mixin.time_limited_chunker(mock_stream))
-            
+
             # Verify no chunks were yielded and the stream was closed
             assert chunks == []
             assert mock_stream.close.called
-    
+
     def test_override_range_header_no_header(self):
         """Test override_range_header when no Range header is present"""
         self.request.headers = {}
         result = self.mixin.override_range_header(self.request)
         assert result is None
-    
+
     def test_override_range_header_header_probes(self):
         """Test override_range_header with header probe formats"""
         # Test bytes=0-
         self.request.headers = {'Range': 'bytes=0-'}
-        with patch('io_storages.proxy_api.settings') as mock_settings, patch('io_storages.proxy_api.parse_range') as mock_parse_range:
+        with patch('io_storages.proxy_api.settings') as mock_settings, patch(
+            'io_storages.proxy_api.parse_range'
+        ) as mock_parse_range:
             mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 1024 * 1024
             # Mock the parse_range function to return a known value
             mock_parse_range.return_value = (0, '')
-            
+
             result = self.mixin.override_range_header(self.request)
             assert result == 'bytes=0-'
-        
+
         # Test bytes=0-0
         self.request.headers = {'Range': 'bytes=0-0'}
-        with patch('io_storages.proxy_api.settings') as mock_settings, patch('io_storages.proxy_api.parse_range') as mock_parse_range:
+        with patch('io_storages.proxy_api.settings') as mock_settings, patch(
+            'io_storages.proxy_api.parse_range'
+        ) as mock_parse_range:
             mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 1024 * 1024
             # Mock the parse_range function to return a known value
             mock_parse_range.return_value = (0, 0)
-            
+
             result = self.mixin.override_range_header(self.request)
             assert result == 'bytes=0-0'
-    
+
     def test_override_range_header_start_no_end(self):
         """Test override_range_header with a start position but no end"""
         # Case: bytes=100-
         self.request.headers = {'Range': 'bytes=100-'}
-        with patch('io_storages.proxy_api.settings') as mock_settings, patch('io_storages.proxy_api.parse_range') as mock_parse_range:
+        with patch('io_storages.proxy_api.settings') as mock_settings, patch(
+            'io_storages.proxy_api.parse_range'
+        ) as mock_parse_range:
             mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 1024 * 1024  # 1MB
             # Mock the parse_range function to return a known value
             mock_parse_range.return_value = (100, '')
-            
+
             result = self.mixin.override_range_header(self.request)
             # Should add MAX_RANGE_SIZE to start
             assert result == f'bytes=100-{100 + 1024*1024}'
-        
+
         # Case: bytes=100-0 (treated like bytes=100-)
         self.request.headers = {'Range': 'bytes=100-0'}
-        with patch('io_storages.proxy_api.settings') as mock_settings, patch('io_storages.proxy_api.parse_range') as mock_parse_range:
+        with patch('io_storages.proxy_api.settings') as mock_settings, patch(
+            'io_storages.proxy_api.parse_range'
+        ) as mock_parse_range:
             mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 1024 * 1024  # 1MB
             # Mock the parse_range function to return a known value
             mock_parse_range.return_value = (100, 0)
-            
+
             result = self.mixin.override_range_header(self.request)
             # Should add MAX_RANGE_SIZE to start
             assert result == f'bytes=100-{100 + 1024*1024}'
-    
+
     def test_override_range_header_start_and_end(self):
         """Test override_range_header with start and end positions"""
         # Case: Range within limit
         self.request.headers = {'Range': 'bytes=100-5000'}
-        with patch('io_storages.proxy_api.settings') as mock_settings, patch('io_storages.proxy_api.parse_range') as mock_parse_range:
+        with patch('io_storages.proxy_api.settings') as mock_settings, patch(
+            'io_storages.proxy_api.parse_range'
+        ) as mock_parse_range:
             mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 10000  # 10KB
             # Mock the parse_range function to return a known value
             mock_parse_range.return_value = (100, 5000)
-            
+
             result = self.mixin.override_range_header(self.request)
             # Should remain unchanged as it's within limit
             assert result == 'bytes=100-5000'
-        
+
         # Case: Range exceeding limit
         self.request.headers = {'Range': 'bytes=100-20000'}
-        with patch('io_storages.proxy_api.settings') as mock_settings, patch('io_storages.proxy_api.parse_range') as mock_parse_range:
+        with patch('io_storages.proxy_api.settings') as mock_settings, patch(
+            'io_storages.proxy_api.parse_range'
+        ) as mock_parse_range:
             mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 10000  # 10KB
             # Mock the parse_range function to return a known value
             mock_parse_range.return_value = (100, 20000)
-            
+
             result = self.mixin.override_range_header(self.request)
             # Should limit the range to MAX_RANGE_SIZE from start
             assert result == f'bytes=100-{100 + 10000}'
-    
+
     def test_override_range_header_negative_start(self):
         """Test override_range_header with negative start position"""
         self.request.headers = {'Range': 'bytes=-1024'}
-        with patch('io_storages.proxy_api.settings') as mock_settings, patch('io_storages.proxy_api.parse_range') as mock_parse_range:
+        with patch('io_storages.proxy_api.settings') as mock_settings, patch(
+            'io_storages.proxy_api.parse_range'
+        ) as mock_parse_range:
             mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 10000  # 10KB
             # Mock the parse_range function to return a negative start
             mock_parse_range.return_value = (-1024, None)
-            
+
             result = self.mixin.override_range_header(self.request)
             # Should reset to 0 and add MAX_RANGE_SIZE
             assert result == f'bytes=0-{10000}'
-    
+
     def test_override_range_header_unsupported_format(self):
         """Test override_range_header with unsupported range format"""
         self.request.headers = {'Range': 'invalid-range-format'}
-        with patch('io_storages.proxy_api.settings') as mock_settings, patch('io_storages.proxy_api.parse_range') as mock_parse_range:
+        with patch('io_storages.proxy_api.settings') as mock_settings, patch(
+            'io_storages.proxy_api.parse_range'
+        ) as mock_parse_range:
             mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 10000  # 10KB
             # Mock parse_range to simulate failure with invalid format
             mock_parse_range.return_value = (0, None)
-            
+
             result = self.mixin.override_range_header(self.request)
             # Should reset to default
             assert result == 'bytes=0-'

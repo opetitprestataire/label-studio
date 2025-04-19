@@ -174,7 +174,7 @@ class AzureBlobStorageMixin(models.Model):
             metadata = {
                 'ETag': properties.etag,
                 'ContentLength': content_length,
-                'ContentRange': f'bytes {start}-{length-1}/{total_size or 0}',
+                'ContentRange': f'bytes {start}-{start + length-1}/{total_size or 0}',
                 'LastModified': properties.last_modified,
                 'StatusCode': status_code,
             }

@@ -6,7 +6,7 @@ from urllib.parse import unquote
 
 from core.feature_flags import flag_set
 from django.conf import settings
-from django.http import HttpRequest, HttpResponseRedirect, StreamingHttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, StreamingHttpResponse
 from projects.models import Project
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -252,6 +252,12 @@ class ResolveStorageUriAPIMixin:
 
             # Prepare response headers
             response = self.prepare_headers(response, metadata, request, project)
+
+            # Process cached requests using ETag - with range-aware handling
+            if settings.RESOLVER_PROXY_ENABLE_ETAG_CACHE and 'Range' not in request.headers:
+                if request.headers.get('If-None-Match') == response.headers.get('ETag'):
+                    return HttpResponse(status=status.HTTP_304_NOT_MODIFIED)
+
             return response
 
         except Exception as e:
