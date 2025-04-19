@@ -432,6 +432,8 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         self.storage = ConcreteGCSStorage()
         # Setup mock client
         self.mock_client = MagicMock()
+        # Add mock credentials to avoid AuthorizedSession error
+        self.mock_client._credentials = MagicMock()
         # Patch the get_client method
         self.get_client_patcher = patch.object(self.storage, 'get_client', return_value=self.mock_client)
         self.get_client_patcher.start()
@@ -442,6 +444,7 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         self.mock_settings = self.mock_settings_patcher.start()
         self.mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE = 10 * 1024 * 1024  # 10MB
         self.mock_settings.RESOLVER_PROXY_GCS_DOWNLOAD_URL = 'https://storage.googleapis.com/{bucket_name}/{blob_name}'
+        self.mock_settings.RESOLVER_PROXY_GCS_HTTP_TIMEOUT = 30
         self.addCleanup(self.mock_settings_patcher.stop)
 
     def test_get_bytes_stream_success(self):
@@ -459,6 +462,7 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         # Mock the requests session
         from unittest.mock import patch
 
+        # Create mock response for session.get
         mock_session = MagicMock()
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -470,7 +474,8 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         mock_response.iter_content.return_value = [b'fake pdf data']
         mock_session.get.return_value = mock_response
 
-        with patch('google.auth.transport.requests.AuthorizedSession', return_value=mock_session):
+        # Create a proper AuthorizedSession patcher that returns our mock session
+        with patch('io_storages.gcs.models.AuthorizedSession', return_value=mock_session):
             # Call the real get_bytes_stream method
             uri = 'gs://test-bucket/test-document.pdf'
             result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri)
@@ -521,7 +526,7 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         mock_response.iter_content.return_value = [b'range pdf data']
         mock_session.get.return_value = mock_response
 
-        with patch('google.auth.transport.requests.AuthorizedSession', return_value=mock_session):
+        with patch('io_storages.gcs.models.AuthorizedSession', return_value=mock_session):
             # Call get_bytes_stream with range header
             uri = 'gs://test-bucket/test-document.pdf'
             range_header = 'bytes=100-199'
@@ -578,7 +583,7 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         mock_response.iter_content.return_value = [b'large data chunk']
         mock_session.get.return_value = mock_response
 
-        with patch('google.auth.transport.requests.AuthorizedSession', return_value=mock_session):
+        with patch('io_storages.gcs.models.AuthorizedSession', return_value=mock_session):
             # Call get_bytes_stream with large range
             uri = 'gs://test-bucket/test-file.bin'
             range_header = f'bytes={large_start}-{large_end}'
@@ -639,7 +644,7 @@ class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
         mock_response.iter_content.return_value = [b'test data']
         mock_session.get.return_value = mock_response
 
-        with patch('google.auth.transport.requests.AuthorizedSession', return_value=mock_session):
+        with patch('io_storages.gcs.models.AuthorizedSession', return_value=mock_session):
             # Call the real get_bytes_stream method
             uri = 'gs://test-bucket/test-file'
             result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri)
