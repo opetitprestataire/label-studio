@@ -1,62 +1,68 @@
 import { type MutableRefObject, useCallback, useContext, useEffect } from "react";
 import { TimelineContext } from "../../../components/Timeline/Context";
 import type { Waveform } from "../Waveform";
-import { set } from "lodash";
+import type { WindowFunctionType } from "../Visual/WindowFunctions";
+import type { ColorScheme } from "../Visual/ColorMapper";
+import { SPECTROGRAM_DEFAULTS } from "../Visual/constants";
 
 interface SpectrogramParameters {
-  fftSamples?: number;
-  melBands?: number;
-  windowingFunction?: string;
-  colorScheme?: string;
-  minDb?: number;
-  maxDb?: number;
+  fftSamples: number;
+  melBands: number;
+  windowingFunction: WindowFunctionType;
+  colorScheme: ColorScheme;
+  minDb: number;
+  maxDb: number;
+}
+
+type PartialSpectrogramParameters = Partial<SpectrogramParameters>;
+
+interface SpectrogramControls {
+  setFftSamples: (samples: number) => void;
+  setMelBands: (bands: number) => void;
+  setWindowingFunction: (func: WindowFunctionType) => void;
+  setColorScheme: (scheme: ColorScheme) => void;
+  setDbRange: (minDb: number, maxDb: number) => void;
 }
 
 /**
  * Hook to manage and synchronize spectrogram settings between
  * the TimelineContext and the Waveform instance.
  */
-export function useSpectrogramControls(waveform: MutableRefObject<Waveform | undefined>) {
+export function useSpectrogramControls(
+  waveform: MutableRefObject<Waveform | undefined>
+): SpectrogramControls {
   const { settings, changeSetting } = useContext(TimelineContext);
 
   // Effect to update Waveform/Visualizer when context settings change
   useEffect(() => {
-    // Don't run if waveform isn't ready or no settings
     if (!waveform.current || !settings) return;
 
     const wf = waveform.current;
-    const paramsToUpdate: SpectrogramParameters = {};
-
-    // Ideally, Waveform would expose getters for current visualizer settings
-    // For now, we compare against context only to avoid redundant updates if context is the source
-    // This effect primarily handles updates *from* the context
+    const paramsToUpdate: PartialSpectrogramParameters = {};
 
     if (settings.spectrogramFftSamples !== undefined) {
-       paramsToUpdate.fftSamples = settings.spectrogramFftSamples;
+      paramsToUpdate.fftSamples = settings.spectrogramFftSamples;
     }
     if (settings.numberOfMelBands !== undefined) {
-       paramsToUpdate.melBands = settings.numberOfMelBands;
+      paramsToUpdate.melBands = settings.numberOfMelBands;
     }
     if (settings.spectrogramWindowingFunction) {
-       paramsToUpdate.windowingFunction = settings.spectrogramWindowingFunction;
+      paramsToUpdate.windowingFunction = settings.spectrogramWindowingFunction as WindowFunctionType;
     }
     if (settings.spectrogramColorScheme) {
-       paramsToUpdate.colorScheme = settings.spectrogramColorScheme;
+      paramsToUpdate.colorScheme = settings.spectrogramColorScheme as ColorScheme;
     }
     if (settings.spectrogramMinDb !== undefined) {
-       paramsToUpdate.minDb = settings.spectrogramMinDb;
+      paramsToUpdate.minDb = settings.spectrogramMinDb;
     }
     if (settings.spectrogramMaxDb !== undefined) {
-       paramsToUpdate.maxDb = settings.spectrogramMaxDb;
+      paramsToUpdate.maxDb = settings.spectrogramMaxDb;
     }
 
-    // Only call update if there are actual changes needed
     if (Object.keys(paramsToUpdate).length > 0) {
-       console.log("useSpectrogramControls: Updating waveform from context changes", paramsToUpdate);
-      // Call the public method on Waveform
+      console.log("useSpectrogramControls: Updating waveform from context changes", paramsToUpdate);
       wf.updateSpectrogramParameters(paramsToUpdate);
     }
-
   }, [
     settings?.spectrogramFftSamples,
     settings?.numberOfMelBands,
@@ -67,52 +73,55 @@ export function useSpectrogramControls(waveform: MutableRefObject<Waveform | und
     waveform,
   ]);
 
-  // --- Control functions returned by the hook ---
-
   const setFftSamples = useCallback((samples: number) => {
-    if (waveform.current) {
-      // Call the public method on Waveform
-      waveform.current.updateSpectrogramParameters({ fftSamples: samples });
-      // Update context state
-      changeSetting?.("spectrogramFftSamples", samples);
+    if (!waveform.current) return;
+    
+    if (samples < SPECTROGRAM_DEFAULTS.FFT_SAMPLES / 8 || samples > SPECTROGRAM_DEFAULTS.FFT_SAMPLES * 4) {
+      console.warn(`Invalid FFT samples value: ${samples}`);
+      return;
     }
-  }, [waveform]);
+
+    waveform.current.updateSpectrogramParameters({ fftSamples: samples });
+    changeSetting?.("spectrogramFftSamples", samples);
+  }, [waveform, changeSetting]);
 
   const setMelBands = useCallback((bands: number) => {
-    if (waveform.current) {
-      // Call the public method on Waveform
-      waveform.current.updateSpectrogramParameters({ melBands: bands });
-      // Update context state
-      changeSetting?.("numberOfMelBands", bands);
-    }
-  }, [waveform]);
+    if (!waveform.current) return;
 
-  const setWindowingFunction = useCallback((func: string) => {
-    if (waveform.current) {
-      // Call the public method on Waveform
-      waveform.current.updateSpectrogramParameters({ windowingFunction: func });
-      // Update context state
-      changeSetting?.("spectrogramWindowingFunction", func);
+    if (bands < 1 || bands > 512) {
+      console.warn(`Invalid mel bands value: ${bands}`);
+      return;
     }
-  }, [waveform]);
 
-  const setColorScheme = useCallback((func: string) => {
-    if (waveform.current) {
-      // Call the public method on Waveform
-      waveform.current.updateSpectrogramParameters({ colorScheme: func });
-      // Update context state
-      changeSetting?.("spectrogramColorScheme", func);
-    }
+    waveform.current.updateSpectrogramParameters({ melBands: bands });
+    changeSetting?.("numberOfMelBands", bands);
+  }, [waveform, changeSetting]);
+
+  const setWindowingFunction = useCallback((func: WindowFunctionType) => {
+    if (!waveform.current) return;
+
+    waveform.current.updateSpectrogramParameters({ windowingFunction: func });
+    changeSetting?.("spectrogramWindowingFunction", func);
+  }, [waveform, changeSetting]);
+
+  const setColorScheme = useCallback((scheme: ColorScheme) => {
+    if (!waveform.current) return;
+
+    waveform.current.updateSpectrogramParameters({ colorScheme: scheme });
+    changeSetting?.("spectrogramColorScheme", scheme);
   }, [waveform, changeSetting]);
 
   const setDbRange = useCallback((minDb: number, maxDb: number) => {
-    if (waveform.current) {
-      // Call the public method on Waveform
-      waveform.current.updateSpectrogramParameters({ minDb, maxDb });
-      // Update context state
-      changeSetting?.("spectrogramMinDb", minDb);
-      changeSetting?.("spectrogramMaxDb", maxDb);
+    if (!waveform.current) return;
+
+    if (minDb >= maxDb) {
+      console.warn(`Invalid dB range: min (${minDb}) must be less than max (${maxDb})`);
+      return;
     }
+
+    waveform.current.updateSpectrogramParameters({ minDb, maxDb });
+    changeSetting?.("spectrogramMinDb", minDb);
+    changeSetting?.("spectrogramMaxDb", maxDb);
   }, [waveform, changeSetting]);
 
   return {

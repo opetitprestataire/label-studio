@@ -13,9 +13,15 @@ import "./Loader";
 import FFT from 'fft.js';
 import { WindowFunctionType, applyWindowFunction } from './WindowFunctions';
 import { ColorMapper, COLOR_SCHEMES, type ColorScheme } from './ColorMapper';
+import {
+  BUFFER_SAMPLES,
+  COLORMAP_NSHADES,
+  MIN_RECT_HEIGHT,
+  RENDER_YIELD_INTERVAL_MS,
+  SPECTROGRAM_DEFAULTS,
+} from './constants';
 
 // Amount of data samples to buffer on either side of the renderable area
-const BUFFER_SAMPLES = 2;
 const CACHE_RENDER_THRESHOLD = 10000000;
 
 interface VisualizerEvents {
@@ -155,14 +161,21 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.invoke("initialized", [this]);
   }
 
+  private handleFFTError(): Float32Array {
+    const fallbackBins = (this.spectrogramFftSamples || SPECTROGRAM_DEFAULTS.FFT_SAMPLES) / 2 + 1;
+    console.warn('FFT not initialized, falling back to zero-filled array');
+    return new Float32Array(fallbackBins).fill(0);
+  }
+
   private async initFFT() {
     try {
-      // Create FFT instance with the current size
       this.fft = new FFT(this.spectrogramFftSamples);
-      console.log(`Visualizer: FFT initialized/re-initialized with size ${this.spectrogramFftSamples}`);
+      console.log(`Visualizer: FFT initialized with size ${this.spectrogramFftSamples}`);
     } catch (error) {
-      console.warn('Failed to initialize FFT:', error);
+      console.error('Failed to initialize FFT:', error);
       this.fft = null;
+      // Reset to default FFT size on error
+      this.spectrogramFftSamples = SPECTROGRAM_DEFAULTS.FFT_SAMPLES;
     }
   }
 
@@ -254,37 +267,42 @@ export class Visualizer extends Events<VisualizerEvents> {
    */
   private calculateFFT(buffer: Float32Array): Float32Array {
     if (!this.fft) {
-      const fallbackBins = (this.spectrogramFftSamples || 512) / 2 + 1;
-      return new Float32Array(fallbackBins).fill(0);
+      return this.handleFFTError();
     }
 
-    const fftSize = this.spectrogramFftSamples;
-    let inputBuffer = new Float32Array(fftSize);
-    const usableLength = Math.min(buffer.length, fftSize);
-    if (usableLength > 0) {
-      inputBuffer.set(buffer.slice(0, usableLength));
+    try {
+      const fftSize = this.spectrogramFftSamples;
+      let inputBuffer = new Float32Array(fftSize);
+      const usableLength = Math.min(buffer.length, fftSize);
+      
+      if (usableLength > 0) {
+        inputBuffer.set(buffer.slice(0, usableLength));
+      }
+
+      applyWindowFunction(inputBuffer, this.spectrogramWindowingFunction);
+
+      const complexOutput = this.fft.createComplexArray();
+      this.fft.realTransform(complexOutput, inputBuffer);
+
+      const numBins = fftSize / 2 + 1;
+      const magnitudes = new Float32Array(numBins);
+      const normFactor = fftSize;
+
+      for (let i = 0; i < numBins; i++) {
+        const real = complexOutput[i * 2];
+        const imag = complexOutput[i * 2 + 1];
+        magnitudes[i] = normFactor > 0 ? (Math.sqrt(real * real + imag * imag) / normFactor) : 0;
+      }
+
+      const processedMagnitudes = (this.numberOfMelBands > 0 && this.audio)
+          ? this.convertToMelScale(magnitudes)
+          : magnitudes;
+
+      return processedMagnitudes;
+    } catch (error) {
+      console.error('Error calculating FFT:', error);
+      return this.handleFFTError();
     }
-
-    applyWindowFunction(inputBuffer, this.spectrogramWindowingFunction);
-
-    const complexOutput = this.fft.createComplexArray();
-    this.fft.realTransform(complexOutput, inputBuffer);
-
-    const numBins = fftSize / 2 + 1;
-    const magnitudes = new Float32Array(numBins);
-    const normFactor = fftSize;
-
-    for (let i = 0; i < numBins; i++) {
-      const real = complexOutput[i * 2];
-      const imag = complexOutput[i * 2 + 1];
-      magnitudes[i] = normFactor > 0 ? (Math.sqrt(real * real + imag * imag) / normFactor) : 0;
-    }
-
-    const processedMagnitudes = (this.numberOfMelBands > 0 && this.audio)
-        ? this.convertToMelScale(magnitudes)
-        : magnitudes;
-
-    return processedMagnitudes;
   }
 
   /**
