@@ -185,6 +185,7 @@ class RichTextPieceView extends Component {
 
       // don't collapse region into nothing
       if (selection.isCollapsed) return false;
+      if (!area) return false;
 
       let range = selection.getRangeAt(0);
 
@@ -197,6 +198,9 @@ class RichTextPieceView extends Component {
         return false;
       }
 
+      // remove handles to not mess with ranges and selection
+      area.detachHandles();
+
       // we need this to properly apply the granularity; it fixes selection to point only to text nodes
       if (item.granularity !== "symbol") {
         trimSelection(selection);
@@ -208,15 +212,13 @@ class RichTextPieceView extends Component {
 
       // so no visual glitches on the screen, selection was just a helper here, we don't need it anymore
       selection.removeAllRanges();
-      if (!area) return false;
 
       area._range = range;
 
       // we have to calculate offsets before we remove spans, because it will break the range
       const [soff, eoff] = rangeToGlobalOffset(range, root);
 
-      // clear visuals and remove spans before updating internals
-      area.detachHandles();
+      // remove all spans to recreate them later
       area.removeHighlight();
 
       // we update multiple props of the region here, so easier to just freeze the history during these updates
