@@ -1,6 +1,6 @@
 {
-  "message": "fix: LEAP-1433: Remove deprecated feature flag FF_DEV_1170 (#7264)",
-  "commit": "51e652c5859e9e04e1d5d3029fc5feb0f7292092",
-  "date": "2025-04-10T15:01:50.000Z",
+  "message": "feat: OPTIC-1938: Proxy for storages when presigned urls are off (#7354)",
+  "commit": "b560a3fb14675bb12dc68c416fa4e9b3556938f1",
+  "date": "2025-04-20T09:50:10.000Z",
   "branch": "develop"
 }
