@@ -1,6 +1,6 @@
 {
-  "message": "fix: DIA-2156: Fix button imports (#7381)",
-  "commit": "4235e4150d96c834250d9e098c3ae94696f1d16e",
-  "date": "2025-04-16T10:53:18.000Z",
+  "message": "feat: OPTIC-1938: Proxy for storages when presigned urls are off (#7354)",
+  "commit": "b560a3fb14675bb12dc68c416fa4e9b3556938f1",
+  "date": "2025-04-20T09:50:10.000Z",
   "branch": "develop"
 }
