@@ -1,9 +1,13 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
 import base64
+import concurrent.futures
+import itertools
 import json
 import logging
+import os
 import traceback as tb
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Union
 from urllib.parse import urljoin
@@ -232,6 +236,17 @@ class ImportStorage(Storage):
     def generate_http_url(self, url):
         raise NotImplementedError
 
+    def get_bytes_stream(self, uri):
+        """Get file bytes from storage as a stream and content type.
+
+        Args:
+            uri: The URI of the file to retrieve
+
+        Returns:
+            Tuple of (BytesIO stream, content_type)
+        """
+        raise NotImplementedError
+
     def can_resolve_url(self, url: Union[str, None]) -> bool:
         return self.can_resolve_scheme(url)
 
@@ -271,16 +286,32 @@ class ImportStorage(Storage):
                     logger.debug(f'No storage info found for URI={uri}')
                     return
 
-                if self.presign and task is not None:
+                if flag_set('fflag_optic_all_optic_1938_storage_proxy', user=self.project.organization.created_by):
+                    if task is None:
+                        logger.error(f'Task is required to resolve URI={uri}', exc_info=True)
+                        raise ValueError(f'Task is required to resolve URI={uri}')
+
                     proxy_url = urljoin(
                         settings.HOSTNAME,
-                        reverse('data_import:task-storage-data-presign', kwargs={'task_id': task.id})
+                        reverse('storages:task-storage-data-resolve', kwargs={'task_id': task.id})
                         + f'?fileuri={base64.urlsafe_b64encode(extracted_uri.encode()).decode()}',
                     )
                     return uri.replace(extracted_uri, proxy_url)
+
+                # ff off: old logic without proxy
                 else:
-                    # resolve uri to url using storages
-                    http_url = self.generate_http_url(extracted_uri)
+                    if self.presign and task is not None:
+                        proxy_url = urljoin(
+                            settings.HOSTNAME,
+                            reverse('storages:task-storage-data-presign', kwargs={'task_id': task.id})
+                            + f'?fileuri={base64.urlsafe_b64encode(extracted_uri.encode()).decode()}',
+                        )
+                        return uri.replace(extracted_uri, proxy_url)
+                    else:
+                        # this branch is our old approach:
+                        # it generates presigned URLs if storage.presign=True;
+                        # or it inserts base64 media into task data if storage.presign=False
+                        http_url = self.generate_http_url(extracted_uri)
 
                 return uri.replace(extracted_uri, http_url)
             except Exception:
@@ -526,10 +557,23 @@ def storage_background_failure(*args, **kwargs):
     storage.info_set_failed()
 
 
+# note: this is available in python 3.12 , #TODO to switch to builtin function when we move to it.
+def _batched(iterable, n):
+    # batched('ABCDEFG', 3) --> ABC DEF G
+    if n < 1:
+        raise ValueError('n must be at least one')
+    it = iter(iterable)
+    while batch := tuple(itertools.islice(it, n)):
+        yield batch
+
+
 class ExportStorage(Storage, ProjectStorageMixin):
     can_delete_objects = models.BooleanField(
         _('can_delete_objects'), null=True, blank=True, help_text='Deletion from storage enabled'
     )
+    # Use 8 threads, unless we know we only have a single core
+    # TODO from testing, more than 8 seems to cause problems. revisit to add more parallelism.
+    max_workers = min(8, (os.cpu_count() or 2) * 4)
 
     def _get_serialized_data(self, annotation):
         user = self.project.organization.created_by
@@ -557,13 +601,24 @@ class ExportStorage(Storage, ProjectStorageMixin):
         self.info_set_in_progress()
         self.cached_user = self.project.organization.created_by
 
-        for annotation in annotations.iterator(chunk_size=settings.STORAGE_EXPORT_CHUNK_SIZE):
-            annotation.cached_user = self.cached_user
-            self.save_annotation(annotation)
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            # Batch annotations so that we update progress before having to submit every future.
+            # Updating progress in thread requires coordinating on count and db writes, so just
+            # batching to keep it simpler.
+            for annotation_batch in _batched(
+                Annotation.objects.filter(project=self.project).iterator(
+                    chunk_size=settings.STORAGE_EXPORT_CHUNK_SIZE
+                ),
+                settings.STORAGE_EXPORT_CHUNK_SIZE,
+            ):
+                futures = []
+                for annotation in annotation_batch:
+                    annotation.cached_user = self.cached_user
+                    futures.append(executor.submit(self.save_annotation, annotation))
 
-            # update progress counters
-            annotation_exported += 1
-            self.info_update_progress(last_sync_count=annotation_exported, total_annotations=total_annotations)
+                for future in concurrent.futures.as_completed(futures):
+                    annotation_exported += 1
+                    self.info_update_progress(last_sync_count=annotation_exported, total_annotations=total_annotations)
 
         self.info_set_completed(last_sync_count=annotation_exported, total_annotations=total_annotations)
 
