@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import type React from "react";
 import { useCallback, useState } from "react";
 
-import { Button } from "@humansignal/ui";
+import { Button, ButtonGroup, type ButtonProps } from "@humansignal/ui";
 import { IconBan, IconChevron } from "@humansignal/icons";
 import { Dropdown } from "../../common/Dropdown/Dropdown";
 import type { CustomButtonType } from "../../stores/CustomButton";
@@ -38,6 +38,8 @@ type CustomButtonsField = Map<
 type ControlButtonProps = {
   button: CustomButtonType;
   disabled: boolean;
+  variant?: ButtonProps["variant"];
+  look?: ButtonProps["look"];
   onClick: (e: React.MouseEvent) => void;
 };
 
@@ -46,11 +48,13 @@ export const EMPTY_SUBMIT_TOOLTIP = "Empty annotations denied in this project";
 /**
  * Custom action button component, rendering buttons from store.customButtons
  */
-const ControlButton = observer(({ button, disabled, onClick }: ControlButtonProps) => {
+const ControlButton = observer(({ button, disabled, onClick, variant, look }: ControlButtonProps) => {
   return (
     <Button
       {...button.props}
       size="small"
+      variant={variant}
+      look={look}
       tooltip={button.tooltip}
       className="w-[150px]"
       aria-label={button.ariaLabel}
@@ -172,7 +176,9 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
           }
         };
 
-        buttons.push(<ControlButton key={button.name} button={button} disabled={disabled} onClick={onReject} />);
+        buttons.push(
+          <ControlButton key={button.name} variant="negative" button={button} disabled={disabled} onClick={onReject} />,
+        );
       });
       buttons.push(<AcceptButton key="review-accept" disabled={disabled} history={history} store={store} />);
     } else if (annotation.skipped) {
@@ -232,35 +238,39 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
         buttons.push(
           <ButtonTooltip key="submit" title={title}>
             <Elem name="tooltip-wrapper">
-              <Button
-                aria-label="submit"
-                name="submit"
-                size="small"
-                className="w-[150px]"
-                disabled={isDisabled}
-                onClick={async (event) => {
-                  if ((event.target as HTMLButtonElement).classList.contains(dropdownTrigger)) return;
-                  const selected = store.annotationStore?.selected;
+              <ButtonGroup>
+                <Button
+                  aria-label="submit"
+                  name="submit"
+                  size="small"
+                  className="w-[150px]"
+                  disabled={isDisabled}
+                  onClick={async (event) => {
+                    if ((event.target as HTMLButtonElement).classList.contains(dropdownTrigger)) return;
+                    const selected = store.annotationStore?.selected;
 
-                  selected?.submissionInProgress();
-                  await store.commentStore.commentFormSubmit();
-                  store.submitAnnotation();
-                }}
-                leading={
-                  useExitOption ? (
-                    <Dropdown.Trigger
-                      alignment="top-right"
-                      content={<SubmitOption onClickMethod={store.submitAnnotation} isUpdate={false} />}
-                    >
-                      <div>
-                        <IconChevron />
+                    selected?.submissionInProgress();
+                    await store.commentStore.commentFormSubmit();
+                    store.submitAnnotation();
+                  }}
+                >
+                  Submit
+                </Button>
+                {useExitOption ? (
+                  <Dropdown.Trigger
+                    alignment="top-right"
+                    content={
+                      <div className="p-tight bg-neutral-surface">
+                        <SubmitOption onClickMethod={store.submitAnnotation} isUpdate={false} />
                       </div>
-                    </Dropdown.Trigger>
-                  ) : null
-                }
-              >
-                Submit
-              </Button>
+                    }
+                  >
+                    <Button size="small" type="button">
+                      <IconChevron />
+                    </Button>
+                  </Dropdown.Trigger>
+                ) : null}
+              </ButtonGroup>
             </Elem>
           </ButtonTooltip>,
         );
