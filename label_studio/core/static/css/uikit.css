@@ -57,6 +57,14 @@ span.error {
   color: var(--color-error);
 }
 
+/**
+* [data-ignore-uikit] allows skip styling from this file
+* uikit is a redundant legacy and it messes up the styles
+* in a lot of places by using global styles for elements
+* like inputs and buttonts. if your button looks weird, try
+* adding data-ignore-uikit. most probably it will help
+*/
+
 input:not([data-ignore-uikit]),
 textarea:not([data-ignore-uikit]) {
   font: inherit;
