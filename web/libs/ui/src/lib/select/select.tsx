@@ -244,7 +244,7 @@ export const Select = forwardRef(
                               onSelect={() => {
                                 children.forEach((child: SelectOption<T>) => {
                                   const childVal = child?.value ?? child;
-                                  isOptionSelected ? _onChange(childVal, true) : _onChange(childVal, false);
+                                  _onChange(childVal, isOptionSelected);
                                 });
                               }}
                             />
