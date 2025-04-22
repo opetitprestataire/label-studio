@@ -77,20 +77,15 @@ export const Select = forwardRef(
       (val: string, isSelected: boolean) => {
         if (disabled) return;
 
-        let selectedOptions = [];
         if (multiple) {
-          setValue((prev = []) => {
-            if (isSelected) {
-              return (selectedOptions = [...prev.filter((v) => v !== val)]);
-            }
-            return (selectedOptions = [...prev, val]);
-          });
+          valueRef.current = isSelected ? [...(valueRef.current ?? []).filter((v) => v !== val)] : [...(valueRef.current ?? []), val];
+          setValue(valueRef.current);
         } else {
+          valueRef.current = val;
           setValue(val);
         }
-        valueRef.current = val;
         !multiple && setIsOpen(false);
-        props?.onChange?.(multiple ? (selectedOptions ?? []) : val);
+        props?.onChange?.(valueRef.current);
         setTimeout(() => {
           const changeEvent = new Event("change", {
             bubbles: true,
@@ -244,7 +239,7 @@ export const Select = forwardRef(
                               onSelect={() => {
                                 children.forEach((child: SelectOption<T>) => {
                                   const childVal = child?.value ?? child;
-                                  _onChange(childVal, isOptionSelected);
+                                  isOptionSelected ? _onChange(childVal, true) : _onChange(childVal, false);
                                 });
                               }}
                             />
