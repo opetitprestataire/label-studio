@@ -2,7 +2,6 @@
   margin-bottom: 0;
 
   &__text {
-    padding: 0 8px;
     height: 22px;
     display: flex;
     margin-bottom: 4px;
@@ -25,7 +24,7 @@
   }
 
   &_size_small &__text {
-    font-size: 10px;
+    font-size: 14px;
     margin: 0;
     height: 14px;
     line-height: 14px;
@@ -58,10 +57,12 @@
   &_placement_right {
     display: inline-flex;
     flex-direction: row-reverse;
+    gap: var(--spacing-tighter, 4px);
   }
 
   &_placement_left {
     display: inline-flex;
+    gap: var(--spacing-tighter, 4px);
   }
 
   &_empty &__text,
