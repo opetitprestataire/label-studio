@@ -78,7 +78,9 @@ export const Select = forwardRef(
         if (disabled) return;
 
         if (multiple) {
-          valueRef.current = isSelected ? [...(valueRef.current ?? []).filter((v) => v !== val)] : [...(valueRef.current ?? []), val];
+          valueRef.current = isSelected
+            ? [...(valueRef.current ?? []).filter((v) => v !== val)]
+            : [...(valueRef.current ?? []), val];
           setValue(valueRef.current);
         } else {
           valueRef.current = val;
