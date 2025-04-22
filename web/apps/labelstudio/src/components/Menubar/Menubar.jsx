@@ -3,6 +3,7 @@ import { StaticContent } from "../../app/StaticContent/StaticContent";
 import {
   IconBook,
   IconFolder,
+  IconHome,
   IconPersonInCircle,
   IconPin,
   IconTerminal,
@@ -27,9 +28,9 @@ import "./Menubar.scss";
 import "./MenuContent.scss";
 import "./MenuSidebar.scss";
 import { FF_HOMEPAGE } from "../../utils/feature-flags";
-import { IconHome } from "@humansignal/ui";
 import { pages } from "@humansignal/app-common";
 import { isFF } from "../../utils/feature-flags";
+import { ff } from "@humansignal/core";
 
 export const MenubarContext = createContext();
 
