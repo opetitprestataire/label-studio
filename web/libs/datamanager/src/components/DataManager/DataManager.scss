@@ -56,7 +56,8 @@
   background: var(--color-primary-emphasis-subtle);
 }
 
-:global(.react-datepicker__day--selected) {
+:global(.react-datepicker__day--selected),
+:global(.react-datepicker__day--in-range) {
   background-color: var(--color-primary-emphasis);
   color: var(--color-neutral-content);
 }
