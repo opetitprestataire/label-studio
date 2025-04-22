@@ -169,6 +169,7 @@
 
     &_danger {
       --button-color: var(--color-negative-content);
+      --button-border: var(--color-negative-border);
 
       border-color: var(--color-negative-border);
 
@@ -183,6 +184,8 @@
     &_destructive {
       --button-color: var(--color-negative-surface-content);
       --button-background-color: var(--color-negative-surface);
+      
+      border-color: var(--color-negative-border);
 
       &:hover:not(:disabled, .button-ls_waiting) {
         --button-color: var(--color-negative-surface-content);

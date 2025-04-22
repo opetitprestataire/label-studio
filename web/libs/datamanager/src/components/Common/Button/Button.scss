@@ -153,17 +153,29 @@
     }
 
     &_danger {
-      --button-color: var(--color-negative-content);
+      --button-color: var(--color-negative-surface-content);
+
+      border-color: var(--color-negative-border);
 
       &:not(:disabled):hover {
-        --button-color: var(--color-negative-content-hover) !important;
+        --button-color: var(--color-negative-surface-content) !important;
+
+        background-color: var(--color-negative-surface-hover);
       }
     }
 
     &_destructive {
-      --button-color: var(--white);
+      --button-color: var(--color-negative-surface-content);
 
-      background-color: var(--color-negative-content);
+      background-color: var(--color-negative-surface);
+      border-color: var(--color-negative-border);
+
+      &:hover:not(:disabled) {
+        --button-color: var(--color-negative-surface-content);
+
+        background-color: var(--color-negative-surface-hover);
+        border-color: var(--color-negative-border-bold);
+      }
     }
   }
 

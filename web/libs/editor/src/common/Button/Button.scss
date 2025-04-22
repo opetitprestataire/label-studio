@@ -140,6 +140,8 @@
     &_destructive {
       --button-color: var(--color-negative-surface-content);
       --button-background-color: var(--color-negative-surface);
+
+      border-color: var(--color-negative-border);
     }
 
     &_outlined {
