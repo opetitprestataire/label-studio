@@ -105,7 +105,7 @@ const meta: Meta<typeof Select> = {
           <Select
             options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
             label="In progress"
-            isInProgress={true}
+            isLoading={true}
             {...args}
           />
         </div>
