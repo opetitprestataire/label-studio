@@ -275,10 +275,10 @@ class ExportMixin:
             self.status = self.Status.COMPLETED
             self.save(update_fields=['status'])
 
-        except Exception:
+        except Exception as e:
             self.status = self.Status.FAILED
             self.save(update_fields=['status'])
-            logger.exception('Export was failed')
+            logger.exception('Export was failed: %s', e)
         finally:
             self.finished_at = datetime.now()
             self.save(update_fields=['finished_at'])
