@@ -7,7 +7,7 @@ body {
   padding: 20px;
 }
 
-.full_content>header {
+.full_content > header {
   font-size: 1.5em;
   margin-bottom: 20px;
 }
@@ -24,18 +24,18 @@ body {
   display: block;
 }
 
-.field--wide>*:not(:first-child) {
+.field--wide > *:not(:first-child) {
   display: block;
   margin-top: 4px;
   width: 100%;
   box-sizing: border-box;
 }
 
-.field>* {
+.field > * {
   grid-column: 2;
 }
 
-.field>label {
+.field > label {
   grid-column: 1;
 }
 
