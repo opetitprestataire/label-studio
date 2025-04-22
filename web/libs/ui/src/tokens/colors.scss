@@ -100,7 +100,10 @@
   --project-title-icon-primary-color: rgba(var(--black-raw), 0.35);
   --project-title-icon-alternate-color: rgba(var(--white-raw), 0.35);
   --shadow-intensity: 1;
-  --color-accent-gradient: var(--color-accent-canteloupe-base) 0%, var(--color-accent-persimmon-base) 51.56%, var(--color-accent-plum-base) 100%;
+  --color-accent-gradient-subtle: rgba(var(--color-accent-canteloupe-base-raw) / 10%) 0%, rgba(var(--color-accent-persimmon-base-raw) / 10%) 50%, rgba(var(--color-accent-plum-base-raw) / 10%) 100%;
+  --color-accent-gradient-base: rgba(var(--color-accent-canteloupe-base-raw) / 90%) 0%, rgba(var(--color-accent-persimmon-base-raw) / 90%) 50%, rgba(var(--color-accent-plum-base-raw) / 90%) 100%;
+  --color-accent-gradient-bold: rgba(var(--color-accent-canteloupe-base-raw) / 100%) 0%, rgba(var(--color-accent-persimmon-base-raw) / 100%) 50%, rgba(var(--color-accent-plum-base-raw) / 100%) 100%;
+  --color-accent-gradient-dark: rgba(var(--color-accent-canteloupe-bold-raw) / 100%) 0%, rgba(var(--color-accent-persimmon-bold-raw) / 100%) 50%, rgba(var(--color-accent-plum-bold-raw) / 100%) 100%;
 }
 
 [data-color-scheme="dark"] {
