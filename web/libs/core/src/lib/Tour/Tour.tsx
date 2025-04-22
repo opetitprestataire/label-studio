@@ -125,7 +125,7 @@ export const Tour: React.FC<TourProps> = ({ name, autoStart = false, delay = 0, 
           primaryColor: "var(--color-primary-surface)",
           textColor: "var(--color-neutral-content)",
           overlayColor: "rgba(var(--color-neutral-shadow-raw) / calc( 50% * var(--shadow-intensity)))",
-          arrowColor: "var(--color-neutral-surface-active)"
+          arrowColor: "var(--color-neutral-surface-active)",
         },
       }}
       hideCloseButton={true}
