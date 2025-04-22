@@ -39,23 +39,10 @@
 }
 
 :global(.ant-form-item .ant-form-item-control-input-content input) {
-  background: var(--color-neutral-surface);
-  color: var(--color-neutral-content);
-  border-color: var(--color-neutral-border);
-  border-radius: var(--corner-radius-smaller);
-}
-
-:global(.ant-form-item .ant-form-item-control-input-content input) {
-  background: var(--color-neutral-surface);
-  color: var(--color-neutral-content);
-  border-color: var(--color-neutral-border);
-  border-radius: var(--corner-radius-smaller);
-}
-
-:global(.ant-form-item .ant-form-item-control-input-content input) {
   background-color: var(--color-neutral-background);
   color: var(--color-neutral-content);
   border-color: var(--color-neutral-border);
+  border-radius: var(--corner-radius-smaller);
 }
 
 :global(.ant-form-item .ant-form-item-control-input-content input:focus) {
@@ -68,24 +55,11 @@
   box-shadow: 0 0 0 4px var(--color-primary-focus-outline);
 }
 
-:global(.ant-form-item .ant-form-item-control-input-content input) {
-  background: var(--color-neutral-surface);
-  color: var(--color-neutral-content);
-  border-color: var(--color-neutral-border);
-  border-radius: var(--corner-radius-smaller);
-}
-
-:global(.ant-form-item .ant-form-item-control-input-content textarea) {
-  background: var(--color-neutral-surface);
-  color: var(--color-neutral-content);
-  border-color: var(--color-neutral-border);
-  border-radius: var(--corner-radius-smaller);
-}
-
 :global(.ant-form-item .ant-form-item-control-input-content textarea) {
   background-color: var(--color-neutral-background);
   color: var(--color-neutral-content);
   border-color: var(--color-neutral-border);
+  border-radius: var(--corner-radius-smaller);
 }
 
 :global(.ant-form-item .ant-form-item-control-input-content textarea:focus) {
