@@ -33,7 +33,7 @@ export const Select = forwardRef(
       disabled = false,
       multiple = false,
       isInline = false,
-      isInProgress = false,
+      isLoading = false,
       triggerProps,
       className,
       size,
@@ -166,7 +166,7 @@ export const Select = forwardRef(
             {...triggerProps}
           >
             <span
-              className="flex flex-1 text-left gap-2 leading-none max-w-full w-[calc(100%-1rem-0.5rem)]"
+              className="flex flex-1 text-left gap-2 max-w-full w-[calc(100%-1rem-0.5rem)]"
               data-testid="select-display-value"
             >
               {selectedOptions?.length ? (
@@ -199,7 +199,7 @@ export const Select = forwardRef(
           </button>
         </PopoverTrigger>
         <PopoverContent align="start" data-testid="select-popup">
-          {isInProgress ? (
+          {isLoading ? (
             <span className={styles.selectLoading} tabIndex={-1}>
               Loading...
             </span>
