@@ -5,6 +5,8 @@ module.exports = {
   content: [
     "./apps/**/*.{js,jsx,ts,tsx}",
     "./libs/ui/src/**/*.{js,jsx,ts,tsx}",
+    "./libs/libs/editor/src/**/*.{js,jsx,ts,tsx}",
+    "./libs/libs/datamanager/src/**/*.{js,jsx,ts,tsx}",
     "./libs/core/src/**/*.{js,jsx,ts,tsx}",
     "./libs/storybook/**/*.{js,jsx,ts,tsx}",
   ],
