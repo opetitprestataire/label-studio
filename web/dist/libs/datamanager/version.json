@@ -1,6 +1,6 @@
 {
-  "message": "feat: DIA-2196: Dedup JSON Preview and Sample Data FFs (#7386)",
-  "commit": "66d43c84e2fef1a7079b4aec6343e8a48484fd07",
-  "date": "2025-04-16T15:45:52.000Z",
+  "message": "feat: OPTIC-1938: Proxy for storages when presigned urls are off (#7354)",
+  "commit": "b560a3fb14675bb12dc68c416fa4e9b3556938f1",
+  "date": "2025-04-20T09:50:10.000Z",
   "branch": "develop"
 }
