@@ -143,7 +143,10 @@ class ExportMixin:
         return options
 
     def get_task_queryset(self, ids, annotation_filter_options):
-        annotations_qs = self._get_filtered_annotations_queryset(annotation_filter_options=annotation_filter_options)
+        annotations_qs = self._get_filtered_annotations_queryset(
+            annotation_filter_options=annotation_filter_options
+        ).prefetch_related('reviews')
+
         return (
             Task.objects.filter(id__in=ids)
             .prefetch_related(
@@ -152,7 +155,7 @@ class ExportMixin:
                     queryset=annotations_qs,
                 )
             )
-            .prefetch_related('predictions', 'drafts')
+            .prefetch_related('predictions', 'drafts', 'comments_authors', 'file_upload')
         )
 
     def get_export_data(self, task_filter_options=None, annotation_filter_options=None, serialization_options=None):
