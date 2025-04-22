@@ -196,7 +196,7 @@ export const Select = forwardRef(
             )}
           </button>
         </PopoverTrigger>
-        <PopoverContent className="z-99999 min-w-full" align="start" data-testid="select-popup">
+        <PopoverContent align="start" data-testid="select-popup">
           {isInProgress ? (
             <span className={styles.selectLoading} tabIndex={-1}>
               Loading...
