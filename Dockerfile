@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG NODE_VERSION=18
 ARG PYTHON_VERSION=3.12
-ARG POETRY_VERSION=2.0.1
+ARG POETRY_VERSION=2.1.2
 ARG VERSION_OVERRIDE
 ARG BRANCH_OVERRIDE
 
@@ -135,7 +135,7 @@ RUN --mount=type=cache,target="/var/cache/apt",sharing=locked \
     set -eux; \
     apt-get update; \
     apt-get upgrade -y; \
-    apt-get install --no-install-recommends -y libexpat1 \
+    apt-get install --no-install-recommends -y libexpat1 libgl1-mesa-glx libglib2.0-0 \
         gnupg2 curl; \
     apt-get autoremove -y
 
