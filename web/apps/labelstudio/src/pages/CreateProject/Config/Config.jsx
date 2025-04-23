@@ -98,7 +98,15 @@ const ConfigureControl = ({ control, template }) => {
       <form className={configClass.elem("add-labels")} action="">
         <h4>{tagname === "Choices" ? "Add choices" : "Add label names"}</h4>
         <span>Use new line as a separator to add multiple labels</span>
-        <textarea name="labels" id="" cols="50" rows="5" ref={refLabels} onKeyPress={onKeyPress} className="lsf-textarea-ls p-2 px-3" />
+        <textarea
+          name="labels"
+          id=""
+          cols="50"
+          rows="5"
+          ref={refLabels}
+          onKeyPress={onKeyPress}
+          className="lsf-textarea-ls p-2 px-3"
+        />
         <Button type="button" size="compact" onClick={onAddLabels}>
           Add
         </Button>
