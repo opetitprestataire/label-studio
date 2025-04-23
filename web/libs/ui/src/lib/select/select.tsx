@@ -75,7 +75,7 @@ export const Select = forwardRef(
     }, [externalValue, multiple]);
 
     useEffect(() => {
-      if (valueRef.current || !selectFirstIfEmpty || !options?.[0]) return;
+      if (valueRef.current || !selectFirstIfEmpty || options?.[0] === null || options?.[0] === undefined) return;
       const val = options?.[0]?.value ?? options?.[0];
       valueRef.current = val;
       setValue(val);
