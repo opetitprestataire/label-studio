@@ -131,7 +131,7 @@ export const HomePage: Page = () => {
                 </div>
                 <Heading size={2}>Create your first project</Heading>
                 <Sub>Import your data and set up the labeling interface to start annotating</Sub>
-                <Button primary className="mt-4" onClick={() => setCreationDialogOpen(true)}>
+                <Button primary rawClassName="mt-4" onClick={() => setCreationDialogOpen(true)}>
                   Create Project
                 </Button>
               </div>
