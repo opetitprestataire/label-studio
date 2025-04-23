@@ -110,7 +110,13 @@ class ExportMixin:
             return queryset
 
         q = reduce(lambda x, y: x | y, q_list)
-        return queryset.filter(q)
+        annotations_qs = queryset.filter(q)
+
+        # prefetch reviews in LSE
+        if hasattr(annotations_qs.model, 'reviews'):
+            annotations_qs = annotations_qs.prefetch_related('reviews')
+
+        return annotation_qs
 
     @staticmethod
     def _get_export_serializer_option(serialization_options):
@@ -143,9 +149,7 @@ class ExportMixin:
         return options
 
     def get_task_queryset(self, ids, annotation_filter_options):
-        annotations_qs = self._get_filtered_annotations_queryset(
-            annotation_filter_options=annotation_filter_options
-        ).prefetch_related('reviews')
+        annotations_qs = self._get_filtered_annotations_queryset(annotation_filter_options=annotation_filter_options)
 
         return (
             Task.objects.filter(id__in=ids)
