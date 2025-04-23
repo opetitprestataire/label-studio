@@ -50,7 +50,7 @@ export const Select = forwardRef(
     const [query, setQuery] = useState<string>("");
     const valueRef = useRef<any>();
     let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
-    if (selectFirstIfEmpty && initialValue !== null || initialValue !== undefined) {
+    if (selectFirstIfEmpty && initialValue === null || initialValue === undefined) {
       initialValue = options?.[0]?.value ?? options?.[0];
     }
     if (multiple) {
