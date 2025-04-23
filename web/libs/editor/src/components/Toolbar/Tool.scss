@@ -74,16 +74,15 @@
       background-color: var(--color-neutral-background);
     }
 
-    .tool_smart {
-      border-radius: 5px;
-      background-color: var(--color-neutral-background);
-    }
-
-    & .tool__icon {
+    & > .tool__icon {
       opacity: 1;
-      box-shadow: 0 0 0 var(--color-primary-border-subtle);
+      box-shadow: inset 0 0 2px var(--color-primary-border-subtle);
       background: var(--color-primary-emphasis-subtle);
       color: var(--text-color-hover);
+    }
+
+    .tool_smart {
+      border-radius: 5px;
     }
 
     & .tool__label {
@@ -96,19 +95,15 @@
 
     > &__icon {
       background: var(--color-neutral-surface-active);
-      box-shadow: inset 0 1px 0 rgb(0 0 0 / 5%), inset 0 0 0 1px rgb(0 0 0 / 5%);
+      box-shadow: inset 0 0 0 1px var(--color-primary-border-subtle);
       border-radius: 5px;
     }
+
   }
 
   &_smart {
-    & .tool_active > .tool__icon {
-      background: var(--color-accent-plum-base);
-      box-shadow: inset 0 1px 0 var(--color-accent-plum-bold), inset 0 0 0 1px var(--color-accent-plum-subtlest);
-    }
-
-    --text-color: var(--color-accent-plum-subtle);
-    --text-color-hover: var(--color-accent-plum-subtlest);
+    --text-color: var(--color-accent-plum-base);
+    --text-color-hover: var(--color-accent-plum-base);
   }
 
   &__tooltip {

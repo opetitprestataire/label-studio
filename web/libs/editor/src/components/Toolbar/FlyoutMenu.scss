@@ -32,8 +32,8 @@
     }
 
     &.isClicked {
-      background: var(--color-neutral-surface-active);
-      box-shadow: inset 0 1px 0 rgb(0 0 0 / 5%), inset 0 0 0 1px rgb(0 0 0 / 5%);
+      background: var(--color-primary-emphasis-subtle);
+      box-shadow: inset 0 0 2px var(--color-primary-border-subtle);
       border-radius: 5px;
       opacity: 1;
     }
