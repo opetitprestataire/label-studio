@@ -112,7 +112,7 @@ const NewTaxonomy = ({
   // onDeleteLabel,
   options,
   // @todo implement readonly mode
-  // isEditable = true,
+  isEditable = true,
 }: TaxonomyProps) => {
   const refInput = useRef<TaxonomySearchRef>(null);
   const [treeData, setTreeData] = useState<AntTaxonomyItem[]>([]);
@@ -197,6 +197,7 @@ const NewTaxonomy = ({
       placeholder={options.placeholder || "Click to add..."}
       style={style}
       className="htx-taxonomy"
+      disabled={!isEditable}
     />
   );
 };

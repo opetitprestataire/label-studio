@@ -1,4 +1,5 @@
 import { AudioView, LabelStudio, Rating, Taxonomy, ToolBar } from "@humansignal/frontend-test/helpers/LSF";
+import { FF_DEV_3391, FF_TAXONOMY_ASYNC } from "../../../../src/utils/feature-flags";
 import {
   audioConfig,
   audioData,
@@ -9,6 +10,13 @@ import {
   taxonomyResult,
   textData,
 } from "../../data/view_all/readonly";
+
+beforeEach(() => {
+  LabelStudio.addFeatureFlagsOnPageLoad({
+    [FF_DEV_3391]: true,
+    [FF_TAXONOMY_ASYNC]: true,
+  });
+});
 
 describe("View all - Raadonly", () => {
   it("Should not allow user to edit an annotation - Rating", () => {
@@ -21,7 +29,7 @@ describe("View all - Raadonly", () => {
     LabelStudio.params().config(taxonomyConfig).data(textData).withResult(taxonomyResult).init();
     ToolBar.viewAllBtn.click();
     Taxonomy.open();
-    Taxonomy.input.filter(Taxonomy.selectors.open).should("not.exist");
+    Taxonomy.dropdown.should("not.exist");
   });
   it("Should not allow user to edit an annotation - Audio region", () => {
     LabelStudio.params().config(audioConfig).data(audioData).withResult(audioResult).init();
