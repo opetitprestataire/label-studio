@@ -15,6 +15,7 @@
     :global(.CodeMirror) {
       height: 100%;
       width: 100%;
+      border: 1px solid var(--color-neutral-border);
       background: var(--color-neutral-background);
       color: var(--color-neutral-content-subtle);
       border-radius: var(--corner-radius-small);
