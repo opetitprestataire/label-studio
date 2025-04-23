@@ -155,7 +155,7 @@ class ExportMixin:
                     queryset=annotations_qs,
                 )
             )
-            .prefetch_related('predictions', 'drafts', 'comments_author', 'file_upload')
+            .prefetch_related('predictions', 'drafts', 'comment_authors', 'file_upload')
         )
 
     def get_export_data(self, task_filter_options=None, annotation_filter_options=None, serialization_options=None):
