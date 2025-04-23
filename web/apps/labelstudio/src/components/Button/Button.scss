@@ -231,7 +231,7 @@
   }
 
   &_look_primary.button-ls_waiting {
-    --button-color: var(--color-neutral-content);
+    --button-color: var(--color-primary-surface-content);
   }
 
   &_size {
@@ -320,6 +320,13 @@
   &_waiting.button-ls_look_primary {
     --button-background-image: var(--primary-button-waiting-animation-bg);
     --button-background-color: var(--color-primary-surface);
+  }
+
+  &_waiting.button-ls_look_danger,
+  &_waiting.button-ls_look_destructive {
+    --button-background-color: var(--color-negative-emphasis-subtle);
+
+    background-image: var(--negative-button-waiting-animation-bg);
   }
 
   &_size_small &__icon {

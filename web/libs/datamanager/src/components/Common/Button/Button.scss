@@ -271,6 +271,13 @@
     background-color: var(--accent_color);
   }
 
+  &_waiting.button-dm_look_danger,
+  &_waiting.button-dm_look_destructive {
+    --button-background-color: var(--color-negative-emphasis-subtle);
+
+    background-image: var(--negative-button-waiting-animation-bg);
+  }
+
   &_size_small &__icon {
     width: 12px;
 

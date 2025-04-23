@@ -95,8 +95,9 @@
   --colors-surface-border: var(--sand_300);
   --colors-surface-icon-on-base: var(--sand_700);
   --colors-surface-text: var(--sand_700);
-  --primary-button-waiting-animation-bg: repeating-linear-gradient(-63.43deg, hsl(0deg 0% 100% / 20%) 1px, transparent 2px, transparent 6px, hsl(0deg 0% 100% / 20%) 7px, hsl(0deg 0% 100% / 20%) 12px);
-  --button-waiting-animation-bg: repeating-linear-gradient(-63.43deg, rgba(var(--color-primary-surface-active-raw) / 50%) 1px, rgba(var(--color-primary-surface-raw) / 50%) 2px, rgba(var(--color-primary-surface-raw) / 50%) 6px, rgba(var(--color-primary-surface-active-raw) / 50%) 7px, rgba(var(--color-primary-surface-active-raw) / 50%) 12px);
+  --primary-button-waiting-animation-bg: repeating-linear-gradient(-63.43deg, rgba(var(--color-primary-surface-active-raw) / 50%) 1px, rgba(var(--color-primary-surface-raw) / 50%) 2px, rgba(var(--color-primary-surface-raw) / 50%) 6px, rgba(var(--color-primary-surface-active-raw) / 50%) 7px, rgba(var(--color-primary-surface-active-raw) / 50%) 12px);
+  --negative-button-waiting-animation-bg: repeating-linear-gradient(-63.43deg, rgba(var(--color-negative-surface-active-raw) / 50%) 1px, rgba(var(--color-negative-surface-raw) / 50%) 2px, rgba(var(--color-negative-surface-raw) / 50%) 6px, rgba(var(--color-negative-surface-active-raw) / 50%) 7px, rgba(var(--color-negative-surface-active-raw) / 50%) 12px);
+  --button-waiting-animation-bg: repeating-linear-gradient(-63.43deg, rgba(var(--color-neutral-surface-active-raw) / 50%) 1px, rgba(var(--color-neutral-surface-raw) / 50%) 2px, rgba(var(--color-neutral-surface-raw) / 50%) 6px, rgba(var(--color-neutral-surface-active-raw) / 50%) 7px, rgba(var(--color-neutral-surface-active-raw) / 50%) 12px);
   --project-title-icon-primary-color: rgba(var(--black-raw), 0.35);
   --project-title-icon-alternate-color: rgba(var(--white-raw), 0.35);
   --shadow-intensity: 1;
