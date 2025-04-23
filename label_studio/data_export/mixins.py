@@ -116,7 +116,7 @@ class ExportMixin:
         if hasattr(annotations_qs.model, 'reviews'):
             annotations_qs = annotations_qs.prefetch_related('reviews')
 
-        return annotation_qs
+        return annotations_qs
 
     @staticmethod
     def _get_export_serializer_option(serialization_options):
