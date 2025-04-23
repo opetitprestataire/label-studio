@@ -5,7 +5,12 @@ import * as xpath from "xpath-range";
 import { inject, observer } from "mobx-react";
 import { STATE_CLASS_MODS } from "../../../mixins/HighlightMixin";
 import Utils from "../../../utils";
-import { applyTextGranularity, fixCodePointsInRange, rangeToGlobalOffset, trimSelection } from "../../../utils/selection-tools";
+import {
+  applyTextGranularity,
+  fixCodePointsInRange,
+  rangeToGlobalOffset,
+  trimSelection,
+} from "../../../utils/selection-tools";
 import "./RichText.scss";
 import { isAlive } from "mobx-state-tree";
 import { LoadingOutlined } from "@ant-design/icons";
