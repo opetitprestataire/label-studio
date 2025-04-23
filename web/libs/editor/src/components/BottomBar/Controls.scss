@@ -15,6 +15,12 @@
       height: 40px;
       font-size: 16px;
       line-height: 24px;
+      border-color: var(--color-neutral-border);
+
+      &:hover:not(.button_look_primary) {
+        background-color: var(--color-neutral-surface);
+        border-color: var(--color-neutral-border-bold);
+      }
 
       &_look_danger {
         border-color: var(--color-neutral-border);
@@ -24,7 +30,7 @@
     .submit {
       border-radius: 4px;
       background: var(--color-primary-surface);
-      box-shadow: 0 4px 4px 0 rgb(0 0 0 / 25%);
+      box-shadow: 0 4px 4px 0 rgb(var(--color-neutral-shadow-raw) / 25%);
       display: flex;
       width: 160px;
       height: 40px;
@@ -40,6 +46,11 @@
       flex-direction: row-reverse;
       padding: 0;
       cursor: pointer;
+
+      &:hover {
+        background-color: var(--color-primary-surface-hover);
+        border-color: var(--color-primary-border-bold);
+      }
 
       &_disabled {
         color: var(--color-neutral-content-subtlest);
