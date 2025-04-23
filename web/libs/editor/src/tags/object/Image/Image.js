@@ -569,11 +569,9 @@ const Model = types
       };
     },
   }))
-  .volatile((self) => {
-    return {
-      manager: null,
-    };
-  })
+  .volatile((self) => ({
+    manager: null,
+  }))
   // actions for the tools
   .actions((self) => {
     const manager = ToolsManager.getInstance({ name: self.name });
