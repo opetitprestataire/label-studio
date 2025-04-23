@@ -67,6 +67,7 @@ export const Select = forwardRef(
       } else if (!multiple && Array.isArray(val)) {
         val = val[0];
       }
+      valueRef.current = val;
       setValue(val);
     }, [externalValue, multiple]);
 
