@@ -230,7 +230,7 @@ class RichTextPieceView extends Component {
       item.annotation.history.freeze("richtext:resize");
 
       area.updateGlobalOffsets(soff, eoff);
-      if (item.isText) {
+      if (item.type === "text") {
         area.updateTextOffsets(soff, eoff);
       } else {
         // @todo right now resizing works only for text regions, this `else` branch is for the future
