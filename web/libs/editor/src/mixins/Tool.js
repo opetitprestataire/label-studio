@@ -13,6 +13,7 @@ const ToolMixin = types
   .views((self) => ({
     get obj() {
       if (ff.isActive(FF_DEV_3391)) {
+        // It's a temporal solution (see root description)
         const root = self.manager?.root;
         if (root?.annotationStore.selected) {
           return root.annotationStore.selected.names.get(self.manager?.name);
@@ -27,6 +28,7 @@ const ToolMixin = types
 
     get control() {
       if (ff.isActive(FF_DEV_3391)) {
+        // It's a temporal solution (see root description)
         const control = getEnv(self).control;
         const { name } = control;
         const root = self.manager?.root;
