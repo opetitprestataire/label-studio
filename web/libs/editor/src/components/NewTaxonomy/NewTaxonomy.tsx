@@ -111,7 +111,6 @@ const NewTaxonomy = ({
   // onAddLabel,
   // onDeleteLabel,
   options,
-  // @todo implement readonly mode
   isEditable = true,
 }: TaxonomyProps) => {
   const refInput = useRef<TaxonomySearchRef>(null);
