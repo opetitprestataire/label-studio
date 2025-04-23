@@ -44,7 +44,7 @@ export const TopBar = observer(({ store }) => {
                   height: 28,
                   width: 28,
                   padding: 0,
-                  marginRight: "var(--spacing-small, 8px)",
+                  marginRight: "var(--spacing-tight, 8px)",
                 }}
               />
             </Tooltip>
@@ -66,7 +66,7 @@ export const TopBar = observer(({ store }) => {
                   height: 28,
                   width: 28,
                   padding: 0,
-                  marginRight: "var(--spacing-small, 8px)",
+                  marginRight: "var(--spacing-tight, 8px)",
                 }}
               />
             </Tooltip>
