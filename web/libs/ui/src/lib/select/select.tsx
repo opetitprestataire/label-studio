@@ -40,6 +40,7 @@ export const Select = forwardRef(
       searchFilter,
       onSearch,
       selectedValueRenderer,
+      selectFirstIfEmpty,
       ...props
     }: SelectProps<T, A>,
     _ref: ForwardedRef<HTMLSelectElement>,
@@ -49,7 +50,9 @@ export const Select = forwardRef(
     const [query, setQuery] = useState<string>("");
     const valueRef = useRef<any>();
     let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
-
+    if (selectFirstIfEmpty && !initialValue) {
+      initialValue = options?.[0]?.value ?? options?.[0];
+    }
     if (multiple) {
       initialValue = initialValue ? (Array.isArray(initialValue) ? (initialValue ?? []) : [initialValue]) : [];
     } else if (Array.isArray(initialValue)) {
@@ -67,8 +70,16 @@ export const Select = forwardRef(
       } else if (!multiple && Array.isArray(val)) {
         val = val[0];
       }
+      valueRef.current = val;
       setValue(val);
     }, [externalValue, multiple]);
+
+    useEffect(() => {
+      if (valueRef.current || !selectFirstIfEmpty || !options?.[0]) return;
+      const val = options?.[0]?.value ?? options?.[0];
+      valueRef.current = val;
+      setValue(val);
+    }, [selectFirstIfEmpty, options, multiple]);
 
     useEffect(() => {
       if (!isOpen) setQuery("");
@@ -370,11 +381,8 @@ const Option = ({
         [
           "rounded-4",
           "text-neutral-content-subtle",
-          "[&_[cmdk-group-heading]]:text-muted-foreground",
           "overflow-hidden",
           "p-1",
-          "[&_[cmdk-group-heading]]:text-xs",
-          "[&_[cmdk-group-heading]]:font-medium",
           "outline-none",
           "group",
           "duration-150 ease-out",
