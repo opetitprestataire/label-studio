@@ -34,7 +34,8 @@ const ToggleRelationsVisibilityButton = observer<FC<ToggleRelationsVisibilityBut
   return (
     <Elem
       tag={Button}
-      type="text"
+      look="string"
+      size="small"
       disabled={isDisabled}
       onClick={toggleRelationsVisibility}
       mod={{ hidden: isAllHidden }}
@@ -72,7 +73,8 @@ const ToggleRelationsOrderButton = observer<FC<ToggleRelationsOrderButtonProps>>
   return (
     <Elem
       tag={Button}
-      type="text"
+      look="string"
+      size="small"
       onClick={toggleRelationsOrder}
       disabled={isDisabled}
       mod={{ order: relationStore.order }}

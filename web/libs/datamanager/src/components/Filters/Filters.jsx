@@ -69,19 +69,18 @@ export const Filters = injector(({ views, currentView, filters }) => {
         )}
       </Elem>
       <Elem name="actions">
-        <Button size="smaller" onClick={() => currentView.createFilter()} leading={<IconPlus className="!h-3 !w-3" />}>
+        <Button
+          size="smaller"
+          look="outlined"
+          onClick={() => currentView.createFilter()}
+          leading={<IconPlus className="!h-3 !w-3" />}
+        >
           Add {filters.length ? "Another Filter" : "Filter"}
         </Button>
 
         {!sidebarEnabled ? (
           <Tooltip title="Pin to sidebar">
-            <Button
-              look="outlined"
-              type="link"
-              size="smaller"
-              about="Pin to sidebar"
-              onClick={() => views.expandFilters()}
-            >
+            <Button look="string" type="link" size="small" about="Pin to sidebar" onClick={() => views.expandFilters()}>
               <IconChevronRight className="!w-4 !h-4" />
             </Button>
           </Tooltip>
