@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, type CSSProperties, useCallback } from "react";
 import { observer } from "mobx-react";
 import styles from "./GridPreview.module.scss";
+import { cn } from "@humansignal/ui";
 
 const MAX_ZOOM = 20;
 const ZOOM_FACTOR = 0.01;
@@ -195,7 +196,6 @@ const ImagePreview = observer(({ task, field }: ImagePreviewProps) => {
     ? {
         maxWidth: "100%",
         maxHeight: "100%",
-        transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
         transformOrigin: "0 0",
       }
     : {
@@ -208,7 +208,7 @@ const ImagePreview = observer(({ task, field }: ImagePreviewProps) => {
     <div
       ref={containerRef}
       style={containerStyle}
-      className={styles.imageContainer}
+      className={cn(styles.imageContainer, "px-tight")}
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
     >

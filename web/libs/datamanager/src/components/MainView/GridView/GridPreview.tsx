@@ -1,5 +1,5 @@
-import { CloseOutlined, LeftCircleOutlined, QuestionCircleOutlined, RightCircleOutlined } from "@ant-design/icons";
-import { Button, Checkbox } from "@humansignal/ui";
+import { CloseOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { Button, Checkbox, IconChevronLeft, IconChevronRight } from "@humansignal/ui";
 import { observer } from "mobx-react";
 import type { PropsWithChildren } from "react";
 import { createContext, useCallback, useEffect, useRef, useState } from "react";
@@ -109,12 +109,18 @@ const TaskModal = observer(({ view, tasks, imageField, currentTaskId, setCurrent
         </div>
       </div>
       <div className={styles.container}>
-        <Button type="button" onClick={goToPrev} disabled={index === 0}>
-          <Icon icon={LeftCircleOutlined} />
+        <Button type="button" variant="primary" look="outlined" onClick={goToPrev} disabled={index === 0}>
+          <IconChevronLeft />
         </Button>
         <ImagePreview task={task} field={imageField} />
-        <Button type="button" onClick={goToNext} disabled={index === tasks.length - 1}>
-          <Icon icon={RightCircleOutlined} />
+        <Button
+          type="button"
+          variant="primary"
+          look="outlined"
+          onClick={goToNext}
+          disabled={index === tasks.length - 1}
+        >
+          <IconChevronRight />
         </Button>
       </div>
     </div>
