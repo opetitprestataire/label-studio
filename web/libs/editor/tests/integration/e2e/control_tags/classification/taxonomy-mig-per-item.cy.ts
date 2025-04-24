@@ -56,7 +56,9 @@ describe("Control Tags - MIG perItem - Taxonomy", () => {
 
     Taxonomy.open();
     ImageView.waitForImage();
-    Taxonomy.findItem("Choice 1").click();
+    Taxonomy.findItem("Choice 1").as("choice1");
+    ImageView.waitForImage();
+    cy.get("@choice1").click();
 
     LabelStudio.serialize().then((result) => {
       expect(result[0]).to.have.property("item_index", 1);
