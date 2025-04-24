@@ -25,7 +25,7 @@ from django.db.models import Prefetch
 from django.db.models.query_utils import Q
 from django.utils import dateformat, timezone
 from label_studio_sdk.converter import Converter
-from tasks.models import Annotation, AnnotationDraft, Prediction, Task
+from tasks.models import Annotation, AnnotationDraft, Task
 
 ONLY = 'only'
 EXCLUDE = 'exclude'
