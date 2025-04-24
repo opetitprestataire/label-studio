@@ -42,6 +42,8 @@
     pointer-events: none;
     color: var(--color-neutral-content);
     transition: all 150ms ease-out;
+    border: 1px solid transparent;
+    width: 100%;
 
     &_active {
       cursor: pointer;
@@ -52,11 +54,6 @@
       background-color: var(--color-primary-emphasis-subtle);
     }
 
-    &_selected {
-      pointer-events: none;
-      background-color: var(--color-primary-emphasis);
-      border: 1px solid var(--color-primary-border-subtler);
-    }
 
     &:not(&_active) {
       opacity: 0.3;
@@ -76,14 +73,24 @@
     }
 
     &::before {
-      box-shadow: 0 0 0 0.5px rgba(#000, 0.5);
+      box-shadow: 0 0 0 0.5px var(--color-neutral-border);
     }
 
-    &_selected::after {
-      left: 12px;
-      width: 14px;
-      height: 14px;
-      background-color: var(--grape_500);
+    &_selected {
+      pointer-events: none;
+      background-color: var(--color-primary-emphasis);
+      border: 1px solid var(--color-primary-border-subtler);
+
+      &::after {
+        left: 12px;
+        width: 14px;
+        height: 14px;
+        background-color: var(--color-primary-content);
+      }
+
+      &::before {
+        box-shadow: 0 0 0 0.5px var(--color-neutral-content-subtler);
+      }
     }
   }
 
