@@ -49,7 +49,7 @@ const WebhookList = ({ onSelectActive, onAddWebhook, webhooks, fetchWebhooks }) 
                   <Elem name="item-date">Created {format(new Date(obj.created_at), "dd MMM yyyy, HH:mm")}</Elem>
                 </Elem>
                 <Elem name="item-control">
-                  <Button onClick={() => onSelectActive(obj.id)} icon={<IconPencil />}>
+                  <Button look="outlined" onClick={() => onSelectActive(obj.id)} icon={<IconPencil />}>
                     Edit
                   </Button>
                   <Button
@@ -61,7 +61,8 @@ const WebhookList = ({ onSelectActive, onAddWebhook, webhooks, fetchWebhooks }) 
                         },
                       })
                     }
-                    look="danger"
+                    variant="negative"
+                    look="outlined"
                     icon={<IconCross />}
                   >
                     Delete

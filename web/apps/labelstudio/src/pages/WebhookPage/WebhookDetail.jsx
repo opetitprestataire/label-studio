@@ -145,7 +145,7 @@ const WebhookDetail = ({ webhook, webhooksInfo, fetchWebhooks, onBack, onSelectA
                     <Button
                       type="button"
                       onClick={onAddHeaderClick}
-                      look="outlined"
+                      look="string"
                       className={rootClass.elem("headers-add")}
                       size="small"
                     >
@@ -173,6 +173,7 @@ const WebhookDetail = ({ webhook, webhooksInfo, fetchWebhooks, onBack, onSelectA
                           <Button
                             className={rootClass.elem("headers-remove")}
                             type="button"
+                            look="string"
                             icon={<IconCross />}
                             onClick={() => onHeaderRemove(index)}
                           />
