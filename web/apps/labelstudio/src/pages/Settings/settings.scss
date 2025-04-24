@@ -62,6 +62,10 @@
     &__text {
       padding: 0;
     }
+
+    &__text:first-child {
+      margin-bottom: var(--spacing-tight);
+    }
   }
 
   .radio-group-ls__buttons {
