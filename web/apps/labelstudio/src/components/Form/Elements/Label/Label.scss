@@ -16,11 +16,12 @@
     line-height: 140%;
 
     a {
-      color: var(--color-primary-surface-content);
+      color: var(--color-primary-content);
       text-decoration: underline;
 
       &:hover {
         text-decoration: none;
+        color: var(--color-primary-content-subtle);
       }
     }
   }
