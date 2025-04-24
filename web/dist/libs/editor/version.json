@@ -1,6 +1,6 @@
 {
-  "message": "fix: LEAP-1947: Fix interactive view all FF in image tag case (#7387)",
-  "commit": "98dfd898c23e94a2f094df3798ad233ba8a83a91",
-  "date": "2025-04-23T16:14:37.000Z",
+  "message": "fix: LEAP-1442: Fix unexpected scrolling on region select in Video (#7392)",
+  "commit": "a154f88092bb133a26e09c6d202b2c4ae6c5c3e6",
+  "date": "2025-04-24T10:03:07.000Z",
   "branch": "develop"
 }
