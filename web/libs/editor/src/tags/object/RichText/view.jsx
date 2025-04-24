@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import * as ff from "@humansignal/core/lib/utils/feature-flags/ff";
 import { htmlEscape, matchesSelector } from "../../../utils/html";
 import ObjectTag from "../../../components/Tags/Object";
 import * as xpath from "xpath-range";
@@ -560,7 +561,7 @@ class RichTextPieceView extends Component {
           <Elem
             key="root"
             name="container"
-            mod={{ canResizeSpans: item.canResizeSpans }}
+            mod={{ canResizeSpans: ff.isActive(ff.FF_ADJUSTABLE_SPANS) }}
             ref={(el) => {
               item.mountNodeRef.current = el;
               el && this.markObjectAsLoaded();
