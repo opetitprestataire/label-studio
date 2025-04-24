@@ -92,6 +92,13 @@
         "cwd": "libs/editor",
         "command": "node scripts/create-docs.js ../../../docs/source/tags"
       }
+    },
+    "extract-antd-no-reset": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ../../tools/extract-antd-no-reset/extract-antd-no-reset.mjs",
+        "cwd": "libs/editor"
+      }
     }
   }
 }

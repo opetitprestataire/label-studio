@@ -32,8 +32,9 @@
     "test:affected": "nx affected --target=test:unit --base=develop",
     "test:watch": "yarn test:unit --all --watch",
     "test:watch:affected": "yarn test --watch",
-    "postinstall": "npx -y copy-files-from-to",
+    "postinstall": "npx -y copy-files-from-to && yarn extract-antd-no-reset",
     "design-tokens": "nx design-tokens ui",
+    "extract-antd-no-reset": "nx extract-antd-no-reset editor",
     "storybook:serve": "nx storybook storybook",
     "storybook:build": "nx build-storybook storybook"
   },
