@@ -1,6 +1,6 @@
 {
-  "message": "feat: DIA-2196: Dedup JSON Preview and Sample Data FFs (#7386)",
-  "commit": "66d43c84e2fef1a7079b4aec6343e8a48484fd07",
-  "date": "2025-04-16T15:45:52.000Z",
+  "message": "fix: LEAP-1947: Fix interactive view all FF in image tag case (#7387)",
+  "commit": "98dfd898c23e94a2f094df3798ad233ba8a83a91",
+  "date": "2025-04-23T16:14:37.000Z",
   "branch": "develop"
 }
