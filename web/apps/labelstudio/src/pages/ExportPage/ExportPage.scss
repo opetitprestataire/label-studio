@@ -73,7 +73,7 @@
     }
 
     &::before {
-      box-shadow: 0 0 0 0.5px var(--color-neutral-border);
+      box-shadow: 0 0 0 0.5px var(--color-neutral-content-subtler);
     }
 
     &_selected {
@@ -89,7 +89,7 @@
       }
 
       &::before {
-        box-shadow: 0 0 0 0.5px var(--color-neutral-content-subtler);
+        box-shadow: 0 0 0 0.5px var(--color-neutral-content);
       }
     }
   }
