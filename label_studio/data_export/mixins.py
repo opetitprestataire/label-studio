@@ -151,7 +151,7 @@ class ExportMixin:
     def get_task_queryset(self, ids, annotation_filter_options):
         annotations_qs = self._get_filtered_annotations_queryset(annotation_filter_options=annotation_filter_options)
 
-        task_queryset = (
+        return (
             Task.objects.filter(id__in=ids)
             .select_related('file_upload')  # select_related more efficient for regular foreign-key relationship
             .prefetch_related(
@@ -161,8 +161,6 @@ class ExportMixin:
                 'comment_authors',
             )
         )
-
-        return task_queryset
 
     def get_export_data(self, task_filter_options=None, annotation_filter_options=None, serialization_options=None):
         """
