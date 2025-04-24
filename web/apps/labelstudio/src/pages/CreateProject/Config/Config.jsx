@@ -41,7 +41,7 @@ const Label = ({ label, template, color }) => {
   return (
     <li className={configClass.elem("label").mod({ choice: label.tagName === "Choice" })}>
       <label style={{ background: color }}>
-        <input
+        <Input
           type="color"
           className={configClass.elem("label-color")}
           value={colorNames[color] || color}
@@ -206,8 +206,7 @@ const ConfigureSettings = ({ template }) => {
         return (
           <li key={key}>
             <label>
-              {options.title}{" "}
-              <input className="lsf-input-ls" type="text" onInput={onChange} value={value} size={size} />
+              {options.title} <Input type="text" onInput={onChange} value={value} size={size} />
             </label>
           </li>
         );
