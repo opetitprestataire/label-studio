@@ -1,6 +1,6 @@
 {
-  "message": "feat: OPTIC-1733: Standardize Dropdown Components Using LSE selector (#7257)",
-  "commit": "ddb598a3e2f0aedb7d58055aa80b1937ee7f901f",
-  "date": "2025-04-22T18:37:23.000Z",
+  "message": "fix: LEAP-2009: Respect granularity when resizing NER spans (#7364)",
+  "commit": "f9cdff24ff81e24c6515c4d14fba1bda4d04932a",
+  "date": "2025-04-24T09:12:12.000Z",
   "branch": "develop"
 }
