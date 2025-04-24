@@ -38,7 +38,7 @@ const SelectedChoiceMixin = types.model().views((self) => ({
       // This is the original behaviour of other SelectedModel mixin usages
       // as they are using alias lookups for choices. For now we will keep it as is since it works for all the
       // other cases currently.
-      if (self.findLabel && !self.type === "taxonomy") {
+      if (self.findLabel && self.type !== "taxonomy") {
         return choiceValue.map((v) => self.findLabel(v)).some((c) => c && c.sel);
       }
 
