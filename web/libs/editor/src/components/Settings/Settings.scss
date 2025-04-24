@@ -11,11 +11,14 @@
 
 .settings__title {
   @extend %settings-title;
+
+  color: var(--color-neutral-content);
 }
 
 .settings {
   &__field + &__field {
     margin-top: 10px;
+    color: var(--color-neutral-content);
   }
 }
 
@@ -241,5 +244,21 @@
     border-color: var(--color-primary-emphasis);
     background: var(--color-primary-emphasis);
     color: var(--color-neutral-content);
+  }
+
+  :global(.ant-input) {
+    background-color: var(--color-neutral-background);
+    color: var(--color-neutral-content);
+    border: 1px solid var(--color-neutral-border);
+    border-radius: var(--corner-radius-smaller);
+  }
+
+  :global(.ant-input:hover) {
+    border-color: 1px solid var(--color-neutral-border-bold);
+  }
+
+  :global(.ant-input:focus) {
+    border-color: 1px solid var(--color-neutral-border);
+    box-shadow: 0 0 0 4px var(--color-primary-focus-outline);
   }
 }
