@@ -40,7 +40,6 @@ export const Select = forwardRef(
       searchFilter,
       onSearch,
       selectedValueRenderer,
-      selectFirstIfEmpty,
       ...props
     }: SelectProps<T, A>,
     _ref: ForwardedRef<HTMLSelectElement>,
@@ -50,9 +49,7 @@ export const Select = forwardRef(
     const [query, setQuery] = useState<string>("");
     const valueRef = useRef<any>();
     let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
-    if (selectFirstIfEmpty && (initialValue === null || initialValue === undefined)) {
-      initialValue = options?.[0]?.value ?? options?.[0];
-    }
+
     if (multiple) {
       initialValue = initialValue ? (Array.isArray(initialValue) ? (initialValue ?? []) : [initialValue]) : [];
     } else if (Array.isArray(initialValue)) {
@@ -73,13 +70,6 @@ export const Select = forwardRef(
       valueRef.current = val;
       setValue(val);
     }, [externalValue, multiple]);
-
-    useEffect(() => {
-      if (valueRef.current || !selectFirstIfEmpty || options?.[0] === null || options?.[0] === undefined) return;
-      const val = options?.[0]?.value ?? options?.[0];
-      valueRef.current = val;
-      setValue(val);
-    }, [selectFirstIfEmpty, options, multiple]);
 
     useEffect(() => {
       if (!isOpen) setQuery("");
@@ -151,6 +141,12 @@ export const Select = forwardRef(
       },
       [setQuery, onSearch],
     );
+
+    useEffect(() => {
+      if (selectedOptions.length > 0 || !isDefined(defaultValue)) return;
+      valueRef.current = defaultValue;
+      setValue(defaultValue);
+    }, [selectedOptions, defaultValue]);
 
     const combobox = (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
