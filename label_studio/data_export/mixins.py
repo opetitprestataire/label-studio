@@ -115,7 +115,7 @@ class ExportMixin:
             from reviews.models import AnnotationReview
 
             queryset = queryset.prefetch_related(
-                Prefetch('reviews', queryset=AnnotationReview.model.objects.select_related('created_by'))
+                Prefetch('reviews', queryset=AnnotationReview.objects.select_related('created_by'))
             )
 
         return queryset
@@ -158,8 +158,7 @@ class ExportMixin:
             .select_related('file_upload')  # select_related more efficient for regular foreign-key relationship
             .prefetch_related(
                 Prefetch('annotations', queryset=annotations_qs),
-                Prefetch('predictions', queryset=Prediction.objects.select_related('created_by')),
-                Prefetch('drafts', queryset=AnnotationDraft.objects.select_related('created_by')),
+                Prefetch('drafts', queryset=AnnotationDraft.objects.select_related('user')),
                 'comment_authors',
             )
         )
