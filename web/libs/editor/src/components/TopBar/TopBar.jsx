@@ -35,7 +35,7 @@ export const TopBar = observer(({ store }) => {
               <Button
                 className={"topbar__button"}
                 icon={<IconViewAll width={20} height={20} />}
-                type="text"
+                type={isViewAll ? undefined : "text"}
                 aria-label="Compare all annotations"
                 onClick={annotationStore.toggleViewingAllAnnotations}
                 primary={isViewAll}
@@ -54,7 +54,7 @@ export const TopBar = observer(({ store }) => {
               <Button
                 icon={<IconPlus />}
                 className={"topbar__button"}
-                type="text"
+                type={isViewAll ? undefined : "text"}
                 aria-label="Create an annotation"
                 onClick={(event) => {
                   event.preventDefault();

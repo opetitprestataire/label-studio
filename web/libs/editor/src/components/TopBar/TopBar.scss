@@ -12,7 +12,7 @@
   position: sticky;
   top: 0;
 
-  &__button {
+  &__button:not(.button_look_primary) {
     &:hover {
       background-color: var(--color-primary-emphasis-subtle);
     }
