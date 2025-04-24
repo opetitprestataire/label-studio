@@ -30,10 +30,12 @@ WORKDIR /label-studio/web
 # Fix Docker Arm64 Build
 RUN yarn config set registry https://registry.npmjs.org/
 RUN yarn config set network-timeout 1200000 # HTTP timeout used when downloading packages, set to 20 minutes
+RUN mkdir -p libs/editor/src/assets/styles
 
 COPY web/package.json .
 COPY web/yarn.lock .
 COPY web/tools tools
+COPY web/libs/editor/project.json libs/editor/
 RUN --mount=type=cache,target=${YARN_CACHE_FOLDER},sharing=locked \
     --mount=type=cache,target=${NX_CACHE_DIRECTORY},sharing=locked \
     yarn install --prefer-offline --no-progress --pure-lockfile --frozen-lockfile --ignore-engines --non-interactive --production=false
@@ -74,7 +76,7 @@ RUN --mount=type=cache,target="/var/cache/apt",sharing=locked \
     set -eux; \
     apt-get update; \
     apt-get install --no-install-recommends -y \
-            build-essential git; \
+    build-essential git; \
     apt-get autoremove -y
 
 WORKDIR /label-studio
@@ -94,9 +96,9 @@ ARG INCLUDE_DEV=false
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR,sharing=locked \
     poetry check --lock && \
     if [ "$INCLUDE_DEV" = "true" ]; then \
-        poetry install --no-root --extras uwsgi --with test; \
+    poetry install --no-root --extras uwsgi --with test; \
     else \
-        poetry install --no-root --without test --extras uwsgi; \
+    poetry install --no-root --without test --extras uwsgi; \
     fi
 
 # Install LS
@@ -136,7 +138,7 @@ RUN --mount=type=cache,target="/var/cache/apt",sharing=locked \
     apt-get update; \
     apt-get upgrade -y; \
     apt-get install --no-install-recommends -y libexpat1 libgl1-mesa-glx libglib2.0-0 \
-        gnupg2 curl; \
+    gnupg2 curl; \
     apt-get autoremove -y
 
 # install nginx
