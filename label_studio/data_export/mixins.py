@@ -112,8 +112,10 @@ class ExportMixin:
         queryset = queryset.select_related('completed_by')
         # prefetch reviews in LSE
         if hasattr(queryset.model, 'reviews'):
+            from reviews.models import AnnotationReview
+
             queryset = queryset.prefetch_related(
-                Prefetch('reviews', queryset=queryset.model.reviews.model.objects.select_related('created_by'))
+                Prefetch('reviews', queryset=AnnotationReview.model.objects.select_related('created_by'))
             )
 
         return queryset
