@@ -6,8 +6,31 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Paths
-const sourcePath = path.join(__dirname, "../../node_modules/antd/dist/antd.css");
-const targetPath = path.join(__dirname, "../../libs/editor/src/assets/styles/_antd-no-reset.scss");
+const findNearestNodeModules = (dir) => {
+  const nodeModulesPath = path.join(dir, "node_modules");
+  if (fs.existsSync(nodeModulesPath)) {
+    return nodeModulesPath;
+  }
+  const parentDir = path.dirname(dir);
+  if (parentDir === dir) {
+    throw new Error("No node_modules directory found");
+  }
+  return findNearestNodeModules(parentDir);
+};
+
+const nodeModulesPath = findNearestNodeModules(__dirname);
+const sourcePath = path.join(nodeModulesPath, "./antd/dist/antd.css");
+if (!fs.existsSync(sourcePath)) {
+  throw new Error("Source file not found: " + sourcePath);
+}
+let targetDirPath = path.join(nodeModulesPath, "@humansignal/editor/src/assets/styles");
+if (!fs.existsSync(targetDirPath)) {
+  if (fs.existsSync(path.join(__dirname, "../../libs/editor/src/assets/styles"))) {
+    targetDirPath = path.join(__dirname, "../../libs/editor/src/assets/styles");
+  }
+}
+
+const targetPath = path.join(targetDirPath, "./_antd-no-reset.scss");
 
 // Read the source file
 const sourceContent = fs.readFileSync(sourcePath, "utf8");
