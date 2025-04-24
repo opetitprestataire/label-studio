@@ -77,7 +77,9 @@ function TokenSettingsModalView({
         </Form.Row>
       )}
       <Form.Actions>
-        <Button type="submit">Save</Button>
+        <Button look="outlined" type="submit">
+          Save
+        </Button>
       </Form.Actions>
     </Form>
   );
