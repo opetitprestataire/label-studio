@@ -27,6 +27,11 @@
     background-color: transparent;
     outline: none;
   }
+
+  &:read-only {
+    background-color: var(--color-neutral-surface);
+    color: var(--color-neutral-content-subtle);
+  }
 }
 
 .input-ls,
