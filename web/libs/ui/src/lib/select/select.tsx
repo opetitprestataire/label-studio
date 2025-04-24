@@ -221,6 +221,7 @@ export const Select = forwardRef(
                   placeholder={searchPlaceholder ?? "Search"}
                   onChangeCapture={onSearchInputHandler}
                   data-testid="select-search-field"
+                  autoFocus
                 />
               )}
               <CommandList
