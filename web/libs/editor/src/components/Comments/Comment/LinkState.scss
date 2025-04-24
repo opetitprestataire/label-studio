@@ -80,12 +80,12 @@
     margin-top: 3px; // to align with 24px icon
     display: flex;
     font-size: 9px;
-    color: var(--color-neutral-background);
+    color: var(--color-neutral-content);
     text-align: center;
     align-items: center;
     border-radius: 4px;
     justify-content: center;
-    background-color: var(--color-neutral-content);
+    background-color: var(--icon-color, var(--color-neutral-surface));
     flex-grow: 0;
   }
 
