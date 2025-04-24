@@ -1,6 +1,6 @@
 {
-  "message": "feat: OPTIC-1938: Proxy for storages when presigned urls are off (#7354)",
-  "commit": "b560a3fb14675bb12dc68c416fa4e9b3556938f1",
-  "date": "2025-04-20T09:50:10.000Z",
+  "message": "fix: LEAP-1442: Fix unexpected scrolling on region select in Video (#7392)",
+  "commit": "a154f88092bb133a26e09c6d202b2c4ae6c5c3e6",
+  "date": "2025-04-24T10:03:07.000Z",
   "branch": "develop"
 }
