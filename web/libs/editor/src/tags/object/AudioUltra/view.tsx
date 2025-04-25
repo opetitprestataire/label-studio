@@ -213,6 +213,8 @@ const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
     // @todo this hotkey should be moved from these settings for a more appropriate place;
     // @todo we are planning to have a central hotkeys management, that would be a better option.
     playpauseHotkey: "audio:playpause",
+    stepBackHotkey: "media:step-backward",
+    stepForwardHotkey: "media:step-forward",
     loopRegion: false,
     autoPlayNewSegments: true,
   });
