@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useSDK } from "../../../providers/SDKProvider";
 import { cn } from "../../../utils/bem";
 import { isDefined } from "../../../utils/utils";
 import "./Agreement.scss";
@@ -19,13 +20,20 @@ const formatNumber = (num) => {
   return number.toFixed(2);
 };
 
-export const Agreement = (column) => {
+export const Agreement = (cell) => {
+  const { value, original: task } = cell;
+  const sdk = useSDK();
   const agreementCN = cn("agreement");
   const scoreElem = agreementCN.elem("score");
   return (
-    <div className={agreementCN.toString()}>
-      <span className={clsx(scoreElem.toString(), scoreElem.mod({ [agreement(column.value)]: true }).toString())}>
-        {isDefined(column.value) ? `${formatNumber(column.value)}%` : ""}
+    <div
+      className={agreementCN.toString()}
+      onClick={(e) => {
+        sdk.invoke("agreementCellClick", e, task);
+      }}
+    >
+      <span className={clsx(scoreElem.toString(), scoreElem.mod({ [agreement(value)]: true }).toString())}>
+        {isDefined(value) ? `${formatNumber(value)}%` : ""}
       </span>
     </div>
   );
