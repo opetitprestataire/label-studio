@@ -42,7 +42,7 @@
       height: 10px;
       border-radius: 100%;
       transition: all 120ms ease;
-      background: var(--color-neutral-border);
+      background: var(--color-neutral-border-bold);
       box-shadow: 0 5px 10px rgb(18 17 13 / 15%), inset 0 -1px 0 rgb(18 17 13 / 10%), inset 0 0 0 1px rgb(18 17 13 / 5%);
     }
   }
@@ -70,7 +70,8 @@
   &_disabled {
     box-shadow: none;
     pointer-events: none;
-    background: var(--sand_200);
+    background: var(--color-neutral-background);
+    cursor: not-allowed;
   }
 
   &_disabled &__indicator {
@@ -81,6 +82,6 @@
   &_disabled.toggle_checked &__indicator::before {
     box-shadow: none;
     transition: none;
-    background-color: var(--sand_500);
+    background-color: var(--color-neutral-border);
   }
 }
