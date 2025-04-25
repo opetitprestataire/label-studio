@@ -110,6 +110,10 @@
   opacity: 0;
 }
 
+[data-color-scheme="dark"] input[type="number"] {
+  color-scheme: dark;
+}
+
 .number input {
   background-color: var(--color-neutral-background);
   border: 1px solid var(--color-neutral-border);
