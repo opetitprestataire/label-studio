@@ -126,3 +126,11 @@
   color: var(--color-neutral-content);
   background: var(--color-primary-emphasis-subtle);
 }
+
+:global(.CodeMirror-hints .CodeMirror-hint-type) {
+  color: var(--color-neutral-content-subtle);
+}
+
+:global(.CodeMirror-hints .CodeMirror-hint-description) {
+  color: var(--color-neutral-content-subtler);
+}
