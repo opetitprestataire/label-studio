@@ -63,10 +63,10 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
           <Sun className={clsx(styles.sun)} />
         </div>
       </div>
-      <span className={clsx(styles.themeToggle__label)}>
-        {themeLabel}
-      </span>
-      <Badge variant="beta" className={styles.betaBadge}>Beta</Badge>
+      <span className={clsx(styles.themeToggle__label)}>{themeLabel}</span>
+      <Badge variant="beta" className={styles.betaBadge}>
+        Beta
+      </Badge>
     </button>
   );
 };
