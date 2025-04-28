@@ -6,13 +6,15 @@
   border-style: solid;
   background-color: var(--color-neutral-surface);
   margin-top: 2px;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   cursor: pointer;
   height: calc(100% - 3px);
   min-width: 186px;
   border-color: var(--color-neutral-border);
-  transition: all 150ms ease-out;
+  transition-property: background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
 
   &__user {
     line-height: 16px;
@@ -85,6 +87,8 @@
     background-color: var(--color-neutral-background);
     border-color: var(--color-neutral-border);
     transform: translate(0, 1px);
+    margin-top: 1px;
+    height: calc(100% - 2px);
 
     &:hover {
       cursor: default;
