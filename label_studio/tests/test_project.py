@@ -2,8 +2,9 @@ import json
 
 import pytest
 from django.db.models.query import QuerySet
-from tests.utils import make_project
 from users.models import User
+
+from tests.utils import make_project
 
 
 @pytest.mark.django_db

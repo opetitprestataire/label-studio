@@ -1,7 +1,6 @@
 import factory
-from projects.models import Project, ProjectMember
 from io_storages.base_models import ImportStorage, ProjectStorageMixin
-from io_storages.models import AzureBlobImportStorage, S3ImportStorage, GCSImportStorage, RedisImportStorage
+from io_storages.models import AzureBlobImportStorage, GCSImportStorage, RedisImportStorage, S3ImportStorage
 
 
 class StorageFactory(factory.django.DjangoModelFactory):
