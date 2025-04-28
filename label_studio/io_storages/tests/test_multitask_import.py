@@ -1,7 +1,6 @@
 import json
 
 import boto3
-import pytest
 from django.test import TestCase
 from io_storages.tests.factories import (
     AzureBlobImportStorageFactory,
@@ -16,7 +15,7 @@ from rest_framework.test import APIClient
 from tests.utils import azure_client_mock, gcs_client_mock, redis_client_mock
 
 
-@pytest.mark.forked
+# @pytest.mark.forked
 class TestMultiTaskImport(TestCase):
     @classmethod
     def setUpTestData(cls):

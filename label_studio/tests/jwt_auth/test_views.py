@@ -3,7 +3,6 @@ from jwt_auth.models import LSAPIToken
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.exceptions import TokenError
-
 from tests.jwt_auth.utils import create_user_with_token_settings
 from tests.utils import mock_feature_flag
 
