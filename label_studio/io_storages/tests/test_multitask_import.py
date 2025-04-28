@@ -1,5 +1,6 @@
 import json
 import boto3
+import pytest
 from django.test import TestCase
 from rest_framework.test import APIClient
 from moto import mock_s3
@@ -13,6 +14,7 @@ from io_storages.tests.factories import (
 from tests.utils import gcs_client_mock, azure_client_mock, redis_client_mock
 
 
+@pytest.mark.forked
 class TestMultiTaskImport(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -77,7 +79,7 @@ class TestMultiTaskImport(TestCase):
 
     def test_import_multiple_tasks_gcs(self):
         # initialize mock with sample data
-        with gcs_client_mock(sample_json_contents=self.common_task_data, sample_json_blob_names=['test.json']) as gcs:
+        with gcs_client_mock(sample_json_contents=self.common_task_data, sample_blob_names=['test.json']):
 
             self._test_storage_import(
                 GCSImportStorageFactory,

@@ -82,8 +82,9 @@ def email_mock():
         yield
 
 
+# NOTE: when using non-default sample arguments, be sure to use @pytest.mark.forked on the test, so as not to interfere with default values in other tests - this function doesn't properly clean up after itself.
 @contextmanager
-def gcs_client_mock(sample_json_contents=None, sample_json_blob_names=None):
+def gcs_client_mock(sample_json_contents=None, sample_blob_names=None):
     from collections import namedtuple
 
     from google.cloud import storage as google_storage
@@ -105,7 +106,7 @@ def gcs_client_mock(sample_json_contents=None, sample_json_blob_names=None):
         def download_as_string(self):
             data = f'test_blob_{self.key}'
             if self.is_json:
-                return json.dumps(sample_json_contents)
+                return json.dumps(self.sample_json_contents)
             return data
 
         def upload_from_string(self, string):
@@ -117,42 +118,42 @@ def gcs_client_mock(sample_json_contents=None, sample_json_blob_names=None):
         def download_as_bytes(self):
             data = f'test_blob_{self.key}'
             if self.is_json:
-                return json.dumps(sample_json_contents)
+                return json.dumps(self.sample_json_contents)
             return data
 
     class DummyGCSBucket:
-        def __init__(self, bucket_name, is_json, sample_json_blob_names=None, sample_json_contents=None):
+        def __init__(self, bucket_name, is_json, sample_blob_names=None, sample_json_contents=None):
             self.name = bucket_name
             self.is_json = is_json
-            self.sample_json_blob_names = sample_json_blob_names
+            self.sample_blob_names = sample_blob_names
             self.sample_json_contents = sample_json_contents
 
         def list_blobs(self, prefix, **kwargs):
             if 'fake' in prefix:
                 return []
-            return [File(name) for name in self.sample_json_blob_names]
+            return [File(name) for name in self.sample_blob_names]
 
         def blob(self, key):
             return DummyGCSBlob(self.name, key, self.is_json, self.sample_json_contents)
 
     class DummyGCSClient:
-        def __init__(self, sample_json_contents=None, sample_json_blob_names=None):
+        def __init__(self, sample_json_contents=None, sample_blob_names=None):
             self.sample_json_contents = sample_json_contents
-            self.sample_json_blob_names = sample_json_blob_names or ['abc', 'def', 'ghi']
+            self.sample_blob_names = sample_blob_names or ['abc', 'def', 'ghi']
 
         def get_bucket(self, bucket_name):
             is_json = bucket_name.endswith('_JSON')
-            return DummyGCSBucket(bucket_name, is_json, self.sample_json_blob_names, self.sample_json_contents)
+            return DummyGCSBucket(bucket_name, is_json, self.sample_blob_names, self.sample_json_contents)
 
         def list_blobs(self, bucket_name, prefix):
             is_json = bucket_name.endswith('_JSON')
             return [
                 DummyGCSBlob(bucket_name, name, is_json, self.sample_json_contents)
-                for name in self.sample_json_blob_names
+                for name in self.sample_blob_names
             ]
 
     with mock.patch.object(
-        google_storage, 'Client', return_value=DummyGCSClient(sample_json_contents, sample_json_blob_names)
+        google_storage, 'Client', return_value=DummyGCSClient(sample_json_contents, sample_blob_names)
     ):
         yield google_storage
 
