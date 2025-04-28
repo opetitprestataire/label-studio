@@ -3,6 +3,7 @@ import styles from "./ThemeToggle.module.scss";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ReactComponent as Sun } from "./icons/sun.svg";
 import { ReactComponent as Moon } from "./icons/moon.svg";
+import { Badge } from "@humansignal/ui";
 
 interface ThemeToggleProps {
   className?: string;
@@ -62,7 +63,10 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
           <Sun className={clsx(styles.sun)} />
         </div>
       </div>
-      <span className={clsx(styles.themeToggle__label)}>{themeLabel}</span>
+      <span className={clsx(styles.themeToggle__label)}>
+        {themeLabel}
+      </span>
+      <Badge variant="beta" className={styles.betaBadge}>Beta</Badge>
     </button>
   );
 };
