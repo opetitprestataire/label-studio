@@ -1,6 +1,6 @@
 {
-  "message": "feat: OPTIC-1938: Proxy for storages when presigned urls are off (#7354)",
-  "commit": "b560a3fb14675bb12dc68c416fa4e9b3556938f1",
-  "date": "2025-04-20T09:50:10.000Z",
+  "message": "feat: OPTIC-1217: Implement Color design tokens as CSS variables and Dark Mode (#6550)",
+  "commit": "2e8e35e16d766b02d1c4bca558ed692a8af3cb3a",
+  "date": "2025-04-28T16:46:57.000Z",
   "branch": "develop"
 }
