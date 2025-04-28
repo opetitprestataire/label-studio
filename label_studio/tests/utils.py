@@ -148,8 +148,7 @@ def gcs_client_mock(sample_json_contents=None, sample_blob_names=None):
         def list_blobs(self, bucket_name, prefix):
             is_json = bucket_name.endswith('_JSON')
             return [
-                DummyGCSBlob(bucket_name, name, is_json, self.sample_json_contents)
-                for name in self.sample_blob_names
+                DummyGCSBlob(bucket_name, name, is_json, self.sample_json_contents) for name in self.sample_blob_names
             ]
 
     with mock.patch.object(

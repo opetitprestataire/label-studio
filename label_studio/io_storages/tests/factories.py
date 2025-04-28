@@ -36,7 +36,6 @@ class AzureBlobStorageMixinFactory(factory.django.DjangoModelFactory):
 
 
 class AzureBlobImportStorageBaseFactory(AzureBlobStorageMixinFactory, ImportStorageFactory):
-
     class Meta:
         model = AzureBlobImportStorage
         abstract = True
@@ -48,13 +47,11 @@ class AzureBlobImportStorageFactory(AzureBlobImportStorageBaseFactory, ProjectSt
 
 
 class S3StorageMixinFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         abstract = True
 
 
 class S3ImportStorageBaseFactory(S3StorageMixinFactory, ImportStorageFactory):
-
     class Meta:
         model = S3ImportStorage
         abstract = True
@@ -66,13 +63,11 @@ class S3ImportStorageFactory(S3ImportStorageBaseFactory, ProjectStorageMixinFact
 
 
 class GCSStorageMixinFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         abstract = True
 
 
 class GCSImportStorageBaseFactory(GCSStorageMixinFactory, ImportStorageFactory):
-
     class Meta:
         model = GCSImportStorage
         abstract = True
@@ -84,13 +79,11 @@ class GCSImportStorageFactory(GCSImportStorageBaseFactory, ProjectStorageMixinFa
 
 
 class RedisStorageMixinFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         abstract = True
 
 
 class RedisImportStorageBaseFactory(RedisStorageMixinFactory, ImportStorageFactory):
-
     class Meta:
         model = RedisImportStorage
         abstract = True
