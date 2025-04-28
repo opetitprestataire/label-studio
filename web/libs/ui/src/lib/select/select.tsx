@@ -152,6 +152,12 @@ export const Select = forwardRef(
       [setQuery, onSearch],
     );
 
+    useEffect(() => {
+      if (selectedOptions.length > 0 || !isDefined(defaultValue)) return;
+      valueRef.current = defaultValue;
+      setValue(defaultValue);
+    }, [selectedOptions, defaultValue]);
+
     const combobox = (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild={true} disabled={disabled}>
@@ -221,6 +227,7 @@ export const Select = forwardRef(
                   placeholder={searchPlaceholder ?? "Search"}
                   onChangeCapture={onSearchInputHandler}
                   data-testid="select-search-field"
+                  autoFocus
                 />
               )}
               <CommandList

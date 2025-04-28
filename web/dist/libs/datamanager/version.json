@@ -1,6 +1,6 @@
 {
-  "message": "fix: LEAP-1442: Fix unexpected scrolling on region select in Video (#7392)",
-  "commit": "a154f88092bb133a26e09c6d202b2c4ae6c5c3e6",
-  "date": "2025-04-24T10:03:07.000Z",
+  "message": "feat: LEAP-2042: [FE] Implement agreement popover component showing agreement between annotators as list (#7430)",
+  "commit": "25e99ba6cc07c6993d6d7f365b42a253cc4a28ee",
+  "date": "2025-04-28T10:37:39.000Z",
   "branch": "develop"
 }
