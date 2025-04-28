@@ -159,7 +159,7 @@ def gcs_client_mock(sample_json_contents=None, sample_blob_names=None):
 
 
 @contextmanager
-def azure_client_mock(sample_json_contents=None, sample_json_blob_names=None):
+def azure_client_mock(sample_json_contents=None, sample_blob_names=None):
     from collections import namedtuple
 
     from io_storages.azure_blob import models
@@ -171,7 +171,7 @@ def azure_client_mock(sample_json_contents=None, sample_json_blob_names=None):
         'int_field': 123,
         'dict_field': {'one': 'wow', 'two': 456},
     }
-    sample_json_blob_names = sample_json_blob_names or ['abc', 'def', 'ghi']
+    sample_blob_names = sample_blob_names or ['abc', 'def', 'ghi']
 
     class DummyAzureBlob:
         def __init__(self, container_name, key):
@@ -195,7 +195,7 @@ def azure_client_mock(sample_json_contents=None, sample_json_blob_names=None):
             self.name = container_name
 
         def list_blobs(self, name_starts_with):
-            return [File(name) for name in sample_json_blob_names]
+            return [File(name) for name in sample_blob_names]
 
         def get_blob_client(self, key):
             return DummyAzureBlob(self.name, key)

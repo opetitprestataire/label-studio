@@ -93,7 +93,7 @@ class TestMultiTaskImport(TestCase):
     def test_import_multiple_tasks_azure(self):
         # initialize mock with sample data
         with azure_client_mock(
-            sample_json_contents=self.common_task_data, sample_json_blob_names=['test.json']
+            sample_json_contents=self.common_task_data, sample_blob_names=['test.json']
         ) as azure:
 
             self._test_storage_import(
