@@ -11,6 +11,7 @@ from jwt_auth.serializers import (
     LSAPITokenCreateSerializer,
     LSAPITokenListSerializer,
     TokenRefreshResponseSerializer,
+    TokenRotateResponseSerializer,
 )
 from rest_framework import generics, status
 from rest_framework.authentication import SessionAuthentication
@@ -197,7 +198,7 @@ class LSAPITokenRotateView(TokenViewBase):
         operation_summary='Rotate JWT refresh token',
         operation_description='Creates a new JWT refresh token and blacklists the current one.',
         responses={
-            status.HTTP_200_OK: TokenRefreshResponseSerializer,
+            status.HTTP_200_OK: TokenRotateResponseSerializer,
             status.HTTP_400_BAD_REQUEST: 'Invalid token or token already blacklisted',
         },
     )

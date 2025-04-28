@@ -5,7 +5,6 @@ from rest_framework.test import APIClient
 from rest_framework_simplejwt.exceptions import TokenError
 from tests.jwt_auth.utils import create_user_with_token_settings
 from tests.utils import mock_feature_flag
-from rest_framework_simplejwt.tokens import RefreshToken
 
 
 @mock_feature_flag(flag_name='fflag__feature_develop__prompts__dia_1829_jwt_token_auth', value=True)

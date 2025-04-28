@@ -48,3 +48,7 @@ class LSAPITokenRotateSerializer(serializers.Serializer):
             raise serializers.ValidationError('Invalid refresh token')
         data['refresh'] = token
         return data
+
+
+class TokenRotateResponseSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
