@@ -219,4 +219,4 @@ class LSAPITokenRotateView(TokenViewBase):
 
         # Create a new token for the user
         new_token = LSAPIToken.for_user(request.user)
-        return Response({'refresh': new_token.get_full_jwt()})
+        return Response({'refresh': new_token.get_full_jwt()}, status=status.HTTP_200_OK)
