@@ -489,7 +489,7 @@ For more information about pausing annotators, including how to manually pause s
 
 Evaluate annotators against ground truth annotations within a project. 
 
-When configured, this setting looks at the agreement score for the annotator when compared solely against ground truth annotations. If the ground truth agreement score falls below a certain threshold, the annotator is automatically paused within the project. 
+When configured, this setting looks at the agreement score for the annotator when compared solely against ground truth annotations. You can decide to automatically pause an annotator within the project if their ground truth agreement score falls below a certain threshold. 
  
 
 <table>
@@ -506,12 +506,12 @@ When configured, this setting looks at the agreement score for the annotator whe
 </td>
 <td>
 
-You can use this option to determine what types of tasks annotators will see first. 
+Use this option to determine what types of tasks annotators will see first. 
 
-* **Ongoing (Uniform Sampling)** - Annotators are presented with tasks in the order that is configured under [**Task Sampling**](#task-sampling). 
+* **Ongoing** - Annotators are presented with tasks in the order that is configured under [**Task Sampling**](#task-sampling). 
 
     Keep in mind that ongoing evaluation respects the [annotator overlap](#overlap) you set above. For example, if you set overlap to `2`, then only 2 annotators will be able to complete annotations on ground truth tasks before the task is considered complete and removed from the labeling stream for other users.  
-* **Onboarding** - Annotators are first presented with tasks that have a ground truth annotation. This ensures they meet your evaluation . 
+* **Onboarding** - Annotators are first presented with tasks that have a ground truth annotation. This ensures they meet your evaluation standards before progressing through the remaining project tasks. 
 
     Onboarding evaluation disregards the [annotator overlap](#overlap) for ground truth tasks. For example, if you set overlap to `2`, but you have 10 annotators, all 10 will still be able to add annotations to ground truth tasks. 
 
@@ -550,7 +550,7 @@ The agreement threshold the annotator must meet when evaluated against ground tr
 
 If, after completing the minimum number of tasks, the annotator does not meet the ground truth agreement threshold, they will be immediately paused and unable to access the project. 
 
-If you do not enable pausing, the other **Annotator Evaluation** options are calculated in the background but have no meaningful effect. 
+If you do not enable pausing, the other **Annotator Evaluation** options are calculated in the background and can be seen in the Members Dashboard, but annotators are not paused.
 
 </td>
 </tr>
