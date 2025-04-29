@@ -1,8 +1,9 @@
-import { AudioView, LabelStudio, Rating, Taxonomy, ToolBar } from "@humansignal/frontend-test/helpers/LSF";
+import { AudioView, Choices, LabelStudio, Rating, Taxonomy, ToolBar } from "@humansignal/frontend-test/helpers/LSF";
 import { FF_DEV_3391, FF_TAXONOMY_ASYNC } from "../../../../src/utils/feature-flags";
 import {
   audioConfig,
   audioData,
+  audioPerRegionConfig,
   audioResult,
   ratingConfig,
   ratingResult,
@@ -41,5 +42,14 @@ describe("View all - Raadonly", () => {
       expect(result[0].value.start).to.eq(3);
       expect(result[0].value.end).to.eq(10);
     });
+  });
+
+  it("Should allow to select an audio region", () => {
+    LabelStudio.params().config(audioPerRegionConfig).data(audioData).withResult(audioResult).init();
+    AudioView.isReady();
+    ToolBar.viewAllBtn.click();
+    AudioView.isReady();
+    AudioView.clickAtRelative(0.07, 0.6);
+    Choices.findChoice("Per-region").should("be.visible");
   });
 });

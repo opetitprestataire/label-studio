@@ -24,6 +24,18 @@ export const audioConfig = `
 </View>
 `;
 
+export const audioPerRegionConfig = `
+<View>
+    <Audio name="audio" value="$audio" />
+    <Labels name="labels" toName="audio">
+        <Label value="Area" />
+    </Labels>
+    <Choices name="choices" toName="audio" perRegion="true">
+        <Choice value="Per-region" />
+    </Choices>
+</View>
+`;
+
 export const textData = { text: "Hello World" };
 
 export const audioData = { audio: "/public/files/barradeen-emotional.mp3" };
