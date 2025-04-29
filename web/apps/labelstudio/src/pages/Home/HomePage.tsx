@@ -94,6 +94,7 @@ export const HomePage: Page = () => {
                   className="flex-grow-0 text-16/24 min-w-[250px]"
                   look="outlined"
                   align="center"
+                  className="flex-grow-0 text-16/24 gap-2 text-primary-content text-left min-w-[250px] [&_svg]:w-6 [&_svg]:h-6 pl-2"
                   onClick={handleActions(action.type)}
                   leading={<action.icon />}
                 >
@@ -147,7 +148,7 @@ export const HomePage: Page = () => {
         </section>
         <section className="flex flex-col gap-6">
           <HeidiTips collection="projectSettings" />
-          <SimpleCard title="Resources" description="Learn, explore and get help">
+          <SimpleCard title="Resources" description="Learn, explore and get help" data-testid="resources-card">
             <ul>
               {resources.map((link) => {
                 return (

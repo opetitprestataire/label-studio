@@ -32,8 +32,9 @@ export const TopBar = observer(({ store }) => {
           {store.hasInterface("annotations:view-all") && (
             <Tooltip title="Compare all annotations">
               <Button
-                className="topbar__button"
-                type="text"
+                className={"topbar__button"}
+                icon={<IconViewAll width={20} height={20} />}
+                type={isViewAll ? undefined : "string"}
                 aria-label="Compare all annotations"
                 onClick={annotationStore.toggleViewingAllAnnotations}
                 variant={isViewAll ? "primary" : "neutral"}
@@ -47,7 +48,7 @@ export const TopBar = observer(({ store }) => {
             <Tooltip title="Create a new annotation" style={{ "--offset-x": "11px" }}>
               <Button
                 className={"topbar__button"}
-                type="text"
+                type={isViewAll ? undefined : "text"}
                 aria-label="Create an annotation"
                 variant="neutral"
                 size="small"

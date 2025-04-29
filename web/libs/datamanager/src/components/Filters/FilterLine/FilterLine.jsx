@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 import { Fragment } from "react";
-import { IconTrash } from "@humansignal/icons";
 import { BemWithSpecifiContext } from "../../../utils/bem";
 import { Button } from "@humansignal/ui";
 import { Tag } from "../../Common/Tag/Tag";

@@ -23,10 +23,10 @@ export const FiltersSidebar = sidebarInjector(({ viewsStore, sidebarEnabled, sid
           <Button look="string" onClick={() => viewsStore.collapseFilters()}>
             <IconChevronLeft width={24} height={24} />
           </Button>
+          <Elem name="title">Filters</Elem>
         </Elem>
-        <Elem name="title">Filters</Elem>
+        <Filters sidebar={true} />
       </Elem>
-      <Filters sidebar={true} />
     </Block>
   ) : null;
 });

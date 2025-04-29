@@ -1,15 +1,15 @@
-import { EnterpriseBadge } from "@humansignal/ui";
+import { EnterpriseBadge, Select } from "@humansignal/ui";
 import { useCallback, useContext } from "react";
 import { Button } from "@humansignal/ui";
-import { Form, Input, Select, TextArea } from "../../components/Form";
+import { Form, Input, TextArea } from "../../components/Form";
 import { RadioGroup } from "../../components/Form/Elements/RadioGroup/RadioGroup";
 import { ProjectContext } from "../../providers/ProjectProvider";
 import { Block, Elem } from "../../utils/bem";
-import "./settings.scss";
 import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
 import { FF_LSDV_E_297, isFF } from "../../utils/feature-flags";
 import { createURL } from "../../components/HeidiTips/utils";
 import { Caption } from "../../components/Caption/Caption";
+import "./settings.scss";
 
 export const GeneralSettings = () => {
   const { project, fetchProject } = useContext(ProjectContext);
