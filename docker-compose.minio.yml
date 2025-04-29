@@ -9,7 +9,7 @@ x-logging:
 services:
   # not replicated setup for test setup, use a proper aws S3 compatible cluster in production
   minio:
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    image: "minio/minio:${MINIO_VERSION:-RELEASE.2025-04-22T22-12-26Z}"
     command: server /data --console-address ":9009"
     restart: unless-stopped
     logging: *default-logging
