@@ -1,5 +1,3 @@
-version: "3.9"
-
 # rotating logs so they do not overflow
 x-logging:
   logging: &default-logging
