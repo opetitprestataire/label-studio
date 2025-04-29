@@ -7,7 +7,12 @@ from django.test import TestCase
 from moto import mock_s3
 from rest_framework.test import APIClient
 
-from io_storages.tests.factories import AzureBlobImportStorageFactory, GCSImportStorageFactory, RedisImportStorageFactory, S3ImportStorageFactory
+from io_storages.tests.factories import (
+    AzureBlobImportStorageFactory,
+    GCSImportStorageFactory,
+    RedisImportStorageFactory,
+    S3ImportStorageFactory,
+)
 from projects.tests.factories import ProjectFactory
 from tests.utils import azure_client_mock, gcs_client_mock, redis_client_mock
 
