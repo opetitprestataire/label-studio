@@ -1,5 +1,6 @@
+import sys
 import json
-
+import pytest
 import boto3
 from django.test import TestCase
 from io_storages.tests.factories import (
@@ -15,7 +16,6 @@ from rest_framework.test import APIClient
 from tests.utils import azure_client_mock, gcs_client_mock, redis_client_mock
 
 
-# @pytest.mark.forked
 class TestMultiTaskImport(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -78,6 +78,8 @@ class TestMultiTaskImport(TestCase):
                 use_blob_urls=False,
             )
 
+    @pytest.mark.skipif(sys.platform == 'win32', reason="forked tests not supported on Windows")
+    @pytest.mark.forked
     def test_import_multiple_tasks_gcs(self):
         # initialize mock with sample data
         with gcs_client_mock(sample_json_contents=self.common_task_data, sample_blob_names=['test.json']):
@@ -93,7 +95,7 @@ class TestMultiTaskImport(TestCase):
 
     def test_import_multiple_tasks_azure(self):
         # initialize mock with sample data
-        with azure_client_mock(sample_json_contents=self.common_task_data, sample_blob_names=['test.json']) as azure:
+        with azure_client_mock(sample_json_contents=self.common_task_data, sample_blob_names=['test.json']):
 
             self._test_storage_import(
                 AzureBlobImportStorageFactory,
