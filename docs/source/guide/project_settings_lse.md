@@ -511,7 +511,7 @@ Use this option to determine what types of tasks annotators will see first.
 * **Ongoing** - Annotators are presented with tasks in the order that is configured under [**Task Sampling**](#task-sampling). 
 
     Keep in mind that ongoing evaluation respects the [annotator overlap](#overlap) you set above. For example, if you set overlap to `2`, then only 2 annotators will be able to complete annotations on ground truth tasks before the task is considered complete and removed from the labeling stream for other users.  
-* **Onboarding** - Annotators are first presented with tasks that have a ground truth annotation. This ensures they meet your evaluation standards before progressing through the remaining project tasks. 
+* **Onboarding** - Annotators are first presented with tasks that have a ground truth annotation. This ensures that all annotators are evaluated and that they meet your evaluation standards before progressing through the remaining project tasks. 
 
     Onboarding evaluation disregards the [annotator overlap](#overlap) for ground truth tasks. For example, if you set overlap to `2`, but you have 10 annotators, all 10 will still be able to add annotations to ground truth tasks. 
 
