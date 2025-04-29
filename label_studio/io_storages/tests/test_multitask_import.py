@@ -1,7 +1,8 @@
-import sys
 import json
-import pytest
+import sys
+
 import boto3
+import pytest
 from django.test import TestCase
 from io_storages.tests.factories import (
     AzureBlobImportStorageFactory,
@@ -78,7 +79,7 @@ class TestMultiTaskImport(TestCase):
                 use_blob_urls=False,
             )
 
-    @pytest.mark.skipif(sys.platform == 'win32', reason="forked tests not supported on Windows")
+    @pytest.mark.skipif(sys.platform == 'win32', reason='forked tests not supported on Windows')
     @pytest.mark.forked
     def test_import_multiple_tasks_gcs(self):
         # initialize mock with sample data

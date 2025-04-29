@@ -152,7 +152,9 @@ def gcs_client_mock(sample_json_contents=None, sample_blob_names=None):
             ]
 
     with mock.patch.object(
-        google_storage, 'Client', side_effect=lambda *args, **kwargs: DummyGCSClient(sample_json_contents, sample_blob_names)
+        google_storage,
+        'Client',
+        side_effect=lambda *args, **kwargs: DummyGCSClient(sample_json_contents, sample_blob_names),
     ):
         yield google_storage
 
