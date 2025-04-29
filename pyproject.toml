@@ -210,7 +210,7 @@ djangorestframework-simplejwt = {extras = ["crypto"], version = "^5.4.0"}
 tldextract = ">=5.1.3"
 
 # Humansignal repo dependencies
-label-studio-sdk = {url = "https://github.com/HumanSignal/label-studio-sdk/archive/7903bae4487ec471442d839f71c4ef9e86fd664d.zip"}
+label-studio-sdk = {url = "https://github.com/HumanSignal/label-studio-sdk/archive/1ef88e2f8afe50a738fc1b03385cb1f3d6b2dd9f.zip"}
 
 [tool.poetry.group.test.dependencies]
 pytest = "7.2.2"
