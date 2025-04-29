@@ -47,7 +47,8 @@ import { ToastProvider, ToastViewport } from "@humansignal/ui/lib/toast/toast";
 import { Annotation } from "./Annotation";
 import { BottomBar } from "../BottomBar/BottomBar";
 import Debug from "../Debug";
-import Grid from "./Grid";
+// import Grid from "./Grid";
+import Summary from "../Summary/Summary";
 import { InstructionsModal } from "../InstructionsModal/InstructionsModal";
 import { RelationsOverlay } from "../InteractiveOverlays/RelationsOverlay";
 import Segment from "../Segment/Segment";
@@ -186,7 +187,8 @@ class App extends Component {
       sortAnnotations(entities);
     }
 
-    return <Grid store={as} annotations={entities} root={as.root} />;
+    // return <Grid store={as} annotations={entities} root={as.root} />;
+    return <Summary store={as} annotations={entities} root={as.root} />;
   }
 
   renderRelations(selectedStore) {
