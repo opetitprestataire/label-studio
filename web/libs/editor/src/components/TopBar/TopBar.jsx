@@ -30,19 +30,17 @@ export const TopBar = observer(({ store }) => {
         <Elem name="group">
           <CurrentTask store={store} />
           {store.hasInterface("annotations:view-all") && (
-            <Tooltip title="Compare all annotations">
-              <Button
-                className={"topbar__button"}
-                icon={<IconViewAll width={20} height={20} />}
-                type={isViewAll ? undefined : "string"}
-                aria-label="Compare all annotations"
-                onClick={annotationStore.toggleViewingAllAnnotations}
-                variant={isViewAll ? "primary" : "neutral"}
-                size="small"
-              >
-                <IconViewAll />
-              </Button>
-            </Tooltip>
+            <Button
+              className={"topbar__button"}
+              type={isViewAll ? undefined : "string"}
+              aria-label="Compare all annotations"
+              onClick={annotationStore.toggleViewingAllAnnotations}
+              variant={isViewAll ? "primary" : "neutral"}
+              tooltip="Compare all annotations"
+              size="small"
+            >
+              <IconViewAll />
+            </Button>
           )}
           {store.hasInterface("annotations:add-new") && (
             <Tooltip title="Create a new annotation" style={{ "--offset-x": "11px" }}>
