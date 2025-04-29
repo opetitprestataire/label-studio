@@ -3,22 +3,25 @@ import sys
 
 import boto3
 import pytest
-from moto import mock_s3
-from rest_framework.test import APIClient
 from django.test import TestCase
-
 from io_storages.tests.factories import (
     AzureBlobImportStorageFactory,
     GCSImportStorageFactory,
     RedisImportStorageFactory,
     S3ImportStorageFactory,
 )
+from moto import mock_s3
 from projects.tests.factories import ProjectFactory
+from rest_framework.test import APIClient
+
 from tests.utils import azure_client_mock, gcs_client_mock, redis_client_mock
+
+# Skip on Windows before any forking is attempted
+if sys.platform == 'win32':
+    pytest.skip('forked tests not supported on Windows', allow_module_level=True)
 
 
 @pytest.mark.forked
-@pytest.mark.skipif(sys.platform == 'win32', reason='forked tests not supported on Windows')
 class TestMultiTaskImport(TestCase):
     @classmethod
     def setUpTestData(cls):
