@@ -10,6 +10,7 @@ type MSTResult = {
   annotation: MSTAnnotation;
   type: string;
   mainValue: any;
+  to_name: any;
   // @todo tag
   from_name: any;
 };
@@ -80,12 +81,13 @@ type MSTRegion = MixinMSTArea & MixinMSTRegion & MixinMSTRegionVolatile & MSTEdi
 
 type MSTAnnotation = {
   id: string;
+  pk: string;
+  user: MSTUserExtended;
   canBeReviewed: boolean;
   userGenerate: boolean;
   sentUserGenerate: boolean;
   skipped: boolean;
   editable: boolean;
-  id: string;
   draftId: string;
   versions: {
     draft?: RawResult[];
@@ -110,6 +112,7 @@ type MSTUserExtended = {
   avatar: string | null;
   initials: string | null;
   phone: string | null;
+  displayName: string | null;
 };
 
 type MSTAnchor = {
@@ -152,7 +155,7 @@ type MSTCommentStore = {
   restoreCommentsFromCache: (cacheKey: string) => void;
 };
 
-type MSTStore = {
+export type MSTStore = {
   customButtons: CustomButtonsField;
   settings: Record<string, boolean>;
   isSubmitting: boolean;
