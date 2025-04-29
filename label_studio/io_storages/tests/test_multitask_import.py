@@ -17,8 +17,8 @@ from rest_framework.test import APIClient
 from tests.utils import azure_client_mock, gcs_client_mock, redis_client_mock
 
 
-@pytest.mark.skipif(sys.platform == 'win32', reason='forked tests not supported on Windows')
 @pytest.mark.forked
+@pytest.mark.skipif(sys.platform == 'win32', reason='forked tests not supported on Windows')
 class TestMultiTaskImport(TestCase):
     @classmethod
     def setUpTestData(cls):
