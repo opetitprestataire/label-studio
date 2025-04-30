@@ -18,6 +18,7 @@
   pointer-events: none;
   background-color: var(--color-neutral-inverted-background);
   border-radius: 3px;
+  max-width: 250px;
 
   &::before {
     left: 50%;
