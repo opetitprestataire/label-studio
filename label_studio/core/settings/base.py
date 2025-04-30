@@ -275,7 +275,14 @@ INTERNAL_IPS = [  # django debug toolbar for django==2.2 requirement
     '127.0.0.1',
     'localhost',
 ]
-CORS_ORIGIN_ALLOW_ALL = True
+
+if allowed_origins := get_env_list('CORS_ALLOWED_ORIGINS'):
+    CORS_ALLOWED_ORIGINS = allowed_origins
+elif allowed_origin_regexes := get_env_list('CORS_ALLOWED_ORIGIN_REGEXES'):
+    CORS_ALLOWED_ORIGIN_REGEXES = allowed_origin_regexes
+else:
+    CORS_ORIGIN_ALLOW_ALL = True
+
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
