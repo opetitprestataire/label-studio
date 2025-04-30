@@ -30,12 +30,10 @@ WORKDIR /label-studio/web
 # Fix Docker Arm64 Build
 RUN yarn config set registry https://registry.npmjs.org/
 RUN yarn config set network-timeout 1200000 # HTTP timeout used when downloading packages, set to 20 minutes
-RUN mkdir -p libs/editor/src/assets/styles
 
 COPY web/package.json .
 COPY web/yarn.lock .
 COPY web/tools tools
-COPY web/libs/editor/project.json libs/editor/
 RUN --mount=type=cache,target=${YARN_CACHE_FOLDER},sharing=locked \
     --mount=type=cache,target=${NX_CACHE_DIRECTORY},sharing=locked \
     yarn install --prefer-offline --no-progress --pure-lockfile --frozen-lockfile --ignore-engines --non-interactive --production=false
