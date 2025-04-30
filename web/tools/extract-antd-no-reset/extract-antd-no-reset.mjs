@@ -21,7 +21,7 @@ const findNearestNodeModules = (dir) => {
 const nodeModulesPath = findNearestNodeModules(__dirname);
 const sourcePath = path.join(nodeModulesPath, "./antd/dist/antd.css");
 if (!fs.existsSync(sourcePath)) {
-  throw new Error("Source file not found: " + sourcePath);
+  throw new Error(`Source file not found: ${sourcePath}`);
 }
 let targetDirPath = path.join(nodeModulesPath, "@humansignal/editor/src/assets/styles");
 if (!fs.existsSync(targetDirPath)) {
