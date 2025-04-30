@@ -11,9 +11,10 @@ from io_storages.tests.factories import (
 from moto import mock_s3
 from projects.tests.factories import ProjectFactory
 from rest_framework.test import APIClient
-from tests.utils import azure_client_mock, gcs_client_mock, redis_client_mock
+from tests.utils import azure_client_mock, gcs_client_mock, redis_client_mock, mock_feature_flag
 
 
+@mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
 class TestMultiTaskImport(TestCase):
     @classmethod
     def setUpTestData(cls):
