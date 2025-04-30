@@ -96,26 +96,23 @@ def gcs_client_mock():
             self.bucket_name = bucket_name
             self.name = f'{bucket_name}/{key}'
             self.is_json = is_json
-            self.is_multitask = is_multitask
+            self.sample_json_contents = (
+                [
+                    {'data': {'image_url': 'http://ggg.com/image.jpg', 'text': 'Task 1 text'}},
+                    {'data': {'image_url': 'http://ggg.com/image2.jpg', 'text': 'Task 2 text'}},
+                ]
+                if is_multitask
+                else {
+                    'str_field': 'test',
+                    'int_field': 123,
+                    'dict_field': {'one': 'wow', 'two': 456},
+                }
+            )
 
         def download_as_string(self):
             data = f'test_blob_{self.key}'
             if self.is_json:
-                if self.is_multitask:
-                    return json.dumps(
-                        [
-                            {'data': {'image_url': 'http://ggg.com/image.jpg', 'text': 'Task 1 text'}},
-                            {'data': {'image_url': 'http://ggg.com/image2.jpg', 'text': 'Task 2 text'}},
-                        ]
-                    )
-                else:
-                    return json.dumps(
-                        {
-                            'str_field': 'test',
-                            'int_field': 123,
-                            'dict_field': {'one': 'wow', 'two': 456},
-                        }
-                    )
+                return json.dumps(self.sample_json_contents)
             return data
 
         def upload_from_string(self, string):
@@ -142,7 +139,7 @@ def gcs_client_mock():
             return [File(name) for name in self.sample_blob_names]
 
         def blob(self, key):
-            return DummyGCSBlob(self.name, key, self.is_json, self.sample_json_contents)
+            return DummyGCSBlob(self.name, key, self.is_json, self.is_multitask)
 
     class DummyGCSClient:
         def __init__(self, sample_json_contents=None, sample_blob_names=None):
