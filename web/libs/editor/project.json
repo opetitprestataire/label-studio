@@ -13,7 +13,7 @@
         "webpackConfig": "webpack.config.js",
         "index": "libs/editor/public/index.html",
         "tsConfig": "libs/editor/tsconfig.lib.json",
-        "main": "libs/editor/src/index.js",
+        "main": "libs/editor/src/standalone.js",
         "outputPath": "dist/libs/editor",
         "isolatedConfig": true,
         "generatePackageJson": true,
