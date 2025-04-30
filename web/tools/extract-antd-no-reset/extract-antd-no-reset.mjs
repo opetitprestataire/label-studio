@@ -30,7 +30,7 @@ if (!fs.existsSync(targetDirPath)) {
   }
 }
 
-const targetPath = path.join(targetDirPath, "./_antd-no-reset.scss");
+const targetPath = path.join(targetDirPath, "./antd-no-reset.css");
 
 // Read the source file
 const sourceContent = fs.readFileSync(sourcePath, "utf8");
