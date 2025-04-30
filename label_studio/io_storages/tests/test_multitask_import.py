@@ -78,7 +78,7 @@ class TestMultiTaskImport(TestCase):
 
     def test_import_multiple_tasks_gcs(self):
         # initialize mock with sample data
-        with gcs_client_mock(sample_json_contents=self.common_task_data, sample_blob_names=['test.json']):
+        with gcs_client_mock():
 
             self._test_storage_import(
                 GCSImportStorageFactory,
