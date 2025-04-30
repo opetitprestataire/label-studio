@@ -156,7 +156,7 @@ def gcs_client_mock():
         def list_blobs(self, bucket_name, prefix):
             is_json = bucket_name.endswith('_JSON')
             is_multitask = bucket_name.startswith('multitask_')
-            sample_blob_names = ['test.json'] if is_json else ['abc', 'def', 'ghi']
+            sample_blob_names = ['test.json'] if is_multitask else ['abc', 'def', 'ghi']
             return [DummyGCSBlob(bucket_name, name, is_json, is_multitask) for name in sample_blob_names]
 
     with mock.patch.object(google_storage, 'Client', return_value=DummyGCSClient()):
