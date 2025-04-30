@@ -1,6 +1,6 @@
 {
-  "message": "fix: LEAP-1947: Fix interactive view all FF in image tag case (#7387)",
-  "commit": "98dfd898c23e94a2f094df3798ad233ba8a83a91",
-  "date": "2025-04-23T16:14:37.000Z",
+  "message": "feat: OPTIC-1217: Implement Color design tokens as CSS variables and Dark Mode (#6550)",
+  "commit": "2e8e35e16d766b02d1c4bca558ed692a8af3cb3a",
+  "date": "2025-04-28T16:46:57.000Z",
   "branch": "develop"
 }
