@@ -97,7 +97,7 @@ export const FieldsButton = injector(
             resetTitle={resetTitle}
           />
         }
-        rawClassName="max-h-[280px] overflow-auto"
+        style={{ maxHeight: 280, overflow: "auto" }}
         openUpwardForShortViewport={openUpwardForShortViewport}
       >
         {tooltip ? (
