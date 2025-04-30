@@ -316,9 +316,10 @@ export const Select = forwardRef(
           ref={ref}
           disabled={disabled}
           className={styles.valueInput}
+          onChange={() => {}} // Prevents the React uncontrolled select component warning message
         >
           {selectedOptions?.map((option, index) => (
-            <option key={`${option?.value}_${index}`} value={option?.value ?? option} selected />
+            <option key={`${option?.value}_${index}`} value={option?.value ?? option} />
           ))}
         </select>
       </Popover>
