@@ -281,7 +281,7 @@ if allowed_origins := get_env_list('CORS_ALLOWED_ORIGINS'):
 elif allowed_origin_regexes := get_env_list('CORS_ALLOWED_ORIGIN_REGEXES'):
     CORS_ALLOWED_ORIGIN_REGEXES = allowed_origin_regexes
 else:
-    CORS_ORIGIN_ALLOW_ALL = True
+    CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_METHODS = [
     'DELETE',
