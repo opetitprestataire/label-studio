@@ -11,21 +11,24 @@ export const AnnotationMixin = types.model("AnnotationMixin", {}).views((self) =
 
     if (!isAlive(self)) return null;
 
-    const root = getRoot(self); // Will get the root if self is already the root
-    const as = root.annotationStore;
+    let node = self;
 
-    if (isFF(FF_DEV_3391) && root === self) {
+    if (isFF(FF_DEV_3391)) {
+      node = getRoot(self);
+
       // if that's a Tool (they live in separate tree)
-      if (self.control) {
-        return self.control.annotation;
+      if (node === self) {
+        if (self.control) {
+          return self.control.annotation;
+        }
+        if (self.obj) {
+          return self.obj.annotation;
+        }
+        return null;
       }
-      if (self.obj) {
-        return self.obj.annotation;
-      }
-
-      return null;
     }
 
+    const as = node.annotationStore;
     return as?.selectedHistory ?? as?.selected;
   },
 
