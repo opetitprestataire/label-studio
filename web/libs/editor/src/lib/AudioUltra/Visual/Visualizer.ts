@@ -191,6 +191,8 @@ export class Visualizer extends Events<VisualizerEvents> {
     // Notify external listeners about zoom change
     this.wf.invoke("zoom", [this.zoom]);
     //  _setScrollLeft handles the draw call.
+
+    this.draw();
   }
 
   getZoom() {
