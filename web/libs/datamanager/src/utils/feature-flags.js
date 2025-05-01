@@ -1,6 +1,3 @@
-// Outliner + Details
-export const FF_DEV_1170 = "ff_front_1170_outliner_030222_short";
-
 /**
  * Support for notification links in the Label Steam and the Review Stream.
  * @link https://app.launchdarkly.com/default/branch/features/feat_front_dev_1752_notification_links_in_label_and_review_streams
@@ -41,11 +38,6 @@ export const FF_LSDV_4620_3_ML = "fflag_fix_front_lsdv_4620_memory_leaks_100723_
  * Fixes how presigned urls are generated and accessed to remove possibility of CORS errors.
  */
 export const FF_LSDV_4711 = "fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short";
-
-/**
- * Adding the ability to toggle dataset storage editability.
- */
-export const FF_LOPS_86 = "fflag_feat_front_lops_86_datasets_storage_edit_short";
 
 /**
  * Self Serve

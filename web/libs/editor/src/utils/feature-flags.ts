@@ -1,6 +1,3 @@
-// Outliner + Details
-export const FF_DEV_1170 = "ff_front_1170_outliner_030222_short";
-
 /**
  * Fixing "Auto Detect" tool undo functionality and bugs with skipNextUndoState.
  * @link https://app.launchdarkly.com/default/production/features/fflag_fix_front_dev_1284_auto_detect_undo_281022_short
@@ -14,8 +11,6 @@ export const FF_DEV_1536 = "ff_front_dev_1536_taxonomy_user_labels_150222_long";
 
 // New Audio 2.0 UI
 export const FF_DEV_1713 = "ff_front_DEV_1713_audio_ui_150222_short";
-
-export const FF_DEV_2432 = "ff_front_dev_2432_auto_save_polygon_draft_210622_short";
 
 export const FF_DEV_2669 = "ff_front_dev_2669_paragraph_author_filter_210622_short";
 
@@ -112,9 +107,6 @@ export const FF_LSDV_4620_3_ML = "fflag_fix_front_lsdv_4620_memory_leaks_100723_
  * Fixes how presigned urls are generated and accessed to remove possibility of CORS errors.
  */
 export const FF_LSDV_4711 = "fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short";
-
-/** Fix "No Label" for Dynamic Labels by switching off missing labels removal */
-export const FF_LSDV_4988 = "fflag_fix_front_lsdv_4988_dynamic_no_label_120523_short";
 
 /**
  * Fixing issues related to selection tool functional (selecting hidden regions, onClick in Konva, interaction with regions inside selection area)

@@ -1,9 +1,13 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
 import base64
+import concurrent.futures
+import itertools
 import json
 import logging
+import os
 import traceback as tb
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Union
 from urllib.parse import urljoin
@@ -226,10 +230,21 @@ class ImportStorage(Storage):
     def iterkeys(self):
         return iter(())
 
-    def get_data(self, key):
+    def get_data(self, key) -> list[dict]:
         raise NotImplementedError
 
     def generate_http_url(self, url):
+        raise NotImplementedError
+
+    def get_bytes_stream(self, uri):
+        """Get file bytes from storage as a stream and content type.
+
+        Args:
+            uri: The URI of the file to retrieve
+
+        Returns:
+            Tuple of (BytesIO stream, content_type)
+        """
         raise NotImplementedError
 
     def can_resolve_url(self, url: Union[str, None]) -> bool:
@@ -271,16 +286,32 @@ class ImportStorage(Storage):
                     logger.debug(f'No storage info found for URI={uri}')
                     return
 
-                if self.presign and task is not None:
+                if flag_set('fflag_optic_all_optic_1938_storage_proxy', user=self.project.organization.created_by):
+                    if task is None:
+                        logger.error(f'Task is required to resolve URI={uri}', exc_info=True)
+                        raise ValueError(f'Task is required to resolve URI={uri}')
+
                     proxy_url = urljoin(
                         settings.HOSTNAME,
-                        reverse('data_import:task-storage-data-presign', kwargs={'task_id': task.id})
+                        reverse('storages:task-storage-data-resolve', kwargs={'task_id': task.id})
                         + f'?fileuri={base64.urlsafe_b64encode(extracted_uri.encode()).decode()}',
                     )
                     return uri.replace(extracted_uri, proxy_url)
+
+                # ff off: old logic without proxy
                 else:
-                    # resolve uri to url using storages
-                    http_url = self.generate_http_url(extracted_uri)
+                    if self.presign and task is not None:
+                        proxy_url = urljoin(
+                            settings.HOSTNAME,
+                            reverse('storages:task-storage-data-presign', kwargs={'task_id': task.id})
+                            + f'?fileuri={base64.urlsafe_b64encode(extracted_uri.encode()).decode()}',
+                        )
+                        return uri.replace(extracted_uri, proxy_url)
+                    else:
+                        # this branch is our old approach:
+                        # it generates presigned URLs if storage.presign=True;
+                        # or it inserts base64 media into task data if storage.presign=False
+                        http_url = self.generate_http_url(extracted_uri)
 
                 return uri.replace(extracted_uri, http_url)
             except Exception:
@@ -389,7 +420,7 @@ class ImportStorage(Storage):
 
             logger.debug(f'{self}: found new key {key}')
             try:
-                data = self.get_data(key)
+                tasks_data = self.get_data(key)
             except (UnicodeDecodeError, json.decoder.JSONDecodeError) as exc:
                 logger.debug(exc, exc_info=True)
                 raise ValueError(
@@ -398,26 +429,29 @@ class ImportStorage(Storage):
                     f'"Treat every bucket object as a source file"'
                 )
 
-            task = self.add_task(data, self.project, maximum_annotations, max_inner_id, self, key, link_class)
-            max_inner_id += 1
+            for task_data in tasks_data:
+                # TODO: batch this loop body with add_task -> add_tasks in a single bulk write.
+                # Also have to handle any mismatch between len(tasks_data) and settings.WEBHOOK_BATCH_SIZE
+                task = self.add_task(task_data, self.project, maximum_annotations, max_inner_id, self, key, link_class)
+                max_inner_id += 1
 
-            # update progress counters for storage info
-            tasks_created += 1
+                # update progress counters for storage info
+                tasks_created += 1
 
-            # add task to webhook list
-            tasks_for_webhook.append(task)
+                # add task to webhook list
+                tasks_for_webhook.append(task)
 
-            # settings.WEBHOOK_BATCH_SIZE
-            # `WEBHOOK_BATCH_SIZE` sets the maximum number of tasks sent in a single webhook call, ensuring manageable payload sizes.
-            # When `tasks_for_webhook` accumulates tasks equal to/exceeding `WEBHOOK_BATCH_SIZE`, they're sent in a webhook via
-            # `emit_webhooks_for_instance`, and `tasks_for_webhook` is cleared for new tasks.
-            # If tasks remain in `tasks_for_webhook` at process end (less than `WEBHOOK_BATCH_SIZE`), they're sent in a final webhook
-            # call to ensure all tasks are processed and no task is left unreported in the webhook.
-            if len(tasks_for_webhook) >= settings.WEBHOOK_BATCH_SIZE:
-                emit_webhooks_for_instance(
-                    self.project.organization, self.project, WebhookAction.TASKS_CREATED, tasks_for_webhook
-                )
-                tasks_for_webhook = []
+                # settings.WEBHOOK_BATCH_SIZE
+                # `WEBHOOK_BATCH_SIZE` sets the maximum number of tasks sent in a single webhook call, ensuring manageable payload sizes.
+                # When `tasks_for_webhook` accumulates tasks equal to/exceeding `WEBHOOK_BATCH_SIZE`, they're sent in a webhook via
+                # `emit_webhooks_for_instance`, and `tasks_for_webhook` is cleared for new tasks.
+                # If tasks remain in `tasks_for_webhook` at process end (less than `WEBHOOK_BATCH_SIZE`), they're sent in a final webhook
+                # call to ensure all tasks are processed and no task is left unreported in the webhook.
+                if len(tasks_for_webhook) >= settings.WEBHOOK_BATCH_SIZE:
+                    emit_webhooks_for_instance(
+                        self.project.organization, self.project, WebhookAction.TASKS_CREATED, tasks_for_webhook
+                    )
+                    tasks_for_webhook = []
         if tasks_for_webhook:
             emit_webhooks_for_instance(
                 self.project.organization, self.project, WebhookAction.TASKS_CREATED, tasks_for_webhook
@@ -496,6 +530,12 @@ def export_sync_background(storage_class, storage_id, **kwargs):
     storage.save_all_annotations()
 
 
+@job('low', timeout=settings.RQ_LONG_JOB_TIMEOUT)
+def export_sync_only_new_background(storage_class, storage_id, **kwargs):
+    storage = storage_class.objects.get(id=storage_id)
+    storage.save_only_new_annotations()
+
+
 def storage_background_failure(*args, **kwargs):
     # job is used in rqworker failure, extract storage id from job arguments
     if isinstance(args[0], rq.job.Job):
@@ -520,10 +560,23 @@ def storage_background_failure(*args, **kwargs):
     storage.info_set_failed()
 
 
+# note: this is available in python 3.12 , #TODO to switch to builtin function when we move to it.
+def _batched(iterable, n):
+    # batched('ABCDEFG', 3) --> ABC DEF G
+    if n < 1:
+        raise ValueError('n must be at least one')
+    it = iter(iterable)
+    while batch := tuple(itertools.islice(it, n)):
+        yield batch
+
+
 class ExportStorage(Storage, ProjectStorageMixin):
     can_delete_objects = models.BooleanField(
         _('can_delete_objects'), null=True, blank=True, help_text='Deletion from storage enabled'
     )
+    # Use 8 threads, unless we know we only have a single core
+    # TODO from testing, more than 8 seems to cause problems. revisit to add more parallelism.
+    max_workers = min(8, (os.cpu_count() or 2) * 4)
 
     def _get_serialized_data(self, annotation):
         user = self.project.organization.created_by
@@ -545,30 +598,58 @@ class ExportStorage(Storage, ProjectStorageMixin):
     def save_annotation(self, annotation):
         raise NotImplementedError
 
-    def save_all_annotations(self):
+    def save_annotations(self, annotations: models.QuerySet[Annotation]):
         annotation_exported = 0
-        total_annotations = Annotation.objects.filter(project=self.project).count()
+        total_annotations = annotations.count()
         self.info_set_in_progress()
         self.cached_user = self.project.organization.created_by
 
-        for annotation in Annotation.objects.filter(project=self.project).iterator(
-            chunk_size=settings.STORAGE_EXPORT_CHUNK_SIZE
-        ):
-            annotation.cached_user = self.cached_user
-            self.save_annotation(annotation)
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            # Batch annotations so that we update progress before having to submit every future.
+            # Updating progress in thread requires coordinating on count and db writes, so just
+            # batching to keep it simpler.
+            for annotation_batch in _batched(
+                Annotation.objects.filter(project=self.project).iterator(
+                    chunk_size=settings.STORAGE_EXPORT_CHUNK_SIZE
+                ),
+                settings.STORAGE_EXPORT_CHUNK_SIZE,
+            ):
+                futures = []
+                for annotation in annotation_batch:
+                    annotation.cached_user = self.cached_user
+                    futures.append(executor.submit(self.save_annotation, annotation))
 
-            # update progress counters
-            annotation_exported += 1
-            self.info_update_progress(last_sync_count=annotation_exported, total_annotations=total_annotations)
+                for future in concurrent.futures.as_completed(futures):
+                    annotation_exported += 1
+                    self.info_update_progress(last_sync_count=annotation_exported, total_annotations=total_annotations)
 
         self.info_set_completed(last_sync_count=annotation_exported, total_annotations=total_annotations)
 
-    def sync(self):
+    def save_all_annotations(self):
+        self.save_annotations(Annotation.objects.filter(project=self.project))
+
+    def save_only_new_annotations(self):
+        """Do not update existing annotations, only ensure that all annotations have an ExportStorageLink"""
+        # Get the storage-specific ExportStorageLink model
+        storage_link_model = self.links.model
+        new_annotations = Annotation.objects.filter(project=self.project).exclude(
+            id__in=storage_link_model.objects.filter(storage=self, annotation__project=self.project).values(
+                'annotation_id'
+            )
+        )
+        self.save_annotations(new_annotations)
+
+    def sync(self, save_only_new_annotations: bool = False):
+        if save_only_new_annotations:
+            export_sync_fn = export_sync_only_new_background
+        else:
+            export_sync_fn = export_sync_background
+
         if redis_connected():
             queue = django_rq.get_queue('low')
             self.info_set_queued()
             sync_job = queue.enqueue(
-                export_sync_background,
+                export_sync_fn,
                 self.__class__,
                 self.id,
                 job_timeout=settings.RQ_LONG_JOB_TIMEOUT,
@@ -582,7 +663,7 @@ class ExportStorage(Storage, ProjectStorageMixin):
             try:
                 logger.info(f'Start syncing storage {self}')
                 self.info_set_queued()
-                export_sync_background(self.__class__, self.id)
+                export_sync_fn(self.__class__, self.id)
             except Exception:
                 storage_background_failure(self)
 

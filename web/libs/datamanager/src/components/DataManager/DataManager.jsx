@@ -1,7 +1,7 @@
 import { inject, observer } from "mobx-react";
 import { useCallback } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import { LSPlus } from "../../assets/icons";
+import { IconPlus } from "@humansignal/icons";
 import { cn } from "../../utils/bem";
 import { Interface } from "../Common/Interface";
 import { Space } from "../Common/Space/Space";
@@ -45,7 +45,7 @@ const switchInjector = inject(({ store }) => {
 
 const ProjectSummary = summaryInjector((props) => {
   return (
-    <Space size="large" style={{ paddingRight: "1em" }}>
+    <Space size="large" style={{ paddingRight: "1em", color: "var(--color-neutral-content-subtle)" }}>
       {props.cloudSync && (
         <Space size="small" style={{ fontSize: 12, fontWeight: 400, opacity: 0.8 }}>
           Storage sync
@@ -85,7 +85,7 @@ const TabsSwitch = switchInjector(
         onChange={(key) => views.setSelected(key)}
         onDragEnd={onDragEnd}
         tabBarExtraContent={<ProjectSummary />}
-        addIcon={<LSPlus />}
+        addIcon={<IconPlus />}
         allowedActions={editable}
       >
         {tabs.map((tab, index) => (
@@ -97,7 +97,7 @@ const TabsSwitch = switchInjector(
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 style={{
-                  background: snapshot.isDragging && "#ddd",
+                  background: snapshot.isDragging,
                   ...provided.draggableProps.style,
                 }}
               >

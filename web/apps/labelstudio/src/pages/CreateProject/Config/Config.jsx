@@ -1,13 +1,8 @@
-import "codemirror/lib/codemirror.css";
-import "codemirror/mode/xml/xml";
-import React, { useEffect, useState } from "react";
-import { UnControlled as CodeMirror } from "react-codemirror2";
+import React, { useEffect, useMemo, useState } from "react";
 import CM from "codemirror";
-import "codemirror/addon/hint/show-hint";
-import "codemirror/addon/hint/show-hint.css";
 
 import { Button, ToggleItems } from "../../../components";
-import { Form } from "../../../components/Form";
+import { Form, Input } from "../../../components/Form";
 import { useAPI } from "../../../providers/ApiProvider";
 import { Block, cn, Elem } from "../../../utils/bem";
 import { Palette } from "../../../utils/colors";
@@ -18,11 +13,9 @@ import { Preview } from "./Preview";
 import { DEFAULT_COLUMN, EMPTY_CONFIG, isEmptyConfig, Template } from "./Template";
 import { TemplatesList } from "./TemplatesList";
 
-import "./codemirror.css";
-import "./config-hint";
 import tags from "./schema.json";
 import { UnsavedChanges } from "./UnsavedChanges";
-import { Checkbox } from "@humansignal/ui";
+import { Checkbox, CodeEditor, Select } from "@humansignal/ui";
 import { toSnakeCase } from "strman";
 
 const wizardClass = cn("wizard");
@@ -48,7 +41,7 @@ const Label = ({ label, template, color }) => {
   return (
     <li className={configClass.elem("label").mod({ choice: label.tagName === "Choice" })}>
       <label style={{ background: color }}>
-        <input
+        <Input
           type="color"
           className={configClass.elem("label-color")}
           value={colorNames[color] || color}
@@ -105,7 +98,15 @@ const ConfigureControl = ({ control, template }) => {
       <form className={configClass.elem("add-labels")} action="">
         <h4>{tagname === "Choices" ? "Add choices" : "Add label names"}</h4>
         <span>Use new line as a separator to add multiple labels</span>
-        <textarea name="labels" id="" cols="50" rows="5" ref={refLabels} onKeyPress={onKeyPress} className="p-2 px-3" />
+        <textarea
+          name="labels"
+          id=""
+          cols="50"
+          rows="5"
+          ref={refLabels}
+          onKeyPress={onKeyPress}
+          className="lsf-textarea-ls p-2 px-3"
+        />
         <Button type="button" size="compact" onClick={onAddLabels}>
           Add
         </Button>
@@ -154,26 +155,25 @@ const ConfigureSettings = ({ template }) => {
 
     switch (type) {
       case Array:
-        onChange = (e) => {
+        onChange = (val) => {
           if (typeof options.param === "function") {
-            options.param($tag, e.target.value);
+            options.param($tag, val);
           } else {
-            $object.setAttribute(options.param, e.target.value);
+            $object.setAttribute(options.param, val);
           }
           template.render();
         };
         return (
           <li key={key}>
-            <label>
-              {options.title}{" "}
-              <select className="border" value={value} onChange={onChange}>
-                {options.type.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <Select
+              className="border"
+              value={value}
+              onChange={onChange}
+              options={options.type}
+              label={options.title}
+              isInline={true}
+              dataTestid={`select-trigger-${options.title.replace(/\s+/g, "-").replace(":", "").toLowerCase()}-${value}`}
+            />
           </li>
         );
       case Boolean:
@@ -206,7 +206,7 @@ const ConfigureSettings = ({ template }) => {
         return (
           <li key={key}>
             <label>
-              {options.title} <input type="text" onInput={onChange} value={value} size={size} />
+              {options.title} <Input type="text" onInput={onChange} value={value} size={size} />
             </label>
           </li>
         );
@@ -247,9 +247,7 @@ const ConfigureColumn = ({ template, obj, columns }) => {
     template.render();
   };
 
-  const selectValue = (e) => {
-    const value = e.target.value;
-
+  const selectValue = (value) => {
     if (value === "-") {
       setIsManual(true);
       return;
@@ -278,23 +276,40 @@ const ConfigureColumn = ({ template, obj, columns }) => {
     }
   };
 
+  const columnsList = useMemo(() => {
+    const cols = (columns ?? []).map((col) => {
+      return {
+        value: col,
+        label: col === DEFAULT_COLUMN ? "<imported file>" : `$${col}`,
+      };
+    });
+    if (!columns?.length) {
+      cols.push({ value, label: "<imported file>" });
+    }
+    cols.push({ value: "-", label: "<set manually>" });
+    return cols;
+  }, [columns, DEFAULT_COLUMN, value]);
+
   return (
-    <p>
-      Use {obj.tagName.toLowerCase()}
-      {template.objects > 1 && ` for ${obj.getAttribute("name")}`}
-      {" from "}
-      {columns?.length > 0 && columns[0] !== DEFAULT_COLUMN && "field "}
-      <select className="border" onChange={selectValue} value={isManual ? "-" : value}>
-        {columns?.map((column) => (
-          <option key={column} value={column}>
-            {column === DEFAULT_COLUMN ? "<imported file>" : `$${column}`}
-          </option>
-        ))}
-        {!columns?.length && <option value={value}>{"<imported file>"}</option>}
-        <option value="-">{"<set manually>"}</option>
-      </select>
-      {isManual && <input value={newValue} onChange={handleChange} onBlur={handleBlur} onKeyDown={handleKeyDown} />}
-    </p>
+    <>
+      <Select
+        onChange={selectValue}
+        value={isManual ? "-" : value}
+        options={columnsList}
+        isInline={true}
+        label={
+          <>
+            Use {obj.tagName.toLowerCase()}
+            {template.objects > 1 && ` for ${obj.getAttribute("name")}`}
+            {" from "}
+            {columns?.length > 0 && columns[0] !== DEFAULT_COLUMN && "field "}
+          </>
+        }
+        labelProps={{ className: "inline-flex" }}
+        dataTestid={`select-trigger-use-image-from-field-${isManual ? "-" : value}`}
+      />
+      {isManual && <Input value={newValue} onChange={handleChange} onBlur={handleBlur} onKeyDown={handleKeyDown} />}
+    </>
   );
 };
 
@@ -357,41 +372,44 @@ const Configurator = ({
     return () => window.clearTimeout(debounceTimer.current);
   }, [config]);
 
-  React.useEffect(async () => {
-    if (!configToCheck) return;
+  React.useEffect(() => {
+    const validate = async () => {
+      if (!configToCheck) return;
 
-    setLoading(true);
+      setLoading(true);
 
-    const validation = await api.callApi("validateConfig", {
-      params: { pk: project.id },
-      body: { label_config: configToCheck },
-      errorFilter: () => true,
-    });
+      const validation = await api.callApi("validateConfig", {
+        params: { pk: project.id },
+        body: { label_config: configToCheck },
+        errorFilter: () => true,
+      });
 
-    if (validation?.error) {
-      setError(validation.response);
+      if (validation?.error) {
+        setError(validation.response);
+        setLoading(false);
+        return;
+      }
+
+      setError(null);
+      onValidate?.(validation);
+
+      const sample = await api.callApi("createSampleTask", {
+        params: { pk: project.id },
+        body: { label_config: configToCheck },
+        errorFilter: () => true,
+      });
+
       setLoading(false);
-      return;
-    }
-
-    setError(null);
-    onValidate?.(validation);
-
-    const sample = await api.callApi("createSampleTask", {
-      params: { pk: project.id },
-      body: { label_config: configToCheck },
-      errorFilter: () => true,
-    });
-
-    setLoading(false);
-    if (sample && !sample.error) {
-      setData(sample.sample_task);
-      setConfigToDisplay(configToCheck);
-    } else {
-      // @todo validation can be done in this place,
-      // @todo but for now it's extremely slow in /sample-task endpoint
-      setError(sample?.response);
-    }
+      if (sample && !sample.error) {
+        setData(sample.sample_task);
+        setConfigToDisplay(configToCheck);
+      } else {
+        // @todo validation can be done in this place,
+        // @todo but for now it's extremely slow in /sample-task endpoint
+        setError(sample?.response);
+      }
+    };
+    validate();
   }, [configToCheck]);
 
   // code should be reloaded on every render because of uncontrolled codemirror
@@ -470,7 +488,14 @@ const Configurator = ({
       <div className={configClass.elem("container")}>
         <h1>Labeling Interface{hasChanges ? " *" : ""}</h1>
         <header>
-          <Button type="button" data-leave={true} onClick={onBrowse} size="compact">
+          <Button
+            look="secondary"
+            type="button"
+            data-leave={true}
+            onClick={onBrowse}
+            size="compact"
+            style={{ width: 160 }}
+          >
             Browse Templates
           </Button>
           <ToggleItems items={{ code: "Code", visual: "Visual" }} active={configure} onSelect={onSelect} />
@@ -478,13 +503,14 @@ const Configurator = ({
         <div className={configClass.elem("editor")}>
           {configure === "code" && (
             <div className={configClass.elem("code")} style={{ display: configure === "code" ? undefined : "none" }}>
-              <CodeMirror
+              <CodeEditor
                 name="code"
                 id="edit_code"
                 value={config}
                 autoCloseTags={true}
                 smartIndent={true}
                 detach
+                border
                 extensions={["hint", "xml-hint"]}
                 options={{
                   mode: "xml",
@@ -601,18 +627,21 @@ export const ConfigPage = ({
 
   const [warning, setWarning] = React.useState();
 
-  React.useEffect(async () => {
-    if (externalColumns) return; // we are in Create Project dialog, so this request is useless
-    if (!project || columns) return;
-    const res = await api.callApi("dataSummary", {
-      params: { pk: project.id },
-      // 404 is ok, and errors here don't matter
-      errorFilter: () => true,
-    });
+  React.useEffect(() => {
+    const fetchData = async () => {
+      if (!externalColumns || (project && !columns)) {
+        const res = await api.callApi("dataSummary", {
+          params: { pk: project.id },
+          // 404 is ok, and errors here don't matter
+          errorFilter: () => true,
+        });
 
-    if (res?.common_data_columns) {
-      setColumns(res.common_data_columns);
-    }
+        if (res?.common_data_columns) {
+          setColumns(res.common_data_columns);
+        }
+      }
+      fetchData();
+    };
   }, [columns, project]);
 
   const onSelectRecipe = React.useCallback((recipe) => {
@@ -620,12 +649,12 @@ export const ConfigPage = ({
       setSelectedRecipe(null);
       setMode("list");
       __lsa("labeling_setup.view.empty");
-      return;
+    } else {
+      setTemplate(recipe.config);
+      setSelectedRecipe(recipe);
+      setMode("view");
+      __lsa(`labeling_setup.view.${toSnakeCase(recipe.group)}.${toSnakeCase(recipe.title)}`);
     }
-    setTemplate(recipe.config);
-    setSelectedRecipe(recipe);
-    setMode("view");
-    __lsa(`labeling_setup.view.${toSnakeCase(recipe.group)}.${toSnakeCase(recipe.title)}`);
   });
 
   const onCustomTemplate = React.useCallback(() => {

@@ -8,11 +8,13 @@ interface TourProps extends BaseProps {
   name: string;
   /** Whether to automatically start the tour when component mounts. Defaults to false */
   autoStart?: boolean;
+  /** Delay in milliseconds before the tour starts when autoStart is true. Defaults to 0 */
+  delay?: number;
 
   /* Check all other props here https://docs.react-joyride.com/props */
 }
 
-export const Tour: React.FC<TourProps> = ({ name, autoStart = false, ...props }) => {
+export const Tour: React.FC<TourProps> = ({ name, autoStart = false, delay = 0, ...props }) => {
   const tourContext = useContext(TourContext);
   if (!tourContext) {
     console.error("Tour context not found");
@@ -25,7 +27,9 @@ export const Tour: React.FC<TourProps> = ({ name, autoStart = false, ...props })
       tourContext.registerTour(name, dispatch);
 
       if (autoStart) {
-        tourContext.startTour(name);
+        setTimeout(() => {
+          tourContext.startTour(name);
+        }, delay);
       }
 
       return () => {
@@ -117,9 +121,11 @@ export const Tour: React.FC<TourProps> = ({ name, autoStart = false, ...props })
           width: "468px",
         },
         options: {
-          primaryColor: "var(--primary_link)",
-          textColor: "var(--sand_900)",
-          overlayColor: "rgba(0, 0, 0, 0.5)",
+          backgroundColor: "var(--color-neutral-surface-active)",
+          primaryColor: "var(--color-primary-surface)",
+          textColor: "var(--color-neutral-content)",
+          overlayColor: "rgba(var(--color-neutral-shadow-raw) / calc( 50% * var(--shadow-intensity)))",
+          arrowColor: "var(--color-neutral-surface-active)",
         },
       }}
       hideCloseButton={true}

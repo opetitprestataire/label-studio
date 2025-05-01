@@ -37,7 +37,7 @@
     "mkdirp": "^1.0.4",
     "nyc": "^15.1.0",
     "playwright": "^1.16.3",
-    "puppeteer": "^10.0.0",
+    "puppeteer": "^24.6.1",
     "rimraf": "^3.0.2",
     "strman": "2.0.1",
     "ts-node": "^10.0.0",
@@ -47,6 +47,7 @@
     "xmlbuilder": "^15.1.1"
   },
   "resolutions": {
+    "axios": "1.8.2",
     "cookie": "0.7.0",
     "debug": "^4.3.1",
     "electron": "^22.3.25",

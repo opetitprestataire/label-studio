@@ -1,10 +1,10 @@
 import { inject } from "mobx-react";
 import clsx from "clsx";
-import { LsCheckAlt, LsCrossAlt } from "../../../assets/icons";
 import { useSDK } from "../../../providers/SDKProvider";
 import { cn } from "../../../utils/bem";
 import { isDefined } from "../../../utils/utils";
 import { Space } from "../../Common/Space/Space";
+import { IconCheckAlt, IconCrossAlt } from "@humansignal/icons";
 import { Tooltip, Userpic } from "@humansignal/ui";
 import { Common } from "../../Filters/types";
 import { VariantSelect } from "../../Filters/types/List";
@@ -46,7 +46,7 @@ export const Annotators = (cell) => {
                 badge={{
                   bottomRight: review && (
                     <div className={clsx(userPickBadge.toString(), userPickBadge.mod({ [review]: true }).toString())}>
-                      {review === "rejected" ? <LsCrossAlt /> : <LsCheckAlt />}
+                      {review === "rejected" ? <IconCrossAlt /> : <IconCheckAlt />}
                     </div>
                   ),
                 }}
@@ -87,6 +87,15 @@ Annotators.FilterItem = UsersInjector(({ users, item }) => {
     </Space>
   ) : null;
 });
+
+Annotators.searchFilter = (option, queryString) => {
+  const user = DM.users.find((u) => u.id === option?.value);
+  return (
+    user.id?.toString().toLowerCase().includes(queryString.toLowerCase()) ||
+    user.email.toLowerCase().includes(queryString.toLowerCase()) ||
+    user.displayName.toLowerCase().includes(queryString.toLowerCase())
+  );
+};
 
 Annotators.filterable = true;
 Annotators.customOperators = [

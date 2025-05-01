@@ -1,12 +1,19 @@
 import { observer } from "mobx-react";
 import { type FC, useCallback, useMemo, useState } from "react";
-import { IconMenu, IconRelationBi, IconRelationLeft, IconRelationRight, IconTrash } from "../../../assets/icons";
-import { IconEyeClosed, IconEyeOpened } from "../../../assets/icons/timeline";
+import {
+  IconMenu,
+  IconRelationBi,
+  IconRelationLeft,
+  IconRelationRight,
+  IconTrash,
+  IconEyeClosed,
+  IconEyeOpened,
+} from "@humansignal/icons";
 import { Button } from "../../../common/Button/Button";
 import { Block, Elem } from "../../../utils/bem";
 import { wrapArray } from "../../../utils/utilities";
 import { RegionItem } from "./RegionItem";
-import { Select } from "antd";
+import { Select } from "@humansignal/ui";
 import "./Relations.scss";
 
 const RealtionsComponent: FC<any> = ({ relationStore }) => {
@@ -100,7 +107,11 @@ const RelationItem: FC<{ relation: any }> = observer(({ relation }) => {
                 onClick={relation.toggleVisibility}
                 aria-label={`${relation.visible ? "Hide" : "Show"} Relation`}
               >
-                {relation.visible ? <IconEyeOpened /> : <IconEyeClosed />}
+                {relation.visible ? (
+                  <IconEyeOpened style={{ width: 20, height: 20 }} />
+                ) : (
+                  <IconEyeClosed style={{ width: 20, height: 20 }} />
+                )}
               </Button>
             )}
           </Elem>
@@ -132,7 +143,7 @@ const RelationMeta: FC<any> = observer(({ relation }) => {
   const { children, choice } = control;
 
   const selectionMode = useMemo(() => {
-    return choice === "multiple" ? "multiple" : undefined;
+    return choice === "multiple";
   }, [choice]);
 
   const onChange = useCallback(
@@ -143,22 +154,21 @@ const RelationMeta: FC<any> = observer(({ relation }) => {
     },
     [relation],
   );
+  const options = useMemo(
+    () => children.map((c: any) => ({ value: c.value, style: { background: c.background } })),
+    [children],
+  );
 
   return (
     <Block name="relation-meta">
       <Select
-        mode={selectionMode}
+        multiple={selectionMode}
         style={{ width: "100%" }}
         placeholder="Select labels"
         value={selectedValues}
         onChange={onChange}
-      >
-        {children.map((c: any) => (
-          <Select.Option key={c.value} value={c.value} style={{ background: c.background }}>
-            {c.value}
-          </Select.Option>
-        ))}
-      </Select>
+        options={options}
+      />
     </Block>
   );
 });
