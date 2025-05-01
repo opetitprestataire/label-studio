@@ -139,7 +139,7 @@ export const useWaveform = (
     options?.onPlaying?.(playing);
 
     return () => cancelAnimationFrame(animationFrameId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing]);
 
   useEffect(() => {
