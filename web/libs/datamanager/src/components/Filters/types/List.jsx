@@ -1,13 +1,14 @@
 import { observer } from "mobx-react";
 import { FilterDropdown } from "../FilterDropdown";
-import { useSDK } from "../../../providers/SDKProvider";
-import { useMemo } from "react";
 // import { Common } from "./Common";
+
+function filterItems(items) {
+  return items?.toJSON ? items.toJSON() : items;
+}
 
 export const VariantSelect = observer(({ filter, schema, onChange, multiple, value, placeholder }) => {
   if (!schema) return <></>;
   const { items } = schema;
-  const sdk = useSDK();
 
   const selectedValue = (() => {
     if (!multiple) {
@@ -16,22 +17,11 @@ export const VariantSelect = observer(({ filter, schema, onChange, multiple, val
     return Array.isArray(value) ? value : (value ?? []);
   })();
 
+  const filterItems = filter.cellView?.filterItems || filterItems;
   const FilterItem = filter.cellView?.FilterItem;
-
-  const filteredItems = useMemo(() => {
-    if (filter.field?.alias === "annotators" || filter.field?.alias === "reviewers") {
-      const itemsArray = items?.toJSON ? items.toJSON() : items;
-      return itemsArray?.filter((item) => {
-        const user = sdk.store.users.find((u) => u.id === item);
-        return !(user?.firstName === "Deleted" && user?.lastName === "User");
-      });
-    }
-    return items?.toJSON ? items.toJSON() : items;
-  }, [filter.field?.alias, items, sdk.store.users]);
-
   return (
     <FilterDropdown
-      items={filteredItems}
+      items={filterItems(items)}
       value={selectedValue}
       multiple={multiple}
       optionRender={FilterItem}
