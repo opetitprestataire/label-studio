@@ -10,14 +10,11 @@ export const AnnotationMixin = types.model("AnnotationMixin", {}).views((self) =
     }
 
     if (!isAlive(self)) return null;
-
-    let node = self;
-
     if (isFF(FF_DEV_3391)) {
-      node = getRoot(self);
+      const root = getRoot(self);
 
       // if that's a Tool (they live in separate tree)
-      if (node === self) {
+      if (root === self) {
         if (self.control) {
           return self.control.annotation;
         }
@@ -26,9 +23,18 @@ export const AnnotationMixin = types.model("AnnotationMixin", {}).views((self) =
         }
         return null;
       }
+
+      // if annotation history item selected
+      if (root.annotationStore?.selectedHistory) {
+        return root.annotationStore.selectedHistory;
+      }
+
+      // return connected annotation, not the globally selected one
+      return Types.getParentOfTypeString(self, "Annotation");
     }
 
-    const as = node.annotationStore;
+    const as = self.annotationStore;
+
     return as?.selectedHistory ?? as?.selected;
   },
 

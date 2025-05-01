@@ -58,9 +58,10 @@ export default types
     applyCSSClass(lastSpan) {
       if (!lastSpan) return;
       const classes = ["htx-highlight", "htx-highlight-last"];
+
       const settings = getRoot(self).settings;
 
-      if (!self.parent.showlabels && !settings.showLabels) {
+      if (!self.parent.showlabels && !settings?.showLabels) {
         classes.push("htx-no-label");
       } else {
         // @todo multilabeling with different labels?
