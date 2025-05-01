@@ -10,30 +10,21 @@ export const AnnotationMixin = types.model("AnnotationMixin", {}).views((self) =
     }
 
     if (!isAlive(self)) return null;
-    if (isFF(FF_DEV_3391)) {
-      const root = getRoot(self);
 
+    const root = getRoot(self); // Will get the root if self is already the root
+    const as = root.annotationStore;
+
+    if (isFF(FF_DEV_3391) && root === self) {
       // if that's a Tool (they live in separate tree)
-      if (root === self) {
-        if (self.control) {
-          return self.control.annotation;
-        }
-        if (self.obj) {
-          return self.obj.annotation;
-        }
-        return null;
+      if (self.control) {
+        return self.control.annotation;
+      }
+      if (self.obj) {
+        return self.obj.annotation;
       }
 
-      // if annotation history item selected
-      if (root.annotationStore?.selectedHistory) {
-        return root.annotationStore.selectedHistory;
-      }
-
-      // return connected annotation, not the globally selected one
-      return Types.getParentOfTypeString(self, "Annotation");
+      return null;
     }
-
-    const as = self.annotationStore;
 
     return as?.selectedHistory ?? as?.selected;
   },
