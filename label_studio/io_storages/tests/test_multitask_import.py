@@ -14,7 +14,6 @@ from rest_framework.test import APIClient
 from tests.utils import azure_client_mock, gcs_client_mock, mock_feature_flag, redis_client_mock
 
 
-@mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
 class TestMultiTaskImport(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -27,6 +26,7 @@ class TestMultiTaskImport(TestCase):
             {'data': {'image_url': 'http://ggg.com/image2.jpg', 'text': 'Task 2 text'}},
         ]
 
+    @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
     def _test_storage_import(self, storage_class, task_data, **storage_kwargs):
         """Helper to test import for a specific storage type"""
 
