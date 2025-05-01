@@ -231,7 +231,6 @@ export class Visualizer extends Events<VisualizerEvents> {
   draw(dry = false, forceDraw = false) {
     if (this.isDestroyed) return;
     if (this.drawing && !forceDraw) return warn("Concurrent render detected");
-    
     this.drawing = true;
 
     setTimeout(async () => {
