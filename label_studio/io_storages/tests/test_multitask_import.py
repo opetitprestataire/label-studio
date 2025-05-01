@@ -1,8 +1,6 @@
 import json
-import sys
 
 import boto3
-import pytest
 from django.test import TestCase
 from io_storages.tests.factories import (
     AzureBlobImportStorageFactory,
@@ -13,14 +11,9 @@ from io_storages.tests.factories import (
 from moto import mock_s3
 from projects.tests.factories import ProjectFactory
 from rest_framework.test import APIClient
-from tests.utils import azure_client_mock, gcs_client_mock, redis_client_mock
-
-# Skip on Windows before any forking is attempted
-if sys.platform == 'win32':
-    pytest.skip('forked tests not supported on Windows', allow_module_level=True)
+from tests.utils import azure_client_mock, gcs_client_mock, mock_feature_flag, redis_client_mock
 
 
-@pytest.mark.forked
 class TestMultiTaskImport(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -33,6 +26,7 @@ class TestMultiTaskImport(TestCase):
             {'data': {'image_url': 'http://ggg.com/image2.jpg', 'text': 'Task 2 text'}},
         ]
 
+    @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
     def _test_storage_import(self, storage_class, task_data, **storage_kwargs):
         """Helper to test import for a specific storage type"""
 
@@ -85,14 +79,13 @@ class TestMultiTaskImport(TestCase):
 
     def test_import_multiple_tasks_gcs(self):
         # initialize mock with sample data
-        with gcs_client_mock(sample_json_contents=self.common_task_data, sample_blob_names=['test.json']):
+        with gcs_client_mock():
 
             self._test_storage_import(
                 GCSImportStorageFactory,
                 self.common_task_data,
-                # bucket name just has to end in "_JSON" for the mock to work
-                # and to not collide with other tests
-                bucket='unique-bucket-name_JSON',
+                # magic bucket name to set correct data in gcs_client_mock
+                bucket='multitask_JSON',
                 use_blob_urls=False,
             )
 
