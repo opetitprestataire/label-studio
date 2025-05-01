@@ -1,6 +1,6 @@
 {
-  "message": "feat: OPTIC-1217: Implement Color design tokens as CSS variables and Dark Mode (#6550)",
-  "commit": "2e8e35e16d766b02d1c4bca558ed692a8af3cb3a",
-  "date": "2025-04-28T16:46:57.000Z",
+  "message": "fix: OPTIC-1982: Allow any errors to be displayed inline for external connection testing (#7442)",
+  "commit": "1aab1d2bae61d309e056561953826ba0aa0c0358",
+  "date": "2025-04-30T21:53:37.000Z",
   "branch": "develop"
 }
