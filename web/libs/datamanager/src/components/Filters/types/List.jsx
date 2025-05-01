@@ -1,10 +1,12 @@
 import { observer } from "mobx-react";
 import { FilterDropdown } from "../FilterDropdown";
+import { useSDK } from "../../../providers/SDKProvider";
 // import { Common } from "./Common";
 
 export const VariantSelect = observer(({ filter, schema, onChange, multiple, value, placeholder }) => {
   if (!schema) return <></>;
   const { items } = schema;
+  const sdk = useSDK();
 
   const selectedValue = (() => {
     if (!multiple) {
@@ -14,9 +16,21 @@ export const VariantSelect = observer(({ filter, schema, onChange, multiple, val
   })();
 
   const FilterItem = filter.cellView?.FilterItem;
+
+  // Filter out users with firstName "Deleted" for annotator filters
+  const filteredItems =
+    filter.field?.alias === "annotators" || filter.field?.alias === "reviewers"
+      ? (items?.toJSON ? items.toJSON() : items).filter((item) => {
+          const user = sdk.store.users.find((u) => u.id === item);
+          return !(user?.firstName === "Deleted" && user?.lastName === "User");
+        })
+      : items?.toJSON
+        ? items.toJSON()
+        : items;
+
   return (
     <FilterDropdown
-      items={items?.toJSON ? items.toJSON() : items}
+      items={filteredItems}
       value={selectedValue}
       multiple={multiple}
       optionRender={FilterItem}
