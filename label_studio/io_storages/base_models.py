@@ -256,9 +256,16 @@ class ImportStorage(Storage):
         # TODO: Search for occurrences inside string, e.g. for cases like "gs://bucket/file.pdf" or "<embed src='gs://bucket/file.pdf'/>"
         _, prefix = get_uri_via_regex(url, prefixes=(self.url_scheme,))
         bucket_uri = parse_bucket_uri(url, self)
-        # If there is a prefix and the bucket is the same as the storage's bucket, return True
-        if prefix == self.url_scheme and bucket_uri and bucket_uri.bucket == self.bucket:
-            return True
+
+        # If there is a prefix and the bucket matches the storage's bucket/container/path
+        if prefix == self.url_scheme and bucket_uri:
+            # Check for different storage types
+            if hasattr(self, 'bucket') and bucket_uri.bucket == self.bucket:
+                return True
+            if hasattr(self, 'container') and bucket_uri.bucket == self.container:
+                return True
+            if hasattr(self, 'path') and bucket_uri.bucket == self.path:
+                return True
         # if not found any occurrences - this Storage can't resolve url
         return False
 
