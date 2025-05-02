@@ -14,10 +14,10 @@ from organizations.models import Organization, OrganizationMember
 from organizations.serializers import (
     OrganizationIdSerializer,
     OrganizationInviteSerializer,
+    OrganizationMemberListParamsSerializer,
+    OrganizationMemberListSerializer,
     OrganizationMemberSerializer,
-    OrganizationMemberUserSerializer,
     OrganizationSerializer,
-    OrganizationsParamsSerializer,
 )
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -75,7 +75,7 @@ class OrganizationListAPI(generics.ListCreateAPIView):
         return super(OrganizationListAPI, self).post(request, *args, **kwargs)
 
 
-class OrganizationMemberPagination(PageNumberPagination):
+class OrganizationMemberListPagination(PageNumberPagination):
     page_size = 20
     page_size_query_param = 'page_size'
 
@@ -111,8 +111,8 @@ class OrganizationMemberListAPI(generics.ListAPIView):
         PATCH=all_permissions.organizations_change,
         DELETE=all_permissions.organizations_change,
     )
-    serializer_class = OrganizationMemberUserSerializer
-    pagination_class = OrganizationMemberPagination
+    serializer_class = OrganizationMemberListSerializer
+    pagination_class = OrganizationMemberListPagination
 
     def get_serializer_context(self):
         return {
@@ -123,7 +123,7 @@ class OrganizationMemberListAPI(generics.ListAPIView):
     def get_queryset(self):
         org = generics.get_object_or_404(self.request.user.organizations, pk=self.kwargs[self.lookup_field])
         if flag_set('fix_backend_dev_3134_exclude_deactivated_users', self.request.user):
-            serializer = OrganizationsParamsSerializer(data=self.request.GET)
+            serializer = OrganizationMemberListParamsSerializer(data=self.request.GET)
             serializer.is_valid(raise_exception=True)
             active = serializer.validated_data.get('active')
 
