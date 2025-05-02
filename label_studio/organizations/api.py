@@ -19,6 +19,7 @@ from organizations.serializers import (
     OrganizationMemberSerializer,
     OrganizationSerializer,
 )
+from projects.models import Project
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import get_object_or_404
@@ -28,6 +29,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.views import APIView
+from tasks.models import Annotation
 from users.models import User
 
 from label_studio.core.permissions import ViewClassPermission, all_permissions
@@ -114,10 +116,54 @@ class OrganizationMemberListAPI(generics.ListAPIView):
     serializer_class = OrganizationMemberListSerializer
     pagination_class = OrganizationMemberListPagination
 
+    def _get_created_projects_map(self):
+        members = self.get_queryset()
+        user_ids = members.values_list('user_id', flat=True)
+        projects = (
+            Project.objects.filter(created_by_id__in=user_ids, organization=self.request.user.active_organization)
+            .values('created_by_id', 'id', 'title')
+            .distinct()
+        )
+        projects_map = {}
+        for project in projects:
+            projects_map.setdefault(project['created_by_id'], []).append(
+                {
+                    'id': project['id'],
+                    'title': project['title'],
+                }
+            )
+        return projects_map
+
+    def _get_contributed_to_projects_map(self):
+        members = self.get_queryset()
+        user_ids = members.values_list('user_id', flat=True)
+        projects = (
+            Annotation.objects.filter(
+                completed_by__in=user_ids, project__organization=self.request.user.active_organization
+            )
+            .values('completed_by', 'project__id', 'project__title')
+            .distinct()
+        )
+        projects_map = {}
+        for project in projects:
+            projects_map.setdefault(project['completed_by'], []).append(
+                {
+                    'id': project['project__id'],
+                    'title': project['project__title'],
+                }
+            )
+        return projects_map
+
     def get_serializer_context(self):
+        context = super().get_serializer_context()
+        contributed_to_projects = bool_from_request(self.request.GET, 'contributed_to_projects', False)
         return {
-            'contributed_to_projects': bool_from_request(self.request.GET, 'contributed_to_projects', False),
-            'request': self.request,
+            'contributed_to_projects': contributed_to_projects,
+            'created_projects_map': self._get_created_projects_map() if contributed_to_projects else None,
+            'contributed_to_projects_map': self._get_contributed_to_projects_map()
+            if contributed_to_projects
+            else None,
+            **context,
         }
 
     def get_queryset(self):
