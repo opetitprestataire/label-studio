@@ -3,12 +3,13 @@ import { DataSummary } from "./DataSummary";
 import { LabelingSummary } from "./LabelingSummary";
 import type { ControlTag, Project } from "./types";
 
-const Summary = ({ annotations }: { annotations: MSTAnnotation[] }) => {
+const Summary = ({ annotations: all }: { annotations: MSTAnnotation[] }) => {
   // @ts-ignore
   const DM = window.DM;
   const project: Project = DM.project;
   const task = DM.taskStore.selected;
   const data = task.data;
+  const annotations = all.filter(a => a.pk);
 
   const parsed_config = project.parsed_label_config;
   const controls: ControlTag[] = Object.entries(parsed_config).map(([name, control]) => ({
