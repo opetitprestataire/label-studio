@@ -86,7 +86,7 @@ export const LabelingSummary = ({ annotations, controls }: Props) => {
       <tbody>
         {annotations.map((annotation) => (
           <tr key={annotation.id}>
-            <td className="px-4 py-2 whitespace-nowrap">
+            <td className="px-4 py-2 whitespace-nowrap flex gap-2 items-center">
               <Userpic user={annotation.user} showUsername />
               <span className="bold">{annotation.user?.displayName}</span>
               <span>#{annotation.pk ?? annotation.id}</span>
