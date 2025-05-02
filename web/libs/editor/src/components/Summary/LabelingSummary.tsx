@@ -47,6 +47,27 @@ const renderers: Record<string, (results: MSTResult[], control: ControlTag) => R
       </span>
     );
   },
+  Number: (results, control) => {
+    if (!results.length) return "-";
+
+    return results[0].mainValue;
+  },
+  Choices: (results, control) => {
+    const choices = results.flatMap((result) => result.mainValue).flat();
+    const unique = [...new Set(choices)];
+
+    if (!choices.length) return "-";
+
+    return (
+      <span className="flex gap-2">
+        {unique.map((choice) => (
+          <span key={choice} className="inline-block px-2 bg-primary-background border border-primary-emphasis text-accent-grape-dark whitespace-nowrap rounded-4 mr-2">
+            {choice}
+          </span>
+        ))}
+      </span>
+    );
+  }
 };
 
 export const LabelingSummary = ({ annotations, controls }: Props) => {
