@@ -68,7 +68,7 @@ class S3StorageSerializerMixin:
         except TypeError as e:
             logger.info(f'It seems access keys are incorrect: {e}', exc_info=True)
             raise ValidationError('It seems access keys are incorrect')
-        except KeyError as e:
+        except KeyError:
             raise ValidationError(f'{storage.url_scheme}://{storage.bucket}/{storage.prefix} not found.')
         return data
 
