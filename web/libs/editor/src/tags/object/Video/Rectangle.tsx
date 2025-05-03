@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { type FC, useMemo } from "react";
 import { Group, Rect } from "react-konva";
 import { useRegionStyles } from "../../../hooks/useRegionColor";
-import { getNodeAbsoluteDimensions, normalizeNodeDimentions } from "./tools";
+import { getNodeAbsoluteDimensions, normalizeNodeDimensions } from "./tools";
 import type { WorkingArea } from "./types";
 import { LabelOnVideoBbox } from "../../../components/ImageView/LabelOnRegion";
 
@@ -55,7 +55,7 @@ const RectanglePure: FC<RectProps> = ({
   };
 
   const onTransform = (e: KonvaEventObject<Event>) => {
-    normalizeNodeDimentions(e.target, "rect");
+    normalizeNodeDimensions(e.target, "rect");
   };
 
   return (
