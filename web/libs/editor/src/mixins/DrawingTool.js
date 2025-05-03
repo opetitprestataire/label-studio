@@ -52,7 +52,7 @@ const DrawingTool = types
         return !self.isDrawing && !self.annotation.isReadOnly();
       },
       get defaultDimensions() {
-        console.warn("Drawing tool model needs to implement defaultDimentions getter in views");
+        console.warn("Drawing tool model needs to implement defaultDimensions getter in views");
         return {};
       },
       get MIN_SIZE() {
