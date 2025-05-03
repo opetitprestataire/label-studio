@@ -35,7 +35,7 @@ type VideoProps = {
   onLoad?: (data: VideoRef) => void;
   onFrameChange?: (frame: number, length: number) => void;
   onEnded?: () => void;
-  onResize?: (dimensions: VideoDimentions) => void;
+  onResize?: (dimensions: VideoDimensions) => void;
   onError?: (error: any) => void;
 };
 
@@ -44,7 +44,7 @@ type PanOptions = {
   y: number;
 };
 
-type VideoDimentions = {
+type VideoDimensions = {
   width: number;
   height: number;
   ratio: number;
@@ -110,7 +110,7 @@ export const VideoCanvas = memo(
     const [zoom, setZoom] = useState(props.zoom ?? 1);
     const [pan, setPan] = useState<PanOptions>(props.pan ?? { x: 0, y: 0 });
 
-    const [videoDimensions, setVideoDimensions] = useState<VideoDimentions>({ width: 0, height: 0, ratio: 1 });
+    const [videoDimensions, setVideoDimensions] = useState<VideoDimensions>({ width: 0, height: 0, ratio: 1 });
 
     const [contrast, setContrast] = useState(1);
     const [brightness, setBrightness] = useState(1);
