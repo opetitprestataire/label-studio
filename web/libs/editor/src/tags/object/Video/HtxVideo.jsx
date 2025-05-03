@@ -26,12 +26,12 @@ import { VideoRegions } from "./VideoRegions";
 
 const isFFDev2715 = isFF(FF_DEV_2715);
 
-function useZoom(videoDimensions, canvasDimentions, shouldClampPan) {
+function useZoom(videoDimensions, canvasDimensions, shouldClampPan) {
   const [zoomState, setZoomState] = useState({ zoom: 1, pan: { x: 0, y: 0 } });
   const data = useRef({});
 
   data.current.video = videoDimensions;
-  data.current.canvas = canvasDimentions;
+  data.current.canvas = canvasDimensions;
   data.current.shouldClampPan = shouldClampPan;
 
   const clampPan = useCallback((pan, zoom) => {
