@@ -15,7 +15,7 @@ export const getNodeAbsoluteDimensions = (node: KonvaNode, workingArea: WorkingA
   return result;
 };
 
-export const normalizeNodeDimentions = <T extends KonvaNode>(node: T, shapeType: "rect") => {
+export const normalizeNodeDimensions = <T extends KonvaNode>(node: T, shapeType: "rect") => {
   const scaleX = node.scaleX();
   const scaleY = node.scaleY();
 
