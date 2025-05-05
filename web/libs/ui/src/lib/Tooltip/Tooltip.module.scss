@@ -18,6 +18,8 @@
   pointer-events: none;
   background-color: var(--color-neutral-inverted-background);
   border-radius: 3px;
+  white-space: normal;
+  overflow-wrap: break-word;
   max-width: 250px;
 
   &::before {
