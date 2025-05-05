@@ -1,12 +1,11 @@
 import { inject, observer } from "mobx-react";
-import { flow, getEnv, types } from "mobx-state-tree";
+import { flow, types } from "mobx-state-tree";
 
 import Registry from "../../core/Registry";
-import { errorBuilder } from "../../core/DataValidator/ConfigValidator";
 import { AnnotationMixin } from "../../mixins/AnnotationMixin";
 import ProcessAttrsMixin from "../../mixins/ProcessAttrs";
 import Base from "./Base";
-import { parseTypeAndOption, parseValue } from "../../utils/data";
+import { parseValue } from "../../utils/data";
 
 /**
  * The `Pdf` tag is used to display a PDF document from a URL.
@@ -45,10 +44,10 @@ const HtxPdf = inject("store")(
         allowFullScreen
       />
     );
-  })
+  }),
 );
 
 Registry.addTag("pdf", PdfModel, HtxPdf);
 Registry.addObjectType(PdfModel);
 
-export { HtxPdf, PdfModel }; 
+export { HtxPdf, PdfModel };
