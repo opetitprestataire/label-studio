@@ -1637,7 +1637,7 @@
     },
     "fflag_feat_all_optic_1811_automax_project_setup_streaming": {
       "key": "fflag_feat_all_optic_1811_automax_project_setup_streaming",
-      "on": false,
+      "on": true,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
@@ -1659,7 +1659,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 2,
+      "version": 3,
       "deleted": false
     },
     "fflag_feat_all_optic_520_annotator_report_short": {
@@ -2088,6 +2088,33 @@
       },
       "clientSide": false,
       "salt": "ada8018a7d124ed3976aba1e0ae85c81",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
+      "deleted": false
+    },
+    "fflag_feat_dia_2092_multitasks_per_storage_link": {
+      "key": "fflag_feat_dia_2092_multitasks_per_storage_link",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "6961906955144de79ef62428d656b457",
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
@@ -2931,6 +2958,60 @@
       "version": 5,
       "deleted": false
     },
+    "fflag_feat_optic_2123_audio_spectrograms": {
+      "key": "fflag_feat_optic_2123_audio_spectrograms",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "22c39d2de39640dbbce81c06559cfce7",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
+      "deleted": false
+    },
+    "fflag_feat_optic_2125_timeseries_sync": {
+      "key": "fflag_feat_optic_2125_timeseries_sync",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "c97ee12f1c2a46918bffcda57fbd822b",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
+      "deleted": false
+    },
     "fflag_feat_optic_378_limit_projects_per_page_to_ten_short": {
       "key": "fflag_feat_optic_378_limit_projects_per_page_to_ten_short",
       "on": false,
@@ -3500,7 +3581,7 @@
     },
     "fflag_fix_back_optic_1380_dashboard_task_chart_grouped_by_completed_at_reviewed_at_short": {
       "key": "fflag_fix_back_optic_1380_dashboard_task_chart_grouped_by_completed_at_reviewed_at_short",
-      "on": false,
+      "on": true,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
@@ -3522,7 +3603,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 2,
+      "version": 3,
       "deleted": false
     },
     "fflag_fix_back_optic_1407_optimize_tasks_api_pagination_counts": {
