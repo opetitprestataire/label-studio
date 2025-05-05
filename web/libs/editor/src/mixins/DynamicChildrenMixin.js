@@ -15,7 +15,8 @@ const DynamicChildrenMixin = types
     const prepareDynamicChildrenData = (data, store, parent) => {
       if (data && data.length) {
         for (const obj of data) {
-          // Multiple traversal of the tree will cause the same object to be added multiple times
+          // Right now with the FF on, we are traverseing the Tree in the store::initRoot and the
+          // AnnotationStore::afterCreate which will generate duplicated children
           if (parent.children?.find((child) => child.value === obj.value)) continue;
 
           // No matter if Interactive View mode or not, we add the id for consistency
