@@ -1,6 +1,7 @@
 import { getRoot, protect, types, unprotect } from "mobx-state-tree";
 import ProcessAttrsMixin from "./ProcessAttrs";
 import { parseValue } from "../utils/data";
+import { guidGenerator } from "../utils/unique";
 
 const DynamicChildrenMixin = types
   .model({})
@@ -14,9 +15,15 @@ const DynamicChildrenMixin = types
     const prepareDynamicChildrenData = (data, store, parent) => {
       if (data && data.length) {
         for (const obj of data) {
+          // Multiple traversal of the tree will cause the same object to be added multiple times
+          if (parent.children?.find((child) => child.value === obj.value)) continue;
+
+          // No matter if Interactive View mode or not, we add the id for consistency
+          const id = obj.id ?? guidGenerator();
           parent.children.push({
             type: self.defaultChildType,
             ...obj,
+            id,
             children: [],
           });
 
