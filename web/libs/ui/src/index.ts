@@ -19,5 +19,3 @@ export * from "./assets/icons";
 export * from "./lib/simple-card";
 export * from "./lib/space/space";
 export * from "./lib/spinner/spinner";
-
-export * from "./shadcn";

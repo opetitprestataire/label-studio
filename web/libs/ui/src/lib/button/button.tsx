@@ -71,17 +71,37 @@ export function buttonVariant(
 }
 
 export type ButtonProps = {
+  /**
+   * Controls the color variant of the button
+   * See [Storybook](https://labelstud.io/storybook?path=/docs/ui-button--docs)
+   */
   variant?: keyof typeof variants;
+  /**
+   * Controls the look of the button
+   * See [Storybook](https://labelstud.io/storybook?path=/docs/ui-button--docs)
+   */
   look?: keyof typeof looks;
   size?: keyof typeof sizes;
   align?: keyof typeof alignment;
+  /**
+   * Waiting state with stripes animation
+   */
   waiting?: boolean;
   /**
    * @deprecated Use `leading` instead
    */
   icon?: ReactNode;
+  /**
+   * Inserts a leading element preceding the content of the button
+   */
   leading?: ReactNode;
+  /**
+   * Inserts a trailing element following the content of the button
+   */
   trailing?: ReactNode;
+  /**
+   * Adds a tooltip to the button
+   */
   tooltip?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 

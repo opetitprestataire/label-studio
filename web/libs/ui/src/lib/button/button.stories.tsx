@@ -69,10 +69,10 @@ export const WithSize: Story = {
         <Button {...props} size="medium" className="w-48" leading={<IconAnnotationGroundTruth />}>
           Medium
         </Button>
-        <Button {...props} size="small" className="w-48" align="left" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} size="small" className="w-48" leading={<IconAnnotationGroundTruth />}>
           Small
         </Button>
-        <Button {...props} size="smaller" className="w-48" align="center" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} size="smaller" className="w-48" leading={<IconAnnotationGroundTruth />}>
           Smaller
         </Button>
       </div>
