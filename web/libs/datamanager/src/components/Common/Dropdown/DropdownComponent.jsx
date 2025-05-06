@@ -36,7 +36,7 @@ export const Dropdown = React.forwardRef(({ animated = true, visible = false, ..
     );
 
     setOffset({ left, top });
-  }, [triggerRef, align, openUpwardForShortViewport]);
+  }, [triggerRef, align, openUpwardForShortViewport, constrainHeight]);
 
   const dropdownIndex = React.useMemo(() => {
     return lastIndex++;
