@@ -41,7 +41,6 @@ export const FilterDropdown = observer(
     );
     const options = useMemo(() => items.map(parseItems), [items, parseItems]);
 
-    console.log("FilterDropdown", options);
     return (
       <Select
         multiple={multiple}
