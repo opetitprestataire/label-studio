@@ -1,5 +1,5 @@
 ---
-title: Install Prompts in an on-prem environment
+title: Install Prompts in an on-prem environment (optional)
 short: Install Prompts
 type: guide
 tier: enterprise
@@ -12,7 +12,9 @@ parent: "install_k8s"
 parent_enterprise: "install_enterprise_k8s"
 ---
 
-Installing Prompts in an on-prem environment requires installing [Adala](https://github.com/HumanSignal/Adala). 
+Installing Prompts in an on-prem environment requires installing Adala, our data labeling agent microservice.
+
+You only need to complete these steps if you want to use Prompts. For more information, see our [Prompts overview](prompts_overview).
 
 
 ## Prerequisites
