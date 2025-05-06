@@ -19,7 +19,7 @@
   background-color: var(--color-neutral-inverted-background);
   border-radius: 3px;
   white-space: normal;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   max-width: 250px;
 
   &::before {
