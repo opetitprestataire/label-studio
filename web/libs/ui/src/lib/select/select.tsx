@@ -220,7 +220,9 @@ export const Select = forwardRef(
               className="flex flex-1 text-left gap-2 max-w-full w-[calc(100%-1rem-0.5rem)]"
               data-testid="select-display-value"
             >
-              {displayValueOverride ? displayValueOverride?.(selectedOptions, props?.placeholder) : (
+              {displayValueOverride ? (
+                displayValueOverride?.(selectedOptions, props?.placeholder)
+              ) : (
                 <>
                   {selectedOptions?.length ? (
                     <>
