@@ -21,7 +21,7 @@ Installing Prompts in an on-prem environment requires installing [Adala](https:/
 - Helm **v3.8.0** or later
 - Docker CLI (for logging into Docker Hub)
 
-### Resource requirements
+## Resource requirements
 
 Before installing, ensure your Kubernetes cluster can provide the following minimum resources for Adala:
 
