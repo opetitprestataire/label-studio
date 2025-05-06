@@ -142,30 +142,26 @@ or
 kubectl logs <pod-name> -n prompt
 ```
 
-## 7. Configure Label Studio to discover the Adala endpoint
+## 7. Update the Label Studio `values.yaml` file
 
-To enable Label Studio to connect to Adala, update your Label Studio Enterprise `values.yaml` file by appending the following under the `global` section:
+You will need to update the `global` section of your Label Studio Enterprise `values.yaml` file to include the following:
+
+* Add the Adala endpoint, which will allow Label Studio to connect to Adala. 
+* Add the Prompts feature flag, to enable Prompts visibility within Label Studio. 
+
 
 ```yaml
 global:
   extraEnvironmentVars:
     PROMPTER_ADALA_URL: http://adala-adala-app.prompt:8000
+  featureFlags:
+    fflag_feat_all_dia_835_prompter_workflow_long: true
 ```
 
-Note the following:
+Note the following for `PROMPTER_ADALA_URL`:
 
 - `prompt` is the namespace where Adala is installed.
 - `adala-adala-app` is the name of the Adala service automatically created by the Helm release.
 - Port `8000` is the default port where Adala listens.
-
-## 8. Add the Prompts feature flag
-
-To ensure you can access the Prompts option in Label Studio, you must also update `values.yml` file to include the following feature flag under the `global` section:
-
-```yaml
-global:
-  featureFlags:
-    fflag_feat_all_dia_835_prompter_workflow_long: true
-```
 
 After updating the values file, redeploy Label Studio to apply the changes.
