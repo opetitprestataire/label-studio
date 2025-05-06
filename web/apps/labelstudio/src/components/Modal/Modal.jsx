@@ -81,6 +81,7 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
           size="small"
           look="outlined"
           autoFocus
+          className="min-w-[120px]"
         >
           {cancelText ?? "Cancel"}
         </Button>
@@ -91,7 +92,8 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
             modal.close();
           }}
           size="small"
-          look={buttonLook ?? "primary"}
+          variant={buttonLook ?? "primary"}
+          className="min-w-[120px]"
         >
           {okText ?? "OK"}
         </Button>
@@ -114,6 +116,7 @@ export const info = ({ okText, onOkPress, ...props }) => {
           }}
           look="primary"
           size="compact"
+          className="min-w-[120px]"
         >
           {okText ?? "OK"}
         </Button>
