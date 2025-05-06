@@ -24,6 +24,7 @@ export const Dropdown = React.forwardRef(({ animated = true, visible = false, ..
   const [visibility, setVisibility] = React.useState(visible ? "visible" : null);
 
   const calculatePosition = React.useCallback(() => {
+    console.log("calculatePosition", openUpwardForShortViewport);
     const dropdownEl = dropdown.current;
     const parent = triggerRef?.current ?? dropdownEl.parentNode;
     const { left, top } = alignElements(
@@ -31,11 +32,12 @@ export const Dropdown = React.forwardRef(({ animated = true, visible = false, ..
       dropdownEl,
       align ?? "bottom-left",
       0,
+      false,
       openUpwardForShortViewport ?? true,
     );
 
     setOffset({ left, top });
-  }, [triggerRef]);
+  }, [triggerRef, align, openUpwardForShortViewport]);
 
   const dropdownIndex = React.useMemo(() => {
     return lastIndex++;

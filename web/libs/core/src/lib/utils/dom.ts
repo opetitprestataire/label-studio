@@ -96,6 +96,7 @@ export const alignElements = (
   align: Align = "bottom-left",
   padding = 0,
   constrainHeight = false,
+  openUpwardForShortViewport = true,
 ) => {
   let offsetLeft = 0;
   let offsetTop = 0;
@@ -139,9 +140,9 @@ export const alignElements = (
       break;
   }
 
-  if (offsetTop < window.scrollX) {
+  if (offsetTop < window.scrollY || !openUpwardForShortViewport) {
     offsetTop = pos.bottom + padding;
-    maxHeight = window.scrollX + window.innerHeight - offsetTop;
+    maxHeight = window.scrollY + window.innerHeight - offsetTop;
     resultAlign[0] = "bottom";
   }
   // If the dropdown has more space on the top, then we should align it to the top
@@ -159,6 +160,7 @@ export const alignElements = (
     offsetLeft = pos.horizontalRight;
     resultAlign[1] = "right";
   }
+  console.log("offsetTop", offsetTop, openUpwardForShortViewport, elem, target, resultAlign);
 
   const { scrollY, scrollX } = window;
 
