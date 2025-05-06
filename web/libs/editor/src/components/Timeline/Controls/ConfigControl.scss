@@ -5,26 +5,25 @@
   &__modal {
     position: fixed; /* MUST be fixed for portal + JS positioning */
     width: 260px;
-    max-height: 500px; 
-    background: var(--sand_0);
+    max-height: 500px;
+    background: var(--color-neutral-background);
+    box-shadow: 0 4px 10px 0 rgba(var(--color-neutral-shadow-raw) / 30%);
     border-radius: 4px;
     padding: 0;
-    box-shadow: 0 4px 10px 0 var(--sand_300);
-    z-index: 102; 
+    z-index: 102;
     display: flex;
-    flex-direction: column; 
-    opacity: 1; 
-    transition: opacity 0.15s ease-in-out; 
+    flex-direction: column;
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
 
     &__toggle {
-      padding-top: 8px; 
-      padding-bottom: 8px; 
-      margin-bottom: 5px; 
+      padding-block: var(--spacing-tight);
+      margin-bottom: 5px;
     }
 
     .audio-config__slider-container {
       padding: 28px 16px 0px 16px;
-      
+
       .ant-slider {
         margin-left: 10px;
         margin-right: 20px;
@@ -50,8 +49,8 @@
           width: 40px;
           height: 24px;
           border-radius: 2px;
-          background: var(--sand_100);
-          border: 1px solid var(--sand_300);
+          background: var(--color-neutral-surface);
+          border: 1px solid var(--color-neutral-border);
           line-height: 24px;
           padding: 0;
           text-align: center;
@@ -59,15 +58,15 @@
           margin-left: 10px;
 
           &--error {
-            color: var(--danger_color);
-            border: 1px solid var(--red_1);
+            color: var(--color-negative-content);
+            border: 1px solid var(--color-negative-border);
           }
         }
       }
     }
   }
 
- 
+
   &__scroll-content {
     flex-grow: 1;
     overflow-y: auto;
@@ -83,19 +82,21 @@
   &__buttons {
     margin-top: 0; /* Remove margin */
     padding: 2px 0;
-    border-top: 1px solid var(--sand_200);
+    border-top: 1px solid var(--color-neutral-border);
     font-size: 14px;
     cursor: pointer;
     flex-shrink: 0; /* Prevent buttons from shrinking */
-    background: var(--sand_0); /* Ensure background matches */
+    background: var(--color-neutral-background); /* Ensure background matches */
   }
 
   &__menu-button {
     padding: 8px 16px;
     cursor: pointer;
+    transition: all 150ms ease-out;
+    color: var(--color-neutral-content-subtle);
 
     &:hover {
-      background: var(--sand_200);
+      background: var(--color-primary-emphasis-subtle);
     }
   }
 
@@ -104,7 +105,7 @@
     flex-direction: column;
     width: 100%;
     padding: 8px 16px;
-    
+
     .range {
       width: 100%;
       margin: 8px 0;
@@ -140,13 +141,13 @@
       align-items: center;
       gap: 8px;
       font-size: 12px;
-      color: var(--sand_600);
+      color: var(--color-neutral-content-subtler);
       white-space: nowrap;
 
       svg {
         width: 14px;
         height: 14px;
-        color: var(--sand_500);
+        color: var(--color-neutral-icon);
       }
     }
 
@@ -157,7 +158,7 @@
     }
 
     .separator {
-      color: var(--sand_500);
+      color: var(--color-neutral-content-subtlest);
       font-size: 12px;
       white-space: nowrap;
       margin: 0 4px;
@@ -176,16 +177,16 @@
   }
 
   &__section-header {
-    background-color: var(--sand_100);
-    color: var(--sand_600);
+    background-color: var(--color-neutral-background);
+    color: var(--color-neutral-content-subtler);
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
     padding: 6px 16px;
-    border-top: 1px solid var(--sand_200);
-    border-bottom: 1px solid var(--sand_200);
+    border-top: 1px solid var(--color-neutral-border);
+    border-bottom: 1px solid var(--color-neutral-border);
     margin: 0 0 8px;
-    
+
     &:first-child {
       border-top: none;
       border-top-left-radius: 4px;
@@ -207,14 +208,14 @@
   .ant-select-selection-item {
     padding: 0 12px !important;
     line-height: 32px !important;
-    color: white;
+    color: var(--color-neutral-content);
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
     text-align: left;
     width: 100%;
   }
 
   .ant-select-arrow {
-    color: white;
+    color: var(--color-neutral-content);
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
     right: 8px;
   }

@@ -9,6 +9,7 @@ import { rgba } from "../Common/Color";
 import type { Cursor } from "../Cursor/Cursor";
 import type { Padding } from "../Common/Style";
 import type { TimelineOptions } from "../Timeline/Timeline";
+import { getCurrentTheme } from "@humansignal/ui";
 import "./Loader";
 import FFT from 'fft.js';
 import { WindowFunctionType, applyWindowFunction } from './WindowFunctions';
@@ -101,6 +102,7 @@ export class Visualizer extends Events<VisualizerEvents> {
   constructor(options: VisualizerOptions, waveform: Waveform) {
     super();
 
+    const isDarkMode = getCurrentTheme() === "Dark";
     this.wf = waveform;
     this.waveContainer = options.container;
     this.waveColor = options.waveColor ? rgba(options.waveColor) : this.waveColor;
@@ -132,9 +134,9 @@ export class Visualizer extends Events<VisualizerEvents> {
       {
         ...options.playhead,
         x: 0,
-        color: rgba("#000"),
-        fillColor: rgba("#BAE7FF"),
-        width: options.cursorWidth ?? 1,
+        color: isDarkMode ? rgba("#fff") : rgba("#000"),
+        fillColor: isDarkMode ? rgba("#fff") : rgba("#BAE7FF"),
+        width: options.cursorWidth ?? 2,
       },
       this,
       this.wf,
@@ -274,7 +276,7 @@ export class Visualizer extends Events<VisualizerEvents> {
       const fftSize = this.spectrogramFftSamples;
       let inputBuffer = new Float32Array(fftSize);
       const usableLength = Math.min(buffer.length, fftSize);
-      
+
       if (usableLength > 0) {
         inputBuffer.set(buffer.slice(0, usableLength));
       }
@@ -361,7 +363,10 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.getSamplesPerPx();
     this.updateScrollFiller();
 
+    // Notify external listeners about zoom change
     this.wf.invoke("zoom", [this.zoom]);
+    //  _setScrollLeft handles the draw call.
+
     this.draw();
   }
 
@@ -370,8 +375,9 @@ export class Visualizer extends Events<VisualizerEvents> {
   }
 
   setScrollLeft(value: number, redraw = true, forceDraw = false) {
+    // Only set the DOM element scroll. Let the native 'scroll' event handler
+    // call _setScrollLeft to update internal state and trigger redraw.
     this.wrapper.scrollLeft = value * this.fullWidth;
-    this._setScrollLeft(value, redraw, forceDraw);
   }
 
   _setScrollLeft(value: number, redraw = true, forceDraw = false) {
@@ -1271,7 +1277,6 @@ export class Visualizer extends Events<VisualizerEvents> {
       const zoom = this.zoom - e.deltaY * 0.2;
 
       this.setZoom(zoom);
-      this.wf.invoke("zoom", [this.zoom]);
     } else if (this.zoom > 1) {
       // Base values
       const maxScroll = this.scrollWidth;
@@ -1386,7 +1391,7 @@ export class Visualizer extends Events<VisualizerEvents> {
   /**
    * Retrieves a slice of audio data for a specific channel across a sample range.
    * This function handles data that may be split across multiple chunks in the audio buffer.
-   * 
+   *
    * @param channelIndex - The index of the audio channel to read from
    * @param startSample - The starting sample index (inclusive)
    * @param endSample - The ending sample index (exclusive)
@@ -1394,7 +1399,7 @@ export class Visualizer extends Events<VisualizerEvents> {
    *          - The audio is not loaded
    *          - The channel index is invalid
    *          - The sample range is invalid (start >= end)
-   * 
+   *
    * The returned array will be of length (endSample - startSample) and will contain:
    * - The actual audio data where available
    * - Zeros for any portions of the requested range that fall outside the available data
@@ -1445,7 +1450,7 @@ export class Visualizer extends Events<VisualizerEvents> {
   /**
    * Renders a slice of the spectrogram by processing audio data through FFT analysis.
    * This generator function processes the audio data pixel by pixel, yielding periodically to maintain UI responsiveness.
-   * 
+   *
    * @param layer - The canvas layer to render the spectrogram on
    * @param height - The height allocated for each channel's spectrogram
    * @param iStart - Starting sample index in the audio data
@@ -1453,7 +1458,7 @@ export class Visualizer extends Events<VisualizerEvents> {
    * @param channelNumber - The audio channel being processed (0 = left, 1 = right, etc.)
    * @param startX - Starting X coordinate for rendering (used for partial renders)
    * @yields When processing time exceeds 16ms (maintains ~60fps)
-   * 
+   *
    * The function:
    * 1. Calculates vertical positioning based on channel layout and visible components
    * 2. For each pixel column:
@@ -1554,13 +1559,13 @@ export class Visualizer extends Events<VisualizerEvents> {
   /**
    * Renders a single vertical column of the spectrogram using FFT magnitude data.
    * Converts linear magnitude values to decibels and maps them to colors using the current color scheme.
-   * 
+   *
    * @param fftData - Array of FFT magnitude values (linear scale)
    * @param layer - The canvas layer to render on
    * @param height - Available height for rendering
    * @param x - X-coordinate for the column
    * @param zero - Y-coordinate offset for positioning
-   * 
+   *
    * The function:
    * 1. Converts magnitude values to decibels
    * 2. Normalizes values within the configured dB range
@@ -1607,7 +1612,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     if (this.spectrogramColorScheme !== schemeName) {
       this.spectrogramColorScheme = schemeName;
       this.colorMapper.setColorScheme(schemeName);
-      
+
       // Find the spectrogram layer and redraw it
       const spectrogramLayer = this.getLayer('spectrogram');
       if (spectrogramLayer?.isVisible) {

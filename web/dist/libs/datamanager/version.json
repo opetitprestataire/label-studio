@@ -1,6 +1,0 @@
-{
-  "message": "fix: LEAP-2051: Don't allow to resize spans in readonly mode (#7422)",
-  "commit": "b45567246037545e55d132efb8294b86e99e4582",
-  "date": "2025-04-25T16:34:33.000Z",
-  "branch": "develop"
-}
