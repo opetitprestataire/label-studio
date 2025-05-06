@@ -160,7 +160,6 @@ export const alignElements = (
     offsetLeft = pos.horizontalRight;
     resultAlign[1] = "right";
   }
-  console.log("offsetTop", offsetTop, openUpwardForShortViewport, elem, target, resultAlign);
 
   const { scrollY, scrollX } = window;
 
