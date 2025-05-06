@@ -223,6 +223,14 @@ const Model = types
         return self.points[insertIdx];
       },
 
+      splicePoints(start) {
+        self.points.splice(start);
+      },
+
+      setClosed(bool) {
+        self.closed = bool;
+      },
+
       _addPoint(x, y) {
         const firstPoint = self.points[0];
 
