@@ -84,6 +84,11 @@ export const FF_USE_NEW_PROJECTS_COUNTS_API = "fflag_feat_front_optic_1351_use_n
 export const FF_ADJUSTABLE_SPANS = "fflag_feat_front_leap_1973_adjustable_spans_090425_short";
 
 /**
- * Enables the theme toggle in the UI
+ * Enables the theme toggle in the UI to enable the dark mode
  */
 export const FF_THEME_TOGGLE = "fflag_feat_front_optic_1217_theme_toggle_short";
+
+/**
+ * Enables the summary view for annotations
+ */
+export const FF_SUMMARY = "fflag_feat_front_leap_2036_annotations_summary";
