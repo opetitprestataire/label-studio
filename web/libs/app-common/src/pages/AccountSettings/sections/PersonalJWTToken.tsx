@@ -113,7 +113,7 @@ export function PersonalJWTToken() {
           window?.APP_SETTINGS?.app_name || "Label Studio"
         }`,
         okText: "Revoke",
-        buttonLook: "danger",
+        buttonLook: "negative",
         onOk: async () => {
           await revokeToken.mutateAsync({ token });
         },

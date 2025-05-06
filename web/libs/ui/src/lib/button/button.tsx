@@ -32,6 +32,10 @@ const alignment = {
   right: styles["align-right"],
 };
 
+export type ButtonVariant = ButtonProps["variant"];
+export type ButtonLook = ButtonProps["look"];
+export type ButtonSize = ButtonProps["size"];
+
 /**
  * Generates a className string with button styling that can be applied to any element
  *
@@ -58,12 +62,16 @@ export function buttonVariant(
     size?: ButtonProps["size"];
     align?: ButtonProps["align"];
     waiting?: boolean;
-  },
+  } = {},
   className?: string,
 ) {
   const buttonStyles = [styles.base, variants[variant], looks[look], sizes[size], alignment[align]];
   return cn(
     "inline-flex items-center rounded-smaller border text-shadow-button box-border border transition-all",
+    "text-label-medium font-medium text-[color:--text-color] bg-[color:--background-color] bg-[image:--background-image] border-[color:--border-color] shadow-[shadow:--emboss-shadow] text-center",
+    "hover:bg-[color:--background-color-hover] hover:border-[color:--border-color-hover]",
+    "active:bg-[color:--background-color-active] active:border-[color:--border-color-active]",
+    "[&_svg]:h-full [&_svg]:inline-block [&_svg]:aspect-square",
     ...buttonStyles,
     { [styles.waiting]: waiting },
     className,
@@ -130,7 +138,10 @@ const Button = forwardRef(
     }: PropsWithChildren<ButtonProps>,
     ref,
   ) => {
-    const buttonClassName = buttonVariant({ variant, look, size, waiting, align }, className);
+    const buttonClassName = cn(buttonVariant({ variant, look, size, waiting, align }, className));
+    const iconClassName = "inline-flex gap-tight not-italic items-center";
+    const contentClassName = "inline-flex flex-1 whitespace-pre items-center px-tight";
+
     const buttonBody = (
       <button
         {...buttonProps}
@@ -138,9 +149,9 @@ const Button = forwardRef(
         disabled={buttonProps.disabled ?? waiting}
         className={buttonClassName}
       >
-        {leading && children && <em>{leading}</em>}
-        <span>{children ?? leading ?? ""}</span>
-        {trailing && <em>{trailing}</em>}
+        {leading && children && <em className={iconClassName}>{leading}</em>}
+        <span className={contentClassName}>{children ?? leading ?? ""}</span>
+        {trailing && <em className={iconClassName}>{trailing}</em>}
       </button>
     );
 
