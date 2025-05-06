@@ -24,7 +24,6 @@ export const Dropdown = React.forwardRef(({ animated = true, visible = false, ..
   const [visibility, setVisibility] = React.useState(visible ? "visible" : null);
 
   const calculatePosition = React.useCallback(() => {
-    console.log("calculatePosition", openUpwardForShortViewport);
     const dropdownEl = dropdown.current;
     const parent = triggerRef?.current ?? dropdownEl.parentNode;
     const { left, top } = alignElements(
