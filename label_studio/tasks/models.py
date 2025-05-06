@@ -467,7 +467,8 @@ class Task(TaskMixin, models.Model):
                 # project storage
                 # TODO: to resolve nested lists and dicts we should improve get_storage_by_url(),
                 # Now always using get_storage_by_url to ensure the storage with the correct bucket is used
-                storage = get_storage_by_url(task_data[field], storage_objects)
+                # As a last fallback we can use self.storage which is the storage the Task was imported from
+                storage = get_storage_by_url(task_data[field], storage_objects) or self.storage
                 if storage:
                     try:
                         resolved_uri = storage.resolve_uri(task_data[field], self)

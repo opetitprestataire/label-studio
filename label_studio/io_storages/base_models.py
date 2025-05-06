@@ -259,11 +259,13 @@ class ImportStorage(Storage):
 
         # If there is a prefix and the bucket matches the storage's bucket/container/path
         if prefix == self.url_scheme and bucket_uri:
-            # Check for different storage types
+            # bucket is used for s3 and gcs
             if hasattr(self, 'bucket') and bucket_uri.bucket == self.bucket:
                 return True
+            # container is used for azure blob
             if hasattr(self, 'container') and bucket_uri.bucket == self.container:
                 return True
+            # path is used for redis
             if hasattr(self, 'path') and bucket_uri.bucket == self.path:
                 return True
         # if not found any occurrences - this Storage can't resolve url
