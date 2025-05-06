@@ -48,3 +48,23 @@ export const WithLongTextString: Story = {
     );
   },
 };
+
+export const Interactive: Story = {
+  render: ({ children, ...props }) => {
+    return (
+      <div className="flex items-center gap-tight">
+        <Tooltip
+          {...props}
+          title={
+            <div>
+              <button onClick={() => alert("hello there")}>click me</button>
+            </div>
+          }
+          interactive
+        >
+          <div>hover over me</div>
+        </Tooltip>
+      </div>
+    );
+  },
+};
