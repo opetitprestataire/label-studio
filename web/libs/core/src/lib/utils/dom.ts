@@ -124,17 +124,17 @@ export const alignElements = (
     case "bottom-center":
       offsetTop = pos.bottom + padding;
       offsetLeft = pos.horizontalCenter;
-      maxHeight = window.scrollX + window.innerHeight - offsetTop;
+      maxHeight = window.scrollY + window.innerHeight - offsetTop;
       break;
     case "bottom-left":
       offsetTop = pos.bottom + padding;
       offsetLeft = pos.horizontalLeft;
-      maxHeight = window.scrollX + window.innerHeight - offsetTop;
+      maxHeight = window.scrollY + window.innerHeight - offsetTop;
       break;
     case "bottom-right":
       offsetTop = pos.bottom + padding;
       offsetLeft = pos.horizontalRight;
-      maxHeight = window.scrollX + window.innerHeight - offsetTop;
+      maxHeight = window.scrollY + window.innerHeight - offsetTop;
       break;
     default:
       break;
