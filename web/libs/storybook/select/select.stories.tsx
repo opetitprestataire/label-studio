@@ -143,6 +143,34 @@ const meta: Meta<typeof Select> = {
             {...args}
           />
         </div>
+        <div>
+          <Select
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
+            label="Boolean values with displayValueOverride"
+            displayValueOverride={(selectedOptions, placeholder) => {
+              if (selectedOptions.length > 0) {
+                return selectedOptions.map((option) => `${option.label} and such`).join(", ");
+              }
+              return placeholder;
+            }}
+            multiple={true}
+            {...args}
+          />
+        </div>
+        <div>
+          <Select
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
+            label="Boolean values with displayValueOverride"
+            displayValueOverride={() => "Always show this"}
+            {...args}
+          />
+        </div>
       </>
     );
   },
