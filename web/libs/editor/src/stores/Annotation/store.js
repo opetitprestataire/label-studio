@@ -68,6 +68,23 @@ const AnnotationStoreModel = types
           self.selected.selected = false;
         }
 
+        // When FF_SIMPLE_INIT is enabled, we need to ensure all annotations have their results set given that, due
+        // to enforcing a better performance, we are not "selecting" all annotations and therefore the right values
+        // won't be set.
+        if (isFF(FF_SIMPLE_INIT)) {
+          self.annotations.forEach(annotation => {
+            // Skip the current annotation as it's already handled
+            if (annotation === self.selected) return;
+
+            // Set results for each annotation without selecting it
+            annotation.results.forEach(result => {
+              if (result.from_name.type === "choices" || result.from_name.type === "taxonomy") {
+                result.from_name.updateFromResult(result.mainValue);
+              }
+            });
+          });
+        }
+
         self.annotations.forEach((c) => {
           c.editable = false;
         });
