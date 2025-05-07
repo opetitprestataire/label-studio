@@ -95,6 +95,7 @@ type MSTAnnotation = {
   };
   regions: MSTRegion[];
   results: MSTResult[];
+  type: "annotation" | "prediction";
   names: Map<string, MSTTag>;
   isLinkingMode: boolean;
   linkingMode: "create_relation" | "link_to_comment";
