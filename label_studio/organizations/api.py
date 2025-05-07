@@ -117,7 +117,7 @@ class OrganizationMemberListAPI(generics.ListAPIView):
     pagination_class = OrganizationMemberListPagination
 
     def _get_created_projects_map(self):
-        members = self.paginate_queryset(self.get_queryset())
+        members = self.paginate_queryset(self.filter_queryset(self.get_queryset()))
         user_ids = [member.user_id for member in members]
         projects = (
             Project.objects.filter(created_by_id__in=user_ids, organization=self.request.user.active_organization)
@@ -135,7 +135,7 @@ class OrganizationMemberListAPI(generics.ListAPIView):
         return projects_map
 
     def _get_contributed_to_projects_map(self):
-        members = self.paginate_queryset(self.get_queryset())
+        members = self.paginate_queryset(self.filter_queryset(self.get_queryset()))
         user_ids = [member.user_id for member in members]
         org_project_ids = Project.objects.filter(organization=self.request.user.active_organization).values_list(
             'id', flat=True
