@@ -3,43 +3,56 @@ import type { MSTResult } from "../../stores/types";
 import { contrastColor, convertToRGBA } from "../../utils/colors";
 import type { ControlTag } from "./types";
 
-export const renderers: Record<string, (results: MSTResult[], control: ControlTag) => ReactNode> = {
-  Labels: (results, control) => {
-    const labels = results.flatMap((result) => result.mainValue).flat();
-    const labelAmounts: [string, number][] = Object.entries(
-      labels.reduce((acc, label) => {
-        acc[label] = (acc[label] || 0) + 1;
-        return acc;
-      }, {}),
-    );
-    const labelColors = Object.fromEntries(
-      Object.entries(control.label_attrs).map(([lbl, attr]) => [lbl, attr.background]),
-    );
+type RendererType = (results: MSTResult[], control: ControlTag) => ReactNode;
 
-    if (!labels.length) return "-";
+const LabelsRenderer: RendererType = (results, control) => {
+  const labels = results.flatMap((result) => result.mainValue).flat();
+  const labelAmounts: [string, number][] = Object.entries(
+    labels.reduce((acc, label) => {
+      acc[label] = (acc[label] || 0) + 1;
+      return acc;
+    }, {}),
+  );
+  const labelColors = Object.fromEntries(
+    Object.entries(control.label_attrs).map(([lbl, attr]) => [lbl, attr.background]),
+  );
 
-    return (
-      <span className="flex gap-2">
-        {labelAmounts.map(([label, amount]) => {
-          const color = labelColors[label];
-          const background = color ? convertToRGBA(color, 0.3) : undefined;
+  if (!labels.length) return "-";
 
-          return (
-            <span
-              className="inline-block px-2 whitespace-nowrap rounded-4"
-              style={{
-                borderLeft: `4px solid ${color ?? "var(--color-grape-200)"}`,
-                color: background ? contrastColor(background) : undefined,
-                background: background ?? "var(--color-grape-200)",
-              }}
-            >
-              <b>{amount}</b> {label}
-            </span>
-          );
-        })}
-      </span>
-    );
-  },
+  return (
+    <span className="flex gap-2">
+      {labelAmounts.map(([label, amount]) => {
+        const color = labelColors[label];
+        const background = color ? convertToRGBA(color, 0.3) : undefined;
+
+        return (
+          <span
+            className="inline-block px-2 whitespace-nowrap rounded-4"
+            style={{
+              borderLeft: `4px solid ${color ?? "var(--color-grape-200)"}`,
+              color: background ? contrastColor(background) : undefined,
+              background: background ?? "var(--color-grape-200)",
+            }}
+          >
+            <b>{amount}</b> {label}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+export const renderers: Record<string, RendererType> = {
+  Labels: LabelsRenderer,
+  EllipseLabels: LabelsRenderer,
+  PolygonLabels: LabelsRenderer,
+  RectangleLabels: LabelsRenderer,
+  KeypointLabels: LabelsRenderer,
+  BrushLabels: LabelsRenderer,
+  HypertextLabels: LabelsRenderer,
+  TimeseriesLabels: LabelsRenderer,
+  ParagraphLabels: LabelsRenderer,
+  TimelineLabels: LabelsRenderer,
   Number: (results, control) => {
     if (!results.length) return "-";
 
