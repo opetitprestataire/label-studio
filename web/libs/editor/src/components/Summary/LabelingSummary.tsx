@@ -1,7 +1,5 @@
-import type { ReactNode } from "react";
 import { Userpic } from "@humansignal/ui";
-import type { MSTAnnotation, MSTResult } from "../../stores/types";
-import { contrastColor, convertToRGBA } from "../../utils/colors";
+import type { MSTAnnotation } from "../../stores/types";
 import { SummaryBadge } from "./SummaryBadge";
 import type { ControlTag } from "./types";
 import { renderers } from "./labelings";
@@ -13,12 +11,12 @@ type Props = {
 
 export const LabelingSummary = ({ annotations, controls }: Props) => {
   return (
-    <table className="w-full">
+    <table className="mb-wide border border-neutral-border rounded-small border-collapse">
       <thead>
-        <tr>
-          <th />
+        <tr className="*:text-left *:whitespace-nowrap *:px-4 *:py-2">
+          <th>Annotation ID</th>
           {controls.map((control) => (
-            <th key={control.name} className="text-left whitespace-nowrap px-4 py-2">
+            <th key={control.name}>
               {control.name} <SummaryBadge>{control.type}</SummaryBadge>
             </th>
           ))}
@@ -26,8 +24,8 @@ export const LabelingSummary = ({ annotations, controls }: Props) => {
       </thead>
       <tbody>
         {annotations.map((annotation) => (
-          <tr key={annotation.id}>
-            <td className="px-4 py-2 whitespace-nowrap flex gap-2 items-center">
+          <tr key={annotation.id} className="odd:bg-neutral-surface">
+            <td className="px-4 py-2 whitespace-nowrap flex gap-tight items-center">
               <Userpic user={annotation.user} />
               <span className="bold">{annotation.user?.displayName}</span>
               <span>#{annotation.pk ?? annotation.id}</span>

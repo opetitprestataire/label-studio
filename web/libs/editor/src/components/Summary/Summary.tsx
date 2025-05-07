@@ -2,6 +2,7 @@ import type { MSTAnnotation } from "../../stores/types";
 import { DataSummary } from "./DataSummary";
 import { LabelingSummary } from "./LabelingSummary";
 import type { ControlTag, Project } from "./types";
+import { NumbersSummary } from "./NumbersSummary";
 
 const Summary = ({ annotations: all }: { annotations: MSTAnnotation[] }) => {
   // @ts-ignore
@@ -20,11 +21,30 @@ const Summary = ({ annotations: all }: { annotations: MSTAnnotation[] }) => {
     per_region: !annotations.every(a => a.results.filter(r => r.from_name.name === name).length <= 1)
   }));
 
+  const values = [
+    {
+      title: "Agreement",
+      value: `${task.agreement}%`,
+      info: "Overall agreement over all submitted annotations",
+    },
+    {
+      title: "Annotations",
+      value: annotations.filter(a => a.type === "annotation").length,
+      info: "Number of submitted annotations",
+    },
+    {
+      title: "Predictions",
+      value: annotations.filter(a => a.type === "prediction").length,
+      info: "Number of predictions",
+    },
+  ];
+
   return (
     <div className="p-4">
-      <h2>Annotations ({task.agreement}% agreement)</h2>
+      <h2 className="px-4">Review Summary</h2>
+      <NumbersSummary values={values} />
       <LabelingSummary annotations={annotations} controls={controls} />
-      <h2>Data</h2>
+      <h2 className="px-4">Task Data</h2>
       <DataSummary data_types={project.data_types} data={data} />
     </div>
   );
