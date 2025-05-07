@@ -1,5 +1,5 @@
 import { inject, observer } from "mobx-react";
-import { flow, types } from "mobx-state-tree";
+import { types } from "mobx-state-tree";
 
 import Registry from "../../core/Registry";
 import { AnnotationMixin } from "../../mixins/AnnotationMixin";
@@ -25,10 +25,10 @@ const Model = types
     _url: types.maybeNull(types.string),
   })
   .actions((self) => ({
-    updateValue: flow(function* (store) {
+    updateValue(store) {
       // @todo check that the value is a valid URL and document exists
       self._url = parseValue(self.value, store.task.dataObj);
-    }),
+    },
   }));
 
 const PdfModel = types.compose("PdfModel", Base, ProcessAttrsMixin, AnnotationMixin, Model);
