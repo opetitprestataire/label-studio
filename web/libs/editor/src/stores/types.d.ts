@@ -164,8 +164,10 @@ export type MSTStore = {
   explore: any;
 
   annotationStore: {
+    annotations: MSTAnnotation[];
     selected: MSTAnnotation | null;
     selectedHistory: object | null;
+    store: MSTStore;
   };
   commentStore: MSTCommentStore;
 

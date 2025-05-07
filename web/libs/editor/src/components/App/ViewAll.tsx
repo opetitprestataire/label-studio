@@ -8,7 +8,7 @@ import Grid from "./Grid";
 import styles from "./ViewAll.module.scss";
 
 type Props = {
-  store: MSTStore;
+  store: MSTStore["annotationStore"];
   annotations: MSTAnnotation[];
   root: any;
 };
@@ -21,10 +21,10 @@ const Tab = ({ title, active, onSelect }: { title: string; active: boolean; onSe
   );
 };
 
-export const ViewAll = ({ store, annotations, root }: Props) => {
+export const ViewAll = ({ store: annotationStore, annotations, root }: Props) => {
   const [tab, setTab] = usePersistentState<"summary" | "compare">("view-all-tab", "summary");
 
-  if (ff.isActive(ff.FF_SUMMARY)) {
+  if (annotationStore.store.hasInterface("annotations:summary") && ff.isActive(ff.FF_SUMMARY)) {
     return (
       <div>
         <div className={styles.tabs}>
@@ -38,12 +38,12 @@ export const ViewAll = ({ store, annotations, root }: Props) => {
         )}
         {tab === "compare" && (
           <div>
-            <Grid store={store} annotations={annotations} root={root} />
+            <Grid store={annotationStore} annotations={annotations} root={root} />
           </div>
         )}
       </div>
     );
   } else {
-    return <Grid store={store} annotations={annotations} root={root} />;
+    return <Grid store={annotationStore} annotations={annotations} root={root} />;
   }
 };
