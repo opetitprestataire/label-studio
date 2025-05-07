@@ -188,3 +188,23 @@ export const StyledLink: Story = {
     );
   },
 };
+
+export const WithSecondaryAction = {
+  args: {
+    children: "Link with button style",
+  },
+  render({ children, ...props }) {
+    return (
+      // biome-ignore lint: We don't need a real link here
+      <Button
+        {...props}
+        waiting={props.waiting ?? true}
+        waitingClickable
+        onClick={() => alert("First action")}
+        secondaryOnClick={() => alert("Second action")}
+      >
+        <span className="flex-1 px-tight">{children}</span>
+      </Button>
+    );
+  },
+};

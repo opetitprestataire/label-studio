@@ -52,8 +52,6 @@ export const AcceptButton = memo(
       <Button
         aria-label="accept-annotation"
         tooltip="Accept annotation: [ Ctrl+Enter ]"
-        size="small"
-        variant="positive"
         disabled={disabled}
         onClick={async () => {
           const selected = store.annotationStore?.selected;
@@ -95,7 +93,6 @@ export const SkipButton = memo(
     return (
       <Button
         aria-label="skip-task"
-        size="small"
         disabled={disabled}
         look="outlined"
         tooltip="Cancel (skip) tapk [ Ctrl+Space ]"
@@ -123,7 +120,6 @@ export const UnskipButton = memo(
     return (
       <Button
         key="cancel-skip"
-        size="small"
         look="outlined"
         tooltip="Cancel skip: []"
         aria-label="cancel-skip"

@@ -52,7 +52,6 @@ const ControlButton = observer(({ button, disabled, onClick, variant, look }: Co
   return (
     <Button
       {...button.props}
-      size="small"
       variant={variant}
       look={look}
       tooltip={button.tooltip}
@@ -177,7 +176,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
         };
 
         buttons.push(
-          <ControlButton key={button.name} variant="negative" button={button} disabled={disabled} onClick={onReject} />,
+          <ControlButton key={button.name} look="outlined" button={button} disabled={disabled} onClick={onReject} />,
         );
       });
       buttons.push(<AcceptButton key="review-accept" disabled={disabled} history={history} store={store} />);
@@ -205,7 +204,6 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
         return (
           <Button
             name="submit-option"
-            size="small"
             className="w-[150px]"
             onClick={async (event) => {
               event.preventDefault();
@@ -242,7 +240,6 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                 <Button
                   aria-label="submit"
                   name="submit"
-                  size="small"
                   className="w-[150px]"
                   disabled={isDisabled}
                   onClick={async (event) => {
@@ -265,7 +262,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                       </div>
                     }
                   >
-                    <Button size="small" type="button">
+                    <Button type="button">
                       <IconChevron />
                     </Button>
                   </Dropdown.Trigger>
@@ -286,7 +283,6 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
             <Button
               aria-label="submit"
               name="submit"
-              size="small"
               className="w-[150px]"
               disabled={isUpdateDisabled}
               onClick={async (event) => {

@@ -1,5 +1,5 @@
 import { cn } from "../../utils/utils";
-import { forwardRef, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from "react";
+import { forwardRef, type MouseEvent, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from "react";
 import styles from "./button.module.scss";
 import { setRef } from "@humansignal/core/lib/utils/unwrapRef";
 import { Tooltip } from "../Tooltip/Tooltip";
@@ -96,6 +96,10 @@ export type ButtonProps = {
    */
   waiting?: boolean;
   /**
+   * Allow button to be clickable when waiting
+   */
+  waitingClickable?: boolean;
+  /**
    * @deprecated Use `leading` instead
    */
   icon?: ReactNode;
@@ -111,6 +115,11 @@ export type ButtonProps = {
    * Adds a tooltip to the button
    */
   tooltip?: string;
+  /**
+   * When in waiting state with `waitingClickable` enabled, this function will be used
+   * as `onClick` if provided. Otherwise default `onClick` will be used.
+   */
+  secondaryOnClick?: (e: MouseEvent) => void;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 /**
@@ -119,6 +128,11 @@ export type ButtonProps = {
  * The Button component provides a consistent UI element for user interactions
  * with support for different visual variants, looks, and sizes. It can include
  * leading and trailing elements for additional visual context.
+ *
+ * Features:
+ * - Different colors and looks of the button
+ * - Waiting state with secondary action
+ * - Icons support
  */
 const Button = forwardRef(
   (
@@ -130,23 +144,28 @@ const Button = forwardRef(
       size = "medium",
       waiting = false,
       align = "default",
+      waitingClickable = false,
       icon,
       leading = icon,
       trailing,
       tooltip,
+      onClick,
+      secondaryOnClick,
       ...buttonProps
     }: PropsWithChildren<ButtonProps>,
     ref,
-  ) => {
+  ): JSX.Element => {
     const buttonClassName = cn(buttonVariant({ variant, look, size, waiting, align }, className));
     const iconClassName = "inline-flex gap-tight not-italic items-center";
     const contentClassName = "inline-flex flex-1 whitespace-pre items-center px-tight";
+    const clickHandler = waiting && waitingClickable ? (secondaryOnClick ?? onClick) : onClick;
 
     const buttonBody = (
       <button
         {...buttonProps}
+        onClick={clickHandler}
         ref={(el) => setRef(ref, el)}
-        disabled={buttonProps.disabled ?? waiting}
+        disabled={buttonProps.disabled ?? (!waitingClickable && waiting)}
         className={buttonClassName}
       >
         {leading && children && <em className={iconClassName}>{leading}</em>}
@@ -159,7 +178,7 @@ const Button = forwardRef(
       return <Tooltip title={tooltip}>{buttonBody}</Tooltip>;
     }
 
-    return buttonBody;
+    return buttonBody as JSX.Element;
   },
 );
 
