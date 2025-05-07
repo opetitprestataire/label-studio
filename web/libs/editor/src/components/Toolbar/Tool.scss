@@ -220,11 +220,7 @@
     text-transform: uppercase;
     padding: 3px var(--spacing-tight) 5px;
     border-radius: var(--corner-radius-smaller);
-    border: 1px solid var(--color-neutral-border);    
-    // The box-shadow creates a layered effect to simulate depth and realism:
-    // - The first shadow adds an inset highlight for a subtle 3D effect.
-    // - The second shadow uses dynamic intensity (via --shadow-intensity) to adjust the inner shadow's strength.
-    // - The third shadow adds a soft outer shadow for additional depth.
+    border: 1px solid var(--color-neutral-border);
     box-shadow: 0 4px 2px var(--color-neutral-background) inset, 0 -3px 0.5px 0 rgba(var(--color-neutral-shadow-raw) / calc( var(--shadow-intensity) * 10% )) inset, 0 2px 1px rgba(var(--color-neutral-shadow-raw) / calc( var(--shadow-intensity) * 4% ));
     position: relative;
     color: var(--color-neutral-content-subtler);
