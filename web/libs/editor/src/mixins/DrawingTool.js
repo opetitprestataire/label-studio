@@ -447,9 +447,14 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
         if (lastEvent === MOUSE_DOWN_EVENT && self.comparePointsWithThreshold(lastPoint, { x, y })) {
           lastEvent = MOUSE_UP_EVENT;
         }
-        else if (lastEvent === MOUSE_MOVE_EVENT && self.comparePointsWithThreshold(lastPoint, startPoint, 5) && pointsCount > 2) {
-          lastEvent = CLICK_EVENT;
-          self.finishDrawing()
+        else if (lastEvent === MOUSE_MOVE_EVENT) { 
+          if (self.comparePointsWithThreshold(lastPoint, startPoint, 5) && pointsCount > 2) {
+            lastEvent = CLICK_EVENT;
+            self.finishDrawing();
+          }
+          else {
+            lastEvent = MOUSE_UP_EVENT;
+          }
         }
         lastPoint = { x: -1, y: -1 };
       },
