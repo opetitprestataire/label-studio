@@ -74,7 +74,7 @@ export const Select = forwardRef(
       onSearch,
       selectedValueRenderer,
       selectFirstIfEmpty,
-      displayValueOverride,
+      renderSelected,
       ...props
     }: SelectProps<T, A>,
     _ref: ForwardedRef<HTMLSelectElement>,
@@ -246,7 +246,7 @@ export const Select = forwardRef(
               className="flex flex-1 text-left gap-2 max-w-full w-[calc(100%-1rem-0.5rem)]"
               data-testid="select-display-value"
             >
-              {displayValueOverride ? displayValueOverride?.(selectedOptions, props?.placeholder) : displayValue}
+              {renderSelected ? renderSelected?.(selectedOptions, props?.placeholder) : displayValue}
             </span>
             {isOpen ? (
               <IconChevron className="h-4 w-4 shrink-0 opacity-50 pointer-events-none" />

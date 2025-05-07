@@ -149,8 +149,8 @@ const meta: Meta<typeof Select> = {
               { label: "Yes", value: true },
               { label: "No", value: false },
             ]}
-            label="Boolean values with displayValueOverride"
-            displayValueOverride={(selectedOptions, placeholder) => {
+            label="Boolean values with renderSelected"
+            renderSelected={(selectedOptions, placeholder) => {
               if (selectedOptions.length > 0) {
                 return selectedOptions.map((option) => `${option.label} and such`).join(", ");
               }
@@ -166,8 +166,8 @@ const meta: Meta<typeof Select> = {
               { label: "Yes", value: true },
               { label: "No", value: false },
             ]}
-            label="Boolean values with displayValueOverride"
-            displayValueOverride={() => "Always show this"}
+            label="Boolean values with renderSelected"
+            renderSelected={() => "Always show this"}
             {...args}
           />
         </div>
