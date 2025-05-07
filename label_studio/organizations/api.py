@@ -150,10 +150,11 @@ class OrganizationMemberListAPI(generics.ListAPIView):
 
         contributed_to_projects_map = {}
         for annotation in annotations:
+            project = projects_map[annotation['project_id']]
             contributed_to_projects_map.setdefault(annotation['completed_by'], []).append(
                 {
-                    'id': annotation['project_id'],
-                    'title': projects_map[annotation['project_id']].title,
+                    'id': project.id,
+                    'title': project.title,
                 }
             )
         return contributed_to_projects_map
