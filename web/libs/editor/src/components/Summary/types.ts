@@ -13,6 +13,7 @@ export type ControlTag = {
   type: string;
   to_name: string;
   label_attrs: Record<string, LabelAttrs>;
+  per_region?: boolean;
 };
 
 export type Project = {

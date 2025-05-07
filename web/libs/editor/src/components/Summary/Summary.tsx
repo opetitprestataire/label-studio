@@ -17,6 +17,7 @@ const Summary = ({ annotations: all }: { annotations: MSTAnnotation[] }) => {
     type: control.type,
     to_name: control.inputs[0],
     label_attrs: control.labels_attrs,
+    per_region: !annotations.every(a => a.results.filter(r => r.from_name.name === name).length <= 1)
   }));
 
   return (
