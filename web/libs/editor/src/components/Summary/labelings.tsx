@@ -1,12 +1,20 @@
 import type { ReactNode } from "react";
-import type { MSTResult } from "../../stores/types";
+import type { RawResult } from "../../stores/types";
 import { contrastColor, convertToRGBA } from "../../utils/colors";
 import type { ControlTag } from "./types";
 
-type RendererType = (results: MSTResult[], control: ControlTag) => ReactNode;
+type RendererType = (results: RawResult[], control: ControlTag) => ReactNode;
+
+const resultValue = (result: RawResult) => {
+  if (result.type === "textarea") {
+    return result.value.text;
+  }
+
+  return result.value[result.type];
+};
 
 const LabelsRenderer: RendererType = (results, control) => {
-  const labels = results.flatMap((result) => result.mainValue).flat();
+  const labels = results.flatMap(resultValue).flat();
   const labelAmounts: [string, number][] = Object.entries(
     labels.reduce((acc, label) => {
       acc[label] = (acc[label] || 0) + 1;
@@ -56,13 +64,13 @@ export const renderers: Record<string, RendererType> = {
   Number: (results, control) => {
     if (!results.length) return "-";
 
-    return results[0].mainValue;
+    return resultValue(results[0]);
   },
   Choices: (results, control) => {
-    const choices = results.flatMap((result) => result.mainValue).flat();
+    const choices = results.flatMap(resultValue).flat();
     const unique = [...new Set(choices)];
 
-    if (!choices.length) return "-";
+    if (!choices.length) return null;
 
     return (
       <span className="flex gap-2">
@@ -78,6 +86,6 @@ export const renderers: Record<string, RendererType> = {
     if (!results.length) return "-";
     if (control.per_region) return null;
 
-    return results[0].mainValue;
+    return resultValue(results[0]);
   }
 };

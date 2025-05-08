@@ -10,6 +10,7 @@ const Summary = ({ annotations: all }: { annotations: MSTAnnotation[] }) => {
   const project: Project = DM.project;
   const task = DM.taskStore.selected;
   const data = task.data;
+  // skip unsubmitted drafts
   const annotations = all.filter(a => a.pk);
 
   const parsed_config = project.parsed_label_config;
@@ -18,7 +19,9 @@ const Summary = ({ annotations: all }: { annotations: MSTAnnotation[] }) => {
     type: control.type,
     to_name: control.inputs[0],
     label_attrs: control.labels_attrs,
-    per_region: !annotations.every(a => a.results.filter(r => r.from_name.name === name).length <= 1)
+    // for now simulate per_region for all controls, if we have multiple results for the same control, it's per-region
+    // @todo return this in `parsed_label_config` from the backend
+    per_region: annotations.some(a => (a.versions.result ?? []).filter(r => r.from_name === name).length > 1)
   }));
 
   const values = [

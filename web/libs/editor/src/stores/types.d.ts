@@ -1,7 +1,8 @@
 type RawResult = {
   from_name: string;
   to_name: string;
-  value: object;
+  type: string;
+  value: Record<string, any>;
 };
 
 type MSTResult = {
