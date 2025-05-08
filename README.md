@@ -19,7 +19,7 @@ Label Studio is an open source data labeling tool. It lets you label data types 
 
 ![Gif of Label Studio annotating different types of data](/images/annotation_examples.gif)
 
-Have a custom dataset? You can customize Label Studio to fit your needs. Read an [introductory blog post](https://towardsdatascience.com/introducing-label-studio-a-swiss-army-knife-of-data-labeling-140c1be92881) to learn more. 
+Have a custom dataset? You can customize Label Studio to fit your needs. Read an [introductory blog post](https://medium.com/data-science/introducing-label-studio-a-swiss-army-knife-of-data-labeling-140c1be92881) to learn more. 
 
 ## Try out Label Studio
 
