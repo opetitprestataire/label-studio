@@ -219,7 +219,7 @@
   }
 
   & > em {
-    @apply gap-tight h-600;
+    @apply gap-tight h-600 min-w-600;
   }
 }
 
@@ -232,7 +232,7 @@
   }
 
   & > em {
-    @apply gap-tighter h-400;
+    @apply gap-tighter h-400 min-w-400;
   }
 }
 
@@ -244,7 +244,7 @@
   }
 
   & > em {
-    @apply gap-tighter h-400;
+    @apply gap-tighter h-400 min-w-400;
   }
 }
 
