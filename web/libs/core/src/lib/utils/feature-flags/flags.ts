@@ -92,3 +92,8 @@ export const FF_THEME_TOGGLE = "fflag_feat_front_optic_1217_theme_toggle_short";
  * Enables the summary view for annotations
  */
 export const FF_SUMMARY = "fflag_feat_front_leap_2036_annotations_summary";
+
+/**
+ * Cache members manager APIs
+ */
+export const FF_MEMBERS_MANAGER_API_CACHE = "fflag_fix_front_optic_1418_cache_members_manager_apis_short";
