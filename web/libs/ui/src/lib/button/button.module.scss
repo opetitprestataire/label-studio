@@ -19,6 +19,14 @@
     @apply h-full w-full p-0 aspect-square;
   }
 
+  & > em {
+    @apply inline-flex;
+
+    & > svg {
+      @apply h-full aspect-square;
+    }
+  }
+
   &:active {
     --emboss-shadow: var(--emboss-shadow-active);
   }
@@ -204,19 +212,19 @@
 /// SIZES
 
 .size-medium {
-  @apply p-tight text-label-medium h-[40px];
+  @apply p-tight text-label-medium h-1000;
 
   & > span {
     @apply px-tight gap-tight;
   }
 
   & > em {
-    @apply gap-tight;
+    @apply gap-tight h-600;
   }
 }
 
 .size-small {
-  @apply p-tighter text-label-small h-[32px];
+  @apply p-tighter text-label-small h-800;
 
 
   & > span {
@@ -224,19 +232,19 @@
   }
 
   & > em {
-    @apply gap-tighter;
+    @apply gap-tighter h-400;
   }
 }
 
 .size-smaller {
-  @apply p-tightest text-label-smaller h-[24px];
+  @apply p-tightest text-label-smaller h-600;
 
   & > span {
     @apply px-tightest gap-tightest;
   }
 
   & > em {
-    @apply gap-tighter;
+    @apply gap-tighter h-400;
   }
 }
 
