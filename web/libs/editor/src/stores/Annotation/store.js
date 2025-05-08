@@ -77,17 +77,17 @@ const AnnotationStoreModel = types
         // This fix aims to mimic the behaviour of selectAnnotation when it comes to updating the objects only without
         // actually executing the full process of selecting the annotation.
         if (isFF(FF_SIMPLE_INIT)) {
-          [...self.predictions, ...self.annotations].forEach((c) => {
+          [...self.predictions, ...self.annotations].forEach((a) => {
             // Skip the current annotation as it's already handled
-            if (c === self.selected) return;
+            if (a === self.selected) return;
 
             // Set results for each annotation without selecting it
-            c.updateObjects();
+            a.updateObjects();
           });
         }
 
-        self.annotations.forEach((c) => {
-          c.editable = false;
+        self.annotations.forEach((a) => {
+          a.editable = false;
         });
       } else {
         selectAnnotation(self.annotations.at(isFF(FF_SIMPLE_INIT) ? -1 : 0).id, { fromViewAll: true });
