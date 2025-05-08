@@ -61,8 +61,8 @@ export const KonvaRegionMixin = types
         if (isHovered) {
           if (self.annotation.isLinkingMode) {
             style.cursor = Constants.LINKING_MODE_CURSOR;
-          } else {
-            if (self.type !== "brushregion") style.cursor = Constants.POINTER_CURSOR;
+          } else if (self.type !== "brushregion") {
+            style.cursor = Constants.POINTER_CURSOR;
           }
           return;
         }
