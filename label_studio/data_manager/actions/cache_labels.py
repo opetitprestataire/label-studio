@@ -5,8 +5,8 @@ import logging
 
 from core.permissions import AllPermissions
 from core.redis import start_job_async_or_sync
-from tasks.models import Annotation, Prediction, Task
 from label_studio_sdk.label_interface import LabelInterface
+from tasks.models import Annotation, Prediction, Task
 
 logger = logging.getLogger(__name__)
 all_permissions = AllPermissions()
@@ -20,8 +20,8 @@ def cache_labels_job(project, queryset, **kwargs):
     control_tag = request_data.get('custom_control_tag') or request_data.get('control_tag')
     with_counters = request_data.get('with_counters', 'Yes').lower() == 'yes'
     label_interface = LabelInterface(project.label_config)
-    label_interface_tags = {tag.name:tag for tag in label_interface.find_tags('control')}
-    
+    label_interface_tags = {tag.name: tag for tag in label_interface.find_tags('control')}
+
     if source == 'annotations':
         column_name = 'cache'
     else:
@@ -65,11 +65,11 @@ def extract_labels(annotation, control_tag, label_interface_tags=None):
     for region in annotation.result:
         # find regions with specific control tag name or just all regions if control tag is None
         if (control_tag is None or region['from_name'] == control_tag) and 'value' in region:
-            # scan value for a field with list of strings (eg choices, textareas) 
+            # scan value for a field with list of strings (eg choices, textareas)
             # or taxonomy (list of string-lists)
             for key in region['value']:
                 if region['value'][key] and isinstance(region['value'][key], list):
-                    
+
                     if key == 'taxonomy':
                         showFullPath = 'true'
                         pathSeparator = '/'
@@ -78,18 +78,18 @@ def extract_labels(annotation, control_tag, label_interface_tags=None):
                             label_interface_tag = label_interface_tags[region['from_name']]
                             showFullPath = label_interface_tag.attr.get('showFullPath', 'false')
                             pathSeparator = label_interface_tag.attr.get('pathSeparator', '/')
-                            
+
                         if showFullPath == 'false':
                             for elems in region['value'][key]:
-                                labels.append( elems[-1] )  # just the leaf node of a taxonomy selection
+                                labels.append(elems[-1])  # just the leaf node of a taxonomy selection
                         else:
                             for elems in region['value'][key]:
-                                labels.append( pathSeparator.join(elems) )  # the full delimited taxonomy path
+                                labels.append(pathSeparator.join(elems))  # the full delimited taxonomy path
 
                     # other control tag types like Choices & TextAreas
                     elif isinstance(region['value'][key][0], str):
-                        labels.extend(region['value'][key]) 
-                        
+                        labels.extend(region['value'][key])
+
                     break
     return labels
 
