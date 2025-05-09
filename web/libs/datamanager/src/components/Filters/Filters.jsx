@@ -70,8 +70,8 @@ export const Filters = injector(({ views, currentView, filters }) => {
       </Elem>
       <Elem name="actions">
         <Button
-          size="smaller"
-          look="outlined"
+          size="small"
+          look="string"
           onClick={() => currentView.createFilter()}
           leading={<IconPlus className="!h-3 !w-3" />}
         >
