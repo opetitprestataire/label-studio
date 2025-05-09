@@ -132,12 +132,6 @@
         "decorators": ""
     },
     {
-        "url": "/projects/upload-example/",
-        "module": "projects.views.upload_example_using_config",
-        "name": "projects:project-upload-example-using-config",
-        "decorators": ""
-    },
-    {
         "url": "/api/projects/",
         "module": "projects.api.ProjectListAPI",
         "name": "projects:api:project-list",
@@ -273,18 +267,6 @@
         "url": "/storage-data/uploaded/",
         "module": "data_import.api.DownloadStorageData",
         "name": "data_import:storage-data-upload",
-        "decorators": ""
-    },
-    {
-        "url": "/tasks/<int:task_id>/presign/",
-        "module": "data_import.api.TaskPresignStorageData",
-        "name": "data_import:task-storage-data-presign",
-        "decorators": ""
-    },
-    {
-        "url": "/projects/<int:project_id>/presign/",
-        "module": "data_import.api.ProjectPresignStorageData",
-        "name": "data_import:project-storage-data-presign",
         "decorators": ""
     },
     {
@@ -945,6 +927,30 @@
         "url": "/api/storages/export/localfiles/form",
         "module": "io_storages.localfiles.api.LocalFilesExportStorageFormLayoutAPI",
         "name": "storages:api:export-storage-localfiles-form",
+        "decorators": ""
+    },
+    {
+        "url": "/tasks/<int:task_id>/resolve/",
+        "module": "io_storages.proxy_api.TaskResolveStorageUri",
+        "name": "storages:task-storage-data-resolve",
+        "decorators": ""
+    },
+    {
+        "url": "/projects/<int:project_id>/resolve/",
+        "module": "io_storages.proxy_api.ProjectResolveStorageUri",
+        "name": "storages:project-storage-data-resolve",
+        "decorators": ""
+    },
+    {
+        "url": "/tasks/<int:task_id>/presign/",
+        "module": "io_storages.proxy_api.TaskResolveStorageUri",
+        "name": "storages:task-storage-data-presign",
+        "decorators": ""
+    },
+    {
+        "url": "/projects/<int:project_id>/presign/",
+        "module": "io_storages.proxy_api.ProjectResolveStorageUri",
+        "name": "storages:project-storage-data-presign",
         "decorators": ""
     },
     {
@@ -1923,6 +1929,12 @@
         "url": "/api/token/blacklist/",
         "module": "jwt_auth.views.LSTokenBlacklistView",
         "name": "jwt_auth:token_blacklist",
+        "decorators": ""
+    },
+    {
+        "url": "/api/token/rotate/",
+        "module": "jwt_auth.views.LSAPITokenRotateView",
+        "name": "jwt_auth:token_rotate",
         "decorators": ""
     }
 ]

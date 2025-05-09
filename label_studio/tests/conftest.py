@@ -680,30 +680,12 @@ def async_import_off():
         yield
 
 
-@pytest.fixture(name='fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short_on')
-def fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short_on():
-    from core.feature_flags import flag_set
-
-    def fake_flag_set(*args, **kwargs):
-        if args[0] == 'fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short':
-            return True
-        return flag_set(*args, **kwargs)
-
-    with mock.patch('tasks.models.flag_set', wraps=fake_flag_set):
-        yield
-
-
-@pytest.fixture(name='fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short_off')
-def fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short_off():
-    from core.feature_flags import flag_set
-
-    def fake_flag_set(*args, **kwargs):
-        if args[0] == 'fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short':
-            return False
-        return flag_set(*args, **kwargs)
-
-    with mock.patch('tasks.models.flag_set', wraps=fake_flag_set):
-        yield
+@pytest.fixture(autouse=True)
+def set_feature_flag_envvar():
+    """
+    Automatically set the environment variable for all tests, including Tavern tests.
+    """
+    os.environ['fflag_optic_all_optic_1938_storage_proxy'] = 'true'
 
 
 @pytest.fixture(name='fflag_feat_back_lsdv_3958_server_side_encryption_for_target_storage_short_on')

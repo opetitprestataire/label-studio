@@ -275,7 +275,15 @@ INTERNAL_IPS = [  # django debug toolbar for django==2.2 requirement
     '127.0.0.1',
     'localhost',
 ]
-CORS_ORIGIN_ALLOW_ALL = True
+
+# Typical secure configuration is simply set CORS_ALLOW_ALL_ORIGINS = False in the env
+if allowed_origins := get_env_list('CORS_ALLOWED_ORIGINS'):
+    CORS_ALLOWED_ORIGINS = allowed_origins
+elif allowed_origin_regexes := get_env_list('CORS_ALLOWED_ORIGIN_REGEXES'):
+    CORS_ALLOWED_ORIGIN_REGEXES = allowed_origin_regexes
+else:
+    CORS_ALLOW_ALL_ORIGINS = get_bool_env('CORS_ALLOW_ALL_ORIGINS', True)
+
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -598,6 +606,10 @@ PROJECT_IMPORT_PERMISSION = 'projects.permissions.ProjectImportPermission'
 DELETE_TASKS_ANNOTATIONS_POSTPROCESS = None
 FEATURE_FLAGS_GET_USER_REPR = 'core.feature_flags.utils.get_user_repr'
 
+# Test factories
+PROJECT_FACTORY = 'projects.tests.factories.ProjectFactory'
+USER_FACTORY = 'users.tests.factories.UserFactory'
+
 
 def project_delete(project):
     project.delete()
@@ -820,3 +832,16 @@ if CI:
     }
 
 LOGOUT_REDIRECT_URL = get_env('LOGOUT_REDIRECT_URL', None)
+
+# Enable legacy tokens (useful for running with a pre-existing token via `LABEL_STUDIO_USER_TOKEN`)
+LABEL_STUDIO_ENABLE_LEGACY_API_TOKEN = get_bool_env('LABEL_STUDIO_ENABLE_LEGACY_API_TOKEN', False)
+RESOLVER_PROXY_BUFFER_SIZE = int(get_env('RESOLVER_PROXY_BUFFER_SIZE', 512 * 1024))
+RESOLVER_PROXY_TIMEOUT = int(get_env('RESOLVER_PROXY_TIMEOUT', 20))
+RESOLVER_PROXY_MAX_RANGE_SIZE = int(get_env('RESOLVER_PROXY_MAX_RANGE_SIZE', 8 * 1024 * 1024))
+RESOLVER_PROXY_GCS_DOWNLOAD_URL = get_env(
+    'RESOLVER_PROXY_GCS_DOWNLOAD_URL',
+    'https://storage.googleapis.com/download/storage/v1/b/{bucket_name}/o/{blob_name}?alt=media',
+)
+RESOLVER_PROXY_GCS_HTTP_TIMEOUT = int(get_env('RESOLVER_PROXY_GCS_HTTP_TIMEOUT', 5))
+RESOLVER_PROXY_ENABLE_ETAG_CACHE = get_bool_env('RESOLVER_PROXY_ENABLE_ETAG_CACHE', True)
+RESOLVER_PROXY_CACHE_TIMEOUT = int(get_env('RESOLVER_PROXY_CACHE_TIMEOUT', 3600))
