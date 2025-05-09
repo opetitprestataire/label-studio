@@ -36,6 +36,7 @@ export const TopBar = observer(({ store }) => {
               aria-label="Compare all annotations"
               onClick={annotationStore.toggleViewingAllAnnotations}
               variant={isViewAll ? "primary" : "neutral"}
+              look={isViewAll ? "filled" : "string"}
               tooltip="Compare all annotations"
               size="small"
             >
@@ -50,6 +51,7 @@ export const TopBar = observer(({ store }) => {
                 aria-label="Create an annotation"
                 variant="neutral"
                 size="small"
+                look="string"
                 onClick={(event) => {
                   event.preventDefault();
                   const created = store.annotationStore.createAnnotation();

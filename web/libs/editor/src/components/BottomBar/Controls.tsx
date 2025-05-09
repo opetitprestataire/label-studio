@@ -9,7 +9,7 @@ import type React from "react";
 import { useCallback, useState } from "react";
 
 import { Button, ButtonGroup, type ButtonProps } from "@humansignal/ui";
-import { IconBan, IconChevron } from "@humansignal/icons";
+import { IconBan, IconChevronDown } from "@humansignal/icons";
 import { Dropdown } from "../../common/Dropdown/Dropdown";
 import type { CustomButtonType } from "../../stores/CustomButton";
 import { Block, cn, Elem } from "../../utils/bem";
@@ -202,31 +202,35 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
 
       const SubmitOption = ({ isUpdate, onClickMethod }: { isUpdate: boolean; onClickMethod: () => any }) => {
         return (
-          <Button
-            name="submit-option"
-            className="w-[150px]"
-            onClick={async (event) => {
-              event.preventDefault();
+          <div className="p-tighter rounded">
+            <Button
+              name="submit-option"
+              look="string"
+              size="small"
+              className="w-[150px]"
+              onClick={async (event) => {
+                event.preventDefault();
 
-              const selected = store.annotationStore?.selected;
+                const selected = store.annotationStore?.selected;
 
-              selected?.submissionInProgress();
+                selected?.submissionInProgress();
 
-              if ("URLSearchParams" in window) {
-                const searchParams = new URLSearchParams(window.location.search);
+                if ("URLSearchParams" in window) {
+                  const searchParams = new URLSearchParams(window.location.search);
 
-                searchParams.set("exitStream", "true");
-                const newRelativePathQuery = `${window.location.pathname}?${searchParams.toString()}`;
+                  searchParams.set("exitStream", "true");
+                  const newRelativePathQuery = `${window.location.pathname}?${searchParams.toString()}`;
 
-                window.history.pushState(null, "", newRelativePathQuery);
-              }
+                  window.history.pushState(null, "", newRelativePathQuery);
+                }
 
-              await store.commentStore.commentFormSubmit();
-              onClickMethod();
-            }}
-          >
-            {`${isUpdate ? "Update" : "Submit"} and exit`}
-          </Button>
+                await store.commentStore.commentFormSubmit();
+                onClickMethod();
+              }}
+            >
+              {`${isUpdate ? "Update" : "Submit"} and exit`}
+            </Button>
+          </div>
         );
       };
 
@@ -263,7 +267,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                     }
                   >
                     <Button type="button">
-                      <IconChevron />
+                      <IconChevronDown />
                     </Button>
                   </Dropdown.Trigger>
                 ) : null}
@@ -280,34 +284,34 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
         const isUpdateDisabled = isDisabled || noChanges;
         const button = (
           <ButtonTooltip key="update" title={noChanges ? "No changes were made" : "Update this task: [ Ctrl+Enter ]"}>
-            <Button
-              aria-label="submit"
-              name="submit"
-              className="w-[150px]"
-              disabled={isUpdateDisabled}
-              onClick={async (event) => {
-                if ((event.target as HTMLButtonElement).classList.contains(dropdownTrigger)) return;
-                const selected = store.annotationStore?.selected;
+            <ButtonGroup>
+              <Button
+                aria-label="submit"
+                name="submit"
+                className="w-[150px]"
+                disabled={isUpdateDisabled}
+                onClick={async (event) => {
+                  if ((event.target as HTMLButtonElement).classList.contains(dropdownTrigger)) return;
+                  const selected = store.annotationStore?.selected;
 
-                selected?.submissionInProgress();
-                await store.commentStore.commentFormSubmit();
-                store.updateAnnotation();
-              }}
-              leading={
-                useExitOption ? (
-                  <Dropdown.Trigger
-                    alignment="top-right"
-                    content={<SubmitOption onClickMethod={store.updateAnnotation} isUpdate={isUpdate} />}
-                  >
-                    <div>
-                      <IconChevron />
-                    </div>
-                  </Dropdown.Trigger>
-                ) : null
-              }
-            >
-              {isUpdate ? "Update" : "Submit"}
-            </Button>
+                  selected?.submissionInProgress();
+                  await store.commentStore.commentFormSubmit();
+                  store.updateAnnotation();
+                }}
+              >
+                {isUpdate ? "Update" : "Submit"}
+              </Button>
+              {useExitOption ? (
+                <Dropdown.Trigger
+                  alignment="top-right"
+                  content={<SubmitOption onClickMethod={store.updateAnnotation} isUpdate={isUpdate} />}
+                >
+                  <Button>
+                    <IconChevronDown />
+                  </Button>
+                </Dropdown.Trigger>
+              ) : null}
+            </ButtonGroup>
           </ButtonTooltip>
         );
 

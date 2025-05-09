@@ -2,14 +2,7 @@ import tokens from "./tokens/tokens";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./apps/**/*.{js,jsx,ts,tsx}",
-    "./libs/ui/src/**/*.{js,jsx,ts,tsx}",
-    "./libs/libs/editor/src/**/*.{js,jsx,ts,tsx}",
-    "./libs/libs/datamanager/src/**/*.{js,jsx,ts,tsx}",
-    "./libs/core/src/**/*.{js,jsx,ts,tsx}",
-    "./libs/storybook/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ["./apps/**/*.{js,jsx,ts,tsx}", "./libs/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {

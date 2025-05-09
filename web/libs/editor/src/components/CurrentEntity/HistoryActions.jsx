@@ -14,7 +14,8 @@ export const HistoryActions = observer(({ annotation }) => {
         <Elem
           tag={Button}
           name="action"
-          type="text"
+          look="string"
+          size="small"
           aria-label="Undo"
           disabled={!history?.canUndo}
           onClick={() => annotation.undo()}
@@ -25,7 +26,8 @@ export const HistoryActions = observer(({ annotation }) => {
         <Elem
           tag={Button}
           name="action"
-          type="text"
+          look="string"
+          size="small"
           aria-label="Redo"
           disabled={!history?.canRedo}
           onClick={() => annotation.redo()}
@@ -37,7 +39,8 @@ export const HistoryActions = observer(({ annotation }) => {
           tag={Button}
           name="action"
           look="danger"
-          type="text"
+          look="string"
+          size="small"
           aria-label="Reset"
           disabled={!history?.canUndo}
           onClick={() => history?.reset()}

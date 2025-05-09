@@ -27,7 +27,7 @@ export const Actions = ({ store }) => {
         <Tooltip title="Compare all annotations">
           <Button
             icon={<IconViewAll />}
-            type="text"
+            look="string"
             aria-label="Compare all annotations"
             onClick={() => onToggleVisibility()}
             primary={isViewAll}

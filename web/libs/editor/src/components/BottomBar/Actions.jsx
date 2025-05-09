@@ -1,5 +1,5 @@
 import { IconInfoOutline, IconSettings } from "@humansignal/icons";
-import { Button, Tooltip } from "@humansignal/ui";
+import { Button, Space } from "@humansignal/ui";
 import { Elem } from "../../utils/bem";
 import { isSelfServe } from "../../utils/billing";
 import { FF_BULK_ANNOTATION } from "../../utils/feature-flags";
@@ -16,27 +16,32 @@ export const Actions = ({ store }) => {
   const isBulkMode = isFF(FF_BULK_ANNOTATION) && !isSelfServe() && store.hasInterface("annotation:bulk");
 
   return (
-    <Elem name="section">
+    <Space size="small">
       {!isPrediction && !isViewAll && store.hasInterface("edit-history") && <EditingHistory entity={entity} />}
 
       {store.description && store.hasInterface("instruction") && (
-        <Tooltip alignment="top-left" title="Show instructions">
-          <Button
-            type="text"
-            aria-label="Instructions"
-            size="small"
-            variant="neutral"
-            onClick={() => store.toggleDescription()}
-          >
-            <IconInfoOutline />
-          </Button>
-        </Tooltip>
-      )}
-      <Tooltip alignment="top-left" title="Settings">
-        <Button type="text" aria-label="Settings" size="small" variant="neutral" onClick={() => store.toggleSettings()}>
-          <IconSettings />
+        <Button
+          type="text"
+          aria-label="Instructions"
+          size="small"
+          variant="neutral"
+          tooltip="Show instructions"
+          onClick={() => store.toggleDescription()}
+        >
+          <IconInfoOutline />
         </Button>
-      </Tooltip>
+      )}
+      <Button
+        type="text"
+        aria-label="Settings"
+        size="small"
+        look="string"
+        variant="neutral"
+        onClick={() => store.toggleSettings()}
+        tooltip="Settings"
+      >
+        <IconSettings />
+      </Button>
 
       {store.hasInterface("ground-truth") && !isBulkMode && <GroundTruth entity={entity} />}
 
@@ -46,6 +51,6 @@ export const Actions = ({ store }) => {
           <AutoAcceptToggle />
         </Elem>
       )}
-    </Elem>
+    </Space>
   );
 };
