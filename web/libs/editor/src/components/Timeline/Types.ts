@@ -1,6 +1,7 @@
 import type { FC, MouseEvent } from "react";
 import type { ViewTypes } from "./Views";
 import type * as Controls from "./SideControls";
+import type { SpectrogramScale } from "../../lib/AudioUltra/Analysis/FFTProcessor";
 
 export type TimelineControls = Partial<Record<keyof typeof Controls, boolean>> & {
   ZoomControl: boolean;
@@ -144,12 +145,13 @@ export type TimelineSettings = {
   autoPlayNewSegments?: boolean;
 
   spectrogramFftSamples?: number;
-  spectrogramWindowingFunction?: 'hanning' | 'hamming' | 'blackman' | 'sine';
+  spectrogramWindowingFunction?: "hanning" | "hamming" | "blackman" | "sine";
   spectrogramColorScheme?: string;
   numberOfMelBands?: number;
   spectrogramMinDb?: number;
   spectrogramMaxDb?: number;
   spectrogramVisible?: boolean;
+  spectrogramScale?: SpectrogramScale;
 };
 
 export type TimelineStepFunction = (

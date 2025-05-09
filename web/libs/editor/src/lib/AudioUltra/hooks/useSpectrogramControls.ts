@@ -3,6 +3,7 @@ import { TimelineContext } from "../../../components/Timeline/Context";
 import type { Waveform } from "../Waveform";
 import type { WindowFunctionType } from "../Visual/WindowFunctions";
 import type { ColorScheme } from "../Visual/ColorMapper";
+import type { SpectrogramScale } from "../Analysis/FFTProcessor";
 import { SPECTROGRAM_DEFAULTS } from "../Visual/constants";
 
 interface SpectrogramParameters {
@@ -14,7 +15,9 @@ interface SpectrogramParameters {
   maxDb: number;
 }
 
-type PartialSpectrogramParameters = Partial<SpectrogramParameters>;
+type PartialSpectrogramParameters = Partial<SpectrogramParameters> & {
+  scale?: SpectrogramScale;
+};
 
 interface SpectrogramControls {
   setFftSamples: (samples: number) => void;
@@ -22,15 +25,14 @@ interface SpectrogramControls {
   setWindowingFunction: (func: WindowFunctionType) => void;
   setColorScheme: (scheme: ColorScheme) => void;
   setDbRange: (minDb: number, maxDb: number) => void;
+  setScale: (scale: SpectrogramScale) => void;
 }
 
 /**
  * Hook to manage and synchronize spectrogram settings between
  * the TimelineContext and the Waveform instance.
  */
-export function useSpectrogramControls(
-  waveform: MutableRefObject<Waveform | undefined>
-): SpectrogramControls {
+export function useSpectrogramControls(waveform: MutableRefObject<Waveform | undefined>): SpectrogramControls {
   const { settings, changeSetting } = useContext(TimelineContext);
 
   // Effect to update Waveform/Visualizer when context settings change
@@ -58,10 +60,12 @@ export function useSpectrogramControls(
     if (settings.spectrogramMaxDb !== undefined) {
       paramsToUpdate.maxDb = settings.spectrogramMaxDb;
     }
+    if (settings.spectrogramScale) {
+      paramsToUpdate.scale = settings.spectrogramScale;
+    }
 
     if (Object.keys(paramsToUpdate).length > 0) {
-      console.log("useSpectrogramControls: Updating waveform from context changes", paramsToUpdate);
-      wf.updateSpectrogramParameters(paramsToUpdate);
+      wf.updateSpectrogramConfig(paramsToUpdate);
     }
   }, [
     settings?.spectrogramFftSamples,
@@ -70,59 +74,90 @@ export function useSpectrogramControls(
     settings?.spectrogramColorScheme,
     settings?.spectrogramMinDb,
     settings?.spectrogramMaxDb,
+    settings?.spectrogramScale,
     waveform,
   ]);
 
-  const setFftSamples = useCallback((samples: number) => {
-    if (!waveform.current) return;
-    
-    if (samples < SPECTROGRAM_DEFAULTS.FFT_SAMPLES / 8 || samples > SPECTROGRAM_DEFAULTS.FFT_SAMPLES * 4) {
-      console.warn(`Invalid FFT samples value: ${samples}`);
-      return;
-    }
+  const setFftSamples = useCallback(
+    (samples: number) => {
+      if (!waveform.current) return;
 
-    waveform.current.updateSpectrogramParameters({ fftSamples: samples });
-    changeSetting?.("spectrogramFftSamples", samples);
-  }, [waveform, changeSetting]);
+      if (samples < SPECTROGRAM_DEFAULTS.FFT_SAMPLES / 8 || samples > SPECTROGRAM_DEFAULTS.FFT_SAMPLES * 4) {
+        console.warn(`Invalid FFT samples value: ${samples}`);
+        return;
+      }
 
-  const setMelBands = useCallback((bands: number) => {
-    if (!waveform.current) return;
+      waveform.current.updateSpectrogramConfig({ fftSamples: samples });
+      changeSetting?.("spectrogramFftSamples", samples);
+    },
+    [waveform, changeSetting],
+  );
 
-    if (bands < 1 || bands > 512) {
-      console.warn(`Invalid mel bands value: ${bands}`);
-      return;
-    }
+  const setMelBands = useCallback(
+    (bands: number) => {
+      if (!waveform.current) return;
 
-    waveform.current.updateSpectrogramParameters({ melBands: bands });
-    changeSetting?.("numberOfMelBands", bands);
-  }, [waveform, changeSetting]);
+      if (bands < 1 || bands > 512) {
+        console.warn(`Invalid mel bands value: ${bands}`);
+        return;
+      }
 
-  const setWindowingFunction = useCallback((func: WindowFunctionType) => {
-    if (!waveform.current) return;
+      waveform.current.updateSpectrogramConfig({ melBands: bands });
+      changeSetting?.("numberOfMelBands", bands);
+    },
+    [waveform, changeSetting],
+  );
 
-    waveform.current.updateSpectrogramParameters({ windowingFunction: func });
-    changeSetting?.("spectrogramWindowingFunction", func);
-  }, [waveform, changeSetting]);
+  const setWindowingFunction = useCallback(
+    (func: WindowFunctionType) => {
+      if (!waveform.current) return;
 
-  const setColorScheme = useCallback((scheme: ColorScheme) => {
-    if (!waveform.current) return;
+      waveform.current.updateSpectrogramConfig({ windowingFunction: func });
+      changeSetting?.("spectrogramWindowingFunction", func);
+    },
+    [waveform, changeSetting],
+  );
 
-    waveform.current.updateSpectrogramParameters({ colorScheme: scheme });
-    changeSetting?.("spectrogramColorScheme", scheme);
-  }, [waveform, changeSetting]);
+  const setColorScheme = useCallback(
+    (scheme: ColorScheme) => {
+      if (!waveform.current) return;
 
-  const setDbRange = useCallback((minDb: number, maxDb: number) => {
-    if (!waveform.current) return;
+      waveform.current.updateSpectrogramConfig({ colorScheme: scheme });
+      changeSetting?.("spectrogramColorScheme", scheme);
+    },
+    [waveform, changeSetting],
+  );
 
-    if (minDb >= maxDb) {
-      console.warn(`Invalid dB range: min (${minDb}) must be less than max (${maxDb})`);
-      return;
-    }
+  const setDbRange = useCallback(
+    (minDb: number, maxDb: number) => {
+      if (!waveform.current) return;
 
-    waveform.current.updateSpectrogramParameters({ minDb, maxDb });
-    changeSetting?.("spectrogramMinDb", minDb);
-    changeSetting?.("spectrogramMaxDb", maxDb);
-  }, [waveform, changeSetting]);
+      if (minDb >= maxDb) {
+        console.warn(`Invalid dB range: min (${minDb}) must be less than max (${maxDb})`);
+        return;
+      }
+
+      waveform.current.updateSpectrogramConfig({ minDb, maxDb });
+      changeSetting?.("spectrogramMinDb", minDb);
+      changeSetting?.("spectrogramMaxDb", maxDb);
+    },
+    [waveform, changeSetting],
+  );
+
+  const setScale = useCallback(
+    (scale: SpectrogramScale) => {
+      if (!waveform.current) return;
+
+      if (!["linear", "log", "mel"].includes(scale)) {
+        console.warn(`Invalid spectrogram scale: ${scale}`);
+        return;
+      }
+
+      waveform.current.updateSpectrogramConfig({ scale });
+      changeSetting?.("spectrogramScale", scale);
+    },
+    [waveform, changeSetting],
+  );
 
   return {
     setFftSamples,
@@ -130,5 +165,6 @@ export function useSpectrogramControls(
     setWindowingFunction,
     setColorScheme,
     setDbRange,
+    setScale,
   };
 }

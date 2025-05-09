@@ -1,10 +1,9 @@
 .audio-config {
-  position: relative; /* Keep relative for potential other children */
-  /* z-index is not needed here anymore */
+  position: relative;
 
   &__modal {
-    position: fixed; /* MUST be fixed for portal + JS positioning */
-    width: 260px;
+    position: fixed;
+    width: 360px;
     max-height: 500px;
     background: var(--color-neutral-background);
     box-shadow: 0 4px 10px 0 rgba(var(--color-neutral-shadow-raw) / 30%);
@@ -22,7 +21,7 @@
     }
 
     .audio-config__slider-container {
-      padding: 28px 16px 0px 16px;
+      padding: 28px 16px 0;
 
       .ant-slider {
         margin-left: 10px;
@@ -35,6 +34,7 @@
             bottom: 20px;
             font-size: 12px;
             transform: none;
+            color: var(--color-neutral-content);
           }
         }
       }
@@ -66,6 +66,13 @@
     }
   }
 
+  &__range-handle {
+    &::before {
+      width: 14px !important;
+      height: 14px !important;
+      box-shadow: none;
+    }
+  }
 
   &__scroll-content {
     flex-grow: 1;
@@ -73,20 +80,19 @@
     padding: 0;
 
     > .audio-config__slider-container,
-    > .audio-config__toggle,
-    > .audio-config__spectrogram-controls {
+    > .audio-config__toggle {
       padding: 8px 16px;
     }
   }
 
   &__buttons {
-    margin-top: 0; /* Remove margin */
+    margin-top: 0;
     padding: 2px 0;
     border-top: 1px solid var(--color-neutral-border);
     font-size: 14px;
     cursor: pointer;
-    flex-shrink: 0; /* Prevent buttons from shrinking */
-    background: var(--color-neutral-background); /* Ensure background matches */
+    flex-shrink: 0;
+    background: var(--color-neutral-background);
   }
 
   &__menu-button {
@@ -100,81 +106,6 @@
     }
   }
 
-  &__spectrogram-controls {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 8px 16px;
-
-    .range {
-      width: 100%;
-      margin: 8px 0;
-      padding: 0;
-
-      &.range_align_horizontal {
-        padding: 0;
-      }
-
-      &__body {
-        width: 100%;
-      }
-
-      &__range-handle {
-        &::before {
-          width: 14px !important;
-          height: 14px !important;
-        }
-      }
-    }
-  }
-
-  &__control {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin: 10px 0;
-    width: auto;
-
-    .info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--color-neutral-content-subtler);
-      white-space: nowrap;
-
-      svg {
-        width: 14px;
-        height: 14px;
-        color: var(--color-neutral-icon);
-      }
-    }
-
-    .input-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .separator {
-      color: var(--color-neutral-content-subtlest);
-      font-size: 12px;
-      white-space: nowrap;
-      margin: 0 4px;
-    }
-  }
-
-  .ant-select {
-    margin: 4px 0;
-  }
-
-  &__info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 5px;
-  }
 
   &__section-header {
     background-color: var(--color-neutral-background);
@@ -192,31 +123,5 @@
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
     }
-  }
-}
-
-.color-scheme-select {
-  .ant-select-selector {
-    padding: 0 !important;
-    border: none !important;
-    height: 32px;
-    line-height: 32px;
-    overflow: hidden;
-    border-radius: 4px;
-  }
-
-  .ant-select-selection-item {
-    padding: 0 12px !important;
-    line-height: 32px !important;
-    color: var(--color-neutral-content);
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
-    text-align: left;
-    width: 100%;
-  }
-
-  .ant-select-arrow {
-    color: var(--color-neutral-content);
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
-    right: 8px;
   }
 }

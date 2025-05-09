@@ -45,13 +45,13 @@ export const COLOR_SCHEMES = {
   TURBIDITY: "turbidity",
   VELOCITY_BLUE: "velocity-blue",
   VELOCITY_GREEN: "velocity-green",
-  CUBEHELIX: "cubehelix"
+  CUBEHELIX: "cubehelix",
 } as const;
 
-export type ColorScheme = typeof COLOR_SCHEMES[keyof typeof COLOR_SCHEMES];
+export type ColorScheme = (typeof COLOR_SCHEMES)[keyof typeof COLOR_SCHEMES];
 
 // Define the number of shades for cached colormaps
-const COLORMAP_NSHADES = 256;
+const COLORMAP_SHADES = 512;
 
 export class ColorMapper {
   private activeColormap: number[][] = [];
@@ -100,9 +100,7 @@ export class ColorMapper {
     const b = c[2];
 
     // Convert to rgba string
-    return `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(
-      b * 255
-    )}, 1)`;
+    return `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, 1)`;
   }
 
   /**
@@ -112,20 +110,15 @@ export class ColorMapper {
     try {
       this.activeColormap = colormap({
         colormap: this.currentScheme,
-        nshades: COLORMAP_NSHADES,
-        format: "float"
+        nshades: COLORMAP_SHADES,
+        format: "float",
       });
-      console.log(
-        `ColorMapper: Cached colormap '${this.currentScheme}' with ${this.activeColormap.length} shades.`
-      );
+      console.log(`ColorMapper: Cached colormap '${this.currentScheme}' with ${this.activeColormap.length} shades.`);
     } catch (error) {
-      console.error(
-        `Failed to generate colormap '${this.currentScheme}':`,
-        error
-      );
+      console.error(`Failed to generate colormap '${this.currentScheme}':`, error);
       // Fallback to a simple grayscale cache
-      this.activeColormap = Array.from({ length: COLORMAP_NSHADES }, (_, i) => {
-        const v = i / (COLORMAP_NSHADES - 1);
+      this.activeColormap = Array.from({ length: COLORMAP_SHADES }, (_, i) => {
+        const v = i / (COLORMAP_SHADES - 1);
         return [v, v, v];
       });
       // Reset to a known good scheme
