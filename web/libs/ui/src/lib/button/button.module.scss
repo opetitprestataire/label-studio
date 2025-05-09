@@ -135,11 +135,11 @@
 
 .variant-neutral-interted {
   --background-color: var(--color-neutral-inverted-surface);
-  --border-color: var(--color-neutral-inverted-border-bold);
+  --border-color: var(--color-neutral-inverted-border);
   --text-color: var(--color-neutral-inverted-content);
   --background-color-hover: var(--color-neutral-inverted-surface-hover);
   --background-color-active: var(--color-neutral-inverted-surface-active);
-  --focus-outline: var(--color-neutral-inverted-focus-outline);
+  --focus-outline: var(--color-primary-focus-outline);
   --background-color-hover-outline: var(--color-neutral-inverted-emphasis-subtle);
   --background-color-active-outline: var(--color-neutral-inverted-emphasis);
   --border-outline: var(--color-neutral-inverted-border);
