@@ -180,6 +180,7 @@ export type MSTStore = {
   task: {
     data: string;
     dataObj: Record<string, any>;
+    agreement: number | null;
   };
 
   annotationStore: {

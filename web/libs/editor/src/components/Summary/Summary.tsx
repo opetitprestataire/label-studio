@@ -10,12 +10,8 @@ type SummaryProps = {
 };
 
 const Summary = ({ annotations: all, store: annotationStore }: SummaryProps) => {
-  // @ts-ignore
-  // @todo should be alternative way to get the agreement:
-  // - DM is global
-  // - it doesn't exist in Review Stream
-  const task = window.DM?.taskStore.selected;
-  const data = annotationStore.store.task.dataObj;
+  const task = annotationStore.store.task;
+  const data = task.dataObj;
   // skip unsubmitted drafts
   const annotations = all.filter((a) => a.pk);
   const allTags = [...annotationStore.names];
@@ -48,7 +44,7 @@ const Summary = ({ annotations: all, store: annotationStore }: SummaryProps) => 
   const values = [
     {
       title: "Agreement",
-      value: task?.agreement ? `${task.agreement}%` : "N/A",
+      value: task?.agreement ? `${task.agreement.toFixed(2)}%` : "N/A",
       info: "Overall agreement over all submitted annotations",
     },
     {
