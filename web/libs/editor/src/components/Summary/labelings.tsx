@@ -48,25 +48,25 @@ const LabelsRenderer: RendererType = (results, control) => {
       })}
     </span>
   );
-}
+};
 
 export const renderers: Record<string, RendererType> = {
-  Labels: LabelsRenderer,
-  EllipseLabels: LabelsRenderer,
-  PolygonLabels: LabelsRenderer,
-  RectangleLabels: LabelsRenderer,
-  KeypointLabels: LabelsRenderer,
-  BrushLabels: LabelsRenderer,
-  HypertextLabels: LabelsRenderer,
-  TimeseriesLabels: LabelsRenderer,
-  ParagraphLabels: LabelsRenderer,
-  TimelineLabels: LabelsRenderer,
-  Number: (results, control) => {
+  labels: LabelsRenderer,
+  ellipselabels: LabelsRenderer,
+  polygonlabels: LabelsRenderer,
+  rectanglelabels: LabelsRenderer,
+  keypointlabels: LabelsRenderer,
+  brushlabels: LabelsRenderer,
+  hypertextlabels: LabelsRenderer,
+  timeserieslabels: LabelsRenderer,
+  paragraphlabels: LabelsRenderer,
+  timelinelabels: LabelsRenderer,
+  number: (results, control) => {
     if (!results.length) return "-";
 
     return resultValue(results[0]);
   },
-  Choices: (results, control) => {
+  choices: (results, control) => {
     const choices = results.flatMap(resultValue).flat();
     const unique = [...new Set(choices)];
 
@@ -75,17 +75,20 @@ export const renderers: Record<string, RendererType> = {
     return (
       <span className="flex gap-2">
         {unique.map((choice) => (
-          <span key={choice} className="inline-block px-2 bg-primary-background border border-primary-emphasis text-accent-grape-dark whitespace-nowrap rounded-4 mr-2">
+          <span
+            key={choice}
+            className="inline-block px-2 bg-primary-background border border-primary-emphasis text-accent-grape-dark whitespace-nowrap rounded-4 mr-2"
+          >
             {choice}
           </span>
         ))}
       </span>
     );
   },
-  TextArea: (results, control) => {
+  textarea: (results, control) => {
     if (!results.length) return "-";
     if (control.per_region) return null;
 
     return resultValue(results[0]);
-  }
+  },
 };

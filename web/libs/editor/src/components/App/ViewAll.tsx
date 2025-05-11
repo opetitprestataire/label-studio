@@ -15,7 +15,7 @@ type Props = {
 
 const Tab = ({ title, active, onSelect }: { title: string; active: boolean; onSelect: () => void }) => {
   return (
-    <div className={clsx(styles.tab, {[styles.active]: active })} onClick={onSelect}>
+    <div className={clsx(styles.tab, { [styles.active]: active })} onClick={onSelect}>
       {title}
     </div>
   );
@@ -33,7 +33,7 @@ export const ViewAll = ({ store: annotationStore, annotations, root }: Props) =>
         </div>
         {tab === "summary" && (
           <div>
-            <Summary annotations={annotations} />
+            <Summary store={annotationStore} annotations={annotations} />
           </div>
         )}
         {tab === "compare" && (
@@ -43,7 +43,7 @@ export const ViewAll = ({ store: annotationStore, annotations, root }: Props) =>
         )}
       </div>
     );
-  } else {
-    return <Grid store={annotationStore} annotations={annotations} root={root} />;
   }
+
+  return <Grid store={annotationStore} annotations={annotations} root={root} />;
 };

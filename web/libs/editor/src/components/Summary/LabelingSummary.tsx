@@ -36,7 +36,7 @@ export const LabelingSummary = ({ annotations, controls }: Props) => {
               const renderer = renderers[control.type];
               const text = !results.length
                 ? "-"
-                : renderer?.(results, control) ?? `${results.length} result${results.length > 1 ? "s" : ""}`;
+                : (renderer?.(results, control) ?? `${results.length} result${results.length > 1 ? "s" : ""}`);
 
               return (
                 <td key={control.name} className="px-4 py-2">

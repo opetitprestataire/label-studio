@@ -16,20 +16,34 @@ type MSTResult = {
   from_name: any;
 };
 
-type MSTagProps = {
+type MSTObjectTag = {
   isReady?: boolean;
+  name: string;
+  isControlTag: false;
+  isObjectTag: true;
+  type: string;
 };
 
-type MSTTagImage = {
+type MSTControlTag = {
+  isControlTag: true;
+  isObjectTag: false;
+  name: string;
+  toname: string;
+  children: Array<any>;
+  perregion: boolean;
+  type: string;
+};
+
+type MSTTagImage = MSTObjectTag & {
   type: "image";
   stageWidth: number;
   stageHeight: number;
   containerWidth: number;
   containerHeight: number;
   canvasSize?: { width: number; height: number };
-} & MSTagProps;
+};
 
-type MSTTag = MSTTagImage | (MSTagProps & { type: string });
+type MSTTag = MSTTagImage | MSTObjectTag | MSTControlTag;
 
 type MixinMSTArea = {
   id: string;
@@ -163,12 +177,17 @@ export type MSTStore = {
   isSubmitting: boolean;
   // @todo WHAT IS THIS?
   explore: any;
+  task: {
+    data: string;
+    dataObj: Record<string, any>;
+  };
 
   annotationStore: {
     annotations: MSTAnnotation[];
     selected: MSTAnnotation | null;
     selectedHistory: object | null;
     store: MSTStore;
+    names: Map<string, MSTTag>;
   };
   commentStore: MSTCommentStore;
 

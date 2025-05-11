@@ -1,43 +1,64 @@
-import type { MSTAnnotation } from "../../stores/types";
+import type { MSTAnnotation, MSTControlTag, MSTObjectTag, MSTStore } from "../../stores/types";
 import { DataSummary } from "./DataSummary";
 import { LabelingSummary } from "./LabelingSummary";
-import type { ControlTag, Project } from "./types";
 import { NumbersSummary } from "./NumbersSummary";
+import type { ControlTag, LabelAttrs } from "./types";
 
-const Summary = ({ annotations: all }: { annotations: MSTAnnotation[] }) => {
+type SummaryProps = {
+  annotations: MSTAnnotation[];
+  store: MSTStore["annotationStore"];
+};
+
+const Summary = ({ annotations: all, store: annotationStore }: SummaryProps) => {
   // @ts-ignore
-  const DM = window.DM;
-  const project: Project = DM.project;
-  const task = DM.taskStore.selected;
-  const data = task.data;
+  // @todo should be alternative way to get the agreement:
+  // - DM is global
+  // - it doesn't exist in Review Stream
+  const task = window.DM?.taskStore.selected;
+  const data = annotationStore.store.task.dataObj;
   // skip unsubmitted drafts
-  const annotations = all.filter(a => a.pk);
+  const annotations = all.filter((a) => a.pk);
+  const allTags = [...annotationStore.names];
 
-  const parsed_config = project.parsed_label_config;
-  const controls: ControlTag[] = Object.entries(parsed_config).map(([name, control]) => ({
+  const controlTags: [string, MSTControlTag][] = allTags.filter(([_, control]) => control.isControlTag) as [
+    string,
+    MSTControlTag,
+  ][];
+  const controls: ControlTag[] = controlTags.map(([name, control]) => ({
     name,
     type: control.type,
-    to_name: control.inputs[0],
-    label_attrs: control.labels_attrs,
-    // for now simulate per_region for all controls, if we have multiple results for the same control, it's per-region
-    // @todo return this in `parsed_label_config` from the backend
-    per_region: annotations.some(a => (a.versions.result ?? []).filter(r => r.from_name === name).length > 1)
+    to_name: control.toname,
+    label_attrs:
+      control.children?.reduce(
+        (acc, { value, background }) => {
+          acc[value] = { value, background };
+          return acc;
+        },
+        {} as Record<string, LabelAttrs>,
+      ) ?? {},
+    per_region: !!control.perregion,
   }));
+
+  type ObjectTagEntry = [string, MSTObjectTag];
+  type ObjectTypes = Record<string, string>;
+
+  const objectTags: ObjectTagEntry[] = allTags.filter(([_, control]) => control.isObjectTag) as ObjectTagEntry[];
+  const dataTypes: ObjectTypes = Object.fromEntries(objectTags.map(([name, object]) => [name, object.type]));
 
   const values = [
     {
       title: "Agreement",
-      value: `${task.agreement}%`,
+      value: task?.agreement ? `${task.agreement}%` : "N/A",
       info: "Overall agreement over all submitted annotations",
     },
     {
       title: "Annotations",
-      value: annotations.filter(a => a.type === "annotation").length,
+      value: annotations.filter((a) => a.type === "annotation").length,
       info: "Number of submitted annotations",
     },
     {
       title: "Predictions",
-      value: annotations.filter(a => a.type === "prediction").length,
+      value: annotations.filter((a) => a.type === "prediction").length,
       info: "Number of predictions",
     },
   ];
@@ -48,7 +69,7 @@ const Summary = ({ annotations: all }: { annotations: MSTAnnotation[] }) => {
       <NumbersSummary values={values} />
       <LabelingSummary annotations={annotations} controls={controls} />
       <h2 className="px-4">Task Data</h2>
-      <DataSummary data_types={project.data_types} data={data} />
+      <DataSummary data_types={dataTypes} data={data} />
     </div>
   );
 };
