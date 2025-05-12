@@ -98,6 +98,7 @@ type MSTAnnotation = {
   id: string;
   pk: string;
   user: MSTUserExtended;
+  createdBy: string; // used for predictions
   canBeReviewed: boolean;
   userGenerate: boolean;
   sentUserGenerate: boolean;
