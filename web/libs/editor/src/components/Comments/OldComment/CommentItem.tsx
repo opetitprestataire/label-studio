@@ -114,10 +114,10 @@ export const CommentItem: FC<any> = observer(
               <Elem name="confirmForm">
                 <Elem name="question">Are you sure?</Elem>
                 <Elem name="controls">
-                  <Button onClick={() => deleteComment()} size="compact" look="danger" autoFocus>
+                  <Button onClick={() => deleteComment()} size="small" variant="negative" look="outlined" autoFocus aria-label="Delete comment">
                     Yes
                   </Button>
-                  <Button onClick={() => setConfirmMode(false)} size="compact">
+                  <Button onClick={() => setConfirmMode(false)} size="small" look="outlined" aria-label="Cancel comment deletion">
                     No
                   </Button>
                 </Elem>
@@ -167,7 +167,7 @@ export const CommentItem: FC<any> = observer(
                   </Menu>
                 }
               >
-                <Button size="small" type="text" icon={<IconEllipsis />} />
+                <Button size="small" look="string" leading={<IconEllipsis />} aria-label="Comment options" />
               </Dropdown.Trigger>
             )}
           </Elem>

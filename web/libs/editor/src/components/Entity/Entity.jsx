@@ -216,7 +216,7 @@ export default observer(({ store, annotation }) => {
             placeholder="Meta Information"
           />
 
-          <Button type="primary" htmlType="submit" className="mr-2">
+          <Button type="submit" className="mr-2" aria-label="Submit entity">
             Add
           </Button>
 
@@ -229,6 +229,7 @@ export default observer(({ store, annotation }) => {
               ev.preventDefault();
               return false;
             }}
+            aria-label="Cancel"
           >
             Cancel
           </Button>

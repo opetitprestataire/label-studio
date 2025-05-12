@@ -102,7 +102,7 @@ const LinkedRegion: FC<LinkedRegionProps> = observer(({ region, result, interact
       )}
       {onUnlink && (
         <Elem name="close">
-          <Button size="small" variant="neutral" look="string" leading={<IconClose />} onClick={onUnlink} />
+          <Button size="small" variant="neutral" look="string" leading={<IconClose />} onClick={onUnlink} aria-label="Unlink comment" />
         </Elem>
       )}
     </Block>
