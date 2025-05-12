@@ -27,7 +27,7 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_rq import job
-from io_storages.utils import get_uri_via_regex
+from io_storages.utils import get_uri_via_regex, parse_bucket_uri
 from rq.job import Job
 from tasks.models import Annotation, Task
 from tasks.serializers import AnnotationSerializer, PredictionSerializer
@@ -230,7 +230,7 @@ class ImportStorage(Storage):
     def iterkeys(self):
         return iter(())
 
-    def get_data(self, key):
+    def get_data(self, key) -> list[dict]:
         raise NotImplementedError
 
     def generate_http_url(self, url):
@@ -255,8 +255,19 @@ class ImportStorage(Storage):
             return False
         # TODO: Search for occurrences inside string, e.g. for cases like "gs://bucket/file.pdf" or "<embed src='gs://bucket/file.pdf'/>"
         _, prefix = get_uri_via_regex(url, prefixes=(self.url_scheme,))
-        if prefix == self.url_scheme:
-            return True
+        bucket_uri = parse_bucket_uri(url, self)
+
+        # If there is a prefix and the bucket matches the storage's bucket/container/path
+        if prefix == self.url_scheme and bucket_uri:
+            # bucket is used for s3 and gcs
+            if hasattr(self, 'bucket') and bucket_uri.bucket == self.bucket:
+                return True
+            # container is used for azure blob
+            if hasattr(self, 'container') and bucket_uri.bucket == self.container:
+                return True
+            # path is used for redis
+            if hasattr(self, 'path') and bucket_uri.bucket == self.path:
+                return True
         # if not found any occurrences - this Storage can't resolve url
         return False
 
@@ -420,7 +431,7 @@ class ImportStorage(Storage):
 
             logger.debug(f'{self}: found new key {key}')
             try:
-                data = self.get_data(key)
+                tasks_data = self.get_data(key)
             except (UnicodeDecodeError, json.decoder.JSONDecodeError) as exc:
                 logger.debug(exc, exc_info=True)
                 raise ValueError(
@@ -429,26 +440,32 @@ class ImportStorage(Storage):
                     f'"Treat every bucket object as a source file"'
                 )
 
-            task = self.add_task(data, self.project, maximum_annotations, max_inner_id, self, key, link_class)
-            max_inner_id += 1
+            if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):
+                tasks_data = tasks_data[:1]
 
-            # update progress counters for storage info
-            tasks_created += 1
+            for task_data in tasks_data:
+                # TODO: batch this loop body with add_task -> add_tasks in a single bulk write.
+                # Also have to handle any mismatch between len(tasks_data) and settings.WEBHOOK_BATCH_SIZE
+                task = self.add_task(task_data, self.project, maximum_annotations, max_inner_id, self, key, link_class)
+                max_inner_id += 1
 
-            # add task to webhook list
-            tasks_for_webhook.append(task)
+                # update progress counters for storage info
+                tasks_created += 1
 
-            # settings.WEBHOOK_BATCH_SIZE
-            # `WEBHOOK_BATCH_SIZE` sets the maximum number of tasks sent in a single webhook call, ensuring manageable payload sizes.
-            # When `tasks_for_webhook` accumulates tasks equal to/exceeding `WEBHOOK_BATCH_SIZE`, they're sent in a webhook via
-            # `emit_webhooks_for_instance`, and `tasks_for_webhook` is cleared for new tasks.
-            # If tasks remain in `tasks_for_webhook` at process end (less than `WEBHOOK_BATCH_SIZE`), they're sent in a final webhook
-            # call to ensure all tasks are processed and no task is left unreported in the webhook.
-            if len(tasks_for_webhook) >= settings.WEBHOOK_BATCH_SIZE:
-                emit_webhooks_for_instance(
-                    self.project.organization, self.project, WebhookAction.TASKS_CREATED, tasks_for_webhook
-                )
-                tasks_for_webhook = []
+                # add task to webhook list
+                tasks_for_webhook.append(task)
+
+                # settings.WEBHOOK_BATCH_SIZE
+                # `WEBHOOK_BATCH_SIZE` sets the maximum number of tasks sent in a single webhook call, ensuring manageable payload sizes.
+                # When `tasks_for_webhook` accumulates tasks equal to/exceeding `WEBHOOK_BATCH_SIZE`, they're sent in a webhook via
+                # `emit_webhooks_for_instance`, and `tasks_for_webhook` is cleared for new tasks.
+                # If tasks remain in `tasks_for_webhook` at process end (less than `WEBHOOK_BATCH_SIZE`), they're sent in a final webhook
+                # call to ensure all tasks are processed and no task is left unreported in the webhook.
+                if len(tasks_for_webhook) >= settings.WEBHOOK_BATCH_SIZE:
+                    emit_webhooks_for_instance(
+                        self.project.organization, self.project, WebhookAction.TASKS_CREATED, tasks_for_webhook
+                    )
+                    tasks_for_webhook = []
         if tasks_for_webhook:
             emit_webhooks_for_instance(
                 self.project.organization, self.project, WebhookAction.TASKS_CREATED, tasks_for_webhook
