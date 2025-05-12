@@ -87,10 +87,6 @@
       background-color: var(--color-neutral-surface-hover);
     }
 
-    &:focus {
-      background-color: var(--color-neutral-surface);
-    }
-
     &::placeholder {
       color: var(--color-neutral-content-subtler);
     }
