@@ -59,13 +59,13 @@ const DebugComponent = ({ store }) => {
       <h2>Debug</h2>
       <div>
         <Button size="small" onClick={serializeAll} aria-label="Serialize all">
-          Serialize All
+          Serialize All Annotations
         </Button>
         <Button size="small" onClick={serializeCurrent} aria-label="Serialize current">
-          Serialize Current
+          Serialize Current Annotation
         </Button>
         <Button size="small" onClick={loadTask} aria-label="Load task">
-          Load Task
+          Simulate Loading Task
         </Button>
       </div>
 

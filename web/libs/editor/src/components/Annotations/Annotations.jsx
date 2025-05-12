@@ -157,7 +157,7 @@ const Annotation = observer(({ item, store }) => {
               okType="danger"
               cancelText="Cancel"
             >
-              <Button size="small" look="string" variant="negative" aria-label="Clear annotations">
+              <Button size="small" look="string" variant="negative" aria-label="Delete selected annotation">
                 <DeleteOutlined />
               </Button>
             </Popconfirm>
@@ -195,7 +195,7 @@ const Annotation = observer(({ item, store }) => {
           </Tooltip>
         )}
         {store.annotationStore.viewingAll && (
-          <Button size="small" look="outlined" onClick={toggleVisibility} aria-label="Toggle annotations visibility">
+          <Button size="small" look="outlined" onClick={toggleVisibility} aria-label="Toggle visibility of current annotation">
             {item.hidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
           </Button>
         )}
@@ -225,7 +225,6 @@ class Annotations extends Component {
                 const c = store.annotationStore.createAnnotation();
 
                 store.annotationStore.selectAnnotation(c.id);
-                // c.list.selectAnnotation(c);
               }}
               aria-label="Create new annotation"
             >
@@ -241,7 +240,7 @@ class Annotations extends Component {
               ev.preventDefault();
               store.annotationStore.toggleViewingAllAnnotations();
             }}
-            aria-label="View all annotations"
+            aria-label="Toggle view of all annotations"
           >
             <WindowsOutlined />
           </Button>
