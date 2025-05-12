@@ -7,7 +7,11 @@ docs/package.json                           @hlomzik @Gondragos @nick-skriabin
 docs/yarn.lock                              @hlomzik @Gondragos @nick-skriabin
 web/libs/editor                             @hlomzik @Gondragos @nick-skriabin
 web                                         @HumanSignal/frontend
+web/tools                                   @HumanSignal/fine-tuners
 web/libs/datamanager                        @HumanSignal/fine-tuners
+web/design-tokens.json                      @HumanSignal/fine-tuners
+web/libs/ui/**/tokens*                      @HumanSignal/fine-tuners
+web/**/tailwind*                            @HumanSignal/fine-tuners
 web/libs/editor/**/Audio*                   @HumanSignal/fine-tuners
 web/libs/editor/**/Video*                   @HumanSignal/fine-tuners
 web/libs/editor/**/TimeSeries*              @HumanSignal/fine-tuners
