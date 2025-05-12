@@ -38,15 +38,16 @@ const editorOptions = {
   hintOptions: { schemaInfo: tags },
 };
 
+const COLLAPSED_PANEL_HEIGHT = 33;
 const DEFAULT_PANEL_HEIGHT = 300;
+const MIN_PANEL_HEIGHT = 100;
+const MAX_PANEL_HEIGHT = 800;
 
 const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
   const [config, setConfig] = useAtom(configAtom);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const [bottomPanelHeight, setBottomPanelHeight] = useState(DEFAULT_PANEL_HEIGHT);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const minPanelHeight = 120; // Expanded min height
-  const collapsedPanelHeight = 33; // Collapsed height (matches right panel exactly)
   const dragging = useRef(false);
   const startY = useRef(0);
   const startHeight = useRef(0);
@@ -62,10 +63,8 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!dragging.current) return;
-    let containerHeight = containerRef.current?.offsetHeight || 800;
-    let maxHeight = Math.max(minPanelHeight, Math.floor(containerHeight * 0.5));
     const delta = startY.current - e.clientY;
-    const newHeight = Math.max(minPanelHeight, Math.min(maxHeight, startHeight.current + delta));
+    const newHeight = Math.max(MIN_PANEL_HEIGHT, Math.min(MAX_PANEL_HEIGHT, startHeight.current + delta));
     setBottomPanelHeight(newHeight);
   }, []);
 
@@ -89,12 +88,12 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
 
   // When collapsing, set height to collapsedPanelHeight
   React.useEffect(() => {
-    if (isCollapsed) setBottomPanelHeight(collapsedPanelHeight);
+    if (isCollapsed) setBottomPanelHeight(COLLAPSED_PANEL_HEIGHT);
   }, [isCollapsed]);
 
   // When expanding, ensure height is at least minPanelHeight
   React.useEffect(() => {
-    if (!isCollapsed && bottomPanelHeight < minPanelHeight) setBottomPanelHeight(minPanelHeight);
+    if (!isCollapsed && bottomPanelHeight < MIN_PANEL_HEIGHT) setBottomPanelHeight(MIN_PANEL_HEIGHT);
   }, [isCollapsed, bottomPanelHeight]);
 
   return (
@@ -126,7 +125,7 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
         />
       )}
       {/* BottomPanel (Input/Output) */}
-      <div style={{ height: bottomPanelHeight, minHeight: collapsedPanelHeight }}>
+      <div style={{ height: bottomPanelHeight, minHeight: COLLAPSED_PANEL_HEIGHT }}>
         <BottomPanel
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
