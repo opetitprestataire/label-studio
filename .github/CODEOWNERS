@@ -9,6 +9,8 @@ web/libs/editor                             @hlomzik @Gondragos @nick-skriabin
 web                                         @HumanSignal/frontend
 web/libs/datamanager                        @HumanSignal/fine-tuners
 web/libs/editor/src/tags/object/AudioUltra  @HumanSignal/fine-tuners
+web/libs/editor/src/tags/object/Audio*        @HumanSignal/fine-tuners
+web/libs/editor/src/lib/AudioUltra                @HumanSignal/fine-tuners
 web/libs/editor/src/tags/object/Video       @HumanSignal/fine-tuners
 web/libs/editor/src/tags/object/TimeSeries  @HumanSignal/fine-tuners
 web/apps/labelstudio/src/pages/DataManager  @HumanSignal/fine-tuners
