@@ -111,7 +111,7 @@ export const GeneralSettings = () => {
               <Form.Indicator>
                 <span case="success">Saved!</span>
               </Form.Indicator>
-              <Button type="submit" className="w-[150px]">
+              <Button type="submit" className="w-[150px]" aria-label="Save general settings">
                 Save
               </Button>
             </Form.Actions>

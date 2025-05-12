@@ -112,10 +112,12 @@ export const StorageForm = forwardRef(({ onSubmit, target, project, rootClass, s
       >
         <Input type="hidden" name="project" value={project} />
         <div className="flex gap-tight">
-          <Button type="button" look="outlined" waiting={checking} onClick={validateStorageConnection}>
+          <Button type="button" look="outlined" waiting={checking} onClick={validateStorageConnection} aria-label="Test storage connection">
             Check Connection
           </Button>
-          <Button type="submit">{storage ? "Save" : "Add Storage"}</Button>
+          <Button type="submit" aria-label={storage ? "Save storage settings" : "Add storage"}>
+            {storage ? "Save" : "Add Storage"}
+          </Button>
         </div>
       </Form.Actions>
 

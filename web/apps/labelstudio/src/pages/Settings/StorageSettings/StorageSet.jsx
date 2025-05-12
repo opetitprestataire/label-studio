@@ -97,7 +97,7 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
   return (
     <Columns.Column title={title}>
       <div className={rootClass.elem("controls")}>
-        <Button onClick={() => showStorageFormModal()} disabled={loading} look="outlined">
+        <Button onClick={() => showStorageFormModal()} disabled={loading} look="outlined" aria-label="Add storage">
           {buttonLabel}
         </Button>
       </div>

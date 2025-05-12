@@ -50,7 +50,7 @@ export const StorageCard = ({ rootClass, target, storage, onEditStorage, onDelet
             </Menu>
           }
         >
-          <Button look="string" className="-ml-3">
+          <Button look="string" className="-ml-3" aria-label="Storage options">
             <IconEllipsisVertical />
           </Button>
         </Dropdown.Trigger>
@@ -64,7 +64,7 @@ export const StorageCard = ({ rootClass, target, storage, onEditStorage, onDelet
       />
       <div className={rootClass.elem("sync")}>
         <div>
-          <Button look="outlined" waiting={syncing} onClick={startSync} disabled={notSyncedYet}>
+          <Button look="outlined" waiting={syncing} onClick={startSync} disabled={notSyncedYet} aria-label="Sync storage">
             Sync Storage
           </Button>
           {notSyncedYet && (

@@ -105,7 +105,7 @@ export const MachineLearningSettings = () => {
             title="Let’s connect your first model"
             description="Connect a machine learning model to generate predictions. These predictions can be compared side by side, used for efficient pre‒labeling and, to aid in active learning, directing users to the most impactful labeling tasks."
             action={
-              <Button primary onClick={() => showMLFormModal()}>
+              <Button primary onClick={() => showMLFormModal()} aria-label="Add machine learning model">
                 Connect Model
               </Button>
             }
@@ -172,7 +172,7 @@ export const MachineLearningSettings = () => {
               <Form.Indicator>
                 <span case="success">Saved!</span>
               </Form.Indicator>
-              <Button type="submit" look="primary" style={{ width: 120 }}>
+              <Button type="submit" look="primary" style={{ width: 120 }} aria-label="Save machine learning settings">
                 Save
               </Button>
             </Form.Actions>
