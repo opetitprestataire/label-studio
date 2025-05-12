@@ -20,6 +20,7 @@ export const RegionControlButton: FC<
         look="string"
         size="smaller"
         style={{ ...(props.style ?? {}) }}
+        aria-label={typeof children === 'string' ? children : 'Region control'}
       >
         {children}
       </Button>

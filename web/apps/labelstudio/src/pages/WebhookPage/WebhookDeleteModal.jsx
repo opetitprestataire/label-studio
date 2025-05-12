@@ -29,6 +29,7 @@ export const WebhookDeleteModal = ({ onDelete }) => {
             onClick={() => {
               ctrl.hide();
             }}
+            aria-label="Cancel webhook deletion"
           >
             Cancel
           </Button>
@@ -39,6 +40,7 @@ export const WebhookDeleteModal = ({ onDelete }) => {
               await onDelete();
               ctrl.hide();
             }}
+            aria-label="Confirm webhook deletion"
           >
             Delete
           </Button>

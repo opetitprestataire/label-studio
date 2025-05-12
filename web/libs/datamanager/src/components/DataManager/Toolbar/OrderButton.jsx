@@ -51,6 +51,7 @@ export const OrderButton = injector(({ size, ordering, view, ...rest }) => {
           variant="neutral"
           disabled={!!ordering === false}
           onClick={() => view.setOrdering(ordering?.field)}
+          aria-label={ordering?.desc ? "Sort ascending" : "Sort descending"}
         >
           {ordering?.desc ? <IconSortUp /> : <IconSortDown />}
         </Button>

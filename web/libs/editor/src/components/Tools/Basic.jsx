@@ -16,6 +16,7 @@ export default observer(
             leading={this.props.icon}
             className={styles.button}
             onClick={this.props.onClick}
+            aria-label={this.props.tooltip || "Tool button"}
           />
         </Tooltip>
       );

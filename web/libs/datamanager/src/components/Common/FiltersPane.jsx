@@ -30,6 +30,7 @@ export const FiltersButton = buttonInjector(
           look="outlined"
           onClick={() => sidebarEnabled && viewsStore.toggleSidebar()}
           trailing={<Icon icon={IconChevronDown} />}
+          aria-label="Filters"
           {...rest}
         >
           Filters{" "}
