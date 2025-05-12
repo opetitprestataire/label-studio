@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback, memo } from "react";
 import { useAtom, useSetAtom } from "jotai";
-import { CodeEditor, ThemeToggle, Select } from "@humansignal/ui";
+import { CodeEditor, ThemeToggle } from "@humansignal/ui";
 import { PlaygroundPreview } from "./PlaygroundPreview";
 import { BottomPanel } from "./BottomPanel";
 import type { BottomPanelRef } from "./BottomPanel";
@@ -12,17 +12,12 @@ import tags from "../utils/schema.json";
 import { cnm } from "@humansignal/shad/utils";
 import styles from "./PlaygroundApp.module.scss";
 
-const selectOptions = [
-  { label: "Light", value: "light" },
-  { label: "Dark", value: "dark" },
-];
 
 const TopBar = memo(() => {
   return (
     <div className="flex items-center h-10 px-tight text-heading-medium justify-between select-none border-b border-neutral-border">
       <span className="font-semibold tracking-tight text-body-medium">LabelStudio Playground</span>
       <div className="flex items-center gap-2">
-        <Select options={selectOptions as any} value="light" />
         <ThemeToggle />
       </div>
     </div>
@@ -43,10 +38,12 @@ const editorOptions = {
   hintOptions: { schemaInfo: tags },
 };
 
+const DEFAULT_PANEL_HEIGHT = 300;
+
 const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
   const [config, setConfig] = useAtom(configAtom);
   const editorRef = useRef<HTMLTextAreaElement>(null);
-  const [bottomPanelHeight, setBottomPanelHeight] = useState<number>(180); // Default height for bottom panel
+  const [bottomPanelHeight, setBottomPanelHeight] = useState(DEFAULT_PANEL_HEIGHT);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const minPanelHeight = 120; // Expanded min height
   const collapsedPanelHeight = 33; // Collapsed height (matches right panel exactly)
@@ -76,6 +73,10 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
     dragging.current = false;
     document.body.style.cursor = "";
   }, []);
+
+  const handleDividerDoubleClick = useCallback(() => {
+    setBottomPanelHeight(DEFAULT_PANEL_HEIGHT);
+  }, [setBottomPanelHeight]);
 
   React.useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
@@ -116,8 +117,9 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
       {/* Divider for resizing (only when not collapsed) */}
       {!isCollapsed && (
         <div
-          className="h-2 cursor-row-resize bg-neutral-border-subtler hover:bg-neutral-border-subtle transition-colors duration-100 z-10"
+          className="h-2 cursor-row-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
           onMouseDown={handleMouseDown}
+          onDoubleClick={handleDividerDoubleClick}
           role="separator"
           aria-orientation="horizontal"
           tabIndex={-1}
@@ -216,7 +218,7 @@ export const PlaygroundApp = () => {
         <EditorPanel editorWidth={editorWidth} />
         {/* Divider */}
         <div
-          className="w-2 cursor-col-resize bg-neutral-border-subtler hover:bg-neutral-border-subtle transition-colors duration-100 z-10"
+          className="w-2 cursor-col-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
           onMouseDown={() => (dragging.current = true)}
           onDoubleClick={handleDividerDoubleClick}
           role="separator"

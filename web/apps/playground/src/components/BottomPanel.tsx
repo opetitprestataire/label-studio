@@ -1,13 +1,10 @@
-import React, { useCallback, useRef, useState, forwardRef, useImperativeHandle } from "react";
+import type React from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import { useAtomValue } from "jotai";
 import { configAtom } from "../atoms/configAtoms";
 import { generateSampleTaskFromConfig } from "../utils/generateSampleTask";
 import { IconCollapseSmall, IconExpandSmall } from "@humansignal/icons";
 import { cnm } from "@humansignal/ui/utils/utils";
-
-const DEFAULT_PANEL_HEIGHT = 300;
-const MIN_PANEL_HEIGHT = 100;
-const MAX_PANEL_HEIGHT = 800;
 
 export type BottomPanelRef = {
   handleAnnotationUpdate: (annotation: any) => void;
@@ -18,53 +15,16 @@ interface BottomPanelProps {
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const HEADER_HEIGHT = 33;
+
 export const BottomPanel = forwardRef<BottomPanelRef, BottomPanelProps>(({ isCollapsed, setIsCollapsed }, ref) => {
-  const [panelHeight, setPanelHeight] = useState(DEFAULT_PANEL_HEIGHT);
   const [currentAnnotation, setCurrentAnnotation] = useState<any>(null);
-  const dragging = useRef(false);
-  const startY = useRef(0);
-  const startHeight = useRef(0);
   const config = useAtomValue(configAtom);
   const sampleTask = generateSampleTaskFromConfig(config);
 
-  const handleAnnotationUpdate = useCallback((annotation: any) => {
-    setCurrentAnnotation(annotation);
-  }, []);
-
   useImperativeHandle(ref, () => ({
-    handleAnnotationUpdate,
+    handleAnnotationUpdate: (annotation: any) => setCurrentAnnotation(annotation),
   }));
-
-  // Header height
-  const HEADER_HEIGHT = 33;
-
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    dragging.current = true;
-    startY.current = e.clientY;
-    startHeight.current = panelHeight;
-    document.body.style.cursor = "row-resize";
-  }, [panelHeight]);
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!dragging.current) return;
-    const delta = startY.current - e.clientY;
-    const newHeight = Math.max(100, Math.min(500, startHeight.current + delta));
-    setPanelHeight(newHeight);
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    dragging.current = false;
-    document.body.style.cursor = "";
-  }, []);
-
-  React.useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
 
   return (
     <div
@@ -74,14 +34,15 @@ export const BottomPanel = forwardRef<BottomPanelRef, BottomPanelProps>(({ isCol
     >
       {/* Header (always visible, 33px) */}
       <div
-        className="relative h-[33px] flex flex-row items-center px-4 bg-neutral-surface select-none"
+        className="relative h-[33px] flex flex-row items-center bg-neutral-surface select-none"
         style={{ minHeight: HEADER_HEIGHT, maxHeight: HEADER_HEIGHT }}
       >
         <div className="flex flex-row w-full">
-          <div className="w-1/2 flex items-center font-semibold text-body-small">
+          <div className="flex-1 flex items-center font-semibold text-body-small px-4">
             Data Input
           </div>
-          <div className="w-1/2 flex items-center font-semibold text-body-small pl-4">
+          <div className="w-[1px] h-[33px] bg-neutral-border" />
+          <div className="flex-1 flex items-center font-semibold text-body-small px-4">
             Data Output
           </div>
         </div>
@@ -100,13 +61,13 @@ export const BottomPanel = forwardRef<BottomPanelRef, BottomPanelProps>(({ isCol
       {!isCollapsed && (
         <div className="flex flex-1 min-h-0">
           {/* Sample Data Panel */}
-          <div className="w-1/2 border-r border-neutral-border p-4 overflow-auto">
+          <div className="flex-1 border-r border-neutral-border p-4 overflow-auto">
             <pre className="text-body-small whitespace-pre-wrap">
               {JSON.stringify(sampleTask.data, null, 2)}
             </pre>
           </div>
           {/* Annotation Output Panel */}
-          <div className="w-1/2 p-4 overflow-auto">
+          <div className="flex-1 p-4 overflow-auto">
             <pre className="text-body-small whitespace-pre-wrap">
               {JSON.stringify(currentAnnotation || sampleTask.annotation || {}, null, 2)}
             </pre>
