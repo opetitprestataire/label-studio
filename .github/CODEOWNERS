@@ -6,7 +6,6 @@ docs/.npmignore                             @hlomzik @Gondragos @nick-skriabin
 docs/package.json                           @hlomzik @Gondragos @nick-skriabin
 docs/yarn.lock                              @hlomzik @Gondragos @nick-skriabin
 web/libs/editor                             @hlomzik @Gondragos @nick-skriabin
-web                                         @HumanSignal/frontend
 web/tools                                   @HumanSignal/fine-tuners
 web/libs/datamanager                        @HumanSignal/fine-tuners
 web/design-tokens.json                      @HumanSignal/fine-tuners
