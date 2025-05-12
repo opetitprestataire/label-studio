@@ -233,7 +233,8 @@ export const Tabs = (props: BaseProps & { isBottomPanel?: boolean; bottomCollaps
           {props.isBottomPanel && props.settings?.collapsibleBottomPanel && (
             <Button
               className="collapsible-bottom-panel-toggle"
-              style={{ marginInline: 4, marginTop: 4, display: "flex", height: "24px", width: "24px", padding: 0, alignItems: "center", background: "none", border: "none", cursor: "pointer" }}
+              // TODO: remove inline styles and use tailwind classes when Button component is updated
+              style={{ marginLeft: 4, marginRight: 5, marginTop: 4, display: "flex", height: "24px", width: "24px", padding: 0, alignItems: "center", background: "none", border: "none", cursor: "pointer" }}
               onClick={() => props.setBottomCollapsed?.(!props.bottomCollapsed)}
               title={props.bottomCollapsed ? "Expand Bottom Panel" : "Collapse Bottom Panel"}
             >

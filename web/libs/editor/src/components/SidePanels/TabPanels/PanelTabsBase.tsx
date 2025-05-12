@@ -113,6 +113,7 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
       return {
         height: `${TABS_ROW_HEIGHT}px`,
         zIndex,
+        borderTop: "1px solid var(--color-neutral-border)",
       };
     }
     if (isBottomPanel && collapsibleBottomPanel) {
@@ -352,7 +353,7 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
     <Block ref={panelRef} name="tabs-panel" mod={mods} style={{ ...style, ...coordinates }}>
       {isBottomPanel && collapsibleBottomPanel && !bottomCollapsed && (
         <div
-          className="w-full h-2 cursor-row-resize bg-neutral-border-subtler hover:bg-neutral-border-subtle transition-colors duration-100 relative select-none z-10"
+          className="w-full h-2 absolute top-[-7px] left-0 cursor-row-resize bg-neutral-border-subtler hover:bg-neutral-border-subtle transition-colors duration-100 select-none z-10"
           onMouseDown={handleMouseDown}
           onDoubleClick={handleDividerDoubleClick}
           role="separator"

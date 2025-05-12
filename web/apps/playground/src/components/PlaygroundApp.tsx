@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useRef, useState, useCallback, memo } from "
 import { useAtom, useSetAtom } from "jotai";
 import { CodeEditor, ThemeToggle, Select } from "@humansignal/ui";
 import { PlaygroundPreview } from "./PlaygroundPreview";
+import { BottomPanel } from "./BottomPanel";
+import type { BottomPanelRef } from "./BottomPanel";
 import { configAtom, loadingAtom, errorAtom, interfacesAtom } from "../atoms/configAtoms";
 import { getQueryParams, getInterfacesFromParams } from "../utils/query";
 import { completeAfter, completeIfInTag } from "../utils/codeEditor";
@@ -44,10 +46,60 @@ const editorOptions = {
 const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
   const [config, setConfig] = useAtom(configAtom);
   const editorRef = useRef<HTMLTextAreaElement>(null);
+  const [bottomPanelHeight, setBottomPanelHeight] = useState<number>(180); // Default height for bottom panel
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const minPanelHeight = 120; // Expanded min height
+  const collapsedPanelHeight = 33; // Collapsed height (matches right panel exactly)
+  const dragging = useRef(false);
+  const startY = useRef(0);
+  const startHeight = useRef(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Drag logic for vertical resize
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    dragging.current = true;
+    startY.current = e.clientY;
+    startHeight.current = bottomPanelHeight;
+    document.body.style.cursor = "row-resize";
+  }, [bottomPanelHeight]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!dragging.current) return;
+    let containerHeight = containerRef.current?.offsetHeight || 800;
+    let maxHeight = Math.max(minPanelHeight, Math.floor(containerHeight * 0.5));
+    const delta = startY.current - e.clientY;
+    const newHeight = Math.max(minPanelHeight, Math.min(maxHeight, startHeight.current + delta));
+    setBottomPanelHeight(newHeight);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    dragging.current = false;
+    document.body.style.cursor = "";
+  }, []);
+
+  React.useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
+
+  // When collapsing, set height to collapsedPanelHeight
+  React.useEffect(() => {
+    if (isCollapsed) setBottomPanelHeight(collapsedPanelHeight);
+  }, [isCollapsed]);
+
+  // When expanding, ensure height is at least minPanelHeight
+  React.useEffect(() => {
+    if (!isCollapsed && bottomPanelHeight < minPanelHeight) setBottomPanelHeight(minPanelHeight);
+  }, [isCollapsed, bottomPanelHeight]);
 
   return (
-    <div className="flex flex-col min-w-0 h-full" style={{ width: `${editorWidth}%` }}>
-      <div className="flex-1 min-h-0 min-w-0">
+    <div ref={containerRef} className="flex flex-col min-w-0 h-full" style={{ width: `${editorWidth}%` }}>
+      {/* CodeEditor (top) */}
+      <div className="flex-1 min-h-0">
         <CodeEditor
           ref={editorRef}
           value={config}
@@ -61,6 +113,23 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
           options={editorOptions}
         />
       </div>
+      {/* Divider for resizing (only when not collapsed) */}
+      {!isCollapsed && (
+        <div
+          className="h-2 cursor-row-resize bg-neutral-border-subtler hover:bg-neutral-border-subtle transition-colors duration-100 z-10"
+          onMouseDown={handleMouseDown}
+          role="separator"
+          aria-orientation="horizontal"
+          tabIndex={-1}
+        />
+      )}
+      {/* BottomPanel (Input/Output) */}
+      <div style={{ height: bottomPanelHeight, minHeight: collapsedPanelHeight }}>
+        <BottomPanel
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+        />
+      </div>
     </div>
   );
 };
@@ -72,6 +141,7 @@ export const PlaygroundApp = () => {
   const setInterfaces = useSetAtom(interfacesAtom);
   const [editorWidth, setEditorWidth] = useState(50); // percent
   const dragging = useRef(false);
+  const bottomPanelRef = useRef<BottomPanelRef>(null);
 
   useEffect(() => {
     const params = getQueryParams();
@@ -156,7 +226,7 @@ export const PlaygroundApp = () => {
         {/* Preview Panel */}
         <div className="flex flex-col min-w-0 h-full" style={previewPanelStyle}>
           <div className="flex-1 min-h-0 min-w-0">
-            <PlaygroundPreview />
+            <PlaygroundPreview onAnnotationUpdate={bottomPanelRef.current?.handleAnnotationUpdate} />
           </div>
         </div>
       </div>

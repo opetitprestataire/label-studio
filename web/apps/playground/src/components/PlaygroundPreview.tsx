@@ -5,9 +5,11 @@ import { generateSampleTaskFromConfig } from "../utils/generateSampleTask";
 import { useAtomValue } from "jotai";
 import { configAtom, errorAtom, loadingAtom, interfacesAtom } from "../atoms/configAtoms";
 
-type PlaygroundPreviewProps = {};
+type PlaygroundPreviewProps = {
+  onAnnotationUpdate?: (annotation: any) => void;
+};
 
-export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(() => {
+export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(({ onAnnotationUpdate }) => {
   const config = useAtomValue(configAtom);
   const loading = useAtomValue(loadingAtom);
   const error = useAtomValue(errorAtom);
@@ -39,7 +41,6 @@ export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(() => {
     }
 
     async function loadLSF() {
-      console.time("loadLSF");
       dependencies = await import("@humansignal/editor");
       LabelStudio = dependencies.LabelStudio;
       if (!LabelStudio || !rootRef.current) return;
@@ -62,8 +63,13 @@ export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(() => {
           collapsibleBottomPanel: true,
           defaultCollapsedBottomPanel: true,
         },
+        onLabelStudioLoad: (ls: any) => {
+          console.log("onLabelStudioLoad", ls);
+          // ls.annotationStore.on("updateAnnotation", (annotation: any) => {
+          //   onAnnotationUpdate?.(annotation.serializeAnnotation());
+          // });
+        },
       });
-      console.timeEnd("loadLSF");
     }
 
     if (!loading && !error && config) {
@@ -76,7 +82,7 @@ export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(() => {
       cleanup();
     };
     // eslint-disable-next-line
-  }, [config, loading, error, interfaces]);
+  }, [config, loading, error, interfaces, onAnnotationUpdate]);
 
   return (
     <div className="h-full flex flex-col items-center justify-center">
