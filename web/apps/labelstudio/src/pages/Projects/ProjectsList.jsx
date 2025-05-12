@@ -39,10 +39,10 @@ export const EmptyProjectsList = ({ openModal }) => {
     <Block name="empty-projects-page">
       <Elem name="heidi" tag="img" src={absoluteURL("/static/images/opossum_looking.png")} />
       <Elem name="header" tag="h1">
-        Heidi doesn’t see any projects here!
+        Heidi doesn't see any projects here!
       </Elem>
       <p>Create one and start labeling your data.</p>
-      <Button onClick={openModal} className="my-8">
+      <Button onClick={openModal} className="my-8" aria-label="Create new project">
         Create Project
       </Button>
     </Block>
@@ -91,7 +91,7 @@ const ProjectCard = ({ project }) => {
                   </Menu>
                 }
               >
-                <Button size="smaller" look="string">
+                <Button size="smaller" look="string" aria-label="Project options">
                   <IconEllipsis />
                 </Button>
               </Dropdown.Trigger>
@@ -121,7 +121,7 @@ const ProjectCard = ({ project }) => {
         </Elem>
         <Elem name="description">{project.description}</Elem>
         <Elem name="info">
-          <Elem name="created-date">{format(new Date(project.created_at), "dd MMM ’yy, HH:mm")}</Elem>
+          <Elem name="created-date">{format(new Date(project.created_at), "dd MMM 'yy, HH:mm")}</Elem>
           <Elem name="created-by">
             <Userpic src="#" user={project.created_by} showUsername />
           </Elem>

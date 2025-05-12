@@ -13,7 +13,7 @@ export const EmptyList: FC = () => {
         </Elem>
         <Elem name="title">Create a Model</Elem>
         <Elem name="caption">Build a high quality model to auto-label your data using LLMs</Elem>
-        <Button>Create a Model</Button>
+        <Button aria-label="Create new model">Create a Model</Button>
       </Elem>
     </Block>
   );

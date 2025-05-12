@@ -16,7 +16,7 @@ const SaveAndLeaveButton = ({ onSave, text = "Save and Leave" }: SaveAndLeaveBut
     setSaving(false);
   }, [onSave]);
   return (
-    <Button size="small" onClick={saveHandler} waiting={saving}>
+    <Button size="small" onClick={saveHandler} waiting={saving} aria-label="Save changes">
       {text}
     </Button>
   );

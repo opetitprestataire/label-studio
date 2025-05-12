@@ -208,7 +208,7 @@ export const DataManagerPage = ({ ...props }) => {
     <Block name="crash">
       <Elem name="info">Project was deleted or not yet created</Elem>
 
-      <Button to="/projects">Back to projects</Button>
+      <Button to="/projects" aria-label="Back to projects">Back to projects</Button>
     </Block>
   ) : (
     <>

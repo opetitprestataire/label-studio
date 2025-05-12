@@ -71,7 +71,7 @@ export const TemplatesList = ({ selectedGroup, selectedRecipe, onCustomTemplate,
             </li>
           ))}
         </ul>
-        <Button type="button" align="left" look="string" size="small" onClick={onCustomTemplate} className="w-full">
+        <Button type="button" align="left" look="string" size="small" onClick={onCustomTemplate} className="w-full" aria-label="Create custom template">
           Custom template
         </Button>
       </aside>

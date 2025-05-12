@@ -356,10 +356,10 @@ export const ImportPage = ({
           onSubmit={onLoadURL}
         >
           <Input placeholder="Dataset URL" name="url" ref={urlRef} rawClassName="h-[40px]" />
-          <Button type="submit">Add URL</Button>
+          <Button type="submit" aria-label="Add URL">Add URL</Button>
         </form>
         <span>or</span>
-        <Button type="button" onClick={() => document.getElementById("file-input").click()} leading={<IconUpload />}>
+        <Button type="button" onClick={() => document.getElementById("file-input").click()} leading={<IconUpload />} aria-label="Upload file">
           Upload {files.uploaded.length ? "More " : ""}Files
         </Button>
         {ff.isActive(ff.FF_SAMPLE_DATASETS) && (

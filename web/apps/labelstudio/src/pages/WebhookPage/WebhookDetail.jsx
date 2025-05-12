@@ -261,10 +261,10 @@ const WebhookDetail = ({ webhook, webhooksInfo, fetchWebhooks, onBack, onSelectA
                 <div className={rootClass.elem("status")}>
                   <Form.Indicator />
                 </div>
-                <Button type="button" look="outlined" className={rootClass.elem("cancel-button")} onClick={onBack}>
+                <Button type="button" look="outlined" className={rootClass.elem("cancel-button")} onClick={onBack} aria-label="Cancel webhook edit">
                   Cancel
                 </Button>
-                <Button className={rootClass.elem("save-button")}>{webhook === null ? "Add Webhook" : "Save"}</Button>
+                <Button className={rootClass.elem("save-button")} aria-label={webhook === null ? "Add webhook" : "Save webhook"}>{webhook === null ? "Add Webhook" : "Save"}</Button>
               </Space>
             </Elem>
           </Form>

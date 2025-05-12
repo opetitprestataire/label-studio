@@ -100,7 +100,7 @@ const ConfigureControl = ({ control, template }) => {
           onKeyPress={onKeyPress}
           className="lsf-textarea-ls p-2 px-3"
         />
-        <Button type="button" size="small" look="outlined" onClick={onAddLabels}>
+        <Button type="button" size="small" look="outlined" onClick={onAddLabels} aria-label="Add labels">
           Add
         </Button>
       </form>
@@ -481,7 +481,7 @@ const Configurator = ({
       <div className={configClass.elem("container")}>
         <h1>Labeling Interface{hasChanges ? " *" : ""}</h1>
         <header>
-          <Button type="button" data-leave={true} onClick={onBrowse} size="small" look="outlined">
+          <Button type="button" data-leave={true} onClick={onBrowse} size="small" look="outlined" aria-label="Browse templates">
             Browse Templates
           </Button>
           <ToggleItems items={{ code: "Code", visual: "Visual" }} active={configure} onSelect={onSelect} />
@@ -542,7 +542,7 @@ const Configurator = ({
                 </Elem>
               </Block>
             )}
-            <Button size="small" className="w-[120px]" onClick={onSave} waiting={waiting}>
+            <Button size="small" className="w-[120px]" onClick={onSave} waiting={waiting} aria-label="Save configuration">
               {waiting ? "Saving..." : "Save"}
             </Button>
             {isFF(FF_UNSAVED_CHANGES) && <UnsavedChanges hasChanges={hasChanges} onSave={onSave} />}

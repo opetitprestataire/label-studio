@@ -132,7 +132,7 @@ export const ExportPage = () => {
             <Elem name="actions">
               <Space>
                 {downloadingMessage && "Files are being prepared. It might take some time."}
-                <Button className="w-[135px]" onClick={proceedExport} waiting={downloading}>
+                <Button className="w-[135px]" onClick={proceedExport} waiting={downloading} aria-label="Export data">
                   Export
                 </Button>
               </Space>

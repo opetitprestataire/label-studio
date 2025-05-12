@@ -84,12 +84,12 @@ const InvitationFooter = () => {
   return (
     <Space spread>
       <Space>
-        <Button look="outlined" style={{ width: 170 }} onClick={() => refetch()}>
+        <Button look="outlined" style={{ width: 170 }} onClick={() => refetch()} aria-label="Refresh invite link">
           Reset Link
         </Button>
       </Space>
       <Space>
-        <Button variant={copied ? "positive" : "primary"} style={{ width: 170 }} onClick={() => copyText(link!)}>
+        <Button variant={copied ? "positive" : "primary"} style={{ width: 170 }} onClick={() => copyText(link!)} aria-label="Copy invite link">
           {copied ? "Copied!" : "Copy link"}
         </Button>
       </Space>

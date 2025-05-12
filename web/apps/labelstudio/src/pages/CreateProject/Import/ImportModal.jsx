@@ -77,10 +77,10 @@ export const Inner = () => {
         </Elem>
 
         <Space>
-          <Button size="small" variant="negative" look="outlined" waiting={waiting} onClick={onCancel}>
+          <Button size="small" variant="negative" look="outlined" waiting={waiting} onClick={onCancel} aria-label="Cancel import">
             Cancel
           </Button>
-          <Button size="small" onClick={onFinish} waiting={waiting || uploading} disabled={uploadDisabled}>
+          <Button size="small" onClick={onFinish} waiting={waiting || uploading} disabled={uploadDisabled} aria-label="Finish import">
             Import
           </Button>
         </Space>

@@ -102,11 +102,11 @@ export const PeoplePage = () => {
 
           <Space>
             {isFF(FF_AUTH_TOKENS) && (
-              <Button look="outlined" onClick={showApiTokenSettingsModal}>
+              <Button look="outlined" onClick={showApiTokenSettingsModal} aria-label="Show API token settings">
                 API Tokens Settings
               </Button>
             )}
-            <Button leading={<IconPlus className="!h-4" />} onClick={() => setInvitationOpen(true)}>
+            <Button leading={<IconPlus className="!h-4" />} onClick={() => setInvitationOpen(true)} aria-label="Invite new member">
               Add People
             </Button>
           </Space>
