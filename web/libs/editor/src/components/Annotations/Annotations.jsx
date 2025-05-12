@@ -53,6 +53,7 @@ const Annotation = observer(({ item, store }) => {
         ev.preventDefault();
         item.setGroundTruth(false);
       }}
+      aria-label="Unset ground truth"
     >
       <StarOutlined />
     </Button>
@@ -70,6 +71,7 @@ const Annotation = observer(({ item, store }) => {
           ev.preventDefault();
           item.setGroundTruth(!item.ground_truth);
         }}
+        aria-label={item.ground_truth ? "Unset ground truth" : "Set ground truth"}
       >
         {item.ground_truth ? <StarFilled /> : <StarOutlined />}
       </Button>
@@ -225,6 +227,7 @@ class Annotations extends Component {
                 store.annotationStore.selectAnnotation(c.id);
                 // c.list.selectAnnotation(c);
               }}
+              aria-label="Create new annotation"
             >
               <PlusOutlined />
             </Button>
@@ -238,6 +241,7 @@ class Annotations extends Component {
               ev.preventDefault();
               store.annotationStore.toggleViewingAllAnnotations();
             }}
+            aria-label="View all annotations"
           >
             <WindowsOutlined />
           </Button>
