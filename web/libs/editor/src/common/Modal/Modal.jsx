@@ -54,6 +54,7 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
           size="small"
           look="outlined"
           autoFocus
+          aria-label="Cancel"
         >
           {cancelText ?? "Cancel"}
         </Button>
@@ -65,6 +66,7 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
           }}
           size="small"
           look={buttonLook ?? "primary"}
+          aria-label="Confirm"
         >
           {okText ?? "OK"}
         </Button>
@@ -86,6 +88,7 @@ export const info = ({ okText, onOkPress, ...props }) => {
             modal.close();
           }}
           size="small"
+          aria-label={okText ?? "OK"}
         >
           {okText ?? "OK"}
         </Button>
