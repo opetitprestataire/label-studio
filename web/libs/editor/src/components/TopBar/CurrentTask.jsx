@@ -97,7 +97,7 @@ export const CurrentTask = observer(({ store }) => {
               disabled={!store.canGoNextTask && !canPostpone}
               onClick={store.canGoNextTask ? store.nextTask : store.postponeTask}
               style={{ background: !isFF(FF_DEV_3873) && "none", backgroundColor: isFF(FF_DEV_3873) && "none" }}
-              variant="neutral"
+              variant={!store.canGoNextTask && canPostpone ? "primary" : "neutral"}
             >
               <IconChevronRight />
             </Button>

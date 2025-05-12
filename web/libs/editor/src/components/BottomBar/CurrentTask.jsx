@@ -49,10 +49,10 @@ export const CurrentTask = observer(({ store }) => {
               <IconChevronLeft />
             </Button>
             <Button
-              variant="neutral"
               data-testid="next-task"
               disabled={!store.canGoNextTask && !canPostpone}
               onClick={store.canGoNextTask ? store.nextTask : store.postponeTask}
+              variant={!store.canGoNextTask && canPostpone ? "primary" : "neutral"}
             >
               <IconChevronRight />
             </Button>

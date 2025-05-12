@@ -35,7 +35,7 @@ export default observer(
       return (
         <Fragment>
           <Dropdown overlay={menu}>
-            <Button className={styles.button}>{this.props.icon}</Button>
+            <Button className={styles.button} aria-label="Slider options">{this.props.icon}</Button>
           </Dropdown>
         </Fragment>
       );

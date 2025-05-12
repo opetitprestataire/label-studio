@@ -213,10 +213,10 @@ export default class Grid extends Component {
             </div>
           )}
         </div>
-        <Button size="small" look="string" onClick={this.left} className={styles.left}>
+        <Button size="small" look="string" onClick={this.left} className={styles.left} aria-label="Move left">
           <LeftCircleOutlined />
         </Button>
-        <Button size="small" look="string" onClick={this.right} className={styles.right}>
+        <Button size="small" look="string" onClick={this.right} className={styles.right} aria-label="Move right">
           <RightCircleOutlined />
         </Button>
       </div>

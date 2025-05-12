@@ -40,7 +40,7 @@ export const Controls = controlsInjector(
     if (isReview) {
       buttons.push(
         <ButtonTooltip key="reject" name="annotation:skip" title="Reject annotation">
-          <Button disabled={disabled} look="danger" onClick={store.rejectAnnotation}>
+          <Button disabled={disabled} look="danger" onClick={store.rejectAnnotation} aria-label="Reject annotation">
             Reject
           </Button>
         </ButtonTooltip>,
@@ -48,7 +48,7 @@ export const Controls = controlsInjector(
 
       buttons.push(
         <ButtonTooltip key="accept" name="annotation:submit" title="Accept annotation">
-          <Button disabled={disabled} look="primary" onClick={store.acceptAnnotation}>
+          <Button disabled={disabled} look="primary" onClick={store.acceptAnnotation} aria-label="Accept annotation">
             {history.canUndo ? "Fix + Accept" : "Accept"}
           </Button>
         </ButtonTooltip>,
@@ -63,7 +63,7 @@ export const Controls = controlsInjector(
       if (store.hasInterface("skip")) {
         buttons.push(
           <ButtonTooltip key="skip" name="annotation:skip" title="Cancel (skip) task">
-            <Button disabled={disabled} look="danger" onClick={store.skipTask}>
+            <Button disabled={disabled} look="danger" onClick={store.skipTask} aria-label="Skip task">
               Skip
             </Button>
           </ButtonTooltip>,
@@ -77,7 +77,7 @@ export const Controls = controlsInjector(
         buttons.push(
           <ButtonTooltip key="submit" name="annotation:submit" title={title}>
             <Elem name="tooltip-wrapper">
-              <Button disabled={disabled || submitDisabled} look="primary" onClick={store.submitAnnotation}>
+              <Button disabled={disabled || submitDisabled} look="primary" onClick={store.submitAnnotation} aria-label="Submit annotation">
                 Submit
               </Button>
             </Elem>
@@ -88,7 +88,7 @@ export const Controls = controlsInjector(
       if ((userGenerate && sentUserGenerate) || (!userGenerate && store.hasInterface("update"))) {
         buttons.push(
           <ButtonTooltip key="update" name="annotation:submit" title="Update this task">
-            <Button disabled={disabled || submitDisabled} look="primary" onClick={store.updateAnnotation}>
+            <Button disabled={disabled || submitDisabled} look="primary" onClick={store.updateAnnotation} aria-label="Update annotation">
               {sentUserGenerate || versions.result ? "Update" : "Submit"}
             </Button>
           </ButtonTooltip>,

@@ -155,7 +155,7 @@ const Annotation = observer(({ item, store }) => {
               okType="danger"
               cancelText="Cancel"
             >
-              <Button size="small" look="string" variant="negative">
+              <Button size="small" look="string" variant="negative" aria-label="Clear annotations">
                 <DeleteOutlined />
               </Button>
             </Popconfirm>
@@ -193,7 +193,7 @@ const Annotation = observer(({ item, store }) => {
           </Tooltip>
         )}
         {store.annotationStore.viewingAll && (
-          <Button size="small" look="outlined" onClick={toggleVisibility}>
+          <Button size="small" look="outlined" onClick={toggleVisibility} aria-label="Toggle annotations visibility">
             {item.hidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
           </Button>
         )}

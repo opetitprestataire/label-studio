@@ -266,7 +266,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                       </div>
                     }
                   >
-                    <Button disabled={isDisabled}>
+                    <Button disabled={isDisabled} aria-label="Submit annotation">
                       <IconChevronDown />
                     </Button>
                   </Dropdown.Trigger>
@@ -306,7 +306,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                   alignment="top-right"
                   content={<SubmitOption onClickMethod={store.updateAnnotation} isUpdate={isUpdate} />}
                 >
-                  <Button disabled={isUpdateDisabled}>
+                  <Button disabled={isUpdateDisabled} aria-label="Update annotation">
                     <IconChevronDown />
                   </Button>
                 </Dropdown.Trigger>
