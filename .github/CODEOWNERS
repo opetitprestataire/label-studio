@@ -16,3 +16,4 @@ web/libs/editor/**/Video*                   @HumanSignal/fine-tuners
 web/libs/editor/**/TimeSeries*              @HumanSignal/fine-tuners
 web/apps/labelstudio/src/pages/DataManager  @HumanSignal/fine-tuners
 label_studio/data_manager                   @HumanSignal/fine-tuners
+web/apps/playground                         @HumanSignal/fine-tuners
