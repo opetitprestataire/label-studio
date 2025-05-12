@@ -7,6 +7,25 @@
   :global(.lsf-tabs-panel__body) {
     height: 100%;
   }
+
+  :global(.lsf-panel-tabs__tab) {
+    color: var(--color-neutral-content-subtler);
+  }
+
+  :global(.lsf-panel-tabs__tab_active) {
+    transform: none;
+    border-width: 0;
+    color: var(--color-neutral-content);
+    box-shadow: 1px -1px 0 rgba(var(--color-neutral-shadow-raw) / 4%), -1px -1px 0 rgba(var(--color-neutral-shadow-raw) / 4%);
+  }
+
+  :global(.lsf-tabs__tabs-row) {
+    border: none;
+  }
+
+  :global(.lsf-sidepanels_collapsed .lsf-sidepanels__wrapper .lsf-tabs__contents) {
+    border: none;
+  }
 }
 
 body {
