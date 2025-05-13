@@ -1,4 +1,4 @@
-name: Apply Linters
+name: Apply linters
 
 on:
   workflow_dispatch:
@@ -8,6 +8,10 @@ on:
         required: true
         type: string
 
+env:
+  NODE: "18"
+  FRONTEND_MONOREPO_DIR: "web"
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -16,6 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GIT_PAT }}
           ref: ${{ inputs.branch_name }}
 
       - name: Set up Python
@@ -28,10 +33,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install pre-commit
 
-      - name: Run pre-commit
-        uses: pre-commit/action@v3.0.0
+      - name: Setup frontend environment
+        uses: ./.github/actions/setup-frontend-environment
         with:
-          extra_args: --all-files
+          node-version: "${{ env.NODE }}"
+          directory: "${{ env.FRONTEND_MONOREPO_DIR }}"
+
+      - name: Run formatters
+        run: make fmt-all || true
+
+      - name: Ensure no lint remains
+        run: make fmt-all
 
       - name: Commit changes
         run: |
