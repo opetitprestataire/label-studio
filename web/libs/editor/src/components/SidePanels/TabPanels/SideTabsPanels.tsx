@@ -76,6 +76,7 @@ const SideTabsPanelsComponent: FC<SidePanelsProps> = ({
   const localSnap = useRef(snap);
   const collapsedSideRef = useRef(collapsedSide);
   const settings = currentEntity?.store?.settings || currentEntity?.settings;
+  const contentRef = useRef<HTMLDivElement>(null);
 
   collapsedSideRef.current = collapsedSide;
   localSnap.current = snap;
@@ -554,13 +555,13 @@ const SideTabsPanelsComponent: FC<SidePanelsProps> = ({
       >
         {initialized && (
           <>
-            <Elem name="content" mod={{ resizing: lockPanelContents || positioning }}>
+            <Elem ref={contentRef} name="content" mod={{ resizing: lockPanelContents || positioning }}>
               {children}
             </Elem>
             {panelsHidden !== true && panelBreakPoint ? (
               <>
                 <Elem name="wrapper">
-                  <PanelTabsBase {...emptyBaseProps} isBottomPanel={true}>
+                  <PanelTabsBase {...emptyBaseProps} contentRef={contentRef} isBottomPanel={true}>
                     <Tabs {...emptyBaseProps} />
                   </PanelTabsBase>
                 </Elem>

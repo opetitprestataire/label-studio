@@ -26,6 +26,7 @@ const MAX_HEIGHT = 800;
 interface BasePropsWithChildren extends OrigBaseProps {
   children?: ReactNode;
   isBottomPanel?: boolean;
+  contentRef?: React.RefObject<HTMLDivElement>;
 }
 
 export const PanelTabsBase: FC<BasePropsWithChildren> = ({
@@ -61,6 +62,7 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
   dragBottom,
   lockPanelContents,
   isBottomPanel,
+  contentRef,
   ...props
 }) => {
   const headerRef = useRef<HTMLDivElement>();
@@ -137,6 +139,16 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
       zIndex,
     };
   }, [width, height, visible, locked, collapsed, zIndex, isBottomPanel, bottomCollapsed, collapsibleBottomPanel, panelHeight]);
+
+  useEffect(() => {
+    if (contentRef?.current) {
+      if (isBottomPanel && bottomCollapsed) {
+        contentRef.current.style.height = `calc(100% - ${TABS_ROW_HEIGHT}px)`;
+      } else if (isBottomPanel && collapsibleBottomPanel) {
+        contentRef.current.style.height = `calc(100% - ${panelHeight}px)`;
+      }
+    }
+  }, [panelHeight, isBottomPanel, bottomCollapsed, collapsibleBottomPanel]);
 
   const coordinates = useMemo(() => {
     return detached && !locked
