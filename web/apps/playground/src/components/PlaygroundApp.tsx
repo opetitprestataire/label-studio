@@ -83,12 +83,15 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
     document.body.style.userSelect = "";
   }, []);
 
-  const handleDividerDoubleClick = useCallback((e: MouseEvent) => {
-    dragging.current = false;
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-    setBottomPanelHeight(DEFAULT_PANEL_HEIGHT);
-  }, [setBottomPanelHeight]);
+  const handleDividerDoubleClick = useCallback(
+    (e: MouseEvent) => {
+      dragging.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      setBottomPanelHeight(DEFAULT_PANEL_HEIGHT);
+    },
+    [setBottomPanelHeight],
+  );
 
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove as unknown as EventListener);
@@ -213,12 +216,15 @@ export const PlaygroundApp = () => {
     };
   }, []);
 
-  const handleDividerDoubleClick = useCallback((e: MouseEvent) => {
-    e.preventDefault();
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-    setEditorWidth(50); // Reset to 50/50 split
-  }, [setEditorWidth]);
+  const handleDividerDoubleClick = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      setEditorWidth(50); // Reset to 50/50 split
+    },
+    [setEditorWidth],
+  );
 
   const previewPanelStyle = useMemo(() => ({ width: `${100 - editorWidth}%` }), [editorWidth]);
 
