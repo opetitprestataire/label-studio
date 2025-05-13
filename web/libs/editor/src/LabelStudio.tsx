@@ -132,9 +132,9 @@ export class LabelStudio {
         renderTimeout = null;
       }
       if (this.reactRoot && isRendered) {
-          this.reactRoot.unmount();
-          this.reactRoot = null;
-          isRendered = false;
+        this.reactRoot.unmount();
+        this.reactRoot = null;
+        isRendered = false;
       }
     };
 
