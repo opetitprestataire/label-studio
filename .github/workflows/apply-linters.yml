@@ -1,7 +1,7 @@
 name: Apply Linters
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       branch_name:
         description: 'Branch name to run the workflow on'
