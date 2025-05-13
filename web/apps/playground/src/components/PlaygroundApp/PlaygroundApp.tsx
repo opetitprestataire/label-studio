@@ -5,9 +5,9 @@ import { PreviewPanel } from "../PreviewPanel";
 import { configAtom, loadingAtom, errorAtom, interfacesAtom } from "../../atoms/configAtoms";
 import { getQueryParams, getInterfacesFromParams } from "../../utils/query";
 import { cnm } from "@humansignal/shad/utils";
-import styles from "./PlaygroundApp.module.scss";
 import { TopBar } from "./TopBar";
 import { EditorPanel } from "../EditorPanel";
+import styles from "./PlaygroundApp.module.scss";
 
 const DEFAULT_EDITOR_WIDTH_PERCENT = 50;
 const MIN_EDITOR_WIDTH_PERCENT = 20;
