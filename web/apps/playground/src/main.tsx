@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import "./utils/embedFeatureFlags";
 import { PlaygroundApp } from "./components/PlaygroundApp";
 
 import "@humansignal/ui/src/styles.scss";
