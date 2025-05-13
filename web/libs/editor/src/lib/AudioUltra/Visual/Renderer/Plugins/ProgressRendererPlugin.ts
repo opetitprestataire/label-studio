@@ -127,6 +127,11 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
    * Render the progress overlay. Accepts optional progress data.
    */
   public renderProgress(progress?: DetailedComputationProgress) {
+    if (progress == undefined || progress.overall.overallPercentage == 100 || progress.overall.overallPercentage == 0) {
+      this._hideProgressOverlay();
+      return;
+    }
+
     if (!this.visible) {
       this._hideProgressOverlay();
       return;
@@ -143,7 +148,7 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
     // Render overall bar and text
     overlay.appendChild(this._createOverallBar(cachingTotal, cachingProcessed));
     // Render per-priority bars
-    overlay.appendChild(this._createPriorityBars(batchGroups));
+    // overlay.appendChild(this._createPriorityBars(batchGroups));
   }
 
   /**
@@ -171,53 +176,46 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
    * Create the overall bar and text overlay DOM element.
    */
   private _createOverallBar(cachingTotal: number, cachingProcessed: number): HTMLElement {
-    const cfg = this.config;
     const colorMapper = this.colorMapper;
     const fftCache = this.fftCache;
     const wrapper = document.createElement("div");
-    wrapper.style.position = "relative";
-    wrapper.style.height = "18px";
-    wrapper.style.marginBottom = "5px";
+    wrapper.style.marginBottom = "3px";
     wrapper.style.borderBottom = "1px solid #555";
-    wrapper.style.paddingBottom = "3px";
-    // Bar background
-    const bar = this._createBar({
-      percent: cachingTotal > 0 ? cachingProcessed / cachingTotal : 1,
-      color: colorMapper.magnitudeToColor(1.0),
-      bgColor: colorMapper.magnitudeToColor(0.1),
-      height: this.barHeight ?? 12,
-      radius: this.barRadius ?? 2,
-      shadow: this.barShadow ?? "0 1px 4px rgba(0,0,0,0.18)",
-      opacity: 0.4,
-    });
-    // Text overlay
+    wrapper.style.paddingBottom = "2px";
+
+    // Text Label
     const text = document.createElement("div");
-    text.style.position = "absolute";
-    text.style.left = "0";
-    text.style.top = "0";
-    text.style.width = "100%";
-    text.style.height = "100%";
-    text.style.display = "flex";
-    text.style.alignItems = "center";
-    text.style.justifyContent = "center";
-    text.style.fontWeight = "bold";
     text.style.fontSize = `${this.overlayFontSize ?? 10}px`;
-    text.style.pointerEvents = "none";
+    text.style.fontWeight = "bold";
     text.style.color = this.overlayTextColor ?? colorMapper.magnitudeToColor(1.0);
+    text.style.marginBottom = "1px";
+
     if (cachingTotal === 0) {
-      // Count total FFT cache elements across all channels
       let fftCacheCount = 0;
       if (fftCache) {
         for (const channelMap of fftCache.values()) {
           fftCacheCount += channelMap.size;
         }
       }
-      text.textContent = `${this.labels?.cached || "Cached"}: ${fftCacheCount}`;
+      text.textContent = `${this.labels?.cached || "Cached"}`;
     } else {
       text.textContent = `${this.labels?.caching || "Caching"}: ${cachingProcessed} / ${cachingTotal} (${Math.round((cachingProcessed / cachingTotal) * 100)}%)`;
     }
-    wrapper.appendChild(bar);
+
+    // Bar: Styled like priority bars
+    const bar = this._createBar({
+      percent: cachingTotal > 0 ? cachingProcessed / cachingTotal : 1,
+      color: colorMapper.magnitudeToColor(1.0),
+      bgColor: colorMapper.magnitudeToColor(0),
+      height: 4,
+      radius: this.barRadius ?? 2,
+      shadow: this.barShadow ?? "0 1px 4px rgba(0,0,0,0.18)",
+      opacity: 1,
+      position: "relative",
+    });
+
     wrapper.appendChild(text);
+    wrapper.appendChild(bar);
     return wrapper;
   }
 

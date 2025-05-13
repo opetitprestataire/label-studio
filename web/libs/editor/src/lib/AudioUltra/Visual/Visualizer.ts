@@ -137,7 +137,8 @@ export class Visualizer extends Events<VisualizerEvents> {
     // Visualizer should handle layer and container setup
     if (this.container) {
       // Set an initial height for the container, so the progress bar is visible during loading
-      const initialHeight = this.waveHeight + this.timelineHeight;
+      const initialHeight = this.waveHeight;
+      +this.timelineHeight;
       this.container.style.height = `${initialHeight}px`;
     }
     this.createLayers();
@@ -904,7 +905,7 @@ export class Visualizer extends Events<VisualizerEvents> {
   };
 
   private setContainerHeight() {
-    this.container.style.height = `${this.height - BROWSER_SCROLLBAR_WIDTH}px`;
+    this.container.style.height = `${this.height + BROWSER_SCROLLBAR_WIDTH}px`;
   }
 
   private updateSize() {
@@ -1009,14 +1010,8 @@ export class Visualizer extends Events<VisualizerEvents> {
     // Use updateConfig to update the renderer's config
     this.spectrogramRenderer.updateConfig(newConfig);
 
-    for (const renderer of this.renderers) {
-      if (typeof renderer.onResize === "function") {
-        renderer.onResize();
-      }
-    }
-
     // We need to force a full redrawing here to ensure the spectrogram is updated correctly
-    this.draw();
+    setTimeout(() => this.draw());
   }
 
   /**

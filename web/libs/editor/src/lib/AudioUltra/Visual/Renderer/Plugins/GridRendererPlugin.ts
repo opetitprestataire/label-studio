@@ -111,31 +111,27 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
     const height = this.height;
     const paddingLeft = (state as any).padding?.left ?? 0;
     const ctx = this.layer.context;
-    // Use the visualizer's getSpectrogramChannelYOffset method if available, otherwise use 0
     const sampleRate = audio.sampleRate;
     const scale = this.config.spectrogramScale;
     const fontSize = this.fontSize;
     const colorMapper = this.colorMapper;
-    const gridColor = colorMapper.magnitudeToColor(1); // highest color
-    const gridShadowColor = colorMapper.magnitudeToColor(0); // lowest color
-    const labelBgColor = colorMapper.magnitudeToColor(0); // lowest color
-    const labelColor = colorMapper.magnitudeToColor(1); // highest color
+    const gridColor = colorMapper.magnitudeToColor(1);
+    const gridShadowColor = colorMapper.magnitudeToColor(0);
+    const labelBgColor = colorMapper.magnitudeToColor(0);
+    const labelColor = colorMapper.magnitudeToColor(1);
     const labelPadding = 2;
     const pixelRatio = this.layer["pixelRatio"] ?? 1;
-    // Clear previous grid
     this.layer.clear();
     this.layer.save();
     ctx.font = `${fontSize * pixelRatio}px sans-serif`;
     ctx.textBaseline = "middle";
     this.layer.strokeStyle = gridColor;
     this.layer.fillStyle = labelColor;
-    this.layer.lineWidth = 1; // Layer handles pixel ratio
+    this.layer.lineWidth = 1;
 
-    // Determine grid frequencies (Hz)
     let gridFreqs: number[] = [];
     const nyquist = sampleRate / 2;
     if (scale === "linear") {
-      // 10 grid lines, round to the nearest 100/500/1000 Hz
       const approxStep = nyquist / 10;
       let step: number;
       if (approxStep > 2000) step = 2000;
@@ -146,7 +142,6 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
       for (let f = 0; f <= nyquist; f += step) gridFreqs.push(f);
       if (gridFreqs[gridFreqs.length - 1] !== nyquist) gridFreqs.push(nyquist);
     } else if (scale === "log") {
-      // Logarithmic grid: 10, 20, 50, 100, 200, 500, 1k, 2k, 5k, 10k, ...
       const decades = Math.floor(Math.log10(nyquist)) - 1;
       for (let d = 1; d <= decades; d++) {
         for (const m of [1, 2, 5]) {
@@ -158,31 +153,61 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
       if (gridFreqs[0] !== 0) gridFreqs.unshift(0);
       if (gridFreqs[gridFreqs.length - 1] !== nyquist) gridFreqs.push(nyquist);
     } else if (scale === "mel") {
-      // Mel scale: label at 0, 500, 1000, 2000, 4000, 8000, nyquist (if in range)
       const mel = (f: number) => 2595 * Math.log10(1 + f / 700);
       const invMel = (m: number) => 700 * (Math.pow(10, m / 2595) - 1);
       const melMax = mel(nyquist);
-      const melGrid = [0, 1000, 2000, 4000, 8000, 12000, 16000].map(mel).filter((m) => m <= melMax);
-      gridFreqs = melGrid.map(invMel);
-      if (gridFreqs[0] !== 0) gridFreqs.unshift(0);
-      if (gridFreqs[gridFreqs.length - 1] < nyquist) gridFreqs.push(nyquist);
+      const melGridPoints = [0, 500, 1000, 2000, 4000, 8000, 12000, 16000];
+      const specificMelFreqs = melGridPoints.filter((f) => f <= nyquist);
+      // Ensure 0Hz is present for Mel scale if not already by melGridPoints filter for f <= nyquist
+      if (!specificMelFreqs.includes(0)) {
+        specificMelFreqs.unshift(0);
+      }
+      if (!specificMelFreqs.includes(nyquist)) {
+        specificMelFreqs.push(nyquist);
+      }
+      gridFreqs = [...new Set(specificMelFreqs)].sort((a, b) => a - b);
     }
 
-    // Draw grid lines and labels
+    // Reduce label density if height is small
+    if (height <= 200 && gridFreqs.length > 2) {
+      // Check gridFreqs.length > 2 to ensure there are intermediate labels to remove
+      const keptFreqs = [gridFreqs[0]]; // Always keep the first frequency (e.g., 0Hz)
+      // Iterate through the intermediate frequencies and pick roughly half
+      const intermediateFreqs = gridFreqs.slice(1, gridFreqs.length - 1);
+      for (let i = 0; i < intermediateFreqs.length; i++) {
+        if (i % 2 === 0) {
+          // Take every other intermediate frequency
+          keptFreqs.push(intermediateFreqs[i]);
+        }
+      }
+      keptFreqs.push(gridFreqs[gridFreqs.length - 1]); // Always keep the last frequency (Nyquist)
+      gridFreqs = [...new Set(keptFreqs)].sort((a, b) => a - b); // Remove duplicates and re-sort
+    }
+
+    const MEL_0HZ_SHIFT_PX = 5 * pixelRatio; // Define the upward shift for 0Hz on Mel scale
+
     for (const freq of gridFreqs) {
       let y: number;
       if (scale === "linear" || scale === "mel") {
-        // Linear mapping: y = height * (1 - freq/nyquist)
         y = height * (1 - freq / nyquist);
+        if (scale === "mel" && freq === 0) {
+          y -= MEL_0HZ_SHIFT_PX; // Apply upward shift for 0Hz on Mel scale
+        }
       } else if (scale === "log") {
-        // Correct log mapping: y = height * (1 - log10(freq/minFreq)/log10(nyquist/minFreq))
-        const minFreq = 10; // Set to your lowest grid frequency
-        if (freq < minFreq) continue; // Skip frequencies below minFreq
-        y = height * (1 - Math.log10(freq / minFreq) / Math.log10(nyquist / minFreq));
+        const minFreq = 10;
+        if (freq < minFreq && freq !== 0) continue; // Allow 0Hz for log if it's in gridFreqs
+        if (freq === 0) {
+          y = height; // 0Hz at the bottom for log scale (if drawn)
+        } else {
+          y = height * (1 - Math.log10(freq / minFreq) / Math.log10(nyquist / minFreq));
+        }
       } else {
-        y = height * (1 - freq / nyquist);
+        y = height * (1 - freq / nyquist); // Fallback, should not be reached if scale is one of the known types
       }
-      // Draw a horizontal line with shadow
+
+      // Clamp y to be within the drawable height to avoid lines outside the view
+      y = Math.max(0, Math.min(height, y));
+
       this.layer.save();
       ctx.shadowColor = gridShadowColor;
       ctx.shadowBlur = 2 * pixelRatio;
@@ -193,10 +218,9 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
       this.layer.lineTo(paddingLeft + width, y);
       this.layer.stroke();
       this.layer.restore();
-      // Draw label (left edge) with the background
-      if (freq === 0) continue; // Omit 0 Hz label
+
       let label: string;
-      if (freq >= 1000) label = `${(freq / 1000).toFixed(1)} kHz`;
+      if (freq >= 1000) label = `${(freq / 1000).toFixed(freq % 1000 === 0 ? 0 : 1)} kHz`;
       else label = `${Math.round(freq)} Hz`;
       const textX = paddingLeft + labelPadding;
       const textMetrics = this.layer.measureText(label);
@@ -206,21 +230,29 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
       const rectHeight = fontSize + rectPaddingY * 2;
       const rectX = textX - rectPaddingX;
       let rectY: number, textY: number;
-      if (freq === nyquist) {
-        // Align top of label with grid line
+
+      if (scale === "linear" && freq === 0) {
+        rectY = y - rectHeight;
+        textY = y - rectHeight / 2;
+      } else if (scale === "mel" && freq === 0) {
+        // New condition for Mel 0Hz label
+        rectY = y - rectHeight; // Align bottom of label with the (shifted) grid line
+        textY = y - rectHeight / 2;
+      } else if (scale === "log" && freq === 10) {
+        rectY = y - rectHeight;
+        textY = y - rectHeight / 2;
+      } else if (freq === nyquist) {
         rectY = y;
         textY = y + rectHeight / 2;
       } else {
-        // Center label on grid line
         textY = y;
         rectY = textY - rectHeight / 2;
       }
-      // Draw background rectangle
+
       this.layer.save();
       this.layer.fillStyle = labelBgColor;
       this.layer.fillRect(rectX, rectY, rectWidth, rectHeight);
       this.layer.restore();
-      // Draw label text
       this.layer.fillStyle = labelColor;
       this.layer.fillText(label, textX, textY);
     }

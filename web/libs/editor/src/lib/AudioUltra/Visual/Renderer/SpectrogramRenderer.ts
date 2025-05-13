@@ -14,7 +14,6 @@ import {
   SPECTROGRAM_HIGH_BATCH_SIZE,
   SPECTROGRAM_MAX_COMPUTATIONS,
   SPECTROGRAM_NORMAL_BATCH_SIZE,
-  DEBOUNCE_PAINT_AMOUNT,
 } from "../constants";
 import { LRUCache } from "../../Common/LRUCache";
 import { FFTProcessor, type SpectrogramScale } from "../../Analysis/FFTProcessor";
@@ -26,7 +25,6 @@ import { GridRendererPlugin } from "./Plugins/GridRendererPlugin";
 import type { RenderContext, Renderer } from "./Renderer";
 import type { WaveformAudio } from "../../Media/WaveformAudio";
 import type { RendererPlugin } from "./Plugins/RendererPlugin";
-import { debounce } from "../../Common/Utils";
 
 export interface SpectrogramRendererConfig {
   channelHeight: number;
@@ -75,7 +73,6 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
   private readonly spectrogram: Layer;
   private readonly gridLayer: Layer;
   private readonly progressContainer: HTMLElement;
-  private debouncedDraw: (context: RenderContext) => void;
 
   constructor(
     progressContainer: HTMLElement,
@@ -163,7 +160,6 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     });
 
     this.plugins = [this.progressRendererPlugin, this.gridRendererPlugin];
-    this.debouncedDraw = debounce((context: RenderContext) => this._drawInternal(context), DEBOUNCE_PAINT_AMOUNT);
   }
 
   public renderProgress(progress?: DetailedComputationProgress) {
@@ -188,10 +184,6 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
   }
 
   public draw(context: RenderContext): void {
-    this.debouncedDraw(context);
-  }
-
-  private _drawInternal(context: RenderContext): void {
     if (
       this.isDestroyed ||
       !this.spectrogram?.isVisible ||
@@ -680,12 +672,6 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
       (config.windowFunction !== undefined && config.windowFunction !== this.windowFunction) ||
       (config.numberOfMelBands !== undefined && config.numberOfMelBands !== this.numberOfMelBands);
     // Note: minDb, maxDb, and spectrogramColorScheme are intentionally excluded
-
-    // Check if grid-affecting parameters are changing
-    const shouldUpdateGrid =
-      (config.spectrogramScale !== undefined && config.spectrogramScale !== this.spectrogramScale) ||
-      (config.colorMapper !== undefined && config.colorMapper !== this.colorMapper) ||
-      (config.channelHeight !== undefined && config.channelHeight !== this.config.channelHeight);
 
     this.config = { ...this.config, ...config };
     if (config.spectrogramMinDb !== undefined) this.spectrogramMinDb = config.spectrogramMinDb;
