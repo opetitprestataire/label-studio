@@ -274,7 +274,7 @@ class App extends Component {
               name="wrapper"
               mod={{
                 viewAll: viewingAll,
-                bsp: settings.effectiveBottomSidePanel,
+                bsp: settings.bottomSidePanel,
                 showingBottomBar: newUIEnabled,
               }}
             >
