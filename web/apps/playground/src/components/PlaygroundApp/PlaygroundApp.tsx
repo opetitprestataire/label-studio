@@ -1,158 +1,25 @@
-import { useEffect, useMemo, useRef, useState, useCallback, memo } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { MouseEvent } from "react";
-import { useAtom, useSetAtom } from "jotai";
-import { CodeEditor, ThemeToggle } from "@humansignal/ui";
-import { PlaygroundPreview } from "../PlaygroundPreview";
-import { BottomPanel } from "../BottomPanel";
-import type { BottomPanelRef } from "../BottomPanel";
+import { useSetAtom } from "jotai";
+import { PreviewPanel } from "../PreviewPanel";
 import { configAtom, loadingAtom, errorAtom, interfacesAtom } from "../../atoms/configAtoms";
 import { getQueryParams, getInterfacesFromParams } from "../../utils/query";
-import { completeAfter, completeIfInTag } from "../../utils/codeEditor";
-import tags from "../../utils/schema.json";
-
 import { cnm } from "@humansignal/shad/utils";
 import styles from "./PlaygroundApp.module.scss";
+import { TopBar } from "./TopBar";
+import { EditorPanel } from "../EditorPanel";
 
-const TopBar = memo(
-  () => {
-    return (
-      <div className="flex items-center h-10 px-tight text-heading-medium justify-between select-none border-b border-neutral-border">
-        <span className="font-semibold tracking-tight text-body-medium">LabelStudio Playground</span>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-        </div>
-      </div>
-    );
-  },
-  () => true,
-);
-
-const editorExtensions = ["hint", "xml-hint"];
-const editorOptions = {
-  mode: "xml",
-  theme: "default",
-  lineNumbers: true,
-  extraKeys: {
-    "'<'": completeAfter,
-    "' '": completeIfInTag,
-    "'='": completeIfInTag,
-    "Ctrl-Space": "autocomplete",
-  },
-  hintOptions: { schemaInfo: tags },
-};
-
-const COLLAPSED_PANEL_HEIGHT = 33;
-const DEFAULT_PANEL_HEIGHT = 300;
-const MIN_PANEL_HEIGHT = 100;
-const MAX_PANEL_HEIGHT = 800;
-
-const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
-  const [config, setConfig] = useAtom(configAtom);
-  const editorRef = useRef<HTMLTextAreaElement>(null);
-  const [bottomPanelHeight, setBottomPanelHeight] = useState(DEFAULT_PANEL_HEIGHT);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const dragging = useRef(false);
-  const startY = useRef(0);
-  const startHeight = useRef(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Drag logic for vertical resize
-  const handleMouseDown = useCallback(
-    (e: MouseEvent) => {
-      if (e.button !== 0) return;
-      dragging.current = true;
-      startY.current = e.clientY;
-      startHeight.current = bottomPanelHeight;
-    },
-    [bottomPanelHeight],
-  );
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!dragging.current) return;
-    e.preventDefault();
-    document.body.style.cursor = "row-resize";
-    document.body.style.userSelect = "none";
-    const delta = startY.current - e.clientY;
-    const newHeight = Math.max(MIN_PANEL_HEIGHT, Math.min(MAX_PANEL_HEIGHT, startHeight.current + delta));
-    setBottomPanelHeight(newHeight);
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    dragging.current = false;
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-  }, []);
-
-  const handleDividerDoubleClick = useCallback(
-    (e: MouseEvent) => {
-      dragging.current = false;
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-      setBottomPanelHeight(DEFAULT_PANEL_HEIGHT);
-    },
-    [setBottomPanelHeight],
-  );
-
-  useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove as unknown as EventListener);
-    window.addEventListener("mouseup", handleMouseUp as unknown as EventListener);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove as unknown as EventListener);
-      window.removeEventListener("mouseup", handleMouseUp as unknown as EventListener);
-    };
-  }, [handleMouseMove, handleMouseUp]);
-
-  // When collapsing, set height to collapsedPanelHeight
-  useEffect(() => {
-    if (isCollapsed) setBottomPanelHeight(COLLAPSED_PANEL_HEIGHT);
-    else setBottomPanelHeight(DEFAULT_PANEL_HEIGHT);
-  }, [isCollapsed]);
-
-  return (
-    <div ref={containerRef} className="flex flex-col min-w-0 h-full" style={{ width: `${editorWidth}%` }}>
-      {/* CodeEditor (top) */}
-      <div className="flex-1 min-h-0">
-        <CodeEditor
-          ref={editorRef}
-          value={config}
-          onBeforeChange={(_editor: any, _data: any, value: string) => setConfig(value)}
-          border={false}
-          controlled
-          // @ts-ignore
-          autoCloseTags
-          smartIndent
-          detach
-          extensions={editorExtensions}
-          options={editorOptions}
-        />
-      </div>
-      {/* Divider for resizing (only when not collapsed) */}
-      {!isCollapsed && (
-        <div
-          className="h-2 cursor-row-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
-          onMouseDown={handleMouseDown}
-          onDoubleClick={handleDividerDoubleClick}
-          role="separator"
-          aria-orientation="horizontal"
-          tabIndex={-1}
-        />
-      )}
-      {/* BottomPanel (Input/Output) */}
-      <div style={{ height: bottomPanelHeight, minHeight: COLLAPSED_PANEL_HEIGHT }}>
-        <BottomPanel isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-      </div>
-    </div>
-  );
-};
+const DEFAULT_EDITOR_WIDTH_PERCENT = 50;
+const MIN_EDITOR_WIDTH_PERCENT = 20;
+const MAX_EDITOR_WIDTH_PERCENT = 80;
 
 export const PlaygroundApp = () => {
   const setConfig = useSetAtom(configAtom);
   const setLoading = useSetAtom(loadingAtom);
   const setError = useSetAtom(errorAtom);
   const setInterfaces = useSetAtom(interfacesAtom);
-  const [editorWidth, setEditorWidth] = useState(50); // percent
+  const [editorWidth, setEditorWidth] = useState(DEFAULT_EDITOR_WIDTH_PERCENT);
   const dragging = useRef(false);
-  const bottomPanelRef = useRef<BottomPanelRef>(null);
 
   useEffect(() => {
     const params = getQueryParams();
@@ -201,7 +68,7 @@ export const PlaygroundApp = () => {
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
       const percent = (e.clientX / window.innerWidth) * 100;
-      setEditorWidth(Math.max(20, Math.min(80, percent)));
+      setEditorWidth(Math.max(MIN_EDITOR_WIDTH_PERCENT, Math.min(MAX_EDITOR_WIDTH_PERCENT, percent)));
     };
     const onMouseUp = () => {
       dragging.current = false;
@@ -221,7 +88,7 @@ export const PlaygroundApp = () => {
       e.preventDefault();
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
-      setEditorWidth(50); // Reset to 50/50 split
+      setEditorWidth(DEFAULT_EDITOR_WIDTH_PERCENT);
     },
     [setEditorWidth],
   );
@@ -240,7 +107,7 @@ export const PlaygroundApp = () => {
       <div className="flex flex-1 min-h-0 min-w-0 relative">
         {/* Editor Panel */}
         <EditorPanel editorWidth={editorWidth} />
-        {/* Divider */}
+        {/* Resizable Divider */}
         <div
           className="w-2 cursor-col-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
           onMouseDown={(e: MouseEvent) => {
@@ -256,7 +123,7 @@ export const PlaygroundApp = () => {
         {/* Preview Panel */}
         <div className="flex flex-col min-w-0 h-full" style={previewPanelStyle}>
           <div className="flex-1 min-h-0 min-w-0">
-            <PlaygroundPreview onAnnotationUpdate={bottomPanelRef.current?.handleAnnotationUpdate} />
+            <PreviewPanel />
           </div>
         </div>
       </div>

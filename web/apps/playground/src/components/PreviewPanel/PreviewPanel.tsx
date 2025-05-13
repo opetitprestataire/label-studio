@@ -13,11 +13,11 @@ import {
 } from "../../atoms/configAtoms";
 import { onSnapshot } from "mobx-state-tree";
 
-type PlaygroundPreviewProps = {
+type PreviewPanelProps = {
   onAnnotationUpdate?: (annotation: any) => void;
 };
 
-export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(
+export const PreviewPanel: FC<PreviewPanelProps> = memo(
   ({ onAnnotationUpdate }) => {
     const config = useAtomValue(configAtom);
     const loading = useAtomValue(loadingAtom);
