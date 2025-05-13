@@ -48,10 +48,8 @@ export function generateSampleTaskFromConfig(config: string): {
   const SAMPLE_IMAGE2 = "https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg";
   const SAMPLE_AUDIO =
     "https://upload.wikimedia.org/wikipedia/commons/9/9d/Bach_-_Cello_Suite_no._1_in_G_major,_BWV_1007_-_I._Pr%C3%A9lude.ogg";
-  const SAMPLE_AUDIO2 = "https://upload.wikimedia.org/wikipedia/commons/8/89/Example.ogg";
   const SAMPLE_VIDEO =
-    "https://upload.wikimedia.org/wikipedia/commons/transcoded/8/88/Big_Buck_Bunny_Trailer_400p.ogv/Big_Buck_Bunny_Trailer_400p.ogv.360p.webm";
-  const SAMPLE_VIDEO2 = "https://upload.wikimedia.org/wikipedia/commons/7/75/Big_Buck_Bunny_Trailer_400p.ogv";
+    "https://upload.wikimedia.org/wikipedia/commons/transcoded/8/88/Big_Buck_Bunny_alt.webm/Big_Buck_Bunny_alt.webm.360p.vp9.webm";
   const SAMPLE_PDF = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.pdf";
   const SAMPLE_WEBSITE = "https://www.wikipedia.org/";
   const SAMPLE_CSV = "https://people.sc.fsu.edu/~jburkardt/data/csv/airtravel.csv";
@@ -148,12 +146,6 @@ export function generateSampleTaskFromConfig(config: string): {
       return;
     }
 
-    // Special handling for AudioPlus
-    if (tag === "audioplus") {
-      data[key] = SAMPLE_AUDIO2;
-      return;
-    }
-
     // Special handling for longText, corefText, captioning, etc.
     if (tag === "longtext") {
       data[key] =
@@ -198,7 +190,7 @@ export function generateSampleTaskFromConfig(config: string): {
       } else {
         data[key] = SAMPLE_IMAGE;
       }
-    } else if (tag === "audio") {
+    } else if (tag === "audio" || tag === "audioplus") {
       data[key] = SAMPLE_AUDIO;
     } else if (tag === "video") {
       data[key] = SAMPLE_VIDEO;
