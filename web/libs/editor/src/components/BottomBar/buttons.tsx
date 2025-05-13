@@ -71,7 +71,8 @@ export const RejectButtonDefinition = {
   id: "reject",
   name: "reject",
   title: "Reject",
-  look: undefined,
+  variant: "negative",
+  look: "outlined",
   ariaLabel: "reject-annotation",
   tooltip: "Reject annotation: [ Ctrl+Space ]",
   // @todo we need this for types compatibility, but better to fix CustomButtonType
@@ -120,7 +121,7 @@ export const UnskipButton = memo(
     return (
       <Button
         key="cancel-skip"
-        look="outlined"
+        size="small"
         tooltip="Cancel skip: []"
         aria-label="cancel-skip"
         disabled={disabled}

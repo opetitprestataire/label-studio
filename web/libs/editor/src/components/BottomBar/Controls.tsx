@@ -52,8 +52,8 @@ const ControlButton = observer(({ button, disabled, onClick, variant, look }: Co
   return (
     <Button
       {...button.props}
-      variant={variant}
-      look={look}
+      variant={button.variant ?? variant}
+      look={button.look ?? look}
       tooltip={button.tooltip}
       className="w-[150px]"
       aria-label={button.ariaLabel}
@@ -155,6 +155,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
       const customRejectButtons = toArray(customButtons.get("reject"));
       const hasCustomReject = customRejectButtons.length > 0;
       const originalRejectButton = RejectButtonDefinition;
+
       // @todo implement reuse of internal buttons later (they are set as strings)
       const rejectButtons: CustomButtonType[] = hasCustomReject
         ? customRejectButtons.filter((button) => typeof button !== "string")
@@ -175,9 +176,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
           }
         };
 
-        buttons.push(
-          <ControlButton key={button.name} look="outlined" button={button} disabled={disabled} onClick={onReject} />,
-        );
+        buttons.push(<ControlButton key={button.name} button={button} disabled={disabled} onClick={onReject} />);
       });
       buttons.push(<AcceptButton key="review-accept" disabled={disabled} history={history} store={store} />);
     } else if (annotation.skipped) {
