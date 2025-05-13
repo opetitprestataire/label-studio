@@ -921,7 +921,7 @@
     },
     "fflag__feature_develop__prompts__dia_1868_azure_ai_foundry": {
       "key": "fflag__feature_develop__prompts__dia_1868_azure_ai_foundry",
-      "on": false,
+      "on": true,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
@@ -943,7 +943,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 2,
+      "version": 3,
       "deleted": false
     },
     "fflag_all_feat_dia_1777_ls_homepage_short": {
@@ -2362,6 +2362,33 @@
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
       "version": 4,
+      "deleted": false
+    },
+    "fflag_feat_front_leap_2036_annotations_summary": {
+      "key": "fflag_feat_front_leap_2036_annotations_summary",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "a0c67bbfb44743d6903c9445033c59c3",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
       "deleted": false
     },
     "fflag_feat_front_leap_482_self_serve_short": {
@@ -4054,13 +4081,13 @@
     },
     "fflag_fix_leap_2052_detect_empty_filters_at_next_task_endpoint_short": {
       "key": "fflag_fix_leap_2052_detect_empty_filters_at_next_task_endpoint_short",
-      "on": false,
+      "on": true,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
       "rules": [],
       "fallthrough": {
-        "variation": 1
+        "variation": 0
       },
       "offVariation": 1,
       "variations": [
@@ -4076,7 +4103,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 2,
+      "version": 3,
       "deleted": false
     },
     "fflag_fix_leap_246_multi_object_hotkeys_160124_short": {
