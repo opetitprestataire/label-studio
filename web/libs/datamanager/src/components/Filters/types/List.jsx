@@ -3,6 +3,10 @@ import { FilterDropdown } from "../FilterDropdown";
 import { useMemo } from "react";
 // import { Common } from "./Common";
 
+function defaultFilterItems(items) {
+  return items?.toJSON ? items.toJSON() : items;
+}
+
 export const VariantSelect = observer(({ filter, schema, onChange, multiple, value, placeholder }) => {
   if (!schema) return <></>;
   const { items } = schema;
