@@ -1,8 +1,7 @@
 import type React from "react";
-import { useState, forwardRef, useImperativeHandle } from "react";
+import { forwardRef } from "react";
 import { useAtomValue } from "jotai";
-import { configAtom } from "../atoms/configAtoms";
-import { generateSampleTaskFromConfig } from "../utils/generateSampleTask";
+import { configAtom, annotationAtom, sampleTaskAtom } from "../atoms/configAtoms";
 import { IconCollapseSmall, IconExpandSmall } from "@humansignal/icons";
 import { cnm } from "@humansignal/ui/utils/utils";
 
@@ -18,13 +17,8 @@ interface BottomPanelProps {
 const HEADER_HEIGHT = 33;
 
 export const BottomPanel = forwardRef<BottomPanelRef, BottomPanelProps>(({ isCollapsed, setIsCollapsed }, ref) => {
-  const [currentAnnotation, setCurrentAnnotation] = useState<any>(null);
-  const config = useAtomValue(configAtom);
-  const sampleTask = generateSampleTaskFromConfig(config);
-
-  useImperativeHandle(ref, () => ({
-    handleAnnotationUpdate: (annotation: any) => setCurrentAnnotation(annotation),
-  }));
+  const currentAnnotation = useAtomValue(annotationAtom);
+  const sampleTask = useAtomValue(sampleTaskAtom);
 
   return (
     <div
@@ -63,7 +57,7 @@ export const BottomPanel = forwardRef<BottomPanelRef, BottomPanelProps>(({ isCol
           {/* Annotation Output Panel */}
           <div className="flex-1 p-4 overflow-auto">
             <pre className="text-body-small whitespace-pre-wrap">
-              {JSON.stringify(currentAnnotation || sampleTask.annotation || {}, null, 2)}
+              {JSON.stringify(currentAnnotation || {}, null, 2)}
             </pre>
           </div>
         </div>

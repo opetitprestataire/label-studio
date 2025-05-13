@@ -2,14 +2,15 @@
 export function generateSampleTaskFromConfig(config: string): {
   id: number;
   data: Record<string, any>;
-  annotation?: any;
+  annotations?: any[];
+  predictions?: any[];
 } {
   const parser = new DOMParser();
   let xml: Document;
   try {
     xml = parser.parseFromString(config, "text/xml");
   } catch (e) {
-    return { id: 1, data: {} };
+    return { id: 1, data: {}, annotations: [{ id: 1, result: [] }], predictions: [] };
   }
 
   // Try to find a root-level comment with a JSON object
@@ -267,5 +268,5 @@ export function generateSampleTaskFromConfig(config: string): {
   });
 
   // Return annotation if provided, else undefined
-  return { id: 1, data, annotation: userAnnotation };
+  return { id: 1, data, annotations: [{ id: 1, result: [userAnnotation] }], predictions: [] };
 }

@@ -1044,7 +1044,7 @@ const _Annotation = types
         const tagNames = self.names;
 
         // Clear non-existent labels
-        if (obj.type.endsWith("labels")) {
+        if (obj.type?.endsWith("labels")) {
           const keys = Object.keys(obj.value);
 
           for (const key of keys) {

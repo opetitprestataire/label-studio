@@ -7,3 +7,5 @@ export const loadingAtom = atom<boolean>(false);
 export const errorAtom = atom<string | null>(null);
 export const interfacesAtom = atom<string[]>(["side-column"]);
 export const showPreviewAtom = atom<boolean>(true);
+export const sampleTaskAtom = atom<any>({});
+export const annotationAtom = atom<any>({});
