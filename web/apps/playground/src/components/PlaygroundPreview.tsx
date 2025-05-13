@@ -2,8 +2,8 @@ import { memo, useEffect, useRef } from "react";
 import { unmountComponentAtNode } from "react-dom";
 import type { FC } from "react";
 import { generateSampleTaskFromConfig } from "../utils/generateSampleTask";
-import { useAtomValue } from "jotai";
-import { configAtom, errorAtom, loadingAtom, interfacesAtom } from "../atoms/configAtoms";
+import { useAtom, useAtomValue } from "jotai";
+import { configAtom, errorAtom, loadingAtom, showPreviewAtom, interfacesAtom } from "../atoms/configAtoms";
 
 type PlaygroundPreviewProps = {
   onAnnotationUpdate?: (annotation: any) => void;
@@ -15,6 +15,7 @@ export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(
     const loading = useAtomValue(loadingAtom);
     const error = useAtomValue(errorAtom);
     const interfaces = useAtomValue(interfacesAtom);
+    const [showPreview, setShowPreview] = useAtom(showPreviewAtom);
 
     const rootRef = useRef<HTMLDivElement>(null);
     const lsfInstance = useRef<any>(null);
@@ -28,9 +29,7 @@ export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(
         if (typeof window !== "undefined" && (window as any).LabelStudio) {
           delete (window as any).LabelStudio;
         }
-        if (rootRef.current) {
-          unmountComponentAtNode(rootRef.current);
-        }
+        setShowPreview(false);
         if (lsfInstance.current) {
           lsfInstance.current.destroy();
           lsfInstance.current = null;
@@ -44,32 +43,36 @@ export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(
       async function loadLSF() {
         dependencies = await import("@humansignal/editor");
         LabelStudio = dependencies.LabelStudio;
-        if (!LabelStudio || !rootRef.current) return;
+        if (!LabelStudio) return;
         cleanup();
+        setShowPreview(true);
         const sampleTask = generateSampleTaskFromConfig(config);
         const annotations = sampleTask.annotation
           ? [{ id: 1, result: [sampleTask.annotation] }]
           : [{ id: 1, result: [] }];
-        lsfInstance.current = new LabelStudio(rootRef.current, {
-          config,
-          task: {
-            id: 1,
-            data: sampleTask.data,
-            annotations,
-            predictions: [],
-          },
-          interfaces,
-          settings: {
-            forceBottomPanel: true,
-            collapsibleBottomPanel: true,
-            defaultCollapsedBottomPanel: true,
-          },
-          onLabelStudioLoad: (ls: any) => {
-            console.log("onLabelStudioLoad", ls);
-            // ls.annotationStore.on("updateAnnotation", (annotation: any) => {
-            //   onAnnotationUpdate?.(annotation.serializeAnnotation());
-            // });
-          },
+
+        setTimeout(() => {
+          lsfInstance.current = new LabelStudio(rootRef.current, {
+            config,
+            task: {
+              id: 1,
+              data: sampleTask.data,
+              annotations,
+              predictions: [],
+            },
+            interfaces,
+            settings: {
+              forceBottomPanel: true,
+              collapsibleBottomPanel: true,
+              defaultCollapsedBottomPanel: true,
+            },
+            onLabelStudioLoad: () => {
+              // lsfInstance.current.on("updateAnnotation", (annotation: any) => {
+              //   console.log("updateAnnotation", annotation.serializeAnnotation());
+              //   // onAnnotationUpdate?.(annotation.serializeAnnotation());
+              // });
+            },
+          });
         });
       }
 
@@ -91,9 +94,9 @@ export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(
           <div className="text-danger-foreground text-body-medium">{error}</div>
         ) : loading ? (
           <div className="text-secondary-foreground text-body-medium">Loading config...</div>
-        ) : (
-          <div id="label-studio" ref={rootRef} className="w-full h-full" />
-        )}
+        ) : showPreview ? (
+          <div ref={rootRef} className="w-full h-full" />
+        ): null}
       </div>
     );
   },

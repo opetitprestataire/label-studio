@@ -1,5 +1,4 @@
 import { configure } from "mobx";
-import { applyAction } from "mobx-state-tree";
 import { createRoot } from "react-dom/client";
 import { toCamelCase } from "strman";
 
@@ -111,22 +110,31 @@ export class LabelStudio {
     this.store = store;
     window.Htx = this.store;
 
-    const isRendered = false;
+    let isRendered = false;
+    let renderTimeout: number | null = null;
 
     const renderApp = () => {
       if (isRendered) {
         clearRenderedApp();
       }
-      // Create new root for React 18
-      this.reactRoot = createRoot(rootElement);
-      const AppComponent = App as any;
-      this.reactRoot.render(<AppComponent store={this.store} />);
+      renderTimeout = setTimeout(() => {
+        // Create new root for React 18
+        this.reactRoot = createRoot(rootElement);
+        const AppComponent = App as any;
+        this.reactRoot.render(<AppComponent store={this.store} />);
+        isRendered = true;
+      });
     };
 
     const clearRenderedApp = () => {
+      if (renderTimeout) {
+        clearTimeout(renderTimeout);
+        renderTimeout = null;
+      }
       if (this.reactRoot) {
         this.reactRoot.unmount();
         this.reactRoot = null;
+        isRendered = false;
       }
     };
 
@@ -166,43 +174,6 @@ export class LabelStudio {
 
       // Destroy shared store
       destroySharedStore();
-
-      // Destroy store and its children using actions
-      if (this.store) {
-        try {
-          // First destroy children to prevent circular references
-          if (this.store.annotationStore) {
-            applyAction(this.store, {
-              name: "destroyAnnotationStore",
-              path: "/annotationStore",
-              args: [],
-            });
-          }
-          if (this.store.relationStore) {
-            applyAction(this.store, {
-              name: "destroyRelationStore",
-              path: "/relationStore",
-              args: [],
-            });
-          }
-          if (this.store.settings) {
-            applyAction(this.store, {
-              name: "destroySettings",
-              path: "/settings",
-              args: [],
-            });
-          }
-
-          // Then destroy the main store
-          applyAction(this.store, {
-            name: "destroy",
-            path: "",
-            args: [],
-          });
-        } catch (e) {
-          console.error("Error destroying store:", e);
-        }
-      }
 
       // Unbind all hotkeys
       Hotkey.unbindAll();
