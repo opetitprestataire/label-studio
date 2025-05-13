@@ -1,6 +1,6 @@
 // @ts-ignore
 import CM from "codemirror";
-import tags from "./schema.json";
+import tags from "@humansignal/core/lib/utils/schema/tags.json";
 
 export function completeAfter(cm: CM.Editor, pred: () => boolean) {
   if (!pred || pred()) {
