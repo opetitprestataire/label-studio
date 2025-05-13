@@ -143,21 +143,21 @@ export class LabelStudio {
       // Clear any pending timeouts/intervals
       if (this.store?.timeouts) {
         Object.values(this.store.timeouts).forEach((timeoutId: unknown) => {
-          if (typeof timeoutId === 'number') {
+          if (typeof timeoutId === "number") {
             clearTimeout(timeoutId);
           }
         });
       }
       if (this.store?.intervals) {
         Object.values(this.store.intervals).forEach((intervalId: unknown) => {
-          if (typeof intervalId === 'number') {
+          if (typeof intervalId === "number") {
             clearInterval(intervalId);
           }
         });
       }
 
       // Remove all event listeners
-      Object.keys(this.events.events).forEach(eventName => {
+      Object.keys(this.events.events).forEach((eventName) => {
         this.events.removeAll(eventName);
       });
 

@@ -1,4 +1,13 @@
-import { type FC, type MouseEvent as RMouseEvent, useCallback, useMemo, useRef, useState, type ReactNode, useEffect } from "react";
+import {
+  type FC,
+  type MouseEvent as RMouseEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  useEffect,
+} from "react";
 import { Block, Elem } from "../../../utils/bem";
 import {
   IconChevronLeft,
@@ -138,7 +147,18 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
       ...dynamicStyle,
       zIndex,
     };
-  }, [width, height, visible, locked, collapsed, zIndex, isBottomPanel, bottomCollapsed, collapsibleBottomPanel, panelHeight]);
+  }, [
+    width,
+    height,
+    visible,
+    locked,
+    collapsed,
+    zIndex,
+    isBottomPanel,
+    bottomCollapsed,
+    collapsibleBottomPanel,
+    panelHeight,
+  ]);
 
   useEffect(() => {
     if (contentRef?.current) {
@@ -374,7 +394,7 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
         />
       )}
       <Elem name="content">
-        {(!locked && collapsedHeader) && (
+        {!locked && collapsedHeader && (
           <>
             {isChildOfGroup && visible && (
               <Elem

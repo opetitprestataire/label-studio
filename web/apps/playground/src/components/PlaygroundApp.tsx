@@ -12,17 +12,19 @@ import tags from "../utils/schema.json";
 import { cnm } from "@humansignal/shad/utils";
 import styles from "./PlaygroundApp.module.scss";
 
-
-const TopBar = memo(() => {
-  return (
-    <div className="flex items-center h-10 px-tight text-heading-medium justify-between select-none border-b border-neutral-border">
-      <span className="font-semibold tracking-tight text-body-medium">LabelStudio Playground</span>
-      <div className="flex items-center gap-2">
-        <ThemeToggle />
+const TopBar = memo(
+  () => {
+    return (
+      <div className="flex items-center h-10 px-tight text-heading-medium justify-between select-none border-b border-neutral-border">
+        <span className="font-semibold tracking-tight text-body-medium">LabelStudio Playground</span>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+        </div>
       </div>
-    </div>
-  );
-}, () => true);
+    );
+  },
+  () => true,
+);
 
 const editorExtensions = ["hint", "xml-hint"];
 const editorOptions = {
@@ -54,12 +56,15 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Drag logic for vertical resize
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    dragging.current = true;
-    startY.current = e.clientY;
-    startHeight.current = bottomPanelHeight;
-    document.body.style.cursor = "row-resize";
-  }, [bottomPanelHeight]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      dragging.current = true;
+      startY.current = e.clientY;
+      startHeight.current = bottomPanelHeight;
+      document.body.style.cursor = "row-resize";
+    },
+    [bottomPanelHeight],
+  );
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!dragging.current) return;
@@ -126,10 +131,7 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
       )}
       {/* BottomPanel (Input/Output) */}
       <div style={{ height: bottomPanelHeight, minHeight: COLLAPSED_PANEL_HEIGHT }}>
-        <BottomPanel
-          isCollapsed={isCollapsed}
-          setIsCollapsed={setIsCollapsed}
-        />
+        <BottomPanel isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       </div>
     </div>
   );
