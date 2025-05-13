@@ -130,7 +130,8 @@ export const Controls = controlsInjector(
           <Button
             aria-label="Cancel skip and return to annotation"
             disabled={disabled}
-            look="primary"
+            look="outlined"
+            size="medium"
             onClick={async () => {
               await store.commentStore.commentFormSubmit();
               store.unskipTask();
