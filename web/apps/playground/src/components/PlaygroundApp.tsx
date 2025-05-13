@@ -108,8 +108,9 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
         <CodeEditor
           ref={editorRef}
           value={config}
-          onChange={(_editor, _data, value) => setConfig(value)}
+          onBeforeChange={(_editor: any, _data: any, value: string) => setConfig(value)}
           border={false}
+          controlled
           // @ts-ignore
           autoCloseTags
           smartIndent
@@ -155,11 +156,13 @@ export const PlaygroundApp = () => {
     async function loadConfig() {
       if (configParam) {
         try {
-          const decoded = atob(configParam);
+          // Parse url encoded config
+          // Replace all <br> tags with newlines
+          const decoded = decodeURIComponent(configParam).replace(/<br\s*\/?>/g, "\n");
 
           setConfig(decoded);
         } catch (e) {
-          setError("Failed to decode base64 config. Are you sure it's a valid base64 string?");
+          setError("Failed to decode config. Are you sure it's a valid urlencoded string?");
         }
         return;
       }
@@ -169,7 +172,9 @@ export const PlaygroundApp = () => {
           const res = await fetch(configUrl);
           if (!res.ok) throw new Error("Failed to fetch config from URL.");
           const text = await res.text();
-          setConfig(text);
+          // Replace all <br> tags with newlines
+          const decoded = text.replace(/<br\s*\/?>/g, "\n");
+          setConfig(decoded);
         } catch (e) {
           setError("Failed to fetch config from URL.");
         } finally {
