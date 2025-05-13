@@ -20,4 +20,7 @@ export * from "./lib/simple-card";
 export * from "./lib/space/space";
 export * from "./lib/spinner/spinner";
 
+export * from "./utils/utils";
+
+// TODO: Remove when DIA-2142 and DIA-2175 are delivered
 export * from "./shadcn";
