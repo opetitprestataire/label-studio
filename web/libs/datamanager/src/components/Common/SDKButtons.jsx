@@ -8,9 +8,9 @@ const SDKButton = ({ eventName, ...props }) => {
     <Button
       {...props}
       size="small"
-      look="outlined"
-      variant="neutral"
-      aria-label={`${eventName.replace('Clicked', '')} button`}
+      look={props.look ?? "outlined"}
+      variant={props.variant ?? "neutral"}
+      aria-label={`${eventName.replace("Clicked", "")} button`}
       onClick={() => {
         sdk.invoke(eventName);
       }}

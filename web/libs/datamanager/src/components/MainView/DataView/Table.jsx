@@ -195,7 +195,7 @@ export const DataView = injector(
               </Elem>
               {!hasData && !!store.interfaces.get("import") && (
                 <Elem name="navigation">
-                  <ImportButton look="primary" href="./import">
+                  <ImportButton variant="primary" look="filled" href="./import">
                     Go to import
                   </ImportButton>
                 </Elem>
