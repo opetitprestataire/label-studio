@@ -132,13 +132,19 @@ export class LabelStudio {
         renderTimeout = null;
       }
       if (this.reactRoot) {
-        this.reactRoot.unmount();
-        this.reactRoot = null;
-        isRendered = false;
+        try {
+          this.reactRoot.unmount();
+        } catch {
+          // do nothing, it would otherwise complain about not being a node of the tree in HMR development scenarios
+        } finally {
+          this.reactRoot = null;
+          isRendered = false;
+        }
       }
     };
 
     renderApp();
+
     store.setAppControls({
       isRendered() {
         return isRendered;
@@ -148,27 +154,6 @@ export class LabelStudio {
     });
 
     this.destroy = () => {
-      // Clear any pending timeouts/intervals
-      if (this.store?.timeouts) {
-        Object.values(this.store.timeouts).forEach((timeoutId: unknown) => {
-          if (typeof timeoutId === "number") {
-            clearTimeout(timeoutId);
-          }
-        });
-      }
-      if (this.store?.intervals) {
-        Object.values(this.store.intervals).forEach((intervalId: unknown) => {
-          if (typeof intervalId === "number") {
-            clearInterval(intervalId);
-          }
-        });
-      }
-
-      // Remove all event listeners
-      Object.keys(this.events.events).forEach((eventName) => {
-        this.events.removeAll(eventName);
-      });
-
       // Clear rendered app
       clearRenderedApp();
 
@@ -180,8 +165,8 @@ export class LabelStudio {
 
       // Clear references
       this.store = null;
-      this.destroy = null;
       window.Htx = null;
+      this.destroy = null;
 
       // Remove from instances set
       LabelStudio.instances.delete(this);

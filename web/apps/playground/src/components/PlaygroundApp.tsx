@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState, useCallback, memo } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback, memo } from "react";
+import type { MouseEvent } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { CodeEditor, ThemeToggle } from "@humansignal/ui";
 import { PlaygroundPreview } from "./PlaygroundPreview";
@@ -57,17 +58,20 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
 
   // Drag logic for vertical resize
   const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
+      if (e.button !== 0) return;
       dragging.current = true;
       startY.current = e.clientY;
       startHeight.current = bottomPanelHeight;
-      document.body.style.cursor = "row-resize";
     },
     [bottomPanelHeight],
   );
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!dragging.current) return;
+    e.preventDefault();
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
     const delta = startY.current - e.clientY;
     const newHeight = Math.max(MIN_PANEL_HEIGHT, Math.min(MAX_PANEL_HEIGHT, startHeight.current + delta));
     setBottomPanelHeight(newHeight);
@@ -76,30 +80,30 @@ const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
   const handleMouseUp = useCallback(() => {
     dragging.current = false;
     document.body.style.cursor = "";
+    document.body.style.userSelect = "";
   }, []);
 
-  const handleDividerDoubleClick = useCallback(() => {
+  const handleDividerDoubleClick = useCallback((e: MouseEvent) => {
+    dragging.current = false;
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
     setBottomPanelHeight(DEFAULT_PANEL_HEIGHT);
   }, [setBottomPanelHeight]);
 
-  React.useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove as unknown as EventListener);
+    window.addEventListener("mouseup", handleMouseUp as unknown as EventListener);
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove as unknown as EventListener);
+      window.removeEventListener("mouseup", handleMouseUp as unknown as EventListener);
     };
   }, [handleMouseMove, handleMouseUp]);
 
   // When collapsing, set height to collapsedPanelHeight
-  React.useEffect(() => {
+  useEffect(() => {
     if (isCollapsed) setBottomPanelHeight(COLLAPSED_PANEL_HEIGHT);
+    else setBottomPanelHeight(DEFAULT_PANEL_HEIGHT);
   }, [isCollapsed]);
-
-  // When expanding, ensure height is at least minPanelHeight
-  React.useEffect(() => {
-    if (!isCollapsed && bottomPanelHeight < MIN_PANEL_HEIGHT) setBottomPanelHeight(MIN_PANEL_HEIGHT);
-  }, [isCollapsed, bottomPanelHeight]);
 
   return (
     <div ref={containerRef} className="flex flex-col min-w-0 h-full" style={{ width: `${editorWidth}%` }}>
@@ -190,21 +194,29 @@ export const PlaygroundApp = () => {
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
       if (!dragging.current) return;
+      e.preventDefault();
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
       const percent = (e.clientX / window.innerWidth) * 100;
       setEditorWidth(Math.max(20, Math.min(80, percent)));
     };
     const onMouseUp = () => {
       dragging.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
     };
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
+    window.addEventListener("mousemove", onMouseMove as unknown as EventListener);
+    window.addEventListener("mouseup", onMouseUp as unknown as EventListener);
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
+      window.removeEventListener("mousemove", onMouseMove as unknown as EventListener);
+      window.removeEventListener("mouseup", onMouseUp as unknown as EventListener);
     };
   }, []);
 
-  const handleDividerDoubleClick = useCallback(() => {
+  const handleDividerDoubleClick = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
     setEditorWidth(50); // Reset to 50/50 split
   }, [setEditorWidth]);
 
@@ -225,7 +237,11 @@ export const PlaygroundApp = () => {
         {/* Divider */}
         <div
           className="w-2 cursor-col-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
-          onMouseDown={() => (dragging.current = true)}
+          onMouseDown={(e: MouseEvent) => {
+            if (e.button !== 0) return;
+            e.preventDefault();
+            dragging.current = true;
+          }}
           onDoubleClick={handleDividerDoubleClick}
           role="separator"
           aria-orientation="vertical"
