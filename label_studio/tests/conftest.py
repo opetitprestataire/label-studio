@@ -51,7 +51,7 @@ from .utils import (
 boto3.set_stream_logger('botocore.credentials', logging.DEBUG)
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(autouse=True)
 def set_test_password_hasher(settings):
     """
     Set the password hasher to less expensive MD5 for testing purposes.
@@ -69,7 +69,7 @@ def label_stream_history_limit(settings):
     settings.LABEL_STREAM_HISTORY_LIMIT = 1
 
 
-@pytest.fixture(autouse=True, scope='session')
+@pytest.fixture(autouse=True)
 def disable_sentry(settings):
     settings.SENTRY_RATE = 0
     settings.SENTRY_DSN = None
