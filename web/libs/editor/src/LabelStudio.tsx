@@ -131,15 +131,10 @@ export class LabelStudio {
         clearTimeout(renderTimeout);
         renderTimeout = null;
       }
-      if (this.reactRoot) {
-        try {
+      if (this.reactRoot && isRendered) {
           this.reactRoot.unmount();
-        } catch {
-          // do nothing, it would otherwise complain about not being a node of the tree in HMR development scenarios
-        } finally {
           this.reactRoot = null;
           isRendered = false;
-        }
       }
     };
 

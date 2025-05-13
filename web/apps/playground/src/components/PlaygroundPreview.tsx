@@ -41,7 +41,11 @@ export const PlaygroundPreview: FC<PlaygroundPreviewProps> = memo(
         }
         setShowPreview(false);
         if (lsfInstance.current) {
-          lsfInstance.current.destroy();
+          try {
+            lsfInstance.current.destroy();
+          } catch {
+            // do nothing, it would otherwise complain about not being a node of the tree in HMR development scenarios
+          }
           lsfInstance.current = null;
         }
         if (rafId.current !== null) {
