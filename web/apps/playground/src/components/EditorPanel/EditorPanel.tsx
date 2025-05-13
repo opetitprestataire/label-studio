@@ -1,25 +1,10 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import type { MouseEvent } from "react";
 import { useAtom } from "jotai";
 import { CodeEditor } from "@humansignal/ui";
 import { BottomPanel } from "../BottomPanel";
 import { configAtom } from "../../atoms/configAtoms";
-import { completeAfter, completeIfInTag } from "../../utils/codeEditor";
-import tags from "../../utils/schema.json";
-
-const editorExtensions = ["hint", "xml-hint"];
-const editorOptions = {
-  mode: "xml",
-  theme: "default",
-  lineNumbers: true,
-  extraKeys: {
-    "'<'": completeAfter,
-    "' '": completeIfInTag,
-    "'='": completeIfInTag,
-    "Ctrl-Space": "autocomplete",
-  },
-  hintOptions: { schemaInfo: tags },
-};
+import { editorExtensions, editorOptions } from "../../utils/codeEditor";
 
 const COLLAPSED_PANEL_HEIGHT = 33;
 const DEFAULT_PANEL_HEIGHT = 300;
@@ -65,6 +50,7 @@ export const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
 
   const handleDividerDoubleClick = useCallback(
     (e: MouseEvent) => {
+      e.preventDefault();
       dragging.current = false;
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
@@ -82,11 +68,12 @@ export const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
     };
   }, [handleMouseMove, handleMouseUp]);
 
-  // When collapsing, set height to collapsedPanelHeight
-  useEffect(() => {
-    if (isCollapsed) setBottomPanelHeight(COLLAPSED_PANEL_HEIGHT);
-    else setBottomPanelHeight(DEFAULT_PANEL_HEIGHT);
-  }, [isCollapsed]);
+  const bottomPanelStyle = useMemo(() => {
+    if (isCollapsed) return { height: COLLAPSED_PANEL_HEIGHT };
+    return {
+      height: bottomPanelHeight,
+    };
+  }, [bottomPanelHeight, isCollapsed]);
 
   return (
     <div ref={containerRef} className="flex flex-col min-w-0 h-full" style={{ width: `${editorWidth}%` }}>
@@ -118,7 +105,7 @@ export const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
         />
       )}
       {/* BottomPanel (Input/Output) */}
-      <div style={{ height: bottomPanelHeight, minHeight: COLLAPSED_PANEL_HEIGHT }}>
+      <div style={bottomPanelStyle}>
         <BottomPanel isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       </div>
     </div>

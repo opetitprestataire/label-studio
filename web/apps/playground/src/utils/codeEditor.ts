@@ -1,5 +1,6 @@
 // @ts-ignore
 import CM from "codemirror";
+import tags from "./schema.json";
 
 export function completeAfter(cm: CM.Editor, pred: () => boolean) {
   if (!pred || pred()) {
@@ -21,3 +22,17 @@ export function completeIfInTag(cm: CM.Editor) {
     return inner.tagName;
   });
 }
+
+export const editorExtensions = ["hint", "xml-hint"];
+export const editorOptions = {
+  mode: "xml",
+  theme: "default",
+  lineNumbers: true,
+  extraKeys: {
+    "'<'": completeAfter,
+    "' '": completeIfInTag,
+    "'='": completeIfInTag,
+    "Ctrl-Space": "autocomplete",
+  },
+  hintOptions: { schemaInfo: tags },
+};
