@@ -1,7 +1,7 @@
 import type React from "react";
 import { forwardRef } from "react";
 import { useAtomValue } from "jotai";
-import { configAtom, annotationAtom, sampleTaskAtom } from "../atoms/configAtoms";
+import { annotationAtom, sampleTaskAtom } from "../atoms/configAtoms";
 import { IconCollapseSmall, IconExpandSmall } from "@humansignal/icons";
 import { cnm } from "@humansignal/ui/utils/utils";
 

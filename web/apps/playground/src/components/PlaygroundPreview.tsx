@@ -2,7 +2,15 @@ import { memo, useEffect, useRef } from "react";
 import type { FC } from "react";
 import { generateSampleTaskFromConfig } from "../utils/generateSampleTask";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { configAtom, errorAtom, loadingAtom, showPreviewAtom, interfacesAtom, annotationAtom, sampleTaskAtom } from "../atoms/configAtoms";
+import {
+  configAtom,
+  errorAtom,
+  loadingAtom,
+  showPreviewAtom,
+  interfacesAtom,
+  annotationAtom,
+  sampleTaskAtom,
+} from "../atoms/configAtoms";
 import { onSnapshot } from "mobx-state-tree";
 
 type PlaygroundPreviewProps = {
