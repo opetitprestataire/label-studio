@@ -1,4 +1,4 @@
-import { IconLaunch, IconFileCopy, Label } from "@humansignal/ui";
+import { Button, IconLaunch, IconFileCopy, Label } from "@humansignal/ui";
 import styles from "./PersonalAccessToken.module.scss";
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { atom, useAtomValue } from "jotai";
@@ -9,7 +9,6 @@ import { useCopyText } from "@humansignal/core/lib/hooks/useCopyText";
  * each one of these eventually has to be migrated to core/ui
  */
 import { Input, TextArea } from "apps/labelstudio/src/components/Form";
-import { Button } from "apps/labelstudio/src/components/Button/Button";
 
 const tokenAtom = atomWithQuery(() => ({
   queryKey: ["access-token"],
@@ -56,10 +55,16 @@ export const PersonalAccessToken = () => {
           <Label text="Access Token" className={styles.label} />
           <div className="flex gap-2 w-full justify-between">
             <Input name="token" className={styles.input} readOnly value={token} />
-            <Button icon={<IconFileCopy />} onClick={copyToken} disabled={tokenCopied}>
+            <Button
+              leading={<IconFileCopy />}
+              onClick={copyToken}
+              disabled={tokenCopied}
+              look="outlined"
+              variant="neutral"
+            >
               {tokenCopied ? "Copied!" : "Copy"}
             </Button>
-            <Button look="danger" onClick={reset.mutate}>
+            <Button look="outlined" variant="neutral" onClick={reset.mutate}>
               Reset
             </Button>
           </div>
@@ -74,7 +79,7 @@ export const PersonalAccessToken = () => {
               rawClassName={styles.textarea}
               value={curl}
             />
-            <Button icon={<IconFileCopy />} onClick={copyCurl} disabled={curlCopied}>
+            <Button icon={<IconFileCopy />} onClick={copyCurl} disabled={curlCopied} look="outlined" variant="neutral">
               {curlCopied ? "Copied!" : "Copy"}
             </Button>
           </div>
