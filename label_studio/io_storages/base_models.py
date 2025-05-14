@@ -688,11 +688,26 @@ class ExportStorage(Storage, ProjectStorageMixin):
 class ImportStorageLink(models.Model):
 
     task = models.OneToOneField('tasks.Task', on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s')
+
+    # ---
+    # NOTE: ImportStorageLink is task-level, not key-level. These fields could be split out into a new, key-level table to optimize DB access patterns.
+
     key = models.TextField(_('key'), null=False, help_text='External link key')
+
+    # NOTE: unused
     object_exists = models.BooleanField(
         _('object exists'), help_text='Whether object under external link still exists', default=True
     )
+    # ---
+
     created_at = models.DateTimeField(_('created at'), auto_now_add=True, help_text='Creation time')
+
+    # NOTE: we could support other file formats in future with an equivalent of row_group - ORC, Feather, Avro.
+    # In that case, we would need a file_type enum or similar to distinguish them in filters.
+    row_group = models.PositiveIntegerField(null=True, blank=True, help_text='Parquet row group')
+    row_idx = models.PositiveIntegerField(
+        null=True, blank=True, help_text='Parquet row index, or JSON[L] object index'
+    )
 
     @classmethod
     def exists(cls, key, storage):
