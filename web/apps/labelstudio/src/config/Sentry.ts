@@ -3,7 +3,6 @@ import * as ReactSentry from "@sentry/react";
 import type { RouterHistory } from "@sentry/react/build/types/reactrouter";
 import { Route } from "react-router-dom";
 import { isDefined } from "../utils/helpers";
-import { browserTracingIntegration } from "@sentry/react";
 
 const SENTRY_DSN = APP_SETTINGS.sentry_dsn;
 const SENTRY_ENV = APP_SETTINGS.sentry_environment ?? process.env.NODE_ENV;
@@ -23,7 +22,7 @@ export const initSentry = (history: RouterHistory) => {
       tracePropagationTargets: [
         /^\/(?!tasks\/\d+\/(?:resolve|presign)|projects\/\d+\/(?:resolve|presign))/,
       ],
-      integrations: [browserTracingIntegration(), ReactSentry.reactRouterV5BrowserTracingIntegration({ history })],
+      integrations: [Sentry.browserTracingIntegration(), ReactSentry.reactRouterV5BrowserTracingIntegration({ history })],
       environment: SENTRY_ENV,
       // Set tracesSampleRate to 1.0 to capture 100%
       // of transactions for performance monitoring.
