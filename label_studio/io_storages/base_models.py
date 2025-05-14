@@ -375,7 +375,7 @@ class ImportStorage(Storage):
                 inner_id=max_inner_id,
             )
 
-            link_class.create(task, key, row_index, storage)
+            link_class.create(task, key, storage, row_index=row_index)
             logger.debug(f'Create {storage.__class__.__name__} link with {key=} and {row_index=} for {task=}')
 
             raise_exception = not flag_set(
@@ -708,9 +708,9 @@ class ImportStorageLink(models.Model):
         return cls.objects.filter(key=key, storage=storage.id).count()
 
     @classmethod
-    def create(cls, task, key, row_index, storage):
+    def create(cls, task, key, storage, row_index=0, row_group=None):
         link, created = cls.objects.get_or_create(
-            task_id=task.id, key=key, row_index=row_index, storage=storage, object_exists=True
+            task_id=task.id, key=key, row_index=row_index, row_group=row_group, storage=storage, object_exists=True
         )
         return link
 
