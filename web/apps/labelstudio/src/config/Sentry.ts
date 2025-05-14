@@ -17,15 +17,12 @@ export const initSentry = (history: RouterHistory) => {
       dsn: APP_SETTINGS.sentry_dsn,
       // Only propagate tracing headers for API calls excluding the resolve endpoint
       tracePropagationTargets: [
-        /^\/api\/(?!tasks\/\d+\/resolve)/, 
+        /^\/api\/(?!tasks\/\d+\/resolve)/,
         /^\/api\/(?!tasks\/\d+\/presign)/,
         /^\/api\/(?!projects\/\d+\/resolve)/,
         /^\/api\/(?!projects\/\d+\/presign)/,
       ],
-      integrations: [
-        browserTracingIntegration(),
-        ReactSentry.reactRouterV5BrowserTracingIntegration({ history }),
-      ],
+      integrations: [browserTracingIntegration(), ReactSentry.reactRouterV5BrowserTracingIntegration({ history })],
       environment: SENTRY_ENV,
       // Set tracesSampleRate to 1.0 to capture 100%
       // of transactions for performance monitoring.
