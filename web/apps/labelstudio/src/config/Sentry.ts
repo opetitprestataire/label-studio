@@ -15,12 +15,13 @@ export const initSentry = (history: RouterHistory) => {
     setTags();
     Sentry.init({
       dsn: APP_SETTINGS.sentry_dsn,
-      // Only propagate tracing headers for API calls excluding the resolve endpoint
+      // Only propagate tracing headers for same-origin paths, excluding the resolve/presign endpoints
+      // Regex: ^/             => path starts with '/'
+      //        (?!tasks/...   => negative lookahead excluding '/tasks/:id/(resolve|presign)'
+      //           |projects/...)=> or '/projects/:id/(resolve|presign)'
+      // Note: (?:...) is a non-capturing group – groups without creating numbered captures
       tracePropagationTargets: [
-        /^\/api\/(?!tasks\/\d+\/resolve)/,
-        /^\/api\/(?!tasks\/\d+\/presign)/,
-        /^\/api\/(?!projects\/\d+\/resolve)/,
-        /^\/api\/(?!projects\/\d+\/presign)/,
+        /^\/(?!tasks\/\d+\/(?:resolve|presign)|projects\/\d+\/(?:resolve|presign))/,
       ],
       integrations: [browserTracingIntegration(), ReactSentry.reactRouterV5BrowserTracingIntegration({ history })],
       environment: SENTRY_ENV,
