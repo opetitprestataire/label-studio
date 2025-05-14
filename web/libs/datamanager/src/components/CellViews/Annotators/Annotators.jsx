@@ -18,6 +18,7 @@ export const Annotators = (cell) => {
   const extra = userList.length - renderable.length;
   const userPickBadge = cn("userpic-badge");
   const annotatorsCN = cn("annotators");
+  const isEnterprise = window.APP_SETTINGS.billing?.enterprise;
 
   return (
     <div className={annotatorsCN.toString()}>
@@ -26,7 +27,7 @@ export const Annotators = (cell) => {
         const { annotated, reviewed, review } = item;
 
         const userpicIsFaded =
-          (isDefined(annotated) && annotated === false) || (isDefined(reviewed) && reviewed === false);
+          (isDefined(annotated) && annotated === false) || (isDefined(reviewed) && reviewed === false && isEnterprise);
         const suppressStats = column.alias === "comment_authors";
 
         return (
@@ -77,8 +78,15 @@ const UsersInjector = inject(({ store }) => {
   };
 });
 
-Annotators.FilterItem = UsersInjector(({ users, item }) => {
-  const user = users.find((u) => u.id === item);
+Annotators.filterItems = (items) => {
+  return items.filter((userId) => {
+    const user = DM.usersMap.get(userId);
+    return !(user?.firstName === "Deleted" && user?.lastName === "User");
+  });
+};
+
+Annotators.FilterItem = UsersInjector(({ item }) => {
+  const user = DM.usersMap.get(item);
 
   return user ? (
     <Space size="small">
@@ -89,7 +97,7 @@ Annotators.FilterItem = UsersInjector(({ users, item }) => {
 });
 
 Annotators.searchFilter = (option, queryString) => {
-  const user = DM.users.find((u) => u.id === option?.value);
+  const user = DM.usersMap.get(option?.value);
   return (
     user.id?.toString().toLowerCase().includes(queryString.toLowerCase()) ||
     user.email.toLowerCase().includes(queryString.toLowerCase()) ||
