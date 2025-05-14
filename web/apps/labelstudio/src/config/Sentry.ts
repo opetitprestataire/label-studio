@@ -22,15 +22,14 @@ const tracePropagationTargets = [
 
 export const initSentry = (history: RouterHistory) => {
   if (SENTRY_ENABLED) {
-
     setTags();
 
     Sentry.init({
       dsn: APP_SETTINGS.sentry_dsn,
       tracePropagationTargets,
       integrations: [
-        Sentry.browserTracingIntegration(), 
-        ReactSentry.reactRouterV5BrowserTracingIntegration({ history })
+        Sentry.browserTracingIntegration(),
+        ReactSentry.reactRouterV5BrowserTracingIntegration({ history }),
       ],
       environment: SENTRY_ENV,
       // Set tracesSampleRate to 1.0 to capture 100%
