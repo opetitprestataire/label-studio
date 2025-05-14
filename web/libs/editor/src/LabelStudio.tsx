@@ -111,26 +111,18 @@ export class LabelStudio {
     window.Htx = this.store;
 
     let isRendered = false;
-    let renderTimeout: number | null = null;
 
     const renderApp = () => {
       if (isRendered) {
         clearRenderedApp();
       }
-      renderTimeout = setTimeout(() => {
-        // Create new root for React 18
-        this.reactRoot = createRoot(rootElement);
-        const AppComponent = App as any;
-        this.reactRoot.render(<AppComponent store={this.store} />);
-        isRendered = true;
-      });
+      this.reactRoot = createRoot(rootElement);
+      const AppComponent = App as any;
+      this.reactRoot.render(<AppComponent store={this.store} />);
+      isRendered = true;
     };
 
     const clearRenderedApp = () => {
-      if (renderTimeout) {
-        clearTimeout(renderTimeout);
-        renderTimeout = null;
-      }
       if (this.reactRoot && isRendered) {
         this.reactRoot.unmount();
         this.reactRoot = null;
