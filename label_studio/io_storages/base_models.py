@@ -688,7 +688,6 @@ class ExportStorage(Storage, ProjectStorageMixin):
 class ImportStorageLink(models.Model):
 
     task = models.OneToOneField('tasks.Task', on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s')
-
     key = models.TextField(_('key'), null=False, help_text='External link key')
 
     # NOTE: unused
