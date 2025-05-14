@@ -129,7 +129,7 @@ A popular machine learning format used by the [COCO dataset](http://cocodataset.
 If using `KeyPointLabels`, you will need to add the following to your labeling config:
 
 * At least one `<RectangleLabels>` option. You will use this as a parent bounding box for the keypoints. 
-* Add a `model_index` to every `<Label>` inside your `<KeyPointLabels>` tag. 
+* Add a `model_index` to every `<Label>` inside your `<KeyPointLabels>` tag. The `model_index` value defines the order of the keypoint coordinates in the output array for YOLO. 
 
 For example:
 
