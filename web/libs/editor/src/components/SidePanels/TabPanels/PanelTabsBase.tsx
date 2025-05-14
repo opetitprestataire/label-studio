@@ -28,7 +28,7 @@ const distance = (x1: number, x2: number, y1: number, y2: number) => {
   return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 };
 
-const TABS_ROW_HEIGHT = 33; // px, should match your CSS
+const TABS_ROW_HEIGHT = 33;
 const MIN_HEIGHT = 100;
 const MAX_HEIGHT = 800;
 
