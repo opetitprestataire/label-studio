@@ -18,7 +18,9 @@ export const initSentry = (history: RouterHistory) => {
       // Only propagate tracing headers for API calls excluding the resolve endpoint
       tracePropagationTargets: [
         /^\/api\/(?!tasks\/\d+\/resolve)/, 
-        /^\/api\/(?!tasks\/\d+\/presign)/
+        /^\/api\/(?!tasks\/\d+\/presign)/,
+        /^\/api\/(?!projects\/\d+\/resolve)/,
+        /^\/api\/(?!projects\/\d+\/presign)/,
       ],
       integrations: [
         browserTracingIntegration(),
