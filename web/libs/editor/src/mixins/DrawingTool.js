@@ -460,11 +460,42 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
       },
       mousemoveEv(ev, [x, y]) {
         if ((lastEvent === MOUSE_DOWN_EVENT || lastEvent === MOUSE_MOVE_EVENT) 
-          && ev.timeStamp - lastPointTs > 20 && !self.comparePointsWithThreshold(lastPoint, { x, y })) {
+          && ev.timeStamp - lastPointTs > 20 && !self.comparePointsWithThreshold(lastPoint, { x, y })
+          && x > 0 && y > 0 && x < RELATIVE_STAGE_WIDTH && y < RELATIVE_STAGE_HEIGHT) {
           self._clickEv(ev, [x, y]);
           lastPoint = { x, y };
           lastEvent = MOUSE_MOVE_EVENT;
         }
+      },
+      touchstartEv(ev, [x, y]) {
+        self._clickEv(ev, [x, y]);
+        lastPoint = { x, y };
+        lastEvent = MOUSE_DOWN_EVENT;
+      },
+      touchmoveEv(ev, [x, y]) {
+        if ((lastEvent === MOUSE_DOWN_EVENT || lastEvent === MOUSE_MOVE_EVENT) 
+          && ev.timeStamp - lastPointTs > 20 && !self.comparePointsWithThreshold(lastPoint, { x, y })
+          && x > 0 && y > 0 && x < RELATIVE_STAGE_WIDTH && y < RELATIVE_STAGE_HEIGHT) {
+          self._clickEv(ev, [x, y]);
+          lastPoint = { x, y };
+          lastEvent = MOUSE_MOVE_EVENT;
+        }
+      },
+      touchendEv(ev, [x, y]) {
+        if (lastEvent === MOUSE_DOWN_EVENT && self.comparePointsWithThreshold(lastPoint, { x, y })) {
+          lastEvent = MOUSE_UP_EVENT;
+        }
+        else if (lastEvent === MOUSE_MOVE_EVENT) { 
+          if (self.comparePointsWithThreshold(lastPoint, startPoint, 5) && pointsCount > 2
+              && x > 0 && y > 0 && x < RELATIVE_STAGE_WIDTH && y < RELATIVE_STAGE_HEIGHT) {
+            lastEvent = CLICK_EVENT;
+            self.finishDrawing();
+          }
+          else {
+            lastEvent = MOUSE_UP_EVENT;
+          }
+        }
+        lastPoint = { x: -1, y: -1 };
       },
       clickEv(ev, [x, y]) {
         if (lastEvent !== MOUSE_DOWN_EVENT) {

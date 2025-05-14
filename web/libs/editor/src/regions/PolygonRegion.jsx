@@ -550,6 +550,10 @@ const HtxPolygonView = ({ item, setShapeRef }) => {
     useStrokeAsFill: true,
   });
 
+  var lastEvent = 0;
+  const TOUCH_DOWN_EVENT = 1;
+  const TOUCH_MOVE_EVENT = 2;
+
   function renderCircle({ points, idx }) {
     const name = `anchor_${points.length}_${idx}`;
     const point = points[idx];
@@ -656,6 +660,33 @@ const HtxPolygonView = ({ item, setShapeRef }) => {
         item.setHighlight(false);
         item.onClickRegion(e);
       }}
+      onTouchStart={(e) => {
+        e.evt.preventDefault()
+        lastEvent = TOUCH_DOWN_EVENT;
+      }}
+      onTouchEnd={(e) => {
+
+        // create regions over another regions with Cmd/Ctrl pressed
+        if (item.parent.getSkipInteractions()) return;
+        if (item.isDrawing) return;
+
+        e.cancelBubble = true;
+
+        if (!item.closed) return;
+
+        if (lastEvent !== TOUCH_DOWN_EVENT) return;
+
+        if (store.annotationStore.selected.isLinkingMode) {
+          stage.container().style.cursor = Constants.DEFAULT_CURSOR;
+        }
+
+        item.setHighlight(false);
+        item.onClickRegion(e);
+      }}
+      onTouchMove={(e) => {
+        lastEvent = TOUCH_MOVE_EVENT;
+      }}
+      
       {...dragProps}
       draggable={!item.isReadOnly() && (!item.inSelection || item.parent?.selectedRegions?.length === 1)}
       listening={!suggestion}
