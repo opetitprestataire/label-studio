@@ -167,6 +167,7 @@ const Button = forwardRef(
         ref={(el) => setRef(ref, el)}
         disabled={buttonProps.disabled ?? (!waitingClickable && waiting)}
         data-waiting={waiting}
+        data-variant={variant}
         className={buttonClassName}
       >
         {leading && children && <em className={iconClassName}>{leading}</em>}
