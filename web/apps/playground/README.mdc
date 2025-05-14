@@ -23,7 +23,7 @@ The LabelStudio Playground is a standalone, embeddable React application for edi
 - **Location:** `src/components/PlaygroundApp.tsx`
 - **Role:** The main application component. Handles:
   - UI rendering and atom wiring only; all state is managed via Jotai atoms.
-  - Reads and writes config, loading, error, and interfaces state via atoms.
+  - Reads and writes config, loading, error, interfaces state via atoms.
   - Uses utility functions for parsing URL parameters and interface options.
   - Renders the code editor and preview panels side by side using Tailwind CSS for layout.
 
@@ -112,19 +112,22 @@ The LabelStudio Playground is a standalone, embeddable React application for edi
 
 ```
 web/apps/playground/
-  README.mdc
-  src/
-    main.tsx
-    index.html
-    components/
-      PlaygroundApp.tsx
-      PlaygroundPreview.tsx
-    atoms/
-      configAtoms.ts
-    utils/
-      codeEditor.ts
-      generateSampleTask.ts
-      query.ts
+├── src/
+│   ├── atoms/           # Jotai atoms for state management
+│   ├── components/      # React components
+│   │   ├── BottomPanel/ # Data Input/Output Bottom panel component
+│   │   ├── EditorPanel/ # Labelling Config Editor panel component
+│   │   ├── PlaygroundApp/ # Main app component
+│   │   └── PreviewPanel/ # Labelling Preview panel component
+│   ├── utils/          # Utility functions
+│   ├── index.html      # Entry HTML file
+│   └── main.tsx        # Entry point
+├── .babelrc           # Babel configuration
+├── jest.config.ts     # Jest configuration
+├── project.json       # Nx project configuration
+├── tsconfig.json      # TypeScript configuration
+├── tsconfig.app.json  # App-specific TypeScript configuration
+└── tsconfig.spec.json # Test-specific TypeScript configuration
 ```
 
 ## Summary
