@@ -275,7 +275,15 @@ INTERNAL_IPS = [  # django debug toolbar for django==2.2 requirement
     '127.0.0.1',
     'localhost',
 ]
-CORS_ORIGIN_ALLOW_ALL = True
+
+# Typical secure configuration is simply set CORS_ALLOW_ALL_ORIGINS = False in the env
+if allowed_origins := get_env_list('CORS_ALLOWED_ORIGINS'):
+    CORS_ALLOWED_ORIGINS = allowed_origins
+elif allowed_origin_regexes := get_env_list('CORS_ALLOWED_ORIGIN_REGEXES'):
+    CORS_ALLOWED_ORIGIN_REGEXES = allowed_origin_regexes
+else:
+    CORS_ALLOW_ALL_ORIGINS = get_bool_env('CORS_ALLOW_ALL_ORIGINS', True)
+
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -597,6 +605,10 @@ STORAGE_PERMISSION = 'io_storages.permissions.StoragePermission'
 PROJECT_IMPORT_PERMISSION = 'projects.permissions.ProjectImportPermission'
 DELETE_TASKS_ANNOTATIONS_POSTPROCESS = None
 FEATURE_FLAGS_GET_USER_REPR = 'core.feature_flags.utils.get_user_repr'
+
+# Test factories
+PROJECT_FACTORY = 'projects.tests.factories.ProjectFactory'
+USER_FACTORY = 'users.tests.factories.UserFactory'
 
 
 def project_delete(project):
