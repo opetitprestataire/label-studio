@@ -447,7 +447,9 @@ class ImportStorage(Storage):
             for row_index, task_data in enumerate(tasks_data):
                 # TODO: batch this loop body with add_task -> add_tasks in a single bulk write.
                 # See DIA-2062 for prerequisites
-                task = self.add_task(task_data, self.project, maximum_annotations, max_inner_id, self, key, row_index, link_class)
+                task = self.add_task(
+                    task_data, self.project, maximum_annotations, max_inner_id, self, key, row_index, link_class
+                )
                 max_inner_id += 1
 
                 # update progress counters for storage info
@@ -707,7 +709,9 @@ class ImportStorageLink(models.Model):
 
     @classmethod
     def create(cls, task, key, row_index, storage):
-        link, created = cls.objects.get_or_create(task_id=task.id, key=key, row_index=row_index, storage=storage, object_exists=True)
+        link, created = cls.objects.get_or_create(
+            task_id=task.id, key=key, row_index=row_index, storage=storage, object_exists=True
+        )
         return link
 
     class Meta:
