@@ -121,7 +121,43 @@ Export your brush mask labels as NumPy 2d arrays and PNG images. Each label outp
 
 ### COCO
 
-A popular machine learning format used by the [COCO dataset](http://cocodataset.org/#home) for object detection and image segmentation tasks. Supports bounding box and polygon image labeling projects that use the `BrushLabels`, `RectangleLabels`, or `PolygonLabels` tags.
+A popular machine learning format used by the [COCO dataset](http://cocodataset.org/#home) for object detection and image segmentation tasks. Supports bounding box and polygon image labeling projects that use the `BrushLabels`, `RectangleLabels`, `KeyPointLabels` (see note below), or `PolygonLabels` tags.
+
+
+{% details <b>KeyPointLabels Export Support</b> %}
+
+If using `KeyPointLabels`, you will need to add the following to your labeling config:
+
+* At least one `<RectangleLabels>` option. You will use this as a parent bounding box for the keypoints. 
+* Add a `model_index` to every `<Label>` inside your `<KeyPointLabels>` tag. 
+
+For example:
+
+```xml
+<View>
+  <Image name="image" value="$image"/>
+
+  <KeyPointLabels name="kp" toName="image">
+    <Label value="nose" model_index="0"/>
+    <Label value="eye" model_index="1"/>
+    <Label value="tail" model_index="2"/>
+  </KeyPointLabels>
+
+  <RectangleLabels name="bbox" toName="image">
+    <Label value="animal"/>
+  </RectangleLabels>
+</View>
+
+```
+
+After annotation, drag-and-drop each keypoint region under its bounding-box region in the **Regions** panel. 
+
+This establishes a parent–child hierarchy (via parentID), which is necessary for export. 
+
+![Screenshot of keypoints within a bounding box](/images/import-export/keypoints.png)
+
+{% enddetails %}
+
 
 ### CoNLL2003
 
@@ -189,7 +225,10 @@ Results are stored in a tab-separated tabular file with column names specified b
 
 ### YOLO
 
-Export object detection annotations in the YOLOv3 and YOLOv4 format. Supports object detection labeling projects that use the `RectangleLabels` tag. 
+Export object detection annotations in the YOLOv3 and YOLOv4 format. Supports object detection labeling projects that use the `RectangleLabels`  and `KeyPointLabels` tags. 
+
+!!! note
+    If using KeyPointLabels, see the note under [COCO](#COCO).
 
 {% insertmd includes/task_format.md %}
 
