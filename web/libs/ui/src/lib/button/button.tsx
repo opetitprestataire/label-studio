@@ -166,6 +166,7 @@ const Button = forwardRef(
         onClick={clickHandler}
         ref={(el) => setRef(ref, el)}
         disabled={buttonProps.disabled ?? (!waitingClickable && waiting)}
+        data-waiting={waiting}
         className={buttonClassName}
       >
         {leading && children && <em className={iconClassName}>{leading}</em>}
