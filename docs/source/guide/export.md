@@ -150,7 +150,7 @@ For example:
 
 ```
 
-After annotation, drag-and-drop each keypoint region under its bounding-box region in the **Regions** panel. 
+After annotating, you must drag-and-drop each keypoint region under its corresponding rectangle region in the **Regions** panel. 
 
 This establishes a parent–child hierarchy (via parentID), which is necessary for export. 
 
