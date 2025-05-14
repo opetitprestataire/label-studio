@@ -690,7 +690,7 @@ class ImportStorageLink(models.Model):
     task = models.OneToOneField('tasks.Task', on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s')
     key = models.TextField(_('key'), null=False, help_text='External link key')
 
-    # NOTE: unused
+    # This field is set to True on creation and never updated; it should not be relied upon.
     object_exists = models.BooleanField(
         _('object exists'), help_text='Whether object under external link still exists', default=True
     )
