@@ -3,6 +3,7 @@ import * as ReactSentry from "@sentry/react";
 import type { RouterHistory } from "@sentry/react/build/types/reactrouter";
 import { Route } from "react-router-dom";
 import { isDefined } from "../utils/helpers";
+import { browserTracingIntegration } from "@sentry/react";
 
 const SENTRY_DSN = APP_SETTINGS.sentry_dsn;
 const SENTRY_ENV = APP_SETTINGS.sentry_environment ?? process.env.NODE_ENV;
@@ -14,8 +15,13 @@ export const initSentry = (history: RouterHistory) => {
     setTags();
     Sentry.init({
       dsn: APP_SETTINGS.sentry_dsn,
+      // Only propagate tracing headers for API calls excluding the resolve endpoint
+      tracePropagationTargets: [
+        /^\/api\/(?!tasks\/\d+\/resolve)/, 
+        /^\/api\/(?!tasks\/\d+\/presign)/
+      ],
       integrations: [
-        Sentry.browserTracingIntegration(),
+        browserTracingIntegration(),
         ReactSentry.reactRouterV5BrowserTracingIntegration({ history }),
       ],
       environment: SENTRY_ENV,
