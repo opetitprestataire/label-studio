@@ -21,16 +21,19 @@ module.exports.config = {
       url: `http://localhost:${port}`,
       show: !headless,
       restart: "context",
-      timeout: 60000, // Action timeout after 60 seconds
-      waitForAction: headless ? 300 : 1200,
+      timeout: 30000, // Reduced from 60000 to 30000 ms
+      waitForAction: headless ? 100 : 500, // Reduced wait times
       windowSize: "1200x900",
-      waitForNavigation: "networkidle",
+      waitForNavigation: "domcontentloaded", // Changed from networkidle to domcontentloaded
       browser: "chromium",
       chromium: process.env.CHROMIUM_EXECUTABLE_PATH
         ? {
             executablePath: process.env.CHROMIUM_EXECUTABLE_PATH,
+            args: ['--disable-dev-shm-usage', '--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
           }
-        : {},
+        : {
+            args: ['--disable-dev-shm-usage', '--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+          },
       // to test date shifts because of timezone. (see date-time.test.js)
       // Paris is in +1/+2 timezone, so date with midnight (00:00)
       // will be always in previous day in ISO
@@ -72,6 +75,8 @@ module.exports.config = {
     },
   },
   name: "label-studio-frontend",
+  // Configure parallel execution with workers
+  workers: process.env.WORKERS ? parseInt(process.env.WORKERS) : (process.env.CI ? 2 : 4),
   plugins: {
     retryFailedStep: {
       enabled: true,
