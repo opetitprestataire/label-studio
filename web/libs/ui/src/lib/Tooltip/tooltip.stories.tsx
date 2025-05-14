@@ -57,7 +57,9 @@ export const Interactive: Story = {
           {...props}
           title={
             <div>
-              <button onClick={() => alert("hello there")}>click me</button>
+              <button type="button" onClick={() => alert("hello there")}>
+                click me
+              </button>
             </div>
           }
           interactive
