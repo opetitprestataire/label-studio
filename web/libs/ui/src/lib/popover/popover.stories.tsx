@@ -50,31 +50,19 @@ export const WithList: Story = {
       <div className="p-2 w-48">
         <ul className="space-y-1">
           <li>
-            <button
-              onClick={() => {}}
-              type="button"
-              className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm"
-            >
+            <span className="block w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm cursor-pointer">
               Option 1
-            </button>
+            </span>
           </li>
           <li>
-            <button
-              onClick={() => {}}
-              type="button"
-              className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm"
-            >
+            <span className="block w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm cursor-pointer">
               Option 2
-            </button>
+            </span>
           </li>
           <li>
-            <button
-              onClick={() => {}}
-              type="button"
-              className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm"
-            >
+            <span className="block w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm cursor-pointer">
               Option 3
-            </button>
+            </span>
           </li>
         </ul>
       </div>
