@@ -72,6 +72,9 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(
             config,
             task: sampleTask,
             interfaces,
+            instanceOptions: {
+              reactVersion: "v18",
+            },
             settings: {
               forceBottomPanel: true,
               collapsibleBottomPanel: true,
