@@ -423,7 +423,7 @@ class ImportStorage(Storage):
             logger.debug(f'Scanning key {key}')
             self.info_update_progress(last_sync_count=tasks_created, tasks_existed=tasks_existed)
 
-            # skip if task already exists
+            # skip if key has already been synced
             if n_tasks_linked := link_class.n_tasks_linked(key, self):
                 logger.debug(f'{self.__class__.__name__} already has {n_tasks_linked} tasks linked to {key=}')
                 tasks_existed += n_tasks_linked  # update progress counter
@@ -439,12 +439,16 @@ class ImportStorage(Storage):
                     f'(images, audio, text, etc.), edit storage settings and enable '
                     f'"Treat every bucket object as a source file"'
                 )
+            
+            if isinstance(tasks_data, dict):
+                tasks_data = [tasks_data]
+                row_indices = [None]
+            else:
+                if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):
+                    tasks_data = tasks_data[:1]
+                row_indices = range(len(tasks_data))
 
-            if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):
-                tasks_data = tasks_data[:1]
-
-            # TODO: for keys that contain exactly one task not in a list (blob url, top-level JSON dict) should row_index=None?
-            for row_index, task_data in enumerate(tasks_data):
+            for row_index, task_data in zip(row_indices, tasks_data):
                 # TODO: batch this loop body with add_task -> add_tasks in a single bulk write.
                 # See DIA-2062 for prerequisites
                 task = self.add_task(
@@ -708,7 +712,7 @@ class ImportStorageLink(models.Model):
         return cls.objects.filter(key=key, storage=storage.id).count()
 
     @classmethod
-    def create(cls, task, key, storage, row_index=0, row_group=None):
+    def create(cls, task, key, storage, row_index=None, row_group=None):
         link, created = cls.objects.get_or_create(
             task_id=task.id, key=key, row_index=row_index, row_group=row_group, storage=storage, object_exists=True
         )
