@@ -17,14 +17,25 @@ type Story = StoryObj<typeof Popover>;
 export const Default: Story = {
   args: {
     trigger: <Button>Click me</Button>,
-    children: (
-      <div className="p-4">
-        <h4 className="mb-2 font-medium">Popover Title</h4>
-        <p className="text-sm text-muted-foreground">
-          This is a basic popover with some content.
-        </p>
-      </div>
-    ),
+    children: <div className="p-4">Popover content</div>,
+  },
+};
+
+export const ShowMethod: Story = {
+  render: () => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      Popover.show({
+        anchorEl: e.currentTarget,
+        children: <div className="p-4">This popover was created using Popover.show</div>,
+        className: "w-64",
+      });
+    };
+
+    return (
+      <Button onClick={handleClick}>
+        Show Popover
+      </Button>
+    );
   },
 };
 
@@ -37,19 +48,11 @@ export const WithForm: Story = {
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium">Name</label>
-            <input
-              type="text"
-              className="w-full mt-1 px-3 py-2 border rounded-md"
-              placeholder="Enter your name"
-            />
+            <input type="text" className="w-full mt-1 px-3 py-2 border rounded-md" placeholder="Enter your name" />
           </div>
           <div>
             <label className="text-sm font-medium">Email</label>
-            <input
-              type="email"
-              className="w-full mt-1 px-3 py-2 border rounded-md"
-              placeholder="Enter your email"
-            />
+            <input type="email" className="w-full mt-1 px-3 py-2 border rounded-md" placeholder="Enter your email" />
           </div>
           <Button className="w-full">Save</Button>
         </div>
@@ -65,19 +68,13 @@ export const WithList: Story = {
       <div className="p-2 w-48">
         <ul className="space-y-1">
           <li>
-            <button className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm">
-              Option 1
-            </button>
+            <button className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm">Option 1</button>
           </li>
           <li>
-            <button className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm">
-              Option 2
-            </button>
+            <button className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm">Option 2</button>
           </li>
           <li>
-            <button className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm">
-              Option 3
-            </button>
+            <button className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm">Option 3</button>
           </li>
         </ul>
       </div>
@@ -96,4 +93,4 @@ export const WithCustomAlignment: Story = {
       </div>
     ),
   },
-}; 
+};
