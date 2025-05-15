@@ -6,7 +6,7 @@ import { DEFAULT_PANEL_HEIGHT } from "../constants";
 import "./Tabs.scss";
 import { type BaseProps, Side, type TabProps } from "./types";
 import { determineDroppableArea, determineLeftOrRight } from "./utils";
-import { Button } from "libs/editor/src/common/Button/Button";
+import { Button } from "../../../common/Button/Button";
 
 const classAddedTabs: (Element | undefined)[] = [];
 
