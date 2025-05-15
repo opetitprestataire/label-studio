@@ -439,7 +439,7 @@ class ImportStorage(Storage):
                     f'(images, audio, text, etc.), edit storage settings and enable '
                     f'"Treat every bucket object as a source file"'
                 )
-            
+
             if isinstance(tasks_data, dict):
                 tasks_data = [tasks_data]
                 row_indices = [None]
