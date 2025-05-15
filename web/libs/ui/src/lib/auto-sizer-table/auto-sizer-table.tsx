@@ -41,7 +41,10 @@ export const AutoSizerTable = forwardRef<VariableSizeList, AutoSizerTableProps>(
             minimumBatchSize={30}
             ref={ref}
           >
-            {({ onItemsRendered, ref: infiniteLoaderRef }: { onItemsRendered: (params: { startIndex: number; stopIndex: number }) => void; ref: any }) => {
+            {({
+              onItemsRendered,
+              ref: infiniteLoaderRef,
+            }: { onItemsRendered: (params: { startIndex: number; stopIndex: number }) => void; ref: any }) => {
               return (
                 <VariableSizeList
                   ref={infiniteLoaderRef}
