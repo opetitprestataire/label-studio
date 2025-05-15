@@ -152,10 +152,111 @@ For example:
 
 After annotating, you must drag-and-drop each keypoint region under its corresponding rectangle region in the **Regions** panel. 
 
-This establishes a parent–child hierarchy (via parentID), which is necessary for export. 
+This establishes a parent–child hierarchy (via parentID), which is necessary for export. See the export examples below. 
 
 ![Screenshot of keypoints within a bounding box](/images/import-export/keypoints.png)
 
+**Export examples**
+
+<div class="code-tabs">
+  <div data-name="Keypoints in JSON">
+```json
+[
+      {
+        "result": [
+          {
+            "id": "17n06ubOJs",
+            "type": "keypointlabels",
+            "value": {
+              "x": 6.675567423230974,
+              "y": 20.597014925373134,
+              "width": 0.26702269692923897,
+              "keypointlabels": [
+                "nose"
+              ]
+            },
+            "origin": "manual",
+            "to_name": "image",
+            "parentID": "QHG4TBXuNC",
+            "from_name": "kp",
+            "image_rotation": 0,
+            "original_width": 200,
+            "original_height": 179
+          },
+          {
+            "id": "QHG4TBXuNC",
+            "type": "rectanglelabels",
+            "value": {
+              "x": 3.871829105473965,
+              "y": 4.029850746268656,
+              "width": 94.39252336448598,
+              "height": 92.08955223880598,
+              "rotation": 0,
+              "rectanglelabels": [
+                "animal"
+              ]
+            },
+            "origin": "manual",
+            "to_name": "image",
+            "from_name": "bbox",
+            "image_rotation": 0,
+            "original_width": 200,
+            "original_height": 179
+          }
+]
+```
+  </div>
+  <div data-name="Keypoints in COCO">
+```json
+[
+    {
+      "id": 0,
+      "image_id": 0,
+      "category_id": 0,
+      "segmentation": [],
+      "bbox": [
+        7.74365821094793,
+        7.213432835820895,
+        188.78504672897196,
+        164.84029850746268
+      ],
+      "ignore": 0,
+      "iscrowd": 0,
+      "area": 31119.38345654903
+    },
+    {
+      "id": 1,
+      "image_id": 0,
+      "category_id": 0,
+      "keypoints": [
+        13,
+        37,
+        2,
+        33,
+        33,
+        2,
+        167,
+        24,
+        2
+      ],
+      "num_keypoints": 3,
+      "bbox": [
+        13,
+        24,
+        154,
+        13
+      ],
+      "iscrowd": 0
+    }
+]
+```
+  </div>
+  <div data-name="Keypoints in YOLO">
+```
+0 0.5106809078771696 0.5007462686567165 0.9439252336448598 0.9208955223880598 0.06675567423230974 0.20597014925373133 2 0.1628838451268358 0.18507462686567164 2 0.8371161548731643 0.13134328358208955 2
+```
+  </div>
+</div>
 {% enddetails %}
 
 
