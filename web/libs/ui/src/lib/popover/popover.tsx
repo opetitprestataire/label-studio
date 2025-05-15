@@ -5,8 +5,6 @@ import {
   PopoverContent,
   PopoverAnchor,
 } from "../../shad/components/ui/popover";
-import { createRoot } from "react-dom/client";
-import { createElement } from "react";
 import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
 
@@ -16,11 +14,9 @@ export interface PopoverProps extends React.ComponentProps<typeof ShadPopover> {
   align?: "start" | "center" | "end";
   sideOffset?: number;
   className?: string;
-  anchorEl?: HTMLElement;
-  onClose?: () => void;
 }
 
-export function Popover({ trigger, children, align = "center", sideOffset = 4, className, ...props }: PopoverProps) {
+const Popover = ({ trigger, children, align = "center", sideOffset = 4, className, ...props }: PopoverProps) => {
   return (
     <ShadPopover {...props}>
       <PopoverTrigger data-slot="popover-trigger" asChild>
@@ -41,35 +37,6 @@ export function Popover({ trigger, children, align = "center", sideOffset = 4, c
       </PopoverContent>
     </ShadPopover>
   );
-}
-
-interface ShowPopoverProps {
-  anchorEl: HTMLElement;
-  children: React.ReactNode;
-  className?: string;
-}
-
-Popover.show = ({ anchorEl, children, className }: ShowPopoverProps) => {
-  const container = document.createElement("div");
-  document.body.appendChild(container);
-  const root = createRoot(container);
-
-  const unmount = () => {
-    root.unmount();
-    container.remove();
-  };
-
-  root.render(
-    createElement(Popover, {
-      open: true,
-      anchorEl,
-      onClose: unmount,
-      className,
-      children,
-    }),
-  );
-
-  return unmount;
 };
 
-export { PopoverTrigger, PopoverContent, PopoverAnchor };
+export { PopoverTrigger, PopoverContent, PopoverAnchor, Popover };

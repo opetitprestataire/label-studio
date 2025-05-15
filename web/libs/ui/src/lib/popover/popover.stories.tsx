@@ -21,24 +21,6 @@ export const Default: Story = {
   },
 };
 
-export const ShowMethod: Story = {
-  render: () => {
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      Popover.show({
-        anchorEl: e.currentTarget,
-        children: <div className="p-4">This popover was created using Popover.show</div>,
-        className: "w-64",
-      });
-    };
-
-    return (
-      <Button onClick={handleClick}>
-        Show Popover
-      </Button>
-    );
-  },
-};
-
 export const WithForm: Story = {
   args: {
     trigger: <Button>Open Form</Button>,
@@ -68,13 +50,31 @@ export const WithList: Story = {
       <div className="p-2 w-48">
         <ul className="space-y-1">
           <li>
-            <button className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm">Option 1</button>
+            <button
+              onClick={() => {}}
+              type="button"
+              className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm"
+            >
+              Option 1
+            </button>
           </li>
           <li>
-            <button className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm">Option 2</button>
+            <button
+              onClick={() => {}}
+              type="button"
+              className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm"
+            >
+              Option 2
+            </button>
           </li>
           <li>
-            <button className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm">Option 3</button>
+            <button
+              onClick={() => {}}
+              type="button"
+              className="w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm"
+            >
+              Option 3
+            </button>
           </li>
         </ul>
       </div>
