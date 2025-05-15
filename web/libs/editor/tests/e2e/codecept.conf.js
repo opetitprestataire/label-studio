@@ -21,19 +21,18 @@ module.exports.config = {
       url: `http://localhost:${port}`,
       show: !headless,
       restart: "context",
-      timeout: 30000, // Reduced from 60000 to 30000 ms
-      waitForAction: headless ? 100 : 500, // Reduced wait times
+      timeout: 30000,
+      waitForAction: headless ? 100 : 500,
       windowSize: "1200x900",
-      waitForNavigation: "domcontentloaded", // Changed from networkidle to domcontentloaded
+      waitForNavigation: "domcontentloaded",
+      waitForURL: "domcontentloaded",
       browser: "chromium",
       chromium: process.env.CHROMIUM_EXECUTABLE_PATH
         ? {
             executablePath: process.env.CHROMIUM_EXECUTABLE_PATH,
             args: ['--disable-dev-shm-usage', '--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
           }
-        : {
-            args: ['--disable-dev-shm-usage', '--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
-          },
+        : {},
       // to test date shifts because of timezone. (see date-time.test.js)
       // Paris is in +1/+2 timezone, so date with midnight (00:00)
       // will be always in previous day in ISO
