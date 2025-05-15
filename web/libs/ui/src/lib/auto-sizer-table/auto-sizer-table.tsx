@@ -39,22 +39,25 @@ export const AutoSizerTable = forwardRef<VariableSizeList, AutoSizerTableProps>(
             isItemLoaded={isItemLoaded}
             threshold={5}
             minimumBatchSize={30}
+            ref={ref}
           >
-            {({ onItemsRendered, ref: infiniteLoaderRef }) => (
-              <VariableSizeList
-                ref={ref}
-                width={width}
-                height={height}
-                itemCount={totalCount}
-                itemData={itemData}
-                itemSize={itemSize}
-                onItemsRendered={onItemsRendered}
-                initialScrollOffset={initialScrollOffset?.(height) ?? 0}
-                {...rest}
-              >
-                {ItemWrapper}
-              </VariableSizeList>
-            )}
+            {({ onItemsRendered, ref: infiniteLoaderRef }: { onItemsRendered: (params: { startIndex: number; stopIndex: number }) => void; ref: any }) => {
+              return (
+                <VariableSizeList
+                  ref={infiniteLoaderRef}
+                  width={width}
+                  height={height}
+                  itemCount={totalCount}
+                  itemData={itemData}
+                  itemSize={itemSize}
+                  onItemsRendered={onItemsRendered}
+                  initialScrollOffset={initialScrollOffset?.(height) ?? 0}
+                  {...rest}
+                >
+                  {ItemWrapper}
+                </VariableSizeList>
+              );
+            }}
           </InfiniteLoader>
         )}
       </AutoSizer>
