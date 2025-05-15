@@ -91,16 +91,30 @@ export class LabelStudio {
 
     this.root = root;
     this.options = options;
-    if (this.options.instanceOptions?.reactVersion === "v18") {
+    if (options.instanceOptions?.reactVersion === "v18") {
       this.createAppV18();
     } else {
+      console.log("createAppV17");
       this.createAppV17();
     }
 
     this.supportLegacyEvents();
 
-    if (this.options.instanceOptions?.reactVersion !== "v18") {
+    if (options.instanceOptions?.reactVersion !== "v18") {
+      console.log("createAppV17");
       LabelStudio.instances.add(this);
+    }
+  }
+
+  on(eventName: string, callback: Callback) {
+    this.events.on(eventName, callback);
+  }
+
+  off(eventName: string, callback: Callback) {
+    if (isDefined(callback)) {
+      this.events.off(eventName, callback);
+    } else {
+      this.events.removeAll(eventName);
     }
   }
 
