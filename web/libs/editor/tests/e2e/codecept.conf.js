@@ -74,8 +74,6 @@ module.exports.config = {
     },
   },
   name: "label-studio-frontend",
-  // Configure parallel execution with workers
-  workers: process.env.WORKERS ? parseInt(process.env.WORKERS) : (process.env.CI ? 2 : 4),
   plugins: {
     retryFailedStep: {
       enabled: true,
