@@ -199,7 +199,6 @@ export const LabelStudio = {
     cy.visit("/").then((win) => {
       cy.log(`Default feature flags set ${JSON.stringify(win.APP_SETTINGS.feature_flags, null, "  ")}`);
       const labelStudio = new win.LabelStudio("label-studio", fixLSParams(win.LSF_CONFIG, win));
-      console.log("labelStudio", labelStudio);
 
       if (win.LSF_CONFIG.eventListeners) {
         for (const [event, listener] of Object.entries(win.LSF_CONFIG.eventListeners)) {

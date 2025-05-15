@@ -94,14 +94,12 @@ export class LabelStudio {
     if (options.instanceOptions?.reactVersion === "v18") {
       this.createAppV18();
     } else {
-      console.log("createAppV17");
       this.createAppV17();
     }
 
     this.supportLegacyEvents();
 
     if (options.instanceOptions?.reactVersion !== "v18") {
-      console.log("createAppV17");
       LabelStudio.instances.add(this);
     }
   }
