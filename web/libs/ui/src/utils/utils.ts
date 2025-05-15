@@ -56,25 +56,91 @@ export function useRandomInterval(callback: () => void, minDelay: number | null,
 }
 
 /**
- * Utility to generate a random position for a sparkle, avoiding the center of a button
+ * Options for randomPositionAvoidingCenter
  */
-export function randomPositionAvoidingCenter(BUTTON_SIZE: number, SPARKLE_RING_INNER_RADIUS: number, SPARKLE_RING_OUTER_RADIUS: number) {
-  const center = BUTTON_SIZE / 2;
+export interface SparkleAreaOptions {
+  areaShape: 'circle' | 'rect';
+  areaWidth?: number;
+  areaHeight?: number;
+  areaRadius?: number;
+  cutoutShape: 'circle' | 'rect';
+  cutoutWidth?: number;
+  cutoutHeight?: number;
+  cutoutRadius?: number;
+  center: { x: number; y: number };
+}
+
+/**
+ * Generate a random position for a sparkle within an area, avoiding a cutout in the center.
+ *
+ * @param options - Area and cutout options
+ * @returns { top, left }
+ */
+export function randomPositionAvoidingCenter(options: SparkleAreaOptions): { top: number; left: number } {
+  const {
+    areaShape,
+    areaWidth = 28,
+    areaHeight = 28,
+    areaRadius = 14,
+    cutoutShape,
+    cutoutWidth = 0,
+    cutoutHeight = 0,
+    cutoutRadius = 12,
+    center,
+  } = options;
+
   for (let i = 0; i < 10; i++) {
-    const angle = Math.random() * 2 * Math.PI;
-    const radius = SPARKLE_RING_INNER_RADIUS + Math.random() * (SPARKLE_RING_OUTER_RADIUS - SPARKLE_RING_INNER_RADIUS);
-    const top = center + radius * Math.sin(angle);
-    const left = center + radius * Math.cos(angle);
-    if (top >= 0 && top <= BUTTON_SIZE && left >= 0 && left <= BUTTON_SIZE) {
+    let top: number, left: number;
+    if (areaShape === 'circle') {
+      const angle = Math.random() * 2 * Math.PI;
+      const r = (cutoutShape === 'circle')
+        ? cutoutRadius + Math.random() * (areaRadius - cutoutRadius)
+        : Math.random() * areaRadius;
+      top = center.y + r * Math.sin(angle);
+      left = center.x + r * Math.cos(angle);
+    } else {
+      // areaShape === 'rect'
+      top = center.y - areaHeight / 2 + Math.random() * areaHeight;
+      left = center.x - areaWidth / 2 + Math.random() * areaWidth;
+    }
+    // Check if inside cutout
+    let inCutout = false;
+    if (cutoutShape === 'circle') {
+      const dx = left - center.x;
+      const dy = top - center.y;
+      if (Math.sqrt(dx * dx + dy * dy) < cutoutRadius) inCutout = true;
+    } else if (cutoutShape === 'rect') {
+      if (
+        left > center.x - cutoutWidth / 2 &&
+        left < center.x + cutoutWidth / 2 &&
+        top > center.y - cutoutHeight / 2 &&
+        top < center.y + cutoutHeight / 2
+      ) {
+        inCutout = true;
+      }
+    }
+    // Check if inside area
+    let inArea = true;
+    if (areaShape === 'circle') {
+      const dx = left - center.x;
+      const dy = top - center.y;
+      if (Math.sqrt(dx * dx + dy * dy) > areaRadius) inArea = false;
+    } else if (areaShape === 'rect') {
+      if (
+        left < center.x - areaWidth / 2 ||
+        left > center.x + areaWidth / 2 ||
+        top < center.y - areaHeight / 2 ||
+        top > center.y + areaHeight / 2
+      ) {
+        inArea = false;
+      }
+    }
+    if (!inCutout && inArea) {
       return { top, left };
     }
   }
-  // fallback: just pick a random position within the outer ring
-  const angle = Math.random() * 2 * Math.PI;
-  const radius = (SPARKLE_RING_INNER_RADIUS + SPARKLE_RING_OUTER_RADIUS) / 2;
-  const top = center + radius * Math.sin(angle);
-  const left = center + radius * Math.cos(angle);
-  return { top, left };
+  // fallback: center of area
+  return { top: center.y, left: center.x };
 }
 
 /**
@@ -97,7 +163,13 @@ export interface Sparkle {
 export function generateSparkle(color: string, existingSparkles: Sparkle[], BUTTON_SIZE: number, SPARKLE_SIZE_MIN: number, SPARKLE_SIZE_MAX: number, SPARKLE_RING_INNER_RADIUS: number, SPARKLE_RING_OUTER_RADIUS: number, SPARKLE_MIN_DISTANCE: number, SPARKLE_MIN_SIZE_DIFF: number) {
   for (let attempt = 0; attempt < 10; attempt++) {
     const size = Math.floor(Math.random() * (SPARKLE_SIZE_MAX - SPARKLE_SIZE_MIN + 1) + SPARKLE_SIZE_MIN);
-    const { top, left } = randomPositionAvoidingCenter(BUTTON_SIZE, SPARKLE_RING_INNER_RADIUS, SPARKLE_RING_OUTER_RADIUS);
+    const { top, left } = randomPositionAvoidingCenter({
+      areaShape: 'circle',
+      areaRadius: BUTTON_SIZE / 2,
+      cutoutShape: 'circle',
+      cutoutRadius: SPARKLE_RING_INNER_RADIUS,
+      center: { x: BUTTON_SIZE / 2, y: BUTTON_SIZE / 2 },
+    });
     const farEnough = existingSparkles.every((sp) => {
       const dx = Number.parseFloat(sp.style.left) + sp.size / 2 - left;
       const dy = Number.parseFloat(sp.style.top) + sp.size / 2 - top;
@@ -123,7 +195,13 @@ export function generateSparkle(color: string, existingSparkles: Sparkle[], BUTT
   }
   // fallback: just generate one without constraints
   const size = Math.floor(Math.random() * (SPARKLE_SIZE_MAX - SPARKLE_SIZE_MIN + 1) + SPARKLE_SIZE_MIN);
-  const { top, left } = randomPositionAvoidingCenter(BUTTON_SIZE, SPARKLE_RING_INNER_RADIUS, SPARKLE_RING_OUTER_RADIUS);
+  const { top, left } = randomPositionAvoidingCenter({
+    areaShape: 'circle',
+    areaRadius: BUTTON_SIZE / 2,
+    cutoutShape: 'circle',
+    cutoutRadius: SPARKLE_RING_INNER_RADIUS,
+    center: { x: BUTTON_SIZE / 2, y: BUTTON_SIZE / 2 },
+  });
   return {
     id: `${Date.now()}-${Math.random()}`,
     createdAt: Date.now(),

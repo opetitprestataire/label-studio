@@ -57,16 +57,6 @@ const meta: Meta<typeof Sparkles> = {
       description: "Jitter for sparkle interval in ms.",
       table: { defaultValue: { summary: 600 } },
     },
-    sparkleRingInnerRadius: {
-      control: { type: "number", min: 0, max: 100 },
-      description: "Minimum distance from center in px.",
-      table: { defaultValue: { summary: 12 } },
-    },
-    sparkleRingOuterRadius: {
-      control: { type: "number", min: 0, max: 100 },
-      description: "Maximum distance from center in px.",
-      table: { defaultValue: { summary: 14 } },
-    },
     sparkleMinDistance: {
       control: { type: "number", min: 0, max: 100 },
       description: "Minimum distance between sparkles in px.",
@@ -99,6 +89,11 @@ const meta: Meta<typeof Sparkles> = {
       control: false,
       description: "Test id for the root element.",
     },
+    showArea: {
+      control: "boolean",
+      description: "Show the area and cutout visually for testing/demo purposes.",
+      table: { defaultValue: { summary: false } },
+    },
   },
 };
 export default meta;
@@ -118,6 +113,24 @@ export const CustomColor: Story = {
   render: (args) => (
     <Sparkles {...args}>
       <IconAIAssistant style={{ width: 28, height: 28, color: "var(--color-neutral-on-dark-icon)" }} />
+    </Sparkles>
+  ),
+};
+
+export const RectangleAvoidance: Story = {
+  args: {
+    areaShape: "rect",
+    areaWidth: 40,
+    areaHeight: 28,
+    cutoutShape: "rect",
+    cutoutWidth: 16,
+    cutoutHeight: 12,
+    buttonSize: 48,
+    showArea: true,
+  },
+  render: (args) => (
+    <Sparkles {...args}>
+      <div style={{ width: 16, height: 12, background: "#eee", borderRadius: 4, margin: "auto" }} />
     </Sparkles>
   ),
 }; 
