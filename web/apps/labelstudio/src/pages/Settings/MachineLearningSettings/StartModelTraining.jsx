@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Button } from "../../../components";
+import { Button } from "@humansignal/ui";
 import { useAPI } from "../../../providers/ApiProvider";
 import { Description } from "../../../components/Description/Description";
 import { Block } from "../../../utils/bem";

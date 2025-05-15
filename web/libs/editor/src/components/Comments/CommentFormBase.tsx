@@ -65,7 +65,7 @@ export const CommentFormBase: FC<CommentFormProps> = observer(
           onBlur={(e) => onBlur?.(e)}
         />
         <Elem tag="div" name="primary-action">
-          <button type="submit">
+          <button type="submit" aria-label="Submit comment">
             <IconSend />
           </button>
         </Elem>

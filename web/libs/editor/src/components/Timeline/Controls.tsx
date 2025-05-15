@@ -1,4 +1,3 @@
-import { type FC, memo, type MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   IconBackward,
   IconChevronLeft,
@@ -15,13 +14,18 @@ import {
   IconTimelinePause,
   IconTimelinePlay,
 } from "@humansignal/icons";
-import { Button, type ButtonProps } from "../../common/Button/Button";
-import { Space } from "../../common/Space/Space";
-import { Hotkey } from "../../core/Hotkey";
+import { Button, type ButtonProps, Space } from "@humansignal/ui";
+import { type FC, memo, type MouseEvent, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { WithHotkey } from "../../common/Hotkey/WithHotkey";
+import { Hotkey, type HotkeyList } from "../../core/Hotkey";
 import { Block, Elem } from "../../utils/bem";
+import { FF_DEV_2715, isFF } from "../../utils/feature-flags";
 import { isDefined } from "../../utils/utilities";
+import { TimeDurationControl } from "../TimeDurationControl/TimeDurationControl";
 import { TimelineContext } from "./Context";
 import "./Controls.scss";
+import { AudioControl } from "./Controls/AudioControl";
+import { ConfigControl } from "./Controls/ConfigControl";
 import * as SideControls from "./SideControls";
 import type {
   TimelineControlsFormatterOptions,
@@ -31,10 +35,6 @@ import type {
   TimelineProps,
   TimelineStepFunction,
 } from "./Types";
-import { FF_DEV_2715, isFF } from "../../utils/feature-flags";
-import { AudioControl } from "./Controls/AudioControl";
-import { ConfigControl } from "./Controls/ConfigControl";
-import { TimeDurationControl } from "../TimeDurationControl/TimeDurationControl";
 
 const positionFromTime = ({ time, fps }: TimelineControlsFormatterOptions) => {
   const roundedFps = Math.round(fps).toString();
@@ -174,7 +174,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
         {isFF(FF_DEV_2715) && mediaType === "audio" ? (
           renderControls()
         ) : (
-          <Elem name="group" tag={Space} size="small" style={{ gridAutoColumns: "auto" }}>
+          <Space size="small">
             {props.controls &&
               Object.entries(props.controls).map(([name, enabled]) => {
                 if (enabled === false) return;
@@ -195,13 +195,11 @@ export const Controls: FC<TimelineControlsProps> = memo(
                 );
               })}
             {customControls?.left}
-          </Elem>
+          </Space>
         )}
-        <Elem name="main-controls">
-          <Elem name="group" tag={Space} collapsed>
-            {extraControls}
-          </Elem>
-          <Elem name="group" tag={Space} collapsed>
+        <Space size="small" className="justify-between max-w-[310px]">
+          <Space size="small">{extraControls}</Space>
+          <Space size="small">
             {customControls?.leftCenter}
             <AltControls
               showAlterantive={altControlsMode && !disableFrames}
@@ -212,6 +210,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                       onClick={stepHandlerWrapper(onStepBackward, settings.stepSize)}
                       hotkey={settings?.stepAltBack}
                       disabled={startReached}
+                      aria-label="Hop backward"
                     >
                       {<IconPrev />}
                     </ControlButton>
@@ -220,6 +219,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={stepHandlerWrapper(onStepBackward)}
                     hotkey={settings?.stepBackHotkey}
                     disabled={startReached}
+                    aria-label="Step backward"
                   >
                     <IconChevronLeft />
                   </ControlButton>
@@ -231,6 +231,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={() => onRewind?.()}
                     disabled={startReached}
                     hotkey={settings?.skipToBeginning}
+                    aria-label="Skip to start"
                   >
                     <IconRewind />
                   </ControlButton>
@@ -238,6 +239,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={() => onRewind?.(altHopSize)}
                     disabled={startReached}
                     hotkey={settings?.hopBackward}
+                    aria-label="Media rewind"
                   >
                     <IconBackward />
                   </ControlButton>
@@ -249,6 +251,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
               onClick={handlePlay}
               hotkey={settings?.playpauseHotkey}
               hotkeyScope={Hotkey.ALL_SCOPES}
+              aria-label="Play"
             >
               {playing ? <IconTimelinePause /> : <IconTimelinePlay />}
             </ControlButton>
@@ -260,15 +263,16 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={stepHandlerWrapper(onStepForward)}
                     hotkey={settings?.stepForwardHotkey}
                     disabled={endReached}
+                    aria-label="Step forward"
                   >
                     <IconChevronRight />
-                    {}
                   </ControlButton>
                   {settings?.stepSize && !disableFrames && (
                     <ControlButton
                       disabled={endReached}
                       onClick={stepHandlerWrapper(onStepForward, settings.stepSize)}
                       hotkey={settings?.stepAltForward}
+                      aria-label="Hop forward"
                     >
                       <IconNext />
                     </ControlButton>
@@ -281,17 +285,23 @@ export const Controls: FC<TimelineControlsProps> = memo(
                     onClick={() => onForward?.(altHopSize)}
                     disabled={endReached}
                     hotkey={settings?.hopForward}
+                    aria-label="Media fast forward"
                   >
                     <IconForward />
                   </ControlButton>
-                  <ControlButton onClick={() => onForward?.()} disabled={endReached} hotkey={settings?.skipToEnd}>
+                  <ControlButton
+                    aria-label="Skip to end"
+                    onClick={() => onForward?.()}
+                    disabled={endReached}
+                    hotkey={settings?.skipToEnd}
+                  >
                     <IconFastForward />
                   </ControlButton>
                 </>
               }
             />
             {customControls?.rightCenter}
-          </Elem>
+          </Space>
           <Elem name="group" tag={Space} collapsed>
             {!disableFrames && allowViewCollapse && (
               <ControlButton tooltip="Toggle Timeline" onClick={() => onToggleCollapsed?.(!collapsed)}>
@@ -304,7 +314,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
               </ControlButton>
             )}
           </Elem>
-        </Elem>
+        </Space>
 
         <Elem name="group" tag={Space} size="small">
           {isFF(FF_DEV_2715) && mediaType === "audio" ? (
@@ -339,11 +349,13 @@ export const Controls: FC<TimelineControlsProps> = memo(
   },
 );
 
-export const ControlButton: FC<ButtonProps & { disabled?: boolean }> = ({ children, ...props }) => {
+export const ControlButton: FC<ButtonProps & { disabled?: boolean; hotkey?: string }> = ({ children, ...props }) => {
   return (
-    <Button {...props} type="text" style={{ width: 36, height: 36, padding: 0 }}>
-      {children}
-    </Button>
+    <WithHotkey binging={props.hotkey as HotkeyList}>
+      <Button {...props} look="string" size="small" variant="neutral" aria-label={typeof children === 'string' ? children : 'Timeline control'}>
+        {children}
+      </Button>
+    </WithHotkey>
   );
 };
 

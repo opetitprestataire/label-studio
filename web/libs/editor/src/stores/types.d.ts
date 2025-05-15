@@ -96,6 +96,7 @@ type MSTAnnotation = {
   names: Map<string, MSTTag>;
   isLinkingMode: boolean;
   linkingMode: "create_relation" | "link_to_comment";
+  isNonEditableDraft: boolean;
 
   submissionInProgress: () => void;
 };
@@ -142,7 +143,7 @@ type MSTCommentStore = {
   overlayComments: MSTComment[];
   annotationId: string;
   annotation?: MSTAnnotation;
-  commentFormSubmit: () => void;
+  commentFormSubmit: () => Promise<void>;
   setTooltipMessage: (message: string) => void;
   currentComment: any;
   addedCommentThisSession: boolean;

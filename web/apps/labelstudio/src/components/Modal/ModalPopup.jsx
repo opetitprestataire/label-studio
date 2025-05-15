@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { IconCross } from "@humansignal/icons";
 import { BemWithSpecifiContext, cn } from "../../utils/bem";
 import { aroundTransition } from "@humansignal/core/lib/utils/transition";
-import { Button } from "../Button/Button";
+import { Button } from "@humansignal/ui";
 import "./Modal.scss";
 
 const { Block, Elem } = BemWithSpecifiContext();
@@ -101,7 +101,11 @@ export class Modal extends React.Component {
               {!bare && (
                 <Modal.Header>
                   <Elem name="title">{this.state.title}</Elem>
-                  {this.props.allowClose !== false && <Elem tag={Button} name="close" icon={<IconCross />} />}
+                  {this.props.allowClose !== false && (
+                    <Elem tag={Button} name="close" look="outlined">
+                      <IconCross />
+                    </Elem>
+                  )}
                 </Modal.Header>
               )}
               <Elem name="body" mod={{ bare }}>

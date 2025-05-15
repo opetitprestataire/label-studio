@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Button } from "antd";
+import { Button } from "@humansignal/ui";
 import { observer } from "mobx-react";
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 

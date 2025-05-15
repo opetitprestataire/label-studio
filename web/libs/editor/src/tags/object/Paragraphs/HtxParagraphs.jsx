@@ -487,6 +487,8 @@ class HtxParagraphsView extends Component {
     requestAnimationFrame(() => {
       const container = this.myRef.current;
       const mainContentView = document.querySelector(this.mainContentSelector);
+
+      if (!mainContentView) return;
       const mainRect = mainContentView.getBoundingClientRect();
       const visibleHeight = document.documentElement.clientHeight - mainRect.top;
       const annotationView = document.querySelector(this.mainViewAnnotationSelector);

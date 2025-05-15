@@ -2,10 +2,10 @@ import { useAtomValue } from "jotai";
 import { settingsAtom, TOKEN_SETTINGS_KEY } from "@humansignal/app-common/pages/AccountSettings/atoms";
 import { queryClientAtom } from "jotai-tanstack-query";
 import { Button } from "@humansignal/ui";
-
-import { Form, Input, Toggle } from "apps/labelstudio/src/components/Form";
 import type { AuthTokenSettings } from "@humansignal/app-common/pages/AccountSettings/types";
 import { type ChangeEvent, useState } from "react";
+
+import { Form, Input, Toggle } from "apps/labelstudio/src/components/Form";
 
 export const TokenSettingsModal = ({
   showTTL,
@@ -77,7 +77,7 @@ function TokenSettingsModalView({
         </Form.Row>
       )}
       <Form.Actions>
-        <Button type="submit" look="outlined">
+        <Button look="outlined" type="submit">
           Save
         </Button>
       </Form.Actions>

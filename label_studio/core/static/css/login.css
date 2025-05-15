@@ -207,9 +207,20 @@ html, body {
   font-family: 'Hellix', sans-serif;
 }
 
-.login_page_new_ui form .lsf-button-ls.lsf-button-ls_look_primary {
+.login_page_new_ui form input {
+  padding: 10px 15px;
+  border-radius: 100px;
+  box-sizing: border-box;
+  border: 1px solid var(--sand_400);
+}
+
+.login_page_new_ui form button {
   --button-color: var(--color-neutral-inverted-content);
   border-radius: 4rem;
+  background: var(--sand_900);
+  color: white;
+  padding: 10px 0;
+  border: none;
   background: var(--color-neutral-inverted-surface);
 }
 
@@ -268,6 +279,10 @@ label{
   font-size: .825rem !important;
   margin-bottom: .2rem;
   display: block;
+}
+
+.login-button {
+  font-size: 16px;
 }
 
 .form-group {

@@ -86,7 +86,7 @@ export const CommentForm: FC<CommentFormProps> = observer(
           onBlur={clearTooltipMessage}
         />
         <Elem tag="div" name="primary-action">
-          <button type="submit">
+          <button type="submit" aria-label="Submit comment">
             <IconSend />
           </button>
         </Elem>

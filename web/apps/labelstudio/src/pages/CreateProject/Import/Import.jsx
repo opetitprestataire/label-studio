@@ -3,7 +3,6 @@ import { SampleDatasetSelect } from "@humansignal/app-common/blocks/SampleDatase
 import { IconError, IconFileUpload, IconInfo, IconTrash, IconUpload } from "@humansignal/icons";
 import { Badge } from "@humansignal/shad/components/ui/badge";
 import { cn as scn } from "@humansignal/shad/utils";
-import { Button } from "apps/labelstudio/src/components";
 import { useAtomValue } from "jotai";
 import Input from "libs/datamanager/src/components/Common/Input/Input";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
@@ -15,7 +14,7 @@ import { sampleDatasetAtom } from "../utils/atoms";
 import "./Import.scss";
 import samples from "./samples.json";
 import { importFiles } from "./utils";
-import { CodeBlock, SimpleCard, Spinner } from "@humansignal/ui";
+import { Button, CodeBlock, SimpleCard, Spinner } from "@humansignal/ui";
 
 const importClass = cn("upload_page");
 const dropzoneClass = cn("dropzone");
@@ -351,19 +350,16 @@ export const ImportPage = ({
       <input id="file-input" type="file" name="file" multiple onChange={onUpload} style={{ display: "none" }} />
 
       <header className="flex gap-4">
-        <form className={`${importClass.elem("url-form")} inline-flex`} method="POST" onSubmit={onLoadURL}>
-          <Input placeholder="Dataset URL" name="url" ref={urlRef} style={{ height: 40 }} />
-          <Button type="submit" look="primary">
-            Add URL
-          </Button>
+        <form
+          className={`${importClass.elem("url-form")} inline-flex items-stretch`}
+          method="POST"
+          onSubmit={onLoadURL}
+        >
+          <Input placeholder="Dataset URL" name="url" ref={urlRef} rawClassName="h-[40px]" />
+          <Button type="submit" aria-label="Add URL">Add URL</Button>
         </form>
         <span>or</span>
-        <Button
-          type="button"
-          onClick={() => document.getElementById("file-input").click()}
-          className={importClass.elem("upload-button")}
-        >
-          <IconUpload width="16" height="16" className={importClass.elem("upload-icon")} />
+        <Button type="button" onClick={() => document.getElementById("file-input").click()} leading={<IconUpload />} aria-label="Upload file">
           Upload {files.uploaded.length ? "More " : ""}Files
         </Button>
         {ff.isActive(ff.FF_SAMPLE_DATASETS) && (
@@ -502,14 +498,14 @@ export const ImportPage = ({
               ) : ff.isFF(ff.FF_JSON_PREVIEW) ? (
                 <SimpleCard title="Expected input preview" className="w-[650px] h-full">
                   Set up your{" "}
-                  <button
+                  <Button
                     type="button"
-                    look="link"
+                    look="string"
                     onClick={openConfig}
                     className="border-none bg-none p-0 m-0 text-primary-content underline"
                   >
                     labeling configuration
-                  </button>{" "}
+                  </Button>{" "}
                   to generate an input preview.
                 </SimpleCard>
               ) : null}

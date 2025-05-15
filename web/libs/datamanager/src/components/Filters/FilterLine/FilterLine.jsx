@@ -1,9 +1,8 @@
 import { observer } from "mobx-react";
 import { Fragment } from "react";
-import { IconClose } from "@humansignal/icons";
 import { BemWithSpecifiContext } from "../../../utils/bem";
-import { Button } from "../../Common/Button/Button";
-import { Icon } from "../../Common/Icon/Icon";
+import { Button } from "@humansignal/ui";
+import { IconTrash } from "@humansignal/icons";
 import { Tag } from "../../Common/Tag/Tag";
 import { FilterDropdown } from "../FilterDropdown";
 import "./FilterLine.scss";
@@ -68,15 +67,15 @@ export const FilterLine = observer(({ filter, availableFilters, index, view, sid
       </GroupWrapper>
       <Elem name="remove">
         <Button
-          look="danger"
-          size="small"
-          style={{ border: "none" }}
+          look="string"
+          size="smaller"
           onClick={(e) => {
             e.stopPropagation();
             filter.delete();
           }}
-          icon={<Icon icon={IconClose} size={12} />}
-        />
+        >
+          <IconTrash className="!h-4 !w-4" />
+        </Button>
       </Elem>
     </Block>
   );

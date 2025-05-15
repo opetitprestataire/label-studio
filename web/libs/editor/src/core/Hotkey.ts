@@ -422,7 +422,7 @@ Hotkey.setScope = (scope: string) => {
  */
 Hotkey.Tooltip = inject("store")(
   observer(({ store, name, children, ...props }: any) => {
-    const hotkey = Hotkey.keymap[name as string];
+    const hotkey = Hotkey.keymap[name as keyof typeof Hotkey.keymap];
     const enabled = store.settings.enableTooltips && store.settings.enableHotkeys;
 
     if (isDefined(hotkey)) {
@@ -478,7 +478,7 @@ Hotkey.Tooltip = inject("store")(
  */
 Hotkey.Hint = inject("store")(
   observer(({ store, name }: any) => {
-    const hotkey = Hotkey.keymap[name];
+    const hotkey = Hotkey.keymap[name as HotkeyList];
     const enabled = store.settings.enableTooltips && store.settings.enableHotkeys;
 
     if (isDefined(hotkey) && enabled) {
@@ -490,6 +490,8 @@ Hotkey.Hint = inject("store")(
     return null;
   }),
 );
+
+export type HotkeyList = keyof typeof Hotkey.keymap;
 
 export default {
   DEFAULT_SCOPE,

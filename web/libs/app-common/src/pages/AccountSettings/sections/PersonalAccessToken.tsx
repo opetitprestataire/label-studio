@@ -1,7 +1,8 @@
-import { Button, IconLaunch, IconFileCopy, Label } from "@humansignal/ui";
+import { IconLaunch, IconFileCopy, Label } from "@humansignal/ui";
 import styles from "./PersonalAccessToken.module.scss";
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { atom, useAtomValue } from "jotai";
+import { Button } from "@humansignal/ui";
 import { useCopyText } from "@humansignal/core/lib/hooks/useCopyText";
 
 /**
@@ -64,7 +65,7 @@ export const PersonalAccessToken = () => {
             >
               {tokenCopied ? "Copied!" : "Copy"}
             </Button>
-            <Button look="outlined" variant="neutral" onClick={reset.mutate}>
+            <Button look="outlined" variant="neutral" onClick={() => reset.mutate()}>
               Reset
             </Button>
           </div>

@@ -1,4 +1,4 @@
-import { Button } from "../../common/Button/Button";
+import { Button } from "@humansignal/ui";
 import { IconCopy, IconInfo, IconViewAll, IconTrash, IconSettings } from "@humansignal/icons";
 import { Tooltip } from "@humansignal/ui";
 import { Elem } from "../../utils/bem";
@@ -27,7 +27,7 @@ export const Actions = ({ store }) => {
         <Tooltip title="Compare all annotations">
           <Button
             icon={<IconViewAll />}
-            type="text"
+            look="string"
             aria-label="Compare all annotations"
             onClick={() => onToggleVisibility()}
             primary={isViewAll}

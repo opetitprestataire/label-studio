@@ -2,7 +2,7 @@ import { type FC, type MouseEvent, useCallback, useMemo } from "react";
 import { Block, Elem } from "../../utils/bem";
 import { IconCross } from "@humansignal/icons";
 import "./HeidiTip.scss";
-import { Button } from "../Button/Button";
+import { Button } from "@humansignal/ui";
 import { HeidiSpeaking } from "../../assets/images";
 import type { HeidiTipProps, Tip } from "./types";
 import { Tooltip } from "@humansignal/ui";
@@ -40,7 +40,7 @@ export const HeidiTip: FC<HeidiTipProps> = ({ tip, onDismiss, onLinkClick }) => 
             /* @ts-ignore-next-line */
             <Tooltip title="Don't show">
               {/* @ts-ignore-next-line */}
-              <Elem name="dismiss" tag={Button} type="text" onClick={handleClick}>
+              <Elem name="dismiss" tag={Button} look="string" size="small" onClick={handleClick}>
                 <IconCross />
               </Elem>
             </Tooltip>

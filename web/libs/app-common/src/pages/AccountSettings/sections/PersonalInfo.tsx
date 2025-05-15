@@ -116,7 +116,7 @@ export const PersonalInfo = () => {
             />
           </form>
           {user?.avatar && (
-            <Button type="submit" look="danger" onClick={deleteUserAvatar}>
+            <Button type="submit" variant="negative" look="outlined" size="medium" onClick={deleteUserAvatar}>
               Delete
             </Button>
           )}

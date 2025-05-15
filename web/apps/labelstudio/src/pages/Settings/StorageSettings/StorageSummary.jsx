@@ -1,7 +1,6 @@
 import { format } from "date-fns/esm";
-import { Button } from "../../../components";
 import { DescriptionList } from "../../../components/DescriptionList/DescriptionList";
-import { Tooltip } from "@humansignal/ui";
+import { Tooltip, Button } from "@humansignal/ui";
 import { modal } from "../../../components/Modal/Modal";
 import { Oneof } from "../../../components/Oneof/Oneof";
 import { getLastTraceback } from "../../../utils/helpers";
@@ -43,7 +42,8 @@ export const StorageSummary = ({ target, storage, className, storageTypes = [] }
         <>
           <pre style={{ background: "#eee", borderRadius: 5, padding: 10 }}>{msg}</pre>
           <Button
-            size="compact"
+            size="small"
+            look="outlined"
             onClick={() => {
               navigator.clipboard.writeText(msg);
             }}
