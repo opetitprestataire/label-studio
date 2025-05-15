@@ -59,11 +59,11 @@ export function useRandomInterval(callback: () => void, minDelay: number | null,
  * Options for randomPositionAvoidingCenter
  */
 export interface SparkleAreaOptions {
-  areaShape: 'circle' | 'rect';
+  areaShape: "circle" | "rect";
   areaWidth?: number;
   areaHeight?: number;
   areaRadius?: number;
-  cutoutShape: 'circle' | 'rect';
+  cutoutShape: "circle" | "rect";
   cutoutWidth?: number;
   cutoutHeight?: number;
   cutoutRadius?: number;
@@ -91,11 +91,12 @@ export function randomPositionAvoidingCenter(options: SparkleAreaOptions): { top
 
   for (let i = 0; i < 10; i++) {
     let top: number, left: number;
-    if (areaShape === 'circle') {
+    if (areaShape === "circle") {
       const angle = Math.random() * 2 * Math.PI;
-      const r = (cutoutShape === 'circle')
-        ? cutoutRadius + Math.random() * (areaRadius - cutoutRadius)
-        : Math.random() * areaRadius;
+      const r =
+        cutoutShape === "circle"
+          ? cutoutRadius + Math.random() * (areaRadius - cutoutRadius)
+          : Math.random() * areaRadius;
       top = center.y + r * Math.sin(angle);
       left = center.x + r * Math.cos(angle);
     } else {
@@ -105,11 +106,11 @@ export function randomPositionAvoidingCenter(options: SparkleAreaOptions): { top
     }
     // Check if inside cutout
     let inCutout = false;
-    if (cutoutShape === 'circle') {
+    if (cutoutShape === "circle") {
       const dx = left - center.x;
       const dy = top - center.y;
       if (Math.sqrt(dx * dx + dy * dy) < cutoutRadius) inCutout = true;
-    } else if (cutoutShape === 'rect') {
+    } else if (cutoutShape === "rect") {
       if (
         left > center.x - cutoutWidth / 2 &&
         left < center.x + cutoutWidth / 2 &&
@@ -121,11 +122,11 @@ export function randomPositionAvoidingCenter(options: SparkleAreaOptions): { top
     }
     // Check if inside area
     let inArea = true;
-    if (areaShape === 'circle') {
+    if (areaShape === "circle") {
       const dx = left - center.x;
       const dy = top - center.y;
       if (Math.sqrt(dx * dx + dy * dy) > areaRadius) inArea = false;
-    } else if (areaShape === 'rect') {
+    } else if (areaShape === "rect") {
       if (
         left < center.x - areaWidth / 2 ||
         left > center.x + areaWidth / 2 ||
@@ -160,13 +161,23 @@ export interface Sparkle {
   };
 }
 
-export function generateSparkle(color: string, existingSparkles: Sparkle[], BUTTON_SIZE: number, SPARKLE_SIZE_MIN: number, SPARKLE_SIZE_MAX: number, SPARKLE_RING_INNER_RADIUS: number, SPARKLE_RING_OUTER_RADIUS: number, SPARKLE_MIN_DISTANCE: number, SPARKLE_MIN_SIZE_DIFF: number) {
+export function generateSparkle(
+  color: string,
+  existingSparkles: Sparkle[],
+  BUTTON_SIZE: number,
+  SPARKLE_SIZE_MIN: number,
+  SPARKLE_SIZE_MAX: number,
+  SPARKLE_RING_INNER_RADIUS: number,
+  SPARKLE_RING_OUTER_RADIUS: number,
+  SPARKLE_MIN_DISTANCE: number,
+  SPARKLE_MIN_SIZE_DIFF: number,
+) {
   for (let attempt = 0; attempt < 10; attempt++) {
     const size = Math.floor(Math.random() * (SPARKLE_SIZE_MAX - SPARKLE_SIZE_MIN + 1) + SPARKLE_SIZE_MIN);
     const { top, left } = randomPositionAvoidingCenter({
-      areaShape: 'circle',
+      areaShape: "circle",
       areaRadius: BUTTON_SIZE / 2,
-      cutoutShape: 'circle',
+      cutoutShape: "circle",
       cutoutRadius: SPARKLE_RING_INNER_RADIUS,
       center: { x: BUTTON_SIZE / 2, y: BUTTON_SIZE / 2 },
     });
@@ -196,9 +207,9 @@ export function generateSparkle(color: string, existingSparkles: Sparkle[], BUTT
   // fallback: just generate one without constraints
   const size = Math.floor(Math.random() * (SPARKLE_SIZE_MAX - SPARKLE_SIZE_MIN + 1) + SPARKLE_SIZE_MIN);
   const { top, left } = randomPositionAvoidingCenter({
-    areaShape: 'circle',
+    areaShape: "circle",
     areaRadius: BUTTON_SIZE / 2,
-    cutoutShape: 'circle',
+    cutoutShape: "circle",
     cutoutRadius: SPARKLE_RING_INNER_RADIUS,
     center: { x: BUTTON_SIZE / 2, y: BUTTON_SIZE / 2 },
   });

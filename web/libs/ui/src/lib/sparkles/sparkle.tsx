@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import styles from "./sparkles.module.scss";
 
 export interface SparkleProps {
@@ -19,4 +19,4 @@ export const Sparkle: React.FC<SparkleProps> = ({ size, color, style, className 
   </span>
 );
 
-export default Sparkle; 
+export default Sparkle;

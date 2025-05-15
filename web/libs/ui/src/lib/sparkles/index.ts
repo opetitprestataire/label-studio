@@ -1,2 +1,2 @@
 export { Sparkle } from "./sparkle";
-export { Sparkles } from "./sparkles"; 
+export { Sparkles } from "./sparkles";

@@ -4,9 +4,8 @@ import {
   usePrefersReducedMotion,
   useRandomInterval,
   randomPositionAvoidingCenter,
-  generateSparkle,
-  Sparkle as SparkleType,
-  SparkleAreaOptions,
+  type Sparkle as SparkleType,
+  type SparkleAreaOptions,
 } from "../../utils/utils";
 
 /**
@@ -79,7 +78,7 @@ export interface SparklesProps {
    * The shape of the area in which sparkles can appear: 'circle' or 'rect'.
    * @default 'circle'
    */
-  areaShape?: 'circle' | 'rect';
+  areaShape?: "circle" | "rect";
   /**
    * The radius of the area (if areaShape is 'circle').
    * @default buttonSize/2
@@ -99,7 +98,7 @@ export interface SparklesProps {
    * The shape of the cutout in the center: 'circle' or 'rect'.
    * @default 'circle'
    */
-  cutoutShape?: 'circle' | 'rect';
+  cutoutShape?: "circle" | "rect";
   /**
    * The radius of the cutout (if cutoutShape is 'circle').
    * @default buttonSize/2 - 2
@@ -144,11 +143,11 @@ export const Sparkles: React.FC<SparklesProps> = ({
   children,
   className,
   "data-testid": dataTestId,
-  areaShape = 'circle',
+  areaShape = "circle",
   areaRadius,
   areaWidth,
   areaHeight,
-  cutoutShape = 'circle',
+  cutoutShape = "circle",
   cutoutRadius,
   cutoutWidth,
   cutoutHeight,
@@ -159,7 +158,13 @@ export const Sparkles: React.FC<SparklesProps> = ({
   if (disableAnimation) {
     return (
       <span
-        style={{ display: "inline-block", position: "relative", width: buttonSize, height: buttonSize, pointerEvents: "none" }}
+        style={{
+          display: "inline-block",
+          position: "relative",
+          width: buttonSize,
+          height: buttonSize,
+          pointerEvents: "none",
+        }}
         className={className}
         aria-hidden="true"
         data-testid={dataTestId}
@@ -175,7 +180,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
   const _areaRadius = areaRadius ?? buttonSize / 2;
   const _areaWidth = areaWidth ?? buttonSize;
   const _areaHeight = areaHeight ?? buttonSize;
-  const _cutoutRadius = cutoutRadius ?? (buttonSize / 2 - 2);
+  const _cutoutRadius = cutoutRadius ?? buttonSize / 2 - 2;
 
   // Helper to get a random position avoiding the center cutout
   const getRandomPosition = React.useCallback(() => {
@@ -192,11 +197,23 @@ export const Sparkles: React.FC<SparklesProps> = ({
       center,
     };
     return randomPositionAvoidingCenter(options);
-  }, [areaShape, _areaRadius, _areaWidth, _areaHeight, cutoutShape, _cutoutRadius, cutoutWidth, cutoutHeight, buttonSize]);
+  }, [
+    areaShape,
+    _areaRadius,
+    _areaWidth,
+    _areaHeight,
+    cutoutShape,
+    _cutoutRadius,
+    cutoutWidth,
+    cutoutHeight,
+    buttonSize,
+  ]);
 
   // Randomize interval for each sparkle cycle
   const getRandomInterval = () => {
-    const base = Math.floor(Math.random() * (sparkleBaseIntervalMax - sparkleBaseIntervalMin + 1) + sparkleBaseIntervalMin);
+    const base = Math.floor(
+      Math.random() * (sparkleBaseIntervalMax - sparkleBaseIntervalMin + 1) + sparkleBaseIntervalMin,
+    );
     const jitter = Math.floor(Math.random() * (2 * sparkleJitter + 1) - sparkleJitter);
     return Math.max(200, base + jitter);
   };
@@ -210,13 +227,15 @@ export const Sparkles: React.FC<SparklesProps> = ({
       if (nextSparkles.length < sparkleCount) {
         const size = Math.floor(Math.random() * (sparkleSizeMax - sparkleSizeMin + 1) + sparkleSizeMin);
         const { top, left } = getRandomPosition();
-        const farEnough = nextSparkles.length === 0 || nextSparkles.some((sp) => {
-          const dx = Number.parseFloat(sp.style.left) + sp.size / 2 - left;
-          const dy = Number.parseFloat(sp.style.top) + sp.size / 2 - top;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const sizeDiff = Math.abs(sp.size - size);
-          return dist >= sparkleMinDistance && sizeDiff >= sparkleMinSizeDiff;
-        });
+        const farEnough =
+          nextSparkles.length === 0 ||
+          nextSparkles.some((sp) => {
+            const dx = Number.parseFloat(sp.style.left) + sp.size / 2 - left;
+            const dy = Number.parseFloat(sp.style.top) + sp.size / 2 - top;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const sizeDiff = Math.abs(sp.size - size);
+            return dist >= sparkleMinDistance && sizeDiff >= sparkleMinSizeDiff;
+          });
         if (farEnough) {
           nextSparkles.push({
             id: `${Date.now()}-${Math.random()}`,
@@ -242,7 +261,13 @@ export const Sparkles: React.FC<SparklesProps> = ({
 
   return (
     <span
-      style={{ display: "inline-block", position: "relative", width: buttonSize, height: buttonSize, pointerEvents: "none" }}
+      style={{
+        display: "inline-block",
+        position: "relative",
+        width: buttonSize,
+        height: buttonSize,
+        pointerEvents: "none",
+      }}
       className={className}
       aria-hidden="true"
       data-testid={dataTestId}
@@ -258,13 +283,8 @@ export const Sparkles: React.FC<SparklesProps> = ({
           <defs>
             <mask id="sparkles-area-mask">
               {/* Full area is visible (white), cutout is transparent (black) */}
-              {areaShape === 'circle' ? (
-                <circle
-                  cx={buttonSize / 2}
-                  cy={buttonSize / 2}
-                  r={_areaRadius}
-                  fill="white"
-                />
+              {areaShape === "circle" ? (
+                <circle cx={buttonSize / 2} cy={buttonSize / 2} r={_areaRadius} fill="white" />
               ) : (
                 <rect
                   x={(buttonSize - _areaWidth) / 2}
@@ -274,17 +294,12 @@ export const Sparkles: React.FC<SparklesProps> = ({
                   fill="white"
                 />
               )}
-              {cutoutShape === 'circle' ? (
-                <circle
-                  cx={buttonSize / 2}
-                  cy={buttonSize / 2}
-                  r={_cutoutRadius}
-                  fill="black"
-                />
-              ) : cutoutShape === 'rect' && cutoutWidth && cutoutHeight ? (
+              {cutoutShape === "circle" ? (
+                <circle cx={buttonSize / 2} cy={buttonSize / 2} r={_cutoutRadius} fill="black" />
+              ) : cutoutShape === "rect" && cutoutWidth && cutoutHeight ? (
                 <rect
-                  x={buttonSize / 2 - (cutoutWidth / 2)}
-                  y={buttonSize / 2 - (cutoutHeight / 2)}
+                  x={buttonSize / 2 - cutoutWidth / 2}
+                  y={buttonSize / 2 - cutoutHeight / 2}
                   width={cutoutWidth}
                   height={cutoutHeight}
                   fill="black"
@@ -292,7 +307,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
               ) : null}
             </mask>
           </defs>
-          {areaShape === 'circle' ? (
+          {areaShape === "circle" ? (
             <circle
               cx={buttonSize / 2}
               cy={buttonSize / 2}
@@ -315,7 +330,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
         </svg>
       )}
       {sparkles.map((sparkle) => (
-        <Sparkle key={sparkle.id} color={sparkle.color} size={sparkle.size} style={{...sparkle.style, zIndex: 3}} />
+        <Sparkle key={sparkle.id} color={sparkle.color} size={sparkle.size} style={{ ...sparkle.style, zIndex: 3 }} />
       ))}
     </span>
   );
@@ -323,4 +338,4 @@ export const Sparkles: React.FC<SparklesProps> = ({
 
 Sparkles.displayName = "Sparkles";
 
-export default Sparkles; 
+export default Sparkles;

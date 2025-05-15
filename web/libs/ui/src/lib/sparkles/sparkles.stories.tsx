@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
 import { Sparkles } from "./sparkles";
 import { IconAIAssistant } from "@humansignal/icons";
 
@@ -133,4 +132,4 @@ export const RectangleAvoidance: Story = {
       <div style={{ width: 16, height: 12, background: "#eee", borderRadius: 4, margin: "auto" }} />
     </Sparkles>
   ),
-}; 
+};
