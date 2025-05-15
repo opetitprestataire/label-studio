@@ -1411,13 +1411,6 @@ const _Annotation = types
       self.objects.forEach((object) => object.setReady && object.setReady(false));
       self.areas.forEach((area) => area.setReady && area.setReady(false));
     },
-
-    cleanup() {
-      self.resetReady();
-      if (self.disposers) self.disposers.forEach((d) => d());
-      if (self.regions) self.regions.forEach((r) => isAlive(r) && destroy(r));
-      if (self.relations) self.relations.forEach((r) => isAlive(r) && destroy(r));
-    },
   }));
 
 export const Annotation = types.compose("Annotation", LinkingModes, _Annotation);

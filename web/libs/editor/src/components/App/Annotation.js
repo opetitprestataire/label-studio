@@ -6,7 +6,7 @@ export function Annotation({ annotation, root }) {
   useLayoutEffect(() => {
     return () => {
       if (annotation && isAlive(annotation)) {
-        annotation.cleanup();
+        annotation.resetReady();
       }
     };
   }, [annotation?.pk, annotation?.id]);
