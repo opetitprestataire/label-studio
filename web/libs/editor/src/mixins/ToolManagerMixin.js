@@ -8,6 +8,7 @@ export const ToolManagerMixin = types.model().actions((self) => {
   return {
     afterAttach() {
       if (ff.isActive(FF_DEV_3391) && self.annotationStore.initialized) {
+        self.tools = self.annotationStore.names.get(self.name).tools;
         return;
       }
       const toolNames = self.toolNames ?? [];
