@@ -6,6 +6,10 @@ import re
 from dataclasses import dataclass
 from typing import Union
 
+from django.conf import settings
+
+from label_studio.core.utils.common import load_func
+
 logger = logging.getLogger(__name__)
 
 # Put storage prefixes here
@@ -112,7 +116,7 @@ def parse_range(range_header):
     return start, end
 
 
-def load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls=ValueError):
+def _load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls=ValueError):
     """
     Parse blob_str containing task JSON(s) and return the validated result or raise an error.
 
@@ -149,3 +153,9 @@ def load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls=
             'dictionary with one task, or a list of dictionaries with one task each'
         )
     )
+
+
+def load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls=ValueError):
+    # uses _load_tasks_json here and an LSE-specific implementation in LSE
+    load_tasks_json_func = load_func(settings.STORAGE_LOAD_TASKS_JSON)
+    return load_tasks_json_func(blob_str, key, storage_class_name, error_cls)
