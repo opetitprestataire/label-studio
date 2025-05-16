@@ -37,12 +37,12 @@ export function usePrefersReducedMotion() {
 export function useRandomInterval(callback: () => void, minDelay: number | null, maxDelay: number | null) {
   React.useEffect(() => {
     if (minDelay === null || maxDelay === null) return;
-    let timeoutId: number | NodeJS.Timeout;
+    let timeoutId: number;
     let isActive = true;
     const run = () => {
       if (!isActive) return;
       const next = Math.floor(Math.random() * (maxDelay - minDelay + 1) + minDelay);
-      timeoutId = setTimeout(() => {
+      timeoutId = window.setTimeout(() => {
         callback();
         run();
       }, next);
