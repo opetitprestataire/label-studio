@@ -284,6 +284,24 @@
         animation: gradient-button-waiting 2s linear infinite;
       }
     }
+
+    &:focus {
+      --border-color: var(--color-warning-border-subtle);
+      --focus-outline: var(--color-warning-focus-outline);
+
+      box-shadow: var(--focus-shadow);
+
+      & > span {
+        color: var(--color-accent-canteloupe-dark,);
+      }
+
+      background-image: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-accent-canteloupe-base), transparent 75%),
+        color-mix(in srgb, var(--color-accent-persimmon-base), transparent 75%),
+        color-mix(in srgb, var(--color-accent-plum-base), transparent 75%) 100%
+      );
+    }
   }
 }
 
