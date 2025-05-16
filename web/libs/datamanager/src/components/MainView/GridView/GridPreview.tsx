@@ -113,7 +113,7 @@ const TaskModal = observer(({ view, tasks, imageField, currentTaskId, setCurrent
           type="button"
           className="h-full [&_span]:aspect-auto !p-0"
           variant="primary"
-          look="outlined"
+          look="string"
           onClick={goToPrev}
           disabled={index === 0}
         >
@@ -124,7 +124,7 @@ const TaskModal = observer(({ view, tasks, imageField, currentTaskId, setCurrent
           type="button"
           className="h-full [&_span]:aspect-auto !p-0"
           variant="primary"
-          look="outlined"
+          look="string"
           onClick={goToNext}
           disabled={index === tasks.length - 1}
         >
