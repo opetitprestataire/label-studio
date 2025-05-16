@@ -101,7 +101,7 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
       <RegionActionButton
         key="relation"
         variant={annotation.isLinkingMode ? "primary" : "neutral"}
-        look={annotation.isLinkingMode ? "filled" : "outlined"}
+        look={annotation.isLinkingMode ? "filled" : "string"}
         onClick={(_e: any, hotkey?: any) => {
           // If this is triggered by a hotkey, defer to the global bound handler for relations to avoid contention.
           if (hotkey) return;
@@ -122,7 +122,7 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
     <WithHotkey binging="region:meta">
       <RegionActionButton
         key="meta"
-        look={editMode ? "filled" : "outlined"}
+        look={editMode ? "filled" : "string"}
         variant={editMode ? "primary" : "neutral"}
         onClick={() => onEditModeChange(!editMode)}
         aria-label="Edit region's meta"
@@ -169,7 +169,7 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
 
 const RegionActionButton: FC<ButtonProps> = forwardRef(({ children, ...props }, ref) => {
   return (
-    <Button ref={ref} variant="neutral" look="outlined" size="small" {...props}>
+    <Button ref={ref} variant="neutral" look="string" size="small" {...props}>
       {children}
     </Button>
   );
