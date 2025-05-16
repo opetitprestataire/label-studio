@@ -169,7 +169,7 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
 
 const RegionActionButton: FC<ButtonProps> = forwardRef(({ children, ...props }, ref) => {
   return (
-    <Button ref={ref} variant="neutral" look="outlined" {...props} size="small" aria-label={typeof children === 'string' ? children : 'Region action'}>
+    <Button ref={ref} variant="neutral" look="outlined" size="small" {...props}>
       {children}
     </Button>
   );
