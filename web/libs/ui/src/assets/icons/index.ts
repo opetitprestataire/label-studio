@@ -1,4 +1,3 @@
-
 export { ReactComponent as IconAIAssistant } from "./ai-assistant.svg";
 export { ReactComponent as IconAllProjects } from "./all-projects.svg";
 export { ReactComponent as IconAnnotation } from "./annotation.svg";
