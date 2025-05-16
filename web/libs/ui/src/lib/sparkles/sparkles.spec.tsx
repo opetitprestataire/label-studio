@@ -13,8 +13,8 @@ describe("Sparkles", () => {
   });
 
   it("applies custom className", () => {
-    render(<Sparkles {...defaultProps} className="custom-class" />);
-    const root = screen.getByText("Test").parentElement?.parentElement;
+    render(<Sparkles {...defaultProps} className="custom-class" data-testid="sparkles-root" />);
+    const root = screen.getByTestId("sparkles-root");
     expect(root).toHaveClass("custom-class");
   });
 
