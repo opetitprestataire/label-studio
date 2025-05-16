@@ -463,7 +463,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
                   y={buttonSize / 2 - _cutoutHeight / 2}
                   width={_cutoutWidth}
                   height={_cutoutHeight}
-                  fill="black"
+                  fill="currentColor"
                 />
               ) : null}
             </mask>
