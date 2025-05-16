@@ -90,7 +90,8 @@ export function randomPositionAvoidingCenter(options: SparkleAreaOptions): { top
   } = options;
 
   for (let i = 0; i < 10; i++) {
-    let top: number, left: number;
+    let top: number;
+    let left: number;
     if (areaShape === "circle") {
       const angle = Math.random() * 2 * Math.PI;
       const r =
@@ -168,7 +169,7 @@ export function generateSparkle(
   SPARKLE_SIZE_MIN: number,
   SPARKLE_SIZE_MAX: number,
   SPARKLE_RING_INNER_RADIUS: number,
-  SPARKLE_RING_OUTER_RADIUS: number,
+  _SPARKLE_RING_OUTER_RADIUS: number,
   SPARKLE_MIN_DISTANCE: number,
   SPARKLE_MIN_SIZE_DIFF: number,
 ) {

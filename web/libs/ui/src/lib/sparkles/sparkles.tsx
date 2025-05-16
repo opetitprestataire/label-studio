@@ -280,6 +280,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
           style={{ position: "absolute", top: 0, left: 0, zIndex: 2, pointerEvents: "none" }}
           className="sparkles-area-overlay"
         >
+          <title>Sparkles area overlay</title>
           <defs>
             <mask id="sparkles-area-mask">
               {/* Full area is visible (white), cutout is transparent (black) */}
