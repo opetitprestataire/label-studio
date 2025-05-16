@@ -1,7 +1,6 @@
 import "@testing-library/jest-dom";
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import Sparkles, { SparklesProps } from "./sparkles";
+import Sparkles, { type SparklesProps } from "./sparkles";
 
 const defaultProps: SparklesProps = {
   children: <span>Test</span>,
@@ -64,7 +63,7 @@ describe("Sparkles", () => {
         cutoutHeight={5}
         showArea
         data-testid="sparkles-root"
-      />
+      />,
     );
     const svg = screen.getByTestId("sparkles-root").querySelector("svg.sparkles-area-overlay");
     expect(svg).toBeInTheDocument();
@@ -84,7 +83,7 @@ describe("Sparkles", () => {
         sparkleBaseIntervalMin={100}
         sparkleBaseIntervalMax={200}
         sparkleJitter={50}
-      />
+      />,
     );
     expect(screen.getByText("Test")).toBeInTheDocument();
   });
@@ -105,4 +104,4 @@ describe("Sparkles", () => {
     const root = screen.getByText("Test").parentElement?.parentElement;
     expect(root).toHaveStyle({ width: "50px", height: "50px" });
   });
-}); 
+});
