@@ -1,9 +1,6 @@
 import React from "react";
 import { IconSparkle } from "@humansignal/icons";
-import {
-  usePrefersReducedMotion,
-  useRandomInterval,
-} from "../../utils/utils";
+import { usePrefersReducedMotion, useRandomInterval } from "../../utils/utils";
 import styles from "./sparkles.module.scss";
 
 /**
