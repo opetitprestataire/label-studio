@@ -328,10 +328,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
   if (disableAnimation) {
     return (
       <span
-        className={clsx(
-          "inline-block relative pointer-events-none",
-          className
-        )}
+        className={clsx("inline-block relative pointer-events-none", className)}
         style={{ width: buttonSize, height: buttonSize }}
         aria-hidden="true"
         data-testid={dataTestId}
@@ -431,10 +428,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
 
   return (
     <span
-      className={clsx(
-        "inline-block relative pointer-events-none",
-        className
-      )}
+      className={clsx("inline-block relative pointer-events-none", className)}
       style={{ width: buttonSize, height: buttonSize }}
       aria-hidden="true"
       data-testid={dataTestId}

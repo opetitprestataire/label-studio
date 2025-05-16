@@ -42,19 +42,19 @@ const meta: Meta<typeof Sparkles> = {
     areaRadius: {
       control: { type: "number", min: 1, max: 200 },
       description: "The radius of the area (if areaShape is 'circle').",
-      table: { defaultValue: { summary: 'buttonSize/2' } },
+      table: { defaultValue: { summary: "buttonSize/2" } },
       group: "Area",
     },
     areaWidth: {
       control: { type: "number", min: 1, max: 200 },
       description: "The width of the area (if areaShape is 'rect').",
-      table: { defaultValue: { summary: 'buttonSize' } },
+      table: { defaultValue: { summary: "buttonSize" } },
       group: "Area",
     },
     areaHeight: {
       control: { type: "number", min: 1, max: 200 },
       description: "The height of the area (if areaShape is 'rect').",
-      table: { defaultValue: { summary: 'buttonSize' } },
+      table: { defaultValue: { summary: "buttonSize" } },
       group: "Area",
     },
     cutoutShape: {
@@ -66,7 +66,7 @@ const meta: Meta<typeof Sparkles> = {
     cutoutRadius: {
       control: { type: "number", min: 0, max: 200 },
       description: "The radius of the cutout (if cutoutShape is 'circle').",
-      table: { defaultValue: { summary: 'buttonSize/2 - 2' } },
+      table: { defaultValue: { summary: "buttonSize/2 - 2" } },
       group: "Area",
     },
     cutoutWidth: {
