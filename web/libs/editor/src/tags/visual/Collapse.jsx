@@ -120,13 +120,16 @@ const CollapseModel = types.compose("CollapseModel", Model, ProcessAttrsMixin);
 
 const HtxCollapse = observer(({ item }) => {
   const isBulkMode = isFF(FF_BULK_ANNOTATION) && !isSelfServe() && item.store.hasInterface("annotation:bulk");
+  // forceRender is needed to have proper `isReady` for nested object tags.
+  // with Interactive View All we won't need it, because tags are rendered as usual.
+  const extraProps = ff.isActive(FF_DEV_3391) ? {} : { forceRender: true };
 
   return (
     <Collapse bordered={item.bordered} accordion={item.accordion}>
       {item.children
         .filter((i) => i.type === "panel" && (!isBulkMode || i.isIndependent))
         .map((i) => (
-          <Panel key={i._value} header={i._value}>
+          <Panel key={i._value} header={i._value} {...extraProps}>
             {Tree.renderChildren(i, item.annotation)}
           </Panel>
         ))}
