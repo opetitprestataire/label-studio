@@ -20,7 +20,7 @@ See [Secure Label Studio](security.html) for more details about security and har
 To install Label Studio Community Edition, see [Install Label Studio](https://labelstud.io/guide/install). This page is specific to the Enterprise version of Label Studio.
 
 !!! note
-    On-prem Label Studio Enterprise is not supported for Academic licenses. 
+    On-prem deployments of Label Studio Enterprise are not supported for Academic licenses.  
 
 {% insertmd includes/deploy.md %}
 
