@@ -456,7 +456,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
                 />
               )}
               {cutoutShape === "circle" ? (
-                <circle cx={buttonSize / 2} cy={buttonSize / 2} r={_cutoutRadius} fill="black" />
+                <circle cx={buttonSize / 2} cy={buttonSize / 2} r={_cutoutRadius} fill="currentColor" />
               ) : cutoutShape === "rect" && _cutoutWidth && _cutoutHeight ? (
                 <rect
                   x={buttonSize / 2 - _cutoutWidth / 2}
