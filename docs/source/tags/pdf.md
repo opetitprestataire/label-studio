@@ -17,6 +17,13 @@ Use with the following data types: PDF.
 | name | <code>string</code> |  | Name of the element |
 | value | <code>string</code> |  | Value of the element - field name to retrieve the PDF URL from |
 
+### Supported Control tags
+Document-level annotations are supported with Pdf tag, for example:
+
+- Document classification with [Choices](/tags/choices.html)
+- Document rating with [Rating](/tags/rating.html)
+- Transcription and summarization with [TextArea](/tags/textarea.html)
+
 ### Example
 
 Labeling configuration to label PDF documents:
