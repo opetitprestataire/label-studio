@@ -37,4 +37,4 @@ export function useRandomInterval(callback: () => void, minDelay: number | null,
       clearTimeout(timeoutId);
     };
   }, [minDelay, maxDelay, callback]);
-} 
+}
