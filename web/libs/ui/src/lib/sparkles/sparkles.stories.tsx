@@ -11,15 +11,15 @@ const meta: Meta<typeof Sparkles> = {
     docs: {
       description: {
         component:
-          "`Sparkles` is a decorative animation wrapper for icons or buttons. It displays animated sparkles around its children, typically used to highlight special actions or features. The animation is accessible and does not interfere with user interaction.",
+          "`Sparkles` is a decorative animation wrapper for icons or buttons. It displays animated sparkles around its children, typically used to highlight special actions or features. The animation is accessible and does not interfere with user interaction. The default color is theme-aware and uses the CSS variable `--color-neutral-on-dark-icon`.",
       },
     },
   },
   argTypes: {
     color: {
       control: "color",
-      description: "The color of the sparkles.",
-      table: { defaultValue: { summary: '"#FFFFFF"' } },
+      description: "The color of the sparkles. Defaults to the theme-aware CSS variable --color-neutral-on-dark-icon.",
+      table: { defaultValue: { summary: 'var(--color-neutral-on-dark-icon)' } },
       group: "Appearance",
     },
     buttonSize: {

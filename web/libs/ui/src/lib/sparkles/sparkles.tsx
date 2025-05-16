@@ -300,7 +300,7 @@ export interface SparklesProps {
 }
 
 export const Sparkles: React.FC<SparklesProps> = ({
-  color = "#FFFFFF",
+  color = "var(--color-neutral-on-dark-icon)",
   buttonSize = 28,
   areaShape = "circle",
   areaRadius,
