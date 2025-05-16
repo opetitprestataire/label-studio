@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import Sparkles, { type SparklesProps } from "./sparkles";
+import { Sparkles, type SparklesProps } from "./sparkles";
 
 const defaultProps: SparklesProps = {
   children: <span>Test</span>,

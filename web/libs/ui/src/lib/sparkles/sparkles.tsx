@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkle } from "./sparkle";
+import { IconSparkle } from "@humansignal/icons";
 import {
   usePrefersReducedMotion,
   useRandomInterval,
@@ -7,6 +7,7 @@ import {
   type Sparkle as SparkleType,
   type SparkleAreaOptions,
 } from "../../utils/utils";
+import styles from "./sparkles.module.scss";
 
 /**
  * Props for the Sparkles component.
@@ -231,12 +232,13 @@ export const Sparkles: React.FC<SparklesProps> = ({
         const { top, left } = getRandomPosition();
         const farEnough =
           nextSparkles.length === 0 ||
-          nextSparkles.some((sp) => {
+          nextSparkles.every((sp) => {
             const dx = Number.parseFloat(sp.style.left) + sp.size / 2 - left;
             const dy = Number.parseFloat(sp.style.top) + sp.size / 2 - top;
             const dist = Math.sqrt(dx * dx + dy * dy);
             const sizeDiff = Math.abs(sp.size - size);
-            return dist >= sparkleMinDistance && sizeDiff >= sparkleMinSizeDiff;
+            // Relaxed: allow closer sparkles and smaller size differences
+            return dist >= Math.max(2, sparkleMinDistance / 2) && sizeDiff >= Math.max(1, sparkleMinSizeDiff / 2);
           });
         if (farEnough) {
           nextSparkles.push({
@@ -333,7 +335,14 @@ export const Sparkles: React.FC<SparklesProps> = ({
         </svg>
       )}
       {sparkles.map((sparkle) => (
-        <Sparkle key={sparkle.id} color={sparkle.color} size={sparkle.size} style={{ ...sparkle.style, zIndex: 3 }} />
+        <IconSparkle
+          key={sparkle.id}
+          color={sparkle.color}
+          width={sparkle.size}
+          height={sparkle.size}
+          style={{ ...sparkle.style, zIndex: 3 }}
+          className={styles.sparkle}
+        />
       ))}
     </span>
   );
