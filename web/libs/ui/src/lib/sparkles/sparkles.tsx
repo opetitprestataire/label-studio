@@ -499,9 +499,8 @@ export const Sparkles: React.FC<SparklesProps> = ({
           style={{
             top: sparkle.style.top,
             left: sparkle.style.left,
-            zIndex: 3,
           }}
-          className={clsx("absolute pointer-events-none", styles.sparkle)}
+          className={clsx("absolute pointer-events-none z-[3]", styles.sparkle)}
         />
       ))}
     </span>
