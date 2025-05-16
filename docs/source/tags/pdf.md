@@ -47,9 +47,3 @@ Labeling configuration to label PDF documents:
 }
 ```
 
-### Supported Control tags
-Document-level annotations are supported with Pdf tag, for example:
-
-- Document classification with [Choices](/tags/choices.html)
-- Document rating with [Rating](/tags/rating.html)
-- Transcription and summarization with [TextArea](/tags/textarea.html)
