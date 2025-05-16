@@ -16,6 +16,7 @@ export const EditingHistory = observer(({ entity }) => {
           look="string"
           disabled={!history?.canUndo}
           onClick={() => entity.undo()}
+          className="!p-0"
         >
           <IconUndo />
         </Button>
@@ -28,6 +29,7 @@ export const EditingHistory = observer(({ entity }) => {
           aria-label="Redo"
           disabled={!history?.canRedo}
           onClick={() => entity.redo()}
+          className="!p-0"
         >
           <IconRedo />
         </Button>
@@ -40,6 +42,7 @@ export const EditingHistory = observer(({ entity }) => {
           aria-label="Reset"
           disabled={!history?.canUndo}
           onClick={() => history?.reset()}
+          className="!p-0"
         >
           <IconRemove />
         </Button>

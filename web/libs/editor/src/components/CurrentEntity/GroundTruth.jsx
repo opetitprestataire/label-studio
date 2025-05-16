@@ -17,9 +17,9 @@ export const GroundTruth = observer(({ entity, disabled = false, size = "md" }) 
       <Block name="ground-truth" mod={{ disabled, size }}>
         <Tooltip alignment="top-left" title={title}>
           <Button
-            tag={Button}
             size="small"
             look="string"
+            className="!p-0"
             onClick={(ev) => {
               ev.preventDefault();
               entity.setGroundTruth(!entity.ground_truth);

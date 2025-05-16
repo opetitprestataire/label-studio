@@ -39,6 +39,7 @@ export const Actions = ({ store }) => {
         variant="neutral"
         onClick={() => store.toggleSettings()}
         tooltip="Settings"
+        className="!p-0"
       >
         <IconSettings />
       </Button>
