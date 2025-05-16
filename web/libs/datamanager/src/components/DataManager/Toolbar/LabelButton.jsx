@@ -89,7 +89,7 @@ export const LabelButton = injector(({ store, canLabel, size, target, selectedCo
         <ButtonGroup>
           <Button
             size="small"
-            variant="neutral"
+            variant="primary"
             look="outlined"
             disabled={disabled}
             style={primaryStyle}
@@ -105,7 +105,7 @@ export const LabelButton = injector(({ store, canLabel, size, target, selectedCo
               </Menu>
             }
           >
-            <Button size="small" look="outlined" variant="neutral" aria-label={"Toggle open"}>
+            <Button size="small" look="outlined" variant="primary" aria-label={"Toggle open"}>
               <IconChevronDown />
             </Button>
           </Dropdown.Trigger>
