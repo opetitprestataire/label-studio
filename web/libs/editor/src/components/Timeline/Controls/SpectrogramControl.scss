@@ -5,6 +5,7 @@
   padding: 16px;
 
   &__input {
+    font-size: 12px;
     width: 40px;
     height: 24px;
     border-radius: 2px;
@@ -48,10 +49,6 @@
     align-items: center;
     gap: 5px;
     font-size: 10px;
-  }
-
-  &__input {
-    font-size: 12px;
   }
 
   &__info {
