@@ -70,4 +70,4 @@ export function randomPositionAvoidingCenter(options: SparkleAreaOptions): { top
   }
   // fallback: center of area
   return { top: center.y, left: center.x };
-} 
+}

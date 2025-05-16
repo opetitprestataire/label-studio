@@ -22,4 +22,4 @@ export interface Sparkle {
     pointerEvents: "none";
     zIndex: number;
   };
-} 
+}
