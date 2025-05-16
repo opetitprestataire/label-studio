@@ -181,6 +181,8 @@ export const Sparkles: React.FC<SparklesProps> = ({
   const _areaWidth = areaWidth ?? buttonSize;
   const _areaHeight = areaHeight ?? buttonSize;
   const _cutoutRadius = cutoutRadius ?? buttonSize / 2 - 2;
+  const _cutoutWidth = cutoutShape === "rect" ? (cutoutWidth ?? buttonSize / 2) : cutoutWidth;
+  const _cutoutHeight = cutoutShape === "rect" ? (cutoutHeight ?? buttonSize / 2) : cutoutHeight;
 
   // Helper to get a random position avoiding the center cutout
   const getRandomPosition = React.useCallback(() => {
@@ -192,8 +194,8 @@ export const Sparkles: React.FC<SparklesProps> = ({
       areaHeight: _areaHeight,
       cutoutShape,
       cutoutRadius: _cutoutRadius,
-      cutoutWidth,
-      cutoutHeight,
+      cutoutWidth: _cutoutWidth,
+      cutoutHeight: _cutoutHeight,
       center,
     };
     return randomPositionAvoidingCenter(options);
@@ -204,8 +206,8 @@ export const Sparkles: React.FC<SparklesProps> = ({
     _areaHeight,
     cutoutShape,
     _cutoutRadius,
-    cutoutWidth,
-    cutoutHeight,
+    _cutoutWidth,
+    _cutoutHeight,
     buttonSize,
   ]);
 
@@ -297,12 +299,12 @@ export const Sparkles: React.FC<SparklesProps> = ({
               )}
               {cutoutShape === "circle" ? (
                 <circle cx={buttonSize / 2} cy={buttonSize / 2} r={_cutoutRadius} fill="black" />
-              ) : cutoutShape === "rect" && cutoutWidth && cutoutHeight ? (
+              ) : cutoutShape === "rect" && _cutoutWidth && _cutoutHeight ? (
                 <rect
-                  x={buttonSize / 2 - cutoutWidth / 2}
-                  y={buttonSize / 2 - cutoutHeight / 2}
-                  width={cutoutWidth}
-                  height={cutoutHeight}
+                  x={buttonSize / 2 - _cutoutWidth / 2}
+                  y={buttonSize / 2 - _cutoutHeight / 2}
+                  width={_cutoutWidth}
+                  height={_cutoutHeight}
                   fill="black"
                 />
               ) : null}
@@ -314,7 +316,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
               cy={buttonSize / 2}
               r={_areaRadius}
               fill="currentColor"
-              fillOpacity={0.15}
+              fillOpacity={0.5}
               mask="url(#sparkles-area-mask)"
             />
           ) : (
@@ -324,7 +326,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
               width={_areaWidth}
               height={_areaHeight}
               fill="currentColor"
-              fillOpacity={0.15}
+              fillOpacity={0.5}
               mask="url(#sparkles-area-mask)"
             />
           )}

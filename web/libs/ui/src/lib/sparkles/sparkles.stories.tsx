@@ -115,21 +115,3 @@ export const CustomColor: Story = {
     </Sparkles>
   ),
 };
-
-export const RectangleAvoidance: Story = {
-  args: {
-    areaShape: "rect",
-    areaWidth: 40,
-    areaHeight: 28,
-    cutoutShape: "rect",
-    cutoutWidth: 16,
-    cutoutHeight: 12,
-    buttonSize: 48,
-    showArea: true,
-  },
-  render: (args) => (
-    <Sparkles {...args}>
-      <div style={{ width: 16, height: 12, background: "#eee", borderRadius: 4, margin: "auto" }} />
-    </Sparkles>
-  ),
-};
