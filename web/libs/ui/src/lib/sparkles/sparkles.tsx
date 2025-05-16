@@ -340,5 +340,3 @@ export const Sparkles: React.FC<SparklesProps> = ({
 };
 
 Sparkles.displayName = "Sparkles";
-
-export default Sparkles;
