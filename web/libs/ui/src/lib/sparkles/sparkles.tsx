@@ -1,6 +1,6 @@
 import React from "react";
 import { IconSparkle } from "@humansignal/icons";
-import { usePrefersReducedMotion, useRandomInterval } from "../../utils/utils";
+import { usePrefersReducedMotion, useRandomInterval } from "../../../hooks/hooks";
 import styles from "./sparkles.module.scss";
 import clsx from "clsx";
 
@@ -500,7 +500,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
             top: sparkle.style.top,
             left: sparkle.style.left,
           }}
-          className={clsx("absolute pointer-events-none z-[3]", styles.sparkle)}
+          className={clsx("absolute pointer-events-none z-10", styles.sparkle)}
         />
       ))}
     </span>
