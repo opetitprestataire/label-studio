@@ -1,5 +1,6 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
+import json
 import logging
 import re
 from dataclasses import dataclass
@@ -109,3 +110,42 @@ def parse_range(range_header):
         end = ''
 
     return start, end
+
+
+def load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls=ValueError):
+    """
+    Parse blob_str containing task JSON(s) and return the validated result or raise an error.
+
+    Other args are used for error messages.
+    """
+
+    try:
+        value = json.loads(blob_str)
+    except json.decoder.JSONDecodeError:
+        raise ValueError(
+            (
+                f"Can't import JSON-formatted tasks from {key}. If you're trying to import binary objects, "
+                f'perhaps you\'ve forgot to enable "Treat every bucket object as a source file" option?'
+            )
+        )
+
+    if isinstance(value, dict):
+        return value
+    if isinstance(value, list):
+        for idx, item in enumerate(value):
+            if not isinstance(item, dict):
+                raise error_cls(
+                    (
+                        f'Error on key {key} item {idx}: For {storage_class_name} '
+                        'your JSON file must be a dictionary with one task, or a list of '
+                        'dictionaries with one task each'
+                    )
+                )
+        return value
+
+    raise error_cls(
+        (
+            f'Error on key {key}: For {storage_class_name} your JSON file must be a '
+            'dictionary with one task, or a list of dictionaries with one task each'
+        )
+    )

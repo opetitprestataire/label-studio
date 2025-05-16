@@ -228,27 +228,9 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
         _, s3 = self.get_client_and_resource()
         bucket = s3.Bucket(self.bucket)
         obj = s3.Object(bucket.name, key).get()['Body'].read().decode('utf-8')
-        try:
-            value = json.loads(obj)
-            if isinstance(value, dict):
-                return value
-            elif isinstance(value, list):
-                for idx, item in enumerate(value):
-                    if not isinstance(item, dict):
-                        raise TaskValidationError(
-                            f'Error on key {key} item {idx}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
-                        )
-                return value
+        from io_storages.utils import load_tasks_json
 
-            else:
-                raise TaskValidationError(
-                    f'Error on key {key}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
-                )
-        except json.decoder.JSONDecodeError:
-            raise ValueError(
-                f"Can't import JSON-formatted tasks from {key}. If you're trying to import binary objects, "
-                f'perhaps you\'ve forgot to enable "Treat every bucket object as a source file" option?'
-            )
+        return load_tasks_json(obj, key, self.__class__.__name__, TaskValidationError)
 
     @catch_and_reraise_from_none
     def generate_http_url(self, url):

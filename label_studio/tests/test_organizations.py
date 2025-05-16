@@ -3,8 +3,9 @@
 import pytest
 from organizations.models import Organization, OrganizationMember
 from tasks.models import Task
-from tests.utils import make_annotation
 from users.models import User
+
+from tests.utils import make_annotation
 
 
 @pytest.mark.django_db

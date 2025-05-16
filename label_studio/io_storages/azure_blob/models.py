@@ -25,7 +25,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.utils import parse_range, storage_can_resolve_bucket_url
+from io_storages.utils import load_tasks_json, parse_range, storage_can_resolve_bucket_url
 from tasks.models import Annotation
 
 from label_studio.io_storages.azure_blob.utils import AZURE
@@ -217,20 +217,7 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
         container = self.get_container()
         blob = container.download_blob(key)
         blob_str = blob.content_as_text()
-        value = json.loads(blob_str)
-        if isinstance(value, dict):
-            return value
-        elif isinstance(value, list):
-            for idx, item in enumerate(value):
-                if not isinstance(item, dict):
-                    raise ValueError(
-                        f'Error on key {key} item {idx}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
-                    )
-            return value
-        else:
-            raise ValueError(
-                f'Error on key {key}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
-            )
+        return load_tasks_json(blob_str, key, self.__class__.__name__)
 
     def scan_and_create_links(self):
         return self._scan_and_create_links(AzureBlobImportStorageLink)
