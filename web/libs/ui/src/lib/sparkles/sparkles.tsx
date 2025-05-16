@@ -2,6 +2,7 @@ import React from "react";
 import { IconSparkle } from "@humansignal/icons";
 import { usePrefersReducedMotion, useRandomInterval } from "../../utils/utils";
 import styles from "./sparkles.module.scss";
+import clsx from "clsx";
 
 /**
  * Options for randomPositionAvoidingCenter
@@ -187,62 +188,10 @@ export interface SparklesProps {
    */
   color?: string;
   /**
-   * Number of sparkles visible at once.
-   * @default 2
-   */
-  sparkleCount?: number;
-  /**
-   * Minimum sparkle size in px.
-   * @default 10
-   */
-  sparkleSizeMin?: number;
-  /**
-   * Maximum sparkle size in px.
-   * @default 14
-   */
-  sparkleSizeMax?: number;
-  /**
-   * Sparkle lifetime in ms.
-   * @default 3000
-   */
-  sparkleLifetime?: number;
-  /**
-   * Minimum interval between sparkles in ms.
-   * @default 800
-   */
-  sparkleBaseIntervalMin?: number;
-  /**
-   * Maximum interval between sparkles in ms.
-   * @default 1600
-   */
-  sparkleBaseIntervalMax?: number;
-  /**
-   * Jitter for sparkle interval in ms.
-   * @default 600
-   */
-  sparkleJitter?: number;
-  /**
    * The size of the button or area in px.
    * @default 28
    */
   buttonSize?: number;
-  /**
-   * Disable the sparkle animation.
-   * @default false
-   */
-  disableAnimation?: boolean;
-  /**
-   * Children to render inside the sparkles effect.
-   */
-  children: React.ReactNode;
-  /**
-   * Additional className for the root element.
-   */
-  className?: string;
-  /**
-   * Test id for the root element.
-   */
-  "data-testid"?: string;
   /**
    * The shape of the area in which sparkles can appear: 'circle' or 'rect'.
    * @default 'circle'
@@ -282,6 +231,41 @@ export interface SparklesProps {
    */
   cutoutHeight?: number;
   /**
+   * Number of sparkles visible at once.
+   * @default 2
+   */
+  sparkleCount?: number;
+  /**
+   * Minimum sparkle size in px.
+   * @default 10
+   */
+  sparkleSizeMin?: number;
+  /**
+   * Maximum sparkle size in px.
+   * @default 14
+   */
+  sparkleSizeMax?: number;
+  /**
+   * Sparkle lifetime in ms.
+   * @default 3000
+   */
+  sparkleLifetime?: number;
+  /**
+   * Minimum interval between sparkles in ms.
+   * @default 800
+   */
+  sparkleBaseIntervalMin?: number;
+  /**
+   * Maximum interval between sparkles in ms.
+   * @default 1600
+   */
+  sparkleBaseIntervalMax?: number;
+  /**
+   * Jitter for sparkle interval in ms.
+   * @default 600
+   */
+  sparkleJitter?: number;
+  /**
    * Minimum distance between sparkles in px.
    * @default 8
    */
@@ -292,6 +276,23 @@ export interface SparklesProps {
    */
   sparkleMinSizeDiff?: number;
   /**
+   * Disable the sparkle animation.
+   * @default false
+   */
+  disableAnimation?: boolean;
+  /**
+   * Children to render inside the sparkles effect.
+   */
+  children: React.ReactNode;
+  /**
+   * Additional className for the root element.
+   */
+  className?: string;
+  /**
+   * Test id for the root element.
+   */
+  "data-testid"?: string;
+  /**
    * Show the area and cutout visually for testing/demo purposes.
    * @default false
    */
@@ -300,18 +301,7 @@ export interface SparklesProps {
 
 export const Sparkles: React.FC<SparklesProps> = ({
   color = "#FFFFFF",
-  sparkleCount = 2,
-  sparkleSizeMin = 10,
-  sparkleSizeMax = 14,
-  sparkleLifetime = 3000,
-  sparkleBaseIntervalMin = 800,
-  sparkleBaseIntervalMax = 1600,
-  sparkleJitter = 600,
   buttonSize = 28,
-  disableAnimation = false,
-  children,
-  className,
-  "data-testid": dataTestId,
   areaShape = "circle",
   areaRadius,
   areaWidth,
@@ -320,25 +310,33 @@ export const Sparkles: React.FC<SparklesProps> = ({
   cutoutRadius,
   cutoutWidth,
   cutoutHeight,
+  sparkleCount = 2,
+  sparkleSizeMin = 10,
+  sparkleSizeMax = 14,
+  sparkleLifetime = 3000,
+  sparkleBaseIntervalMin = 800,
+  sparkleBaseIntervalMax = 1600,
+  sparkleJitter = 600,
   sparkleMinDistance = 8,
   sparkleMinSizeDiff = 4,
+  disableAnimation = false,
+  children,
+  className,
+  "data-testid": dataTestId,
   showArea = false,
 }) => {
   if (disableAnimation) {
     return (
       <span
-        style={{
-          display: "inline-block",
-          position: "relative",
-          width: buttonSize,
-          height: buttonSize,
-          pointerEvents: "none",
-        }}
-        className={className}
+        className={clsx(
+          "inline-block relative pointer-events-none",
+          className
+        )}
+        style={{ width: buttonSize, height: buttonSize }}
         aria-hidden="true"
         data-testid={dataTestId}
       >
-        <span style={{ position: "relative", zIndex: 1, pointerEvents: "auto" }}>{children}</span>
+        <span className="relative z-[1] pointer-events-auto">{children}</span>
       </span>
     );
   }
@@ -433,38 +431,34 @@ export const Sparkles: React.FC<SparklesProps> = ({
 
   return (
     <span
-      style={{
-        display: "inline-block",
-        position: "relative",
-        width: buttonSize,
-        height: buttonSize,
-        pointerEvents: "none",
-      }}
-      className={className}
+      className={clsx(
+        "inline-block relative pointer-events-none",
+        className
+      )}
+      style={{ width: buttonSize, height: buttonSize }}
       aria-hidden="true"
       data-testid={dataTestId}
     >
-      <span style={{ position: "relative", zIndex: 1, pointerEvents: "auto" }}>{children}</span>
+      <span className="relative z-[1] pointer-events-auto">{children}</span>
       {showArea && (
         <svg
           width={buttonSize}
           height={buttonSize}
-          style={{ position: "absolute", top: 0, left: 0, zIndex: 2, pointerEvents: "none" }}
-          className="sparkles-area-overlay"
+          className="absolute top-0 left-0 z-[2] pointer-events-none sparkles-area-overlay"
         >
           <title>Sparkles area overlay</title>
           <defs>
             <mask id="sparkles-area-mask">
-              {/* Full area is visible (white), cutout is transparent (black) */}
+              {/* Full area is visible, cutout is transparent */}
               {areaShape === "circle" ? (
-                <circle cx={buttonSize / 2} cy={buttonSize / 2} r={_areaRadius} fill="white" />
+                <circle cx={buttonSize / 2} cy={buttonSize / 2} r={_areaRadius} fill="currentColor" />
               ) : (
                 <rect
                   x={(buttonSize - _areaWidth) / 2}
                   y={(buttonSize - _areaHeight) / 2}
                   width={_areaWidth}
                   height={_areaHeight}
-                  fill="white"
+                  fill="currentColor"
                 />
               )}
               {cutoutShape === "circle" ? (
@@ -508,8 +502,12 @@ export const Sparkles: React.FC<SparklesProps> = ({
           color={sparkle.color}
           width={sparkle.size}
           height={sparkle.size}
-          style={{ ...sparkle.style, zIndex: 3 }}
-          className={styles.sparkle}
+          style={{
+            top: sparkle.style.top,
+            left: sparkle.style.left,
+            zIndex: 3,
+          }}
+          className={clsx("absolute pointer-events-none", styles.sparkle)}
         />
       ))}
     </span>
