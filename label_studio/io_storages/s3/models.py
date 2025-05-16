@@ -230,6 +230,7 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
         obj = s3.Object(bucket.name, key).get()['Body'].read().decode('utf-8')
         from io_storages.utils import load_tasks_json
 
+        # TODO: Why do only S3 storages use TaskValidationError here? If the mystery is resolved, can remove this argument from load_tasks_json and use ValueError everywhere
         return load_tasks_json(obj, key, self.__class__.__name__, TaskValidationError)
 
     @catch_and_reraise_from_none
