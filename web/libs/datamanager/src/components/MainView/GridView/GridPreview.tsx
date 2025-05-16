@@ -108,13 +108,21 @@ const TaskModal = observer(({ view, tasks, imageField, currentTaskId, setCurrent
           <Icon icon={CloseOutlined} onClick={onClose} />
         </div>
       </div>
-      <div className={styles.container}>
-        <Button type="button" variant="primary" look="outlined" onClick={goToPrev} disabled={index === 0}>
+      <div className="grid grid-cols-[20px_1fr_20px]">
+        <Button
+          type="button"
+          className="h-full [&_span]:aspect-auto !p-0"
+          variant="primary"
+          look="outlined"
+          onClick={goToPrev}
+          disabled={index === 0}
+        >
           <IconChevronLeft />
         </Button>
         <ImagePreview task={task} field={imageField} />
         <Button
           type="button"
+          className="h-full [&_span]:aspect-auto !p-0"
           variant="primary"
           look="outlined"
           onClick={goToNext}
