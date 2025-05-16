@@ -1,6 +1,7 @@
 import { getRoot, types } from "mobx-state-tree";
 import { observer } from "mobx-react";
 import { Collapse } from "antd";
+import { ff } from "@humansignal/core";
 
 import ProcessAttrsMixin from "../../mixins/ProcessAttrs";
 import Registry from "../../core/Registry";
@@ -8,7 +9,7 @@ import Registry from "../../core/Registry";
 import Types from "../../core/Types";
 import Tree from "../../core/Tree";
 import { isSelfServe } from "../../utils/billing";
-import { FF_BULK_ANNOTATION } from "../../utils/feature-flags";
+import { FF_BULK_ANNOTATION, FF_DEV_3391 } from "../../utils/feature-flags";
 import { guidGenerator } from "../../utils/unique";
 
 const { Panel } = Collapse;
@@ -119,7 +120,7 @@ const Model = types
 const CollapseModel = types.compose("CollapseModel", Model, ProcessAttrsMixin);
 
 const HtxCollapse = observer(({ item }) => {
-  const isBulkMode = isFF(FF_BULK_ANNOTATION) && !isSelfServe() && item.store.hasInterface("annotation:bulk");
+  const isBulkMode = ff.isActive(FF_BULK_ANNOTATION) && !isSelfServe() && item.store.hasInterface("annotation:bulk");
   // forceRender is needed to have proper `isReady` for nested object tags.
   // with Interactive View All we won't need it, because tags are rendered as usual.
   const extraProps = ff.isActive(FF_DEV_3391) ? {} : { forceRender: true };
