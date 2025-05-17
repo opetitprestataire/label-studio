@@ -8,6 +8,7 @@ import { SyncableMixin } from "../../../mixins/Syncable";
 import { parseValue } from "../../../utils/data";
 import { FF_VIDEO_FRAME_SEEK_PRECISION, isFF } from "../../../utils/feature-flags";
 import ObjectBase from "../Base";
+import { isDefined } from "../../../utils/utilities";
 
 /**
  * Video tag plays a simple video file. Use for video annotation tasks such as classification and transcription.
@@ -100,6 +101,7 @@ const Model = types
     frame: 1,
     length: 1,
     drawingRegion: null,
+    isProcessingIncomingSync: false,
   }))
   .views((self) => ({
     get store() {
@@ -160,6 +162,7 @@ const Model = types
         {
           playing: self.ref.current.playing,
           time: self.ref.current.frameSteppedTime(),
+          initiator: self.name,
           ...data,
         },
         event,
@@ -184,28 +187,40 @@ const Model = types
     },
 
     handleSync(data) {
+      if (data.initiator === self.name) return;
       if (!self.ref.current) return;
+      self.isProcessingIncomingSync = true;
+      try {
+        const video = self.ref.current;
 
-      const video = self.ref.current;
+        if (isDefined(data.playing)) {
+          if (data.playing) {
+            if (!video.playing) video.play();
+          } else {
+            if (video.playing) video.pause();
+          }
+        }
 
-      if (data.playing) {
-        if (!video.playing) video.play();
-      } else {
-        if (video.playing) video.pause();
+        if (isDefined(data.speed)) {
+          self.speed = data.speed;
+        }
+        if (isDefined(data.time)) {
+          video.currentTime = data.time;
+        }
+      } finally {
+        self.isProcessingIncomingSync = false;
       }
-
-      if (data.speed) {
-        self.speed = data.speed;
-      }
-
-      video.currentTime = data.time;
     },
 
-    handleSyncSpeed({ speed }) {
-      self.speed = speed;
+    handleSyncSpeed(data) {
+      if (data.initiator === self.name) return;
+      if (isDefined(data.speed)) {
+        self.speed = data.speed;
+      }
     },
 
     handleSeek() {
+      if (self.isProcessingIncomingSync) return;
       self.triggerSync("seek");
     },
 
