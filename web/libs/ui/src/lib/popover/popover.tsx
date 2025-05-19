@@ -17,7 +17,7 @@ export interface PopoverProps extends React.ComponentProps<typeof ShadPopover> {
   className?: string;
 }
 
-const Popover = ({ trigger, children, align = "center", sideOffset = 4, className, ...props }: PopoverProps) => {
+const Popover = ({ trigger, children, align = "start", sideOffset = 4, className, ...props }: PopoverProps) => {
   return (
     <ShadPopover {...props}>
       <PopoverTrigger data-slot="popover-trigger" asChild>

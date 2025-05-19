@@ -46,13 +46,7 @@ export const Agreement = (cell) => {
 
   return (
     <div className="flex items-center" onClick={handleClick}>
-      {isAgreementPopoverEnabled ? (
-        <Popover trigger={score} align="start">
-          {content}
-        </Popover>
-      ) : (
-        score
-      )}
+      {isAgreementPopoverEnabled ? <Popover trigger={score}>{content}</Popover> : score}
     </div>
   );
 };
