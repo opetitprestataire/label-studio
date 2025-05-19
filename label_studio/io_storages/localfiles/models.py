@@ -20,6 +20,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
+from io_storages.utils import load_tasks_json
 from rest_framework.exceptions import ValidationError
 from tasks.models import Annotation
 
@@ -90,27 +91,13 @@ class LocalFilesImportStorageBase(LocalFilesMixin, ImportStorage):
             }
 
         try:
-            with open(path, encoding='utf8') as f:
-                value = json.load(f)
-        except (UnicodeDecodeError, json.decoder.JSONDecodeError):
-            raise ValueError(
-                f"Can't import JSON-formatted tasks from {key}. If you're trying to import binary objects, "
-                f'perhaps you\'ve forgot to enable "Treat every bucket object as a source file" option?'
-            )
-
-        if isinstance(value, dict):
-            return value
-        elif isinstance(value, list):
-            for idx, item in enumerate(value):
-                if not isinstance(item, dict):
-                    raise ValueError(
-                        f'Error on key {key} item {idx}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
-                    )
-            return value
-        else:
-            raise ValueError(
-                f'Error on key {key}: For {self.__class__.__name__} your JSON file must be a dictionary with one task, or a list of dictionaries with one task each'
-            )
+            with open(path, 'rb') as f:
+                blob_str = f.read().decode('utf-8')
+                return load_tasks_json(blob_str, key, self.__class__.__name__)
+        except UnicodeDecodeError as e:
+            raise ValueError(f"Failed to decode file {path} as UTF-8: {str(e)}")
+        except OSError as e:
+            raise ValueError(f"Failed to read file {path}: {str(e)}")
 
     def scan_and_create_links(self):
         return self._scan_and_create_links(LocalFilesImportStorageLink)
