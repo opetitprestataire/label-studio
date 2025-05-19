@@ -155,7 +155,7 @@ def _load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[StorageL
     def _error_wrapper(exc: Optional[Exception] = None):
         raise ValueError(
             (
-                f"Can't import JSON-formatted tasks from {key}. If you're trying to import binary objects, "
+                f"Can’t import JSON-formatted tasks from {key}. If you’re trying to import binary objects, "
                 f'perhaps you forgot to enable "Treat every bucket object as a source file" option?'
             )
         ) from exc
