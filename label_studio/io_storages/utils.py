@@ -117,7 +117,7 @@ def parse_range(range_header):
     return start, end
 
 
-def _load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls=ValueError):
+def _load_tasks_json(blob_str: str, key: str, storage_class_name: str):
     """
     Parse blob_str containing task JSON(s) and return the validated result or raise an error.
 
@@ -139,7 +139,7 @@ def _load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls
     if isinstance(value, list):
         for idx, item in enumerate(value):
             if not isinstance(item, dict):
-                raise error_cls(
+                raise ValueError(
                     (
                         f'Error on key {key} item {idx}: For {storage_class_name} '
                         'your JSON file must be a dictionary with one task, or a list of '
@@ -148,7 +148,7 @@ def _load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls
                 )
         return value
 
-    raise error_cls(
+    raise ValueError(
         (
             f'Error on key {key}: For {storage_class_name} your JSON file must be a '
             'dictionary with one task, or a list of dictionaries with one task each'
@@ -156,7 +156,7 @@ def _load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls
     )
 
 
-def load_tasks_json(blob_str: str, key: str, storage_class_name: str, error_cls=ValueError):
+def load_tasks_json(blob_str: str, key: str, storage_class_name: str):
     # uses _load_tasks_json here and an LSE-specific implementation in LSE
     load_tasks_json_func = load_func(settings.STORAGE_LOAD_TASKS_JSON)
-    return load_tasks_json_func(blob_str, key, storage_class_name, error_cls)
+    return load_tasks_json_func(blob_str, key, storage_class_name)
