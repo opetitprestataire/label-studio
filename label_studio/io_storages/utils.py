@@ -8,7 +8,8 @@ from typing import Union
 
 from django.conf import settings
 
-from label_studio.core.utils.common import load_func
+from core.feature_flags import flag_set
+from core.utils.common import load_func
 
 logger = logging.getLogger(__name__)
 
