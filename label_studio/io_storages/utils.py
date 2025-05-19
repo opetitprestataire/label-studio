@@ -156,7 +156,7 @@ def _load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[StorageL
         raise ValueError(
             (
                 f"Can't import JSON-formatted tasks from {key}. If you're trying to import binary objects, "
-                f'perhaps you\'ve forgot to enable "Treat every bucket object as a source file" option?'
+                f'perhaps you forgot to enable "Treat every bucket object as a source file" option?'
             )
         ) from exc
 
