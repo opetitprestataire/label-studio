@@ -101,4 +101,25 @@ describe("Paragraphs phrases", () => {
     ]);
   });
   ff.reset();
+
+  it("should handle empty arrays gracefully without runtime errors", () => {
+    const model = ParagraphsModel.create({
+      name: "phrases",
+      value: "$emptyPhrases"
+    });
+    const store = MockStore.create({
+      paragraphs: model
+    });
+
+    // Set empty array in task data
+    store.task.dataObj = { emptyPhrases: [] };
+
+    // Should not throw any errors when updating
+    expect(() => {
+      model.updateValue(store);
+    }).not.toThrow();
+
+    // Value should be set to the empty array
+    expect(model._value).toEqual([]);
+  });
 });
