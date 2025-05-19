@@ -103,8 +103,8 @@ examples.slice(1).forEach((example) =>
       AtOutliner.seeRegions(count);
 
       await I.executeScript(async () => {
-        await window.LabelStudio.destroyAll();
-        return true;
+        // await window.LabelStudio.destroyAll();
+        // return true;
       });
     },
   ),
