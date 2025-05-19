@@ -27,7 +27,7 @@ from io_storages.s3.utils import (
     get_client_and_resource,
     resolve_s3_url,
 )
-from io_storages.utils import storage_can_resolve_bucket_url
+from io_storages.utils import storage_can_resolve_bucket_url, load_tasks_json
 from tasks.models import Annotation
 from tasks.validation import ValidationError as TaskValidationError
 
@@ -228,7 +228,6 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
         _, s3 = self.get_client_and_resource()
         bucket = s3.Bucket(self.bucket)
         obj = s3.Object(bucket.name, key).get()['Body'].read().decode('utf-8')
-        from io_storages.utils import load_tasks_json
 
         # TODO: Why do only S3 storages use TaskValidationError here? If the mystery is resolved, can remove this argument from load_tasks_json and use ValueError everywhere
         return load_tasks_json(obj, key, self.__class__.__name__, TaskValidationError)

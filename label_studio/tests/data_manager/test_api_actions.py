@@ -140,7 +140,7 @@ def test_action_remove_duplicates(business_client, project_id, storage_model, li
     # this task would have row_index=0 instead of None if it was created after multitask support was added
     link_model.objects.create(task=task4, key='duplicated.jpg', storage=storage)
 
-    # task 5: add not a duplicated task using the same key, ensuring multiple tasks in the same key don't interfere
+    # task 5: add a non-duplicated task using the same key, ensuring multiple tasks in the same key don't interfere
     task_data = {'data': {'image': 'normal2.jpg'}}
     task5 = make_task(task_data, project)
     link_model.objects.create(task=task5, key='duplicated.jpg', row_index=1, storage=storage)
