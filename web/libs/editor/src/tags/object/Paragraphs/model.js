@@ -461,7 +461,7 @@ const ParagraphsLoadingModel = types.model().actions((self) => ({
 
     if (!Array.isArray(val)) {
       errors.push("Provided data is not an array");
-    } else {
+    } else if (val.length > 0) {
       if (!(self.namekey in val[0])) {
         errors.push(`"${self.namekey}" field not found in task data; check your <b>nameKey</b> parameter`);
       }
