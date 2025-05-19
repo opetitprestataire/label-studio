@@ -27,7 +27,7 @@ from io_storages.s3.utils import (
     get_client_and_resource,
     resolve_s3_url,
 )
-from io_storages.utils import load_tasks_json, storage_can_resolve_bucket_url, StorageLinkParams
+from io_storages.utils import StorageLinkParams, load_tasks_json, storage_can_resolve_bucket_url
 from tasks.models import Annotation
 
 from label_studio.io_storages.s3.utils import AWS

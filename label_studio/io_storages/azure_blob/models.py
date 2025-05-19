@@ -25,7 +25,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.utils import load_tasks_json, parse_range, storage_can_resolve_bucket_url, StorageLinkParams
+from io_storages.utils import StorageLinkParams, load_tasks_json, parse_range, storage_can_resolve_bucket_url
 from tasks.models import Annotation
 
 from label_studio.io_storages.azure_blob.utils import AZURE
