@@ -146,7 +146,9 @@ def _load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[int | No
     except json.decoder.JSONDecodeError as e:
         if flag_set('fflag_feat_root_11_support_jsonl_cloud_storage'):
             try:
-                table = pyarrow.json.read_json(pa.py_buffer(blob_str))
+                table = pyarrow.json.read_json(
+                    pa.py_buffer(blob_str), parse_options=pa.json.ParseOptions(newlines_in_values=True)
+                )
                 return table.to_pylist()
             except Exception as e:
                 _error_wrapper(e)
