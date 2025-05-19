@@ -15,15 +15,11 @@ Use with the following data types: time series.
 
 Test text added to check that it's not rewritten anymore.
 
-### Parameters
-
 {% insertmd includes/tags/timeseries.md %}
 
 ## Channel
 
 Channel tag can be used to label time series data
-
-### Parameters
 
 {% insertmd includes/tags/channel.md %}
 
