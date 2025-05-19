@@ -17,7 +17,7 @@ env:
   NODE: "18"
   FRONTEND_MONOREPO_DIR: "web"
   FRONTEND_BUILD_COMMIT_MESSAGE: "ci: Build tag docs"
-  DOCS_TARGET_DIR: "docs/includes/tags"
+  DOCS_TARGET_DIR: "docs/source/includes/tags"
 
 jobs:
   build:
