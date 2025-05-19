@@ -4,12 +4,13 @@ import json
 import logging
 import re
 from dataclasses import dataclass
-from typing import Union
+from typing import Optional, Union
 
-from django.conf import settings
-
+import pyarrow as pa
+import pyarrow.json
 from core.feature_flags import flag_set
 from core.utils.common import load_func
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -117,43 +118,54 @@ def parse_range(range_header):
     return start, end
 
 
-def _load_tasks_json(blob_str: str, key: str, storage_class_name: str):
+def _load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[int | None], list[int | None]]:
     """
     Parse blob_str containing task JSON(s) and return the validated result or raise an error.
 
-    Other args are used for error messages.
+    Args:
+        blob_str (str): The blob string to parse.
+        key (str): The key of the blob. Used for error messages.
+
+    Returns:
+        list[dict]: parsed tasks.
+        list[int|None]: row_index for each task.
+        list[int|None]: row_group for each task.
     """
 
-    try:
-        value = json.loads(blob_str)
-    except json.decoder.JSONDecodeError:
+    def _error_wrapper(exc: Optional[Exception] = None):
         raise ValueError(
             (
                 f"Can't import JSON-formatted tasks from {key}. If you're trying to import binary objects, "
                 f'perhaps you\'ve forgot to enable "Treat every bucket object as a source file" option?'
             )
-        )
+        ) from exc
+
+    # TODO: rely on file extensions here instead of pure exception-chaining? Would be more readable, potentially less reliable, would work for all storage types except redis.
+    try:
+        value = json.loads(blob_str)
+    except json.decoder.JSONDecodeError as e:
+        if flag_set('fflag_feat_root_11_support_jsonl_cloud_storage'):
+            try:
+                table = pyarrow.json.read_json(pa.py_buffer(blob_str))
+                return table.to_pylist()
+            except Exception as e:
+                _error_wrapper(e)
+        else:
+            _error_wrapper(e)
 
     if isinstance(value, dict):
-        return value
+        return [value], [None], [None]
     if isinstance(value, list):
-        for idx, item in enumerate(value):
-            if not isinstance(item, dict):
-                raise ValueError(
-                    (
-                        f'Error on key {key} item {idx}: For {storage_class_name} '
-                        'your JSON file must be a dictionary with one task, or a list of '
-                        'dictionaries with one task each'
-                    )
-                )
-        return value
+        # validate tasks by briefly converting to table
+        try:
+            table = pa.Table.from_pylist(value)
+            values = table.to_pylist()
+        except Exception as e:
+            _error_wrapper(e)
+        n_tasks = len(values)
+        return values, list(range(n_tasks)), [None] * n_tasks
 
-    raise ValueError(
-        (
-            f'Error on key {key}: For {storage_class_name} your JSON file must be a '
-            'dictionary with one task, or a list of dictionaries with one task each'
-        )
-    )
+    _error_wrapper()
 
 
 def load_tasks_json(blob_str: str, key: str, storage_class_name: str):

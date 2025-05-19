@@ -79,25 +79,26 @@ class LocalFilesImportStorageBase(LocalFilesMixin, ImportStorage):
                     continue
                 yield str(file)
 
-    def get_data(self, key) -> dict | list[dict]:
+    def get_data(self, key) -> tuple[list[dict], list[int | None], list[int | None]]:
         path = Path(key)
         if self.use_blob_urls:
             # include self-hosted links pointed to local resources via
             # {settings.HOSTNAME}/data/local-files?d=<path/to/local/dir>
             document_root = Path(settings.LOCAL_FILES_DOCUMENT_ROOT)
             relative_path = str(path.relative_to(document_root))
-            return {
+            task = {
                 settings.DATA_UNDEFINED_NAME: f'{settings.HOSTNAME}/data/local-files/?d={quote(str(relative_path))}'
             }
+            return [task], [None], [None]
 
         try:
             with open(path, 'rb') as f:
                 blob_str = f.read().decode('utf-8')
                 return load_tasks_json(blob_str, key, self.__class__.__name__)
         except UnicodeDecodeError as e:
-            raise ValueError(f"Failed to decode file {path} as UTF-8: {str(e)}")
+            raise ValueError(f'Failed to decode file {path} as UTF-8: {str(e)}')
         except OSError as e:
-            raise ValueError(f"Failed to read file {path}: {str(e)}")
+            raise ValueError(f'Failed to read file {path}: {str(e)}')
 
     def scan_and_create_links(self):
         return self._scan_and_create_links(LocalFilesImportStorageLink)

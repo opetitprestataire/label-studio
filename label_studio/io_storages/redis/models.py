@@ -3,7 +3,6 @@
 
 import json
 import logging
-from typing import Union
 
 import redis
 from django.db import models
@@ -91,11 +90,11 @@ class RedisImportStorageBase(ImportStorage, RedisStorageMixin):
         for key in client.keys(path + '*'):
             yield key
 
-    def get_data(self, key) -> Union[dict, list[dict]]:
+    def get_data(self, key) -> tuple[list[dict], list[int | None], list[int | None]]:
         client = self.get_client()
         value_str = client.get(key)
         if not value_str:
-            return []
+            return [], [], []
         return load_tasks_json(value_str, key, self.__class__.__name__)
 
     def scan_and_create_links(self):

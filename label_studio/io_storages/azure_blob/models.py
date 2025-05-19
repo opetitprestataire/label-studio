@@ -209,10 +209,11 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
                 continue
             yield file.name
 
-    def get_data(self, key) -> Union[dict, list[dict]]:
+    def get_data(self, key) -> tuple[list[dict], list[int | None], list[int | None]]:
         if self.use_blob_urls:
             data_key = settings.DATA_UNDEFINED_NAME
-            return {data_key: f'{self.url_scheme}://{self.container}/{key}'}
+            task = {data_key: f'{self.url_scheme}://{self.container}/{key}'}
+            return [task], [None], [None]
 
         container = self.get_container()
         blob = container.download_blob(key)

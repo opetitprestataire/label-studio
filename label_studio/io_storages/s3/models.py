@@ -27,7 +27,7 @@ from io_storages.s3.utils import (
     get_client_and_resource,
     resolve_s3_url,
 )
-from io_storages.utils import storage_can_resolve_bucket_url, load_tasks_json
+from io_storages.utils import load_tasks_json, storage_can_resolve_bucket_url
 from tasks.models import Annotation
 
 from label_studio.io_storages.s3.utils import AWS
@@ -217,11 +217,12 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
         return self._scan_and_create_links(S3ImportStorageLink)
 
     @catch_and_reraise_from_none
-    def get_data(self, key) -> Union[dict, list[dict]]:
+    def get_data(self, key) -> tuple[list[dict], list[int | None], list[int | None]]:
         uri = f'{self.url_scheme}://{self.bucket}/{key}'
         if self.use_blob_urls:
             data_key = settings.DATA_UNDEFINED_NAME
-            return {data_key: uri}
+            task = {data_key: uri}
+            return [task], [None], [None]
 
         # read task json from bucket and validate it
         _, s3 = self.get_client_and_resource()

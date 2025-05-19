@@ -180,9 +180,10 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
             return_key=True,
         )
 
-    def get_data(self, key) -> Union[dict, list[dict]]:
+    def get_data(self, key) -> tuple[list[dict], list[int | None], list[int | None]]:
         if self.use_blob_urls:
-            return {settings.DATA_UNDEFINED_NAME: GCS.get_uri(self.bucket, key)}
+            task = {settings.DATA_UNDEFINED_NAME: GCS.get_uri(self.bucket, key)}
+            return [task], [None], [None]
         blob_str = GCS.read_file(
             client=self.get_client(),
             bucket_name=self.bucket,

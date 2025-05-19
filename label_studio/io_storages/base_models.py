@@ -341,7 +341,9 @@ class ImportStorage(Storage):
         raise NotImplementedError
 
     @classmethod
-    def add_task(cls, data, project, maximum_annotations, max_inner_id, storage, key, row_index, link_class):
+    def add_task(
+        cls, data, project, maximum_annotations, max_inner_id, storage, key, row_index, row_group, link_class
+    ):
         # predictions
         predictions = data.get('predictions', [])
         if predictions:
@@ -375,8 +377,8 @@ class ImportStorage(Storage):
                 inner_id=max_inner_id,
             )
 
-            link_class.create(task, key, storage, row_index=row_index)
-            logger.debug(f'Create {storage.__class__.__name__} link with {key=} and {row_index=} for {task=}')
+            link_class.create(task, key, storage, row_index=row_index, row_group=row_group)
+            logger.debug(f'Create {storage.__class__.__name__} link with {key=} {row_index=} {row_group=} for {task=}')
 
             raise_exception = not flag_set(
                 'ff_fix_back_dev_3342_storage_scan_with_invalid_annotations', user=AnonymousUser()
@@ -431,7 +433,7 @@ class ImportStorage(Storage):
 
             logger.debug(f'{self}: found new key {key}')
             try:
-                tasks_data = self.get_data(key)
+                tasks_data, row_indices, row_groups = self.get_data(key)
             except (UnicodeDecodeError, json.decoder.JSONDecodeError) as exc:
                 logger.debug(exc, exc_info=True)
                 raise ValueError(
@@ -440,19 +442,22 @@ class ImportStorage(Storage):
                     f'"Treat every bucket object as a source file"'
                 )
 
-            if isinstance(tasks_data, dict):
-                tasks_data = [tasks_data]
-                row_indices = [None]
-            else:
-                if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):
-                    tasks_data = tasks_data[:1]
-                row_indices = range(len(tasks_data))
+            if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):
+                tasks_data = tasks_data[:1]
 
-            for row_index, task_data in zip(row_indices, tasks_data):
+            for task_data, row_index, row_group in zip(tasks_data, row_indices, row_groups):
                 # TODO: batch this loop body with add_task -> add_tasks in a single bulk write.
                 # See DIA-2062 for prerequisites
                 task = self.add_task(
-                    task_data, self.project, maximum_annotations, max_inner_id, self, key, row_index, link_class
+                    task_data,
+                    self.project,
+                    maximum_annotations,
+                    max_inner_id,
+                    self,
+                    key,
+                    row_index,
+                    row_group,
+                    link_class,
                 )
                 max_inner_id += 1
 
