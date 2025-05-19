@@ -188,7 +188,6 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
             client=self.get_client(),
             bucket_name=self.bucket,
             key=key,
-            convert_to=GCS.ConvertBlobTo.NOTHING,
         )
         return load_tasks_json(blob_str, key)
 
