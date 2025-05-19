@@ -81,7 +81,7 @@ fetch(currentTagsUrl)
     function processTemplate(t, dir, supertag) {
       // all tags are with this kind and leading capital letter
       if (t.kind !== "member" || !t.name.match(/^[A-Z]/)) return;
-      if (!supertag && t.customTags && t.customTags.find((desc) => desc.tag === "subtag")) return;
+      // if (!supertag && t.customTags && t.customTags.find((desc) => desc.tag === "subtag")) return;
       const name = t.name.toLowerCase();
       // there are no new tags if we didn't get the list
       const isNew = tags ? !tags.includes(name) : false;
@@ -145,15 +145,15 @@ fetch(currentTagsUrl)
         .renderSync({ data: [t], "example-lang": "html" })
         // add header with info instead of header for github
         // don't add any header to subtags as they'll be inserted into supertag's doc
-        .replace(/^(.*?\n){3}/, header)
+        // .replace(/^(.*?\n){3}/, header)
         // remove useless Kind: member
-        .replace(/\*\*Kind\*\*.*?\n/, "### Parameters\n")
-        .replace(/(\*\*Example\*\*\s*\n)/, `${results}$1`)
-        .replace(/\*\*Example\*\*\s*\n/g, "### Example\n")
+        .replace(/^.*?\*\*Kind\*\*.*?\n/ms, "### Parameters\n")
+        .replace(/\*\*Example\*\*\s*\n.*/ms, results)
+        // .replace(/\*\*Example\*\*\s*\n/g, "### Example\n")
         // move comments from examples to description
-        .replace(/```html[\n\s]*<!--[\n\s]*([\w\W]*?)[\n\s]*-->[\n\s]*/g, "\n$1\n\n```html\n")
+        // .replace(/```html[\n\s]*<!--[\n\s]*([\w\W]*?)[\n\s]*-->[\n\s]*/g, "\n$1\n\n```html\n")
         // change example language if it looks like JSON
-        .replace(/```html[\n\s]*([[{])/g, "```json\n$1")
+        // .replace(/```html[\n\s]*([[{])/g, "```json\n$1")
         // normalize footnotes to be numbers (e.g. `[^FF_LSDV_0000]` => `[^1]`)
         .replace(
           /\[\^([^\]]+)\]/g,
@@ -172,19 +172,19 @@ fetch(currentTagsUrl)
         // force adding new lines before footnote definitions
         .replace(/(?<![\r\n])([\r\n])(\[\^[^\[]+\]:)/gm, "$1$1$2");
 
-      if (supertags.includes(t.name)) {
-        console.log(`Fetching subtags of ${t.name}`);
-        const templates = jsdoc2md.getTemplateDataSync({ files: `${t.meta.path}/${t.name}/*.${EXT}` });
-        const subtags = templates
-          .map((t) => processTemplate(t, dir, t.name))
-          .filter(Boolean)
-          .join("\n\n");
+      // if (supertags.includes(t.name)) {
+      //   console.log(`Fetching subtags of ${t.name}`);
+      //   const templates = jsdoc2md.getTemplateDataSync({ files: `${t.meta.path}/${t.name}/*.${EXT}` });
+      //   const subtags = templates
+      //     .map((t) => processTemplate(t, dir, t.name))
+      //     .filter(Boolean)
+      //     .join("\n\n");
 
-        if (subtags) {
-          // insert before the first example or just at the end of doc
-          str = str.replace(/(### Example)|$/, `${subtags}\n$1`);
-        }
-      }
+      //   if (subtags) {
+      //     // insert before the first example or just at the end of doc
+      //     str = str.replace(/(### Example)|$/, `${subtags}\n$1`);
+      //   }
+      // }
 
       return str;
     }
