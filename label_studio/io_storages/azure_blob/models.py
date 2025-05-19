@@ -218,7 +218,7 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
         container = self.get_container()
         blob = container.download_blob(key)
         blob_str = blob.content_as_text()
-        return load_tasks_json(blob_str, key, self.__class__.__name__)
+        return load_tasks_json(blob_str, key)
 
     def scan_and_create_links(self):
         return self._scan_and_create_links(AzureBlobImportStorageLink)

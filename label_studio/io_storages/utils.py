@@ -168,7 +168,7 @@ def _load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[int | No
     _error_wrapper()
 
 
-def load_tasks_json(blob_str: str, key: str, storage_class_name: str):
+def load_tasks_json(blob_str: str, key: str):
     # uses _load_tasks_json here and an LSE-specific implementation in LSE
     load_tasks_json_func = load_func(settings.STORAGE_LOAD_TASKS_JSON)
-    return load_tasks_json_func(blob_str, key, storage_class_name)
+    return load_tasks_json_func(blob_str, key)

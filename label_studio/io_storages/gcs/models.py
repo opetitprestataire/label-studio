@@ -190,7 +190,7 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
             key=key,
             convert_to=GCS.ConvertBlobTo.NOTHING,
         )
-        return load_tasks_json(blob_str, key, self.__class__.__name__)
+        return load_tasks_json(blob_str, key)
 
     def generate_http_url(self, url):
         return GCS.generate_http_url(
