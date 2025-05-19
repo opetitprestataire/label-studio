@@ -5,7 +5,7 @@
 | name | <code>string</code> | Name of the element |
 | toName | <code>string</code> | Name of the video element |
 
-### Sample Results JSON
+### Result parameters
 
 | Name | Type | Description |
 | --- | --- | --- |

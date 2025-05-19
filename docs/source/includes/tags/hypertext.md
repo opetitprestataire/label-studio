@@ -14,7 +14,7 @@
 | [showLabels] | <code>boolean</code> |  | Whether or not to show labels next to the region; unset (by default) — use editor settings; true/false — override settings |
 | [granularity] | <code>symbol</code> \| <code>word</code> \| <code>sentence</code> \| <code>paragraph</code> |  | Control region selection granularity |
 
-### Sample Results JSON
+### Result parameters
 
 | Name | Type | Description |
 | --- | --- | --- |

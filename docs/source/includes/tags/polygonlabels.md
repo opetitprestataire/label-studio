@@ -15,7 +15,7 @@
 | [pointStyle] | <code>rectangle</code> \| <code>circle</code> | <code>rectangle</code> | Style of points |
 | [snap] | <code>pixel</code> \| <code>none</code> | <code>none</code> | Snap polygon to image pixels |
 
-### Sample Results JSON
+### Result parameters
 
 | Name | Type | Description |
 | --- | --- | --- |

@@ -13,7 +13,7 @@
 | [strokeWidth] | <code>number</code> | <code>1</code> | Width of stroke |
 | [canRotate] | <code>boolean</code> | <code>true</code> | Show or hide rotation option |
 
-### Sample Results JSON
+### Result parameters
 
 | Name | Type | Description |
 | --- | --- | --- |

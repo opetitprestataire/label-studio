@@ -8,7 +8,7 @@
 | [blurradius] | <code>number</code> | <code>5</code> | The edges of a Magic Wand region are blurred and simplified, this is the radius of the blur kernel |
 | [defaultthreshold] | <code>number</code> | <code>15</code> | When the user initially clicks without dragging, how far a color has to be from the initial selected pixel to also be selected |
 
-### Sample Results JSON
+### Result parameters
 
 | Name | Type | Description |
 | --- | --- | --- |

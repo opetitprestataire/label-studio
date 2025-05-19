@@ -14,7 +14,7 @@
 | [textKey] | <code>string</code> | <code>&quot;text&quot;</code> | The key field to use for the text |
 | [contextScroll] | <code>boolean</code> | <code>false</code> | Turn on contextual scroll mode |
 
-### Sample Results JSON
+### Result parameters
 
 | Name | Type | Description |
 | --- | --- | --- |

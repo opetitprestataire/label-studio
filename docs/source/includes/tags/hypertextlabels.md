@@ -8,7 +8,7 @@
 | [maxUsages] | <code>number</code> |  | Maximum number of times a label can be used per task |
 | [showInline] | <code>boolean</code> | <code>true</code> | Show labels in the same visual line |
 
-### Sample Results JSON
+### Result parameters
 
 | Name | Type | Description |
 | --- | --- | --- |

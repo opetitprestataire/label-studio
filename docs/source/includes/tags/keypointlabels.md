@@ -11,7 +11,7 @@
 | [strokeWidth] | <code>number</code> | <code>1</code> | Width of the stroke |
 | [snap] | <code>pixel</code> \| <code>none</code> | <code>none</code> | Snap keypoint to image pixels |
 
-### Sample Results JSON
+### Result parameters
 
 | Name | Type | Description |
 | --- | --- | --- |

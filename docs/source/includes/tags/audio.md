@@ -16,7 +16,7 @@
 | [decoder] | <code>string</code> | <code>&quot;webaudio&quot;</code> | Decoder type to use to decode audio data. (`"webaudio"` or `"ffmpeg"`) |
 | [player] | <code>string</code> | <code>&quot;html5&quot;</code> | Player type to use to play audio data. (`"html5"` or `"webaudio"`) |
 
-### Sample Results JSON
+### Result parameters
 
 | Name | Type | Description |
 | --- | --- | --- |
