@@ -20,7 +20,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.utils import load_tasks_json
+from io_storages.utils import load_tasks_json, StorageLinkParams
 from rest_framework.exceptions import ValidationError
 from tasks.models import Annotation
 
@@ -79,7 +79,7 @@ class LocalFilesImportStorageBase(LocalFilesMixin, ImportStorage):
                     continue
                 yield str(file)
 
-    def get_data(self, key) -> tuple[list[dict], list[int | None], list[int | None]]:
+    def get_data(self, key) -> tuple[list[dict], list[StorageLinkParams]]:
         path = Path(key)
         if self.use_blob_urls:
             # include self-hosted links pointed to local resources via
@@ -89,7 +89,7 @@ class LocalFilesImportStorageBase(LocalFilesMixin, ImportStorage):
             task = {
                 settings.DATA_UNDEFINED_NAME: f'{settings.HOSTNAME}/data/local-files/?d={quote(str(relative_path))}'
             }
-            return [task], [None], [None]
+            return [task], [StorageLinkParams(key=key)]
 
         try:
             with open(path, 'rb') as f:

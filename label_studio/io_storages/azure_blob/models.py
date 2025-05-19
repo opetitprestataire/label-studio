@@ -25,7 +25,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.utils import load_tasks_json, parse_range, storage_can_resolve_bucket_url
+from io_storages.utils import load_tasks_json, parse_range, storage_can_resolve_bucket_url, StorageLinkParams
 from tasks.models import Annotation
 
 from label_studio.io_storages.azure_blob.utils import AZURE
@@ -209,11 +209,11 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
                 continue
             yield file.name
 
-    def get_data(self, key) -> tuple[list[dict], list[int | None], list[int | None]]:
+    def get_data(self, key) -> tuple[list[dict], list[StorageLinkParams]]:
         if self.use_blob_urls:
             data_key = settings.DATA_UNDEFINED_NAME
             task = {data_key: f'{self.url_scheme}://{self.container}/{key}'}
-            return [task], [None], [None]
+            return [task], [StorageLinkParams(key=key)]
 
         container = self.get_container()
         blob = container.download_blob(key)
