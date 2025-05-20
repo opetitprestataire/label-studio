@@ -1,7 +1,6 @@
 import json
 
 import boto3
-import pytest
 from django.test import TestCase
 from io_storages.models import S3ImportStorage
 from io_storages.s3.models import S3ImportStorageLink
@@ -19,7 +18,6 @@ from rest_framework.test import APIClient
 from tests.utils import azure_client_mock, gcs_client_mock, mock_feature_flag, redis_client_mock
 
 
-@pytest.mark.skip(reason='FF mocking is broken here, letting these tests run in LSE instead')
 class TestMultiTaskImport(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -146,7 +144,6 @@ class TestMultiTaskImport(TestCase):
             self.assertEqual(storage_links[1].row_group, None)
 
 
-@mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True)
 class TestTaskFormats(TestCase):
 
     bare_task_list = [
@@ -273,6 +270,7 @@ class TestTaskFormats(TestCase):
 
         self._create_tasks(output)
 
+    @mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True)
     def test_list_jsonl(self):
         task_data = self.bare_task_list
 
@@ -286,6 +284,7 @@ class TestTaskFormats(TestCase):
 
         self._create_tasks(output)
 
+    @mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True)
     def test_list_jsonl_with_preds_and_annots(self):
         task_data = self.annots_preds_task_list
 
@@ -299,10 +298,10 @@ class TestTaskFormats(TestCase):
 
         self._create_tasks(output)
 
+    @mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', False)
     def test_ff_blocks_jsonl(self):
-        with mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', False):
-            with self.assertRaises(ValueError):
-                load_tasks_json(b'{"text": "Test task 1"}\n{"text": "Test task 2"}', 'test.jsonl')
+        with self.assertRaises(ValueError):
+            load_tasks_json(b'{"text": "Test task 1"}\n{"text": "Test task 2"}', 'test.jsonl')
 
     def test_mixed_formats_invalid(self):
         task_data = [self.bare_task_list[0], self.annots_preds_task_list[0]]
