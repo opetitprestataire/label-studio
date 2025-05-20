@@ -139,7 +139,7 @@ Add the **Storage Blob Data Reader** role, which includes:
 <br>
 
 !!! note Note for on-prem deployments
-    Very large media files are streamed in sequential 8 MB chunks, which are split into different GET requests. This can result in frequent requests to the backend to get the next portion of data and uses additional resources.
+    Large media files are streamed in sequential 8 MB chunks, which are split into different GET requests. This can result in frequent requests to the backend to get the next portion of data and uses additional resources.
 
     You can configure this using the following environment variables:
 
