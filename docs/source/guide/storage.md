@@ -180,7 +180,53 @@ When enabled, Label Studio automatically lists files from the storage bucket and
 
 <img src="/images/source-storages-treat-on.png" class="make-intense-zoom">
 
-### Target storage
+
+#### Pre-signed URLs vs. storage proxies
+
+There are two secure mechanisms in which Label Studio fetches media data from cloud storage: via proxy and via pre-signed URLS. 
+
+Which one you use depends on whether you have **Use pre-signed URLs** toggled on or off when setting up your source storage. Proxy storage is enabled when **Use pre-signed URLs** is OFF:
+
+<img src="/images/storages/use-presigned-off.png" style="max-width: 600px; margin: 0 auto" alt="Screenshot of storage page with use pre-signed off">
+
+##### Proxy storage
+
+When in proxy mode, the Label Studio backend fetches objects server-side and streams them directly to the browser.
+
+![Storage diagram proxy](/images/storages/storage-proxy.png)
+
+This has multiple benefits, including:
+
+- **Security**
+    - Access to media files is further restricted based on Label Studio user roles and project access. 
+    - This access is applied to cached files. This means that even if the media is cached, access will be restricted to that file if a user's access to the task is revoked.  
+    - Data stays within the Label Studio network boundary. This is especially useful for on-prem environments who want to maintain a single entry point for their network traffic.
+- **Configuration**
+    - No CORS settings are needed. 
+    - No pre-signed permissions are needed. 
+
+To allow proxy storage, you need to ensure your permissions include the following: 
+
+{% details <b>AWS S3</b> %}
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::your-bucket-name",
+                "arn:aws:s3:::your-bucket-name/*"
+            ]
+        }
+    ]
+}
+
 
 When annotators click **Submit** or **Update** while labeling tasks, Label Studio saves annotations in the Label Studio database. 
 
