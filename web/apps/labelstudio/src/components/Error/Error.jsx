@@ -93,12 +93,25 @@ export const ErrorWrapper = ({
 
           <Space size="small">
             {preparedStackTrace && (
-              <Button disabled={copied} onClick={copyStacktrace} className="w-[100px]" aria-label="Copy error stacktrace">
+              <Button
+                disabled={copied}
+                onClick={copyStacktrace}
+                className="w-[100px]"
+                aria-label="Copy error stacktrace"
+              >
                 {copied ? "Copied" : "Copy Stacktrace"}
               </Button>
             )}
-            {onGoBack && <Button onClick={onGoBack} aria-label="Go back">Go Back</Button>}
-            {onReload && <Button onClick={onReload} aria-label="Reload page">Reload</Button>}
+            {onGoBack && (
+              <Button onClick={onGoBack} aria-label="Go back">
+                Go Back
+              </Button>
+            )}
+            {onReload && (
+              <Button onClick={onReload} aria-label="Reload page">
+                Reload
+              </Button>
+            )}
           </Space>
         </Space>
       </Elem>

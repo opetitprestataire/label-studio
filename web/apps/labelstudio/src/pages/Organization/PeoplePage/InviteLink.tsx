@@ -89,7 +89,12 @@ const InvitationFooter = () => {
         </Button>
       </Space>
       <Space>
-        <Button variant={copied ? "positive" : "primary"} style={{ width: 170 }} onClick={() => copyText(link!)} aria-label="Copy invite link">
+        <Button
+          variant={copied ? "positive" : "primary"}
+          style={{ width: 170 }}
+          onClick={() => copyText(link!)}
+          aria-label="Copy invite link"
+        >
           {copied ? "Copied!" : "Copy link"}
         </Button>
       </Space>

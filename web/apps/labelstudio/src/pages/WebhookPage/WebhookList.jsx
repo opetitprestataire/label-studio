@@ -30,7 +30,9 @@ const WebhookList = ({ onSelectActive, onAddWebhook, webhooks, fetchWebhooks }) 
     <Block name="webhook">
       <h1>Webhooks</h1>
       <Elem name="controls">
-        <Button onClick={onAddWebhook} aria-label="Add webhook">Add Webhook</Button>
+        <Button onClick={onAddWebhook} aria-label="Add webhook">
+          Add Webhook
+        </Button>
       </Elem>
       <Elem>
         {webhooks.length === 0 ? null : (
@@ -49,7 +51,12 @@ const WebhookList = ({ onSelectActive, onAddWebhook, webhooks, fetchWebhooks }) 
                   <Elem name="item-date">Created {format(new Date(obj.created_at), "dd MMM yyyy, HH:mm")}</Elem>
                 </Elem>
                 <Elem name="item-control">
-                  <Button look="outlined" onClick={() => onSelectActive(obj.id)} icon={<IconPencil />} aria-label="Edit webhook">
+                  <Button
+                    look="outlined"
+                    onClick={() => onSelectActive(obj.id)}
+                    icon={<IconPencil />}
+                    aria-label="Edit webhook"
+                  >
                     Edit
                   </Button>
                   <Button

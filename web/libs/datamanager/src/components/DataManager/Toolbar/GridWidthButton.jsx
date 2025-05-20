@@ -31,17 +31,17 @@ export const GridWidthButton = injector(({ view, gridWidth, size }) => {
     <Space style={{ fontSize: 12 }}>
       Columns: {width}
       <ButtonGroup>
-        <Button 
-          size={size} 
-          onClick={() => setGridWidth(width - 1)} 
+        <Button
+          size={size}
+          onClick={() => setGridWidth(width - 1)}
           disabled={width === 3}
           aria-label="Decrease number of columns"
         >
           <Icon icon={IconMinus} size="12" color="#595959" />
         </Button>
-        <Button 
-          size={size} 
-          onClick={() => setGridWidth(width + 1)} 
+        <Button
+          size={size}
+          onClick={() => setGridWidth(width + 1)}
           disabled={width === 10}
           aria-label="Increase number of columns"
         >

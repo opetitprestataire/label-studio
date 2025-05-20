@@ -481,7 +481,14 @@ const Configurator = ({
       <div className={configClass.elem("container")}>
         <h1>Labeling Interface{hasChanges ? " *" : ""}</h1>
         <header>
-          <Button type="button" data-leave={true} onClick={onBrowse} size="small" look="outlined" aria-label="Browse templates">
+          <Button
+            type="button"
+            data-leave={true}
+            onClick={onBrowse}
+            size="small"
+            look="outlined"
+            aria-label="Browse templates"
+          >
             Browse Templates
           </Button>
           <ToggleItems items={{ code: "Code", visual: "Visual" }} active={configure} onSelect={onSelect} />
@@ -542,7 +549,13 @@ const Configurator = ({
                 </Elem>
               </Block>
             )}
-            <Button size="small" className="w-[120px]" onClick={onSave} waiting={waiting} aria-label="Save configuration">
+            <Button
+              size="small"
+              className="w-[120px]"
+              onClick={onSave}
+              waiting={waiting}
+              aria-label="Save configuration"
+            >
               {waiting ? "Saving..." : "Save"}
             </Button>
             {isFF(FF_UNSAVED_CHANGES) && <UnsavedChanges hasChanges={hasChanges} onSave={onSave} />}

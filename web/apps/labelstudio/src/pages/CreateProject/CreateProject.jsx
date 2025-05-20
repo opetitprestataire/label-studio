@@ -202,7 +202,14 @@ export const CreateProject = ({ onClose }) => {
           <ToggleItems items={steps} active={step} onSelect={setStep} />
 
           <Space>
-            <Button variant="negative" look="outlined" size="small" onClick={onDelete} waiting={waiting} aria-label="Cancel project creation">
+            <Button
+              variant="negative"
+              look="outlined"
+              size="small"
+              onClick={onDelete}
+              waiting={waiting}
+              aria-label="Cancel project creation"
+            >
               Cancel
             </Button>
             <Button
