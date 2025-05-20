@@ -1,10 +1,12 @@
+import { createUtcFormatter } from "./date";
+
 // Utility to generate a sample task from a Label Studio XML config
-export function generateSampleTaskFromConfig(config: string): {
+export async function generateSampleTaskFromConfig(config: string): Promise<{
   id: number;
   data: Record<string, any>;
   annotations?: any[];
   predictions?: any[];
-} {
+}> {
   const parser = new DOMParser();
   let xml: Document;
   try {
@@ -45,16 +47,110 @@ export function generateSampleTaskFromConfig(config: string): {
   }
 
   // Wikimedia Commons public domain sample URLs
-  const SAMPLE_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png";
-  const SAMPLE_IMAGE2 = "https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg";
+  const SAMPLE_IMAGE = "https://app.heartex.ai/static/samples/sample.jpg";
+  const SAMPLE_IMAGE2 = "https://app.heartex.ai/static/samples/sample.jpg"; //"https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg";
   const SAMPLE_AUDIO =
     "https://upload.wikimedia.org/wikipedia/commons/9/9d/Bach_-_Cello_Suite_no._1_in_G_major,_BWV_1007_-_I._Pr%C3%A9lude.ogg";
   const SAMPLE_VIDEO =
     "https://upload.wikimedia.org/wikipedia/commons/transcoded/8/88/Big_Buck_Bunny_alt.webm/Big_Buck_Bunny_alt.webm.360p.vp9.webm";
-  const SAMPLE_PDF = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.pdf";
-  const SAMPLE_WEBSITE = "https://www.wikipedia.org/";
-  const SAMPLE_CSV = "https://people.sc.fsu.edu/~jburkardt/data/csv/airtravel.csv";
-  const SAMPLE_OCR_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png";
+  const SAMPLE_VIDEO_EMBED = "<video src='https://app.heartex.ai/static/samples/opossum_snow.mp4' width=100% controls>";
+  const SAMPLE_HTML =
+    '<div style="max-width: 750px"><div style="clear: both"><div style="float: right; display: inline-block; border: 1px solid #F2F3F4; background-color: #F8F9F9; border-radius: 5px; padding: 7px; margin: 10px 0;"><p><b>Jules</b>: No no, Mr. Wolfe, it\'s not like that. Your help is definitely appreciated.</p></div></div><div style="clear: both"><div style="float: right; display: inline-block; border: 1px solid #F2F3F4; background-color: #F8F9F9; border-radius: 5px; padding: 7px; margin: 10px 0;"><p><b>Vincent</b>: Look, Mr. Wolfe, I respect you. I just don\'t like people barking orders at me, that\'s all.</p></div></div><div style="clear: both"><div style="display: inline-block; border: 1px solid #D5F5E3; background-color: #EAFAF1; border-radius: 5px; padding: 7px; margin: 10px 0;"><p><b>The Wolf</b>: If I\'m curt with you, it\'s because time is a factor. I think fast, I talk fast, and I need you two guys to act fast if you want to get out of this. So pretty please, with sugar on top, clean the car.</p></div></div></div>';
+  const SAMPLE_WEBSITE = "<a href='https://labelstud.io'>https://labelstud.io</a>";
+  const SAMPLE_PDF_EMBED =
+    "<embed src='https://app.heartex.ai/static/samples/sample.pdf' width='100%' height='600px'/>";
+  const SAMPLE_WEBSITE_EMBED = "<iframe src='https://labelstud.io' width='100%' height='600px'/>";
+  const SAMPLE_CSV = "https://app.heartex.ai/samples/time-series.csv";
+  const SAMPLE_OCR_IMAGE = "https://app.heartex.ai/static/samples/sample.jpg";
+
+  const randomFloat = (min: number, max: number) => Math.random() * (max - min) + min;
+
+  const BEGIN_OF_TIME = new Date("2020-01-02T00:00:00.000Z").getTime();
+
+  // Format based on timeFormat
+  // ex. timeFormat="%Y-%m-%d %H:%M:%S.%f"
+  // inline the code of d3.utcFormat
+  const formatTime = (time: number, timeFormat?: string) => {
+    if (!timeFormat) return time;
+
+    if (time < 10000) {
+      const nextDay = new Date(BEGIN_OF_TIME);
+      nextDay.setDate(nextDay.getDate() + time);
+      nextDay.setHours(0, 0, 0, 0);
+      time = nextDay.getTime();
+    }
+
+    const format = createUtcFormatter(timeFormat);
+
+    return format(new Date(time));
+  };
+
+  const generateTimeseriesData = (
+    timeColumn: string,
+    columns: string[],
+    options?: {
+      type?: "csv" | "json";
+      separator?: string;
+      dataName?: string;
+      stringify?: boolean;
+      timeFormat?: string;
+    },
+  ) => {
+    const { type = "csv", separator = "%2C", dataName, stringify = true, timeFormat } = options || {};
+    const headers = [timeColumn, ...(columns || [])];
+    const data = Array.from({ length: 100 }, (_, i) => {
+      // time, column1, column2, ... columnN
+      return [formatTime(i, timeFormat), ...Array.from({ length: columns?.length || 0 }, () => randomFloat(-2, 2))];
+    });
+
+    if (type === "csv") {
+      return [headers.join(separator), ...data.map((row) => row.join(separator))].join("\n");
+    }
+
+    // Output as json object with columns as top level keys, and the arrays of values
+    const resultData = Object.values(headers).reduce(
+      (acc, header, index) => {
+        acc[header] = data.map((row) => row[index]);
+        return acc;
+      },
+      {} as Record<any, any[]>,
+    );
+    let result = {} as Record<string, any>;
+    if (dataName) result[dataName] = resultData;
+    else result = resultData;
+
+    if (stringify) {
+      return JSON.stringify(result);
+    }
+    return result;
+  };
+
+  // Override fetch for CSV and other static files that would produce a CORS error potentially
+  const originalFetch = global.fetch;
+  // @ts-ignore
+  global.fetch = async (url: string) => {
+    console.log("fetch", url);
+    if (url.startsWith(SAMPLE_CSV)) {
+      const params = new URLSearchParams(url.split("?")[1]);
+      const time = params.get("time") || "None";
+      const values = params.get("values");
+      const separator = params.get("sep") || "%2C";
+      const type = params.get("type") || "csv";
+      const columns = values?.split(",") || [];
+      const timeFormat = params.get("tf") || "";
+      const data = generateTimeseriesData(time, columns, {
+        type: type as "csv" | "json",
+        separator,
+        stringify: type === "json",
+        timeFormat,
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      return new Response(data as string);
+    }
+    return originalFetch(url);
+  };
 
   // Find all elements with a value or valueList attribute that starts with $
   const data: Record<string, any> = userData ? { ...userData } : {};
@@ -69,8 +165,48 @@ export function generateSampleTaskFromConfig(config: string): {
     // Detect valueType="url" or valueList
     const valueType = node.getAttribute("valueType") || node.getAttribute("valuetype");
     const onlyUrls = valueType === "url";
+    const isInline = node.getAttribute("inline") === "true";
     const isValueList = node.hasAttribute("valueList");
-    const tag = node.tagName.toLowerCase();
+    let tag = node.tagName.toLowerCase();
+    const value = node.getAttribute("value");
+
+    if (tag === "hypertext" && value?.includes("pdf")) {
+      tag = "pdf";
+    } else if (tag === "hypertext" && value?.includes("video")) {
+      tag = "video_embed";
+    } else if (tag === "hypertext" && (value?.includes("website") || value?.includes("iframe"))) {
+      if (isInline) {
+        tag = "website_embed";
+      } else {
+        tag = "website";
+      }
+    } else if (tag === "timeseries" && value?.includes("csv") && onlyUrls) {
+      const csvUrl = new URL(SAMPLE_CSV);
+      // Check children nodes Channel for columns
+      const columns = Array.from(node.children).filter((child) => child.tagName === "Channel");
+      const timeColumn = node.getAttribute("timeColumn") || "None";
+      const csvSeparator = node.getAttribute("sep") || ",";
+      const timeFormat = node.getAttribute("timeFormat") || "";
+      csvUrl.searchParams.set("time", timeColumn);
+      csvUrl.searchParams.set("values", columns.map((c) => c.getAttribute("column") || "").join(","));
+      csvUrl.searchParams.set("sep", csvSeparator);
+      csvUrl.searchParams.set("tf", timeFormat);
+      console.log("timeFormat", timeFormat);
+      console.log("csvUrl", csvUrl.toString());
+      data[key] = csvUrl.toString();
+      return;
+    } else if (tag === "timeseries" && valueType?.includes("json")) {
+      const columns = Array.from(node.children)
+        .filter((child) => child.tagName === "Channel")
+        .map((c) => c.getAttribute("column") || "");
+      const timeColumn = node.getAttribute("timeColumn") || "None";
+      data[key] = generateTimeseriesData(timeColumn, columns, {
+        type: "json",
+        stringify: false,
+      });
+      console.log(data[key]);
+      return;
+    }
 
     // Special handling for Paragraphs
     if (tag === "paragraphs") {
@@ -125,12 +261,23 @@ export function generateSampleTaskFromConfig(config: string): {
 
     // Special handling for PDF
     if (tag === "pdf") {
-      data[key] = SAMPLE_PDF;
+      data[key] = SAMPLE_PDF_EMBED;
+      return;
+    }
+
+    // Special handling for Video
+    if (tag === "video_embed") {
+      data[key] = SAMPLE_VIDEO_EMBED;
       return;
     }
 
     // Special handling for Website/IFrame
     if (tag === "website" || tag === "iframe") {
+      data[key] = SAMPLE_WEBSITE_EMBED;
+      return;
+    }
+
+    if (tag === "website_embed") {
       data[key] = SAMPLE_WEBSITE;
       return;
     }
@@ -195,8 +342,10 @@ export function generateSampleTaskFromConfig(config: string): {
       data[key] = SAMPLE_AUDIO;
     } else if (tag === "video") {
       data[key] = SAMPLE_VIDEO;
-    } else if (tag === "text" || tag === "hypertext") {
+    } else if (tag === "text") {
       data[key] = "Sample: Your text will go here.";
+    } else if (tag === "hypertext") {
+      data[key] = SAMPLE_HTML;
     } else if (tag === "choices" || tag.endsWith("labels")) {
       data[key] = ["DynamicChoice1", "DynamicChoice2", "DynamicChoice3"];
     } else if (tag === "taxonomy") {

@@ -1,8 +1,8 @@
 import { generateSampleTaskFromConfig } from "../generateSampleTask";
 
 describe("generateSampleTaskFromConfig", () => {
-  it("should handle empty config", () => {
-    const result = generateSampleTaskFromConfig("");
+  it("should handle empty config", async () => {
+    const result = await generateSampleTaskFromConfig("");
     expect(result).toEqual({
       id: 1,
       data: {},
@@ -11,8 +11,8 @@ describe("generateSampleTaskFromConfig", () => {
     });
   });
 
-  it("should handle invalid XML", () => {
-    const result = generateSampleTaskFromConfig("<invalid>");
+  it("should handle invalid XML", async () => {
+    const result = await generateSampleTaskFromConfig("<invalid>");
     expect(result).toEqual({
       id: 1,
       data: {},
@@ -21,7 +21,7 @@ describe("generateSampleTaskFromConfig", () => {
     });
   });
 
-  it("should generate sample data for image config", () => {
+  it("should generate sample data for image config", async () => {
     const config = `
       <View>
         <Image name="image" value="$image"/>
@@ -31,14 +31,12 @@ describe("generateSampleTaskFromConfig", () => {
         </RectangleLabels>
       </View>
     `;
-    const result = generateSampleTaskFromConfig(config);
+    const result = await generateSampleTaskFromConfig(config);
     expect(result.data).toHaveProperty("image");
-    expect(result.data.image).toBe(
-      "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png",
-    );
+    expect(result.data.image).toBe("https://app.heartex.ai/static/samples/sample.jpg");
   });
 
-  it("should generate sample data for audio config", () => {
+  it("should generate sample data for audio config", async () => {
     const config = `
       <View>
         <Audio name="audio" value="$audio"/>
@@ -48,14 +46,14 @@ describe("generateSampleTaskFromConfig", () => {
         </Labels>
       </View>
     `;
-    const result = generateSampleTaskFromConfig(config);
+    const result = await generateSampleTaskFromConfig(config);
     expect(result.data).toHaveProperty("audio");
     expect(result.data.audio).toBe(
       "https://upload.wikimedia.org/wikipedia/commons/9/9d/Bach_-_Cello_Suite_no._1_in_G_major,_BWV_1007_-_I._Pr%C3%A9lude.ogg",
     );
   });
 
-  it("should generate sample data for text config", () => {
+  it("should generate sample data for text config", async () => {
     const config = `
       <View>
         <Text name="text" value="$text"/>
@@ -65,31 +63,31 @@ describe("generateSampleTaskFromConfig", () => {
         </Labels>
       </View>
     `;
-    const result = generateSampleTaskFromConfig(config);
+    const result = await generateSampleTaskFromConfig(config);
     expect(result.data).toHaveProperty("text");
     expect(result.data.text).toBe("Sample: Your text will go here.");
   });
 
-  it("should handle user data in comments", () => {
+  it("should handle user data in comments", async () => {
     const config = `
       <View>
         <Text name="text" value="$text"/>
         <!-- {"data": {"text": "Custom sample text"}} -->
       </View>
     `;
-    const result = generateSampleTaskFromConfig(config);
+    const result = await generateSampleTaskFromConfig(config);
     expect(result.data).toHaveProperty("text");
     expect(result.data.text).toBe("Custom sample text");
   });
 
-  it("should handle user annotation in comments", () => {
+  it("should handle user annotation in comments", async () => {
     const config = `
       <View>
         <Text name="text" value="$text"/>
         <!-- {"annotation": {"from_name": "labels", "to_name": "text", "type": "labels", "value": {"start": 0, "end": 5, "labels": ["Positive"]}}} -->
       </View>
     `;
-    const result = generateSampleTaskFromConfig(config);
+    const result = await generateSampleTaskFromConfig(config);
     expect(result.annotations).toBeDefined();
     if (result.annotations) {
       expect(result.annotations).toHaveLength(1);
@@ -103,7 +101,7 @@ describe("generateSampleTaskFromConfig", () => {
     }
   });
 
-  it("should handle valueList attributes", () => {
+  it("should handle valueList attributes", async () => {
     const config = `
       <View>
         <Image name="image" valueList="$images"/>
@@ -112,19 +110,19 @@ describe("generateSampleTaskFromConfig", () => {
         </RectangleLabels>
       </View>
     `;
-    const result = generateSampleTaskFromConfig(config);
+    const result = await generateSampleTaskFromConfig(config);
     expect(result.data).toHaveProperty("images");
     expect(Array.isArray(result.data.images)).toBe(true);
     expect(result.data.images).toHaveLength(2);
   });
 
-  it('should handle valueType="url" attribute', () => {
+  it("should handle valueType='url' attribute", async () => {
     const config = `
       <View>
         <Text name="text" valueType="url" value="$url"/>
       </View>
     `;
-    const result = generateSampleTaskFromConfig(config);
+    const result = await generateSampleTaskFromConfig(config);
     expect(result.data).toHaveProperty("url");
     expect(result.data.url).toBe("Sample: Your text will go here.");
   });

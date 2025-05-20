@@ -64,7 +64,7 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(
         if (!LabelStudio) return;
         cleanup();
         setShowPreview(true);
-        const sampleTask = generateSampleTaskFromConfig(config);
+        const sampleTask = await generateSampleTaskFromConfig(config);
         setSampleTask(sampleTask);
 
         setTimeout(() => {
