@@ -13,6 +13,7 @@ from io_storages.tests.factories import (
 from io_storages.utils import StorageObjectParams, load_tasks_json
 from moto import mock_s3
 from projects.tests.factories import ProjectFactory
+from rest_framework.test import APIClient
 
 from tests.utils import azure_client_mock, gcs_client_mock, mock_feature_flag, redis_client_mock
 
@@ -22,7 +23,6 @@ from tests.utils import azure_client_mock, gcs_client_mock, mock_feature_flag, r
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def project():
     return ProjectFactory()
 
@@ -35,11 +35,10 @@ def common_task_data():
     ]
 
 
-@pytest.mark.django_db
-def _test_storage_import(project, business_client, storage_class, task_data, **storage_kwargs):
+def _test_storage_import(project, storage_class, task_data, **storage_kwargs):
     """Helper to test import for a specific storage type"""
-    # client = APIClient()
-    # client.force_authenticate(user=project.created_by)
+    client = APIClient()
+    client.force_authenticate(user=project.created_by)
 
     # Setup storage with required credentials
     storage = storage_class(project=project, **storage_kwargs)
@@ -55,7 +54,7 @@ def _test_storage_import(project, business_client, storage_class, task_data, **s
     storage.sync()
 
     # Validate tasks were imported correctly
-    tasks_response = business_client.get(f'/api/tasks?project={project.id}')
+    tasks_response = client.get(f'/api/tasks?project={project.id}')
     assert tasks_response.status_code == 200
     tasks = tasks_response.json()['tasks']
     assert len(tasks) == len(task_data)
@@ -66,6 +65,7 @@ def _test_storage_import(project, business_client, storage_class, task_data, **s
 
 
 @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
+@pytest.mark.django_db
 def test_import_multiple_tasks_s3(project, common_task_data):
     with mock_s3():
         # Setup S3 bucket and test data
@@ -88,6 +88,7 @@ def test_import_multiple_tasks_s3(project, common_task_data):
 
 
 @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
+@pytest.mark.django_db
 def test_import_multiple_tasks_gcs(project, common_task_data):
     # initialize mock with sample data
     with gcs_client_mock():
@@ -102,6 +103,7 @@ def test_import_multiple_tasks_gcs(project, common_task_data):
 
 
 @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
+@pytest.mark.django_db
 def test_import_multiple_tasks_azure(project, common_task_data):
     # initialize mock with sample data
     with azure_client_mock(sample_json_contents=common_task_data, sample_blob_names=['test.json']):
@@ -114,6 +116,7 @@ def test_import_multiple_tasks_azure(project, common_task_data):
 
 
 @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
+@pytest.mark.django_db
 def test_import_multiple_tasks_redis(project, common_task_data):
     with redis_client_mock() as redis:
         redis.set('test.json', json.dumps(common_task_data))
@@ -164,8 +167,9 @@ def test_storagelink_fields(project, common_task_data):
 #
 
 
-@pytest.fixture(scope='module')
-def storage(project):
+@pytest.fixture
+def storage():
+    project = ProjectFactory()
     storage = S3ImportStorage(
         project=project,
         bucket='example',
@@ -174,10 +178,12 @@ def storage(project):
         use_blob_urls=False,
     )
     storage.save()
-    return storage
+    return project, storage
 
 
-def create_tasks(project, storage, params_list: list[StorageObjectParams]):
+@pytest.mark.django_db
+def create_tasks(storage, params_list: list[StorageObjectParams]):
+    project, storage = storage
     # check that no errors are raised during task creation; not checking the task itself
     for params in params_list:
         _ = S3ImportStorage.add_task(project, 1, 0, storage, params, S3ImportStorageLink)
@@ -231,7 +237,8 @@ annots_preds_task_list = [
 ]
 
 
-def test_bare_task(project, storage):
+@pytest.mark.django_db
+def test_bare_task(storage):
     task_data = bare_task_list[0]
 
     blob_str = json.dumps(task_data).encode()
@@ -239,10 +246,11 @@ def test_bare_task(project, storage):
     expected_output = [StorageObjectParams(key='test.json', task_data=task_data)]
     assert output == expected_output
 
-    create_tasks(project, storage, output)
+    create_tasks(storage, output)
 
 
-def test_data_key(project, storage):
+@pytest.mark.django_db
+def test_data_key(storage):
     task_data = {'data': bare_task_list[0]}
 
     blob_str = json.dumps(task_data).encode()
@@ -250,10 +258,11 @@ def test_data_key(project, storage):
     expected_output = [StorageObjectParams(key='test.json', task_data=task_data)]
     assert output == expected_output
 
-    create_tasks(project, storage, output)
+    create_tasks(storage, output)
 
 
-def test_1elem_list(project, storage):
+@pytest.mark.django_db
+def test_1elem_list(storage):
     task_data = bare_task_list[:1]
 
     blob_str = json.dumps(task_data).encode()
@@ -263,10 +272,11 @@ def test_1elem_list(project, storage):
     ]
     assert output == expected_output
 
-    create_tasks(project, storage, output)
+    create_tasks(storage, output)
 
 
-def test_2elem_list(project, storage):
+@pytest.mark.django_db
+def test_2elem_list(storage):
     task_data = bare_task_list
 
     blob_str = json.dumps(task_data).encode()
@@ -277,25 +287,29 @@ def test_2elem_list(project, storage):
     ]
     assert output == expected_output
 
-    create_tasks(project, storage, output)
+    create_tasks(storage, output)
 
 
-def test_preds_and_annots_list(project, storage):
+@pytest.mark.django_db
+def test_preds_and_annots_list(storage):
     task_data = annots_preds_task_list
 
     blob_str = json.dumps(task_data).encode()
     output = load_tasks_json(blob_str, 'test.json')
+
+    fixed_task_data_1 = task_data[1].copy()
+    fixed_task_data_1['annotations'] = None  # this key exists in the output, since preds exist
     expected_output = [
         StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
-        StorageObjectParams(key='test.json', task_data=task_data[1], row_index=1),
+        StorageObjectParams(key='test.json', task_data=fixed_task_data_1, row_index=1),
     ]
     assert output == expected_output
 
-    create_tasks(project, storage, output)
+    create_tasks(storage, output)
 
 
-@mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True)
-def test_list_jsonl(project, storage):
+@pytest.mark.django_db
+def test_list_jsonl(storage):
     task_data = bare_task_list
 
     blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()
@@ -306,24 +320,29 @@ def test_list_jsonl(project, storage):
     ]
     assert output == expected_output
 
-    create_tasks(project, storage, output)
+    create_tasks(storage, output)
 
 
+@pytest.mark.django_db
 @mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True)
-def test_list_jsonl_with_preds_and_annots(project, storage):
+def test_list_jsonl_with_preds_and_annots(storage):
     task_data = annots_preds_task_list
 
     blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()
     output = load_tasks_json(blob_str, 'test.jsonl')
+
+    fixed_task_data_1 = task_data[1].copy()
+    fixed_task_data_1['annotations'] = None  # this key exists in the output, since preds exist
     expected_output = [
         StorageObjectParams(key='test.jsonl', task_data=task_data[0], row_index=0),
-        StorageObjectParams(key='test.jsonl', task_data=task_data[1], row_index=1),
+        StorageObjectParams(key='test.jsonl', task_data=fixed_task_data_1, row_index=1),
     ]
     assert output == expected_output
 
-    create_tasks(project, storage, output)
+    create_tasks(storage, output)
 
 
+@pytest.mark.django_db
 @mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', False)
 def test_ff_blocks_jsonl():
     with pytest.raises(ValueError):
