@@ -190,6 +190,166 @@ describe("PlaygroundApp", () => {
   describe("PlaygroundApp: Loads configs from v1 URL", () => {
     it.each([
       {
+        name: "Multi-step annotation",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3C!--%20No%20region%20selected%20section%20--%3E%3Cbr%3E%20%20%20%20%3CView%20visibleWhen%3D%22no-region-selected%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20style%3D%22height%3A120px%22%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CHeader%20value%3D%22Create%20and%20select%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20region%20to%20classify%20it%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C!--%20Control%20tag%20for%20region%20labels%20--%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Region%22%20background%3D%22%235b5%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Region%20selected%20section%20with%20choices%20and%20rating%20--%3E%3Cbr%3E%20%20%20%20%3CView%20visibleWhen%3D%22region-selected%22%20style%3D%22height%3A120px%22%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CHeader%20value%3D%22Now%20select%20the%20signal%20quality%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C!--%20Per%20region%20Rating%20--%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CRating%20name%3D%22rating%22%20toName%3D%22ts%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20maxRating%3D%2210%22%20icon%3D%22star%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20perRegion%3D%22true%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C!--%20Per%20region%20Choices%20%20--%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoices%20name%3D%22choices%22%20toName%3D%22ts%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showInline%3D%22true%22%20required%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20perRegion%3D%22true%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Good%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Medium%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Poor%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20tag%20for%20time%20series%20data%20source%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%20value%3D%22%24csv%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sep%3D%22%2C%22%20timeColumn%3D%22time%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22signal_1%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%2317b%22%20legend%3D%22Signal%201%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22signal_2%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23f70%22%20legend%3D%22Signal%202%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+        <!-- No region selected section -->
+        <View visibleWhen=\"no-region-selected\"
+              style=\"height:120px\">·
+            <Header value=\"Create and select
+                           region to classify it\"/>·
+            <!-- Control tag for region labels -->
+            <TimeSeriesLabels name=\"label\" toName=\"ts\">
+                <Label value=\"Region\" background=\"#5b5\"/>
+            </TimeSeriesLabels>
+        </View>·
+        <!-- Region selected section with choices and rating -->
+        <View visibleWhen=\"region-selected\" style=\"height:120px\">·
+            <Header value=\"Now select the signal quality\"/>·
+            <!-- Per region Rating -->
+            <Rating name=\"rating\" toName=\"ts\"
+                    maxRating=\"10\" icon=\"star\"
+                    perRegion=\"true\"/>
+            <!-- Per region Choices  -->
+            <Choices name=\"choices\" toName=\"ts\"
+                     showInline=\"true\" required=\"true\"
+                     perRegion=\"true\">
+                <Choice value=\"Good\"/>
+                <Choice value=\"Medium\"/>
+                <Choice value=\"Poor\"/>
+            </Choices>
+        </View>·
+        <!-- Object tag for time series data source -->
+        <TimeSeries name=\"ts\" valueType=\"url\" value=\"$csv\"
+                    sep=\",\" timeColumn=\"time\">
+            <Channel column=\"signal_1\"
+                     strokeColor=\"#17b\" legend=\"Signal 1\"/>
+            <Channel column=\"signal_2\"
+                     strokeColor=\"#f70\" legend=\"Signal 2\"/>
+        </TimeSeries>
+    </View>`,
+      },
+      {
+        name: "Segmentation extended",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20Segmentation%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Control%20tag%20for%20region%20labels%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Run%22%20background%3D%22red%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Walk%22%20background%3D%22green%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Fly%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Swim%22%20background%3D%22%23f6a%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Ride%22%20background%3D%22%23351%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20tag%20for%20time%20series%20data%20source%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%20value%3D%22%24csv%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sep%3D%22%2C%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeColumn%3D%22time%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeFormat%3D%22%25Y-%25m-%25d%20%25H%3A%25M%3A%25S.%25f%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeDisplayFormat%3D%22%25Y-%25m-%25d%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20overviewChannels%3D%22velocity%22%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22velocity%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20units%3D%22miles%2Fh%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20displayFormat%3D%22%2C.1f%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%231f77b4%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20legend%3D%22Velocity%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22acceleration%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20units%3D%22miles%2Fh%5E2%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20displayFormat%3D%22%2C.1f%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23ff7f0e%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20legend%3D%22Acceleration%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+        <Header value=\"Time Series Segmentation\"/>·
+        <!-- Control tag for region labels -->
+        <TimeSeriesLabels name=\"label\" toName=\"ts\">
+            <Label value=\"Run\" background=\"red\"/>
+            <Label value=\"Walk\" background=\"green\"/>
+            <Label value=\"Fly\" background=\"blue\"/>
+            <Label value=\"Swim\" background=\"#f6a\"/>
+            <Label value=\"Ride\" background=\"#351\"/>
+        </TimeSeriesLabels>·
+        <!-- Object tag for time series data source -->
+        <TimeSeries name=\"ts\" valueType=\"url\" value=\"$csv\"
+                    sep=\",\"
+                    timeColumn=\"time\"
+                    timeFormat=\"%Y-%m-%d %H:%M:%S.%f\"
+                    timeDisplayFormat=\"%Y-%m-%d\"
+                    overviewChannels=\"velocity\">·
+            <Channel column=\"velocity\"
+                     units=\"miles/h\"
+                     displayFormat=\",.1f\"
+                     strokeColor=\"#1f77b4\"
+                     legend=\"Velocity\"/>·
+            <Channel column=\"acceleration\"
+                     units=\"miles/h^2\"
+                     displayFormat=\",.1f\"
+                     strokeColor=\"#ff7f0e\"
+                     legend=\"Acceleration\"/>
+        </TimeSeries>
+    </View>`,
+      },
+      {
+        name: "Import JSON",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20from%20JSON%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20style%3D%22font-weight%3A%20normal%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Anomaly%22%20background%3D%22%23a4a%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Ordinary%22%20background%3D%22%23aa4%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20timeColumn%3D%22time%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20name%3D%22ts%22%20value%3D%22%24ts%22%20valueType%3D%22json%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22first_column%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%231f77b4%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22second_column%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23ff7f0e%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+        <Header value=\"Time Series from JSON\"
+                style=\"font-weight: normal\"/>·
+        <TimeSeriesLabels name=\"label\" toName=\"ts\">
+            <Label value=\"Anomaly\" background=\"#a4a\"/>
+            <Label value=\"Ordinary\" background=\"#aa4\"/>
+        </TimeSeriesLabels>·
+        <TimeSeries timeColumn=\"time\"
+                    name=\"ts\" value=\"$ts\" valueType=\"json\">
+            <Channel column=\"first_column\"
+                     strokeColor=\"#1f77b4\"/>
+            <Channel column=\"second_column\"
+                     strokeColor=\"#ff7f0e\"/>
+        </TimeSeries>
+    </View>`,
+      },
+      {
+        name: "Import CSV",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20from%20CSV%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20style%3D%22font-weight%3A%20normal%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Control%20tag%20for%20region%20labels%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Run%22%20background%3D%22%235b5%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Walk%22%20background%3D%22%2355f%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20tag%20for%20time%20series%20data%20source%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeColumn%3D%22time%22%20value%3D%22%24csv%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sep%3D%22%2C%22%20overviewChannels%3D%22velocity%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22velocity%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%231f77b4%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22acceleration%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23ff7f0e%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+        <Header value=\"Time Series from CSV\"
+                style=\"font-weight: normal\"/>·
+        <!-- Control tag for region labels -->
+        <TimeSeriesLabels name=\"label\" toName=\"ts\">
+            <Label value=\"Run\" background=\"#5b5\"/>
+            <Label value=\"Walk\" background=\"#55f\"/>
+        </TimeSeriesLabels>·
+        <!-- Object tag for time series data source -->
+        <TimeSeries name=\"ts\" valueType=\"url\"
+                    timeColumn=\"time\" value=\"$csv\"
+                    sep=\",\" overviewChannels=\"velocity\">
+            <Channel column=\"velocity\"
+                     strokeColor=\"#1f77b4\"/>
+            <Channel column=\"acceleration\"
+                     strokeColor=\"#ff7f0e\"/>
+        </TimeSeries>
+    </View>`,
+      },
+      {
+        name: "Time Series classification",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20classification%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20style%3D%22font-weight%3A%20normal%22%2F%3E%3Cbr%3E%20%20%20%20%3C!--%20Choices%20(whole%20signal%20classification)%20--%3E%3Cbr%3E%20%20%20%20%3CChoices%20name%3D%22pattern%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Growth%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Decay%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Labels%20(per%20region%20classification)%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Run%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Walk%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20(source)%20tag%20for%20plot%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20value%3D%22%24csv%22%20valueType%3D%22url%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22first_column%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+        <Header value=\"Time Series classification\"
+                style=\"font-weight: normal\"/>
+        <!-- Choices (whole signal classification) -->
+        <Choices name=\"pattern\" toName=\"ts\">
+            <Choice value=\"Growth\"/>
+            <Choice value=\"Decay\"/>
+        </Choices>·
+        <!-- Labels (per region classification) -->
+        <TimeSeriesLabels name=\"label\" toName=\"ts\">
+            <Label value=\"Run\"/>
+            <Label value=\"Walk\"/>
+        </TimeSeriesLabels>·
+        <!-- Object (source) tag for plot -->
+        <TimeSeries name=\"ts\" value=\"$csv\" valueType=\"url\">
+            <Channel column=\"first_column\"/>
+        </TimeSeries>
+    </View>`,
+      },
+      {
+        name: "Video classifier",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CHyperText%20name%3D%22video%22%20value%3D%22%24video%22%2F%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22type%22%20toName%3D%22video%22%20choice%3D%22single-radio%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Awesome%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Groove%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+      <HyperText name=\"video\" value=\"$video\"/>
+      <Choices name=\"type\" toName=\"video\" choice=\"single-radio\">
+        <Choice value=\"Awesome\" />
+        <Choice value=\"Groove\" />
+      </Choices>
+    </View>`,
+      },
+      {
+        name: "Rate website",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CHyperText%20name%3D%22website%22%20value%3D%22%24website%22%20inline%3D%22true%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Rate%20this%20website%22%2F%3E%3Cbr%3E%20%20%3CRating%20name%3D%22rating%22%20toName%3D%22website%22%20maxRating%3D%2210%22%20icon%3D%22star%22%20size%3D%22medium%22%20%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22choices%22%20choice%3D%22single-radio%22%20toName%3D%22website%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Important%20article%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Yellow%20press%22%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <HyperText name=\"website\" value=\"$website\" inline=\"true\"/>·
+      <Header value=\"Rate this website\"/>
+      <Rating name=\"rating\" toName=\"website\" maxRating=\"10\" icon=\"star\" size=\"medium\" />·
+      <Choices name=\"choices\" choice=\"single-radio\" toName=\"website\" showInline=\"true\">
+        <Choice value=\"Important article\"/>
+        <Choice value=\"Yellow press\"/>
+      </Choices>
+    </View>`,
+      },
+      {
         name: "Advanced config templates: Audio regions labeling",
         url: "http://localhost/?config=%3CView%20style%3D%22display%3A%20flex%3B%22%3E%3Cbr%3E%20%20%3CView%20style%3D%22width%3A%20100%25%3B%20margin-left%3A%201em%3B%22%3E%3Cbr%3E%20%20%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22audio%22%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Speaker%201%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Speaker%202%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CAudio%20name%3D%22audio%22%20value%3D%22%24audio%22%2F%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22padding%3A%2010px%2020px%3B%20margin-top%3A%202em%3B%20box-shadow%3A%202px%202px%208px%20%23AAA%3B%20margin-right%3A%201em%3B%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20visibleWhen%3D%22region-selected%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22Provide%20Transcription%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CTextArea%20name%3D%22transcription%22%20toName%3D%22audio%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20rows%3D%222%22%20editable%3D%22true%22%20perRegion%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20required%3D%22true%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22padding%3A%2010px%2020px%3B%20margin-top%3A%202em%3B%20box-shadow%3A%202px%202px%208px%20%23AAA%3B%20margin-right%3A%201em%3B%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20visibleWhen%3D%22region-selected%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22Select%20Gender%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoices%20name%3D%22gender%22%20toName%3D%22audio%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20perRegion%3D%22true%22%20required%3D%22true%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Male%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Female%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22width%3A%20100%25%3B%20display%3A%20block%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22Select%20region%20after%20creation%20to%20go%20next%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E",
         expectedConfig: `<View style=\"display: flex;\">
