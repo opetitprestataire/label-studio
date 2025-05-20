@@ -40,6 +40,7 @@ const HtxPdf = inject("store")(
       <embed
         src={item._url}
         style={{ width: "100%", height: "600px", border: "none" }}
+        type="application/pdf"
       />
     );
   }),
