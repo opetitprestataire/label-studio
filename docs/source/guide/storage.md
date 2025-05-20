@@ -73,7 +73,7 @@ There are two secure mechanisms in which Label Studio fetches media data from cl
 
 Which one you use depends on whether you have **Use pre-signed URLs** toggled on or off when setting up your source storage. Proxy storage is enabled when **Use pre-signed URLs** is OFF:
 
-![Screenshot of storage page with use pre-signed off](/images/storages/use-presigned-off.png)
+<img src="/images/storages/use-presigned-off.png" style="max-width: 600px; margin: 0 auto" alt="Screenshot of storage page with use pre-signed off">
 
 ##### Proxy storage
 
