@@ -147,7 +147,7 @@ Add the **Storage Blob Data Reader** role, which includes:
     * `RESOLVER_PROXY_TIMEOUT` - Defaults to 20 seconds, and defines the maximum time uWSGI workers spend on a single request.
 
 
-##### Pre-signed redirect
+##### Pre-signed URLs
 
 In this scenario, your browser receives an HTTP 303 redirect to a time-limited S3/GCS/Azure URL. This is the default behavior. 
 
