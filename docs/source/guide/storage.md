@@ -193,7 +193,7 @@ Which one you use depends on whether you have **Use pre-signed URLs** toggled on
 
 When in proxy mode, the Label Studio backend fetches objects server-side and streams them directly to the browser.
 
-![Storage diagram proxy](/images/storages/storage-proxy.png)
+<img src="/images/storages/storage-proxy.png" style="max-width:600px; margin: 0 auto" alt="Diagram of proxy flow">
 
 This has multiple benefits, including:
 
@@ -263,9 +263,13 @@ Add the **Storage Blob Data Reader** role, which includes:
 
 ##### Pre-signed URLs
 
-In this scenario, your browser receives an HTTP 303 redirect to a time-limited S3/GCS/Azure URL. This is the default behavior. The main benefit to using pre-signed URLs is if you want to ensure that your media files are isolated **from** the Label Studio network as much as possible. 
+In this scenario, your browser receives an HTTP 303 redirect to a time-limited S3/GCS/Azure presigned URL. This is the default behavior. 
 
-<img src="/images/storages/storage-proxy-presigned.png" style="max-width:600px; margin: 0 auto" alt="Screenshot of storage page with use pre-signed off">
+The main benefit to using pre-signed URLs is if you want to ensure that your media files are isolated **from** the Label Studio network as much as possible. 
+
+<img src="/images/storages/storage-proxy-presigned.png" style="max-width:600px; margin: 0 auto" alt="Diagram of presigned URL flow">
+
+The permissions required for this are already included in the cloud storage configuration documentation below. 
 
 
 ### Target storage
