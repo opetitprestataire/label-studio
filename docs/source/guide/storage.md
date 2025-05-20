@@ -149,7 +149,7 @@ Add the **Storage Blob Data Reader** role, which includes:
 
 ##### Pre-signed URLs
 
-In this scenario, your browser receives an HTTP 303 redirect to a time-limited S3/GCS/Azure URL. This is the default behavior. 
+In this scenario, your browser receives an HTTP 303 redirect to a time-limited S3/GCS/Azure URL. This is the default behavior. The main benefit to using pre-signed URLs is if you want to ensure that your media files are isolated **from** the Label Studio network as much as possible. 
 
 ![Screenshot of storage page with use pre-signed off](/images/storages/storage-proxy-presigned.png)
 
