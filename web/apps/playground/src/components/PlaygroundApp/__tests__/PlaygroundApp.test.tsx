@@ -190,7 +190,321 @@ describe("PlaygroundApp", () => {
   describe("PlaygroundApp: Loads configs from v1 URL", () => {
     it.each([
       {
-        name: "Multi-step annotation",
+        name: "Annotation templates: Audio regions labeling",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Listen%20to%20the%20audio%22%2F%3E%3Cbr%3E%20%20%3CAudio%20name%3D%22audio%22%20value%3D%22%24audio%22%2F%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Select%20its%20topic%22%2F%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22topic%22%20toName%3D%22audio%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20choice%3D%22single-radio%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Politics%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Business%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Education%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Other%22%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Header value=\"Listen to the audio\"/>
+      <Audio name=\"audio\" value=\"$audio\"/>
+      <Header value=\"Select its topic\"/>
+      <Choices name=\"topic\" toName=\"audio\"
+               choice=\"single-radio\" showInline=\"true\">
+        <Choice value=\"Politics\"/>
+        <Choice value=\"Business\"/>
+        <Choice value=\"Education\"/>
+        <Choice value=\"Other\"/>
+      </Choices>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Emotion segmentation",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CLabels%20name%3D%22emotion%22%20toName%3D%22audio%22%20choice%3D%22multiple%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Fear%22%20background%3D%22%23ff0000%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Anger%22%20background%3D%22%23d50000%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Sadness%22%20background%3D%22%235050ff%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Joy%22%20background%3D%22%23ffff53%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Disgust%22%20background%3D%22%23ff53ff%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Surprise%22%20background%3D%22%2358beff%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Trust%22%20background%3D%22%23009700%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Anticipation%22%20background%3D%22%23ffa953%22%20%2F%3E%3Cbr%3E%20%20%3C%2FLabels%3E%3Cbr%3E%3Cbr%3E%20%20%3CAudio%20name%3D%22audio%22%20value%3D%22%24audio%22%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Labels name=\"emotion\" toName=\"audio\" choice=\"multiple\">
+        <Label value=\"Fear\" background=\"#ff0000\" />
+        <Label value=\"Anger\" background=\"#d50000\" />
+        <Label value=\"Sadness\" background=\"#5050ff\" />
+        <Label value=\"Joy\" background=\"#ffff53\" />
+        <Label value=\"Disgust\" background=\"#ff53ff\" />
+        <Label value=\"Surprise\" background=\"#58beff\" />
+        <Label value=\"Trust\" background=\"#009700\" />
+        <Label value=\"Anticipation\" background=\"#ffa953\" />
+      </Labels>·
+      <Audio name=\"audio\" value=\"$audio\"/>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Speaker diarization",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22audio%22%20choice%3D%22multiple%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Speaker%201%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Speaker%202%22%20%2F%3E%3Cbr%3E%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%3CAudio%20name%3D%22audio%22%20value%3D%22%24audio%22%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Labels name=\"label\" toName=\"audio\" choice=\"multiple\">
+        <Label value=\"Speaker 1\" />
+        <Label value=\"Speaker 2\" />
+      </Labels>
+      <Audio name=\"audio\" value=\"$audio\"/>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Transcription per region",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CLabels%20name%3D%22labels%22%20toName%3D%22audio%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Speaker%201%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Speaker%202%22%20%2F%3E%3Cbr%3E%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%3CAudio%20name%3D%22audio%22%20value%3D%22%24audio%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20visibleWhen%3D%22region-selected%22%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Provide%20Transcription%22%20%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CTextArea%20name%3D%22transcription%22%20toName%3D%22audio%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20rows%3D%222%22%20editable%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20perRegion%3D%22true%22%20required%3D%22true%22%20%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Labels name=\"labels\" toName=\"audio\">
+        <Label value=\"Speaker 1\" />
+        <Label value=\"Speaker 2\" />
+      </Labels>
+      <Audio name=\"audio\" value=\"$audio\"/>·
+      <View visibleWhen=\"region-selected\">
+        <Header value=\"Provide Transcription\" />
+      </View>·
+      <TextArea name=\"transcription\" toName=\"audio\"
+                rows=\"2\" editable=\"true\"
+                perRegion=\"true\" required=\"true\" />
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Transcription whole audio",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Listen%20to%20the%20audio%22%20%2F%3E%3Cbr%3E%20%20%3CAudio%20name%3D%22audio%22%20value%3D%22%24audio%22%20%2F%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Write%20the%20transcription%22%20%2F%3E%3Cbr%3E%20%20%3CTextArea%20name%3D%22transcription%22%20toName%3D%22audio%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20rows%3D%224%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%20%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Header value=\"Listen to the audio\" />
+      <Audio name=\"audio\" value=\"$audio\" />
+      <Header value=\"Write the transcription\" />
+      <TextArea name=\"transcription\" toName=\"audio\"
+                rows=\"4\" editable=\"true\" maxSubmissions=\"1\" />
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Image classification",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CImage%20name%3D%22image%22%20value%3D%22%24image%22%2F%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22choice%22%20toName%3D%22image%22%20showInLine%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Boeing%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Airbus%22%20background%3D%22green%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Image name=\"image\" value=\"$image\"/>
+      <Choices name=\"choice\" toName=\"image\" showInLine=\"true\">
+        <Choice value=\"Boeing\" background=\"blue\"/>
+        <Choice value=\"Airbus\" background=\"green\" />
+      </Choices>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Bbox object detection",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CImage%20name%3D%22image%22%20value%3D%22%24image%22%2F%3E%3Cbr%3E%20%20%3CRectangleLabels%20name%3D%22label%22%20toName%3D%22image%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Airplane%22%20background%3D%22green%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Car%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%3C%2FRectangleLabels%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Image name=\"image\" value=\"$image\"/>
+      <RectangleLabels name=\"label\" toName=\"image\">
+        <Label value=\"Airplane\" background=\"green\"/>
+        <Label value=\"Car\" background=\"blue\"/>
+      </RectangleLabels>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Brush segmentation",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CImage%20name%3D%22image%22%20value%3D%22%24image%22%2F%3E%3Cbr%3E%20%20%3CBrushLabels%20name%3D%22tag%22%20toName%3D%22image%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Planet%22%20background%3D%22rgba(0%2C%200%2C%20255%2C%200.7)%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Moonwalker%22%20background%3D%22rgba(255%2C%200%2C%200%2C%200.7)%22%2F%3E%3Cbr%3E%20%20%3C%2FBrushLabels%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+      <Image name=\"image\" value=\"$image\"/>
+      <BrushLabels name=\"tag\" toName=\"image\">
+        <Label value=\"Planet\" background=\"rgba(0, 0, 255, 0.7)\"/>
+        <Label value=\"Moonwalker\" background=\"rgba(255, 0, 0, 0.7)\"/>
+      </BrushLabels>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Circular object detector",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CImage%20name%3D%22image%22%20value%3D%22%24image%22%2F%3E%3Cbr%3E%20%20%3CEllipseLabels%20name%3D%22tag%22%20toName%3D%22image%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Airplane%22%20background%3D%22green%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Car%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%3C%2FEllipseLabels%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Image name=\"image\" value=\"$image\"/>
+      <EllipseLabels name=\"tag\" toName=\"image\">
+        <Label value=\"Airplane\" background=\"green\"/>
+        <Label value=\"Car\" background=\"blue\"/>
+      </EllipseLabels>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Keypoints and landmarks",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CImage%20name%3D%22image%22%20value%3D%22%24image%22%20zoom%3D%22true%22%20zoomControl%3D%22true%22%2F%3E%3Cbr%3E%20%20%3CKeyPointLabels%20name%3D%22label%22%20toName%3D%22image%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokewidth%3D%222%22%20opacity%3D%221%22%20%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Engine%22%20background%3D%22red%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Tail%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%3C%2FKeyPointLabels%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Image name=\"image\" value=\"$image\" zoom=\"true\" zoomControl=\"true\"/>
+      <KeyPointLabels name=\"label\" toName=\"image\"
+                      strokewidth=\"2\" opacity=\"1\" >
+          <Label value=\"Engine\" background=\"red\"/>
+          <Label value=\"Tail\" background=\"blue\"/>
+      </KeyPointLabels>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Polygon segmentation",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Select%20label%20and%20start%20to%20click%20on%20image%22%2F%3E%3Cbr%3E%20%20%3CImage%20name%3D%22image%22%20value%3D%22%24image%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CPolygonLabels%20name%3D%22label%22%20toName%3D%22image%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeWidth%3D%223%22%20pointSize%3D%22small%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20opacity%3D%220.9%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Airplane%22%20background%3D%22red%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Car%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%3C%2FPolygonLabels%3E%3Cbr%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>·
+      <Header value=\"Select label and start to click on image\"/>
+      <Image name=\"image\" value=\"$image\"/>·
+      <PolygonLabels name=\"label\" toName=\"image\"
+                     strokeWidth=\"3\" pointSize=\"small\"
+                     opacity=\"0.9\">
+        <Label value=\"Airplane\" background=\"red\"/>
+        <Label value=\"Car\" background=\"blue\"/>
+      </PolygonLabels>·
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Multi-image classification",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Please%20select%20everything%20you%20see%20on%20the%20image%22%20%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20style%3D%22display%3A%20flex%3B%22%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22width%3A%2049%25%3B%20margin-right%3A%201.99%25%22%3E%3Cbr%3E%20%20%20%20%20%20%3CImage%20name%3D%22img-left%22%20value%3D%22%24image1%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoices%20name%3D%22class-left%22%20toName%3D%22img-left%22%20choice%3D%22multiple%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22People%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Trees%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Animals%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22width%3A%2049%25%3B%22%3E%3Cbr%3E%20%20%20%20%20%20%3CImage%20name%3D%22img-right%22%20value%3D%22%24image2%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoices%20name%3D%22class-right%22%20toName%3D%22img-right%22%20choice%3D%22multiple%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Food%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Cars%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Buildings%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Which%20one%20is%20clearer%20to%20you%3F%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoices%20name%3D%22comparison%22%20toName%3D%22img-left%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%20%20%3CChoice%20value%3D%22Left%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoice%20value%3D%22Right%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Header value=\"Please select everything you see on the image\" />·
+      <View style=\"display: flex;\">
+        <View style=\"width: 49%; margin-right: 1.99%\">
+          <Image name=\"img-left\" value=\"$image1\"/>
+          <Choices name=\"class-left\" toName=\"img-left\" choice=\"multiple\">
+            <Choice value=\"People\" />
+            <Choice value=\"Trees\" />
+            <Choice value=\"Animals\" />
+          </Choices>
+        </View>·
+        <View style=\"width: 49%;\">
+          <Image name=\"img-right\" value=\"$image2\"/>
+          <Choices name=\"class-right\" toName=\"img-right\" choice=\"multiple\">
+            <Choice value=\"Food\" />
+            <Choice value=\"Cars\" />
+            <Choice value=\"Buildings\" />
+          </Choices>
+        </View>
+      </View>·
+      <View>
+        <Header value=\"Which one is clearer to you?\" />
+        <Choices name=\"comparison\" toName=\"img-left\" showInline=\"true\">
+          <Choice value=\"Left\" />
+          <Choice value=\"Right\" />
+        </Choices>
+      </View>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Text classification",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%2F%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22sentiment%22%20toName%3D%22text%22%20choice%3D%22single%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Positive%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Negative%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Neutral%22%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Text name=\"text\" value=\"$text\"/>
+      <Choices name=\"sentiment\" toName=\"text\" choice=\"single\">
+        <Choice value=\"Positive\"/>
+        <Choice value=\"Negative\"/>
+        <Choice value=\"Neutral\"/>
+      </Choices>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Multi classification",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22sentiment%22%20toName%3D%22text%22%20choice%3D%22multiple%22%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22display%3A%20flex%3B%20justify-content%3A%20space-between%22%3E%3Cbr%3E%20%20%20%20%20%20%3CView%20style%3D%22width%3A%2050%25%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CHeader%20value%3D%22Select%20Topics%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Politics%22%2F%3E%3Cbr%3E%20%20%20%20%09%3CChoice%20value%3D%22Business%22%2F%3E%3Cbr%3E%20%20%20%20%09%3CChoice%20value%3D%22Sport%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%20%20%20%20%3CView%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CHeader%20value%3D%22Select%20Moods%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Cheerful%22%2F%3E%3Cbr%3E%20%20%20%20%09%3CChoice%20value%3D%22Melancholy%22%2F%3E%3Cbr%3E%20%20%20%20%09%3CChoice%20value%3D%22Romantic%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Text name=\"text\" value=\"$text\" />·
+      <Choices name=\"sentiment\" toName=\"text\" choice=\"multiple\">
+        <View style=\"display: flex; justify-content: space-between\">
+          <View style=\"width: 50%\">
+            <Header value=\"Select Topics\" />
+            <Choice value=\"Politics\"/>
+                <Choice value=\"Business\"/>
+                <Choice value=\"Sport\"/>
+          </View>
+          <View>
+            <Header value=\"Select Moods\" />
+            <Choice value=\"Cheerful\"/>
+                <Choice value=\"Melancholy\"/>
+                <Choice value=\"Romantic\"/>
+          </View>
+        </View>
+      </Choices>·
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Named entity recognition",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Person%22%20background%3D%22red%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Organization%22%20background%3D%22darkorange%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Fact%22%20background%3D%22orange%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Money%22%20background%3D%22green%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Date%22%20background%3D%22darkblue%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Time%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Ordinal%22%20background%3D%22purple%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Percent%22%20background%3D%22%23842%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Product%22%20background%3D%22%23428%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Language%22%20background%3D%22%23482%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Location%22%20background%3D%22rgba(0%2C0%2C0%2C0.8)%22%2F%3E%3Cbr%3E%20%20%3C%2FLabels%3E%3Cbr%3E%3Cbr%3E%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Labels name=\"label\" toName=\"text\">
+        <Label value=\"Person\" background=\"red\"/>
+        <Label value=\"Organization\" background=\"darkorange\"/>
+        <Label value=\"Fact\" background=\"orange\"/>
+        <Label value=\"Money\" background=\"green\"/>
+        <Label value=\"Date\" background=\"darkblue\"/>
+        <Label value=\"Time\" background=\"blue\"/>
+        <Label value=\"Ordinal\" background=\"purple\"/>
+        <Label value=\"Percent\" background=\"#842\"/>
+        <Label value=\"Product\" background=\"#428\"/>
+        <Label value=\"Language\" background=\"#482\"/>
+        <Label value=\"Location\" background=\"rgba(0,0,0,0.8)\"/>
+      </Labels>·
+      <Text name=\"text\" value=\"$text\"/>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Text summarization",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Please%20read%20the%20text%22%20%2F%3E%3Cbr%3E%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Provide%20one%20sentence%20summary%22%20%2F%3E%3Cbr%3E%20%20%3CTextArea%20name%3D%22answer%22%20toName%3D%22text%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20showSubmitButton%3D%22true%22%20maxSubmissions%3D%221%22%20editable%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20required%3D%22true%22%20%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Header value=\"Please read the text\" />
+      <Text name=\"text\" value=\"$text\" />·
+      <Header value=\"Provide one sentence summary\" />
+      <TextArea name=\"answer\" toName=\"text\"
+                showSubmitButton=\"true\" maxSubmissions=\"1\" editable=\"true\"
+                required=\"true\" />
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Word alignment",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Person%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Organization%22%20%2F%3E%3Cbr%3E%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20granularity%3D%22word%22%20%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Labels name=\"label\" toName=\"text\">
+        <Label value=\"Person\" />
+        <Label value=\"Organization\" />
+      </Labels>
+      <Text name=\"text\" value=\"$text\" granularity=\"word\" />
+    </View>`,
+      },
+      {
+        name: "Annotation templates: HTML classification",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22toxicity%22%20toName%3D%22web_page%22%20choice%3D%22multiple%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Toxic%22%20background%3D%22red%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Severe%20Toxic%22%20background%3D%22brown%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Obsene%22%20background%3D%22green%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Threat%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Insult%22%20background%3D%22orange%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Identity%20Hate%22%20background%3D%22grey%22%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20style%3D%22border%3A%201px%20solid%20%23CCC%3B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2010px%3B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20padding%3A%205px%22%3E%3Cbr%3E%20%20%20%20%3CHyperText%20name%3D%22web_page%22%20value%3D%22%24text%22%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Choices name=\"toxicity\" toName=\"web_page\" choice=\"multiple\" showInline=\"true\">
+        <Choice value=\"Toxic\" background=\"red\"/>
+        <Choice value=\"Severe Toxic\" background=\"brown\"/>
+        <Choice value=\"Obsene\" background=\"green\"/>
+        <Choice value=\"Threat\" background=\"blue\"/>
+        <Choice value=\"Insult\" background=\"orange\"/>
+        <Choice value=\"Identity Hate\" background=\"grey\"/>
+      </Choices>·
+      <View style=\"border: 1px solid #CCC;
+                   border-radius: 10px;
+                   padding: 5px\">
+        <HyperText name=\"web_page\" value=\"$text\"/>
+      </View>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: HTML NER tagging",
+        url: "https://labelstud.io/playground?config=%3CView%3E%3Cbr%3E%20%20%3CHyperTextLabels%20name%3D%22ner%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Person%22%20background%3D%22green%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Organization%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%3C%2FHyperTextLabels%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20style%3D%22border%3A%201px%20solid%20%23CCC%3B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2010px%3B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20padding%3A%205px%22%3E%3Cbr%3E%20%20%20%20%3CHyperText%20name%3D%22text%22%20value%3D%22%24text%22%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <HyperTextLabels name=\"ner\" toName=\"text\">
+        <Label value=\"Person\" background=\"green\"/>
+        <Label value=\"Organization\" background=\"blue\"/>
+      </HyperTextLabels>·
+      <View style=\"border: 1px solid #CCC;
+                   border-radius: 10px;
+                   padding: 5px\">
+        <HyperText name=\"text\" value=\"$text\"/>
+      </View>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Dialogs & conversations",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CHyperText%20name%3D%22dialog%22%20value%3D%22%24dialogs%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Rate%20last%20answer%22%2F%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22rating%22%20choice%3D%22single-radio%22%20toName%3D%22dialog%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Bad%20answer%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Neutral%20answer%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Good%20answer%22%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Write%20your%20answer%20and%20press%20Enter%22%2F%3E%3Cbr%3E%20%20%3CTextArea%20toName%3D%22dialog%22%20name%3D%22answer%22%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <HyperText name=\"dialog\" value=\"$dialogs\"/>·
+      <Header value=\"Rate last answer\"/>
+      <Choices name=\"rating\" choice=\"single-radio\" toName=\"dialog\" showInline=\"true\">
+        <Choice value=\"Bad answer\"/>
+        <Choice value=\"Neutral answer\"/>
+        <Choice value=\"Good answer\"/>
+      </Choices>·
+      <Header value=\"Write your answer and press Enter\"/>
+      <TextArea toName=\"dialog\" name=\"answer\"/>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Rate PDF",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CHyperText%20name%3D%22pdf%22%20value%3D%22%24pdf%22%20inline%3D%22true%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Rate%20this%20article%22%2F%3E%3Cbr%3E%20%20%3CRating%20name%3D%22rating%22%20toName%3D%22pdf%22%20maxRating%3D%2210%22%20icon%3D%22star%22%20size%3D%22medium%22%20%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22choices%22%20choice%3D%22single-radio%22%20toName%3D%22pdf%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Important%20article%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Yellow%20press%22%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <HyperText name=\"pdf\" value=\"$pdf\" inline=\"true\"/>·
+      <Header value=\"Rate this article\"/>
+      <Rating name=\"rating\" toName=\"pdf\" maxRating=\"10\" icon=\"star\" size=\"medium\" />·
+      <Choices name=\"choices\" choice=\"single-radio\" toName=\"pdf\" showInline=\"true\">
+        <Choice value=\"Important article\"/>
+        <Choice value=\"Yellow press\"/>
+      </Choices>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Multi-step annotation",
         url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3C!--%20No%20region%20selected%20section%20--%3E%3Cbr%3E%20%20%20%20%3CView%20visibleWhen%3D%22no-region-selected%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20style%3D%22height%3A120px%22%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CHeader%20value%3D%22Create%20and%20select%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20region%20to%20classify%20it%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C!--%20Control%20tag%20for%20region%20labels%20--%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Region%22%20background%3D%22%235b5%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Region%20selected%20section%20with%20choices%20and%20rating%20--%3E%3Cbr%3E%20%20%20%20%3CView%20visibleWhen%3D%22region-selected%22%20style%3D%22height%3A120px%22%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CHeader%20value%3D%22Now%20select%20the%20signal%20quality%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C!--%20Per%20region%20Rating%20--%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CRating%20name%3D%22rating%22%20toName%3D%22ts%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20maxRating%3D%2210%22%20icon%3D%22star%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20perRegion%3D%22true%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C!--%20Per%20region%20Choices%20%20--%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoices%20name%3D%22choices%22%20toName%3D%22ts%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showInline%3D%22true%22%20required%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20perRegion%3D%22true%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Good%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Medium%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Poor%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20tag%20for%20time%20series%20data%20source%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%20value%3D%22%24csv%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sep%3D%22%2C%22%20timeColumn%3D%22time%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22signal_1%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%2317b%22%20legend%3D%22Signal%201%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22signal_2%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23f70%22%20legend%3D%22Signal%202%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E",
         expectedConfig: `<View>
         <!-- No region selected section -->
@@ -230,7 +544,7 @@ describe("PlaygroundApp", () => {
     </View>`,
       },
       {
-        name: "Segmentation extended",
+        name: "Annotation templates: Segmentation extended",
         url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20Segmentation%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Control%20tag%20for%20region%20labels%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Run%22%20background%3D%22red%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Walk%22%20background%3D%22green%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Fly%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Swim%22%20background%3D%22%23f6a%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Ride%22%20background%3D%22%23351%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20tag%20for%20time%20series%20data%20source%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%20value%3D%22%24csv%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sep%3D%22%2C%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeColumn%3D%22time%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeFormat%3D%22%25Y-%25m-%25d%20%25H%3A%25M%3A%25S.%25f%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeDisplayFormat%3D%22%25Y-%25m-%25d%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20overviewChannels%3D%22velocity%22%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22velocity%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20units%3D%22miles%2Fh%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20displayFormat%3D%22%2C.1f%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%231f77b4%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20legend%3D%22Velocity%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22acceleration%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20units%3D%22miles%2Fh%5E2%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20displayFormat%3D%22%2C.1f%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23ff7f0e%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20legend%3D%22Acceleration%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E",
         expectedConfig: `<View>
         <Header value=\"Time Series Segmentation\"/>·
@@ -263,7 +577,7 @@ describe("PlaygroundApp", () => {
     </View>`,
       },
       {
-        name: "Import JSON",
+        name: "Annotation templates: Import JSON",
         url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20from%20JSON%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20style%3D%22font-weight%3A%20normal%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Anomaly%22%20background%3D%22%23a4a%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Ordinary%22%20background%3D%22%23aa4%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20timeColumn%3D%22time%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20name%3D%22ts%22%20value%3D%22%24ts%22%20valueType%3D%22json%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22first_column%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%231f77b4%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22second_column%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23ff7f0e%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
         expectedConfig: `<View>
         <Header value=\"Time Series from JSON\"
@@ -282,7 +596,7 @@ describe("PlaygroundApp", () => {
     </View>`,
       },
       {
-        name: "Import CSV",
+        name: "Annotation templates: Import CSV",
         url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20from%20CSV%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20style%3D%22font-weight%3A%20normal%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Control%20tag%20for%20region%20labels%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Run%22%20background%3D%22%235b5%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Walk%22%20background%3D%22%2355f%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20tag%20for%20time%20series%20data%20source%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeColumn%3D%22time%22%20value%3D%22%24csv%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sep%3D%22%2C%22%20overviewChannels%3D%22velocity%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22velocity%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%231f77b4%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22acceleration%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23ff7f0e%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E",
         expectedConfig: `<View>
         <Header value=\"Time Series from CSV\"
@@ -304,7 +618,7 @@ describe("PlaygroundApp", () => {
     </View>`,
       },
       {
-        name: "Time Series classification",
+        name: "Annotation templates: Time Series classification",
         url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20classification%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20style%3D%22font-weight%3A%20normal%22%2F%3E%3Cbr%3E%20%20%20%20%3C!--%20Choices%20(whole%20signal%20classification)%20--%3E%3Cbr%3E%20%20%20%20%3CChoices%20name%3D%22pattern%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Growth%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Decay%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Labels%20(per%20region%20classification)%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Run%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Walk%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20(source)%20tag%20for%20plot%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20value%3D%22%24csv%22%20valueType%3D%22url%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22first_column%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
         expectedConfig: `<View>
         <Header value=\"Time Series classification\"
@@ -326,7 +640,7 @@ describe("PlaygroundApp", () => {
     </View>`,
       },
       {
-        name: "Video classifier",
+        name: "Annotation templates: Video classifier",
         url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CHyperText%20name%3D%22video%22%20value%3D%22%24video%22%2F%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22type%22%20toName%3D%22video%22%20choice%3D%22single-radio%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Awesome%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Groove%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E",
         expectedConfig: `<View>
       <HyperText name=\"video\" value=\"$video\"/>
@@ -337,7 +651,7 @@ describe("PlaygroundApp", () => {
     </View>`,
       },
       {
-        name: "Rate website",
+        name: "Annotation templates: Rate website",
         url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CHyperText%20name%3D%22website%22%20value%3D%22%24website%22%20inline%3D%22true%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Rate%20this%20website%22%2F%3E%3Cbr%3E%20%20%3CRating%20name%3D%22rating%22%20toName%3D%22website%22%20maxRating%3D%2210%22%20icon%3D%22star%22%20size%3D%22medium%22%20%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22choices%22%20choice%3D%22single-radio%22%20toName%3D%22website%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Important%20article%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Yellow%20press%22%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
         expectedConfig: `<View>
       <HyperText name=\"website\" value=\"$website\" inline=\"true\"/>·
@@ -479,7 +793,7 @@ describe("PlaygroundApp", () => {
       },
       {
         name: "Advanced config templates: Pairwise comparison",
-        url: "https://labelstud.io/playground/?config=%3CView%3E%3Cbr%3E%20%20%3CHeader%3ESelect%20one%20of%20two%20items%3C%2FHeader%3E%3Cbr%3E%20%20%3CPairwise%20name%3D%22pw%22%20toName%3D%22text1%2Ctext2%22%20%2F%3E%3Cbr%3E%20%20%3CText%20name%3D%22text1%22%20value%3D%22%24text1%22%20%2F%3E%3Cbr%3E%20%20%3CText%20name%3D%22text2%22%20value%3D%22%24text2%22%20%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        url: "https://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CHeader%3ESelect%20one%20of%20two%20items%3C%2FHeader%3E%3Cbr%3E%20%20%3CPairwise%20name%3D%22pw%22%20toName%3D%22text1%2Ctext2%22%20%2F%3E%3Cbr%3E%20%20%3CText%20name%3D%22text1%22%20value%3D%22%24text1%22%20%2F%3E%3Cbr%3E%20%20%3CText%20name%3D%22text2%22%20value%3D%22%24text2%22%20%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
         expectedConfig: `<View>
       <Header>Select one of two items</Header>
       <Pairwise name=\"pw\" toName=\"text1,text2\" />
