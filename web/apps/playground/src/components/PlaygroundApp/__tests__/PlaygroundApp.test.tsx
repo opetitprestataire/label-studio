@@ -462,6 +462,49 @@ describe("PlaygroundApp", () => {
     </View>`,
       },
       {
+        name: "Annotation templates: HTML NER tagging",
+        url: "https://labelstud.io/playground?config=%3CView%3E%3Cbr%3E%20%20%3CHyperTextLabels%20name%3D%22ner%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Person%22%20background%3D%22green%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Organization%22%20background%3D%22blue%22%2F%3E%3Cbr%3E%20%20%3C%2FHyperTextLabels%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20style%3D%22border%3A%201px%20solid%20%23CCC%3B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2010px%3B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20padding%3A%205px%22%3E%3Cbr%3E%20%20%20%20%3CHyperText%20name%3D%22text%22%20value%3D%22%24text%22%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <HyperTextLabels name=\"ner\" toName=\"text\">
+        <Label value=\"Person\" background=\"green\"/>
+        <Label value=\"Organization\" background=\"blue\"/>
+      </HyperTextLabels>·
+      <View style=\"border: 1px solid #CCC;
+                   border-radius: 10px;
+                   padding: 5px\">
+        <HyperText name=\"text\" value=\"$text\"/>
+      </View>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Dialogs & conversations",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CHyperText%20name%3D%22dialog%22%20value%3D%22%24dialogs%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Rate%20last%20answer%22%2F%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22rating%22%20choice%3D%22single-radio%22%20toName%3D%22dialog%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Bad%20answer%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Neutral%20answer%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Good%20answer%22%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Write%20your%20answer%20and%20press%20Enter%22%2F%3E%3Cbr%3E%20%20%3CTextArea%20toName%3D%22dialog%22%20name%3D%22answer%22%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <HyperText name=\"dialog\" value=\"$dialogs\"/>·
+      <Header value=\"Rate last answer\"/>
+      <Choices name=\"rating\" choice=\"single-radio\" toName=\"dialog\" showInline=\"true\">
+        <Choice value=\"Bad answer\"/>
+        <Choice value=\"Neutral answer\"/>
+        <Choice value=\"Good answer\"/>
+      </Choices>·
+      <Header value=\"Write your answer and press Enter\"/>
+      <TextArea toName=\"dialog\" name=\"answer\"/>
+    </View>`,
+      },
+      {
+        name: "Annotation templates: Rate PDF",
+        url: "https://localhost?config=%3CView%3E%3Cbr%3E%20%20%3CHyperText%20name%3D%22pdf%22%20value%3D%22%24pdf%22%20inline%3D%22true%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Rate%20this%20article%22%2F%3E%3Cbr%3E%20%20%3CRating%20name%3D%22rating%22%20toName%3D%22pdf%22%20maxRating%3D%2210%22%20icon%3D%22star%22%20size%3D%22medium%22%20%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22choices%22%20choice%3D%22single-radio%22%20toName%3D%22pdf%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Important%20article%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Yellow%20press%22%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <HyperText name=\"pdf\" value=\"$pdf\" inline=\"true\"/>·
+      <Header value=\"Rate this article\"/>
+      <Rating name=\"rating\" toName=\"pdf\" maxRating=\"10\" icon=\"star\" size=\"medium\" />·
+      <Choices name=\"choices\" choice=\"single-radio\" toName=\"pdf\" showInline=\"true\">
+        <Choice value=\"Important article\"/>
+        <Choice value=\"Yellow press\"/>
+      </Choices>
+    </View>`,
+      },
+      {
         name: "Advanced config templates: Audio regions labeling",
         url: "http://localhost/?config=%3CView%20style%3D%22display%3A%20flex%3B%22%3E%3Cbr%3E%20%20%3CView%20style%3D%22width%3A%20100%25%3B%20margin-left%3A%201em%3B%22%3E%3Cbr%3E%20%20%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22audio%22%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Speaker%201%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Speaker%202%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CAudio%20name%3D%22audio%22%20value%3D%22%24audio%22%2F%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22padding%3A%2010px%2020px%3B%20margin-top%3A%202em%3B%20box-shadow%3A%202px%202px%208px%20%23AAA%3B%20margin-right%3A%201em%3B%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20visibleWhen%3D%22region-selected%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22Provide%20Transcription%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CTextArea%20name%3D%22transcription%22%20toName%3D%22audio%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20rows%3D%222%22%20editable%3D%22true%22%20perRegion%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20required%3D%22true%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22padding%3A%2010px%2020px%3B%20margin-top%3A%202em%3B%20box-shadow%3A%202px%202px%208px%20%23AAA%3B%20margin-right%3A%201em%3B%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20visibleWhen%3D%22region-selected%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22Select%20Gender%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoices%20name%3D%22gender%22%20toName%3D%22audio%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20perRegion%3D%22true%22%20required%3D%22true%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Male%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChoice%20value%3D%22Female%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22width%3A%20100%25%3B%20display%3A%20block%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22Select%20region%20after%20creation%20to%20go%20next%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E",
         expectedConfig: `<View style=\"display: flex;\">
