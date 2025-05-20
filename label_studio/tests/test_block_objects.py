@@ -17,7 +17,7 @@ def test_export(business_client, configured_project):
         t.start()
         time.sleep(20)
         assert Task.objects.filter(is_labeled=True).count() == 2
-        time.sleep(70)
+        t.join(timeout=70)
     assert Task.objects.filter(is_labeled=True).count() == 2
     bulk_update_stats_project_tasks(task_query)
     assert Task.objects.filter(is_labeled=True).count() == 0
