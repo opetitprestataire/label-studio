@@ -3,7 +3,7 @@ import type { MouseEvent } from "react";
 import { useSetAtom } from "jotai";
 import { PreviewPanel } from "../PreviewPanel";
 import { configAtom, loadingAtom, errorAtom, interfacesAtom } from "../../atoms/configAtoms";
-import { getQueryParams, getInterfacesFromParams } from "../../utils/query";
+import { getQueryParams, replaceBrTagsWithNewlines, getInterfacesFromParams, throwUnlessXmlLike } from "../../utils/query";
 import { cnm } from "@humansignal/shad/utils";
 import { TopBar } from "./TopBar";
 import { EditorPanel } from "../EditorPanel";
@@ -28,18 +28,9 @@ export const PlaygroundApp = () => {
     setInterfaces(getInterfacesFromParams(params));
 
     async function loadConfig() {
-      if (configParam) {
-        try {
-          // Parse url encoded config
-          // Replace all <br> tags with newlines
-          const decoded = decodeURIComponent(configParam).replace(/<br\s*\/?>/g, "\n");
+      let config = null;
 
-          setConfig(decoded);
-        } catch (e) {
-          setError("Failed to decode config. Are you sure it's a valid urlencoded string?");
-        }
-        return;
-      }
+      // Precedence: configUrl > configParam
       if (configUrl) {
         setLoading(true);
         try {
@@ -47,13 +38,31 @@ export const PlaygroundApp = () => {
           if (!res.ok) throw new Error("Failed to fetch config from URL.");
           const text = await res.text();
           // Replace all <br> tags with newlines
-          const decoded = text.replace(/<br\s*\/?>/g, "\n");
-          setConfig(decoded);
+          config = replaceBrTagsWithNewlines(text);
         } catch (e) {
           setError("Failed to fetch config from URL.");
         } finally {
           setLoading(false);
         }
+      }
+
+      config ??= configParam;
+
+      if (config) {
+        try {
+          // Check if the config is already valid xml
+          // Otherwise, parse url encoded config
+          // Replace all <br> tags with newlines
+          try {
+            throwUnlessXmlLike(config);
+            setConfig(replaceBrTagsWithNewlines(config));
+          } catch (e) {
+            setConfig(replaceBrTagsWithNewlines(decodeURIComponent(config)));
+          }
+        } catch (e) {
+          setError("Failed to decode config. Are you sure it's a valid urlencoded string?");
+        }
+        return;
       }
     }
     loadConfig();
