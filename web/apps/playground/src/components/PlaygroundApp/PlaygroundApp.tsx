@@ -3,7 +3,12 @@ import type { MouseEvent } from "react";
 import { useSetAtom } from "jotai";
 import { PreviewPanel } from "../PreviewPanel";
 import { configAtom, loadingAtom, errorAtom, interfacesAtom } from "../../atoms/configAtoms";
-import { getQueryParams, replaceBrTagsWithNewlines, getInterfacesFromParams, throwUnlessXmlLike } from "../../utils/query";
+import {
+  getQueryParams,
+  replaceBrTagsWithNewlines,
+  getInterfacesFromParams,
+  throwUnlessXmlLike,
+} from "../../utils/query";
 import { cnm } from "@humansignal/shad/utils";
 import { TopBar } from "./TopBar";
 import { EditorPanel } from "../EditorPanel";
