@@ -227,6 +227,48 @@ To allow proxy storage, you need to ensure your permissions include the followin
     ]
 }
 
+```
+
+{% enddetails %}
+
+<br>
+
+{% details <b>Google Cloud Storage</b> %}
+
+- `storage.objects.get` - Read object data and metadata
+- `storage.objects.list` - List objects in the bucket (if using prefix)
+
+{% enddetails %}
+
+<br>
+
+{% details <b>Azure Blob Storage</b> %}
+
+Add the **Storage Blob Data Reader** role, which includes:
+- `Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read`
+- `Microsoft.Storage/storageAccounts/blobServices/containers/blobs/getTags/action`
+
+{% enddetails %}
+
+<br>
+
+!!! note Note for on-prem deployments
+    Large media files are streamed in sequential 8 MB chunks, which are split into different GET requests. This can result in frequent requests to the backend to get the next portion of data and uses additional resources.
+
+    You can configure this using the following environment variables:
+
+    * `RESOLVER_PROXY_MAX_RANGE_SIZE` - Defaults to 8 MB, and defines the largest chunk size returned per request. 
+    * `RESOLVER_PROXY_TIMEOUT` - Defaults to 20 seconds, and defines the maximum time uWSGI workers spend on a single request.
+
+
+##### Pre-signed URLs
+
+In this scenario, your browser receives an HTTP 303 redirect to a time-limited S3/GCS/Azure URL. This is the default behavior. The main benefit to using pre-signed URLs is if you want to ensure that your media files are isolated **from** the Label Studio network as much as possible. 
+
+<img src="/images/storages/storage-proxy-presigned.png" style="max-width:600px; margin: 0 auto" alt="Screenshot of storage page with use pre-signed off">
+
+
+### Target storage
 
 When annotators click **Submit** or **Update** while labeling tasks, Label Studio saves annotations in the Label Studio database. 
 
