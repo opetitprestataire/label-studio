@@ -327,6 +327,453 @@ describe("PlaygroundApp", () => {
       <Text name=\"text2\" value=\"$text2\" />
     </View>`,
       },
+      {
+        name: "Advanced config templates: Relations among entities",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Note%3A%20To%20manage%20relations%20you%20need%20Label%20Studio%20entity%20panel%20to%20be%20shown%22%20%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CRelations%3E%3Cbr%3E%20%20%20%20%3CRelation%20value%3D%22Is%20A%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CRelation%20value%3D%22Has%20Function%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CRelation%20value%3D%22Involved%20In%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CRelation%20value%3D%22Related%20To%22%20%2F%3E%3Cbr%3E%20%20%3C%2FRelations%3E%3Cbr%3E%3Cbr%3E%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Subject%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Object%22%20%2F%3E%3Cbr%3E%20%20%3C%2FLabels%3E%3Cbr%3E%3Cbr%3E%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Header value=\"Note: To manage relations you need Label Studio entity panel to be shown\" />·
+      <Relations>
+        <Relation value=\"Is A\" />
+        <Relation value=\"Has Function\" />
+        <Relation value=\"Involved In\" />
+        <Relation value=\"Related To\" />
+      </Relations>·
+      <Labels name=\"label\" toName=\"text\">
+        <Label value=\"Subject\" />
+        <Label value=\"Object\" />
+      </Labels>·
+      <Text name=\"text\" value=\"$text\" />
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Table with key-value",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Table%20with%20%7Bkey%3A%20value%7D%20pairs%22%2F%3E%3Cbr%3E%20%20%20%20%3CTable%20name%3D%22table%22%20value%3D%22%24item%22%2F%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+        <Header value=\"Table with {key: value} pairs\"/>
+        <Table name=\"table\" value=\"$item\"/>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Table with text fields",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CStyle%3E%3Cbr%3E%20%20%20%20input%5Btype%3D%22text%22%5D%5Bname%5E%3D%22table%22%5D%20%7B%20border-radius%3A%200px%3B%20border-right%3A%20none%3B%7D%3Cbr%3E%20%20%20%20input%5Btype%3D%22text%22%5D%5Bname%5E%3D%22table_metric%22%5D%20%7B%20border-right%3A%201px%20solid%20%23ddd%3B%20%7D%3Cbr%3E%20%20%20%20div%5Bclass*%3D%22%20TextAreaRegion_mark%22%5D%20%7Bbackground%3A%20none%3B%20height%3A%2033px%3B%20border-radius%3A%200%3B%20min-width%3A%20135px%3B%7D%3Cbr%3E%20%20%3C%2FStyle%3E%3Cbr%3E%3Cbr%3E%20%20%3CImage%20value%3D%22%24image%22%20name%3D%22image%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Trick%20to%20build%20a%20table%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20style%3D%22display%3A%20grid%3B%20%20grid-template-columns%3A%201fr%201fr%201fr%3B%20max-height%3A%20300px%3B%20width%3A%20400px%22%3E%3Cbr%3E%20%20%20%20%3CTextArea%20name%3D%22table_name_1%22%20toName%3D%22image%22%20placeholder%3D%22name%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%2F%3E%3Cbr%3E%20%20%20%20%3CTextArea%20name%3D%22table_value_1%22%20toName%3D%22image%22%20placeholder%3D%22value%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%2F%3E%3Cbr%3E%20%20%20%20%3CTextArea%20name%3D%22table_metric_1%22%20toName%3D%22image%22%20placeholder%3D%22metric%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%2F%3E%3Cbr%3E%20%20%20%20%3CTextArea%20name%3D%22table_name_2%22%20toName%3D%22image%22%20placeholder%3D%22name%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%2F%3E%3Cbr%3E%20%20%20%20%3CTextArea%20name%3D%22table_value_2%22%20toName%3D%22image%22%20placeholder%3D%22value%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%2F%3E%3Cbr%3E%20%20%20%20%3CTextArea%20name%3D%22table_metric_2%22%20toName%3D%22image%22%20placeholder%3D%22metric%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%2F%3E%3Cbr%3E%20%20%20%20%3CTextArea%20name%3D%22table_name_3%22%20toName%3D%22image%22%20placeholder%3D%22name%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%2F%3E%3Cbr%3E%20%20%20%20%3CTextArea%20name%3D%22table_value_3%22%20toName%3D%22image%22%20placeholder%3D%22value%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%2F%3E%3Cbr%3E%20%20%20%20%3CTextArea%20name%3D%22table_metric_3%22%20toName%3D%22image%22%20placeholder%3D%22metric%22%20editable%3D%22true%22%20maxSubmissions%3D%221%22%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+      <Style>
+        input[type=\"text\"][name^=\"table\"] { border-radius: 0px; border-right: none;}
+        input[type=\"text\"][name^=\"table_metric\"] { border-right: 1px solid #ddd; }
+        div[class*=\" TextAreaRegion_mark\"] {background: none; height: 33px; border-radius: 0; min-width: 135px;}
+      </Style>·
+      <Image value=\"$image\" name=\"image\"/>·
+      <Header value=\"Trick to build a table\"/>·
+      <View style=\"display: grid;  grid-template-columns: 1fr 1fr 1fr; max-height: 300px; width: 400px\">
+        <TextArea name=\"table_name_1\" toName=\"image\" placeholder=\"name\" editable=\"true\" maxSubmissions=\"1\"/>
+        <TextArea name=\"table_value_1\" toName=\"image\" placeholder=\"value\" editable=\"true\" maxSubmissions=\"1\"/>
+        <TextArea name=\"table_metric_1\" toName=\"image\" placeholder=\"metric\" editable=\"true\" maxSubmissions=\"1\"/>
+        <TextArea name=\"table_name_2\" toName=\"image\" placeholder=\"name\" editable=\"true\" maxSubmissions=\"1\"/>
+        <TextArea name=\"table_value_2\" toName=\"image\" placeholder=\"value\" editable=\"true\" maxSubmissions=\"1\"/>
+        <TextArea name=\"table_metric_2\" toName=\"image\" placeholder=\"metric\" editable=\"true\" maxSubmissions=\"1\"/>
+        <TextArea name=\"table_name_3\" toName=\"image\" placeholder=\"name\" editable=\"true\" maxSubmissions=\"1\"/>
+        <TextArea name=\"table_value_3\" toName=\"image\" placeholder=\"value\" editable=\"true\" maxSubmissions=\"1\"/>
+        <TextArea name=\"table_metric_3\" toName=\"image\" placeholder=\"metric\" editable=\"true\" maxSubmissions=\"1\"/>
+      </View>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Video timeline segmentation",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CHeader%20value%3D%22Video%20timeline%20segmentation%20via%20Audio%20sync%20trick%22%2F%3E%3Cbr%3E%20%20%3CHyperText%20name%3D%22video%22%20value%3D%22%24video%22%2F%3E%3Cbr%3E%20%20%3CLabels%20name%3D%22tricks%22%20toName%3D%22audio%22%20choice%3D%22multiple%22%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Kickflip%22%20background%3D%22%231BB500%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22360%20Flip%22%20background%3D%22%23FFA91D%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabel%20value%3D%22Trick%22%20background%3D%22%23358EF3%22%20%2F%3E%3Cbr%3E%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%3CAudio%20name%3D%22audio%22%20value%3D%22%24videoSource%22%20speed%3D%22false%22%2F%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E%3Cbr%3E%3C!--%3Cbr%3E%20%20It's%20very%20important%20to%20prepare%20task%20data%20correctly%2C%3Cbr%3E%20%20it%20includes%20HyperText%20%24video%20and%3Cbr%3E%20%20it%20must%20be%20like%20this%20example%20below%3A%3Cbr%3E--%3E%3Cbr%3E%3Cbr%3E%3C!--%20%7B%3Cbr%3E%20%22video%22%3A%20%22%3Cvideo%20src%3D'https%3A%2F%2Fapp.heartex.ai%2Fstatic%2Fsamples%2Fopossum_snow.mp4'%20width%3D100%25%20muted%20%2F%3E%3Cimg%20src%20onerror%3D%5C%22%24%3Dn%3D%3Edocument.getElementsByTagName(n)%5B0%5D%3Ba%3D%24('audio')%3Bv%3D%24('video')%3Ba.onseeked%3D()%3D%3E%7Bv.currentTime%3Da.currentTime%7D%3Ba.onplay%3D()%3D%3Ev.play()%3Ba.onpause%3D()%3D%3Ev.pause()%5C%22%20%2F%3E%22%2C%3Cbr%3E%20%22videoSource%22%3A%20%22https%3A%2F%2Fapp.heartex.ai%2Fstatic%2Fsamples%2Fopossum_snow.mp4%22%3Cbr%3E%7D%20--%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Header value=\"Video timeline segmentation via Audio sync trick\"/>
+      <HyperText name=\"video\" value=\"$video\"/>
+      <Labels name=\"tricks\" toName=\"audio\" choice=\"multiple\">
+        <Label value=\"Kickflip\" background=\"#1BB500\" />
+        <Label value=\"360 Flip\" background=\"#FFA91D\" />
+        <Label value=\"Trick\" background=\"#358EF3\" />
+      </Labels>
+      <Audio name=\"audio\" value=\"$videoSource\" speed=\"false\"/>
+    </View>·
+    <!--
+      It's very important to prepare task data correctly,
+      it includes HyperText $video and
+      it must be like this example below:
+    -->·
+    <!-- {
+     \"video\": \"<video src='https://app.heartex.ai/static/samples/opossum_snow.mp4' width=100% muted /><img src onerror=\\\"$=n=>document.getElementsByTagName(n)[0];a=$('audio');v=$('video');a.onseeked=()=>{v.currentTime=a.currentTime};a.onplay=()=>v.play();a.onpause=()=>v.pause()\\\" />\",
+     \"videoSource\": \"https://app.heartex.ai/static/samples/opossum_snow.mp4\"
+    } -->`,
+      },
+      {
+        name: "Advanced config templates: Import CSV no time",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20from%20CSV%20without%20time%20column%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20style%3D%22font-weight%3A%20normal%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Control%20tag%20for%20region%20labels%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Run%22%20background%3D%22%235b5%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Walk%22%20background%3D%22%2355f%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20tag%20for%20time%20series%20data%20source%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%20value%3D%22%24csv%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22velocity%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%231f77b4%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+        <Header value=\"Time Series from CSV without time column\"
+                style=\"font-weight: normal\"/>·
+        <!-- Control tag for region labels -->
+        <TimeSeriesLabels name=\"label\" toName=\"ts\">
+            <Label value=\"Run\" background=\"#5b5\"/>
+            <Label value=\"Walk\" background=\"#55f\"/>
+        </TimeSeriesLabels>·
+        <!-- Object tag for time series data source -->
+        <TimeSeries name=\"ts\" valueType=\"url\" value=\"$csv\">
+            <Channel column=\"velocity\"
+                     strokeColor=\"#1f77b4\"/>
+        </TimeSeries>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Import CSV headless",
+        url: "https://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20from%20headless%20CSV%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20style%3D%22font-weight%3A%20normal%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Control%20tag%20for%20region%20labels%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Run%22%20background%3D%22%235b5%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Walk%22%20background%3D%22%2355f%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20tag%20for%20time%20series%20data%20source%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeColumn%3D%220%22%20value%3D%22%24csv%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sep%3D%22%2C%22%20overviewChannels%3D%221%2C2%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%221%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%231f77b4%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%222%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23ff7f0e%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+        <Header value=\"Time Series from headless CSV\"
+                style=\"font-weight: normal\"/>·
+        <!-- Control tag for region labels -->
+        <TimeSeriesLabels name=\"label\" toName=\"ts\">
+            <Label value=\"Run\" background=\"#5b5\"/>
+            <Label value=\"Walk\" background=\"#55f\"/>
+        </TimeSeriesLabels>·
+        <!-- Object tag for time series data source -->
+        <TimeSeries name=\"ts\" valueType=\"url\"
+                    timeColumn=\"0\" value=\"$csv\"
+                    sep=\",\" overviewChannels=\"1,2\">
+            <Channel column=\"1\"
+                     strokeColor=\"#1f77b4\"/>
+            <Channel column=\"2\"
+                     strokeColor=\"#ff7f0e\"/>
+        </TimeSeries>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Relations between channels",
+        url: "https://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Time%20Series%20from%20headless%20CSV%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20style%3D%22font-weight%3A%20normal%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Control%20tag%20for%20region%20labels%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Run%22%20background%3D%22%235b5%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Walk%22%20background%3D%22%2355f%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Object%20tag%20for%20time%20series%20data%20source%20--%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20timeColumn%3D%220%22%20value%3D%22%24csv%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sep%3D%22%2C%22%20overviewChannels%3D%221%2C2%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%221%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%231f77b4%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%222%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%23ff7f0e%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>
+        <Header value=\"Time Series from headless CSV\"
+                style=\"font-weight: normal\"/>·
+        <!-- Control tag for region labels -->
+        <TimeSeriesLabels name=\"label\" toName=\"ts\">
+            <Label value=\"Run\" background=\"#5b5\"/>
+            <Label value=\"Walk\" background=\"#55f\"/>
+        </TimeSeriesLabels>·
+        <!-- Object tag for time series data source -->
+        <TimeSeries name=\"ts\" valueType=\"url\"
+                    timeColumn=\"0\" value=\"$csv\"
+                    sep=\",\" overviewChannels=\"1,2\">
+            <Channel column=\"1\"
+                     strokeColor=\"#1f77b4\"/>
+            <Channel column=\"2\"
+                     strokeColor=\"#ff7f0e\"/>
+        </TimeSeries>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Relations with text",
+        url: "https://localhost/?config=%3CView%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Link%20logger%20events%20with%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20monitoring%20signals%20using%20relations%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Text%20setup%20--%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Mark%20actions%20in%20text%22%20size%3D%226%22%2F%3E%3Cbr%3E%20%20%20%20%3CLabels%20name%3D%22logger_label%22%20toName%3D%22logger%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Error%22%20background%3D%22red%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Success%22%20background%3D%22orange%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CText%20name%3D%22logger%22%20value%3D%22%24event%22%2F%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3C!--%20Time%20series%20setup%20--%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Mark%20regions%20in%20time%20series%22%20size%3D%226%22%2F%3E%3Cbr%3E%20%20%20%20%3CTimeSeriesLabels%20name%3D%22ts_label%22%20toName%3D%22ts%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Error%22%20background%3D%22red%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22High%20load%22%20background%3D%22darkorange%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeriesLabels%3E%3Cbr%3E%3Cbr%3E%20%20%20%20%3CTimeSeries%20name%3D%22ts%22%20valueType%3D%22url%22%20value%3D%22%24csv%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sep%3D%22%2C%22%20timeColumn%3D%22time%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CChannel%20column%3D%22temperature%22%20units%3D%22%C2%B0C%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20strokeColor%3D%22%2317b%22%20legend%3D%22Temperature%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FTimeSeries%3E%3Cbr%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E%3Cbr%3E%3Cbr%3E%3C!--%3Cbr%3E%20%20%20%20Sample%20task%20data%20and%20completion%3Cbr%3E%20%20%20%20are%20for%20preview%20only%3Cbr%3E--%3E%3Cbr%3E%3Cbr%3E%3Cbr%3E%3C!--%20%7B%3Cbr%3E%20%20%22data%22%3A%20%7B%3Cbr%3E%20%20%20%20%22event%22%3A%20%22Authorization%20success%5CnError%20requesting%20auth%3A%20Authorization%20check%20failed%22%3Cbr%3E%20%20%7D%2C%3Cbr%3E%20%20%22completions%22%3A%20%5B%7B%3Cbr%3E%3Cbr%3E%20%20%20%20%22result%22%3A%20%5B%3Cbr%3E%20%20%20%20%20%20%20%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22value%22%3A%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22start%22%3A%2022%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22end%22%3A%2071%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22text%22%3A%20%22Error%20requesting%20auth%3A%20Authorization%20check%20failed%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22labels%22%3A%20%5B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22Error%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5D%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22id%22%3A%20%22ohdmBWCbqB%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22from_name%22%3A%20%22logger_label%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22to_name%22%3A%20%22logger%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22type%22%3A%20%22labels%22%3Cbr%3E%20%20%20%20%20%20%20%20%7D%2C%3Cbr%3E%20%20%20%20%20%20%20%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22value%22%3A%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22start%22%3A%206%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22end%22%3A%2017%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22instant%22%3A%20false%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22timeserieslabels%22%3A%20%5B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22High%20load%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5D%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22id%22%3A%20%22JlujfAED9-%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22from_name%22%3A%20%22ts_label%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22to_name%22%3A%20%22ts%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22type%22%3A%20%22timeserieslabels%22%3Cbr%3E%20%20%20%20%20%20%20%20%7D%2C%3Cbr%3E%20%20%20%20%20%20%20%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22value%22%3A%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22start%22%3A%200%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22end%22%3A%2021%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22text%22%3A%20%22Authorization%20success%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22labels%22%3A%20%5B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22Success%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5D%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22id%22%3A%20%22pA0JwD5dAF%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22from_name%22%3A%20%22logger_label%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22to_name%22%3A%20%22logger%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22type%22%3A%20%22labels%22%3Cbr%3E%20%20%20%20%20%20%20%20%7D%2C%3Cbr%3E%20%20%20%20%20%20%20%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22value%22%3A%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22start%22%3A%2013%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22end%22%3A%2022%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22instant%22%3A%20false%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22timeserieslabels%22%3A%20%5B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22Error%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5D%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22id%22%3A%20%22G4m2fkQAb4%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22from_name%22%3A%20%22ts_label%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22to_name%22%3A%20%22ts%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22type%22%3A%20%22timeserieslabels%22%3Cbr%3E%20%20%20%20%20%20%20%20%7D%2C%3Cbr%3E%20%20%20%20%20%20%20%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22from_id%22%3A%20%22JlujfAED9-%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22to_id%22%3A%20%22pA0JwD5dAF%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22type%22%3A%20%22relation%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22direction%22%3A%20%22right%22%3Cbr%3E%20%20%20%20%20%20%20%20%7D%2C%3Cbr%3E%20%20%20%20%20%20%20%20%7B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22from_id%22%3A%20%22G4m2fkQAb4%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22to_id%22%3A%20%22ohdmBWCbqB%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22type%22%3A%20%22relation%22%2C%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%22direction%22%3A%20%22right%22%3Cbr%3E%20%20%20%20%20%20%20%20%7D%3Cbr%3E%20%20%20%20%5D%3Cbr%3E%20%20%7D%5D%3Cbr%3E%7D%3Cbr%3E--%3E%3Cbr%3E",
+        expectedConfig: `<View>
+        <Header value=\"Link logger events with
+                       monitoring signals using relations\"/>·
+        <!-- Text setup -->
+        <Header value=\"Mark actions in text\" size=\"6\"/>
+        <Labels name=\"logger_label\" toName=\"logger\">
+            <Label value=\"Error\" background=\"red\"/>
+            <Label value=\"Success\" background=\"orange\"/>
+        </Labels>·
+        <Text name=\"logger\" value=\"$event\"/>·
+        <!-- Time series setup -->
+        <Header value=\"Mark regions in time series\" size=\"6\"/>
+        <TimeSeriesLabels name=\"ts_label\" toName=\"ts\">
+            <Label value=\"Error\" background=\"red\"/>
+            <Label value=\"High load\" background=\"darkorange\"/>
+        </TimeSeriesLabels>·
+        <TimeSeries name=\"ts\" valueType=\"url\" value=\"$csv\"
+                    sep=\",\" timeColumn=\"time\">
+            <Channel column=\"temperature\" units=\"°C\"
+                     strokeColor=\"#17b\" legend=\"Temperature\"/>
+        </TimeSeries>·
+    </View>··
+    <!--
+        Sample task data and completion
+        are for preview only
+    -->··
+    <!-- {
+      \"data\": {
+        \"event\": \"Authorization success\\nError requesting auth: Authorization check failed\"
+      },
+      \"completions\": [{·
+        \"result\": [
+            {
+                \"value\": {
+                    \"start\": 22,
+                    \"end\": 71,
+                    \"text\": \"Error requesting auth: Authorization check failed\",
+                    \"labels\": [
+                        \"Error\"
+                    ]
+                },
+                \"id\": \"ohdmBWCbqB\",
+                \"from_name\": \"logger_label\",
+                \"to_name\": \"logger\",
+                \"type\": \"labels\"
+            },
+            {
+                \"value\": {
+                    \"start\": 6,
+                    \"end\": 17,
+                    \"instant\": false,
+                    \"timeserieslabels\": [
+                        \"High load\"
+                    ]
+                },
+                \"id\": \"JlujfAED9-\",
+                \"from_name\": \"ts_label\",
+                \"to_name\": \"ts\",
+                \"type\": \"timeserieslabels\"
+            },
+            {
+                \"value\": {
+                    \"start\": 0,
+                    \"end\": 21,
+                    \"text\": \"Authorization success\",
+                    \"labels\": [
+                        \"Success\"
+                    ]
+                },
+                \"id\": \"pA0JwD5dAF\",
+                \"from_name\": \"logger_label\",
+                \"to_name\": \"logger\",
+                \"type\": \"labels\"
+            },
+            {
+                \"value\": {
+                    \"start\": 13,
+                    \"end\": 22,
+                    \"instant\": false,
+                    \"timeserieslabels\": [
+                        \"Error\"
+                    ]
+                },
+                \"id\": \"G4m2fkQAb4\",
+                \"from_name\": \"ts_label\",
+                \"to_name\": \"ts\",
+                \"type\": \"timeserieslabels\"
+            },
+            {
+                \"from_id\": \"JlujfAED9-\",
+                \"to_id\": \"pA0JwD5dAF\",
+                \"type\": \"relation\",
+                \"direction\": \"right\"
+            },
+            {
+                \"from_id\": \"G4m2fkQAb4\",
+                \"to_id\": \"ohdmBWCbqB\",
+                \"type\": \"relation\",
+                \"direction\": \"right\"
+            }
+        ]
+      }]
+    }
+    -->`,
+      },
+      {
+        name: "Advanced config templates: Filtering long labels list",
+        url: "http://localhost/?config=%3CView%20style%3D%22display%3A%20flex%3B%22%3E%3Cbr%3E%20%20%3CView%20style%3D%22width%3A%20350px%3B%20padding-right%3A%201em%3B%20height%3A%20400px%3B%20overflow-y%3A%20auto%22%3E%3Cbr%3E%20%20%20%20%3CFilter%20name%3D%22fl%22%20toName%3D%22ner%22%20hotkey%3D%22shift%2Bf%22%20minlength%3D%221%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CLabels%20name%3D%22ner%22%20toName%3D%22text%22%20showInline%3D%22false%22%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Person%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Organization%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20style%3D%22height%3A%20400px%3B%20overflow%3A%20auto%22%3E%3Cbr%3E%20%20%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View style=\"display: flex;\">
+      <View style=\"width: 350px; padding-right: 1em; height: 400px; overflow-y: auto\">
+        <Filter name=\"fl\" toName=\"ner\" hotkey=\"shift+f\" minlength=\"1\" />
+        <Labels name=\"ner\" toName=\"text\" showInline=\"false\">
+          <Label value=\"Person\" />
+          <Label value=\"Organization\" />
+        </Labels>
+      </View>·
+      <View style=\"height: 400px; overflow: auto\">
+        <Text name=\"text\" value=\"$text\" />
+      </View>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Long text with scrollbar",
+        url: "http://localhost/?config=%3CView%20style%3D%22display%3A%20flex%3B%22%3E%3Cbr%3E%20%20%3CView%20style%3D%22padding%3A%200em%201em%3B%20background%3A%20%23f1f1f1%3B%20margin-right%3A%201em%3B%20border-radius%3A%203px%22%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22position%3A%20sticky%3B%20top%3A%200%22%3E%3Cbr%3E%20%20%20%20%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Person%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Organization%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20style%3D%22height%3A%20300px%3B%20overflow%3A%20auto%3B%22%3E%3Cbr%3E%20%20%20%20%3CText%20name%3D%22text%22%20value%3D%22%24longText%22%20%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View style=\"display: flex;\">
+      <View style=\"padding: 0em 1em; background: #f1f1f1; margin-right: 1em; border-radius: 3px\">
+        <View style=\"position: sticky; top: 0\">
+          <Labels name=\"label\" toName=\"text\">
+            <Label value=\"Person\" />
+            <Label value=\"Organization\" />
+          </Labels>
+        </View>
+      </View>·
+      <View style=\"height: 300px; overflow: auto;\">
+        <Text name=\"text\" value=\"$longText\" />
+      </View>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Pretty choices",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%2F%3E%3Cbr%3E%20%20%3CView%20style%3D%22box-shadow%3A%202px%202px%205px%20%23999%3B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20padding%3A%2020px%3B%20margin-top%3A%202em%3B%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%205px%3B%22%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22Choose%20text%20sentiment%22%2F%3E%3Cbr%3E%20%20%20%20%3CChoices%20name%3D%22sentiment%22%20toName%3D%22text%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20%20%20choice%3D%22single%22%20showInLine%3D%22true%22%3E%3Cbr%3E%20%20%20%20%20%20%3CChoice%20value%3D%22Positive%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoice%20value%3D%22Negative%22%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoice%20value%3D%22Neutral%22%2F%3E%3Cbr%3E%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Text name=\"text\" value=\"$text\"/>
+      <View style=\"box-shadow: 2px 2px 5px #999;
+                   padding: 20px; margin-top: 2em;
+                   border-radius: 5px;\">
+        <Header value=\"Choose text sentiment\"/>
+        <Choices name=\"sentiment\" toName=\"text\"
+                 choice=\"single\" showInLine=\"true\">
+          <Choice value=\"Positive\"/>
+          <Choice value=\"Negative\"/>
+          <Choice value=\"Neutral\"/>
+        </Choices>
+      </View>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Sticky header",
+        url: "https://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CView%20style%3D%22padding%3A%200%201em%3B%20margin%3A%201em%200%3B%20background%3A%20%23f1f1f1%3B%20position%3A%20sticky%3B%20top%3A%200%3B%20border-radius%3A%203px%3B%20z-index%3A%20100%22%3E%3Cbr%3E%20%20%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22text%22%20showInline%3D%22true%22%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Person%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Organization%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%3E%3Cbr%3E%20%20%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <View style=\"padding: 0 1em; margin: 1em 0; background: #f1f1f1; position: sticky; top: 0; border-radius: 3px; z-index: 100\">
+        <Labels name=\"label\" toName=\"text\" showInline=\"true\">
+          <Label value=\"Person\" />
+          <Label value=\"Organization\" />
+        </Labels>
+      </View>·
+      <View>
+        <Text name=\"text\" value=\"$text\" />
+      </View>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Sticky left column",
+        url: "http://localhost/?config=%3CView%20style%3D%22display%3A%20flex%3B%22%3E%3Cbr%3E%20%20%3CView%20style%3D%22padding%3A%200em%201em%3B%20background%3A%20%23f1f1f1%3B%20margin-right%3A%201em%3B%20border-radius%3A%203px%22%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22position%3A%20sticky%3B%20top%3A%200%22%3E%3Cbr%3E%20%20%20%20%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Person%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%20%20%3CLabel%20value%3D%22Organization%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%3E%3Cbr%3E%20%20%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View style=\"display: flex;\">
+      <View style=\"padding: 0em 1em; background: #f1f1f1; margin-right: 1em; border-radius: 3px\">
+        <View style=\"position: sticky; top: 0\">
+          <Labels name=\"label\" toName=\"text\">
+            <Label value=\"Person\" />
+            <Label value=\"Organization\" />
+          </Labels>
+        </View>
+      </View>·
+      <View>
+        <Text name=\"text\" value=\"$text\" />
+      </View>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Three columns",
+        url: "http://localhost/?config=%3CView%20style%3D%22display%3A%20flex%3B%22%3E%3Cbr%3E%20%20%3CView%20style%3D%22width%3A%20150px%3B%20padding%3A%200%201em%3B%20margin-right%3A%200.5em%3B%20background%3A%20%23f1f1f1%3B%20border-radius%3A%203px%22%3E%3Cbr%3E%20%20%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Person%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Organization%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%3E%3Cbr%3E%20%20%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20style%3D%22padding%3A%200%201em%3B%20margin-left%3A%200.5em%3B%20background%3A%20%23f1f1f1%3B%20border-radius%3A%203px%22%3E%3Cbr%3E%20%20%20%20%3CChoices%20name%3D%22importance%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22Text%20Importance%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoice%20value%3D%22High%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoice%20value%3D%22Medium%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CChoice%20value%3D%22Low%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FChoices%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View style=\"display: flex;\">
+      <View style=\"width: 150px; padding: 0 1em; margin-right: 0.5em; background: #f1f1f1; border-radius: 3px\">
+        <Labels name=\"label\" toName=\"text\">
+          <Label value=\"Person\" />
+          <Label value=\"Organization\" />
+        </Labels>
+      </View>·
+      <View>
+        <Text name=\"text\" value=\"$text\" />
+      </View>·
+      <View style=\"padding: 0 1em; margin-left: 0.5em; background: #f1f1f1; border-radius: 3px\">
+        <Choices name=\"importance\" toName=\"text\">
+          <Header value=\"Text Importance\" />
+          <Choice value=\"High\" />
+          <Choice value=\"Medium\" />
+          <Choice value=\"Low\" />
+        </Choices>
+      </View>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Two columns",
+        url: "http://localhost/?config=%3CView%20style%3D%22display%3A%20flex%3B%22%3E%3Cbr%3E%20%20%3CView%20style%3D%22width%3A%20150px%3B%20padding-left%3A%202em%3B%20margin-right%3A%202em%3B%20background%3A%20%23f1f1f1%3B%20border-radius%3A%203px%22%3E%3Cbr%3E%20%20%20%20%3CLabels%20name%3D%22label%22%20toName%3D%22text%22%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Person%22%20%2F%3E%3Cbr%3E%20%20%20%20%20%20%3CLabel%20value%3D%22Organization%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FLabels%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%3E%3Cbr%3E%20%20%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View style=\"display: flex;\">
+      <View style=\"width: 150px; padding-left: 2em; margin-right: 2em; background: #f1f1f1; border-radius: 3px\">
+        <Labels name=\"label\" toName=\"text\">
+          <Label value=\"Person\" />
+          <Label value=\"Organization\" />
+        </Labels>
+      </View>·
+      <View>
+        <Text name=\"text\" value=\"$text\" />
+      </View>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Conditional classification",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CText%20name%3D%22text1%22%20value%3D%22%24text1%22%20%2F%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22sentiment%22%20toName%3D%22text1%22%20showInLine%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Positive%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Negative%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Neutral%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%20%20%3CView%20visibleWhen%3D%22choice-selected%22%3Cbr%3E%20%20%20%20%20%20%20%20whenTagName%3D%22sentiment%22%20whenChoiceValue%3D%22Positive%22%3E%3Cbr%3E%20%20%20%20%3CHeader%20value%3D%22What%20about%20this%20text%3F%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CText%20name%3D%22text2%22%20value%3D%22%24text2%22%20%2F%3E%3Cbr%3E%20%20%3C%2FView%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22sentiment2%22%20toName%3D%22text2%22%3Cbr%3E%20%20%09%20%20%20choice%3D%22single%22%20showInLine%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20visibleWhen%3D%22choice-selected%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20whenTagName%3D%22sentiment%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20whenChoiceValue%3D%22Positive%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Positive%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Negative%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Neutral%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Text name=\"text1\" value=\"$text1\" />
+      <Choices name=\"sentiment\" toName=\"text1\" showInLine=\"true\">
+        <Choice value=\"Positive\" />
+        <Choice value=\"Negative\" />
+        <Choice value=\"Neutral\" />
+      </Choices>·
+      <View visibleWhen=\"choice-selected\"
+            whenTagName=\"sentiment\" whenChoiceValue=\"Positive\">
+        <Header value=\"What about this text?\" />
+        <Text name=\"text2\" value=\"$text2\" />
+      </View>·
+      <Choices name=\"sentiment2\" toName=\"text2\"
+           choice=\"single\" showInLine=\"true\"
+               visibleWhen=\"choice-selected\"
+               whenTagName=\"sentiment\"
+               whenChoiceValue=\"Positive\">
+        <Choice value=\"Positive\" />
+        <Choice value=\"Negative\" />
+        <Choice value=\"Neutral\" />
+      </Choices>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Three level classification",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22sentiment%22%20toName%3D%22text%22%20showInLine%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Positive%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Negative%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Neutral%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22other-props%22%20toName%3D%22text%22%3Cbr%3E%20%20%09%20%20%20choice%3D%22single%22%20showInLine%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20visibleWhen%3D%22choice-selected%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20whenTagName%3D%22sentiment%22%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22width%3A%20100%25%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22Other%20properties%20of%20the%20text%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Descriptive%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Emotional%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22emotion%22%20toName%3D%22text%22%3Cbr%3E%20%20%09%20%20%20choice%3D%22single%22%20showInLine%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20visibleWhen%3D%22choice-selected%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20whenTagName%3D%22other-props%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20whenChoiceValue%3D%22Emotional%22%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22width%3A%20100%25%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22What%20emotion%3F%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Sadness%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Disgust%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Fear%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Surprise%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3C%2FView%3E%3Cbr%3E",
+        expectedConfig: `<View>
+      <Text name=\"text\" value=\"$text\" />·
+      <Choices name=\"sentiment\" toName=\"text\" showInLine=\"true\">
+        <Choice value=\"Positive\" />
+        <Choice value=\"Negative\" />
+        <Choice value=\"Neutral\" />
+      </Choices>·
+      <Choices name=\"other-props\" toName=\"text\"
+           choice=\"single\" showInLine=\"true\"
+               visibleWhen=\"choice-selected\"
+               whenTagName=\"sentiment\">
+        <View style=\"width: 100%\">
+          <Header value=\"Other properties of the text\" />
+        </View>
+        <Choice value=\"Descriptive\" />
+        <Choice value=\"Emotional\" />
+      </Choices>·
+      <Choices name=\"emotion\" toName=\"text\"
+           choice=\"single\" showInLine=\"true\"
+               visibleWhen=\"choice-selected\"
+               whenTagName=\"other-props\"
+               whenChoiceValue=\"Emotional\">
+        <View style=\"width: 100%\">
+          <Header value=\"What emotion?\" />
+        </View>
+        <Choice value=\"Sadness\" />
+        <Choice value=\"Disgust\" />
+        <Choice value=\"Fear\" />
+        <Choice value=\"Surprise\" />
+      </Choices>
+    </View>`,
+      },
+      {
+        name: "Advanced config templates: Two level classification",
+        url: "http://localhost/?config=%3CView%3E%3Cbr%3E%3Cbr%3E%20%20%3CText%20name%3D%22text%22%20value%3D%22%24text%22%20%2F%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22sentiment%22%20toName%3D%22text%22%20showInLine%3D%22true%22%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Positive%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Negative%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Neutral%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%20%20%3CChoices%20name%3D%22other-props%22%20toName%3D%22text%22%3Cbr%3E%20%20%09%20%20%20choice%3D%22single%22%20showInLine%3D%22true%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20visibleWhen%3D%22choice-selected%22%3Cbr%3E%20%20%20%20%20%20%20%20%20%20%20whenTagName%3D%22sentiment%22%3E%3Cbr%3E%20%20%20%20%3CView%20style%3D%22width%3A100%25%22%3E%3Cbr%3E%20%20%20%20%20%20%3CHeader%20value%3D%22Other%20properties%20of%20the%20text%22%20%2F%3E%3Cbr%3E%20%20%20%20%3C%2FView%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Descriptive%22%20%2F%3E%3Cbr%3E%20%20%20%20%3CChoice%20value%3D%22Emotional%22%20%2F%3E%3Cbr%3E%20%20%3C%2FChoices%3E%3Cbr%3E%3Cbr%3E%3C%2FView%3E",
+        expectedConfig: `<View>·
+      <Text name=\"text\" value=\"$text\" />
+      <Choices name=\"sentiment\" toName=\"text\" showInLine=\"true\">
+        <Choice value=\"Positive\" />
+        <Choice value=\"Negative\" />
+        <Choice value=\"Neutral\" />
+      </Choices>·
+      <Choices name=\"other-props\" toName=\"text\"
+           choice=\"single\" showInLine=\"true\"
+               visibleWhen=\"choice-selected\"
+               whenTagName=\"sentiment\">
+        <View style=\"width:100%\">
+          <Header value=\"Other properties of the text\" />
+        </View>
+        <Choice value=\"Descriptive\" />
+        <Choice value=\"Emotional\" />
+      </Choices>·
+    </View>`,
+      },
     ])("$name", async ({ url, expectedConfig }) => {
       Object.defineProperty(window, "location", {
         value: new URL(url),
