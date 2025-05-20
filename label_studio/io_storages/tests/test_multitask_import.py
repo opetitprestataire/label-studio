@@ -14,12 +14,14 @@ from io_storages.utils import StorageObjectParams, load_tasks_json
 from moto import mock_s3
 from projects.tests.factories import ProjectFactory
 from rest_framework.test import APIClient
-
 from tests.utils import azure_client_mock, gcs_client_mock, mock_feature_flag, redis_client_mock
 
 #
 # Integration tests for storage.sync()
 #
+
+
+pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
@@ -65,7 +67,6 @@ def _test_storage_import(project, storage_class, task_data, **storage_kwargs):
 
 
 @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
-@pytest.mark.django_db
 def test_import_multiple_tasks_s3(project, common_task_data):
     with mock_s3():
         # Setup S3 bucket and test data
@@ -88,7 +89,6 @@ def test_import_multiple_tasks_s3(project, common_task_data):
 
 
 @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
-@pytest.mark.django_db
 def test_import_multiple_tasks_gcs(project, common_task_data):
     # initialize mock with sample data
     with gcs_client_mock():
@@ -103,7 +103,6 @@ def test_import_multiple_tasks_gcs(project, common_task_data):
 
 
 @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
-@pytest.mark.django_db
 def test_import_multiple_tasks_azure(project, common_task_data):
     # initialize mock with sample data
     with azure_client_mock(sample_json_contents=common_task_data, sample_blob_names=['test.json']):
@@ -116,7 +115,6 @@ def test_import_multiple_tasks_azure(project, common_task_data):
 
 
 @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
-@pytest.mark.django_db
 def test_import_multiple_tasks_redis(project, common_task_data):
     with redis_client_mock() as redis:
         redis.set('test.json', json.dumps(common_task_data))
@@ -131,7 +129,6 @@ def test_import_multiple_tasks_redis(project, common_task_data):
 
 
 @mock_feature_flag('fflag_feat_dia_2092_multitasks_per_storage_link', True)
-@pytest.mark.django_db
 def test_storagelink_fields(project, common_task_data):
     # use an actual storage and storagelink to test this, since factories aren't connected properly
     with mock_s3():
@@ -181,7 +178,6 @@ def storage():
     return project, storage
 
 
-@pytest.mark.django_db
 def create_tasks(storage, params_list: list[StorageObjectParams]):
     project, storage = storage
     # check that no errors are raised during task creation; not checking the task itself
@@ -237,7 +233,6 @@ annots_preds_task_list = [
 ]
 
 
-@pytest.mark.django_db
 def test_bare_task(storage):
     task_data = bare_task_list[0]
 
@@ -249,7 +244,6 @@ def test_bare_task(storage):
     create_tasks(storage, output)
 
 
-@pytest.mark.django_db
 def test_data_key(storage):
     task_data = {'data': bare_task_list[0]}
 
@@ -261,7 +255,6 @@ def test_data_key(storage):
     create_tasks(storage, output)
 
 
-@pytest.mark.django_db
 def test_1elem_list(storage):
     task_data = bare_task_list[:1]
 
@@ -275,7 +268,6 @@ def test_1elem_list(storage):
     create_tasks(storage, output)
 
 
-@pytest.mark.django_db
 def test_2elem_list(storage):
     task_data = bare_task_list
 
@@ -290,7 +282,6 @@ def test_2elem_list(storage):
     create_tasks(storage, output)
 
 
-@pytest.mark.django_db
 def test_preds_and_annots_list(storage):
     task_data = annots_preds_task_list
 
@@ -308,7 +299,6 @@ def test_preds_and_annots_list(storage):
     create_tasks(storage, output)
 
 
-@pytest.mark.django_db
 def test_list_jsonl(storage):
     task_data = bare_task_list
 
@@ -323,7 +313,6 @@ def test_list_jsonl(storage):
     create_tasks(storage, output)
 
 
-@pytest.mark.django_db
 @mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True)
 def test_list_jsonl_with_preds_and_annots(storage):
     task_data = annots_preds_task_list
@@ -342,7 +331,6 @@ def test_list_jsonl_with_preds_and_annots(storage):
     create_tasks(storage, output)
 
 
-@pytest.mark.django_db
 @mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', False)
 def test_ff_blocks_jsonl():
     with pytest.raises(ValueError):
