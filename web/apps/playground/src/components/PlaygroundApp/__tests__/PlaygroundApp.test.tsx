@@ -1,13 +1,13 @@
-import { render, waitFor } from '@testing-library/react';
-import { PlaygroundApp } from '../PlaygroundApp';
-import { useAtom, useSetAtom } from 'jotai';
-import { configAtom, errorAtom, loadingAtom } from '../../../atoms/configAtoms';
+import { render, waitFor } from "@testing-library/react";
+import { PlaygroundApp } from "../PlaygroundApp";
+import { useAtom, useSetAtom } from "jotai";
+import { configAtom, errorAtom, loadingAtom } from "../../../atoms/configAtoms";
 
 // Mock CodeEditor and allow it to be spied on
-jest.mock('../../EditorPanel', () => ({
+jest.mock("../../EditorPanel", () => ({
   EditorPanel: () => <div>EditorPanel</div>,
 }));
-jest.mock('../../PreviewPanel', () => ({
+jest.mock("../../PreviewPanel", () => ({
   PreviewPanel: () => <div>PreviewPanel</div>,
 }));
 jest.mock("@humansignal/ui", () => ({
@@ -15,8 +15,8 @@ jest.mock("@humansignal/ui", () => ({
 }));
 
 // Mock the atoms
-jest.mock('jotai', () => {
-  const originalModule = jest.requireActual('jotai');
+jest.mock("jotai", () => {
+  const originalModule = jest.requireActual("jotai");
   return {
     ...originalModule,
     useAtom: jest.fn(),
@@ -27,7 +27,7 @@ jest.mock('jotai', () => {
 // Mock the fetch function
 global.fetch = jest.fn();
 
-describe('PlaygroundApp', () => {
+describe("PlaygroundApp", () => {
   const mockSetConfig = jest.fn();
   const mockSetError = jest.fn();
   const mockSetLoading = jest.fn();
@@ -36,8 +36,8 @@ describe('PlaygroundApp', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useAtom as jest.Mock).mockImplementation((atom) => {
-      if (atom === configAtom) return ['', mockSetConfig];
-      if (atom === errorAtom) return ['', mockSetError];
+      if (atom === configAtom) return ["", mockSetConfig];
+      if (atom === errorAtom) return ["", mockSetError];
       if (atom === loadingAtom) return [false, mockSetLoading];
       return [null, mockSetInterfaces];
     });
@@ -49,18 +49,18 @@ describe('PlaygroundApp', () => {
     });
 
     // Reset window.location
-    Object.defineProperty(window, 'location', {
-      value: new URL('http://localhost'),
+    Object.defineProperty(window, "location", {
+      value: new URL("http://localhost"),
       writable: true,
       configurable: true,
     });
   });
 
-  it('should handle config parameter in URL', async () => {
+  it("should handle config parameter in URL", async () => {
     // Mock URL with config parameter
     const mockConfig = '<View><Text name="text" value="$text"/></View>';
-    const encodedConfig = encodeURIComponent(mockConfig.replace(/\n/g, '<br>'));
-    Object.defineProperty(window, 'location', {
+    const encodedConfig = encodeURIComponent(mockConfig.replace(/\n/g, "<br>"));
+    Object.defineProperty(window, "location", {
       value: new URL(`http://localhost?config=${encodedConfig}`),
       writable: true,
       configurable: true,
@@ -74,10 +74,10 @@ describe('PlaygroundApp', () => {
     });
   });
 
-  it('should handle invalid config parameter', async () => {
+  it("should handle invalid config parameter", async () => {
     // Mock URL with invalid config parameter that will cause decodeURIComponent to fail
-    Object.defineProperty(window, 'location', {
-      value: new URL('http://localhost?config=invalid%config'),
+    Object.defineProperty(window, "location", {
+      value: new URL("http://localhost?config=invalid%config"),
       writable: true,
       configurable: true,
     });
@@ -85,15 +85,17 @@ describe('PlaygroundApp', () => {
     render(<PlaygroundApp />);
 
     await waitFor(() => {
-      expect(mockSetError).toHaveBeenCalledWith('Failed to decode config. Are you sure it\'s a valid urlencoded string?');
+      expect(mockSetError).toHaveBeenCalledWith(
+        "Failed to decode config. Are you sure it's a valid urlencoded string?",
+      );
     });
   });
 
-  it('should handle configUrl parameter', async () => {
+  it("should handle configUrl parameter", async () => {
     // Mock URL with configUrl parameter
     const mockConfig = '<View><Text name="text" value="$text"/></View>';
-    Object.defineProperty(window, 'location', {
-      value: new URL('http://localhost?configUrl=http://example.com/config.xml'),
+    Object.defineProperty(window, "location", {
+      value: new URL("http://localhost?configUrl=http://example.com/config.xml"),
       writable: true,
       configurable: true,
     });
@@ -116,16 +118,16 @@ describe('PlaygroundApp', () => {
     });
   });
 
-  it('should handle failed configUrl fetch', async () => {
+  it("should handle failed configUrl fetch", async () => {
     // Mock URL with configUrl parameter
-    Object.defineProperty(window, 'location', {
-      value: new URL('http://localhost?configUrl=http://example.com/config.xml'),
+    Object.defineProperty(window, "location", {
+      value: new URL("http://localhost?configUrl=http://example.com/config.xml"),
       writable: true,
       configurable: true,
     });
 
     // Mock failed fetch response
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Failed to fetch'));
+    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error("Failed to fetch"));
 
     render(<PlaygroundApp />);
 
@@ -134,15 +136,15 @@ describe('PlaygroundApp', () => {
     });
 
     await waitFor(() => {
-      expect(mockSetError).toHaveBeenCalledWith('Failed to fetch config from URL.');
+      expect(mockSetError).toHaveBeenCalledWith("Failed to fetch config from URL.");
       expect(mockSetLoading).toHaveBeenCalledWith(false);
     });
   });
 
-  it('should handle non-200 configUrl response', async () => {
+  it("should handle non-200 configUrl response", async () => {
     // Mock URL with configUrl parameter
-    Object.defineProperty(window, 'location', {
-      value: new URL('http://localhost?configUrl=http://example.com/config.xml'),
+    Object.defineProperty(window, "location", {
+      value: new URL("http://localhost?configUrl=http://example.com/config.xml"),
       writable: true,
       configurable: true,
     });
@@ -159,15 +161,15 @@ describe('PlaygroundApp', () => {
     });
 
     await waitFor(() => {
-      expect(mockSetError).toHaveBeenCalledWith('Failed to fetch config from URL.');
+      expect(mockSetError).toHaveBeenCalledWith("Failed to fetch config from URL.");
       expect(mockSetLoading).toHaveBeenCalledWith(false);
     });
   });
 
-  it('should handle interfaces parameter', async () => {
+  it("should handle interfaces parameter", async () => {
     // Mock URL with interfaces parameter
-    Object.defineProperty(window, 'location', {
-      value: new URL('http://localhost?interfaces=skip,submit'),
+    Object.defineProperty(window, "location", {
+      value: new URL("http://localhost?interfaces=skip,submit"),
       writable: true,
       configurable: true,
     });
@@ -175,7 +177,7 @@ describe('PlaygroundApp', () => {
     render(<PlaygroundApp />);
 
     await waitFor(() => {
-      expect(mockSetInterfaces).toHaveBeenCalledWith(['skip', 'submit']);
+      expect(mockSetInterfaces).toHaveBeenCalledWith(["skip", "submit"]);
     });
   });
 });
