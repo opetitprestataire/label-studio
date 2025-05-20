@@ -8,6 +8,7 @@ import logging
 import os
 import traceback as tb
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import asdict
 from datetime import datetime
 from typing import Union
 from urllib.parse import urljoin
@@ -341,9 +342,7 @@ class ImportStorage(Storage):
         raise NotImplementedError
 
     @classmethod
-    def add_task(
-        cls, data, project, maximum_annotations, max_inner_id, storage, key, row_index, row_group, link_class
-    ):
+    def add_task(cls, data, project, maximum_annotations, max_inner_id, storage, link_params, link_class):
         # predictions
         predictions = data.get('predictions', [])
         if predictions:
@@ -377,8 +376,8 @@ class ImportStorage(Storage):
                 inner_id=max_inner_id,
             )
 
-            link_class.create(task, key, storage, row_index=row_index, row_group=row_group)
-            logger.debug(f'Create {storage.__class__.__name__} link with {key=} {row_index=} {row_group=} for {task=}')
+            link_class.create(task, storage=storage, **asdict(link_params))
+            logger.debug(f'Create {storage.__class__.__name__} link with {asdict(link_params)} for {task=}')
 
             raise_exception = not flag_set(
                 'ff_fix_back_dev_3342_storage_scan_with_invalid_annotations', user=AnonymousUser()
@@ -454,7 +453,7 @@ class ImportStorage(Storage):
                     maximum_annotations,
                     max_inner_id,
                     self,
-                    **link_params,
+                    link_params,
                     link_class=link_class,
                 )
                 max_inner_id += 1

@@ -121,8 +121,8 @@ def parse_range(range_header):
 @dataclass
 class StorageLinkParams:
     key: str
-    row_index: int | None
-    row_group: int | None
+    row_index: int | None = None
+    row_group: int | None = None
 
     @classmethod
     def bulk_create(
