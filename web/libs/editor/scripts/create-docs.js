@@ -104,7 +104,7 @@ function processTemplate(t) {
   // remove all other @params we don't know how to use
   delete t.customTags;
 
-  let str = jsdoc2md
+  const str = jsdoc2md
     .renderSync({ data: [t], "example-lang": "html" })
     // remove useless Kind: member
     .replace(/^.*?\*\*Kind\*\*.*?\n/ms, "### Parameters\n")
