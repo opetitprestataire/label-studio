@@ -153,7 +153,6 @@ In this scenario, your browser receives an HTTP 303 redirect to a time-limited S
 
 <img src="/images/storages/storage-proxy-presigned.png" style="max-width:600px; margin: 0 auto" alt="Screenshot of storage page with use pre-signed off">
 
-The main benefit to using pre-signed URLs is if you want to ensure that your media files are isolated from the Label Studio network as much as possible. 
 
 #### Treat every bucket object as a source file
 
