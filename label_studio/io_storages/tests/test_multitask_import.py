@@ -11,9 +11,11 @@ from io_storages.tests.factories import (
     RedisImportStorageFactory,
     S3ImportStorageFactory,
 )
+from io_storages.utils import StorageObjectParams, load_tasks_json
 from moto import mock_s3
 from projects.tests.factories import ProjectFactory
 from rest_framework.test import APIClient
+
 from tests.utils import azure_client_mock, gcs_client_mock, mock_feature_flag, redis_client_mock
 
 
@@ -142,3 +144,173 @@ class TestMultiTaskImport(TestCase):
             self.assertEqual(storage_links[0].row_group, None)
             self.assertEqual(storage_links[1].row_index, 1)
             self.assertEqual(storage_links[1].row_group, None)
+
+
+@mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True)
+class TestTaskFormats(TestCase):
+
+    bare_task_list = [
+        {
+            'text': 'Test task 1',
+        },
+        {
+            'text': 'Test task 2',
+        },
+    ]
+
+    annots_preds_task_list = [
+        {
+            'data': {'text': 'Machine learning models require high-quality labeled data.'},
+            'annotations': [
+                {
+                    'result': [
+                        {
+                            'value': {'start': 0, 'end': 22, 'text': 'Machine learning models', 'labels': ['FIELD']},
+                            'from_name': 'label',
+                            'to_name': 'text',
+                            'type': 'labels',
+                        },
+                        {
+                            'value': {'start': 44, 'end': 56, 'text': 'labeled data', 'labels': ['ACTION']},
+                            'from_name': 'label',
+                            'to_name': 'text',
+                            'type': 'labels',
+                        },
+                    ]
+                }
+            ],
+            'predictions': [
+                {
+                    'result': [
+                        {
+                            'value': {'start': 0, 'end': 22, 'text': 'Machine learning models', 'labels': ['FIELD']},
+                            'from_name': 'label',
+                            'to_name': 'text',
+                            'type': 'labels',
+                        }
+                    ]
+                }
+            ],
+        },
+        {'data': {'text': 'Prosper annotation helps improve model accuracy.'}, 'predictions': [{'result': []}]},
+    ]
+
+    def setUp(self):
+        self.project = ProjectFactory()
+        self.storage = S3ImportStorage(
+            project=self.project,
+            bucket='example',
+            aws_access_key_id='example',
+            aws_secret_access_key='example',
+            use_blob_urls=False,
+        )
+        self.storage.save()
+
+    def _create_tasks(self, params_list: list[StorageObjectParams]):
+        # check that no errors are raised during task creation; not checking the task itself
+        for params in params_list:
+            _ = S3ImportStorage.add_task(self.project, 1, 0, self.storage, params, S3ImportStorageLink)
+
+    def test_bare_task(self):
+
+        task_data = self.bare_task_list[0]
+
+        blob_str = json.dumps(task_data).encode()
+        output = load_tasks_json(blob_str, 'test.json')
+        expected_output = [StorageObjectParams(key='test.json', task_data=task_data)]
+        self.assertEqual(output, expected_output)
+
+        self._create_tasks(output)
+
+    def test_data_key(self):
+
+        task_data = {'data': self.bare_task_list[0]}
+
+        blob_str = json.dumps(task_data).encode()
+        output = load_tasks_json(blob_str, 'test.json')
+        expected_output = [StorageObjectParams(key='test.json', task_data=task_data)]
+        self.assertEqual(output, expected_output)
+
+        self._create_tasks(output)
+
+    def test_1elem_list(self):
+
+        task_data = self.bare_task_list[:1]
+
+        blob_str = json.dumps(task_data).encode()
+        output = load_tasks_json(blob_str, 'test.json')
+        expected_output = [
+            StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
+        ]
+        self.assertEqual(output, expected_output)
+
+        self._create_tasks(output)
+
+    def test_2elem_list(self):
+
+        task_data = self.bare_task_list
+
+        blob_str = json.dumps(task_data).encode()
+        output = load_tasks_json(blob_str, 'test.json')
+        expected_output = [
+            StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
+            StorageObjectParams(key='test.json', task_data=task_data[1], row_index=1),
+        ]
+        self.assertEqual(output, expected_output)
+
+        self._create_tasks(output)
+
+    def test_preds_and_annots_list(self):
+        task_data = self.annots_preds_task_list
+
+        blob_str = json.dumps(task_data).encode()
+        output = load_tasks_json(blob_str, 'test.json')
+        expected_output = [
+            StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
+            StorageObjectParams(key='test.json', task_data=task_data[1], row_index=1),
+        ]
+        self.assertEqual(output, expected_output)
+
+        self._create_tasks(output)
+
+    def test_list_jsonl(self):
+        task_data = self.bare_task_list
+
+        blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()
+        output = load_tasks_json(blob_str, 'test.jsonl')
+        expected_output = [
+            StorageObjectParams(key='test.jsonl', task_data=task_data[0], row_index=0),
+            StorageObjectParams(key='test.jsonl', task_data=task_data[1], row_index=1),
+        ]
+        self.assertEqual(output, expected_output)
+
+        self._create_tasks(output)
+
+    def test_list_jsonl_with_preds_and_annots(self):
+        task_data = self.annots_preds_task_list
+
+        blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()
+        output = load_tasks_json(blob_str, 'test.jsonl')
+        expected_output = [
+            StorageObjectParams(key='test.jsonl', task_data=task_data[0], row_index=0),
+            StorageObjectParams(key='test.jsonl', task_data=task_data[1], row_index=1),
+        ]
+        self.assertEqual(output, expected_output)
+
+        self._create_tasks(output)
+
+    def test_ff_blocks_jsonl(self):
+        with mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', False):
+            with self.assertRaises(ValueError):
+                load_tasks_json(b'{"text": "Test task 1"}\n{"text": "Test task 2"}', 'test.jsonl')
+
+    def test_mixed_formats_invalid(self):
+        task_data = [self.bare_task_list[0], self.annots_preds_task_list[0]]
+
+        with self.assertRaises(ValueError):
+            blob_str = json.dumps(task_data).encode()
+            load_tasks_json(blob_str, 'test.json')
+
+        with self.assertRaises(ValueError):
+            blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()
+            load_tasks_json(blob_str, 'test.jsonl')

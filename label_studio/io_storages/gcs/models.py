@@ -23,7 +23,12 @@ from io_storages.base_models import (
     ProjectStorageMixin,
 )
 from io_storages.gcs.utils import GCS
-from io_storages.utils import StorageLinkParams, load_tasks_json, parse_range, storage_can_resolve_bucket_url
+from io_storages.utils import (
+    StorageObjectParams,
+    load_tasks_json,
+    parse_range,
+    storage_can_resolve_bucket_url,
+)
 from tasks.models import Annotation
 
 logger = logging.getLogger(__name__)
@@ -180,10 +185,10 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
             return_key=True,
         )
 
-    def get_data(self, key) -> tuple[list[dict], list[StorageLinkParams]]:
+    def get_data(self, key) -> list[StorageObjectParams]:
         if self.use_blob_urls:
             task = {settings.DATA_UNDEFINED_NAME: GCS.get_uri(self.bucket, key)}
-            return [task], [StorageLinkParams(key=key)]
+            return [StorageObjectParams(key=key, task_data=task)]
         blob_str = GCS.read_file(
             client=self.get_client(),
             bucket_name=self.bucket,

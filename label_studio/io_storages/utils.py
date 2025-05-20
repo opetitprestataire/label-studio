@@ -119,27 +119,27 @@ def parse_range(range_header):
 
 
 @dataclass
-class StorageLinkParams:
+class StorageObjectParams:
+    task_data: dict
     key: str
     row_index: int | None = None
     row_group: int | None = None
 
     @classmethod
     def bulk_create(
-        cls, key, row_idxs: list[int] | None = None, row_groups: list[int] | None = None
-    ) -> list['StorageLinkParams']:
-        if row_idxs is None and row_groups is None:
-            row_idxs, row_groups = [None], [None]
+        cls, task_datas: list[dict], key, row_idxs: list[int] | None = None, row_groups: list[int] | None = None
+    ) -> list['StorageObjectParams']:
         if row_idxs is None:
-            row_idxs = [None] * len(row_groups)
+            row_idxs = [None] * len(task_datas)
         if row_groups is None:
-            row_groups = [None] * len(row_idxs)
+            row_groups = [None] * len(task_datas)
         return [
-            cls(key=key, row_index=row_idx, row_group=row_group) for row_idx, row_group in zip(row_idxs, row_groups)
+            cls(key=key, row_index=row_idx, row_group=row_group, task_data=task_data)
+            for row_idx, row_group, task_data in zip(row_idxs, row_groups, task_datas)
         ]
 
 
-def _load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[StorageLinkParams]]:
+def _load_tasks_json(blob_str: str, key: str) -> list[StorageObjectParams]:
     """
     Parse blob_str containing task JSON(s) and return the validated result or raise an error.
 
@@ -168,14 +168,14 @@ def _load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[StorageL
                 table = pyarrow.json.read_json(
                     pa.py_buffer(blob_str), parse_options=pa.json.ParseOptions(newlines_in_values=True)
                 )
-                return table.to_pylist(), StorageLinkParams.bulk_create(key, range(table.num_rows))
+                return StorageObjectParams.bulk_create(table.to_pylist(), key, range(table.num_rows))
             except Exception as e:
                 _error_wrapper(e)
         else:
             _error_wrapper(e)
 
     if isinstance(value, dict):
-        return [value], [StorageLinkParams(key)]
+        return [StorageObjectParams(key=key, task_data=value)]
     if isinstance(value, list):
         # validate tasks by briefly converting to table
         try:
@@ -183,12 +183,12 @@ def _load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[StorageL
             values = table.to_pylist()
         except Exception as e:
             _error_wrapper(e)
-        return values, StorageLinkParams.bulk_create(key, range(len(values)))
+        return StorageObjectParams.bulk_create(values, key, range(len(values)))
 
     _error_wrapper()
 
 
-def load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[StorageLinkParams]]:
+def load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[StorageObjectParams]]:
     # uses _load_tasks_json here and an LSE-specific implementation in LSE
     load_tasks_json_func = load_func(settings.STORAGE_LOAD_TASKS_JSON)
     return load_tasks_json_func(blob_str, key)
