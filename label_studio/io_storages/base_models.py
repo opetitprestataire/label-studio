@@ -347,7 +347,7 @@ class ImportStorage(Storage):
         data = link_kwargs.pop('task_data')
 
         # predictions
-        predictions = data.get('predictions', [])
+        predictions = data.get('predictions') or []
         if predictions:
             if 'data' not in data:
                 raise ValueError(
@@ -355,7 +355,7 @@ class ImportStorage(Storage):
                 )
 
         # annotations
-        annotations = data.get('annotations', [])
+        annotations = data.get('annotations') or []
         cancelled_annotations = 0
         if annotations:
             if 'data' not in data:
