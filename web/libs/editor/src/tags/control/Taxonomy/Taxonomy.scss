@@ -49,8 +49,8 @@ body :global(.ant-select-tree) {
   color: var(--color-neutral-content);
 }
 
-body :global(.ant-select-tree .ant-select-tree-node-content-wrapper:hover) {
-  background-color: var(--color-primary-emphasis-subtle) !important;
+body :global(.ant-select-tree .ant-select-tree-treenode .ant-select-tree-node-content-wrapper:hover) {
+  background-color: var(--color-primary-emphasis-subtle);
   color: var(--color-neutral-content);
 }
 
