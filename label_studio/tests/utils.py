@@ -417,7 +417,7 @@ def file_exists_in_storage(response, exists=True, file_path=None):
 
 
 def mock_feature_flag(flag_name: str, value: bool, parent_module: str = 'core.feature_flags'):
-    """Decorator to mock a feature flag state for a test function or method.
+    """Decorator to mock a feature flag state for a test function.
 
     Args:
         flag_name: Name of the feature flag to mock
@@ -436,11 +436,6 @@ def mock_feature_flag(flag_name: str, value: bool, parent_module: str = 'core.fe
             with mock.patch(f'{parent_module}.flag_set', wraps=fake_flag_set):
                 return func(*args, **kwargs)
 
-        # Handle both functions and methods
-        # For instance methods, we need to preserve the instance
-        if hasattr(func, '__self__'):
-            # This is a bound method, preserve the binding
-            return wrapper.__get__(func.__self__, type(func.__self__))
         return wrapper
 
     return decorator
