@@ -37,7 +37,7 @@ const HtxPdf = inject("store")(
   observer(({ item }) => {
     if (!item._url) return null;
     return (
-      <iframe
+      <embed
         src={item._url}
         title="PDF Document"
         style={{ width: "100%", height: "600px", border: "none" }}
