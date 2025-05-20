@@ -94,7 +94,7 @@ export const Filter: FC<FilterInterface> = ({ availableFilters, filterData, onCh
     return (
       <Block name={"filter"}>
         {filterList.length > 0 ? renderFilterList : <Elem name="empty">No filters applied</Elem>}
-        <Button look="alt" size="small" look="string" onClick={addNewFilterListItem} aria-label="Add filter">
+        <Button size="small" look="string" onClick={addNewFilterListItem} aria-label="Add filter">
           Add {filterList.length ? "Another Filter" : "Filter"}
         </Button>
       </Block>

@@ -38,7 +38,6 @@ export const HistoryActions = observer(({ annotation }) => {
         <Elem
           tag={Button}
           name="action"
-          look="danger"
           look="string"
           size="small"
           aria-label="Reset"
