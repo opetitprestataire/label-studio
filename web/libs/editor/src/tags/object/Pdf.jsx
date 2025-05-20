@@ -39,9 +39,7 @@ const HtxPdf = inject("store")(
     return (
       <embed
         src={item._url}
-        title="PDF Document"
         style={{ width: "100%", height: "600px", border: "none" }}
-        allowFullScreen
       />
     );
   }),
