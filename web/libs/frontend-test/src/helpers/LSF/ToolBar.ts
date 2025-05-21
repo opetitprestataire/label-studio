@@ -31,7 +31,7 @@ export const ToolBar = {
   },
 
   get submitBtn() {
-    return this.sectionTwo.find('[aria-label="submit"]');
+    return this.sectionTwo.find('[aria-label="Submit current annotation"]');
   },
 
   get annotationDropdownTrigger() {
