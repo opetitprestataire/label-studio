@@ -523,6 +523,7 @@ class ImportStorage(Storage):
                 self.info_set_queued()
                 import_sync_background(self.__class__, self.id)
             except Exception:
+                # needed to facilitate debugging storage-related testcases, since otherwise no exception is logged
                 logger.debug(f'Storage {self} failed', exc_info=True)
                 storage_background_failure(self)
 
