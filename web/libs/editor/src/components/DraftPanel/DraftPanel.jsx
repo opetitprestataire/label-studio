@@ -24,7 +24,14 @@ export const DraftPanel = observer(({ item }) => {
         alignment="top-left"
         title={item.draftSelected ? "switch to original result" : "switch to current draft"}
       >
-        <Button type="button" size="smaller" look="string"  onClick={() => item.toggleDraft()} className={panel.elem("toggle")} aria-label="Toggle draft mode">
+        <Button
+          type="button"
+          size="smaller"
+          look="string"
+          onClick={() => item.toggleDraft()}
+          className={panel.elem("toggle")}
+          aria-label="Toggle draft mode"
+        >
           {item.draftSelected ? "draft" : "original"}
         </Button>
       </Tooltip>

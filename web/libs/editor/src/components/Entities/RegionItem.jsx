@@ -47,9 +47,9 @@ const RegionItemDesc = observer(({ item, setDraggable }) => {
           ) : null;
         })}
       </Elem>
-      <Elem name="collapse" tag={Button} size="small" type="text" onClick={toggleCollapsed}>
+      <Button size="small" type="text" onClick={toggleCollapsed}>
         {collapsed ? <IconExpandTool /> : <IconCollapse />}
-      </Elem>
+      </Button>
     </Elem>
   );
 });
@@ -103,16 +103,9 @@ const RegionItemContent = observer(({ idx, item, setDraggable }) => {
           )}
 
           {item.hideable && (
-            <Elem
-              tag={Button}
-              name="toggle"
-              size="small"
-              type="text"
-              mod={{ active: !item.hidden }}
-              onClick={item.toggleHidden}
-            >
+            <Button size="small" type="text" mod={{ active: !item.hidden }} onClick={item.toggleHidden}>
               {item.hidden ? <IconInvisible /> : <IconVisible />}
-            </Elem>
+            </Button>
           )}
         </Space>
       </Elem>

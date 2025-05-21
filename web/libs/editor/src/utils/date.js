@@ -33,7 +33,7 @@ export function prettyDate(time) {
 
   const date = new Date(time);
   const diff = (new Date().getTime() - date.getTime()) / 1000;
-  const day_diff = Math.round(diff / 86400);
+  const day_diff = Math.floor(diff / 86400);
 
   if (isNaN(day_diff) || day_diff < 0) return;
 

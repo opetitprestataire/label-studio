@@ -77,7 +77,12 @@ export const Controls = controlsInjector(
         buttons.push(
           <ButtonTooltip key="submit" name="annotation:submit" title={title}>
             <Elem name="tooltip-wrapper">
-              <Button disabled={disabled || submitDisabled} look="primary" onClick={store.submitAnnotation} aria-label="Submit annotation">
+              <Button
+                disabled={disabled || submitDisabled}
+                look="primary"
+                onClick={store.submitAnnotation}
+                aria-label="Submit annotation"
+              >
                 Submit
               </Button>
             </Elem>
@@ -88,7 +93,12 @@ export const Controls = controlsInjector(
       if ((userGenerate && sentUserGenerate) || (!userGenerate && store.hasInterface("update"))) {
         buttons.push(
           <ButtonTooltip key="update" name="annotation:submit" title="Update this task">
-            <Button disabled={disabled || submitDisabled} look="primary" onClick={store.updateAnnotation} aria-label="Update annotation">
+            <Button
+              disabled={disabled || submitDisabled}
+              look="primary"
+              onClick={store.updateAnnotation}
+              aria-label="Update annotation"
+            >
               {sentUserGenerate || versions.result ? "Update" : "Submit"}
             </Button>
           </ButtonTooltip>,

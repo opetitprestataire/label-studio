@@ -195,7 +195,12 @@ const Annotation = observer(({ item, store }) => {
           </Tooltip>
         )}
         {store.annotationStore.viewingAll && (
-          <Button size="small" look="outlined" onClick={toggleVisibility} aria-label="Toggle visibility of current annotation">
+          <Button
+            size="small"
+            look="outlined"
+            onClick={toggleVisibility}
+            aria-label="Toggle visibility of current annotation"
+          >
             {item.hidden ? <EyeInvisibleOutlined /> : <EyeOutlined />}
           </Button>
         )}

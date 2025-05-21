@@ -172,7 +172,7 @@ export const MachineLearningSettings = () => {
               <Form.Indicator>
                 <span case="success">Saved!</span>
               </Form.Indicator>
-              <Button type="submit" look="primary" style={{ width: 120 }} aria-label="Save machine learning settings">
+              <Button type="submit" look="primary" className="w-[120px]" aria-label="Save machine learning settings">
                 Save
               </Button>
             </Form.Actions>

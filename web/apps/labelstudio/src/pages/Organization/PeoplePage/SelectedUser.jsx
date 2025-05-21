@@ -31,7 +31,12 @@ export const SelectedUser = ({ user, onClose }) => {
 
   return (
     <Block name="user-info">
-      <Button look="string" onClick={onClose} className="absolute top-[20px] right-[24px]" aria-label="Close user details">
+      <Button
+        look="string"
+        onClick={onClose}
+        className="absolute top-[20px] right-[24px]"
+        aria-label="Close user details"
+      >
         <IconCross />
       </Button>
 

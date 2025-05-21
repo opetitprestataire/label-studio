@@ -106,7 +106,11 @@ export const PeoplePage = () => {
                 API Tokens Settings
               </Button>
             )}
-            <Button leading={<IconPlus className="!h-4" />} onClick={() => setInvitationOpen(true)} aria-label="Invite new member">
+            <Button
+              leading={<IconPlus className="!h-4" />}
+              onClick={() => setInvitationOpen(true)}
+              aria-label="Invite new member"
+            >
               Add People
             </Button>
           </Space>
