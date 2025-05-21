@@ -595,107 +595,40 @@ const Model = types
         return;
       }
       if (data.initiator === self.name) return;
-      const [minKey, maxKey] = self.keysRange;
-      if (minKey === undefined || maxKey === undefined) {
-        // console.warn("TimeSeries _handleSeek: keysRange not available.");
+      if (typeof data.time !== 'number' || isNaN(data.time)) {
+        // console.error("TimeSeries _handleSeek: Invalid data.time received.", data.time);
         return;
       }
 
-      // data.time is received in relative seconds from the start of the series.
-      // Convert relative seconds to the native units of keysRange.
-      let targetNative; // This will be the seek target in native units
+      const [minKey] = self.keysRange; // Native unit
+      if (minKey === undefined) {
+        // console.warn("TimeSeries _handleSeek: minKey is undefined.");
+        return;
+      }
+
+      // Convert received relative seconds to native units for view update
+      let targetNativeForSeek;
       if (self.isDate) {
-        // If data is date-based, native units are milliseconds.
-        targetNative = minKey + (data.time * 1000);
+        targetNativeForSeek = minKey + (data.time * 1000);
       } else {
-        // If data is numeric (seconds/indices), native units are the same as relative seconds (assuming minKey is the offset).
-        targetNative = minKey + data.time;
+        targetNativeForSeek = minKey + data.time;
       }
 
-      const timeRangeDurationNative = maxKey - minKey; // Duration in native units
-
-      if (self.canvasWidth <= 0 || timeRangeDurationNative <= 0 || data.time === undefined) {
-        // console.warn("TimeSeries Sync: Essential data missing for seek operation.");
-        return;
-      }
-
-      // Validate targetNative against the native range
-      if (targetNative < minKey || targetNative > maxKey) {
-        // console.warn(`TimeSeries Sync: Target time ${targetNative} (from rel ${data.time}s) is outside the native range [${minKey}, ${maxKey}]. Ignoring.`);
-        return;
-      }
-
-      // All subsequent calculations use native units.
-      const centerPx = ((targetNative - minKey) / timeRangeDurationNative) * self.canvasWidth;
-      let currentBrushWidthNative = self.brushRange[1] - self.brushRange[0]; // brushRange is in native units
-
-      if (currentBrushWidthNative <= 0) {
-        currentBrushWidthNative = timeRangeDurationNative * 0.1;
-        if (currentBrushWidthNative <= 0) {
-          // console.warn("TimeSeries Sync: Cannot determine valid native brush width.");
-          return;
+      // If we're currently playing, we need to restart the playback loop with the new time
+      if (self.isPlaying) {
+        // Cancel the current animation frame
+        if (self.animationFrameId) {
+          cancelAnimationFrame(self.animationFrameId);
+          self.animationFrameId = null;
         }
+        // Update the play start position to the new time
+        self.playStartPosition = data.time;
+        self.playStartTime = performance.now();
+        // Restart the playback loop
+        self.playbackLoop();
       }
 
-      const currentPixelWidth = (currentBrushWidthNative / timeRangeDurationNative) * self.canvasWidth;
-      if (currentPixelWidth <= 0) {
-        // console.warn("TimeSeries Sync: Cannot determine valid pixel width for brush.");
-        return;
-      }
-
-      let newPixelStart = centerPx - currentPixelWidth / 2;
-      let newPixelEnd = centerPx + currentPixelWidth / 2;
-
-      if (newPixelStart < 0) {
-        const widthPx = newPixelEnd - newPixelStart;
-        newPixelStart = 0;
-        newPixelEnd = Math.min(widthPx, self.canvasWidth);
-      }
-      if (newPixelEnd > self.canvasWidth) {
-        const widthPx = newPixelEnd - newPixelStart;
-        newPixelEnd = self.canvasWidth;
-        newPixelStart = Math.max(0, self.canvasWidth - widthPx);
-      }
-      newPixelStart = Math.max(0, newPixelStart);
-      newPixelEnd = Math.min(self.canvasWidth, newPixelEnd);
-
-      if (newPixelStart >= newPixelEnd) {
-        const defaultPixelWidth = Math.max(10, self.canvasWidth * 0.1);
-        newPixelStart = centerPx - defaultPixelWidth / 2;
-        newPixelEnd = centerPx + defaultPixelWidth / 2;
-        if (newPixelStart < 0) { newPixelEnd -= newPixelStart; newPixelStart = 0; }
-        if (newPixelEnd > self.canvasWidth) { newPixelStart -= newPixelEnd - self.canvasWidth; newPixelEnd = self.canvasWidth; }
-        newPixelStart = Math.max(0, newPixelStart);
-        newPixelEnd = Math.min(self.canvasWidth, newPixelEnd);
-        if (newPixelStart >= newPixelEnd) {
-          // console.error("TimeSeries Sync: Failed to calculate valid pixel range even with fallback.");
-          return;
-        }
-      }
-
-      // Convert pixel range back to native time units
-      let newTimeStartNative = minKey + (newPixelStart / self.canvasWidth) * timeRangeDurationNative;
-      let newTimeEndNative = minKey + (newPixelEnd / self.canvasWidth) * timeRangeDurationNative;
-
-      // Fallback logic for native time range calculation
-      if (!isFinite(newTimeStartNative) || !isFinite(newTimeEndNative) || newTimeStartNative >= newTimeEndNative) {
-        // console.warn(`TimeSeries Sync: Calculated invalid native time range [${newTimeStartNative}, ${newTimeEndNative}]. Recalculating.`);
-        newTimeStartNative = targetNative - currentBrushWidthNative / 2;
-        newTimeEndNative = targetNative + currentBrushWidthNative / 2;
-        if (newTimeStartNative < minKey) { newTimeEndNative -= newTimeStartNative - minKey; newTimeStartNative = minKey; }
-        if (newTimeEndNative > maxKey) { newTimeStartNative -= newTimeEndNative - maxKey; newTimeEndNative = maxKey; }
-        newTimeStartNative = Math.max(minKey, newTimeStartNative);
-        newTimeEndNative = Math.min(maxKey, newTimeEndNative);
-        if (!isFinite(newTimeStartNative) || !isFinite(newTimeEndNative) || newTimeStartNative >= newTimeEndNative) {
-          // console.error("TimeSeries Sync: Failed to calculate fallback native time range.");
-          return;
-        }
-      }
-
-      if (isFinite(newTimeStartNative) && isFinite(newTimeEndNative)) {
-        self.updateTR([newTimeStartNative, newTimeEndNative], self.scale); // updateTR expects native units
-        self.seekTo = targetNative; // seekTo stores native units for internal overview update
-      }
+      self._updateViewForTime(targetNativeForSeek); // _updateViewForTime expects native units
     },
 
     _handlePlay(data) { // data.time is received in relative seconds
