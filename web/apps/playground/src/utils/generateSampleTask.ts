@@ -13,7 +13,7 @@ const SAMPLE_WEBSITE = "<a href='https://labelstud.io'>https://labelstud.io</a>"
 const SAMPLE_PDF_EMBED = "<embed src='https://app.heartex.ai/static/samples/sample.pdf' width='100%' height='600px'/>";
 const SAMPLE_WEBSITE_EMBED = "<iframe src='https://labelstud.io' width='100%' height='600px'/>";
 const SAMPLE_CSV = "https://app.heartex.ai/samples/time-series.csv";
-const SAMPLE_OCR_IMAGE = "https://app.heartex.ai/static/samples/sample.jpg";
+const SAMPLE_OCR_IMAGE = "https://htx-pub.s3.amazonaws.com/demo/ocr/example.jpg";
 
 const randomFloat = (min: number, max: number) => Math.random() * (max - min) + min;
 
@@ -164,7 +164,9 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
     const isValueList = node.hasAttribute("valueList");
     let tag = node.tagName.toLowerCase();
     const value = node.getAttribute("value");
-    if (tag === "text" && (value?.includes("coref") || value?.includes("long"))) {
+    if (tag === "image" && value?.includes("ocr")) {
+      tag = "ocr";
+    } else if (tag === "text" && (value?.includes("coref") || value?.includes("long"))) {
       tag = "longtext";
     }
     if (tag === "hypertext" && value?.includes("pdf")) {
