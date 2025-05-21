@@ -151,7 +151,6 @@ describe("generateSampleTaskFromConfig", () => {
       } -->
     `;
     const result = await generateSampleTaskFromConfig(config);
-    console.log("result", result);
     expect(result.data).toHaveProperty("videoSource");
     expect(result.data.videoSource).toBe("https://app.heartex.ai/static/samples/opossum_snow_alt.mp4");
   });

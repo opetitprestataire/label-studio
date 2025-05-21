@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { MouseEvent } from "react";
 import { useSetAtom } from "jotai";
+import { ToastProvider, ToastViewport } from "@humansignal/ui/lib/toast/toast";
+import { cnm } from "@humansignal/shad/utils";
 import { PreviewPanel } from "../PreviewPanel";
 import { configAtom, loadingAtom, errorAtom, interfacesAtom } from "../../atoms/configAtoms";
 import {
@@ -9,7 +11,6 @@ import {
   getInterfacesFromParams,
   throwUnlessXmlLike,
 } from "../../utils/query";
-import { cnm } from "@humansignal/shad/utils";
 import { TopBar } from "./TopBar";
 import { EditorPanel } from "../EditorPanel";
 import styles from "./PlaygroundApp.module.scss";
@@ -115,32 +116,35 @@ export const PlaygroundApp = () => {
         [styles.root]: true,
       })}
     >
-      {/* Minimal top bar */}
-      <TopBar />
-      {/* Editor/Preview split */}
-      <div className="flex flex-1 min-h-0 min-w-0 relative">
-        {/* Editor Panel */}
-        <EditorPanel editorWidth={editorWidth} />
-        {/* Resizable Divider */}
-        <div
-          className="w-2 cursor-col-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
-          onMouseDown={(e: MouseEvent) => {
-            if (e.button !== 0) return;
-            e.preventDefault();
-            dragging.current = true;
-          }}
-          onDoubleClick={handleDividerDoubleClick}
-          role="separator"
-          aria-orientation="vertical"
-          tabIndex={-1}
-        />
-        {/* Preview Panel */}
-        <div className="flex flex-col min-w-0 h-full" style={previewPanelStyle}>
-          <div className="flex-1 min-h-0 min-w-0">
-            <PreviewPanel />
+      <ToastProvider>
+        {/* Minimal top bar */}
+        <TopBar />
+        {/* Editor/Preview split */}
+        <div className="flex flex-1 min-h-0 min-w-0 relative">
+          {/* Editor Panel */}
+          <EditorPanel editorWidth={editorWidth} />
+          {/* Resizable Divider */}
+          <div
+            className="w-2 cursor-col-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
+            onMouseDown={(e: MouseEvent) => {
+              if (e.button !== 0) return;
+              e.preventDefault();
+              dragging.current = true;
+            }}
+            onDoubleClick={handleDividerDoubleClick}
+            role="separator"
+            aria-orientation="vertical"
+            tabIndex={-1}
+          />
+          {/* Preview Panel */}
+          <div className="flex flex-col min-w-0 h-full" style={previewPanelStyle}>
+            <div className="flex-1 min-h-0 min-w-0">
+              <PreviewPanel />
+            </div>
           </div>
         </div>
-      </div>
+        <ToastViewport />
+      </ToastProvider>
     </div>
   );
 };

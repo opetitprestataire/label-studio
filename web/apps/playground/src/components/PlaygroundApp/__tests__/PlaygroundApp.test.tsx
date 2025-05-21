@@ -11,7 +11,12 @@ jest.mock("../../PreviewPanel", () => ({
   PreviewPanel: () => <div>PreviewPanel</div>,
 }));
 jest.mock("@humansignal/ui", () => ({
+  ...jest.requireActual("@humansignal/ui"),
   ThemeToggle: () => <div>ThemeToggle</div>,
+  ToastProvider: ({ children }: { children: React.ReactNode }) => children,
+  useToast: () => ({
+    show: jest.fn(),
+  }),
 }));
 
 // Mock the atoms
