@@ -1,8 +1,7 @@
 import type React from "react";
 import { type FC, useContext, useEffect, useMemo, useState } from "react";
-import { Tooltip } from "@humansignal/ui";
+import { Tooltip, Select } from "@humansignal/ui";
 import { Block, Elem } from "../../../utils/bem";
-import { Select, Slider as AntSlider } from "antd";
 import { Range } from "../../../common/Range/Range";
 import { IconInfoConfig, IconWarningCircleFilled } from "@humansignal/icons";
 import { TimelineContext } from "../Context";
@@ -317,7 +316,9 @@ export const SpectrogramControl: FC<SpectrogramControlProps> = ({ waveform }) =>
     }
   };
 
-  const handleChangeFftSamplesSlider = (sliderIndex: number) => {
+  const handleChangeFftSamplesSlider = (e: React.FormEvent<HTMLInputElement> | number) => {
+    const sliderIndex =
+      typeof e === "number" ? e : Number.parseInt((e as React.FormEvent<HTMLInputElement>).currentTarget.value);
     if (!isNaN(sliderIndex)) {
       const clampedIndex = Math.max(0, Math.min(sliderIndex, FFT_SAMPLE_VALUES.length - 1));
       const actualFftValue = FFT_SAMPLE_VALUES[clampedIndex];
@@ -442,7 +443,7 @@ export const SpectrogramControl: FC<SpectrogramControlProps> = ({ waveform }) =>
         </Tooltip>
       )}
       <Elem name="slider-container">
-        <AntSlider
+        <Slider
           min={0}
           max={FFT_SAMPLE_VALUES.length - 1}
           step={1}
