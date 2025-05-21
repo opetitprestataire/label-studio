@@ -2,6 +2,7 @@ import { memo, useCallback } from "react";
 import { ThemeToggle, IconLink, IconCopyOutline, Tooltip, useToast } from "@humansignal/ui";
 import { useAtomValue } from "jotai";
 import { configAtom } from "../../atoms/configAtoms";
+import { getParentUrl } from "../../utils/url";
 
 const ShareUrlButton = () => {
   const config = useAtomValue(configAtom);
@@ -9,7 +10,7 @@ const ShareUrlButton = () => {
 
   const handleCopy = useCallback(() => {
     const configUrl = encodeURIComponent(config.replace(/\n/g, "<br>"));
-    const shareUrl = `https://labelstud.io/playground/?config=${configUrl}`;
+    const shareUrl = `${getParentUrl()}?config=${configUrl}`;
     navigator.clipboard.writeText(shareUrl);
     toast?.show({ message: "URL copied to clipboard" });
   }, [config, toast]);
