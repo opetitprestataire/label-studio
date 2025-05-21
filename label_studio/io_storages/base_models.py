@@ -342,8 +342,8 @@ class ImportStorage(Storage):
         raise NotImplementedError
 
     @classmethod
-    def add_task(cls, project, maximum_annotations, max_inner_id, storage, link_params, link_class):
-        link_kwargs = asdict(link_params)
+    def add_task(cls, project, maximum_annotations, max_inner_id, storage, link_object, link_class):
+        link_kwargs = asdict(link_object)
         data = link_kwargs.pop('task_data')
 
         # predictions
@@ -438,7 +438,7 @@ class ImportStorage(Storage):
 
             logger.debug(f'{self}: found new key {key}')
             try:
-                links_params = self.get_data(key)
+                link_objects = self.get_data(key)
             except (UnicodeDecodeError, json.decoder.JSONDecodeError) as exc:
                 logger.debug(exc, exc_info=True)
                 raise ValueError(
@@ -448,9 +448,9 @@ class ImportStorage(Storage):
                 )
 
             if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):
-                links_params = links_params[:1]
+                link_objects = link_objects[:1]
 
-            for link_params in links_params:
+            for link_object in link_objects:
                 # TODO: batch this loop body with add_task -> add_tasks in a single bulk write.
                 # See DIA-2062 for prerequisites
                 task = self.add_task(
@@ -458,7 +458,7 @@ class ImportStorage(Storage):
                     maximum_annotations,
                     max_inner_id,
                     self,
-                    link_params,
+                    link_object,
                     link_class=link_class,
                 )
                 max_inner_id += 1
