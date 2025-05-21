@@ -148,7 +148,6 @@ def _load_tasks_json(blob_str: bytes, key: str) -> list[StorageObjectParams]:
         key (str): The key of the blob. Used for error messages.
 
     Returns:
-        list[dict]: parsed tasks.
         list[StorageLinkParams]: link params for each task.
     """
 
