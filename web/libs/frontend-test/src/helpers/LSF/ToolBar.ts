@@ -34,6 +34,10 @@ export const ToolBar = {
     return this.sectionTwo.find('[aria-label="Submit current annotation"]');
   },
 
+  get updateBtn() {
+    return this.sectionTwo.find('[aria-label="Update current annotation"]');
+  },
+
   get annotationDropdownTrigger() {
     return this.sectionOne.find(".lsf-annotation-button__trigger");
   },
