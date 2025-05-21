@@ -54,10 +54,12 @@ const Model = types
     },
 
     get left() {
+      if (!self.annotation || !self.annotation.names) return undefined;
       return self.annotation.names.get(self.names[0]);
     },
 
     get right() {
+      if (!self.annotation || !self.annotation.names) return undefined;
       return self.annotation.names.get(self.names[1]);
     },
 
@@ -158,6 +160,7 @@ const Model = types
     annotationAttached() {
       // @todo annotation attached in a weird way, so do that next tick, with fixed tree
       setTimeout(() => {
+        if (!self.left || !self.right) return;
         self.left.addProp("onClick", self.selectLeft);
         self.right.addProp("onClick", self.selectRight);
         self.setResult(self.result?.value.selected);
