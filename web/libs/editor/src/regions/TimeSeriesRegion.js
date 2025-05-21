@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { getRoot, types } from "mobx-state-tree";
+import { types } from "mobx-state-tree";
 
 import { Hotkey } from "../core/Hotkey";
 import NormalizationMixin from "../mixins/Normalization";
@@ -29,13 +29,6 @@ const Model = types
   .views((self) => ({
     get parent() {
       return self.object;
-    },
-
-    // Do not remove this annotation getter until saving/updating annotation in LS will work without errors
-    get annotation() {
-      const root = getRoot(self);
-
-      return root !== self ? root.annotationStore?.selected : null;
     },
 
     getRegionElement() {
