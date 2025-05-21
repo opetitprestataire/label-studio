@@ -42,7 +42,7 @@ Based on the natural language prompt, you can generate the set of images from wh
       padding: 8px;
     }
     .ant-checkbox-checked+span {
-      border-color: red;
+      border-color: var(--color-primary-border-subtle);
     }
     .ant-checkbox+span sup {
       position: absolute;
