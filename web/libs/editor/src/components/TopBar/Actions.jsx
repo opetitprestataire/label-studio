@@ -48,7 +48,8 @@ export const Actions = ({ store }) => {
         <Tooltip title="Delete annotation">
           <Button
             icon={<IconTrash />}
-            look="danger"
+            variant="negative"
+            look="string"
             type="text"
             aria-label="Delete"
             onClick={() => {
@@ -73,8 +74,8 @@ export const Actions = ({ store }) => {
         <Tooltip title={`Create copy of current ${entity.type}`}>
           <Button
             icon={<IconCopy style={{ width: 36, height: 36 }} />}
-            size="small"
-            look="ghost"
+            variant="neutral"
+            look="string"
             type="text"
             aria-label="Copy Annotation"
             onClick={(ev) => {
@@ -99,7 +100,8 @@ export const Actions = ({ store }) => {
 
       <Button
         icon={<IconSettings />}
-        type="text"
+        variant="neutral"
+        look="string"
         aria-label="Settings"
         onClick={() => store.toggleSettings()}
         style={{
@@ -113,7 +115,8 @@ export const Actions = ({ store }) => {
         <Button
           icon={<IconInfo style={{ width: 16, height: 16 }} />}
           primary={store.showingDescription}
-          type="text"
+          variant={store.showingDescription ? "primary" : "neutral"}
+          look={store.showingDescription ? "filled" : "string"}
           aria-label="Instructions"
           onClick={() => store.toggleDescription()}
           style={{

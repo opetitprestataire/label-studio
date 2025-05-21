@@ -14,7 +14,7 @@ export const ToolBar = {
         return cy.get(".lsf-bottombar");
       }
 
-      return cy.get(".lsf-topbar").find(".lsf-topbar__group").eq(1);
+      return cy.get(".lsf-topbar");
     });
   },
 
