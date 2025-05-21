@@ -342,9 +342,9 @@ class ImportStorage(Storage):
         raise NotImplementedError
 
     @classmethod
-    def add_task(cls, project, maximum_annotations, max_inner_id, storage, link_object, link_class):
+    def add_task(cls, project, maximum_annotations, max_inner_id, storage, link_object: StorageObject, link_class):
         link_kwargs = asdict(link_object)
-        data = link_kwargs.pop('task_data')
+        data = link_kwargs.pop('task_data', None)
 
         # predictions
         predictions = data.get('predictions') or []
