@@ -9,9 +9,9 @@ const ShareUrlButton = () => {
   const toast = useToast();
 
   const handleCopy = useCallback(() => {
-    const configUrl = encodeURIComponent(config.replace(/\n/g, "<br>"));
-    const shareUrl = `${getParentUrl()}?config=${configUrl}`;
-    navigator.clipboard.writeText(shareUrl);
+    const url = new URL(getParentUrl());
+    url.searchParams.set("config", encodeURIComponent(config.replace(/\n/g, "<br>")));
+    navigator.clipboard.writeText(url.toString());
     toast?.show({ message: "URL copied to clipboard" });
   }, [config, toast]);
 
