@@ -2,7 +2,7 @@ import { IconRedo, IconRemove, IconUndo } from "@humansignal/icons";
 import { Button, Tooltip } from "@humansignal/ui";
 import { observer } from "mobx-react";
 import { Hotkey } from "../../core/Hotkey";
-import { Block, Elem } from "../../utils/bem";
+import { Block } from "../../utils/bem";
 import "./HistoryActions.scss";
 
 export const HistoryActions = observer(({ annotation }) => {
@@ -11,9 +11,7 @@ export const HistoryActions = observer(({ annotation }) => {
   return (
     <Block name="history-buttons">
       <Hotkey.Tooltip name="annotation:undo">
-        <Elem
-          tag={Button}
-          name="action"
+        <Button
           look="string"
           size="small"
           aria-label="Undo"
@@ -23,9 +21,7 @@ export const HistoryActions = observer(({ annotation }) => {
         />
       </Hotkey.Tooltip>
       <Hotkey.Tooltip name="annotation:redo">
-        <Elem
-          tag={Button}
-          name="action"
+        <Button
           look="string"
           size="small"
           aria-label="Redo"
@@ -35,9 +31,7 @@ export const HistoryActions = observer(({ annotation }) => {
         />
       </Hotkey.Tooltip>
       <Tooltip title="Reset">
-        <Elem
-          tag={Button}
-          name="action"
+        <Button
           look="string"
           size="small"
           aria-label="Reset"

@@ -102,9 +102,9 @@ export class Modal extends React.Component {
                 <Modal.Header>
                   <Elem name="title">{this.state.title}</Elem>
                   {this.props.allowClose !== false && (
-                    <Elem tag={Button} name="close" look="outlined">
+                    <Button name="close" look="outlined">
                       <IconCross />
-                    </Elem>
+                    </Button>
                   )}
                 </Modal.Header>
               )}

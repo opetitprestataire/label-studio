@@ -37,7 +37,7 @@ export const GridWidthButton = injector(({ view, gridWidth, size }) => {
           disabled={width === 3}
           aria-label="Decrease number of columns"
         >
-          <Icon icon={IconMinus} size="12" color="#595959" />
+          <Icon icon={IconMinus} size="12" />
         </Button>
         <Button
           size={size}
@@ -45,7 +45,7 @@ export const GridWidthButton = injector(({ view, gridWidth, size }) => {
           disabled={width === 10}
           aria-label="Increase number of columns"
         >
-          <Icon icon={IconPlus} size="12" color="#595959" />
+          <Icon icon={IconPlus} size="12" />
         </Button>
       </ButtonGroup>
     </Space>
