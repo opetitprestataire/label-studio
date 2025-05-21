@@ -239,7 +239,7 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
     }
 
     // Special handling for List
-    if (tag === "list") {
+    if (tag === "list" || tag === "ranker") {
       data[key] = [
         {
           id: 1,
@@ -328,11 +328,6 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
       return;
     }
 
-    // Special handling for humanMachineDialogue
-    if (tag === "humanmachinedialogue") {
-      return;
-    }
-
     // Main tag-based logic
     if (tag === "image" || tag === "hyperimage") {
       if (isValueList) {
@@ -376,11 +371,6 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
       data[key] = [
         { id: 1, text: "Option A" },
         { id: 2, text: "Option B" },
-      ];
-    } else if (tag === "ranker") {
-      data[key] = [
-        { id: 1, text: "Ranked 1" },
-        { id: 2, text: "Ranked 2" },
       ];
     } else if (tag === "repeater") {
       data[key] = [{ text: "Repeat 1" }, { text: "Repeat 2" }];
