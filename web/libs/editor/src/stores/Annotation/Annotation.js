@@ -942,10 +942,7 @@ const _Annotation = types
       const objectTag = self.names.get(object.name ?? object);
 
       const result = {
-        // @todo we should be validating this upstream before getting to this point
-        // otherwise a user would be creating a result that is invalid or erroring like it was previously
-        // but doing so silently and not showing any feedback to the user
-        from_name: control.name ? self.names.get(control.name) : "",
+        from_name: self.names.get(control.name),
         // @todo should stick to area
         to_name: objectTag,
         type: control.resultType,
@@ -1035,6 +1032,8 @@ const _Annotation = types
     // And this problems are fixable, so better to fix them on start
     fixBrokenAnnotation(json) {
       return (json ?? []).reduce((res, objRaw) => {
+        if (!objRaw) return res;
+
         const obj = structuredClone(objRaw) ?? {};
 
         if (obj.type === "relation") {
@@ -1047,7 +1046,7 @@ const _Annotation = types
         const tagNames = self.names;
 
         // Clear non-existent labels
-        if (obj.type?.endsWith("labels")) {
+        if (obj.type.endsWith("labels")) {
           const keys = Object.keys(obj.value);
 
           for (const key of keys) {

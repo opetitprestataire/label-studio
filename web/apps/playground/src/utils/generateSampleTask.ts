@@ -344,7 +344,12 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
     } else if (tag === "hypertext") {
       data[key] = SAMPLE_HTML;
     } else if (tag === "choices" || tag.endsWith("labels")) {
-      data[key] = ["DynamicChoice1", "DynamicChoice2", "DynamicChoice3"];
+      const type = tag.endsWith("labels") ? "Label" : "Choice";
+
+      data[key] = [
+        { value: `Dynamic${type}1`, background: "#ff0000" },
+        { value: `Dynamic${type}2`, background: "#0000ff" },
+      ];
     } else if (tag === "taxonomy") {
       data[key] = [
         {
@@ -394,24 +399,6 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
     }
   });
 
-  // Also handle dynamic label lists (e.g., <Labels value="$brands">)
-  const dynamicLabelNodes = Array.from(
-    xml.querySelectorAll(
-      "labels, brushlabels, polygonlabels, keypointlabels, ellipselabels, rectanglelabels, paragraphlabels, hypertextlabels, timeserieslabels",
-    ),
-  );
-  dynamicLabelNodes.forEach((node) => {
-    const valueAttr = node.getAttribute("value");
-    if (!valueAttr || !valueAttr.startsWith("$") || valueAttr.length < 2) return;
-    const key = valueAttr.slice(1);
-    if (data[key] === undefined) {
-      data[key] = [
-        { value: "DynamicLabel1", background: "#ff0000" },
-        { value: "DynamicLabel2", background: "#0000ff" },
-      ];
-    }
-  });
-
   // Return annotation if provided, else undefined
-  return { id: 1, data, annotations: [{ id: 1, result: [userAnnotation] }], predictions: [] };
+  return { id: 1, data, annotations: [{ id: 1, result: userAnnotation ? [userAnnotation] : [] }], predictions: [] };
 }
