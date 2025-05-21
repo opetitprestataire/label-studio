@@ -7,7 +7,7 @@ const SDKButton = ({ eventName, ...props }) => {
   return sdk.hasHandler(eventName) ? (
     <Button
       {...props}
-      size="small"
+      size={props.size ?? "small"}
       look={props.look ?? "outlined"}
       variant={props.variant ?? "neutral"}
       aria-label={`${eventName.replace("Clicked", "")} button`}

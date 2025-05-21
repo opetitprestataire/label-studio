@@ -56,7 +56,7 @@ const Label = ({ label, template, color }) => {
         type="button"
         look="string"
         size="smaller"
-        variant="neutral"
+        variant="negative"
         onClick={() => template.removeLabel(label)}
         aria-label="delete label"
         className="relative z-10 hover:!bg-transparent"

@@ -13,7 +13,7 @@ const injector = inject(({ store }) => {
 export const RefreshButton = injector(({ store, needsDataFetch, projectFetch, size, style, ...rest }) => {
   return (
     <Button
-      size="small"
+      size={size ?? "small"}
       look={needsDataFetch ? "filled" : "outlined"}
       variant={needsDataFetch ? "primary" : "neutral"}
       waiting={projectFetch}
