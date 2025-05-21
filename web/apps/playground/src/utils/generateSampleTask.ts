@@ -218,13 +218,23 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
     if (tag === "paragraphs") {
       const nameKey = node.getAttribute("nameKey") || node.getAttribute("namekey") || "author";
       const textKey = node.getAttribute("textKey") || node.getAttribute("textkey") || "text";
-      data[key] = [
-        { [nameKey]: "Alice", [textKey]: "Sample: Text #1" },
-        { [nameKey]: "Bob", [textKey]: "Sample: Text #2" },
-        { [nameKey]: "Alice", [textKey]: "Sample: Text #3" },
-        { [nameKey]: "Bob", [textKey]: "Sample: Text #4" },
-        { [nameKey]: "Alice", [textKey]: "Sample: Text #5" },
-      ];
+      if (value?.toLowerCase().includes("humanmachinedialogue")) {
+        data[key] = [
+          { [nameKey]: "Human", [textKey]: "Sample: Hi, Robot!" },
+          { [nameKey]: "Robot", [textKey]: "Sample: Nice to meet you, human! Tell me what you want." },
+          { [nameKey]: "Human", [textKey]: "Sample: Order me a pizza from Golden Boy at Green Street " },
+          { [nameKey]: "Robot", [textKey]: "Sample: Done. When do you want to get the order?" },
+          { [nameKey]: "Human", [textKey]: "Sample: At 3am in the morning, please" },
+        ];
+      } else {
+        data[key] = [
+          { [nameKey]: "Alice", [textKey]: "Sample: Text #1" },
+          { [nameKey]: "Bob", [textKey]: "Sample: Text #2" },
+          { [nameKey]: "Alice", [textKey]: "Sample: Text #3" },
+          { [nameKey]: "Bob", [textKey]: "Sample: Text #4" },
+          { [nameKey]: "Alice", [textKey]: "Sample: Text #5" },
+        ];
+      }
       return;
     }
 
@@ -320,13 +330,6 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
 
     // Special handling for humanMachineDialogue
     if (tag === "humanmachinedialogue") {
-      data[key] = [
-        { author: "Human", text: "Sample: Hi, Robot!" },
-        { author: "Robot", text: "Sample: Nice to meet you, human! Tell me what you want." },
-        { author: "Human", text: "Sample: Order me a pizza from Golden Boy at Green Street " },
-        { author: "Robot", text: "Sample: Done. When do you want to get the order?" },
-        { author: "Human", text: "Sample: At 3am in the morning, please" },
-      ];
       return;
     }
 
