@@ -177,13 +177,7 @@ def _load_tasks_json(blob_str: bytes, key: str) -> list[StorageObjectParams]:
     if isinstance(value, dict):
         return [StorageObjectParams(key=key, task_data=value)]
     if isinstance(value, list):
-        # validate tasks by briefly converting to table
-        try:
-            table = pa.Table.from_pylist(value)
-            values = table.to_pylist()
-        except Exception as e:
-            _error_wrapper(e)
-        return StorageObjectParams.bulk_create(values, key, range(len(values)))
+        return StorageObjectParams.bulk_create(value, key, range(len(value)))
 
     _error_wrapper()
 

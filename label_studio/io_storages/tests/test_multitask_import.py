@@ -16,12 +16,10 @@ from moto import mock_s3
 from projects.tests.factories import ProjectFactory
 from rest_framework.test import APIClient
 
-from tests.utils import azure_client_mock, gcs_client_mock, redis_client_mock
-
-# FIXME: mock_feature_flag is not working in this file for some reason
+from tests.utils import azure_client_mock, gcs_client_mock, mock_feature_flag, redis_client_mock
 
 
-@pytest.fixture(name='fflag_feat_dia_2092_multitasks_per_storage_link_on')
+@pytest.fixture(name='fflag_feat_dia_2092_multitasks_per_storage_link_on', autouse=True)
 def fflag_feat_dia_2092_multitasks_per_storage_link_on():
     from core.feature_flags import flag_set
 
@@ -30,7 +28,7 @@ def fflag_feat_dia_2092_multitasks_per_storage_link_on():
             return True
         return flag_set(*args, **kwargs)
 
-    with mock.patch('core.feature_flags.flag_set', wraps=fake_flag_set):
+    with mock.patch('io_storages.base_models.flag_set', wraps=fake_flag_set):
         yield
 
 
@@ -43,7 +41,7 @@ def fflag_feat_root_11_support_jsonl_cloud_storage_on():
             return True
         return flag_set(*args, **kwargs)
 
-    with mock.patch('core.feature_flags.flag_set', wraps=fake_flag_set):
+    with mock.patch('io_storages.utils.flag_set', wraps=fake_flag_set):
         yield
 
 
@@ -56,7 +54,7 @@ def fflag_feat_root_11_support_jsonl_cloud_storage_off():
             return False
         return flag_set(*args, **kwargs)
 
-    with mock.patch('core.feature_flags.flag_set', wraps=fake_flag_set):
+    with mock.patch('io_storages.utils.flag_set', wraps=fake_flag_set):
         yield
 
 
@@ -331,18 +329,32 @@ def test_preds_and_annots_list(storage):
     blob_str = json.dumps(task_data).encode()
     output = load_tasks_json(blob_str, 'test.json')
 
-    fixed_task_data_1 = task_data[1].copy()
-    fixed_task_data_1['annotations'] = None  # this key exists in the output, since preds exist
     expected_output = [
         StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
-        StorageObjectParams(key='test.json', task_data=fixed_task_data_1, row_index=1),
+        StorageObjectParams(key='test.json', task_data=task_data[1], row_index=1),
     ]
     assert output == expected_output
 
     create_tasks(storage, output)
 
 
-def test_list_jsonl(storage, fflag_feat_root_11_support_jsonl_cloud_storage_on):
+def test_mixed_formats(storage):
+    task_data = [bare_task_list[0], annots_preds_task_list[0]]
+
+    blob_str = json.dumps(task_data).encode()
+    output = load_tasks_json(blob_str, 'test.json')
+
+    expected_output = [
+        StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
+        StorageObjectParams(key='test.json', task_data=task_data[1], row_index=1),
+    ]
+    assert output == expected_output
+
+    create_tasks(storage, output)
+
+
+@mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True, 'io_storages.utils')
+def test_list_jsonl(storage):
     task_data = bare_task_list
 
     blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()
@@ -356,7 +368,7 @@ def test_list_jsonl(storage, fflag_feat_root_11_support_jsonl_cloud_storage_on):
     create_tasks(storage, output)
 
 
-@pytest.mark.fflag_feat_root_11_support_jsonl_cloud_storage_on
+@mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True, 'io_storages.utils')
 def test_list_jsonl_with_preds_and_annots(storage):
     task_data = annots_preds_task_list
 
@@ -374,19 +386,32 @@ def test_list_jsonl_with_preds_and_annots(storage):
     create_tasks(storage, output)
 
 
-@pytest.mark.fflag_feat_root_11_support_jsonl_cloud_storage_off
+@mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', False, 'io_storages.utils')
 def test_ff_blocks_jsonl():
     with pytest.raises(ValueError):
         load_tasks_json(b'{"text": "Test task 1"}\n{"text": "Test task 2"}', 'test.jsonl')
 
 
-def test_mixed_formats_invalid():
+@mock_feature_flag('fflag_feat_root_11_support_jsonl_cloud_storage', True, 'io_storages.utils')
+def test_mixed_formats_jsonl(storage):
     task_data = [bare_task_list[0], annots_preds_task_list[0]]
 
-    with pytest.raises(ValueError):
-        blob_str = json.dumps(task_data).encode()
-        load_tasks_json(blob_str, 'test.json')
+    blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()
+    output = load_tasks_json(blob_str, 'test.jsonl')
 
-    with pytest.raises(ValueError):
-        blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()
-        load_tasks_json(blob_str, 'test.jsonl')
+    # keys are copied across tasks; empty keys are correctly ignored in create_tasks()
+    fixed_task_data_0 = task_data[0].copy()
+    fixed_task_data_0['data'] = None
+    fixed_task_data_0['predictions'] = None
+    fixed_task_data_0['annotations'] = None
+
+    fixed_task_data_1 = task_data[1].copy()
+    fixed_task_data_1['text'] = None
+
+    expected_output = [
+        StorageObjectParams(key='test.jsonl', task_data=fixed_task_data_0, row_index=0),
+        StorageObjectParams(key='test.jsonl', task_data=fixed_task_data_1, row_index=1),
+    ]
+    assert output == expected_output
+
+    create_tasks(storage, output)
