@@ -83,7 +83,10 @@ const Model = types
       self.selected = dir;
       if (!self.left || !self.right) {
         // eslint-disable-next-line no-console
-        console.warn("Pairwise: left or right object reference is missing. Check toName and config.", { left: self.left, right: self.right });
+        console.warn("Pairwise: left or right object reference is missing. Check toName and config.", {
+          left: self.left,
+          right: self.right,
+        });
         return;
       }
       // Common interactive classes
@@ -91,21 +94,23 @@ const Model = types
       if (self._selectionType === "className") {
         self.left.addProp(
           "className",
-          dir === "left"
-            ? `${interactive} ${self._selection}`
-            : `${interactive} border border-transparent`
+          dir === "left" ? `${interactive} ${self._selection}` : `${interactive} border border-transparent`,
         );
         self.right.addProp(
           "className",
-          dir === "right"
-            ? `${interactive} ${self._selection}`
-            : `${interactive} border border-transparent`
+          dir === "right" ? `${interactive} ${self._selection}` : `${interactive} border border-transparent`,
         );
         self.left.addProp("style", {});
         self.right.addProp("style", {});
       } else {
-        self.left.addProp("style", dir === "left" ? self._selection : { border: "1px solid transparent", borderRadius: "0.125rem" });
-        self.right.addProp("style", dir === "right" ? self._selection : { border: "1px solid transparent", borderRadius: "0.125rem" });
+        self.left.addProp(
+          "style",
+          dir === "left" ? self._selection : { border: "1px solid transparent", borderRadius: "0.125rem" },
+        );
+        self.right.addProp(
+          "style",
+          dir === "right" ? self._selection : { border: "1px solid transparent", borderRadius: "0.125rem" },
+        );
         self.left.addProp("className", interactive);
         self.right.addProp("className", interactive);
       }
