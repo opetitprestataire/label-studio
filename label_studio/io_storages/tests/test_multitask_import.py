@@ -342,7 +342,7 @@ def test_preds_and_annots_list(storage):
     create_tasks(storage, output)
 
 
-def test_list_jsonl(storage):
+def test_list_jsonl(storage, fflag_feat_root_11_support_jsonl_cloud_storage_on):
     task_data = bare_task_list
 
     blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()

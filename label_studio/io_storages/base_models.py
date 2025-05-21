@@ -520,6 +520,7 @@ class ImportStorage(Storage):
                 self.info_set_queued()
                 import_sync_background(self.__class__, self.id)
             except Exception:
+                logger.debug(f'Storage {self} failed', exc_info=True)
                 storage_background_failure(self)
 
     class Meta:
