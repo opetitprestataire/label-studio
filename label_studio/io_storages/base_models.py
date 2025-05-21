@@ -365,7 +365,10 @@ class ImportStorage(Storage):
             cancelled_annotations = len([a for a in annotations if a.get('was_cancelled', False)])
 
         if 'data' in data and isinstance(data['data'], dict):
-            data = data['data']
+            if data['data'] is not None:
+                data = data['data']
+            else:
+                data.pop('data')
 
         with transaction.atomic():
             task = Task.objects.create(
