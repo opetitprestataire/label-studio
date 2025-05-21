@@ -24,7 +24,7 @@ from io_storages.base_models import (
 )
 from io_storages.gcs.utils import GCS
 from io_storages.utils import (
-    StorageObjectParams,
+    StorageObject,
     load_tasks_json,
     parse_range,
     storage_can_resolve_bucket_url,
@@ -185,10 +185,10 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
             return_key=True,
         )
 
-    def get_data(self, key) -> list[StorageObjectParams]:
+    def get_data(self, key) -> list[StorageObject]:
         if self.use_blob_urls:
             task = {settings.DATA_UNDEFINED_NAME: GCS.get_uri(self.bucket, key)}
-            return [StorageObjectParams(key=key, task_data=task)]
+            return [StorageObject(key=key, task_data=task)]
         blob_str = GCS.read_file(
             client=self.get_client(),
             bucket_name=self.bucket,

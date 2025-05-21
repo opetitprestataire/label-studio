@@ -28,7 +28,7 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_rq import job
-from io_storages.utils import StorageObjectParams, get_uri_via_regex, parse_bucket_uri
+from io_storages.utils import StorageObject, get_uri_via_regex, parse_bucket_uri
 from rq.job import Job
 from tasks.models import Annotation, Task
 from tasks.serializers import AnnotationSerializer, PredictionSerializer
@@ -231,7 +231,7 @@ class ImportStorage(Storage):
     def iterkeys(self):
         return iter(())
 
-    def get_data(self, key) -> list[StorageObjectParams]:
+    def get_data(self, key) -> list[StorageObject]:
         raise NotImplementedError
 
     def generate_http_url(self, url):

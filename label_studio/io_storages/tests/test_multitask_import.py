@@ -11,10 +11,11 @@ from io_storages.tests.factories import (
     RedisImportStorageFactory,
     S3ImportStorageFactory,
 )
-from io_storages.utils import StorageObjectParams, load_tasks_json
+from io_storages.utils import StorageObject, load_tasks_json
 from moto import mock_s3
 from projects.tests.factories import ProjectFactory
 from rest_framework.test import APIClient
+
 from tests.utils import azure_client_mock, gcs_client_mock, mock_feature_flag, redis_client_mock
 
 
@@ -218,7 +219,7 @@ def storage():
     return project, storage
 
 
-def create_tasks(storage, params_list: list[StorageObjectParams]):
+def create_tasks(storage, params_list: list[StorageObject]):
     project, storage = storage
     # check that no errors are raised during task creation; not checking the task itself
     for params in params_list:
@@ -278,7 +279,7 @@ def test_bare_task(storage):
 
     blob_str = json.dumps(task_data).encode()
     output = load_tasks_json(blob_str, 'test.json')
-    expected_output = [StorageObjectParams(key='test.json', task_data=task_data)]
+    expected_output = [StorageObject(key='test.json', task_data=task_data)]
     assert output == expected_output
 
     create_tasks(storage, output)
@@ -289,7 +290,7 @@ def test_data_key(storage):
 
     blob_str = json.dumps(task_data).encode()
     output = load_tasks_json(blob_str, 'test.json')
-    expected_output = [StorageObjectParams(key='test.json', task_data=task_data)]
+    expected_output = [StorageObject(key='test.json', task_data=task_data)]
     assert output == expected_output
 
     create_tasks(storage, output)
@@ -301,7 +302,7 @@ def test_1elem_list(storage):
     blob_str = json.dumps(task_data).encode()
     output = load_tasks_json(blob_str, 'test.json')
     expected_output = [
-        StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
+        StorageObject(key='test.json', task_data=task_data[0], row_index=0),
     ]
     assert output == expected_output
 
@@ -314,8 +315,8 @@ def test_2elem_list(storage):
     blob_str = json.dumps(task_data).encode()
     output = load_tasks_json(blob_str, 'test.json')
     expected_output = [
-        StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
-        StorageObjectParams(key='test.json', task_data=task_data[1], row_index=1),
+        StorageObject(key='test.json', task_data=task_data[0], row_index=0),
+        StorageObject(key='test.json', task_data=task_data[1], row_index=1),
     ]
     assert output == expected_output
 
@@ -329,8 +330,8 @@ def test_preds_and_annots_list(storage):
     output = load_tasks_json(blob_str, 'test.json')
 
     expected_output = [
-        StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
-        StorageObjectParams(key='test.json', task_data=task_data[1], row_index=1),
+        StorageObject(key='test.json', task_data=task_data[0], row_index=0),
+        StorageObject(key='test.json', task_data=task_data[1], row_index=1),
     ]
     assert output == expected_output
 
@@ -344,8 +345,8 @@ def test_mixed_formats(storage):
     output = load_tasks_json(blob_str, 'test.json')
 
     expected_output = [
-        StorageObjectParams(key='test.json', task_data=task_data[0], row_index=0),
-        StorageObjectParams(key='test.json', task_data=task_data[1], row_index=1),
+        StorageObject(key='test.json', task_data=task_data[0], row_index=0),
+        StorageObject(key='test.json', task_data=task_data[1], row_index=1),
     ]
     assert output == expected_output
 
@@ -359,8 +360,8 @@ def test_list_jsonl(storage):
     blob_str = '\n'.join([json.dumps(task) for task in task_data]).encode()
     output = load_tasks_json(blob_str, 'test.jsonl')
     expected_output = [
-        StorageObjectParams(key='test.jsonl', task_data=task_data[0], row_index=0),
-        StorageObjectParams(key='test.jsonl', task_data=task_data[1], row_index=1),
+        StorageObject(key='test.jsonl', task_data=task_data[0], row_index=0),
+        StorageObject(key='test.jsonl', task_data=task_data[1], row_index=1),
     ]
     assert output == expected_output
 
@@ -377,8 +378,8 @@ def test_list_jsonl_with_preds_and_annots(storage):
     fixed_task_data_1 = task_data[1].copy()
     fixed_task_data_1['annotations'] = None  # this key exists in the output, since preds exist
     expected_output = [
-        StorageObjectParams(key='test.jsonl', task_data=task_data[0], row_index=0),
-        StorageObjectParams(key='test.jsonl', task_data=fixed_task_data_1, row_index=1),
+        StorageObject(key='test.jsonl', task_data=task_data[0], row_index=0),
+        StorageObject(key='test.jsonl', task_data=fixed_task_data_1, row_index=1),
     ]
     assert output == expected_output
 
@@ -408,8 +409,8 @@ def test_mixed_formats_jsonl(storage):
     fixed_task_data_1['text'] = None
 
     expected_output = [
-        StorageObjectParams(key='test.jsonl', task_data=fixed_task_data_0, row_index=0),
-        StorageObjectParams(key='test.jsonl', task_data=fixed_task_data_1, row_index=1),
+        StorageObject(key='test.jsonl', task_data=fixed_task_data_0, row_index=0),
+        StorageObject(key='test.jsonl', task_data=fixed_task_data_1, row_index=1),
     ]
     assert output == expected_output
 

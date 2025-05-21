@@ -16,7 +16,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.utils import StorageObjectParams, load_tasks_json
+from io_storages.utils import StorageObject, load_tasks_json
 from tasks.models import Annotation
 
 logger = logging.getLogger(__name__)
@@ -90,7 +90,7 @@ class RedisImportStorageBase(ImportStorage, RedisStorageMixin):
         for key in client.keys(path + '*'):
             yield key
 
-    def get_data(self, key) -> list[StorageObjectParams]:
+    def get_data(self, key) -> list[StorageObject]:
         client = self.get_client()
         value_str = client.get(key)
         if not value_str:

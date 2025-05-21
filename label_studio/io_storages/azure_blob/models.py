@@ -26,7 +26,7 @@ from io_storages.base_models import (
     ProjectStorageMixin,
 )
 from io_storages.utils import (
-    StorageObjectParams,
+    StorageObject,
     load_tasks_json,
     parse_range,
     storage_can_resolve_bucket_url,
@@ -214,11 +214,11 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
                 continue
             yield file.name
 
-    def get_data(self, key) -> list[StorageObjectParams]:
+    def get_data(self, key) -> list[StorageObject]:
         if self.use_blob_urls:
             data_key = settings.DATA_UNDEFINED_NAME
             task = {data_key: f'{self.url_scheme}://{self.container}/{key}'}
-            return [StorageObjectParams(key=key, task_data=task)]
+            return [StorageObject(key=key, task_data=task)]
 
         container = self.get_container()
         blob = container.download_blob(key)

@@ -119,7 +119,7 @@ def parse_range(range_header):
 
 
 @dataclass
-class StorageObjectParams:
+class StorageObject:
     task_data: dict
     key: str
     row_index: int | None = None
@@ -127,19 +127,19 @@ class StorageObjectParams:
 
     @classmethod
     def bulk_create(
-        cls, task_datas: list[dict], key, row_idxs: list[int] | None = None, row_groups: list[int] | None = None
-    ) -> list['StorageObjectParams']:
-        if row_idxs is None:
-            row_idxs = [None] * len(task_datas)
+        cls, task_datas: list[dict], key, row_indexes: list[int] | None = None, row_groups: list[int] | None = None
+    ) -> list['StorageObject']:
+        if row_indexes is None:
+            row_indexes = [None] * len(task_datas)
         if row_groups is None:
             row_groups = [None] * len(task_datas)
         return [
             cls(key=key, row_index=row_idx, row_group=row_group, task_data=task_data)
-            for row_idx, row_group, task_data in zip(row_idxs, row_groups, task_datas)
+            for row_idx, row_group, task_data in zip(row_indexes, row_groups, task_datas)
         ]
 
 
-def _load_tasks_json(blob_str: bytes, key: str) -> list[StorageObjectParams]:
+def load_tasks_json_lso(blob_str: bytes, key: str) -> list[StorageObject]:
     """
     Parse blob_str containing task JSON(s) and return the validated result or raise an error.
 
@@ -167,21 +167,21 @@ def _load_tasks_json(blob_str: bytes, key: str) -> list[StorageObjectParams]:
                 table = pyarrow.json.read_json(
                     pa.py_buffer(blob_str), parse_options=pa.json.ParseOptions(newlines_in_values=True)
                 )
-                return StorageObjectParams.bulk_create(table.to_pylist(), key, range(table.num_rows))
+                return StorageObject.bulk_create(table.to_pylist(), key, range(table.num_rows))
             except Exception as e:
                 _error_wrapper(e)
         else:
             _error_wrapper(e)
 
     if isinstance(value, dict):
-        return [StorageObjectParams(key=key, task_data=value)]
+        return [StorageObject(key=key, task_data=value)]
     if isinstance(value, list):
-        return StorageObjectParams.bulk_create(value, key, range(len(value)))
+        return StorageObject.bulk_create(value, key, range(len(value)))
 
     _error_wrapper()
 
 
-def load_tasks_json(blob_str: str, key: str) -> tuple[list[dict], list[StorageObjectParams]]:
-    # uses _load_tasks_json here and an LSE-specific implementation in LSE
+def load_tasks_json(blob_str: str, key: str) -> list[StorageObject]:
+    # uses load_tasks_json_lso here and an LSE-specific implementation in LSE
     load_tasks_json_func = load_func(settings.STORAGE_LOAD_TASKS_JSON)
     return load_tasks_json_func(blob_str, key)
