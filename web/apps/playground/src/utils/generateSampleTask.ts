@@ -10,7 +10,7 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
   const parser = new DOMParser();
   let xml: Document;
   try {
-    xml = parser.parseFromString(config, "text/xml");
+    xml = parser.parseFromString(`<View>${config}</View>`, "text/xml");
   } catch (e) {
     return { id: 1, data: {}, annotations: [{ id: 1, result: [] }], predictions: [] };
   }
@@ -51,9 +51,8 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
   const SAMPLE_IMAGE2 = "https://app.heartex.ai/static/samples/sample.jpg"; //"https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg";
   const SAMPLE_AUDIO =
     "https://upload.wikimedia.org/wikipedia/commons/9/9d/Bach_-_Cello_Suite_no._1_in_G_major,_BWV_1007_-_I._Pr%C3%A9lude.ogg";
-  const SAMPLE_VIDEO =
-    "https://upload.wikimedia.org/wikipedia/commons/transcoded/8/88/Big_Buck_Bunny_alt.webm/Big_Buck_Bunny_alt.webm.360p.vp9.webm";
-  const SAMPLE_VIDEO_EMBED = "<video src='https://app.heartex.ai/static/samples/opossum_snow.mp4' width=100% controls>";
+  const SAMPLE_VIDEO = "https://app.heartex.ai/static/samples/opossum_snow.mp4";
+  const SAMPLE_VIDEO_EMBED = `<video src='${SAMPLE_VIDEO}' width=100% controls></video>`;
   const SAMPLE_HTML =
     '<div style="max-width: 750px"><div style="clear: both"><div style="float: right; display: inline-block; border: 1px solid #F2F3F4; background-color: #F8F9F9; border-radius: 5px; padding: 7px; margin: 10px 0;"><p><b>Jules</b>: No no, Mr. Wolfe, it\'s not like that. Your help is definitely appreciated.</p></div></div><div style="clear: both"><div style="float: right; display: inline-block; border: 1px solid #F2F3F4; background-color: #F8F9F9; border-radius: 5px; padding: 7px; margin: 10px 0;"><p><b>Vincent</b>: Look, Mr. Wolfe, I respect you. I just don\'t like people barking orders at me, that\'s all.</p></div></div><div style="clear: both"><div style="display: inline-block; border: 1px solid #D5F5E3; background-color: #EAFAF1; border-radius: 5px; padding: 7px; margin: 10px 0;"><p><b>The Wolf</b>: If I\'m curt with you, it\'s because time is a factor. I think fast, I talk fast, and I need you two guys to act fast if you want to get out of this. So pretty please, with sugar on top, clean the car.</p></div></div></div>';
   const SAMPLE_WEBSITE = "<a href='https://labelstud.io'>https://labelstud.io</a>";
@@ -70,8 +69,9 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
   // Format based on timeFormat
   // ex. timeFormat="%Y-%m-%d %H:%M:%S.%f"
   // inline the code of d3.utcFormat
-  const formatTime = (time: number, timeFormat?: string) => {
-    if (!timeFormat) return time;
+  const formatTime = (time: number | string, timeFormat = "") => {
+    if (typeof time === "string") time = Number(time);
+    if (!timeFormat?.trim()) return time;
 
     if (time < 10000) {
       const nextDay = new Date(BEGIN_OF_TIME);
@@ -86,8 +86,8 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
   };
 
   const generateTimeseriesData = (
-    timeColumn: string,
-    columns: string[],
+    timeColumn?: string,
+    columns?: string[],
     options?: {
       type?: "csv" | "json";
       separator?: string;
@@ -96,8 +96,8 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
       timeFormat?: string;
     },
   ) => {
-    const { type = "csv", separator = "%2C", dataName, stringify = true, timeFormat } = options || {};
-    const headers = [timeColumn, ...(columns || [])];
+    const { type = "csv", separator = ",", dataName, stringify = true, timeFormat } = options || {};
+    const headers = [timeColumn ?? "time", ...(columns || [])];
     const data = Array.from({ length: 100 }, (_, i) => {
       // time, column1, column2, ... columnN
       return [formatTime(i, timeFormat), ...Array.from({ length: columns?.length || 0 }, () => randomFloat(-2, 2))];
@@ -129,24 +129,20 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
   const originalFetch = global.fetch;
   // @ts-ignore
   global.fetch = async (url: string) => {
-    console.log("fetch", url);
     if (url.startsWith(SAMPLE_CSV)) {
       const params = new URLSearchParams(url.split("?")[1]);
-      const time = params.get("time") || "None";
+      const timeColumn = params.get("time") || "None";
       const values = params.get("values");
-      const separator = params.get("sep") || "%2C";
+      const separator = params.get("sep") || ",";
       const type = params.get("type") || "csv";
       const columns = values?.split(",") || [];
-      const timeFormat = params.get("tf") || "";
-      const data = generateTimeseriesData(time, columns, {
+      const timeFormat = params.get("tf");
+      const data = generateTimeseriesData(timeColumn, columns, {
         type: type as "csv" | "json",
         separator,
         stringify: type === "json",
-        timeFormat,
+        timeFormat: timeFormat || undefined,
       });
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       return new Response(data as string);
     }
     return originalFetch(url);
@@ -169,7 +165,9 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
     const isValueList = node.hasAttribute("valueList");
     let tag = node.tagName.toLowerCase();
     const value = node.getAttribute("value");
-
+    if (tag === "text" && (value?.includes("coref") || value?.includes("long"))) {
+      tag = "longtext";
+    }
     if (tag === "hypertext" && value?.includes("pdf")) {
       tag = "pdf";
     } else if (tag === "hypertext" && value?.includes("video")) {
@@ -180,20 +178,28 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
       } else {
         tag = "website";
       }
-    } else if (tag === "timeseries" && value?.includes("csv") && onlyUrls) {
+    } else if (tag === "timeseries" && (value?.includes("csv") || !valueType?.includes("json"))) {
       const csvUrl = new URL(SAMPLE_CSV);
-      // Check children nodes Channel for columns
       const columns = Array.from(node.children).filter((child) => child.tagName === "Channel");
-      const timeColumn = node.getAttribute("timeColumn") || "None";
-      const csvSeparator = node.getAttribute("sep") || ",";
-      const timeFormat = node.getAttribute("timeFormat") || "";
-      csvUrl.searchParams.set("time", timeColumn);
-      csvUrl.searchParams.set("values", columns.map((c) => c.getAttribute("column") || "").join(","));
-      csvUrl.searchParams.set("sep", csvSeparator);
-      csvUrl.searchParams.set("tf", timeFormat);
-      console.log("timeFormat", timeFormat);
-      console.log("csvUrl", csvUrl.toString());
-      data[key] = csvUrl.toString();
+      const timeColumn = node.getAttribute("timeColumn");
+      const csvSeparator = node.getAttribute("sep");
+      const timeFormat = node.getAttribute("timeFormat");
+      const values = columns.map((c) => c.getAttribute("column") || "").join(",");
+
+      if (onlyUrls) {
+        // Check children nodes Channel for columns
+        if (timeColumn) csvUrl.searchParams.set("time", timeColumn);
+        if (values) csvUrl.searchParams.set("values", values);
+        if (csvSeparator) csvUrl.searchParams.set("sep", csvSeparator);
+        if (timeFormat) csvUrl.searchParams.set("tf", timeFormat);
+        data[key] = csvUrl.toString();
+      } else {
+        data[key] = generateTimeseriesData(timeColumn ?? "time", values.split(","), {
+          type: "csv",
+          separator: csvSeparator ?? ",",
+          timeFormat: timeFormat ?? undefined,
+        });
+      }
       return;
     } else if (tag === "timeseries" && valueType?.includes("json")) {
       const columns = Array.from(node.children)
@@ -204,7 +210,6 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
         type: "json",
         stringify: false,
       });
-      console.log(data[key]);
       return;
     }
 
@@ -218,15 +223,6 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
         { [nameKey]: "Alice", [textKey]: "Sample: Text #3" },
         { [nameKey]: "Bob", [textKey]: "Sample: Text #4" },
         { [nameKey]: "Alice", [textKey]: "Sample: Text #5" },
-      ];
-      return;
-    }
-
-    // Special handling for TimeSeries
-    if (tag === "timeseries") {
-      data[key] = [
-        { time: 0, value: 1 },
-        { time: 1, value: 2 },
       ];
       return;
     }
@@ -255,7 +251,7 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
 
     // Special handling for Table
     if (tag === "table") {
-      data[key] = [{ "Card number": 18799210, "First name": "Sample", "Last name": "Text" }];
+      data[key] = { "Card number": 18799210, "First name": "Sample", "Last name": "Text" };
       return;
     }
 
@@ -297,11 +293,13 @@ export async function generateSampleTaskFromConfig(config: string): Promise<{
     // Special handling for longText, corefText, captioning, etc.
     if (tag === "longtext") {
       data[key] =
-        "Sample: This is a sample text for long text task. It can be used for text classification, named entity recognition, etc.";
-      return;
-    }
-    if (tag === "coreftext") {
-      data[key] = "Sample: This is a sample text for coreference resolution and entity linking task.";
+        `Sample: This is sample text for long text task. It can be used for text classification, named entity recognition, coreference resolution, etc.
+
+        Opossums are frequently considered to be living fossils, and as a result are often used to approximate the ancestral therian condition in comparative studies.
+
+        However, this is inaccurate, the oldest opossum fossils are early Miocene in age (roughly 20 million years old) and the last common ancestor of all living opossums approximately dates to the Oligocene-Miocene boundary (roughly 23 million years ago) and is at most no older than Oligocene in age. i
+
+        Many extinct metatherians once considered early opossums, such as Alphadon, Peradectes, Herpetotherium, and Pucadelphys, have since been recognized to have been previously grouped with opossums on the basis of plesiomorphies and are now considered to represent older branches of Metatheria only distantly related to modern opossums.`;
       return;
     }
     if (tag === "captioning") {

@@ -72,8 +72,8 @@ describe("generateSampleTaskFromConfig", () => {
     const config = `
       <View>
         <Text name="text" value="$text"/>
-        <!-- {"data": {"text": "Custom sample text"}} -->
       </View>
+      <!-- {"data": {"text": "Custom sample text"}} -->
     `;
     const result = await generateSampleTaskFromConfig(config);
     expect(result.data).toHaveProperty("text");
@@ -84,8 +84,8 @@ describe("generateSampleTaskFromConfig", () => {
     const config = `
       <View>
         <Text name="text" value="$text"/>
-        <!-- {"annotation": {"from_name": "labels", "to_name": "text", "type": "labels", "value": {"start": 0, "end": 5, "labels": ["Positive"]}}} -->
       </View>
+      <!-- {"annotation": {"from_name": "labels", "to_name": "text", "type": "labels", "value": {"start": 0, "end": 5, "labels": ["Positive"]}}} -->
     `;
     const result = await generateSampleTaskFromConfig(config);
     expect(result.annotations).toBeDefined();
@@ -125,5 +125,34 @@ describe("generateSampleTaskFromConfig", () => {
     const result = await generateSampleTaskFromConfig(config);
     expect(result.data).toHaveProperty("url");
     expect(result.data.url).toBe("Sample: Your text will go here.");
+  });
+
+  it("should handle top level data in comments", async () => {
+    const config = `
+      <View>
+        <Header value="Video timeline segmentation via Audio sync trick"/>
+        <HyperText name="video" value="$video"/>
+        <Labels name="tricks" toName="audio" choice="multiple">
+          <Label value="Kickflip" background="#1BB500" />
+          <Label value="360 Flip" background="#FFA91D" />
+          <Label value="Trick" background="#358EF3" />
+        </Labels>
+        <Audio name="audio" value="$videoSource" speed="false"/>
+      </View>
+
+      <!--
+        It's very important to prepare task data correctly,
+        it includes HyperText $video and
+        it must be like this example below:
+      -->
+
+      <!-- {
+      "videoSource": "https://app.heartex.ai/static/samples/opossum_snow_alt.mp4"
+      } -->
+    `;
+    const result = await generateSampleTaskFromConfig(config);
+    console.log("result", result);
+    expect(result.data).toHaveProperty("videoSource");
+    expect(result.data.videoSource).toBe("https://app.heartex.ai/static/samples/opossum_snow_alt.mp4");
   });
 });

@@ -54,7 +54,5 @@ export function d3FormatToDateFns(d3Format: string) {
  * @returns {Function} - A function that takes a Date and returns a formatted string
  */
 export function createUtcFormatter(d3FormatStr: string, options = {}) {
-  return function (date: Date) {
-    return format(date, d3FormatToDateFns(d3FormatStr), options);
-  };
+  return (date: Date) => format(date, d3FormatToDateFns(d3FormatStr), options);
 }
