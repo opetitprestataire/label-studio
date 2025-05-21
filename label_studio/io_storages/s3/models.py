@@ -227,7 +227,7 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
         # read task json from bucket and validate it
         _, s3 = self.get_client_and_resource()
         bucket = s3.Bucket(self.bucket)
-        obj = s3.Object(bucket.name, key).get()['Body'].read().decode('utf-8')
+        obj = s3.Object(bucket.name, key).get()['Body'].read()
         return load_tasks_json(obj, key)
 
     @catch_and_reraise_from_none

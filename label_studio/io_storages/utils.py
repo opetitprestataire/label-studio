@@ -139,12 +139,12 @@ class StorageObjectParams:
         ]
 
 
-def _load_tasks_json(blob_str: str, key: str) -> list[StorageObjectParams]:
+def _load_tasks_json(blob_str: bytes, key: str) -> list[StorageObjectParams]:
     """
     Parse blob_str containing task JSON(s) and return the validated result or raise an error.
 
     Args:
-        blob_str (str): The blob string to parse.
+        blob_str (bytes): The blob string to parse.
         key (str): The key of the blob. Used for error messages.
 
     Returns:

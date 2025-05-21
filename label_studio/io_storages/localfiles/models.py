@@ -93,10 +93,8 @@ class LocalFilesImportStorageBase(LocalFilesMixin, ImportStorage):
 
         try:
             with open(path, 'rb') as f:
-                blob_str = f.read().decode('utf-8')
+                blob_str = f.read()
                 return load_tasks_json(blob_str, key)
-        except UnicodeDecodeError as e:
-            raise ValueError(f'Failed to decode file {path} as UTF-8: {str(e)}')
         except OSError as e:
             raise ValueError(f'Failed to read file {path}: {str(e)}')
 
