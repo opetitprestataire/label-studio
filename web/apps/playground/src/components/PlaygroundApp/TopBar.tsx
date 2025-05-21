@@ -22,7 +22,7 @@ const ShareUrlButton = () => {
         aria-label="Share URL"
         onClick={handleCopy}
       >
-        <IconLink style={{ width: 22, height: 22, flexShrink: 0 }} />
+        <IconLink width={22} height={22} className="flex-shrink-0" />
       </button>
     </Tooltip>
   );
@@ -45,7 +45,7 @@ const CopyButton = () => {
         aria-label="Copy URL"
         onClick={handleCopy}
       >
-        <IconCopyOutline style={{ width: 18, height: 18, flexShrink: 0 }} />
+        <IconCopyOutline width={18} height={18} className="flex-shrink-0" />
       </button>
     </Tooltip>
   );
@@ -59,6 +59,7 @@ const ShareButtons = () => {
     </div>
   );
 };
+
 export const TopBar = memo(
   () => {
     return (
