@@ -15,11 +15,11 @@ const ShareUrlButton = () => {
   }, [config, toast]);
 
   return (
-    <Tooltip title="Share URL">
+    <Tooltip title="Share labeling config URL">
       <button
         type="button"
         className="flex items-center justify-center h-8 w-8 gap-2 border border-neutral-border rounded-md"
-        aria-label="Share URL"
+        aria-label="Share labeling config URL"
         onClick={handleCopy}
       >
         <IconLink width={22} height={22} className="flex-shrink-0" />
@@ -38,11 +38,11 @@ const CopyButton = () => {
   }, [config, toast]);
 
   return (
-    <Tooltip title="Copy config">
+    <Tooltip title="Copy labeling config">
       <button
         type="button"
         className="flex items-center justify-center h-8 w-8 gap-2 border border-neutral-border rounded-md"
-        aria-label="Copy URL"
+        aria-label="Copy labeling config"
         onClick={handleCopy}
       >
         <IconCopyOutline width={18} height={18} className="flex-shrink-0" />
