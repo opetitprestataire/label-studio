@@ -128,7 +128,7 @@ body :global(.ant-radio-checked .ant-radio-inner::after) {
   background-color: var(--color-primary-surface);
 }
 
-body :global(.ant-radio-checked .ant-radio-input:focus +.ant-radio-inner) {
+body :global(.ant-radio-checked .ant-radio-input:focus + .ant-radio-inner) {
   border-color: var(--color-primary-border);
   background-color: var(--color-neutral-background);
   box-shadow: 0 0 0 4px var(--color-primary-focus-outline);
