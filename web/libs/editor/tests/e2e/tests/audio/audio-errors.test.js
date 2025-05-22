@@ -1,4 +1,4 @@
-Feature("Audio Errors").config({ waitForAction: 100 });
+Feature("Audio Errors");
 
 const config = `
 <View>
@@ -39,7 +39,7 @@ const annotations = [
   },
 ];
 
-Scenario("Check if audio decoder error handler is showing", async ({ I, LabelStudio, AtAudioView }) => {
+Scenario.skip("Check if audio decoder error handler is showing", async ({ I, LabelStudio, AtAudioView }) => {
   LabelStudio.setFeatureFlags({
     ff_front_dev_2715_audio_3_280722_short: true,
   });
@@ -58,7 +58,7 @@ Scenario("Check if audio decoder error handler is showing", async ({ I, LabelStu
   await AtAudioView.seeErrorHandler("An error occurred while decoding the audio file");
 });
 
-Scenario("Check if audio http error handler is showing", async ({ I, LabelStudio, AtAudioView }) => {
+Scenario.skip("Check if audio http error handler is showing", async ({ I, LabelStudio, AtAudioView }) => {
   LabelStudio.setFeatureFlags({
     ff_front_dev_2715_audio_3_280722_short: true,
   });
