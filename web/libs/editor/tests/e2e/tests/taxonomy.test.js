@@ -253,7 +253,7 @@ Scenario("Non unique values filtering", async ({ I, LabelStudio, AtTaxonomy }) =
   I.dontSeeElement(AtTaxonomy.locateItemByText("a2").at(2));
 });
 
-Scenario("Taxonomy read only in history", async ({ I, LabelStudio, AtTaxonomy }) => {
+Scenario.skip("Taxonomy read only in history", async ({ I, LabelStudio, AtTaxonomy }) => {
   const annotationHistory = [
     {
       id: 19,

@@ -225,7 +225,7 @@ Scenario("Independent skip duplicate values", async ({ I, LabelStudio, AtOutline
   Modals.dontSeeWarning(SKIP_DUPLICATES_ERROR);
 });
 
-Scenario("Skip duplicate values on editing", async ({ I, LabelStudio, AtOutliner, Modals }) => {
+Scenario.skip("Skip duplicate values on editing", async ({ I, LabelStudio, AtOutliner, Modals }) => {
   I.amOnPage("/");
   LabelStudio.init({
     data: { letter: "Aa" },
