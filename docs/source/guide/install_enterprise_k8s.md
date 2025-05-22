@@ -311,12 +311,14 @@ global:
       redisSslKeyFileSecretKey: "client.key"
 ```
 
+# 4. Install or upgrade Label Studio Enterprise using Helm.
+
+
 ## Optional: set up username and password for Redis
 
 Only these options are available to set a password and a username for Redis:
 
-**1. Password via Kubernetes Secret**
-Use this when:
+**1. Password via Kubernetes Secret**. Use this when:
 * You want to avoid embedding credentials in `values.yaml`
 * You already manage Secrets in your cluster
 * You need a simple auth without multiple Redis users and you don't have username
@@ -330,8 +332,7 @@ global:
       secretKey: "redis-password"      # Key inside Secret
 ```
 
-**2. Username + password in URL**
-Use this when:
+**2. Username + password in URL**. Use this when:
 * Redis ≥ 7 with ACL-enabled users
 * You need a dedicated Redis user for permission scoping
 * You need a quick, throwaway setup or local testing
@@ -342,9 +343,7 @@ global:
     host: "redis://myuser:mypassword@redis.example.com:6379/1"
 ```
 
- **3. Username in environment variables + password in secret**
-
-Use this when:
+ **3. Username in environment variables + password in secret**. Use this when:
 * Redis ≥ 7 with ACL-enabled users
 * You want to keep the password secret but still specify a username
 
@@ -358,9 +357,6 @@ global:
   extraEnvironmentVars:
     REDIS_USERNAME: "myuser"           # Injected into pod env
 ```
-
-
-4. Install or upgrade Label Studio Enterprise using Helm.
 
 ## Use Helm to install Label Studio Enterprise on your Kubernetes cluster
 
