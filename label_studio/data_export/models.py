@@ -248,6 +248,7 @@ class ConvertedFormat(models.Model):
 
     def delete(self, *args, **kwargs):
         if flag_set('ff_back_dev_4664_remove_storage_file_on_export_delete_29032023_short'):
+            logger.info(f'Deleting file from storage {args=} {kwargs=}')
             if self.file:
                 self.file.delete()
         super().delete(*args, **kwargs)
