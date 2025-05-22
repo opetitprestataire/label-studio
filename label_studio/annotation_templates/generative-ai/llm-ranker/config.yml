@@ -47,7 +47,7 @@ config: |
             background: var(--color-neutral-surface-hover);
           }
           
-          .htx-ranker-item p:last-child { display: none };
+          .htx-ranker-item p:last-child { display: none }
         </Style>
         <Ranker name="rank" toName="answers">
       <Bucket name="relevant_results" title="Relevant Results" />
