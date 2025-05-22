@@ -311,7 +311,7 @@ global:
       redisSslKeyFileSecretKey: "client.key"
 ```
 
-# 4. Install or upgrade Label Studio Enterprise using Helm.
+4. Install or upgrade Label Studio Enterprise using Helm.
 
 
 ## Optional: set up username and password for Redis
