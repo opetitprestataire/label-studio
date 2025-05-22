@@ -190,6 +190,7 @@ Data(maxUsageImageToolsDataTable).Scenario(
       I.pressKey(shape.hotkey);
       drawShapeByBbox(shape, 1 + 50 * k, 1, 30, 30, AtImageView);
       I.pressKey("u");
+      I.wait(0.032);
     }
 
     I.pressKey(shape.hotkey);

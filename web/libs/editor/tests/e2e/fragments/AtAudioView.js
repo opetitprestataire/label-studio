@@ -242,6 +242,7 @@ module.exports = {
     this.toggleControlsMenu();
     I.clearField(this._volumeInputSelector);
     I.fillField(this._volumeInputSelector, value);
+    I.seeInField(this._volumeInputSelector, value);
     this.toggleControlsMenu();
   },
 
@@ -329,6 +330,7 @@ module.exports = {
 
   async seeErrorHandler(value, selector = null) {
     selector = selector ? this[selector] : this._errorSelector;
+    I.seeElement(selector);
     const error = await I.grabTextFrom(selector);
     const matcher = new RegExp(value);
 

@@ -57,6 +57,44 @@ class PlaywrightAddon extends Helper {
       ),
     );
   }
+
+  async seeFocusedElement(selector, { timeout = 2000 } = {}) {
+    const { Playwright } = this.helpers;
+    const page = Playwright.page;
+    const locator = page.locator(selector);
+    const startTime = Date.now();
+    const checkInterval = 16;
+
+    let isFocused = false;
+    let lastError;
+
+    while (Date.now() - startTime < timeout) {
+      try {
+        const elements = await locator.all();
+        if (elements?.length) {
+          for (const element of elements) {
+            const elementIsFocused = await element.evaluate((el) => {
+              console.log(el, document.activeElement);
+              return document.activeElement === el;
+            });
+
+            if (elementIsFocused) {
+              isFocused = true;
+              break;
+            }
+          }
+        }
+        lastError = null;
+      } catch (error) {
+        lastError = error;
+      }
+      await page.waitForTimeout(checkInterval);
+    }
+
+    if (!isFocused) {
+      throw new Error(`Element ${selector} is not focused after ${timeout}ms${lastError ? `:\n${lastError}` : ""}`);
+    }
+  }
 }
 
 module.exports = PlaywrightAddon;

@@ -238,8 +238,11 @@ module.exports = {
     I.scrollPageToTop();
     I.moveMouse(this.stageBBox().x + x, this.stageBBox().y + y);
     I.pressMouseDown();
+    I.wait(0.016);
     I.moveMouse(this.stageBBox().x + x + shiftX, this.stageBBox().y + y + shiftY, 3);
+    I.wait(0.016);
     I.pressMouseUp();
+    I.wait(0.016);
   },
   /**
    * Click through the list of points on the ImageView. Works in couple of lookForStage.

@@ -22,7 +22,7 @@ module.exports.config = {
       show: !headless,
       restart: "context",
       timeout: 30000,
-      waitForAction: headless ? 100 : 500,
+      waitForAction: headless ? 0 : 0,
       windowSize: "1200x900",
       waitForNavigation: "domcontentloaded",
       waitForURL: "domcontentloaded",
@@ -30,7 +30,7 @@ module.exports.config = {
       chromium: process.env.CHROMIUM_EXECUTABLE_PATH
         ? {
             executablePath: process.env.CHROMIUM_EXECUTABLE_PATH,
-            args: ['--disable-dev-shm-usage', '--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+            args: ["--disable-dev-shm-usage", "--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
           }
         : {},
       // to test date shifts because of timezone. (see date-time.test.js)
