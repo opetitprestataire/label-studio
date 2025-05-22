@@ -595,11 +595,12 @@ def async_convert(converted_format_id, export_type, project, hostname, download_
     converted_format.status = ConvertedFormat.Status.COMPLETED
     converted_format.save(update_fields=['file', 'status'])
 
-    logger.info('closing file_')
+    logger.error('closing file_')
     file_.close()
 
 
 def set_convert_background_failure(job, connection, type, value, traceback_obj):
+    logger.error(f'set_convert_background_failure {job=} {connection=} {type=} {value=} {traceback_obj=}')
     from data_export.models import ConvertedFormat
 
     convert_id = job.args[0]
