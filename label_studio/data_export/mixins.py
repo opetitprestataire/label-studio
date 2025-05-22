@@ -340,11 +340,14 @@ class ExportMixin:
             files = get_all_files_from_dir(out_dir)
             dirs = get_all_dirs_from_dir(out_dir)
 
+            logger.info(f'Export files: {files}')
             if len(files) == 0 and len(dirs) == 0:
                 return None
             elif len(files) == 1 and len(dirs) == 0:
+                logger.info(f'Export file: {files[0]}')
                 output_file = files[0]
                 filename = pathlib.Path(input_name).stem + pathlib.Path(output_file).suffix
+                logger.info(f'Export filename: {filename=} {output_file=} {input_name=}')
             else:
                 shutil.make_archive(out_dir, 'zip', out_dir)
                 output_file = pathlib.Path(tmp_dir) / (str(out_dir.stem) + '.zip')
