@@ -1,5 +1,6 @@
 const Helper = require("@codeceptjs/helper");
 const ElementNotFound = require("codeceptjs/lib/helper/errors/ElementNotFound");
+const assert = require("assert");
 
 function assertElementExists(res, locator, prefix, suffix) {
   if (!res || res.length === 0) {
@@ -59,9 +60,6 @@ class PlaywrightAddon extends Helper {
   }
 
   async seeFocusedElement(selector, { timeout = 2000 } = {}) {
-    const { Playwright } = this.helpers;
-    const page = Playwright.page;
-    const locator = page.locator(selector);
     const startTime = Date.now();
     const checkInterval = 16;
 
@@ -70,30 +68,22 @@ class PlaywrightAddon extends Helper {
 
     while (Date.now() - startTime < timeout) {
       try {
-        const elements = await locator.all();
-        if (elements?.length) {
-          for (const element of elements) {
-            const elementIsFocused = await element.evaluate((el) => {
-              console.log(el, document.activeElement);
-              return document.activeElement === el;
-            });
-
-            if (elementIsFocused) {
-              isFocused = true;
-              break;
-            }
-          }
+        const els = await this.helpers.Playwright._locate(selector);
+        const areFocused = await Promise.all(
+          els.map((el) => el.$eval("xpath=.", (el) => el === document.activeElement)),
+        );
+        if (areFocused.some((el) => el)) {
+          isFocused = true;
+          break;
         }
         lastError = null;
       } catch (error) {
         lastError = error;
       }
-      await page.waitForTimeout(checkInterval);
+      await this.helpers.Playwright.page.waitForTimeout(checkInterval);
     }
 
-    if (!isFocused) {
-      throw new Error(`Element ${selector} is not focused after ${timeout}ms${lastError ? `:\n${lastError}` : ""}`);
-    }
+    assert.ok(isFocused, `Element ${selector} is not focused after ${timeout}ms${lastError ? `:\n${lastError}` : ""}`);
   }
 }
 
