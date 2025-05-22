@@ -259,7 +259,7 @@ Adjust the included defaults to reflect your environment and copy these into a n
 
 </div>
 
-## Optional: set up TLS for PostgreSQL
+## Optional: Set up TLS for PostgreSQL
 To configure Label Studio Enterprise to use TLS for end-client connections with PostgreSQL, do the following:
 
 1. Enable TLS for your PostgreSQL instance and save Root TLS certificate, client certificate and its key for the next steps.
@@ -286,7 +286,7 @@ global:
 
 4. Install or upgrade Label Studio Enterprise using Helm.
 
-## Optional: set up TLS for Redis
+## Optional: Set up TLS for Redis
 To configure Label Studio Enterprise to use TLS for end-client connections with Redis, do the following:
 
 1. Enable TLS for your Redis instance and save Root TLS certificate, client certificate and its key for the next steps.
@@ -314,9 +314,9 @@ global:
 4. Install or upgrade Label Studio Enterprise using Helm.
 
 
-## Optional: set up username and password for Redis
+## Optional: Set up username and password for Redis
 
-Only these options are available to set a password and a username for Redis:
+Use one of these options to set a password and a username for Redis:
 
 **1. Password via Kubernetes Secret**. Use this when:
 * You want to avoid embedding credentials in `values.yaml`
@@ -333,7 +333,7 @@ global:
 ```
 
 **2. Username + password in URL**. Use this when:
-* Redis ≥ 7 with ACL-enabled users
+* Redis v.7 or later, and with ACL-enabled users
 * You need a dedicated Redis user for permission scoping
 * You need a quick, throwaway setup or local testing
 
@@ -344,7 +344,7 @@ global:
 ```
 
  **3. Username in environment variables + password in secret**. Use this when:
-* Redis ≥ 7 with ACL-enabled users
+* Redis v.7 or later, and with ACL-enabled users
 * You want to keep the password secret but still specify a username
 
 ```yaml
