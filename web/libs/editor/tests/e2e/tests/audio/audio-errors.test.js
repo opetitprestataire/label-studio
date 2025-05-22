@@ -1,4 +1,4 @@
-Feature("Audio Errors");
+Feature("Audio Errors").config({ waitForAction: 100 });
 
 const config = `
 <View>
