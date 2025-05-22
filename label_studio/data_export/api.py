@@ -430,7 +430,6 @@ class ExportDetailAPI(generics.RetrieveDestroyAPIView):
                     if converted_format.file:
                         converted_format.file.delete()
             except Exception as e:
-                logger.error(f'Failed to delete export file: {e}', exc_info=True)
                 return Response(
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     data={
