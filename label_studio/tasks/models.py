@@ -40,6 +40,7 @@ from django.utils.translation import gettext_lazy as _
 from label_studio_sdk.label_interface.objects import PredictionValue
 from rest_framework.exceptions import ValidationError
 from tasks.choices import ActionType
+from django.contrib.postgres.indexes import BrinIndex
 
 logger = logging.getLogger(__name__)
 
@@ -174,6 +175,7 @@ class Task(TaskMixin, models.Model):
             models.Index(fields=['id', 'overlap']),
             models.Index(fields=['overlap']),
             models.Index(fields=['project', 'id']),
+            BrinIndex(fields=['updated_at'], name='task_updated_at_brin_idx'),
         ]
 
     @property
