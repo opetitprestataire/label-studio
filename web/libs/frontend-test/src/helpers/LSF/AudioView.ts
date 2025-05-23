@@ -10,7 +10,7 @@ export const AudioView = {
     return cy.get(".lsf-audio-tag");
   },
   get errorContainer() {
-    return this.root.find('[data-testid^="error:"]');
+    return this.root.find('[data-testid^="error:"]', { timeout: 30000 });
   },
   get drawingArea() {
     return this.root.find("canvas");
