@@ -1,4 +1,5 @@
 import django_filters
+from core.permissions import ViewClassPermission, all_permissions
 from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
@@ -55,6 +56,10 @@ class WebhookListAPI(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_class = WebhookFilterSet
+    permission_required = ViewClassPermission(
+        GET=all_permissions.webhooks_view,
+        POST=all_permissions.webhooks_change,
+    )
 
     def get_queryset(self):
         return Webhook.objects.filter(organization=self.request.user.active_organization)
