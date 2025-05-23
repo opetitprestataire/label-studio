@@ -175,7 +175,6 @@ class Task(TaskMixin, models.Model):
             models.Index(fields=['id', 'overlap']),
             models.Index(fields=['overlap']),
             models.Index(fields=['project', 'id']),
-            BrinIndex(fields=['updated_at'], name='task_updated_at_brin_idx'),
         ]
 
     @property
