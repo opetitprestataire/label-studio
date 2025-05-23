@@ -25,7 +25,7 @@ Bulk labeling supports all data types (e.g. images, text, audio, video).
 
 ## Supported user roles
 
-Only users who are in the Reviewer, Manager, Admin, and Owner role can use the bulk labeling actions available from the Data Manager. 
+Only users who are in the Reviewer, Manager, Admin, or Owner role can use the bulk labeling actions available from the Data Manager. 
 
 !!! info Tip
     Users in the Annotator role can still use [plugin-enabled bulk labeling actions](/plugins/bulk_labeling). 
