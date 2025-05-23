@@ -7,7 +7,7 @@ order: 0
 order_enterprise: 135
 meta_title: Bulk Labeling
 meta_description: Bulk labeling in Label Studio
-section: "Manage Your Organization"
+section: "Create & Manage Projects"
 parent: "labeling"
 parent_enterprise: "labeling"
 date: 2025-05-24 17:19:21
