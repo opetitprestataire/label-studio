@@ -125,7 +125,7 @@ def gcs_client_mock():
             data = f'test_blob_{self.key}'
             if self.is_json:
                 return json.dumps(self.sample_json_contents).encode('utf-8')
-            return data
+            return data.encode('utf-8')
 
     class DummyGCSBucket:
         def __init__(self, bucket_name, is_json, is_multitask):
