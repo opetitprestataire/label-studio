@@ -124,7 +124,7 @@ def gcs_client_mock():
         def download_as_bytes(self):
             data = f'test_blob_{self.key}'
             if self.is_json:
-                return json.dumps(self.sample_json_contents)
+                return json.dumps(self.sample_json_contents).encode('utf-8')
             return data
 
     class DummyGCSBucket:
