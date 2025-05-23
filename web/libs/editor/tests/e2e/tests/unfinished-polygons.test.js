@@ -507,7 +507,7 @@ Data(selectedPolygonAfterCreatingVariants).Scenario(
     await AtImageView.lookForStage();
     const canvasSize = await AtImageView.getCanvasSize();
 
-    I.wait(0.032);
+    I.waitTicks(2);
     I.say("close loaded region");
     AtImageView.drawByClick(canvasSize.width * 0.1, canvasSize.height * 0.1);
 
@@ -524,7 +524,7 @@ Data(selectedPolygonAfterCreatingVariants).Scenario(
 
     I.say("go back through the history");
     I.pressKey(["CommandOrControl", "Z"]);
-    I.wait(0.032);
+    I.waitTicks(2);
     AtOutliner.dontSeeSelectedRegion();
 
     I.say("repeat creation and checking");

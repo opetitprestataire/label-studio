@@ -883,7 +883,7 @@ async function doDrawingAction(I, { msg, fromX, fromY, toX, toY }) {
     await page.mouse.move(toX, toY);
     await page.mouse.up();
   });
-  I.wait(1); // Ensure that the tool is fully finished being created.
+  I.waitTicks(3); // Ensure that the tool is fully finished being created.
 }
 
 // `mulberry32` (simple generator with a 32-bit state)

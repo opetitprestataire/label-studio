@@ -99,7 +99,7 @@ Scenario(
 
     I.resizeWindow(wWidth, wHeight);
 
-    I.wait(0.05);
+    I.waitTicks(3);
 
     // If the canvas does not match the image, this action will rotate the region
     AtImageView.drawThroughPoints(

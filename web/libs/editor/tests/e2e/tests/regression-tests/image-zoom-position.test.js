@@ -201,7 +201,7 @@ Data(relativeCoordsFF).Scenario(
       await AtOutlinerPanel.dragResizerBy(shiftX, 0, AtOutlinerPanel.resizeRight, steps);
     }
 
-    I.wait(0.1);
+    I.waitTicks(3);
 
     await AtImageView.lookForStage();
 

@@ -131,7 +131,7 @@ Scenario(
     // 1, then redo it and ensure its back and our region list is still 1 again.
     I.say("Undoing last cloud magic wand and ensuring it worked correctly");
     I.click('button[aria-label="Undo"]');
-    I.wait(1);
+    I.waitTicks(3);
     await assertMagicWandPixel(
       I,
       300,

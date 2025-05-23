@@ -229,7 +229,7 @@ Data(windowSizesTable).Scenario(
       I.click(locate(`[aria-label='rotate-${rotate}']`));
       // Just checking that we see image, to get some time for rotating to be finished and correctly rendered
       I.seeElement('[alt="LS"]');
-      I.wait(0.032);
+      I.waitTicks(2);
       const rotatedCanvasSize = await AtImageView.getCanvasSize();
       const rotatedImageSize = await AtImageView.getImageFrameSize();
 
