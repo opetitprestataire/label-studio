@@ -166,7 +166,7 @@ Data(maxUsageImageToolsDataTable).Scenario(
   },
 );
 
-Data(maxUsageImageToolsDataTable).only.Scenario(
+Data(maxUsageImageToolsDataTable).Scenario(
   "Max usages of labels in ImageView on region creating",
   async ({ I, LabelStudio, AtImageView, AtOutliner, AtPanels, current }) => {
     const { maxUsage, shapeName } = current;
@@ -190,7 +190,7 @@ Data(maxUsageImageToolsDataTable).only.Scenario(
       I.pressKey(shape.hotkey);
       drawShapeByBbox(shape, 1 + 50 * k, 1, 30, 30, AtImageView);
       I.pressKey("u");
-      AtOutliner.seeRegions(k);
+      AtOutliner.seeRegions(k + 1);
       I.waitTicks(2);
     }
 
