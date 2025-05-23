@@ -11,12 +11,36 @@ alwaysApply: false
 - DDL (Data Definition Language - it's a subset of SQL statements used to define and modify the structure of a database) that blocks writes if run normally (concurrent index builds, data backfills)
 - To avoid production downtime during heavy migrations or data migrations
 
+## Why Can't We Use Simple Django Migrations with Concurrency?
+
+Even though Django provides `AddIndexConcurrently` and similar operations, they still cause deployment problems:
+
+**The Migration Runner Problem:**
+- Django's migration runner is fundamentally **synchronous** 
+- It waits for each operation to complete before marking the migration as "Applied"
+- Even `AddIndexConcurrently` blocks the **CI/CD pipeline** until the index finishes building (the database itself is not blocked)
+- Large tables (100M+ rows) can take **hours** to build indexes, far exceeding CI/CD timeouts (usually 5-15 minutes)
+
+**What Happens During Deployment:**
+```python
+# This STILL blocks the CI/CD deployment process
+operations = [
+    AddIndexConcurrently(
+        model_name="task", 
+        index=BrinIndex(fields=["updated_at"])
+    )
+]
+# ↑ CI/CD pipeline waits here until index creation completes
+# Database writes are NOT blocked, but deployment fails if it takes longer than timeout
+```
+
 ## How Async Migrations Work
 - Mark the migration `atomic = False` to disable wrapping in a transaction
 - In migration, a custom operation enqueues the real DDL via `start_job_async_or_sync` that is running as asyncronios rqworker job
 - DDL uses `CREATE INDEX CONCURRENTLY ...` (or `DROP INDEX CONCURRENTLY`) for non-blocking behavior
 - Track progress in a table (e.g. `AsyncMigrationStatus`) before and after execution
 - Background workers (RQ, Celery) execute the migration job independently of the main process
+- **Migration completes immediately** after queuing the job, allowing deployment to proceed
 
 ## Example Template
 ```python
