@@ -22,7 +22,7 @@ module.exports.config = {
       show: !headless,
       restart: "context",
       timeout: 30000,
-      waitForAction: headless ? 0 : 0,
+      waitForAction: headless ? 0 : 500,
       windowSize: "1200x900",
       waitForNavigation: "domcontentloaded",
       waitForURL: "domcontentloaded",
