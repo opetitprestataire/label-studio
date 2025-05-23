@@ -28,6 +28,7 @@ from core.utils.params import get_env
 from data_import.models import FileUpload
 from data_manager.managers import PreparedTaskManager, TaskManager
 from django.conf import settings
+from django.contrib.postgres.indexes import BrinIndex
 from django.db import OperationalError, models, transaction
 from django.db.models import CheckConstraint, F, JSONField, Q
 from django.db.models.lookups import GreaterThanOrEqual
@@ -40,7 +41,6 @@ from django.utils.translation import gettext_lazy as _
 from label_studio_sdk.label_interface.objects import PredictionValue
 from rest_framework.exceptions import ValidationError
 from tasks.choices import ActionType
-from django.contrib.postgres.indexes import BrinIndex
 
 logger = logging.getLogger(__name__)
 
