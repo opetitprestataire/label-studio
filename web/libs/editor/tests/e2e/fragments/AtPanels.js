@@ -61,7 +61,7 @@ class Panel {
   collapsePanel() {
     I.click(this.locate(this.collapsingToggle));
     // Allow some tags to rerender and get new sizes before we can continue testing things
-    I.waitTicks(3);
+    I.wait(1);
   }
   expandPanel() {
     I.click(this.locate(this.header));
