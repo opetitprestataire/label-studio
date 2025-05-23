@@ -3,7 +3,7 @@ import {
   audioErrorsConfig,
   audioDecoderErrorData,
   audioHttpErrorData,
-  audioErrorsAnnotations
+  audioErrorsAnnotations,
 } from "../../data/audio/audio_errors";
 
 describe("Audio Errors", () => {
@@ -27,11 +27,7 @@ describe("Audio Errors", () => {
   });
 
   it("Check if audio http error handler is showing", () => {
-    LabelStudio.params()
-      .config(audioErrorsConfig)
-      .data(audioHttpErrorData)
-      .withResult(audioErrorsAnnotations)
-      .init();
+    LabelStudio.params().config(audioErrorsConfig).data(audioHttpErrorData).withResult(audioErrorsAnnotations).init();
 
     LabelStudio.waitForObjectsReady();
 
