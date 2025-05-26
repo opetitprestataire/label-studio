@@ -147,7 +147,6 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
     }
 
     if (buttonsReplacement) {
-      // do nothing as all custom buttons are rendered already and we don't need internal buttons
       return <Block name="controls">{buttons}</Block>;
     }
 

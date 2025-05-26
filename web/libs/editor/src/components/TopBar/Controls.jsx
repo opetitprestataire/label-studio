@@ -131,7 +131,6 @@ export const Controls = controlsInjector(
             aria-label="Cancel skip and return to annotation"
             disabled={disabled}
             look="outlined"
-            size="medium"
             onClick={async () => {
               await store.commentStore.commentFormSubmit();
               store.unskipTask();
@@ -148,7 +147,8 @@ export const Controls = controlsInjector(
             <Button
               aria-label="Skip current task"
               disabled={disabled}
-              look="danger"
+              variant="negative"
+              look="outlined"
               onClick={async (e) => {
                 if (store.hasInterface("comments:skip") ?? true) {
                   buttonHandler(e, () => store.skipTask({}), "Please enter a comment before skipping");
@@ -209,6 +209,10 @@ export const Controls = controlsInjector(
       }
     }
 
-    return <Block name="controls">{buttons}</Block>;
+    return (
+      <Block name="controls">
+        <div className="grid grid-flow-col auto-cols-fr gap-tight items-center">{buttons}</div>
+      </Block>
+    );
   }),
 );

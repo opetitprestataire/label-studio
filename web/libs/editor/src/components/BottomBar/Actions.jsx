@@ -25,6 +25,7 @@ export const Actions = ({ store }) => {
           aria-label="Instructions"
           size="small"
           variant="neutral"
+          look="string"
           tooltip="Show instructions"
           onClick={() => store.toggleDescription()}
         >
