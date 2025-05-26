@@ -27,10 +27,10 @@ export const Actions = ({ store }) => {
         <Tooltip title="Compare all annotations">
           <Button
             icon={<IconViewAll />}
-            look="string"
             aria-label="Compare all annotations"
             onClick={() => onToggleVisibility()}
-            primary={isViewAll}
+            variant={isViewAll ? "primary" : "neutral"}
+            look={isViewAll ? "filled" : "string"}
             style={{
               height: 36,
               width: 36,
@@ -114,7 +114,6 @@ export const Actions = ({ store }) => {
       {store.description && store.hasInterface("instruction") && !isBulkMode && (
         <Button
           icon={<IconInfo style={{ width: 16, height: 16 }} />}
-          primary={store.showingDescription}
           variant={store.showingDescription ? "primary" : "neutral"}
           look={store.showingDescription ? "filled" : "string"}
           aria-label="Instructions"
