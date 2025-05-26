@@ -16,6 +16,7 @@ export const useWaveform = (
     autoLoad?: boolean;
     showLabels?: boolean;
     onFrameChanged?: (frame: { width: number; height: number; zoom: number; scroll: number }) => void;
+    onBuffering?: (buffering: boolean) => void;
   },
 ) => {
   const waveform = useRef<Waveform>();
@@ -23,6 +24,7 @@ export const useWaveform = (
   const [zoom, setZoom] = useState(1);
   const [volume, setVolume] = useState(options?.volume ?? 1);
   const [playing, setPlaying] = useState(false);
+  const [buffering, setBuffering] = useState(options?.buffering ?? false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [amp, setAmp] = useState(options?.amp ?? 1);
@@ -115,6 +117,8 @@ export const useWaveform = (
       setLayerVisibility(layerVis);
     });
 
+    wf.on("buffering", setBuffering);
+
     waveform.current = wf;
 
     return () => {
@@ -184,6 +188,13 @@ export const useWaveform = (
     return () => cancelAnimationFrame(animationFrameId);
   }, [showLabels]);
 
+  useEffect(() => {
+    const animationFrameId = requestAnimationFrame(() => {
+      if (waveform.current && waveform.current.buffering !== buffering) waveform.current.buffering = buffering;
+    });
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [buffering]);
+
   return {
     waveform,
     zoom,
@@ -191,6 +202,7 @@ export const useWaveform = (
     volume,
     setVolume,
     playing,
+    buffering,
     setPlaying,
     duration,
     currentTime,

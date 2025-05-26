@@ -6,7 +6,7 @@ import { type Instance, types } from "mobx-state-tree";
  */
 export const SYNC_WINDOW = 100;
 
-export type SyncEvent = "play" | "pause" | "seek" | "speed";
+export type SyncEvent = "play" | "pause" | "seek" | "speed" | "buffering";
 
 /**
  * Currently only for reference, MST mixins don't allow to apply this interface

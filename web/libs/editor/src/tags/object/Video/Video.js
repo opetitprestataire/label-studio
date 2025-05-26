@@ -6,6 +6,7 @@ import IsReadyMixin from "../../../mixins/IsReadyMixin";
 import ProcessAttrsMixin from "../../../mixins/ProcessAttrs";
 import { SyncableMixin } from "../../../mixins/Syncable";
 import { parseValue } from "../../../utils/data";
+import { isDefined } from "../../../utils/utilities";
 import { FF_VIDEO_FRAME_SEEK_PRECISION, isFF } from "../../../utils/feature-flags";
 import ObjectBase from "../Base";
 
@@ -34,10 +35,10 @@ import ObjectBase from "../Base";
  * - `-pix_fmt yuv420p` ensures the pixel format is compatible with most browsers.
  * - `-r 30` forces a constant frame rate of 30 fps. You can also omit the -r option, ffmpeg will save your current frame rate. This is fine if you are 100% certain that your video has a constant frame rate.
  * - `-c:a aac -b:a 128k` encodes the audio in AAC at 128 kbps.
- * - `-to` stops writing output as soon as the container clock hits your video’s end timestamp, so any extra audio tail is automatically dropped.
+ * - `-to` stops writing output as soon as the container clock hits your video's end timestamp, so any extra audio tail is automatically dropped.
  * - `output_video.mp4` is the converted video file ready for use in Label Studio.
  *
- * Using this FFmpeg command to re-encode your videos will help eliminate playback issues and ensure that Label Studio detects the total video duration  accurately, providing a smooth annotation experience.
+ * Using this FFmpeg command to re-encode your videos will help eliminate playback issues and ensure that Label Studio detects the total video duration accurately, providing a smooth annotation experience.
  *
  * It is a good idea to check all parameters of your video using this command:
  * ```bash
@@ -99,6 +100,7 @@ const Model = types
     ref: React.createRef(),
     frame: 1,
     length: 1,
+    buffering: false,
     drawingRegion: null,
   }))
   .views((self) => ({
@@ -177,7 +179,7 @@ const Model = types
     ////// Incoming
 
     registerSyncHandlers() {
-      ["play", "pause", "seek"].forEach((event) => {
+      ["play", "pause", "seek", "buffering"].forEach((event) => {
         self.syncHandlers.set(event, self.handleSync);
       });
       self.syncHandlers.set("speed", self.handleSyncSpeed);
@@ -187,6 +189,10 @@ const Model = types
       if (!self.ref.current) return;
 
       const video = self.ref.current;
+
+      if (isDefined(data.isBuffering)) {
+        self.buffering = data.isBuffering;
+      }
 
       if (data.playing) {
         if (!video.playing) video.play();
@@ -198,7 +204,9 @@ const Model = types
         self.speed = data.speed;
       }
 
-      video.currentTime = data.time;
+      if (isDefined(data.time)) {
+        video.currentTime = data.time;
+      }
     },
 
     handleSyncSpeed({ speed }) {
@@ -207,6 +215,11 @@ const Model = types
 
     handleSeek() {
       self.triggerSync("seek");
+    },
+
+    handleBuffering(isBuffering) {
+      self.buffering = isBuffering;
+      self.triggerSync("buffering", { isBuffering });
     },
 
     syncMuted(muted) {

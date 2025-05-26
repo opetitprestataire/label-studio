@@ -45,6 +45,8 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
     showLabels: item.annotationStore.store.settings.showLabels,
     rate: item.defaultspeed ? Number(item.defaultspeed) : 1,
     muted: item.muted === "true",
+    buffering: item.buffering,
+    onBuffering: item.handleBuffering,
     onLoad: item.onLoad,
     onPlaying: item.onPlaying,
     onSeek: item.onSeek,

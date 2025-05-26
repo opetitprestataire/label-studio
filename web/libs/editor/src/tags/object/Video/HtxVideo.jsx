@@ -524,6 +524,7 @@ const HtxVideoView = ({ item, store }) => {
                   pan={pan}
                   speed={item.speed}
                   framerate={item.framerate}
+                  buffering={item.buffering}
                   allowInteractions={false}
                   allowPanOffscreen={!limitCanvasDrawingBoundaries}
                   onFrameChange={handleFrameChange}
@@ -534,6 +535,7 @@ const HtxVideoView = ({ item, store }) => {
                   onPlay={handlePlay}
                   onPause={handlePause}
                   onSeeked={item.handleSeek}
+                  onBuffering={item.handleBuffering}
                 />
               </>
             )}

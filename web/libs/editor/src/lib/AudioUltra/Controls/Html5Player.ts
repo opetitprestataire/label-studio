@@ -121,7 +121,7 @@ export class Html5Player extends Player {
     const wasPlaying = this.playing;
 
     this.stop();
-    this.audio.el.load();
+    // this.audio.el.load();
 
     if (wasPlaying) this.play();
   };

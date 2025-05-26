@@ -132,6 +132,7 @@ export const AudioModel = types.compose(
     })
     .volatile(() => ({
       errors: [],
+      buffering: false,
       stageRef: createRef(),
       _ws: null,
       _wfFrame: null,
@@ -211,7 +212,7 @@ export const AudioModel = types.compose(
       ////// Incoming
 
       registerSyncHandlers() {
-        ["play", "pause", "seek"].forEach((event) => {
+        ["play", "pause", "seek", "buffering"].forEach((event) => {
           self.syncHandlers.set(event, self.handleSync);
         });
         self.syncHandlers.set("speed", self.handleSyncSpeed);
@@ -220,12 +221,17 @@ export const AudioModel = types.compose(
       handleSync(data) {
         if (!self._ws?.loaded) return;
 
-        self.handleSyncSeek(data);
+        if (isDefined(data.isBuffering)) {
+          self.buffering = data.isBuffering;
+        }
+
         if (data.playing) {
           if (!self._ws.playing) self._ws?.play();
         } else {
           if (self._ws.playing) self._ws?.pause();
         }
+
+        self.handleSyncSeek(data);
       },
 
       // @todo remove both of these methods
@@ -255,6 +261,11 @@ export const AudioModel = types.compose(
       handleSyncSpeed({ speed }) {
         if (!self._ws) return;
         self._ws.rate = speed;
+      },
+
+      handleBuffering(isBuffering) {
+        self.buffering = isBuffering;
+        self.triggerSync("buffering", { isBuffering });
       },
 
       syncMuted(muted) {

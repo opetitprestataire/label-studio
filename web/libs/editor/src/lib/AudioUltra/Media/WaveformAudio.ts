@@ -14,6 +14,7 @@ interface WaveformAudioEvents {
   decodingProgress: (chunk: number, total: number) => void;
   canplay: () => void;
   resetSource: () => void;
+  waiting: () => void;
 }
 
 export class WaveformAudio extends Events<WaveformAudioEvents> {
@@ -164,6 +165,7 @@ export class WaveformAudio extends Events<WaveformAudioEvents> {
 
     this.el.addEventListener("canplaythrough", this.mediaReady);
     this.el.addEventListener("error", this.mediaError);
+    this.el.addEventListener("waiting", this.mediaWaiting);
     this.loadMedia();
   }
 
@@ -176,6 +178,10 @@ export class WaveformAudio extends Events<WaveformAudioEvents> {
       // otherwise it's an unrecoverable error
       this.mediaReject?.(this.el?.error);
     }
+  };
+
+  mediaWaiting = () => {
+    this.invoke("waiting");
   };
 
   mediaReady = () => {

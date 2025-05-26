@@ -59,6 +59,12 @@ export interface WaveformOptions {
   muted?: boolean;
 
   /**
+   * Buffering true/false.
+   * @default false
+   * */
+  buffering?: boolean;
+
+  /**
    * Playback speed rate. 1 – normal speed
    * @default 1
    * */
@@ -184,6 +190,7 @@ interface WaveformEventTypes extends RegionsGlobalEvents, RegionGlobalEvents {
   scroll: (scroll: number) => void;
   layersUpdated: (layers: Map<string, Layer>) => void;
   frameDrawn: (frameState: WaveformFrameState) => void;
+  buffering: (buffering: boolean) => void;
 }
 
 export class Waveform extends Events<WaveformEventTypes> {
@@ -442,6 +449,14 @@ export class Waveform extends Events<WaveformEventTypes> {
    */
   get playing() {
     return this.player.playing;
+  }
+
+  get buffering() {
+    return this.player.buffering;
+  }
+
+  set buffering(buffering: boolean) {
+    this.player.buffering = buffering;
   }
 
   /**

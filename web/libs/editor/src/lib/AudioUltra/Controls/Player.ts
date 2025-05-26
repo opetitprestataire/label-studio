@@ -18,6 +18,7 @@ export abstract class Player extends Destructable {
   protected _volume = 1;
   protected _savedVolume = 1;
 
+  buffering = false;
   playing = false;
   hasPlayed = false;
 
@@ -28,6 +29,7 @@ export abstract class Player extends Destructable {
     this._rate = wf.params.rate ?? this._rate;
     this.volume = wf.params.volume ?? this._volume;
     this._savedVolume = this.volume;
+    this.buffering = wf.params.buffering ?? this.buffering;
     if (wf.params.muted) {
       this.muted = true;
     }
@@ -135,6 +137,7 @@ export abstract class Player extends Destructable {
   init(audio: WaveformAudio) {
     this.audio = audio;
     this.audio.on("canplay", this.handleCanPlay);
+    this.audio.on("waiting", this.handleWaiting);
   }
 
   seek(time: number) {
@@ -183,6 +186,11 @@ export abstract class Player extends Destructable {
 
   protected handleCanPlay = () => {
     this.bufferResolve?.();
+    this.setBuffering(false);
+  };
+
+  protected handleWaiting = () => {
+    this.setBuffering(true);
   };
 
   private playEnded() {
@@ -215,6 +223,13 @@ export abstract class Player extends Destructable {
     this.bufferPromise = undefined;
     this.bufferResolve = undefined;
     super.destroy();
+  }
+
+  setBuffering(buffering: boolean) {
+    if (this.buffering === buffering) return;
+
+    this.buffering = buffering;
+    this.wf.invoke("buffering", [this.buffering]);
   }
 
   protected updatePlayback() {
