@@ -194,7 +194,6 @@ const Grouping = <T extends string>({
     );
   }, [value, optionsList, readableValue, direction, onChange]);
 
-  // mods are already set in the button from type, so use it only in new UI
 
   return (
     <Dropdown.Trigger content={dropdownContent} style={{ width: 200 }}>
