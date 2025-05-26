@@ -10,12 +10,17 @@ import {
   interfacesAtom,
   annotationAtom,
   sampleTaskAtom,
+  displayModeAtom,
 } from "../../atoms/configAtoms";
 import { onSnapshot } from "mobx-state-tree";
 
 type PreviewPanelProps = {
   onAnnotationUpdate?: (annotation: any) => void;
 };
+
+// Clear localStorage of any LabelStudio:settings as it may cause issues with fullscreen mode
+// if coming from the old playground
+localStorage.removeItem("labelStudio:settings");
 
 export const PreviewPanel: FC<PreviewPanelProps> = memo(
   ({ onAnnotationUpdate }) => {
@@ -25,6 +30,7 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(
     const interfaces = useAtomValue(interfacesAtom);
     const setAnnotation = useSetAtom(annotationAtom);
     const setSampleTask = useSetAtom(sampleTaskAtom);
+    const displayMode = useAtomValue(displayModeAtom);
     const [showPreview, setShowPreview] = useAtom(showPreviewAtom);
     const rootRef = useRef<HTMLDivElement>(null);
     const lsfInstance = useRef<any>(null);
@@ -78,7 +84,9 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(
             settings: {
               forceBottomPanel: true,
               collapsibleBottomPanel: true,
-              defaultCollapsedBottomPanel: true,
+              // Default collapsed in all,preview-inline, but not in preview
+              defaultCollapsedBottomPanel: displayMode !== "preview",
+              fullscreen: false,
             },
             onStorageInitialized: (LS: any) => {
               const initAnnotation = () => {
@@ -88,7 +96,7 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(
 
                 const annotation = as.selected;
                 if (annotation) {
-                  snapshotDisposer = onSnapshot(annotation, (snapshot) => {
+                  snapshotDisposer = onSnapshot(annotation, () => {
                     setAnnotation(annotation.serializeAnnotation());
                   });
                 }
