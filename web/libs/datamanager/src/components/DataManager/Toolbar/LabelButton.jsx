@@ -21,12 +21,9 @@ const injector = inject(({ store }) => {
 });
 
 export const LabelButton = injector(({ store, canLabel, size, target, selectedCount }) => {
-  // const all = selectedCount === 0 || allSelected;
   const disabled = target === "annotations";
   const triggerRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleOpen = useCallback(() => setIsOpen((isOpen) => !isOpen), []);
 
   const handleClickOutside = useCallback((e) => {
     const el = triggerRef.current;
@@ -88,7 +85,7 @@ export const LabelButton = injector(({ store, canLabel, size, target, selectedCo
       <div>
         <ButtonGroup>
           <Button
-            size="small"
+            size={size ?? "small"}
             variant="primary"
             look="outlined"
             disabled={disabled}
@@ -105,7 +102,7 @@ export const LabelButton = injector(({ store, canLabel, size, target, selectedCo
               </Menu>
             }
           >
-            <Button size="small" look="outlined" variant="primary" aria-label={"Toggle open"}>
+            <Button size={size} look="outlined" variant="primary" aria-label={"Toggle open"}>
               <IconChevronDown />
             </Button>
           </Dropdown.Trigger>

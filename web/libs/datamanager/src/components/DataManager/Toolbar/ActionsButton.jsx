@@ -137,7 +137,7 @@ export const ActionsButton = injector(
         disabled={!hasSelected}
       >
         <Button
-          size="small"
+          size={size}
           variant="neutral"
           look="outlined"
           disabled={!hasSelected}

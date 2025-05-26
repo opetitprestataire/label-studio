@@ -46,7 +46,7 @@ export const OrderButton = injector(({ size, ordering, view, ...rest }) => {
         />
 
         <Button
-          size="small"
+          size={size}
           look="outlined"
           variant="neutral"
           disabled={!!ordering === false}

@@ -92,6 +92,7 @@ export const FieldsButton = injector(
             columns={filter ? columns.filter(filter) : columns}
             WrapperComponent={wrapper}
             onClick={onClick}
+            size={size}
             onReset={onReset}
             selected={selected}
             resetTitle={resetTitle}
@@ -105,7 +106,7 @@ export const FieldsButton = injector(
             <Button
               tooltip={tooltip}
               variant="neutral"
-              size="small"
+              size={size}
               look="outlined"
               leading={icon}
               trailing={trailingIcon}
