@@ -20,8 +20,7 @@
   text-align: right;
 
   &[readonly] {
-    background-color: var(--color-neutral-border);
-    color: var(--color-neutral-content-subtler);
+    color: var(--color-neutral-content-subtlest);
     cursor: default;
 
     &:focus {
