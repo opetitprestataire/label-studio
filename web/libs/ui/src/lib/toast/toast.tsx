@@ -22,7 +22,7 @@ export enum ToastType {
   alertError = "alertError",
 }
 interface ToastProviderWithTypes extends ToastPrimitive.ToastProviderProps {
-  type: ToastType;
+  type?: ToastType;
 }
 export const ToastViewport: FC<ToastViewportProps> = ({ hotkey, label, ...props }) => {
   return (
