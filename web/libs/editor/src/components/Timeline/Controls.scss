@@ -19,6 +19,7 @@
       left: -100%;
       width: 50%;
       height: 100%;
+      will-change: left;
       background-color: var(--color-primary-content-subtle);
       animation: buffering-media 2.4s ease-out infinite;
     }
