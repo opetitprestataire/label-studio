@@ -8,11 +8,17 @@ import { ff } from "@humansignal/core";
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
-const useSyncedBuffering = (options: Omit<WaveformOptions, "container">) => {
+const useSyncedBuffering = (
+  options: Omit<WaveformOptions, "container">,
+  wf: MutableRefObject<Waveform | undefined>,
+) => {
   const bufferingRef = useRef(options?.buffering ?? false);
   bufferingRef.current = options?.buffering ?? false;
   const setBuffering = useCallback((buffering: boolean) => {
     bufferingRef.current = buffering;
+    if (wf.current) {
+      wf.current.buffering = buffering;
+    }
   }, []);
 
   return [bufferingRef.current, setBuffering] as const;
@@ -37,7 +43,7 @@ export const useWaveform = (
   const [zoom, setZoom] = useState(1);
   const [volume, setVolume] = useState(options?.volume ?? 1);
   const [playing, setPlaying] = useState(false);
-  const [buffering, setBuffering] = useSyncedBuffering(options);
+  const [buffering, setBuffering] = useSyncedBuffering(options, waveform);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [amp, setAmp] = useState(options?.amp ?? 1);

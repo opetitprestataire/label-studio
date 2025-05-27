@@ -21,7 +21,7 @@ interface AudioUltraProps {
 
 const NORMALIZED_STEP = 0.1;
 
-const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
+const AudioUltraView: FC<AudioUltraProps> = observer(({ item }: AudioUltraProps) => {
   const rootRef = useRef<HTMLElement | null>();
   const isDarkMode = getCurrentTheme() === "Dark";
 
@@ -211,7 +211,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
       />
     </Block>
   );
-};
+});
 
 const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
   const [settings, setSettings] = usePersistentJSONState<TimelineSettings>("ls:audio-tag:settings", {

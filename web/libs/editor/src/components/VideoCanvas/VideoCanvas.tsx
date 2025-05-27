@@ -7,8 +7,11 @@ import { MAX_ZOOM, MIN_ZOOM } from "./VideoConstants";
 import { VirtualCanvas } from "./VirtualCanvas";
 import { VirtualVideo } from "./VirtualVideo";
 import { ff } from "@humansignal/core";
+import { debounce } from "../../utils/debounce";
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
+
+const BUFFERING_DEBOUNCE_TIME = 200;
 
 type VideoProps = {
   src: string;
@@ -94,17 +97,21 @@ export interface VideoRef {
 }
 
 const useSyncedBuffering = (props: VideoProps) => {
-  const buffering = props.buffering ?? false;
+  const bufferingRef = useRef(props.buffering ?? false);
+  bufferingRef.current = props.buffering ?? false;
+  const onBufferingRef = useRef(props.onBuffering ?? (() => {}));
+  onBufferingRef.current = props.onBuffering ?? (() => {});
+
   const setBuffering = useCallback(
-    (isBuffering: boolean) => {
+    debounce((isBuffering: boolean) => {
       // Update parent component
-      if (isBuffering === buffering) return;
-      props.onBuffering?.(isBuffering);
-    },
-    [props.onBuffering, buffering],
+      if (isBuffering === bufferingRef.current) return;
+      onBufferingRef.current(isBuffering);
+    }, BUFFERING_DEBOUNCE_TIME),
+    [],
   );
 
-  return [buffering, setBuffering] as const;
+  return [bufferingRef.current, setBuffering] as const;
 };
 
 const useLocalBuffering = (props: VideoProps) => {

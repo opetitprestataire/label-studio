@@ -486,7 +486,6 @@ const HtxVideoView = ({ item, store }) => {
     });
   }
 
-  console.log("buffering", item.buffering);
   return (
     <ObjectTag item={item}>
       <Block name="video-segmentation" ref={mainContentRef} mod={{ fullscreen: isFullScreen }}>
