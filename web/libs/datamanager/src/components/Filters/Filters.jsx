@@ -2,7 +2,6 @@ import { inject } from "mobx-react";
 import React from "react";
 import { Block, cn, Elem } from "../../utils/bem";
 import { Button } from "@humansignal/ui";
-import { Tooltip } from "@humansignal/ui";
 import { FilterLine } from "./FilterLine/FilterLine";
 import { IconChevronRight, IconPlus } from "@humansignal/icons";
 import "./Filters.scss";
@@ -79,11 +78,16 @@ export const Filters = injector(({ views, currentView, filters }) => {
         </Button>
 
         {!sidebarEnabled ? (
-          <Tooltip title="Pin to sidebar">
-            <Button look="string" type="link" size="small" about="Pin to sidebar" onClick={() => views.expandFilters()}>
-              <IconChevronRight className="!w-4 !h-4" />
-            </Button>
-          </Tooltip>
+          <Button
+            look="string"
+            type="link"
+            size="small"
+            tooltip="Pin to sidebar"
+            onClick={() => views.expandFilters()}
+            aria-label="Pin filters to sidebar"
+          >
+            <IconChevronRight className="!w-4 !h-4" />
+          </Button>
         ) : null}
       </Elem>
     </Block>

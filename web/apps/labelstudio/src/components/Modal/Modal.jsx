@@ -114,8 +114,7 @@ export const info = ({ okText, onOkPress, ...props }) => {
             onOkPress?.();
             modal.close();
           }}
-          look="primary"
-          size="compact"
+          size="small"
           className="min-w-[120px]"
         >
           {okText ?? "OK"}

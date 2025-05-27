@@ -74,7 +74,7 @@ export const FilterLine = observer(({ filter, availableFilters, index, view, sid
             filter.delete();
           }}
         >
-          <IconTrash className="!h-4 !w-4" />
+          <IconTrash size={12} />
         </Button>
       </Elem>
     </Block>

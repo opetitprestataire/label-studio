@@ -153,7 +153,6 @@ export const Dropdown = React.forwardRef(({ animated = true, visible = false, ra
     ...(offset ?? {}),
     zIndex: 1000 + dropdownIndex,
   };
-  console.log({ rawClassName });
   const result = (
     <div
       ref={dropdown}

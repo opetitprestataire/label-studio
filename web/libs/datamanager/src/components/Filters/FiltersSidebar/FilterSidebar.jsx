@@ -20,7 +20,12 @@ export const FiltersSidebar = sidebarInjector(({ viewsStore, sidebarEnabled, sid
     <Block name="filters-sidebar">
       <Elem name="header">
         <Elem name="extra">
-          <Button look="string" onClick={() => viewsStore.collapseFilters()}>
+          <Button
+            look="string"
+            onClick={() => viewsStore.collapseFilters()}
+            tooltip="Unpin filters"
+            aria-label="Unpin filters"
+          >
             <IconChevronLeft width={24} height={24} />
           </Button>
           <Elem name="title">Filters</Elem>
