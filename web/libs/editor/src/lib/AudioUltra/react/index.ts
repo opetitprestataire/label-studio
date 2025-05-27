@@ -1,9 +1,22 @@
-import { type MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { type MutableRefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { TimelineContext } from "../../../components/Timeline/Context";
 import { isTimeRelativelySimilar } from "../Common/Utils";
 import type { Layer } from "../Visual/Layer";
 import { Waveform, type WaveformFrameState, type WaveformOptions } from "../Waveform";
+import { ff } from "@humansignal/core";
+
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
+
+const useSyncedBuffering = (options: Omit<WaveformOptions, "container">) => {
+  const bufferingRef = useRef(options?.buffering ?? false);
+  bufferingRef.current = options?.buffering ?? false;
+  const setBuffering = useCallback((buffering: boolean) => {
+    bufferingRef.current = buffering;
+  }, []);
+
+  return [bufferingRef.current, setBuffering] as const;
+};
 
 export const useWaveform = (
   containter: MutableRefObject<HTMLElement | null | undefined>,
@@ -24,7 +37,7 @@ export const useWaveform = (
   const [zoom, setZoom] = useState(1);
   const [volume, setVolume] = useState(options?.volume ?? 1);
   const [playing, setPlaying] = useState(false);
-  const [buffering, setBuffering] = useState(options?.buffering ?? false);
+  const [buffering, setBuffering] = useSyncedBuffering(options);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [amp, setAmp] = useState(options?.amp ?? 1);
@@ -117,7 +130,12 @@ export const useWaveform = (
       setLayerVisibility(layerVis);
     });
 
-    wf.on("buffering", setBuffering);
+    if (isSyncedBuffering) {
+      wf.on("buffering", (buffering) => {
+        options?.onBuffering?.(buffering);
+        setBuffering(buffering);
+      });
+    }
 
     waveform.current = wf;
 
@@ -187,13 +205,6 @@ export const useWaveform = (
     });
     return () => cancelAnimationFrame(animationFrameId);
   }, [showLabels]);
-
-  useEffect(() => {
-    const animationFrameId = requestAnimationFrame(() => {
-      if (waveform.current && waveform.current.buffering !== buffering) waveform.current.buffering = buffering;
-    });
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [buffering]);
 
   return {
     waveform,

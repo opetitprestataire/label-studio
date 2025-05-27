@@ -172,6 +172,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
       <Controls
         position={controls.currentTime}
         playing={controls.playing}
+        buffering={controls.buffering}
         volume={controls.volume}
         speed={controls.rate}
         zoom={controls.zoom}

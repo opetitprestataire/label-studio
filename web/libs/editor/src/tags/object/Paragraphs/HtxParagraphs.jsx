@@ -11,10 +11,10 @@ import { Phrases } from "./Phrases";
 import { IconHelp } from "@humansignal/icons";
 import { Toggle, Tooltip } from "@humansignal/ui";
 import { cn } from "../../../utils/bem";
-import { FF_SYNCED_BUFFERING, ff } from "@humansignal/core";
+import { ff } from "@humansignal/core";
 
 const audioDefaultProps = {};
-const isSyncedBuffering = ff.isActive(FF_SYNCED_BUFFERING);
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 if (isFF(FF_LSDV_4711)) audioDefaultProps.crossOrigin = "anonymous";
 

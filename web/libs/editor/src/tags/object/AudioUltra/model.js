@@ -13,9 +13,9 @@ import { FF_LSDV_E_278, isFF } from "../../../utils/feature-flags";
 import { isDefined } from "../../../utils/utilities";
 import ObjectBase from "../Base";
 import { WS_SPEED, WS_VOLUME, WS_ZOOM_X } from "./constants";
-import { FF_SYNCED_BUFFERING, ff } from "@humansignal/core";
+import { ff } from "@humansignal/core";
 
-const isSyncedBuffering = ff.isActive(FF_SYNCED_BUFFERING);
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 /**
  * The Audio tag plays audio and shows its waveform. Use for audio annotation tasks where you want to label regions of audio, see the waveform, and manipulate audio during annotation.

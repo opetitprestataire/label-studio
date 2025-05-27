@@ -15,6 +15,7 @@ export interface TimelineProps<D extends ViewTypes = "frames"> {
   mode: D;
   framerate: number;
   playing: boolean;
+  buffering?: boolean;
   zoom?: number;
   volume?: number;
   speed?: number;
@@ -172,6 +173,7 @@ export interface TimelineControlsProps {
   playing: boolean;
   collapsed: boolean;
   fullscreen: boolean;
+  buffering?: boolean;
   volume?: number;
   speed?: number;
   zoom?: number;

@@ -7,7 +7,8 @@ import { MAX_ZOOM, MIN_ZOOM } from "./VideoConstants";
 import { VirtualCanvas } from "./VirtualCanvas";
 import { VirtualVideo } from "./VirtualVideo";
 import { ff } from "@humansignal/core";
-import { FF_SYNCED_BUFFERING } from "@humansignal/core/lib/utils/feature-flags/flags";
+
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 type VideoProps = {
   src: string;
@@ -110,7 +111,7 @@ const useLocalBuffering = (props: VideoProps) => {
   return useState(false);
 };
 
-const useBuffering = ff.isActive(FF_SYNCED_BUFFERING) ? useSyncedBuffering : useLocalBuffering;
+const useBuffering = isSyncedBuffering ? useSyncedBuffering : useLocalBuffering;
 
 export const VideoCanvas = memo(
   forwardRef<VideoRef, VideoProps>((props, ref) => {
@@ -232,7 +233,7 @@ export const VideoCanvas = memo(
     // VIDEO EVENTS'
     const handleVideoPlay = useCallback(() => {
       setPlaying(true);
-      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+      if (!isSyncedBuffering) {
         setBuffering(false);
       }
       props.onPlay?.();
@@ -240,21 +241,21 @@ export const VideoCanvas = memo(
 
     const handleVideoPause = useCallback(() => {
       setPlaying(false);
-      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+      if (!isSyncedBuffering) {
         setBuffering(false);
       }
       props.onPause?.();
     }, [props.onPause]);
 
     const handleVideoPlaying = useCallback(() => {
-      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+      if (!isSyncedBuffering) {
         setBuffering(false);
       }
       delayedUpdate();
     }, [delayedUpdate]);
 
     const handleVideoWaiting = useCallback(() => {
-      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+      if (!isSyncedBuffering) {
         setBuffering(true);
       } else {
         delayedUpdate();
@@ -263,7 +264,7 @@ export const VideoCanvas = memo(
 
     const handleVideoEnded = useCallback(() => {
       setPlaying(false);
-      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+      if (!isSyncedBuffering) {
         setBuffering(false);
       }
       props.onSeeked?.();
@@ -602,7 +603,7 @@ export const VideoCanvas = memo(
             width={canvasWidth}
             height={canvasHeight}
           />
-          {!loading && buffering && <Elem name="buffering" />}
+          {!loading && buffering && !isSyncedBuffering && <Elem name="buffering" aria-label="Buffering Media Source" />}
         </Elem>
 
         <VirtualVideo
@@ -617,19 +618,19 @@ export const VideoCanvas = memo(
           onLoadedData={delayedUpdate}
           onCanPlay={delayedUpdate}
           onSeeked={(event) => {
-            if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+            if (!isSyncedBuffering) {
               delayedUpdate();
             }
             props.onSeeked?.(event);
           }}
           onSeeking={(event) => {
-            if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+            if (!isSyncedBuffering) {
               delayedUpdate();
             }
             props.onSeeked?.(event);
           }}
           onTimeUpdate={(event) => {
-            if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+            if (!isSyncedBuffering) {
               delayedUpdate();
             }
             props.onTimeUpdate?.(event);

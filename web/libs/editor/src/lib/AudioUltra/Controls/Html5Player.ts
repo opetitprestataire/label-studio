@@ -1,4 +1,3 @@
-import { FF_SYNCED_BUFFERING } from "@humansignal/core/lib/utils/feature-flags/flags";
 import type { WaveformAudio } from "../Media/WaveformAudio";
 import { Player } from "./Player";
 import { ff } from "@humansignal/core";
@@ -124,7 +123,7 @@ export class Html5Player extends Player {
 
     this.stop();
     // We don't need to load the audio when the feature flag is active
-    if (!ff.isActive(FF_SYNCED_BUFFERING)) this.audio.el.load();
+    if (!ff.isActive(ff.FF_SYNCED_BUFFERING)) this.audio.el.load();
 
     if (wasPlaying) this.play();
   };

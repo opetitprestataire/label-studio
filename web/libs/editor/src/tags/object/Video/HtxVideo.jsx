@@ -23,8 +23,11 @@ import ResizeObserver from "../../../utils/resize-observer";
 import { clamp, isDefined } from "../../../utils/utilities";
 import "./Video.scss";
 import { VideoRegions } from "./VideoRegions";
+import { ff } from "@humansignal/core";
 
 const isFFDev2715 = isFF(FF_DEV_2715);
+
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 function useZoom(videoDimensions, canvasDimentions, shouldClampPan) {
   const [zoomState, setZoomState] = useState({ zoom: 1, pan: { x: 0, y: 0 } });
@@ -483,6 +486,7 @@ const HtxVideoView = ({ item, store }) => {
     });
   }
 
+  console.log("buffering", item.buffering);
   return (
     <ObjectTag item={item}>
       <Block name="video-segmentation" ref={mainContentRef} mod={{ fullscreen: isFullScreen }}>
@@ -547,6 +551,7 @@ const HtxVideoView = ({ item, store }) => {
             name="timeline"
             tag={Timeline}
             playing={playing}
+            buffering={isSyncedBuffering ? item.buffering : false}
             length={videoLength}
             position={position}
             regions={regions}

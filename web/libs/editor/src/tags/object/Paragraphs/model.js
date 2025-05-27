@@ -14,9 +14,9 @@ import messages from "../../../utils/messages";
 import { clamp, isDefined, isValidObjectURL } from "../../../utils/utilities";
 import ObjectBase from "../Base";
 import styles from "./Paragraphs.module.scss";
-import { FF_SYNCED_BUFFERING, ff } from "@humansignal/core";
+import { ff } from "@humansignal/core";
 
-const isSyncedBuffering = ff.isActive(FF_SYNCED_BUFFERING);
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 /**
  * The `Paragraphs` tag displays paragraphs of text on the labeling interface. Use to label dialogue transcripts for NLP and NER projects.

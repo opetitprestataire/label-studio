@@ -8,10 +8,10 @@ import { SyncableMixin } from "../../../mixins/Syncable";
 import { parseValue } from "../../../utils/data";
 import { isDefined } from "../../../utils/utilities";
 import { FF_VIDEO_FRAME_SEEK_PRECISION, isFF } from "../../../utils/feature-flags";
-import { ff, FF_SYNCED_BUFFERING } from "@humansignal/core";
+import { ff } from "@humansignal/core";
 import ObjectBase from "../Base";
 
-const isSyncedBuffering = ff.isActive(FF_SYNCED_BUFFERING);
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 /**
  * Video tag plays a simple video file. Use for video annotation tasks such as classification and transcription.

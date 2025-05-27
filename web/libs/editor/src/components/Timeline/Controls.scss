@@ -1,6 +1,18 @@
 .timeline-controls {
+  position: relative;
   background: var(--color-neutral-background-bold);
   padding: 4px;
+
+  &__buffering {
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 4px;
+    position: absolute;
+    background-color: var(--color-neutral-background);
+    background-image: repeating-linear-gradient(90deg, var(--color-primary-content) 0, var(--color-primary-content-subtle) 120px, var(--color-primary-content) 240px);
+    animation: buffering 1.2s linear infinite;
+  }
 
   &__counter {
     height: 36px;
@@ -85,7 +97,7 @@
         }
       }
 
-      & + & {
+      &+& {
         border-left: 1px solid var(--color-neutral-border);
       }
     }
@@ -108,5 +120,15 @@
     display: inline-block;
     color: var(--color-neutral-content-subtle);
     background: var(--color-neutral-surface);
+  }
+}
+
+@keyframes buffering {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 240px 0;
   }
 }

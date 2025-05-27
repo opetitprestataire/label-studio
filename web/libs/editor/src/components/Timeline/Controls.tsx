@@ -51,6 +51,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
     position,
     frameRate = 1024,
     playing,
+    buffering = false,
     collapsed,
     duration,
     extraControls,
@@ -171,6 +172,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
 
     return (
       <Block name="timeline-controls" tag={Space} spread style={{ gridAutoColumns: "auto" }}>
+        {buffering && <Elem name="buffering" aria-label="Buffering Media Source" />}
         {isFF(FF_DEV_2715) && mediaType === "audio" ? (
           renderControls()
         ) : (
