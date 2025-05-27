@@ -9,9 +9,19 @@
     top: 0;
     height: 4px;
     position: absolute;
-    background-color: var(--color-neutral-background);
-    background-image: repeating-linear-gradient(90deg, var(--color-primary-content) 0, var(--color-primary-content-subtle) 120px, var(--color-primary-content) 240px);
-    animation: buffering 1.2s linear infinite;
+    background-color: var(--color-primary-content);
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background-color: var(--color-primary-content-subtle);
+      animation: buffering-media 2.4s ease-out infinite;
+    }
   }
 
   &__counter {
@@ -123,12 +133,12 @@
   }
 }
 
-@keyframes buffering {
+@keyframes buffering-media {
   0% {
-    background-position: 0 0;
+    left: -100%;
   }
 
   100% {
-    background-position: 240px 0;
+    left: 200%;
   }
 }
