@@ -2317,17 +2317,18 @@ code.hljs {
 
 #render-editor,
 .api-render-editor {
-  max-width: 1200px;
   border: none;
   background: var(--color-white);
-  width: 500px;
-  height: 500px;
+  width: clamp(600px, 60vw, 1200px);
+  height: clamp(600px, 60vh, 1200px);
   border-radius: 10px;
 }
 
 #main-preview iframe {
   width: 100%;
   margin: 1em 0;
+  border: 1px var(--color-gray-300) solid;
+  border-radius: .75rem;
 }
 
 .page-type-playground .content-markdown {
