@@ -50,6 +50,7 @@ export const AcceptButton = memo(
   observer(({ disabled, history, store }: AcceptButtonProps) => {
     return (
       <Button
+        key="accept"
         aria-label="accept-annotation"
         tooltip="Accept annotation: [ Ctrl+Enter ]"
         disabled={disabled}
