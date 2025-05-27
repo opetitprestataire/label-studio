@@ -82,3 +82,8 @@ export const FF_ADJUSTABLE_SPANS = "fflag_feat_front_leap_1973_adjustable_spans_
  * Enables the theme toggle in the UI
  */
 export const FF_THEME_TOGGLE = "fflag_feat_front_optic_1217_theme_toggle_short";
+
+/**
+ * Fixes synced audio/video buffering
+ */
+export const FF_SYNCED_BUFFERING = "fflag_fix_front_fit_31_synced_media_buffering";

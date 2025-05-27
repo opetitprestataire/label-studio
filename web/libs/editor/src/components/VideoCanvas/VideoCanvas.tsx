@@ -6,6 +6,8 @@ import "./VideoCanvas.scss";
 import { MAX_ZOOM, MIN_ZOOM } from "./VideoConstants";
 import { VirtualCanvas } from "./VirtualCanvas";
 import { VirtualVideo } from "./VirtualVideo";
+import { ff } from "@humansignal/core";
+import { FF_SYNCED_BUFFERING } from "@humansignal/core/lib/utils/feature-flags/flags";
 
 type VideoProps = {
   src: string;
@@ -90,6 +92,26 @@ export interface VideoRef {
   adjustPan: (x: number, y: number) => PanOptions;
 }
 
+const useSyncedBuffering = (props: VideoProps) => {
+  const buffering = props.buffering ?? false;
+  const setBuffering = useCallback(
+    (isBuffering: boolean) => {
+      // Update parent component
+      if (isBuffering === buffering) return;
+      props.onBuffering?.(isBuffering);
+    },
+    [props.onBuffering, buffering],
+  );
+
+  return [buffering, setBuffering] as const;
+};
+
+const useLocalBuffering = (props: VideoProps) => {
+  return useState(false);
+};
+
+const useBuffering = ff.isActive(FF_SYNCED_BUFFERING) ? useSyncedBuffering : useLocalBuffering;
+
 export const VideoCanvas = memo(
   forwardRef<VideoRef, VideoProps>((props, ref) => {
     const raf = useRef<number>();
@@ -108,7 +130,7 @@ export const VideoCanvas = memo(
     const [length, setLength] = useState(0);
     const [currentFrame, setCurrentFrame] = useState(props.position ?? 1);
     const [playing, setPlaying] = useState(false);
-    const buffering = props.buffering ?? false;
+    const [buffering, setBuffering] = useBuffering(props);
     const [zoom, setZoom] = useState(props.zoom ?? 1);
     const [pan, setPan] = useState<PanOptions>(props.pan ?? { x: 0, y: 0 });
 
@@ -117,14 +139,6 @@ export const VideoCanvas = memo(
     const [contrast, setContrast] = useState(1);
     const [brightness, setBrightness] = useState(1);
     const [saturation, setSaturation] = useState(1);
-    const setBuffering = useCallback(
-      (isBuffering: boolean) => {
-        // Update parent component
-        if (isBuffering === buffering) return;
-        props.onBuffering?.(isBuffering);
-      },
-      [props.onBuffering, buffering],
-    );
 
     const filters = useMemo(() => {
       const result: string[] = [];
@@ -218,16 +232,40 @@ export const VideoCanvas = memo(
     // VIDEO EVENTS'
     const handleVideoPlay = useCallback(() => {
       setPlaying(true);
+      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+        setBuffering(false);
+      }
       props.onPlay?.();
     }, [props.onPlay]);
 
     const handleVideoPause = useCallback(() => {
       setPlaying(false);
+      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+        setBuffering(false);
+      }
       props.onPause?.();
     }, [props.onPause]);
 
+    const handleVideoPlaying = useCallback(() => {
+      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+        setBuffering(false);
+      }
+      delayedUpdate();
+    }, [delayedUpdate]);
+
+    const handleVideoWaiting = useCallback(() => {
+      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+        setBuffering(true);
+      } else {
+        delayedUpdate();
+      }
+    }, [delayedUpdate]);
+
     const handleVideoEnded = useCallback(() => {
       setPlaying(false);
+      if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+        setBuffering(false);
+      }
       props.onSeeked?.();
       props.onEnded?.();
       props.onPause?.();
@@ -579,17 +617,26 @@ export const VideoCanvas = memo(
           onLoadedData={delayedUpdate}
           onCanPlay={delayedUpdate}
           onSeeked={(event) => {
+            if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+              delayedUpdate();
+            }
             props.onSeeked?.(event);
           }}
           onSeeking={(event) => {
+            if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+              delayedUpdate();
+            }
             props.onSeeked?.(event);
           }}
           onTimeUpdate={(event) => {
+            if (!ff.isActive(FF_SYNCED_BUFFERING)) {
+              delayedUpdate();
+            }
             props.onTimeUpdate?.(event);
           }}
           onProgress={delayedUpdate}
-          onPlaying={delayedUpdate}
-          onWaiting={delayedUpdate}
+          onPlaying={handleVideoPlaying}
+          onWaiting={handleVideoWaiting}
           onEnded={handleVideoEnded}
           onError={handleVideoError}
         />

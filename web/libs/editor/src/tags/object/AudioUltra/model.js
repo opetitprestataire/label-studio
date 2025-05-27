@@ -13,6 +13,9 @@ import { FF_LSDV_E_278, isFF } from "../../../utils/feature-flags";
 import { isDefined } from "../../../utils/utilities";
 import ObjectBase from "../Base";
 import { WS_SPEED, WS_VOLUME, WS_ZOOM_X } from "./constants";
+import { FF_SYNCED_BUFFERING, ff } from "@humansignal/core";
+
+const isSyncedBuffering = ff.isActive(FF_SYNCED_BUFFERING);
 
 /**
  * The Audio tag plays audio and shows its waveform. Use for audio annotation tasks where you want to label regions of audio, see the waveform, and manipulate audio during annotation.
@@ -212,17 +215,24 @@ export const AudioModel = types.compose(
       ////// Incoming
 
       registerSyncHandlers() {
-        ["play", "pause", "seek", "buffering"].forEach((event) => {
+        const events = isSyncedBuffering ? ["play", "pause", "seek", "buffering"] : ["play", "pause", "seek"];
+
+        events.forEach((event) => {
           self.syncHandlers.set(event, self.handleSync);
         });
+
         self.syncHandlers.set("speed", self.handleSyncSpeed);
       },
 
       handleSync(data) {
         if (!self._ws?.loaded) return;
 
-        if (isDefined(data.isBuffering)) {
+        if (isSyncedBuffering && isDefined(data.isBuffering)) {
           self.buffering = data.isBuffering;
+        }
+
+        if (!isSyncedBuffering) {
+          self.handleSyncSeek(data);
         }
 
         if (data.playing) {
@@ -231,7 +241,9 @@ export const AudioModel = types.compose(
           if (self._ws.playing) self._ws?.pause();
         }
 
-        self.handleSyncSeek(data);
+        if (isSyncedBuffering) {
+          self.handleSyncSeek(data);
+        }
       },
 
       // @todo remove both of these methods
@@ -264,6 +276,7 @@ export const AudioModel = types.compose(
       },
 
       handleBuffering(isBuffering) {
+        if (!isSyncedBuffering) return;
         self.buffering = isBuffering;
         self.triggerSync("buffering", { isBuffering });
       },

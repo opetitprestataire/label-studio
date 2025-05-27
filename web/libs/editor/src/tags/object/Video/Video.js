@@ -8,7 +8,10 @@ import { SyncableMixin } from "../../../mixins/Syncable";
 import { parseValue } from "../../../utils/data";
 import { isDefined } from "../../../utils/utilities";
 import { FF_VIDEO_FRAME_SEEK_PRECISION, isFF } from "../../../utils/feature-flags";
+import { ff, FF_SYNCED_BUFFERING } from "@humansignal/core";
 import ObjectBase from "../Base";
+
+const isSyncedBuffering = ff.isActive(FF_SYNCED_BUFFERING);
 
 /**
  * Video tag plays a simple video file. Use for video annotation tasks such as classification and transcription.
@@ -179,9 +182,12 @@ const Model = types
     ////// Incoming
 
     registerSyncHandlers() {
-      ["play", "pause", "seek", "buffering"].forEach((event) => {
+      const events = isSyncedBuffering ? ["play", "pause", "seek", "buffering"] : ["play", "pause", "seek"];
+
+      events.forEach((event) => {
         self.syncHandlers.set(event, self.handleSync);
       });
+
       self.syncHandlers.set("speed", self.handleSyncSpeed);
     },
 
@@ -190,7 +196,7 @@ const Model = types
 
       const video = self.ref.current;
 
-      if (isDefined(data.isBuffering)) {
+      if (isSyncedBuffering && isDefined(data.isBuffering)) {
         self.buffering = data.isBuffering;
       }
 
@@ -218,6 +224,7 @@ const Model = types
     },
 
     handleBuffering(isBuffering) {
+      if (!isSyncedBuffering) return;
       self.buffering = isBuffering;
       self.triggerSync("buffering", { isBuffering });
     },

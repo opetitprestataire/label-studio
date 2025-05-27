@@ -14,6 +14,9 @@ import messages from "../../../utils/messages";
 import { clamp, isDefined, isValidObjectURL } from "../../../utils/utilities";
 import ObjectBase from "../Base";
 import styles from "./Paragraphs.module.scss";
+import { FF_SYNCED_BUFFERING, ff } from "@humansignal/core";
+
+const isSyncedBuffering = ff.isActive(FF_SYNCED_BUFFERING);
 
 /**
  * The `Paragraphs` tag displays paragraphs of text on the labeling interface. Use to label dialogue transcripts for NLP and NER projects.
@@ -190,6 +193,7 @@ const PlayableAndSyncable = types
     audioRef: createRef(),
     audioDuration: null,
     audioFrameHandler: null,
+    buffering: false,
   }))
   .views((self) => ({
     /**
@@ -257,6 +261,19 @@ const PlayableAndSyncable = types
       self.syncHandlers.set("play", self.handleSyncPlay);
       self.syncHandlers.set("seek", self.handleSyncPlay);
       self.syncHandlers.set("speed", self.handleSyncSpeed);
+      if (isSyncedBuffering) {
+        self.syncHandlers.set("buffering", self.handleSyncBuffering);
+      }
+    },
+
+    handleSyncBuffering({ isBuffering }) {
+      self.trackPlayingId();
+    },
+
+    handleBuffering(isBuffering) {
+      if (!isSyncedBuffering) return;
+      self.buffering = isBuffering;
+      self.triggerSync("buffering", { isBuffering });
     },
 
     handleSyncPlay({ time, playing }) {
@@ -290,6 +307,14 @@ const PlayableAndSyncable = types
       const audio = e.target;
 
       self.audioDuration = audio.duration;
+    },
+
+    handleCanPlay() {
+      self.handleBuffering(false);
+    },
+
+    handleWaiting() {
+      self.handleBuffering(true);
     },
 
     reset() {
@@ -353,7 +378,7 @@ const PlayableAndSyncable = types
         return currentTime >= start && currentTime < end;
       });
 
-      if (!audio.paused) {
+      if (!audio.paused && !self.buffering) {
         self.audioFrameHandler = requestAnimationFrame(self.trackPlayingId);
       }
     },

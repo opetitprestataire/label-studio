@@ -11,8 +11,10 @@ import { Phrases } from "./Phrases";
 import { IconHelp } from "@humansignal/icons";
 import { Toggle, Tooltip } from "@humansignal/ui";
 import { cn } from "../../../utils/bem";
+import { FF_SYNCED_BUFFERING, ff } from "@humansignal/core";
 
 const audioDefaultProps = {};
+const isSyncedBuffering = ff.isActive(FF_SYNCED_BUFFERING);
 
 if (isFF(FF_LSDV_4711)) audioDefaultProps.crossOrigin = "anonymous";
 
@@ -574,7 +576,7 @@ class HtxParagraphsView extends Component {
     const withAudio = !!item.audio;
     const contextScroll = isFF(FF_LSDV_E_278) && this.props.item.contextscroll;
 
-    if (!item.playing && isFF(FF_LSDV_E_278)) this._disposeTimeout(); // dispose scroll timeout when the audio is not playing
+    if ((!item.playing || (isSyncedBuffering && item.buffering)) && isFF(FF_LSDV_E_278)) this._disposeTimeout(); // dispose scroll timeout when the audio is not playing
 
     // current way to not render when we wait for data
     if (isFF(FF_DEV_2669) && !item._value) return null;
@@ -592,6 +594,7 @@ class HtxParagraphsView extends Component {
             onEnded={item.reset}
             onError={item.handleError}
             onCanPlay={item.handleCanPlay}
+            onWaiting={item.handleWaiting}
           />
         )}
         {isFF(FF_LSDV_E_278) ? this.renderWrapperHeader() : isFF(FF_DEV_2669) && <AuthorFilter item={item} />}
