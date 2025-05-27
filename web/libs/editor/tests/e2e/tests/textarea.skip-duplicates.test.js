@@ -225,6 +225,9 @@ Scenario("Independent skip duplicate values", async ({ I, LabelStudio, AtOutline
   Modals.dontSeeWarning(SKIP_DUPLICATES_ERROR);
 });
 
+/**
+ * @TODO: Do something with lost functionality of removing textarea item in `region-list` displayed mode
+ */
 Scenario.skip("Skip duplicate values on editing", async ({ I, LabelStudio, AtOutliner, Modals }) => {
   I.amOnPage("/");
   LabelStudio.init({
