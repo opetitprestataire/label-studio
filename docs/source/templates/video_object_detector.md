@@ -127,6 +127,7 @@ The keyframe format inside `value.sequence` list is the following:
 | height | numeric | bounding box height in the current frame |
 | rotation | numeric | bounding box rotation angle in the current frame (clock-wise) |
 | enabled | boolean | Whether the consequent frames interpolation is toggled on / off (for example, to label occlusion) |
+| auto | boolean | True if the frame is from interpolation, not set for key frame, requires setting interpolate_key_frames to true when export |
 
 ### Example
 
@@ -240,18 +241,16 @@ project = ls.get_project(PROJECT_ID)
 # Create an export snapshot with interpolation enabled
 export_result = project.export_snapshot_create(
     title='Export with Interpolated Keyframes',
-    serialization_options={
-        'interpolate_key_frames': True
-    }
+    interpolate_key_frames=True
 )
 # Get the export ID
 export_id = export_result['id']
 # Wait for the export to complete
 while True:
-    export_status = project.get_export_status(export_id)
-    if export_status['status'] == 'completed':
+    export_status = project.export_snapshot_status(export_id)['status']
+    if export_status == 'completed':
         break
-    elif export_status['status'] == 'failed':
+    elif export_status == 'failed':
         raise Exception('Export failed')
     else:
         time.sleep(5)  # Wait for 5 seconds before checking again
