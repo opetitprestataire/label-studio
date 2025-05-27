@@ -93,6 +93,7 @@ export const SkipButton = memo(
   observer(({ disabled, store, onSkipWithComment }: SkipButtonProps) => {
     return (
       <Button
+        key="skip"
         aria-label="skip-task"
         disabled={disabled}
         look="outlined"
