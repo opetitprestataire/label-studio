@@ -196,6 +196,7 @@ const ImagePreview = observer(({ task, field }: ImagePreviewProps) => {
     ? {
         maxWidth: "100%",
         maxHeight: "100%",
+        transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
         transformOrigin: "0 0",
       }
     : {
