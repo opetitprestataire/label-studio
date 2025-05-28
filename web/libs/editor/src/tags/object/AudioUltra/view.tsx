@@ -242,8 +242,7 @@ const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
   return (
     <TimelineContextProvider value={contextValue}>
       <AudioUltraView item={item}>
-        {item.errors.length &&
-          item.errors?.map((error: any, i: any) => <ErrorMessage key={`err-${i}`} error={error} />)}
+        {item.errors?.map((error: any, i: any) => <ErrorMessage key={`err-${i}`} error={error} />)}
       </AudioUltraView>
     </TimelineContextProvider>
   );
