@@ -19,7 +19,7 @@ export const DangerZone = () => {
       title: "Action confirmation",
       body: "You're about to delete all things. This action cannot be undone.",
       okText: "Proceed",
-      buttonLook: "destructive",
+      buttonLook: "negative",
       onOk: async () => {
         setProcessing(type);
         if (type === "annotations") {
