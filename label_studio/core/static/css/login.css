@@ -294,7 +294,7 @@ label {
 }
 
 .login-button {
-  font-size: 16px;
+  font-size: var(--font-size-body-medium);
 }
 
 .form-group {
