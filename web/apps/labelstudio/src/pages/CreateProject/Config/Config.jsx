@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import CM from "codemirror";
 import { Button } from "@humansignal/ui";
-import { IconTrash } from "@humansignal/icons";
+import { IconCrossNoPadding } from "@humansignal/icons";
 import { ToggleItems } from "../../../components";
 import { Form, Input } from "../../../components/Form";
 import { useAPI } from "../../../providers/ApiProvider";
@@ -43,7 +43,7 @@ const Label = ({ label, template, color }) => {
     <li className={configClass.elem("label").mod({ choice: label.tagName === "Choice" })}>
       <span className="flex">
         <label style={{ background: color }}>
-          <input
+          <Input
             type="color"
             className={configClass.elem("label-color")}
             value={colorNames[color] || color}
@@ -61,7 +61,7 @@ const Label = ({ label, template, color }) => {
         aria-label="delete label"
         className="relative z-10 hover:!bg-transparent"
       >
-        <IconTrash className="min-w-4 min-h-4 text-negative-content" />
+        <IconCrossNoPadding className="min-w-4 min-h-4 text-negative-content" />
       </Button>
     </li>
   );

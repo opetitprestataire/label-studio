@@ -1,8 +1,6 @@
+import { Button, Space, Tooltip } from "@humansignal/ui";
 import { format } from "date-fns/esm";
-import { Button } from "../../../components";
-import { Button } from "../../../components";
 import { DescriptionList } from "../../../components/DescriptionList/DescriptionList";
-import { Tooltip, Button,  Space, Tooltip  } from "@humansignal/ui";
 import { modal } from "../../../components/Modal/Modal";
 import { Oneof } from "../../../components/Oneof/Oneof";
 import { getLastTraceback } from "../../../utils/helpers";
