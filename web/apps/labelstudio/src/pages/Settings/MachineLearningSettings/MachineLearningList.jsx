@@ -84,7 +84,7 @@ const BackendCard = ({ backend, onStartTrain, onEdit, onDelete, onTestRequest })
               </Menu>
             }
           >
-            <Button type="link" className="!p-[15px]" aria-label="Machine learning model options">
+            <Button look="string" size="small" className="!p-0" aria-label="Machine learning model options">
               <IconEllipsis />
             </Button>
           </Dropdown.Trigger>
