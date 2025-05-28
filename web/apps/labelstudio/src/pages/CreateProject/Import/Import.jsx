@@ -453,13 +453,8 @@ export const ImportPage = ({
                         </td>
                         <td>{sample.description}</td>
                         <td>
-                          <Button
-                            size="icon"
-                            look="destructive"
-                            rawClassName="h-6 w-6 p-0"
-                            onClick={() => onSampleDatasetSelect(undefined)}
-                          >
-                            <IconTrash className="w-3 h-3" />
+                          <Button size="smaller" variant="negative" onClick={() => onSampleDatasetSelect(undefined)}>
+                            <IconTrash className="w-4 h-4" />
                           </Button>
                         </td>
                       </tr>
