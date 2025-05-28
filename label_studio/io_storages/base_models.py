@@ -8,6 +8,7 @@ import logging
 import os
 import traceback as tb
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import asdict
 from datetime import datetime
 from typing import Union
 from urllib.parse import urljoin
@@ -27,7 +28,7 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_rq import job
-from io_storages.utils import get_uri_via_regex, parse_bucket_uri
+from io_storages.utils import StorageObject, get_uri_via_regex, parse_bucket_uri
 from rq.job import Job
 from tasks.models import Annotation, Task
 from tasks.serializers import AnnotationSerializer, PredictionSerializer
@@ -230,7 +231,7 @@ class ImportStorage(Storage):
     def iterkeys(self):
         return iter(())
 
-    def get_data(self, key) -> list[dict]:
+    def get_data(self, key) -> list[StorageObject]:
         raise NotImplementedError
 
     def generate_http_url(self, url):
@@ -341,9 +342,12 @@ class ImportStorage(Storage):
         raise NotImplementedError
 
     @classmethod
-    def add_task(cls, data, project, maximum_annotations, max_inner_id, storage, key, link_class):
+    def add_task(cls, project, maximum_annotations, max_inner_id, storage, link_object: StorageObject, link_class):
+        link_kwargs = asdict(link_object)
+        data = link_kwargs.pop('task_data', None)
+
         # predictions
-        predictions = data.get('predictions', [])
+        predictions = data.get('predictions') or []
         if predictions:
             if 'data' not in data:
                 raise ValueError(
@@ -351,7 +355,7 @@ class ImportStorage(Storage):
                 )
 
         # annotations
-        annotations = data.get('annotations', [])
+        annotations = data.get('annotations') or []
         cancelled_annotations = 0
         if annotations:
             if 'data' not in data:
@@ -361,7 +365,10 @@ class ImportStorage(Storage):
             cancelled_annotations = len([a for a in annotations if a.get('was_cancelled', False)])
 
         if 'data' in data and isinstance(data['data'], dict):
-            data = data['data']
+            if data['data'] is not None:
+                data = data['data']
+            else:
+                data.pop('data')
 
         with transaction.atomic():
             task = Task.objects.create(
@@ -375,8 +382,8 @@ class ImportStorage(Storage):
                 inner_id=max_inner_id,
             )
 
-            link_class.create(task, key, storage)
-            logger.debug(f'Create {storage.__class__.__name__} link with key={key} for task={task}')
+            link_class.create(task, storage=storage, **link_kwargs)
+            logger.debug(f'Create {storage.__class__.__name__} link with {link_kwargs} for {task=}')
 
             raise_exception = not flag_set(
                 'ff_fix_back_dev_3342_storage_scan_with_invalid_annotations', user=AnonymousUser()
@@ -423,15 +430,15 @@ class ImportStorage(Storage):
             logger.debug(f'Scanning key {key}')
             self.info_update_progress(last_sync_count=tasks_created, tasks_existed=tasks_existed)
 
-            # skip if task already exists
-            if link_class.exists(key, self):
-                logger.debug(f'{self.__class__.__name__} link {key} already exists')
-                tasks_existed += 1  # update progress counter
+            # skip if key has already been synced
+            if n_tasks_linked := link_class.n_tasks_linked(key, self):
+                logger.debug(f'{self.__class__.__name__} already has {n_tasks_linked} tasks linked to {key=}')
+                tasks_existed += n_tasks_linked  # update progress counter
                 continue
 
             logger.debug(f'{self}: found new key {key}')
             try:
-                tasks_data = self.get_data(key)
+                link_objects = self.get_data(key)
             except (UnicodeDecodeError, json.decoder.JSONDecodeError) as exc:
                 logger.debug(exc, exc_info=True)
                 raise ValueError(
@@ -441,12 +448,19 @@ class ImportStorage(Storage):
                 )
 
             if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):
-                tasks_data = tasks_data[:1]
+                link_objects = link_objects[:1]
 
-            for task_data in tasks_data:
+            for link_object in link_objects:
                 # TODO: batch this loop body with add_task -> add_tasks in a single bulk write.
-                # Also have to handle any mismatch between len(tasks_data) and settings.WEBHOOK_BATCH_SIZE
-                task = self.add_task(task_data, self.project, maximum_annotations, max_inner_id, self, key, link_class)
+                # See DIA-2062 for prerequisites
+                task = self.add_task(
+                    self.project,
+                    maximum_annotations,
+                    max_inner_id,
+                    self,
+                    link_object,
+                    link_class=link_class,
+                )
                 max_inner_id += 1
 
                 # update progress counters for storage info
@@ -508,6 +522,8 @@ class ImportStorage(Storage):
                 self.info_set_queued()
                 import_sync_background(self.__class__, self.id)
             except Exception:
+                # needed to facilitate debugging storage-related testcases, since otherwise no exception is logged
+                logger.debug(f'Storage {self} failed', exc_info=True)
                 storage_background_failure(self)
 
     class Meta:
@@ -689,18 +705,26 @@ class ImportStorageLink(models.Model):
 
     task = models.OneToOneField('tasks.Task', on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s')
     key = models.TextField(_('key'), null=False, help_text='External link key')
+
+    # This field is set to True on creation and never updated; it should not be relied upon.
     object_exists = models.BooleanField(
         _('object exists'), help_text='Whether object under external link still exists', default=True
     )
+
     created_at = models.DateTimeField(_('created at'), auto_now_add=True, help_text='Creation time')
 
-    @classmethod
-    def exists(cls, key, storage):
-        return cls.objects.filter(key=key, storage=storage.id).exists()
+    row_group = models.IntegerField(null=True, blank=True, help_text='Parquet row group')
+    row_index = models.IntegerField(null=True, blank=True, help_text='Parquet row index, or JSON[L] object index')
 
     @classmethod
-    def create(cls, task, key, storage):
-        link, created = cls.objects.get_or_create(task_id=task.id, key=key, storage=storage, object_exists=True)
+    def n_tasks_linked(cls, key, storage):
+        return cls.objects.filter(key=key, storage=storage.id).count()
+
+    @classmethod
+    def create(cls, task, key, storage, row_index=None, row_group=None):
+        link, created = cls.objects.get_or_create(
+            task_id=task.id, key=key, row_index=row_index, row_group=row_group, storage=storage, object_exists=True
+        )
         return link
 
     class Meta:

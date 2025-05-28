@@ -112,7 +112,9 @@ Label Studio does not support labeling PDF files directly. However, you can conv
 
 When working with an external Cloud Storage connection (S3, GCS, Azure), keep the following in mind:
 
-* Label Studio doesn’t import the data stored in the bucket, but instead creates *references* to the objects. Therefore, you have full access control on the data to be synced and shown on the labeling screen.
+* For Source storage:
+   * When "Treat every bucket object as a source file" is checked, Label Studio doesn’t import the data stored in the bucket, but instead creates *references* to the objects. Therefore, you have full access control on the data to be synced and shown on the labeling screen.
+   * When "Treat every bucket object as a source file" is unchecked, bucket files are assumed to be immutable; the only way to push an updated file's state to Label Studio is to upload it with a new filename or delete all tasks that are associated with that file and resync.
 * Sync operations with external buckets only goes one way. It either creates tasks from objects on the bucket (Source storage) or pushes annotations to the output bucket (Target storage). Changing something on the bucket side doesn’t guarantee consistency in results.
 * We recommend using a separate bucket folder for each Label Studio project.
 
@@ -190,7 +192,7 @@ If there is only LIST permission, Label Studio can scan the bucket for the exist
 ### Tasks don't load the way I expect
 
 If the tasks sync to Label Studio but don't appear the way that you expect, maybe with URLs instead of images or with one task where you expect to see many, check the following:
-- If you're placing JSON files in [cloud storage](storage.html), place 1 task in each JSON file in the storage bucket. If you want to upload a JSON file from local storage into Label Studio, you can place multiple tasks in one JSON file. 
+- If you're placing JSON files in [cloud storage](storage.html), ensure that if you have multiple tasks in the same file, they are all formatted the same way (for example, you cannot have 1 task with the raw contents of the `data` field and another task that contains annotations and predictions in the same file).
 - If you're syncing image or audio files, make sure **Treat every bucket object as a source file** is enabled. 
 
 ### Unable to access local storage when using Windows
