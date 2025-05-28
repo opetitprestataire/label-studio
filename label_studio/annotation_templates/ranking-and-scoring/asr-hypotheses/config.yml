@@ -7,21 +7,21 @@ config: |
   <View>
     <Audio name="audio" value="$audio"/>
     <Choices name="transcriptions" toName="audio" value="$transcriptions" selection="highlight"/>
-      <Style>
-        .lsf-choice__item {
-          padding: var(--spacing-tighter) var(--spacing-tight);
-          box-shadow: 0 2px 4px rgba(var(--color-neutral-shadow-raw) / calc(16% * var(--shadow-intensity))) ;
-          background-color: var(--color-neutral-background);
-          border-radius: var(--corner-radius-small);
-          margin: 0 var(--spacing-tighter) var(--spacing-tighter) var(--spacing-tighter);
-          line-height: 1.6rem;
-          transition: all 150ms ease-out;
-        }
-        
-        .lsf-choice__item:hover {
-          background-color: var(--color-primary-emphasis-subtle);
-        }
-      </Style>
+    <Style>
+      .lsf-choice__item {
+        padding: var(--spacing-tighter) var(--spacing-tight);
+        box-shadow: 0 2px 4px rgba(var(--color-neutral-shadow-raw) / calc(16% * var(--shadow-intensity))) ;
+        background-color: var(--color-neutral-background);
+        border-radius: var(--corner-radius-small);
+        margin: 0 var(--spacing-tighter) var(--spacing-tighter) var(--spacing-tighter);
+        line-height: 1.6rem;
+        transition: all 150ms ease-out;
+      }
+      
+      .lsf-choice__item:hover {
+        background-color: var(--color-primary-emphasis-subtle);
+      }
+    </Style>
   </View>
   <!-- { "data": {
     "audio": "https://htx-pub.s3.amazonaws.com/datasets/audio/f2btrop6.0.wav",
