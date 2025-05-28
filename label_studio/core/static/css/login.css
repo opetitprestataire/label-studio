@@ -217,15 +217,14 @@ body {
 
 .login_page_new_ui form input {
   padding: 10px 15px;
-  border-radius: 100px;
+  border-radius: 4rem;
   box-sizing: border-box;
   border: 1px solid var(--color-neutral-border);
 }
 
 .login_page_new_ui form button {
-  --button-color: var(--color-neutral-inverted-content);
   border-radius: 4rem;
-  color: var(--color-neutral-content);
+  color: var(--color-neutral-inverted-content);
   padding: 10px 0;
   border: none;
   background: var(--color-neutral-inverted-surface);
