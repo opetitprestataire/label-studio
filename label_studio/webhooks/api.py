@@ -6,6 +6,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from projects import models as project_models
 from rest_framework import generics
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -65,6 +66,9 @@ class WebhookListAPI(generics.ListCreateAPIView):
         return Webhook.objects.filter(organization=self.request.user.active_organization)
 
     def perform_create(self, serializer):
+        project = serializer.validated_data.get('project')
+        if project is None or project.organization_id != self.request.user.active_organization.id:
+            raise NotFound('Project not found.')
         serializer.save(organization=self.request.user.active_organization)
 
 
