@@ -197,7 +197,6 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     ) {
       return;
     }
-
     // Use rate-limited draw for spectrogram
     this.rateLimitedRenderer.scheduleDraw(
       { context, renderer: this },

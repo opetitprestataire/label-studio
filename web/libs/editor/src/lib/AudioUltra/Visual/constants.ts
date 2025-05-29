@@ -63,5 +63,10 @@ export const SPECTROGRAM_NORMAL_BATCH_SIZE = 100;
 // We will stitch an additional 3 px to the right or left to the data.
 export const SEAM_GAP_FILL = 2;
 
+// Waveform-specific seam gap fill (in pixels)
+export const WAVEFORM_SEAM_GAP_FILL = 10;
+
 // Maximum number of FFT cache entries per channel (for LRU cache)
 export const SPECTROGRAM_FFT_CACHE_MAX_ENTRIES = 50000;
+
+export const FORCE_FULL_WAVEFORM_RENDER = true;

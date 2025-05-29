@@ -260,15 +260,15 @@ export class Visualizer extends Events<VisualizerEvents> {
   private setInitialZoom() {
     if (!this.audio || !this.width) return;
 
-    const duration = this.audio.duration;
-    const targetSeconds = 10; // Show 10 seconds of data
-
-    // Calculate zoom level needed to show targetSeconds
-    // zoom = (total duration) / (target seconds)
-    const targetZoom = duration / targetSeconds;
-
-    // Set the zoom level
-    this.setZoom(targetZoom);
+    if (isFF(FF_AUDIO_SPECTROGRAMS)) {
+      const duration = this.audio.duration;
+      const targetSeconds = 10; // Show 10 seconds of data
+      // Calculate zoom level needed to show targetSeconds
+      // zoom = (total duration) / (target seconds)
+      const targetZoom = duration / targetSeconds;
+      // Set the zoom level
+      this.setZoom(targetZoom);
+    }
   }
 
   private createComposer() {
@@ -966,7 +966,6 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.updateScrollFiller();
     this.setScrollLeft(this.scrollLeft);
     this.wf.renderTimeline();
-
     // Notify all renderers about resize
     for (const renderer of this.renderers) {
       if (typeof renderer.onResize === "function") {
