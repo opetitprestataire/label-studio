@@ -193,20 +193,17 @@ const Model = types
       try {
         const video = self.ref.current;
 
-        if (isDefined(data.playing)) {
-          if (data.playing) {
-            if (!video.playing) video.play();
-          } else {
-            if (video.playing) video.pause();
-          }
+        if (data.playing) {
+          if (!video.playing) video.play();
+        } else {
+          if (video.playing) video.pause();
         }
 
-        if (isDefined(data.speed)) {
+        if (data.speed) {
           self.speed = data.speed;
         }
-        if (isDefined(data.time)) {
-          video.currentTime = data.time;
-        }
+
+        video.currentTime = data.time;
       } finally {
         self.isProcessingIncomingSync = false;
       }
