@@ -384,7 +384,7 @@ After you [configure access to your S3 bucket](#Configure-access-to-your-S3-buck
     - (Optional) Enable **Recursive scan** to perform recursive scans over the bucket contents if you have nested folders in your S3 bucket.
     - Choose whether to disable [**Use pre-signed URLs**](#Pre-signed-URLs-vs-storage-proxies). 
         - **ON** - Label Studio generates a pre-signed URL to load media. 
-        - **OFF** - Label Studio proxies  media using its own backend.  
+        - **OFF** - Label Studio proxies media using its own backend.  
     - Adjust the counter for how many minutes the pre-signed URLs are valid.
 8. Click **Add Storage**.
 
@@ -549,7 +549,7 @@ In the Label Studio UI, do the following to set up the connection:
     - Enable **Recursive scan** to perform recursive scans over the bucket contents if you have nested folders in your S3 bucket.
     - Choose whether to disable [**Use pre-signed URLs**](#Pre-signed-URLs-vs-storage-proxies). 
       - **ON** - Label Studio generates a pre-signed URL to load media. 
-      - **OFF** - Label Studio proxies  media using its own backend.  
+      - **OFF** - Label Studio proxies media using its own backend.  
     - Adjust the counter for how many minutes the pre-signed URLs are valid.
 8. Click **Add Storage**.
 
@@ -690,7 +690,7 @@ In the Label Studio UI, do the following to set up the connection:
     - Enable **Treat every bucket object as a source file** if your bucket contains BLOB storage files such as JPG, MP3, or similar file types. This setting creates a URL for each bucket object to use for labeling, such as `gs://my-gcs-bucket/image.jpg`. Leave this option disabled if you have multiple JSON files in the bucket with one task per JSON file.
     - Choose whether to disable [**Use pre-signed URLs**](#Pre-signed-URLs-vs-storage-proxies).
       - **ON** - Label Studio generates a pre-signed URL to load media. 
-      - **OFF** - Label Studio proxies  media using its own backend.  
+      - **OFF** - Label Studio proxies media using its own backend.  
     - Adjust the counter for how many minutes the pre-signed URLs are valid.
 8. In the **Google Application Credentials** field, add a JSON file with the GCS credentials you created to manage authentication for your bucket. 
 
@@ -1019,7 +1019,7 @@ Select the **GCS (WIF auth)** storage type and then complete the following field
 | Bucket Prefix                              | Optionally, enter the folder name within the bucket that you would like to use.  For example, `data-set-1` or `data-set-1/subfolder-2`.  |
 | File Name Filter                           | Optionally, specify a regular expression to filter bucket objects. |
 | [Treat every bucket object as a source file](#Treat-every-bucket-object-as-a-source-file) | Enable this option if your bucket contains BLOB storage files such as JPG, MP3, or similar file types. This setting creates a URL for each bucket object to use for labeling, such as `gs://my-gcs-bucket/image.jpg`. Leave this option disabled if you have are specifying your tasks in JSON files. |
-| [Use pre-signed URLs](#Pre-signed-URLs-vs-storage-proxies)                        | **ON** - Label Studio generates a pre-signed URL to load media. <br /> **OFF** - Label Studio proxies  media using its own backend. |
+| [Use pre-signed URLs](#Pre-signed-URLs-vs-storage-proxies)                        | **ON** - Label Studio generates a pre-signed URL to load media. <br /> **OFF** - Label Studio proxies media using its own backend. |
 | Pre-signed URL counter                     | Adjust the counter for how many minutes the pre-signed URLs are valid. |
 | Workload Identity Pool ID                  | This is the ID you specified when creating the Work Identity Pool. You can find this in Google Cloud Console under **IAM & Admin > Workload Identity Pools**. |
 | Workload Identity Provider ID              | This is the ID you specified when setting up the provider. You can find this in Google Cloud Console under **IAM & Admin > Workload Identity Pools**. |
