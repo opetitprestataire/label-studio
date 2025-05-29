@@ -176,11 +176,10 @@ class BaseTaskSerializer(FlexFieldsModelSerializer):
 
     def validate(self, task):
         instance = self.instance if hasattr(self, 'instance') else None
-        if self.partial and instance:
-            current_data = getattr(instance, 'data', {})
-            new_data = task.get('data', {})
-            task['data'] = {**current_data, **new_data}
-        validator = TaskValidator(self.project(task=instance))
+        validator = TaskValidator(
+            self.project(task=instance),
+            instance=instance if 'data' not in task else None,
+        )
         return validator.validate(task)
 
     def to_representation(self, instance):
