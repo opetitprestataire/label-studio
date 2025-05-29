@@ -72,7 +72,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin: 10px 0;
     width: auto;
   }
 
@@ -119,7 +118,7 @@
 
   .range {
     width: 100%;
-    margin: 8px 0;
+    margin: -10px 0 8px 0;
     padding: 0;
 
     &.range_align_horizontal {

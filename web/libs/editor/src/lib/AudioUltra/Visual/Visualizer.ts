@@ -21,6 +21,8 @@ import type { LRUCache } from "../Common/LRUCache";
 import type { RenderContext, Renderer } from "./Renderer/Renderer";
 import { LayerM } from "./Composition/LayerM";
 import { isFF, FF_AUDIO_SPECTROGRAMS } from "../../../utils/feature-flags";
+import { RateLimitedRenderer } from "./Renderer/RateLimitedRenderer";
+import { RATE_LIMITED_RENDER_FPS } from "./constants";
 
 interface VisualizerEvents {
   draw: (visualizer: Visualizer) => void;
@@ -101,6 +103,7 @@ export class Visualizer extends Events<VisualizerEvents> {
   private waveformRenderer!: WaveformRenderer;
   private readonly spectrogramRenderer!: SpectrogramRenderer;
   private renderers: Renderer[] = [];
+  private rateLimitedTransfer: RateLimitedRenderer;
 
   constructor(options: VisualizerOptions, waveform: Waveform) {
     super();
@@ -197,6 +200,8 @@ export class Visualizer extends Events<VisualizerEvents> {
         this.transferImage.bind(this),
       );
     }
+
+    this.rateLimitedTransfer = new RateLimitedRenderer(RATE_LIMITED_RENDER_FPS);
   }
 
   init(audio: WaveformAudio) {
@@ -218,6 +223,9 @@ export class Visualizer extends Events<VisualizerEvents> {
     if (this.audio && this.width > 0) {
       this.maxZoom = Math.max(1, Math.ceil(this.audio.dataLength / this.width));
     }
+
+    // Set initial zoom to show 10 seconds of data
+    this.setInitialZoom();
 
     // Compose all layers together so that we cache the composition of the layers.
     this.createComposer();
@@ -249,6 +257,20 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.transferImage();
   }
 
+  private setInitialZoom() {
+    if (!this.audio || !this.width) return;
+    
+    const duration = this.audio.duration;
+    const targetSeconds = 10; // Show 10 seconds of data
+    
+    // Calculate zoom level needed to show targetSeconds
+    // zoom = (total duration) / (target seconds)
+    const targetZoom = duration / targetSeconds;
+    
+    // Set the zoom level
+    this.setZoom(targetZoom);
+  }
+
   private createComposer() {
     const regionsM = LayerM.lift(this.layers.get("regions")!);
     const timelineM = LayerM.lift(this.layers.get("timeline")!);
@@ -277,7 +299,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     );
 
     // Create final composition with all layers
-    this.composer = LayerM.overlay([regionsM, timelineM, waveFormAndSpectrogramWithTimeline]);
+    this.composer = LayerM.overlay([timelineM, waveFormAndSpectrogramWithTimeline, regionsM]);
   }
 
   setLoading(loading: boolean) {
@@ -846,9 +868,13 @@ export class Visualizer extends Events<VisualizerEvents> {
     if (!this.wf.loaded) return;
 
     if (this.isZooming(e)) {
-      const zoom = this.zoom - e.deltaY * 0.2;
-
-      this.setZoom(zoom);
+      // Calculate zoom delta based on trackpad sensitivity
+      const zoomDelta = e.deltaY * 0.1;
+      const newZoom = this.zoom * (1 - zoomDelta);
+      
+      // Set the new zoom level
+      setTimeout(() => this.setZoom(newZoom), 0);
+      
     } else if (this.zoom > 1) {
       // Base values
       const maxScroll = this.scrollWidth;
@@ -915,11 +941,34 @@ export class Visualizer extends Events<VisualizerEvents> {
   private handleResize = () => {
     if (!this.wf.duration) return;
 
+    // Update container height
+    this.setContainerHeight();
+
+    // Update layer dimensions
+    const mainLayer = this.getLayer("main");
+    if (mainLayer) {
+      mainLayer.width = this.width;
+      mainLayer.height = this.height;
+    }
+
+    // Update other layers
+    this.layers.forEach((layer) => {
+      if (layer.name !== "main") {
+        layer.width = this.width;
+        // Only update height for layers that should match the waveform height
+        if (layer.name === "waveform" || layer.name === "spectrogram" || layer.name === "spectrogram-grid") {
+          layer.height = this.waveformHeight;
+        }
+      }
+    });
+
     this.updateSize();
     this.updateCursorToTime(this.wf.currentTime);
     this.updateScrollFiller();
     this.setScrollLeft(this.scrollLeft);
     this.wf.renderTimeline();
+    
+    // Notify all renderers about resize
     for (const renderer of this.renderers) {
       if (typeof renderer.onResize === "function") {
         renderer.onResize();
@@ -931,18 +980,24 @@ export class Visualizer extends Events<VisualizerEvents> {
   };
 
   public transferImage() {
-    const main = this.layers.get("main")!;
-    if (this.composer) {
-      main.clear();
-      this.composer.renderTo(main);
-      // Composite the playhead at its current position
-      const playheadX = this.playhead.x;
-      // Type guard for CanvasRenderingContext2D
-      const ctx = main.context;
-      if (ctx && ctx instanceof CanvasRenderingContext2D) {
-        this.playhead.renderTo(ctx, playheadX);
-      }
-    }
+    this.rateLimitedTransfer.scheduleDraw(
+      { visualizer: this },
+      ({ visualizer }) => {
+        const main = visualizer.layers.get("main")!;
+        if (visualizer.composer) {
+          main.clear();
+          visualizer.composer.renderTo(main);
+          // Composite the playhead at its current position
+          const playheadX = visualizer.playhead.x;
+          // Type guard for CanvasRenderingContext2D
+          const ctx = main.context;
+          if (ctx && ctx instanceof CanvasRenderingContext2D) {
+            visualizer.playhead.renderTo(ctx, playheadX);
+          }
+        }
+      },
+      false // not a zoom operation
+    );
   }
 
   public updateSpectrogramConfig(params: {

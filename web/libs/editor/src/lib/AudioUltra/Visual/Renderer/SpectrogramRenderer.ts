@@ -14,6 +14,7 @@ import {
   SPECTROGRAM_HIGH_BATCH_SIZE,
   SPECTROGRAM_MAX_COMPUTATIONS,
   SPECTROGRAM_NORMAL_BATCH_SIZE,
+  RATE_LIMITED_RENDER_FPS,
 } from "../constants";
 import { LRUCache } from "../../Common/LRUCache";
 import { FFTProcessor, type SpectrogramScale } from "../../Analysis/FFTProcessor";
@@ -25,6 +26,8 @@ import { GridRendererPlugin } from "./Plugins/GridRendererPlugin";
 import type { RenderContext, Renderer } from "./Renderer";
 import type { WaveformAudio } from "../../Media/WaveformAudio";
 import type { RendererPlugin } from "./Plugins/RendererPlugin";
+import { debounce } from "lodash";
+import { RateLimitedRenderer } from "./RateLimitedRenderer";
 
 export interface SpectrogramRendererConfig {
   channelHeight: number;
@@ -73,6 +76,7 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
   private readonly spectrogram: Layer;
   private readonly gridLayer: Layer;
   private readonly progressContainer: HTMLElement;
+  private rateLimitedRenderer: RateLimitedRenderer;
 
   constructor(
     progressContainer: HTMLElement,
@@ -86,6 +90,7 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     this.gridLayer = gridLayer;
     this.onRenderTransfer = onRenderTransfer;
     this.progressContainer = progressContainer;
+    this.rateLimitedRenderer = new RateLimitedRenderer(RATE_LIMITED_RENDER_FPS);
     // Move all config fields to this.config
     this.spectrogramMinDb = config.spectrogramMinDb;
     this.spectrogramScale = config.spectrogramScale;
@@ -190,8 +195,21 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
       !this.audio ||
       !this.fftProcessor ||
       !this.spectrogram.isVisible
-    )
+    ) {
       return;
+    }
+    
+    // Use rate-limited draw for spectrogram
+    this.rateLimitedRenderer.scheduleDraw(
+      { context, renderer: this },
+      ({ context, renderer }) => {
+        renderer._draw(context);
+      },
+      false // not a zoom operation
+    );
+  }
+
+  private _draw(context: RenderContext): void {
     this.lastRenderContext = context;
     const scrollLeftPx = context.scrollLeftPx;
     const deltaX = scrollLeftPx - this.lastSpectrogramRenderedScrollLeftPx;
@@ -216,6 +234,7 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
         this.computationQueue.clear();
         this.spectrogram.clear();
         const hopSize = this._getCurrentHopSize();
+        if (!this.fftProcessor) return;
         const fftSize = this.fftProcessor.fftSamples;
         const visibleStartSample = Math.floor(clamp(scrollLeftPx * context.samplesPerPx, 0, dataLength));
         const visibleEndSample = Math.ceil(
@@ -234,11 +253,12 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
           "current-view",
           SPECTROGRAM_HIGH_BATCH_SIZE,
         );
+
         if (tasksScheduled === 0) {
           this.redrawSpectrogramFromCache("all-in-cache");
         }
 
-        if (PRECACHE) {
+        if (PRECACHE && this.audio) {
           const sampleRate = this.audio.sampleRate;
           const normalBufferSamples = Math.max(
             visibleWindowSamples,
@@ -296,6 +316,9 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     for (const plugin of this.plugins) {
       plugin.render(context);
     }
+
+    // Call transfer immediately since we want to show the waveform updates right away
+    this.onRenderTransfer?.();
   }
 
   destroy(): void {

@@ -25,6 +25,9 @@ export const DEBOUNCE_PAINT_AMOUNT = 0; // ms, for ~60fps
 // Performance tuning constants
 export const SPECTROGRAM_MAX_COMPUTATIONS = 2000;
 
+// Target FPS for rate limited rendering
+export const RATE_LIMITED_RENDER_FPS = 15;
+
 // Pre-cache spectrogram data for the current window size
 export const PRECACHE = true;
 export const SPECTROGRAM_FEATURE_ENABLED = false;

@@ -2,6 +2,8 @@ import type { Layer } from "../Layer";
 import { averageMinMax, clamp } from "../../Common/Utils";
 import type { Renderer, RenderContext } from "./Renderer";
 import type { WaveformAudio } from "../../Media/WaveformAudio";
+import { RateLimitedRenderer } from "./RateLimitedRenderer";
+import { RATE_LIMITED_RENDER_FPS } from "../constants";
 
 export interface WaveformRendererConfig {
   renderId: number;
@@ -30,12 +32,14 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
   private audio?: WaveformAudio;
   private lastRenderContext?: RenderContext;
   private isDestroyed = false;
+  private rateLimitedRenderer: RateLimitedRenderer;
 
   constructor({ layer, backgroundLayer, config, onRenderTransfer }: WaveformRendererConstructorConfig) {
     this.layer = layer;
     this.backgroundLayer = backgroundLayer;
     this.config = config;
     this.onRenderTransfer = onRenderTransfer;
+    this.rateLimitedRenderer = new RateLimitedRenderer(RATE_LIMITED_RENDER_FPS);
   }
 
   init(context: RenderContext, audio: WaveformAudio): void {
@@ -45,36 +49,46 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
   draw(context: RenderContext): void {
     this.lastRenderContext = context;
     this.drawMiddleLine();
-    const audio = this.audio;
-    const layer = this.layer;
-    if (!audio || !layer || !layer.isVisible) {
-      this.lastWaveformRenderedWidth = 0;
-      return;
-    }
-    const dataLength = context.dataLength;
-    const scrollLeftPx = context.scrollLeftPx;
-    const samplesPerPx = context.samplesPerPx;
-    const iStart = clamp(scrollLeftPx * samplesPerPx, 0, dataLength);
-    const iEnd = clamp(Math.ceil(iStart + context.width * samplesPerPx), 0, dataLength);
-    const zoom = context.zoom;
-    const amp = this.config.amp ?? 1;
-    const deltaX = scrollLeftPx - this.lastWaveformRenderedScrollLeftPx;
-    if (
-      context.width !== this.lastWaveformRenderedWidth ||
-      zoom !== this.lastWaveformRenderedZoom ||
-      amp !== this.lastRenderedAmp ||
-      Math.abs(deltaX) >= context.width
-    ) {
-      for (let i = 0; i < audio.channelCount; i++) {
-        this.renderWave(context, i, layer, iStart, iEnd);
-      }
-    } else {
-      this.renderPartialWave(context, layer, iStart, iEnd, deltaX);
-    }
+    
+    this.rateLimitedRenderer.scheduleDraw(
+      { context, renderer: this },
+      ({ context, renderer }) => {
+        const audio = renderer.audio;
+        const layer = renderer.layer;
+        if (!audio || !layer || !layer.isVisible) {
+          renderer.lastWaveformRenderedWidth = 0;
+          return;
+        }
+
+        const dataLength = context.dataLength;
+        const scrollLeftPx = context.scrollLeftPx;
+        const samplesPerPx = context.samplesPerPx;
+        const iStart = clamp(scrollLeftPx * samplesPerPx, 0, dataLength);
+        const iEnd = clamp(Math.ceil(iStart + context.width * samplesPerPx), 0, dataLength);
+        const zoom = context.zoom;
+        const amp = renderer.config.amp ?? 1;
+        const deltaX = scrollLeftPx - renderer.lastWaveformRenderedScrollLeftPx;
+
+        if (
+          context.width !== renderer.lastWaveformRenderedWidth ||
+          zoom !== renderer.lastWaveformRenderedZoom ||
+          amp !== renderer.lastRenderedAmp ||
+          Math.abs(deltaX) >= context.width
+        ) {
+          for (let i = 0; i < audio.channelCount; i++) {
+            renderer.renderWave(context, i, layer, iStart, iEnd);
+          }
+        } else {
+          renderer.renderPartialWave(context, layer, iStart, iEnd, deltaX);
+        }
+      },
+      false // not a zoom operation
+    );
   }
 
   destroy(): void {
     this.isDestroyed = true;
+    this.rateLimitedRenderer.reset();
   }
 
   public lastRenderedAmp = 0;
@@ -105,6 +119,7 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
         this.lastWaveformRenderedZoom = zoom;
         this.lastRenderedAmp = amp;
         this.lastWaveformRenderedScrollLeftPx = scrollLeftPx;
+        this.onRenderTransfer?.();
         return true;
       }
     };
@@ -144,6 +159,7 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
           requestAnimationFrame(render);
         } else {
           if (context && context.notifyRenderComplete) context.notifyRenderComplete();
+          this.onRenderTransfer?.();
         }
       };
       render();

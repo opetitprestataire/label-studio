@@ -447,10 +447,9 @@ export const SpectrogramControl: FC<SpectrogramControlProps> = ({ waveform }) =>
           min={0}
           max={FFT_SAMPLE_VALUES.length - 1}
           step={1}
-          marks={FFT_MARKS}
           value={fftSliderIndex}
+          showInput={false}
           onChange={handleChangeFftSamplesSlider}
-          tooltip={{ formatter: (idx?: number) => FFT_SAMPLE_VALUES[idx ?? 0]?.toString() }}
         />
         <Elem name="control">
           <Elem name="info">
