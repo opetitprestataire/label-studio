@@ -147,6 +147,8 @@ export const VideoCanvas = memo(
     const [contrast, setContrast] = useState(1);
     const [brightness, setBrightness] = useState(1);
     const [saturation, setSaturation] = useState(1);
+    const bufferingRef = useRef(buffering);
+    bufferingRef.current = buffering;
 
     const filters = useMemo(() => {
       const result: string[] = [];
@@ -202,6 +204,7 @@ export const VideoCanvas = memo(
     const updateFrame = useCallback(
       (force = false) => {
         if (!contextRef.current) return;
+        if (isSyncedBuffering && bufferingRef.current) return;
 
         const currentTime = videoRef.current?.currentTime ?? 0;
         const frameNumber = isFF(FF_VIDEO_FRAME_SEEK_PRECISION)
@@ -219,6 +222,19 @@ export const VideoCanvas = memo(
       [framerate, currentFrame, drawVideo, props.onFrameChange, length],
     );
 
+    const updateBuffering = useCallback(() => {
+      if (!videoRef.current) return;
+      if (!contextRef.current) return;
+
+      const video = videoRef.current;
+      if (video.networkState === video.NETWORK_IDLE) {
+        hasLoadedRef.current = true;
+        setBuffering(false);
+      } else {
+        setBuffering(true);
+      }
+    }, []);
+
     const delayedUpdate = useCallback(() => {
       if (!videoRef.current) return;
       if (!contextRef.current) return;
@@ -228,31 +244,30 @@ export const VideoCanvas = memo(
       if (video) {
         if (!playing) updateFrame(true);
 
-        if (video.networkState === video.NETWORK_IDLE) {
-          hasLoadedRef.current = true;
-          setBuffering(false);
-        } else {
-          setBuffering(true);
-        }
+        updateBuffering();
       }
-    }, [playing, updateFrame]);
+    }, [playing, updateFrame, updateBuffering]);
 
     // VIDEO EVENTS'
     const handleVideoPlay = useCallback(() => {
       setPlaying(true);
       if (!isSyncedBuffering) {
         setBuffering(false);
+      } else {
+        updateBuffering();
       }
       props.onPlay?.();
-    }, [props.onPlay]);
+    }, [updateBuffering, props.onPlay]);
 
     const handleVideoPause = useCallback(() => {
       setPlaying(false);
       if (!isSyncedBuffering) {
         setBuffering(false);
+      } else {
+        updateBuffering();
       }
       props.onPause?.();
-    }, [props.onPause]);
+    }, [updateBuffering, props.onPause]);
 
     const handleVideoPlaying = useCallback(() => {
       if (!isSyncedBuffering) {
@@ -265,9 +280,9 @@ export const VideoCanvas = memo(
       if (!isSyncedBuffering) {
         setBuffering(true);
       } else {
-        delayedUpdate();
+        updateBuffering();
       }
-    }, [delayedUpdate]);
+    }, [updateBuffering]);
 
     const handleVideoEnded = useCallback(() => {
       setPlaying(false);
@@ -334,10 +349,13 @@ export const VideoCanvas = memo(
 
     // Handle extrnal state change [current time]
     useEffect(() => {
-      if (videoRef.current && props.currentTime) {
-        videoRef.current.currentTime = props.currentTime;
-      }
-    }, [props.currentTime]);
+      const updateId = requestAnimationFrame(() => {
+        if (isSyncedBuffering && bufferingRef.current) return;
+        if (videoRef.current && props.currentTime) videoRef.current.currentTime = props.currentTime;
+      });
+
+      return () => cancelAnimationFrame(updateId);
+    }, [props.currentTime, bufferingRef]);
 
     // Handle extrnal state change [play/pause]
     useEffect(() => {
