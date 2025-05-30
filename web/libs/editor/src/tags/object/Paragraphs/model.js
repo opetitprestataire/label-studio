@@ -270,11 +270,6 @@ const PlayableAndSyncable = types
       self.buffering = isBuffering;
       self.trackPlayingId();
     },
-
-    handleBuffering(isBuffering) {
-      if (!isSyncedBuffering) return;
-      self.buffering = isBuffering;
-      self.triggerSync("buffering", { isBuffering });
     },
 
     handleSyncPlay({ time, playing }) {
@@ -308,14 +303,6 @@ const PlayableAndSyncable = types
       const audio = e.target;
 
       self.audioDuration = audio.duration;
-    },
-
-    handleCanPlay() {
-      self.handleBuffering(false);
-    },
-
-    handleWaiting() {
-      self.handleBuffering(true);
     },
 
     reset() {
