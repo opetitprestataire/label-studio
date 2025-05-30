@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { type FC, useCallback, useEffect, useMemo, useRef } from "react";
+import { type FC, type ReactNode, useCallback, useEffect, useMemo, useRef } from "react";
 import { usePersistentJSONState } from "@humansignal/core/lib/hooks/usePersistentState";
 import { TimelineContextProvider } from "../../../components/Timeline/Context";
 import { ErrorMessage } from "../../../components/ErrorMessage/ErrorMessage";
@@ -13,23 +13,26 @@ import type { Regions } from "../../../lib/AudioUltra/Regions/Regions";
 import { Block } from "../../../utils/bem";
 
 import "./view.scss";
+import { getCurrentTheme } from "@humansignal/ui";
 
 interface AudioUltraProps {
   item: any;
+  children: ReactNode;
 }
 
 const NORMALIZED_STEP = 0.1;
 
-const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
+const AudioUltraView: FC<AudioUltraProps> = ({ item, children }) => {
   const rootRef = useRef<HTMLElement | null>();
+  const isDarkMode = getCurrentTheme() === "Dark";
 
   const { waveform, ...controls } = useWaveform(rootRef, {
     src: item._value,
     autoLoad: false,
-    waveColor: "#BEB9C5",
-    gridColor: "#BEB9C5",
+    waveColor: isDarkMode ? "rgba(150,150,150,0.8)" : "rgba(150,150,150,0.8)",
+    gridColor: isDarkMode ? "rgba(150,150,150,0.8)" : "rgba(150,150,150,0.9)",
     gridWidth: 1,
-    backgroundColor: "#fafafa",
+    backgroundColor: isDarkMode ? "rgba(150,150,150,0.8)" : "rgba(255,255,255,0.8)",
     autoCenter: true,
     zoomToCursor: true,
     height: item.height && !isNaN(Number(item.height)) ? Number(item.height) : 96,
@@ -54,7 +57,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
       deleteable: !item.readonly,
     },
     timeline: {
-      backgroundColor: "#ffffff",
+      backgroundColor: isDarkMode ? "rgb(38, 37, 34)" : "rgba(255,255,255,0.8)",
     },
     experimental: {
       backgroundCompute: true,
@@ -156,9 +159,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
 
   return (
     <Block name="audio-tag">
-      {item.errors?.map((error: any, i: any) => (
-        <ErrorMessage key={`err-${i}`} error={error} />
-      ))}
+      {children}
       <div
         ref={(el) => {
           rootRef.current = el;
@@ -213,6 +214,8 @@ const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
     // @todo this hotkey should be moved from these settings for a more appropriate place;
     // @todo we are planning to have a central hotkeys management, that would be a better option.
     playpauseHotkey: "audio:playpause",
+    stepBackHotkey: "audio:step-backward",
+    stepForwardHotkey: "audio:step-forward",
     loopRegion: false,
     autoPlayNewSegments: true,
   });
@@ -238,7 +241,11 @@ const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
 
   return (
     <TimelineContextProvider value={contextValue}>
-      <AudioUltraView item={item} />
+      <AudioUltraView item={item}>
+        {item.errors?.map((error: any, i: number) => (
+          <ErrorMessage key={`err-${i}`} error={error} />
+        ))}
+      </AudioUltraView>
     </TimelineContextProvider>
   );
 };

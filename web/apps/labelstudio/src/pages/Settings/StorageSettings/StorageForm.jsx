@@ -41,9 +41,7 @@ export const StorageForm = forwardRef(({ onSubmit, target, project, rootClass, s
           label: title,
         })),
         value: storage?.type ?? type,
-        onChange: (e) => {
-          setType(e.target.value);
-        },
+        onChange: setType,
       },
     ],
   };
@@ -72,7 +70,7 @@ export const StorageForm = forwardRef(({ onSubmit, target, project, rootClass, s
         body,
       });
 
-      if (response !== null) setConnectionValid(true);
+      if (response?.$meta?.ok) setConnectionValid(true);
       else setConnectionValid(false);
     }
     setChecking(false);

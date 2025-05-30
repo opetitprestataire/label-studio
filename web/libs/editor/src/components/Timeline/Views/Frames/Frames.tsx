@@ -67,10 +67,10 @@ export const Frames: FC<TimelineViewProps> = ({
 
   const background = useMemo(() => {
     const bg = [
-      `repeating-linear-gradient(90deg, #fff 1px, #fff ${step - 1}px, rgba(255,255,255,0) ${
+      `repeating-linear-gradient(90deg, var(--color-neutral-background) 1px, var(--color-neutral-background) ${step - 1}px, rgba(255,255,255,0) ${
         step - 1
       }px, rgba(255,255,255,0) ${step + 1}px)`,
-      "linear-gradient(0deg, #FAFAFA, rgba(255,255,255,0) 50%)",
+      "linear-gradient(0deg, var(--color-neutral-surface), rgba(255,255,255,0) 50%)",
     ];
 
     return bg.join(", ");
@@ -177,7 +177,7 @@ export const Frames: FC<TimelineViewProps> = ({
         const target = e.target as Element;
         // every region has `data-id` attribute, so looking for them
         const regionRow = target.closest("[data-id]") as HTMLElement | null;
-        if (regionRow) {
+        if (regionRow && !regionRow.dataset?.locked) {
           const [start, end] = [regionRow.dataset?.start, regionRow.dataset?.end];
           if (start === String(frame) || end === String(frame)) {
             regionRow.style.cursor = "col-resize";
@@ -239,7 +239,8 @@ export const Frames: FC<TimelineViewProps> = ({
       let baseFrame = toSteps(offset, step) + 1;
       let isInstant = false;
 
-      setIndicatorOffset(offset);
+      // don't scroll if we select region clicking on keyframes, outside of scrollable area
+      if (onKeyframes) setIndicatorOffset(offset);
 
       if (isDrawing) {
         // always a timeline region

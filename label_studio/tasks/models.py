@@ -420,12 +420,10 @@ class Task(TaskMixin, models.Model):
     def resolve_storage_uri(self, url) -> Optional[Mapping[str, Any]]:
         from io_storages.functions import get_storage_by_url
 
-        storage = self.storage
-        project = self.project
-
-        if not storage:
-            storage_objects = project.get_all_import_storage_objects
-            storage = get_storage_by_url(url, storage_objects)
+        # Instead of using self.storage, we check all storage objects for the project to
+        # support imported tasks that point to another bucket
+        storage_objects = self.project.get_all_import_storage_objects
+        storage = get_storage_by_url(url, storage_objects)
 
         if storage:
             return {
@@ -468,20 +466,12 @@ class Task(TaskMixin, models.Model):
 
                 # project storage
                 # TODO: to resolve nested lists and dicts we should improve get_storage_by_url(),
-                # TODO: problem with current approach: it can be used only the first storage that get_storage_by_url
-                # TODO: returns. However, maybe the second storage will resolve uris properly.
-                # TODO: resolve_uri() already supports them
-                storage = self.storage or get_storage_by_url(task_data[field], storage_objects)
+                # Now always using get_storage_by_url to ensure the storage with the correct bucket is used
+                # As a last fallback we can use self.storage which is the storage the Task was imported from
+                storage = get_storage_by_url(task_data[field], storage_objects) or self.storage
                 if storage:
                     try:
-                        proxy_task = None
-                        if flag_set(
-                            'fflag_fix_all_lsdv_4711_cors_errors_accessing_task_data_short',
-                            user='auto',
-                        ):
-                            proxy_task = self
-
-                        resolved_uri = storage.resolve_uri(task_data[field], proxy_task)
+                        resolved_uri = storage.resolve_uri(task_data[field], self)
                     except Exception as exc:
                         logger.debug(exc, exc_info=True)
                         resolved_uri = None
@@ -492,6 +482,9 @@ class Task(TaskMixin, models.Model):
     @property
     def storage(self):
         # maybe task has storage link
+        # TODO: this is bad idea to use storage from storage_link,
+        # because storage resolver will be limited to this storage,
+        # however, we may need to use other storages to resolve the uri.
         storage_link = self.get_storage_link()
         if storage_link:
             return storage_link.storage

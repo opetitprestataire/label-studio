@@ -174,8 +174,10 @@ const _Annotation = types
 
     const updateIds = (item) => {
       const children = item.children?.map(updateIds);
+      const imageEntities = item.imageEntities?.map(updateIds);
 
       if (children) item = { ...item, children };
+      if (imageEntities) item = { ...item, imageEntities };
       if (item.id) item = { ...item, id: `${item.name ?? item.id}@${sn.id}` };
       // @todo fallback for tags with name as id:
       // if (item.name) item = { ...item, name: item.name + "@" + sn.id };
@@ -1030,6 +1032,8 @@ const _Annotation = types
     // And this problems are fixable, so better to fix them on start
     fixBrokenAnnotation(json) {
       return (json ?? []).reduce((res, objRaw) => {
+        if (!objRaw) return res;
+
         const obj = structuredClone(objRaw) ?? {};
 
         if (obj.type === "relation") {

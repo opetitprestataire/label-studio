@@ -60,6 +60,11 @@ const DATA = {
 
 const CONFIG = `
 <View>
+  <style>
+    [data-radix-popper-content-wrapper] {
+      z-index: 9999 !important;
+    }
+  </style>
   <ParagraphLabels name="ner" toName="text">
     <Label value="Important Stuff"></Label>
     <Label value="Random talk"></Label>
@@ -102,7 +107,7 @@ Scenario(
     AtOutliner.seeRegions(2);
 
     I.say("Take a snapshot");
-    const twoActionsResult = LabelStudio.serialize();
+    const twoActionsResult = await LabelStudio.serialize();
 
     I.say("Reset to initial state");
     LabelStudio.init(params);
@@ -123,11 +128,16 @@ Scenario(
     AtOutliner.seeRegions(2);
 
     I.say("Take a second snapshot");
-    const oneActionResult = LabelStudio.serialize();
+    const oneActionResult = await LabelStudio.serialize();
 
     I.say("The results should be identical");
 
-    assert.deepStrictEqual(twoActionsResult, oneActionResult);
+    assert.equal(twoActionsResult.length, oneActionResult.length, "The results should be identical");
+    for (let i = 0; i < twoActionsResult.length; i++) {
+      const { id: idOne, ...resOne } = twoActionsResult[i];
+      const { id: idTwo, ...resTwo } = oneActionResult[i];
+      assert.deepStrictEqual(resOne, resTwo, "The results should be identical");
+    }
   },
 );
 
@@ -529,7 +539,7 @@ Scenario(
     AtOutliner.seeRegions(0);
 
     I.say("Select 2 regions in the consecutive phrases of the one person");
-    AtParagraphs.clickFilter("Vincent Vega");
+    AtParagraphs.clickFilter("Vincent Vega:");
     AtLabels.clickLabel("Random talk");
     AtParagraphs.setSelection(
       AtParagraphs.locateText("Hate what?2"),

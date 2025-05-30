@@ -102,7 +102,7 @@ class App extends Component {
         }}
       >
         <Result status="success" title={getEnv(this.props.store).messages.NO_NEXT_TASK} />
-        <Block name="sub__result">You have completed all tasks in the queue!</Block>
+        <Block name="sub__result">All tasks in the queue have been completed</Block>
         {store.taskHistory.length > 0 && (
           <Button onClick={(e) => store.prevTask(e, true)} look="outlined" style={{ margin: "16px 0" }}>
             Go to Previous Task
@@ -274,7 +274,7 @@ class App extends Component {
               name="wrapper"
               mod={{
                 viewAll: viewingAll,
-                bsp: settings.bottomSidePanel,
+                bsp: settings.effectiveBottomSidePanel,
                 showingBottomBar: newUIEnabled,
               }}
             >

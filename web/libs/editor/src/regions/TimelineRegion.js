@@ -84,6 +84,12 @@ const Model = types
      * @property {string[]} [value.timelinelabels] Regions are created by `TimelineLabels`, and the corresponding label is listed here.
      */
 
+    onSelectInOutliner() {
+      // skip video to the first frame of this region
+      // @todo hidden/disabled timespans?
+      self.object.setFrame(self.ranges[0].start);
+    },
+
     /**
      * @return {TimelineRegionResult}
      */
@@ -106,6 +112,7 @@ const Model = types
      *        In first two cases we need to update undo history only once
      */
     setRange([start, end], { mode } = {}) {
+      if (self.locked) return;
       if (mode === "new") {
         // we need to update existing history item while drawing a new region
         self.parent.annotation.history.setReplaceNextUndoState();

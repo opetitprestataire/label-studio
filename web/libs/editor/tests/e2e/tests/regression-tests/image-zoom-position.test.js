@@ -1,7 +1,7 @@
 const assert = require("assert");
 const Helpers = require("../helpers");
 
-Feature("Image zoom position").tag("@regress");
+Feature("Image zoom position").tag("@regress").config({ waitForAction: 50 });
 
 const IMAGE =
   "https://htx-pub.s3.us-east-1.amazonaws.com/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg";
@@ -108,7 +108,7 @@ Data(relativeCoordsFF).Scenario(
     AtOutliner.seeSelectedRegion();
     // these values depend on screen size, interface elements size, etc.
     // so if they were changed slightly, just replace them with actual data.
-    AtDetails.seeFieldWithValue("X", FF3793.enabled ? "88.567" : "435.75");
+    AtDetails.seeFieldWithValue("X", FF3793.enabled ? "88.567" : "430.15");
     I.pressKey("U");
 
     I.say("Collapse the details panel");
@@ -163,7 +163,7 @@ Data(relativeCoordsFF).Scenario(
     I.say("Check that there is a region at the center of visible area");
     AtImageView.clickAt(AtImageView.percToX(50), AtImageView.percToY(50));
     AtOutliner.seeSelectedRegion();
-    AtDetails.seeFieldWithValue("X", FF3793.enabled ? "68.75" : "338.25");
+    AtDetails.seeFieldWithValue("X", FF3793.enabled ? "68.75" : "333.90");
     I.pressKey("U");
 
     I.say("Collapse the details panel");
@@ -201,7 +201,7 @@ Data(relativeCoordsFF).Scenario(
       await AtOutlinerPanel.dragResizerBy(shiftX, 0, AtOutlinerPanel.resizeRight, steps);
     }
 
-    I.wait(1);
+    I.waitTicks(3);
 
     await AtImageView.lookForStage();
 

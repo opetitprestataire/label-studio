@@ -26,13 +26,17 @@ export const Tour: React.FC<TourProps> = ({ name, autoStart = false, delay = 0, 
     if (tourContext) {
       tourContext.registerTour(name, dispatch);
 
+      let timeout = null;
       if (autoStart) {
-        setTimeout(() => {
+        timeout = setTimeout(() => {
           tourContext.startTour(name);
         }, delay);
       }
 
       return () => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
         tourContext.unregisterTour(name);
       };
     }
@@ -121,9 +125,11 @@ export const Tour: React.FC<TourProps> = ({ name, autoStart = false, delay = 0, 
           width: "468px",
         },
         options: {
-          primaryColor: "var(--primary_link)",
-          textColor: "var(--sand_900)",
-          overlayColor: "rgba(0, 0, 0, 0.5)",
+          backgroundColor: "var(--color-neutral-surface-active)",
+          primaryColor: "var(--color-primary-surface)",
+          textColor: "var(--color-neutral-content)",
+          overlayColor: "rgba(var(--color-neutral-shadow-raw) / calc( 50% * var(--shadow-intensity)))",
+          arrowColor: "var(--color-neutral-surface-active)",
         },
       }}
       hideCloseButton={true}

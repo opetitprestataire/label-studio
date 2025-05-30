@@ -32,6 +32,7 @@ const supportedExtensions = {
   image: ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"],
   html: ["html", "htm", "xml"],
   timeSeries: ["csv", "tsv"],
+  pdf: ["pdf"],
   common: ["csv", "tsv", "txt", "json"],
 };
 const allSupportedExtensions = flatten(Object.values(supportedExtensions));
@@ -483,7 +484,7 @@ export const ImportPage = ({
             )}
 
             <div className="w-[650px]">
-              {projectConfigured && ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
+              {projectConfigured && ff.isFF(ff.FF_JSON_PREVIEW) ? (
                 <SimpleCard title="Expected input preview" className="w-[650px] h-full">
                   {sampleConfig.data ? (
                     <CodeBlock
@@ -499,7 +500,7 @@ export const ImportPage = ({
                     <div className="w-full pt-4 text-lg text-negative-content">Unable to load sample data</div>
                   ) : null}
                 </SimpleCard>
-              ) : ff.isFF(ff.FF_SAMPLE_DATASETS) ? (
+              ) : ff.isFF(ff.FF_JSON_PREVIEW) ? (
                 <SimpleCard title="Expected input preview" className="w-[650px] h-full">
                   Set up your{" "}
                   <button

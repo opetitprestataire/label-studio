@@ -178,14 +178,14 @@ Scenario("Can select a region below a hidden region", async ({ I, LabelStudio, A
   AtOutliner.seeRegions(2);
 
   // click on the top-most region visible to select it
-  AtAudioView.clickAt(50);
+  AtAudioView.clickAt(51);
   AtOutliner.seeSelectedRegion("Noise");
 
   // hide the region
   AtOutliner.toggleRegionVisibility("Noise");
 
   // click on the region below the hidden one to select it
-  AtAudioView.clickAt(50);
+  AtAudioView.clickAt(51);
   AtOutliner.seeSelectedRegion("Speech");
 });
 
@@ -238,9 +238,9 @@ Scenario("Check if there are ghost regions", async ({ I, LabelStudio, AtAudioVie
   I.pressKey("1");
   AtAudioView.dragAudioElement(160, 80, false);
   I.pressKey("1");
-  I.wait(1);
+  I.waitTicks(2);
   I.pressMouseUp();
-  I.wait(1);
+  I.waitTicks(2);
 
   // checking if the created region is selected
   AtAudioView.clickAt(310);
