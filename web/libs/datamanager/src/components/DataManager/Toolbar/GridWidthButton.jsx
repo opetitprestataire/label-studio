@@ -3,18 +3,20 @@ import { useCallback, useState } from "react";
 import { Button } from "../../Common/Button/Button";
 import { Dropdown } from "../../Common/Dropdown/DropdownComponent";
 import { Toggle } from "../../Common/Form";
+import { IconSettings } from "@humansignal/icons";
 
 const injector = inject(({ store }) => {
   const view = store?.currentView;
 
   return {
     view,
+    isGrid: view.type === "grid",
     gridWidth: view?.gridWidth,
     responsiveImage: view?.gridResponsiveImage,
   };
 });
 
-export const GridWidthButton = injector(({ view, gridWidth, responsiveImage, size }) => {
+export const GridWidthButton = injector(({ view, isGrid, gridWidth, responsiveImage, size }) => {
   const [width, setWidth] = useState(gridWidth);
 
   const setGridWidth = useCallback(
@@ -27,7 +29,7 @@ export const GridWidthButton = injector(({ view, gridWidth, responsiveImage, siz
     [view],
   );
 
-  return view.type === "grid" ? (
+  return isGrid ? (
     <Dropdown.Trigger
       content={
         <div className="p-tight min-w-wide space-y-base">
@@ -54,7 +56,9 @@ export const GridWidthButton = injector(({ view, gridWidth, responsiveImage, siz
         </div>
       }
     >
-      <Button size={size}>Grid</Button>
+      <Button size={size}>
+        <IconSettings />
+      </Button>
     </Dropdown.Trigger>
   ) : null;
 });
