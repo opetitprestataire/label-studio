@@ -437,8 +437,12 @@ class Project(ProjectMixin, models.Model):
         # if cohort slider is tweaked
         elif overlap_cohort_percentage_changed:
             if self.maximum_annotations == 1:
-                self.tasks.update(overlap=1)
-                bulk_update_stats_project_tasks(self.tasks.all(), project=self)
+                if maximum_annotations_changed:
+                    self.tasks.update(overlap=1)
+                    bulk_update_stats_project_tasks(self.tasks.all(), project=self)
+                logger.info(
+                    f'Project {str(self)}: cohort percentage was changed but maximum annotations was not and is 1; taking no action'
+                )
             else:
                 self._rearrange_overlap_cohort()
 
