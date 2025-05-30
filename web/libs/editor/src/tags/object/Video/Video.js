@@ -187,7 +187,6 @@ const Model = types
     },
 
     handleSync(data) {
-      if (data.initiator === self.name) console.log("VIDEO SYNC: echo sync", self.name);
       if (data.initiator === self.name) return;
       if (!self.ref.current) return;
       self.isProcessingIncomingSync = true;
@@ -218,7 +217,6 @@ const Model = types
     },
 
     handleSeek() {
-      if (self.isProcessingIncomingSync) console.log("VIDEO SYNC: reverb sync");
       if (self.isProcessingIncomingSync) return;
       self.triggerSync("seek");
     },
