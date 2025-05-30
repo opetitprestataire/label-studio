@@ -17,11 +17,11 @@
       position: absolute;
       top: 0;
       left: -100%;
-      width: 50%;
+      width: 25%;
       height: 100%;
       will-change: left;
       background-color: var(--color-primary-content-subtle);
-      animation: buffering-media 2.4s ease-out infinite;
+      animation: buffering-media 800ms ease-out infinite;
     }
   }
 
@@ -140,6 +140,6 @@
   }
 
   100% {
-    left: 200%;
+    left: 100%;
   }
 }
