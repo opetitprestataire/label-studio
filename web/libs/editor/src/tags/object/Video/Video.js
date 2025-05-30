@@ -210,7 +210,7 @@ const Model = types
         self.speed = data.speed;
       }
 
-      if (isDefined(data.time)) {
+      if (isDefined(data.time) && !self.buffering) {
         video.currentTime = data.time;
       }
     },
