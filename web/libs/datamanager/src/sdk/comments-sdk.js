@@ -60,6 +60,7 @@ export class CommentsSdk {
 
     const res = await this.dm.apiCall("listComments", listParams);
 
+    // Ensure request is went through and res is an array
     if (!res?.length) {
       return [];
     }
