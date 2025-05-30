@@ -19,7 +19,6 @@ export * from "./assets/icons";
 export * from "./lib/simple-card";
 export * from "./lib/space/space";
 export * from "./lib/spinner/spinner";
-export * from "./lib/popover/popover";
 export * from "./lib/auto-sizer-table/auto-sizer-table";
 
 export * from "./shadcn";
