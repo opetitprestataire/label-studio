@@ -331,8 +331,10 @@ export abstract class Player extends Destructable {
   protected watch = () => {
     if (!this.playing) return;
 
-    this.updateCurrentTime();
-    this.updateLoop(this.time);
+    if (!this.buffering) {
+      this.updateCurrentTime();
+      this.updateLoop(this.time);
+    }
 
     this.timer = requestAnimationFrame(this.watch);
   };

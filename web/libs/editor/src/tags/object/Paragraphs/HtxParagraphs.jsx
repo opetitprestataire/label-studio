@@ -13,7 +13,6 @@ import { Toggle, Tooltip } from "@humansignal/ui";
 import { cn } from "../../../utils/bem";
 import { cnm } from "@humansignal/shad/utils";
 import { ff } from "@humansignal/core";
-import { useSyncedBuffering } from "../../../hooks/useSyncedBuffering";
 
 const audioDefaultProps = {};
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
@@ -21,24 +20,7 @@ const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 if (isFF(FF_LSDV_4711)) audioDefaultProps.crossOrigin = "anonymous";
 
 const ParagraphAudio = observer(({ item }) => {
-  const [buffering, setBuffering] = useSyncedBuffering({
-    onBuffering: item.handleBuffering,
-    buffering: item.buffering,
-  });
-
-  const isBuffering = isSyncedBuffering && buffering;
-
-  const onCanPlay = useCallback(() => {
-    if (isSyncedBuffering) {
-      setBuffering(false);
-    }
-  }, [setBuffering]);
-
-  const onWaiting = useCallback(() => {
-    if (isSyncedBuffering) {
-      setBuffering(true);
-    }
-  }, [setBuffering]);
+  const isBuffering = isSyncedBuffering && item.buffering;
 
   return (
     <>
@@ -52,8 +34,6 @@ const ParagraphAudio = observer(({ item }) => {
         onLoadedMetadata={item.handleAudioLoaded}
         onEnded={item.reset}
         onError={item.handleError}
-        onCanPlay={onCanPlay}
-        onWaiting={onWaiting}
       />
     </>
   );
