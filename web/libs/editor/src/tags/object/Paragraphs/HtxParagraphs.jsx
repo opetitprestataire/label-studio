@@ -1,4 +1,4 @@
-import React, { Component, useCallback } from "react";
+import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
 import ObjectTag from "../../../components/Tags/Object";
