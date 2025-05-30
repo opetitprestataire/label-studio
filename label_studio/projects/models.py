@@ -415,7 +415,8 @@ class Project(ProjectMixin, models.Model):
         """
         logger.info(
             f'Starting _update_tasks_states with params: Project {str(self)} maximum_annotations '
-            f'{self.maximum_annotations} and percentage {self.overlap_cohort_percentage}'
+            f'{self.maximum_annotations} and percentage {self.overlap_cohort_percentage} '
+            f'{maximum_annotations_changed=} {overlap_cohort_percentage_changed=} {tasks_number_changed=}'
         )
         # if only maximum annotations parameter is tweaked
         if maximum_annotations_changed and not overlap_cohort_percentage_changed:
