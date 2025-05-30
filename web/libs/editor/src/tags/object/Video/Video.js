@@ -101,7 +101,6 @@ const Model = types
     frame: 1,
     length: 1,
     drawingRegion: null,
-    isProcessingIncomingSync: false,
   }))
   .views((self) => ({
     get store() {
@@ -189,24 +188,20 @@ const Model = types
     handleSync(data) {
       if (data.initiator === self.name) return;
       if (!self.ref.current) return;
-      self.isProcessingIncomingSync = true;
-      try {
-        const video = self.ref.current;
 
-        if (data.playing) {
-          if (!video.playing) video.play();
-        } else {
-          if (video.playing) video.pause();
-        }
+      const video = self.ref.current;
 
-        if (data.speed) {
-          self.speed = data.speed;
-        }
-
-        video.currentTime = data.time;
-      } finally {
-        self.isProcessingIncomingSync = false;
+      if (data.playing) {
+        if (!video.playing) video.play();
+      } else {
+        if (video.playing) video.pause();
       }
+
+      if (data.speed) {
+        self.speed = data.speed;
+      }
+
+      video.currentTime = data.time;
     },
 
     handleSyncSpeed(data) {
@@ -217,7 +212,6 @@ const Model = types
     },
 
     handleSeek() {
-      if (self.isProcessingIncomingSync) return;
       self.triggerSync("seek");
     },
 
