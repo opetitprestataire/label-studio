@@ -35,16 +35,35 @@
     }
 
     &-body {
-      height: 100%;
+      width: 100%;
 
+      img {
+        object-fit: fill;
+        object-position: center;
+      }
+
+    }
+
+    &-body img {
+      width: 100%;
+      object-fit: cover;
+      height: 100%;
+    }
+
+    &-body_responsive {
       &:has(img) {
         display: grid;
         grid-auto-flow: row;
-        grid-template-rows: minmax(0, 1fr);
+        grid-template-rows: minmax(1rem, 1fr);
       }
 
       img {
         height: 100%;
+        max-height: 100%;
+        width: auto;
+        min-height: 120px;
+        object-fit: contain;
+        place-self: center center;
       }
     }
 
@@ -103,7 +122,10 @@
   }
 
   & .grid-image-wrapper {
+    display: flex;
+    width: 100%;
     text-align: center;
+    justify-content: center;
     background: var(--color-neutral-surface);
   }
 }

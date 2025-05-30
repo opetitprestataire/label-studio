@@ -7,12 +7,14 @@ export const ImageDataGroup = (column) => {
     value,
     original,
     field: { alias },
+    columnCount,
   } = column;
   const root = getRoot(original);
+  const imageHeight = ImageDataGroup.height * Math.max(1, 8 - columnCount);
 
   return original.total_annotations === 0 || !root.showPreviews ? (
     <Block name="grid-image-wrapper">
-      <img src={value} width="auto" height={ImageDataGroup.height} alt="" />
+      <img src={value} width="auto" style={{ height: imageHeight }} alt="" />
     </Block>
   ) : (
     <AnnotationPreview

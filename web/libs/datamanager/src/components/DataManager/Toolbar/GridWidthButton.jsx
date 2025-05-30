@@ -1,9 +1,8 @@
 import { inject } from "mobx-react";
 import { useCallback, useState } from "react";
-import { IconMinus, IconPlus } from "@humansignal/icons";
 import { Button } from "../../Common/Button/Button";
-import { Icon } from "../../Common/Icon/Icon";
-import { Space } from "../../Common/Space/Space";
+import { Dropdown } from "../../Common/Dropdown/DropdownComponent";
+import { Toggle } from "../../Common/Form";
 
 const injector = inject(({ store }) => {
   const view = store?.currentView;
@@ -11,10 +10,11 @@ const injector = inject(({ store }) => {
   return {
     view,
     gridWidth: view?.gridWidth,
+    responsiveImage: view?.gridResponsiveImage,
   };
 });
 
-export const GridWidthButton = injector(({ view, gridWidth, size }) => {
+export const GridWidthButton = injector(({ view, gridWidth, responsiveImage, size }) => {
   const [width, setWidth] = useState(gridWidth);
 
   const setGridWidth = useCallback(
@@ -28,22 +28,33 @@ export const GridWidthButton = injector(({ view, gridWidth, size }) => {
   );
 
   return view.type === "grid" ? (
-    <Space style={{ fontSize: 12 }}>
-      Columns: {width}
-      <Button.Group>
-        <Button
-          size={size}
-          icon={<Icon icon={IconMinus} size="12" color="#595959" />}
-          onClick={() => setGridWidth(width - 1)}
-          disabled={width === 3}
-        />
-        <Button
-          size={size}
-          icon={<Icon icon={IconPlus} size="12" color="#595959" />}
-          onClick={() => setGridWidth(width + 1)}
-          disabled={width === 10}
-        />
-      </Button.Group>
-    </Space>
+    <Dropdown.Trigger
+      content={
+        <div className="p-tight min-w-wide space-y-base">
+          <div className="grid grid-cols-[1fr_min-content] gap-base items-center">
+            <span>Columns: {width}</span>
+            <Button.Group>
+              <Button onClick={() => setGridWidth(width - 1)} disabled={width === 3}>
+                -
+              </Button>
+              <Button onClick={() => setGridWidth(width + 1)} disabled={width === 10}>
+                +
+              </Button>
+            </Button.Group>
+          </div>
+          <div className="grid grid-cols-[1fr_min-content] gap-base items-center">
+            <span>Fit images to width</span>
+            <Toggle
+              checked={!responsiveImage}
+              onChange={(e) => {
+                view.setGridResponsiveImage(!e.target.checked);
+              }}
+            />
+          </div>
+        </div>
+      }
+    >
+      <Button size={size}>Grid</Button>
+    </Dropdown.Trigger>
   ) : null;
 });

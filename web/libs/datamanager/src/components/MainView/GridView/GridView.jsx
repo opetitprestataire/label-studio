@@ -29,7 +29,7 @@ const GridHeader = observer(({ row, selected }) => {
   );
 });
 
-export const GridBody = observer(({ row, fields }) => {
+export const GridBody = observer(({ row, fields, columnCount }) => {
   const dataFields = fields.filter((f) => f.parent?.alias === "data");
 
   return dataFields.map((field, index) => {
@@ -37,30 +37,40 @@ export const GridBody = observer(({ row, fields }) => {
     const field_type = field.currentType;
     let value = getProperty(row, valuePath);
 
-    /**The value is an array...
+    /**
+     * The value is an array...
      * In this case, we take the first element of the array
      */
     if (Array.isArray(value)) {
       value = value[0];
     }
 
-    return <GridDataGroup key={`${row.id}-${index}`} type={field_type} value={value} field={field} row={row} />;
+    return (
+      <GridDataGroup
+        key={`${row.id}-${index}`}
+        type={field_type}
+        value={value}
+        field={field}
+        row={row}
+        columnCount={columnCount}
+      />
+    );
   });
 });
 
-const GridDataGroup = observer(({ type, value, field, row }) => {
+const GridDataGroup = observer(({ type, value, field, row, columnCount }) => {
   const DataTypeComponent = DataGroups[type];
 
   return isFF(FF_LOPS_E_3) && row.loading === field.alias ? (
     <SkeletonLoader />
   ) : DataTypeComponent ? (
-    <DataTypeComponent value={value} field={field} original={row} />
+    <DataTypeComponent value={value} field={field} original={row} columnCount={columnCount} />
   ) : (
     <DataGroups.TextDataGroup value={value} field={field} original={row} />
   );
 });
 
-const GridCell = observer(({ view, selected, row, fields, onClick, ...props }) => {
+const GridCell = observer(({ view, selected, row, fields, onClick, columnCount, ...props }) => {
   const { setCurrentTaskId, imageField } = useContext(GridViewContext);
 
   const handleBodyClick = useCallback(
@@ -76,8 +86,8 @@ const GridCell = observer(({ view, selected, row, fields, onClick, ...props }) =
     <Elem {...props} name="cell" onClick={onClick} mod={{ selected: selected.isSelected(row.id) }}>
       <Elem name="cell-content">
         <GridHeader view={view} row={row} fields={fields} selected={view.selected} />
-        <Elem name="cell-body" onClick={handleBodyClick}>
-          <GridBody view={view} row={row} fields={fields} />
+        <Elem name="cell-body" onClick={handleBodyClick} mod={{ responsive: view.gridResponsiveImage }}>
+          <GridBody view={view} row={row} fields={fields} columnCount={columnCount} />
         </Elem>
       </Elem>
     </Elem>
@@ -120,12 +130,13 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
           view={view}
           row={row}
           fields={fieldsData}
+          columnCount={columnCount}
           selected={view.selected}
           onClick={() => onChange?.(row.id)}
         />
       );
     },
-    [data, fieldsData, view.selected, view, view.selected.list, view.selected.all, getCellIndex],
+    [data, columnCount, fieldsData, view.selected, view, view.selected.list, view.selected.all, getCellIndex],
   );
 
   const onItemsRenderedWrap =
@@ -170,7 +181,7 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
                   width={width}
                   height={height}
                   name="list"
-                  rowHeight={rowHeight + 42}
+                  rowHeight={(rowHeight + 42) * Math.max(1, (7 - columnCount) * 0.5)}
                   overscanRowCount={view.dataStore.pageSize}
                   columnCount={columnCount}
                   columnWidth={width / columnCount - 9.5}
