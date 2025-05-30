@@ -270,7 +270,6 @@ const PlayableAndSyncable = types
       self.buffering = isBuffering;
       self.trackPlayingId();
     },
-    },
 
     handleSyncPlay({ time, playing }) {
       const audio = self.audioRef.current;
