@@ -5,24 +5,9 @@ import { isTimeRelativelySimilar } from "../Common/Utils";
 import type { Layer } from "../Visual/Layer";
 import { Waveform, type WaveformFrameState, type WaveformOptions } from "../Waveform";
 import { ff } from "@humansignal/core";
+import { useSyncedBuffering } from "../../../hooks/useSyncedBuffering";
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
-
-const useSyncedBuffering = (
-  options: Omit<WaveformOptions, "container">,
-  wf: MutableRefObject<Waveform | undefined>,
-) => {
-  const bufferingRef = useRef(options?.buffering ?? false);
-  bufferingRef.current = options?.buffering ?? false;
-  const setBuffering = useCallback((buffering: boolean) => {
-    bufferingRef.current = buffering;
-    if (wf.current) {
-      wf.current.buffering = buffering;
-    }
-  }, []);
-
-  return [bufferingRef.current, setBuffering] as const;
-};
 
 export const useWaveform = (
   containter: MutableRefObject<HTMLElement | null | undefined>,
@@ -43,7 +28,10 @@ export const useWaveform = (
   const [zoom, setZoom] = useState(1);
   const [volume, setVolume] = useState(options?.volume ?? 1);
   const [playing, setPlaying] = useState(false);
-  const [buffering, setBuffering] = useSyncedBuffering(options, waveform);
+  const [buffering, setBuffering] = useSyncedBuffering({
+    buffering: options?.buffering,
+    onBuffering: options?.onBuffering,
+  });
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [amp, setAmp] = useState(options?.amp ?? 1);
@@ -137,10 +125,7 @@ export const useWaveform = (
     });
 
     if (isSyncedBuffering) {
-      wf.on("buffering", (buffering) => {
-        options?.onBuffering?.(buffering);
-        setBuffering(buffering);
-      });
+      wf.on("buffering", setBuffering);
     }
 
     waveform.current = wf;

@@ -7,7 +7,7 @@ import { MAX_ZOOM, MIN_ZOOM } from "./VideoConstants";
 import { VirtualCanvas } from "./VirtualCanvas";
 import { VirtualVideo } from "./VirtualVideo";
 import { ff } from "@humansignal/core";
-import { debounce } from "../../utils/debounce";
+import { useSyncedBuffering } from "../../hooks/useSyncedBuffering";
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
@@ -96,23 +96,7 @@ export interface VideoRef {
   adjustPan: (x: number, y: number) => PanOptions;
 }
 
-const useSyncedBuffering = (props: VideoProps) => {
-  const bufferingRef = useRef(props.buffering ?? false);
-  bufferingRef.current = props.buffering ?? false;
-  const onBufferingRef = useRef(props.onBuffering ?? (() => {}));
-  onBufferingRef.current = props.onBuffering ?? (() => {});
 
-  const setBuffering = useCallback(
-    debounce((isBuffering: boolean) => {
-      // Update parent component
-      if (isBuffering === bufferingRef.current) return;
-      onBufferingRef.current(isBuffering);
-    }, BUFFERING_DEBOUNCE_TIME),
-    [],
-  );
-
-  return [bufferingRef.current, setBuffering] as const;
-};
 
 const useLocalBuffering = (props: VideoProps) => {
   return useState(false);

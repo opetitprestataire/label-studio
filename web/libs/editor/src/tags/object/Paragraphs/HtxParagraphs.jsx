@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useCallback } from "react";
 import { inject, observer } from "mobx-react";
 
 import ObjectTag from "../../../components/Tags/Object";
@@ -12,12 +12,51 @@ import { IconHelp } from "@humansignal/icons";
 import { Toggle, Tooltip } from "@humansignal/ui";
 import { cn } from "../../../utils/bem";
 import { ff } from "@humansignal/core";
+import { useSyncedBuffering } from "../../../hooks/useSyncedBuffering";
 
 const audioDefaultProps = {};
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 if (isFF(FF_LSDV_4711)) audioDefaultProps.crossOrigin = "anonymous";
 
+const ParagraphAudio = observer(({ item }) => {
+  const [buffering, setBuffering] = useSyncedBuffering({
+    onBuffering: item.handleBuffering,
+    buffering: item.buffering,
+  });
+
+  const isBuffering = isSyncedBuffering && buffering;
+
+  const onCanPlay = useCallback(() => {
+    if (isSyncedBuffering) {
+      setBuffering(false);
+    }
+  }, [setBuffering]);
+
+  const onWaiting = useCallback(() => {
+    if (isSyncedBuffering) {
+      setBuffering(true);
+    }
+  }, [setBuffering]);
+
+  return (
+    <>
+      {isBuffering && <div className="lsf-timeline-controls__buffering" aria-label="Buffering Media Source" />}
+      <audio
+        {...audioDefaultProps}
+        controls={item.showplayer && !item.syncedAudio}
+        className={styles.audio}
+        src={item.audio}
+        ref={item.audioRef}
+        onLoadedMetadata={item.handleAudioLoaded}
+        onEnded={item.reset}
+        onError={item.handleError}
+        onCanPlay={onCanPlay}
+        onWaiting={onWaiting}
+      />
+    </>
+  );
+});
 class HtxParagraphsView extends Component {
   _regionSpanSelector = ".htx-highlight";
   mainContentSelector = `.${cn("main-content").toClassName()}`;
@@ -576,27 +615,14 @@ class HtxParagraphsView extends Component {
     const withAudio = !!item.audio;
     const contextScroll = isFF(FF_LSDV_E_278) && this.props.item.contextscroll;
 
-    if ((!item.playing || (isSyncedBuffering && item.buffering)) && isFF(FF_LSDV_E_278)) this._disposeTimeout(); // dispose scroll timeout when the audio is not playing
+    if (!item.playing && isFF(FF_LSDV_E_278)) this._disposeTimeout(); // dispose scroll timeout when the audio is not playing
 
     // current way to not render when we wait for data
     if (isFF(FF_DEV_2669) && !item._value) return null;
 
     return (
       <ObjectTag item={item} className={cn("paragraphs").toClassName()}>
-        {withAudio && (
-          <audio
-            {...audioDefaultProps}
-            controls={item.showplayer && !item.syncedAudio}
-            className={styles.audio}
-            src={item.audio}
-            ref={item.audioRef}
-            onLoadedMetadata={item.handleAudioLoaded}
-            onEnded={item.reset}
-            onError={item.handleError}
-            onCanPlay={item.handleCanPlay}
-            onWaiting={item.handleWaiting}
-          />
-        )}
+        {withAudio && <ParagraphAudio item={item} />}
         {isFF(FF_LSDV_E_278) ? this.renderWrapperHeader() : isFF(FF_DEV_2669) && <AuthorFilter item={item} />}
         <div
           ref={this.myRef}

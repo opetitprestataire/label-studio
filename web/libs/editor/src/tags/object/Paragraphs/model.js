@@ -267,6 +267,7 @@ const PlayableAndSyncable = types
     },
 
     handleSyncBuffering({ isBuffering }) {
+      self.buffering = isBuffering;
       self.trackPlayingId();
     },
 
