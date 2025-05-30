@@ -12,6 +12,11 @@ import { FF_GRID_PREVIEW, FF_LOPS_E_3, isFF } from "../../../utils/feature-flags
 import { SkeletonLoader } from "../../Common/SkeletonLoader";
 import { GridViewContext, GridViewProvider } from "./GridPreview";
 import "./GridView.scss";
+import { clsx } from "clsx";
+clsx;
+import { groupBy } from "../../../utils/utils";
+
+const TEXT_ONLY_CELL_HEIGHT = 150;
 
 const GridHeader = observer(({ row, selected }) => {
   const isSelected = selected.isSelected(row.id);
@@ -31,6 +36,47 @@ const GridHeader = observer(({ row, selected }) => {
 
 export const GridBody = observer(({ row, fields, columnCount }) => {
   const dataFields = fields.filter((f) => f.parent?.alias === "data");
+  const group = groupBy(dataFields, (f) => f.currentType);
+  const hasImage = dataFields.some((f) => f.currentType === "Image");
+
+  return Object.entries(group).map(([type, fields]) => {
+    return (
+      <div
+        key={type}
+        className={clsx("h-full w-full", {
+          "overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-border scrollbar-track-transparent ":
+            type === "Text" || type === "Unknown",
+          "overflow-y-auto": !hasImage,
+        })}
+      >
+        {fields.map((field, index) => {
+          const valuePath = field.id.split(":")[1] ?? field.id;
+          const field_type = field.currentType;
+          let value = getProperty(row, valuePath);
+
+          /**
+           * The value is an array...
+           * In this case, we take the first element of the array
+           */
+          if (Array.isArray(value)) {
+            value = value[0];
+          }
+
+          return (
+            <GridDataGroup
+              key={`${row.id}-${index}`}
+              type={field_type}
+              value={value}
+              hasImage={hasImage}
+              field={field}
+              row={row}
+              columnCount={columnCount}
+            />
+          );
+        })}
+      </div>
+    );
+  });
 
   return dataFields.map((field, index) => {
     const valuePath = field.id.split(":")[1] ?? field.id;
@@ -58,15 +104,15 @@ export const GridBody = observer(({ row, fields, columnCount }) => {
   });
 });
 
-const GridDataGroup = observer(({ type, value, field, row, columnCount }) => {
+const GridDataGroup = observer(({ type, value, field, row, columnCount, hasImage }) => {
   const DataTypeComponent = DataGroups[type];
 
   return isFF(FF_LOPS_E_3) && row.loading === field.alias ? (
     <SkeletonLoader />
   ) : DataTypeComponent ? (
-    <DataTypeComponent value={value} field={field} original={row} columnCount={columnCount} />
+    <DataTypeComponent value={value} field={field} original={row} columnCount={columnCount} hasImage={hasImage} />
   ) : (
-    <DataGroups.TextDataGroup value={value} field={field} original={row} />
+    <DataGroups.TextDataGroup value={value} field={field} original={row} hasImage={hasImage} />
   );
 });
 
@@ -102,14 +148,16 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
   const fieldsData = useMemo(() => {
     return prepareColumns(fields, hiddenFields);
   }, [fields, hiddenFields]);
+  const hasImage = fieldsData.some((f) => f.currentType === "Image");
 
   const rowHeight = fieldsData
     .filter((f) => f.parent?.alias === "data")
     .reduce((res, f) => {
-      const height = (DataGroups[f.currentType] ?? DataGroups.TextDataGroup).height;
+      const height = !hasImage ? TEXT_ONLY_CELL_HEIGHT : (DataGroups[f.currentType] ?? DataGroups.TextDataGroup).height;
 
       return res + height;
     }, 16);
+  const finalRowHeight = rowHeight + 42 * (hasImage ? Math.max(1, (7 - columnCount) * 0.5) : 1);
 
   const renderItem = useCallback(
     ({ style, rowIndex, columnIndex }) => {
@@ -181,7 +229,7 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
                   width={width}
                   height={height}
                   name="list"
-                  rowHeight={(rowHeight + 42) * Math.max(1, (7 - columnCount) * 0.5)}
+                  rowHeight={finalRowHeight}
                   overscanRowCount={view.dataStore.pageSize}
                   columnCount={columnCount}
                   columnWidth={width / columnCount - 9.5}
