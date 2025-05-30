@@ -38,6 +38,7 @@ const ParagraphAudio = observer(({ item }) => {
     </>
   );
 });
+
 class HtxParagraphsView extends Component {
   _regionSpanSelector = ".htx-highlight";
   mainContentSelector = `.${cn("main-content").toClassName()}`;
