@@ -22,6 +22,8 @@ type MSTObjectTag = {
   isControlTag: false;
   isObjectTag: true;
   type: string;
+  value: string;
+  _value?: any;
 };
 
 type MSTControlTag = {
@@ -41,6 +43,7 @@ type MSTTagImage = MSTObjectTag & {
   containerWidth: number;
   containerHeight: number;
   canvasSize?: { width: number; height: number };
+  parsedValue?: string;
 };
 
 type MSTTag = MSTTagImage | MSTObjectTag | MSTControlTag;

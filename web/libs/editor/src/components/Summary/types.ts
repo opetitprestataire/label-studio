@@ -1,3 +1,5 @@
+import type { MSTObjectTag, MSTTagImage } from "../../stores/types";
+
 export type LabelAttrs = { value: string; background?: string };
 
 export type ParsedControlTag = {
@@ -16,7 +18,5 @@ export type ControlTag = {
   per_region?: boolean;
 };
 
-export type Project = {
-  parsed_label_config: Record<string, ParsedControlTag>;
-  data_types: Record<string, string>;
-};
+export type ObjectTagEntry = [string, MSTObjectTag | MSTTagImage];
+export type ObjectTypes = Record<string, { type: string; value: any }>;

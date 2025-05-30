@@ -1,8 +1,8 @@
-import type { MSTAnnotation, MSTControlTag, MSTObjectTag, MSTStore } from "../../stores/types";
+import type { MSTAnnotation, MSTControlTag, MSTStore } from "../../stores/types";
 import { DataSummary } from "./DataSummary";
 import { LabelingSummary } from "./LabelingSummary";
 import { NumbersSummary } from "./NumbersSummary";
-import type { ControlTag, LabelAttrs } from "./types";
+import type { ControlTag, LabelAttrs, ObjectTagEntry, ObjectTypes } from "./types";
 
 type SummaryProps = {
   annotations: MSTAnnotation[];
@@ -35,11 +35,16 @@ const Summary = ({ annotations: all, store: annotationStore }: SummaryProps) => 
     per_region: !!control.perregion,
   }));
 
-  type ObjectTagEntry = [string, MSTObjectTag];
-  type ObjectTypes = Record<string, string>;
-
-  const objectTags: ObjectTagEntry[] = allTags.filter(([_, control]) => control.isObjectTag) as ObjectTagEntry[];
-  const dataTypes: ObjectTypes = Object.fromEntries(objectTags.map(([name, object]) => [name, object.type]));
+  const objectTags: ObjectTagEntry[] = allTags.filter(
+    ([_, tag]) => tag.isObjectTag && tag.value.includes("$"),
+  ) as ObjectTagEntry[];
+  const dataTypes: ObjectTypes = Object.fromEntries(
+    objectTags.map(([name, object]) => [
+      name,
+      // images use `parsedValue` instead of `_value`
+      { type: object.type, value: "parsedValue" in object ? object.parsedValue : (object._value ?? object.value) },
+    ]),
+  );
 
   const values = [
     {
