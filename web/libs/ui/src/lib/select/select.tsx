@@ -226,7 +226,7 @@ export const Select = forwardRef(
           <button
             variant="outline"
             aria-expanded={isOpen}
-            className={cnm(triggerClassName ?? "", styles.selectTrigger, {
+            className={cnm(styles.selectTrigger, triggerClassName ?? "", {
               [styles.isInline]: isInline,
               [styles.isOpen]: isOpen,
               [styles.isDisabled]: disabled,
@@ -465,7 +465,7 @@ const Option = ({
         data-disabled={disabled}
       >
         {multiple && <Checkbox tabIndex={-1} checked={isOptionSelected} indeterminate={isIndeterminate} readOnly />}
-        <div data-testid="select-option-label" className="w-full truncate">
+        <div data-testid="select-option-label" className="w-full">
           {label}
         </div>
       </div>
