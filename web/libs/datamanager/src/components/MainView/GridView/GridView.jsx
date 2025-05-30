@@ -157,7 +157,7 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
 
       return res + height;
     }, 16);
-  const finalRowHeight = rowHeight + 42 * (hasImage ? Math.max(1, (7 - columnCount) * 0.5) : 1);
+  const finalRowHeight = (rowHeight + 32) * (hasImage ? Math.max(1, (7 - columnCount) * 0.5) : 1);
 
   const renderItem = useCallback(
     ({ style, rowIndex, columnIndex }) => {
