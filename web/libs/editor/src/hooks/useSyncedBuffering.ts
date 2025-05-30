@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { debounce } from "../utils/debounce";
-import { type Atom, atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import { type Atom, atom, useAtomValue, useSetAtom } from "jotai";
 
 interface SyncedBufferingProps {
   onBuffering?: (buffering: boolean) => void;
@@ -11,9 +11,11 @@ const BUFFERING_DEBOUNCE_TIME = 200;
 const syncBufferListAtom = atom<Atom<boolean>[]>([]);
 const anyBufferingAtom = atom((get) => get(syncBufferListAtom).some((atom) => get(atom)));
 
+let reportBuffering = true;
+
 export const useSyncedBuffering = (props: SyncedBufferingProps) => {
-  const bufferingRef = useRef(props.buffering ?? false);
-  bufferingRef.current = props.buffering ?? false;
+  const parentBufferingRef = useRef(props.buffering ?? false);
+  parentBufferingRef.current = props.buffering ?? false;
   const bufferingAtom = useRef(atom(props.buffering ?? false));
   const setSyncBuffering = useSetAtom(bufferingAtom.current);
   const setSyncBufferList = useSetAtom(syncBufferListAtom);
@@ -31,15 +33,24 @@ export const useSyncedBuffering = (props: SyncedBufferingProps) => {
   const setBuffering = useCallback(
     debounce((isBuffering: boolean) => {
       setSyncBuffering(isBuffering);
-
-      // Update parent component
-      if (isBuffering === bufferingRef.current) return;
-      bufferingRef.current = isBuffering;
-
-      onBufferingRef.current(isBuffering);
     }, BUFFERING_DEBOUNCE_TIME),
     [],
   );
+
+  useEffect(() => {
+    if (!reportBuffering) return;
+
+    reportBuffering = parentBufferingRef.current === anyBuffering;
+    if (reportBuffering) return;
+
+    const reportToParent = debounce(() => {
+      onBufferingRef.current(anyBuffering);
+      parentBufferingRef.current = anyBuffering;
+      reportBuffering = true;
+    }, BUFFERING_DEBOUNCE_TIME);
+
+    reportToParent();
+  }, [anyBuffering]);
 
   return [anyBuffering, setBuffering] as const;
 };

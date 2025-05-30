@@ -1,4 +1,4 @@
-import { type MutableRefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { type MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { TimelineContext } from "../../../components/Timeline/Context";
 import { isTimeRelativelySimilar } from "../Common/Utils";

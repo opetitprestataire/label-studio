@@ -11,6 +11,7 @@ import { Phrases } from "./Phrases";
 import { IconHelp } from "@humansignal/icons";
 import { Toggle, Tooltip } from "@humansignal/ui";
 import { cn } from "../../../utils/bem";
+import { cnm } from "@humansignal/shad/utils";
 import { ff } from "@humansignal/core";
 import { useSyncedBuffering } from "../../../hooks/useSyncedBuffering";
 
@@ -621,7 +622,7 @@ class HtxParagraphsView extends Component {
     if (isFF(FF_DEV_2669) && !item._value) return null;
 
     return (
-      <ObjectTag item={item} className={cn("paragraphs").toClassName()}>
+      <ObjectTag item={item} className={cnm(cn("paragraphs").toClassName(), styles.paragraphs)}>
         {withAudio && <ParagraphAudio item={item} />}
         {isFF(FF_LSDV_E_278) ? this.renderWrapperHeader() : isFF(FF_DEV_2669) && <AuthorFilter item={item} />}
         <div

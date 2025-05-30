@@ -96,8 +96,6 @@ export interface VideoRef {
   adjustPan: (x: number, y: number) => PanOptions;
 }
 
-
-
 const useLocalBuffering = (props: VideoProps) => {
   return useState(false);
 };
