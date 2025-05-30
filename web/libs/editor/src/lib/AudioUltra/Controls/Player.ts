@@ -1,9 +1,7 @@
 import { Destructable } from "../Common/Destructable";
 import type { WaveformAudio } from "../Media/WaveformAudio";
-import { clamp, debounce } from "../Common/Utils";
+import { clamp } from "../Common/Utils";
 import type { Waveform } from "../Waveform";
-
-const BUFFERING_DEBOUNCE_TIME = 200;
 
 export abstract class Player extends Destructable {
   protected audio?: WaveformAudio;
@@ -227,12 +225,12 @@ export abstract class Player extends Destructable {
     super.destroy();
   }
 
-  setBuffering = debounce((buffering: boolean) => {
+  setBuffering(buffering: boolean) {
     if (this.buffering === buffering) return;
 
     this.buffering = buffering;
     this.wf.invoke("buffering", [this.buffering]);
-  }, BUFFERING_DEBOUNCE_TIME);
+  }
 
   protected updatePlayback() {
     const { start, end } = this.playSelection();

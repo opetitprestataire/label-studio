@@ -11,8 +11,6 @@ import { useSyncedBuffering } from "../../hooks/useSyncedBuffering";
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
-const BUFFERING_DEBOUNCE_TIME = 200;
-
 type VideoProps = {
   src: string;
   width?: number;
@@ -228,7 +226,7 @@ export const VideoCanvas = memo(
 
         updateBuffering();
       }
-    }, [playing, updateFrame, updateBuffering]);
+    }, [playing, updateFrame]);
 
     // VIDEO EVENTS'
     const handleVideoPlay = useCallback(() => {
@@ -239,7 +237,7 @@ export const VideoCanvas = memo(
         updateBuffering();
       }
       props.onPlay?.();
-    }, [updateBuffering, props.onPlay]);
+    }, [props.onPlay]);
 
     const handleVideoPause = useCallback(() => {
       setPlaying(false);
@@ -249,7 +247,7 @@ export const VideoCanvas = memo(
         updateBuffering();
       }
       props.onPause?.();
-    }, [updateBuffering, props.onPause]);
+    }, [props.onPause]);
 
     const handleVideoPlaying = useCallback(() => {
       if (!isSyncedBuffering) {
@@ -264,7 +262,7 @@ export const VideoCanvas = memo(
       } else {
         updateBuffering();
       }
-    }, [updateBuffering]);
+    }, []);
 
     const handleVideoEnded = useCallback(() => {
       setPlaying(false);
