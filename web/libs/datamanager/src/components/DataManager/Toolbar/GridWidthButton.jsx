@@ -8,20 +8,24 @@ import { IconSettings } from "@humansignal/icons";
 const injector = inject(({ store }) => {
   const view = store?.currentView;
 
+  const dataTypes = store?.project?.data_types ?? {};
+  const hasImage = Object.values(dataTypes).some((type) => type === "Image") ?? false;
+
   return {
     view,
     isGrid: view.type === "grid",
     gridWidth: view?.gridWidth,
     responsiveImage: view?.gridResponsiveImage,
+    hasImage,
   };
 });
 
-export const GridWidthButton = injector(({ view, isGrid, gridWidth, responsiveImage, size }) => {
+export const GridWidthButton = injector(({ view, isGrid, gridWidth, responsiveImage, hasImage, size }) => {
   const [width, setWidth] = useState(gridWidth);
 
   const setGridWidth = useCallback(
     (width) => {
-      const newWidth = Math.max(3, Math.min(width, 10));
+      const newWidth = Math.max(1, Math.min(width, 10));
 
       setWidth(newWidth);
       view.setGridWidth(newWidth);
@@ -36,7 +40,7 @@ export const GridWidthButton = injector(({ view, isGrid, gridWidth, responsiveIm
           <div className="grid grid-cols-[1fr_min-content] gap-base items-center">
             <span>Columns: {width}</span>
             <Button.Group>
-              <Button onClick={() => setGridWidth(width - 1)} disabled={width === 3}>
+              <Button onClick={() => setGridWidth(width - 1)} disabled={width === 1}>
                 -
               </Button>
               <Button onClick={() => setGridWidth(width + 1)} disabled={width === 10}>
@@ -44,15 +48,17 @@ export const GridWidthButton = injector(({ view, isGrid, gridWidth, responsiveIm
               </Button>
             </Button.Group>
           </div>
-          <div className="grid grid-cols-[1fr_min-content] gap-base items-center">
-            <span>Fit images to width</span>
-            <Toggle
-              checked={!responsiveImage}
-              onChange={(e) => {
-                view.setGridResponsiveImage(!e.target.checked);
-              }}
-            />
-          </div>
+          {hasImage && (
+            <div className="grid grid-cols-[1fr_min-content] gap-base items-center">
+              <span>Fit images to width</span>
+              <Toggle
+                checked={!responsiveImage}
+                onChange={(e) => {
+                  view.setGridResponsiveImage(!e.target.checked);
+                }}
+              />
+            </div>
+          )}
         </div>
       }
     >

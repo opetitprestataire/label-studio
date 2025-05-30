@@ -17,7 +17,6 @@ export const valueToString = (value) => {
 };
 
 export const TextDataGroup = ({ value, hasImage }) => {
-  console.log({ hasImage });
   const output = valueToString(value);
   const style = {
     height: hasImage ? TextDataGroup.height : "auto",
