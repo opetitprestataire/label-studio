@@ -418,7 +418,7 @@ class Project(ProjectMixin, models.Model):
             f'{self.maximum_annotations} and percentage {self.overlap_cohort_percentage}'
         )
         # if only maximum annotations parameter is tweaked
-        if maximum_annotations_changed and (not overlap_cohort_percentage_changed or self.maximum_annotations == 1):
+        if maximum_annotations_changed and not overlap_cohort_percentage_changed:
             tasks_with_overlap = self.tasks.filter(overlap__gt=1)
             if tasks_with_overlap.exists():
                 # if there is a part with overlapped tasks, affect only them
