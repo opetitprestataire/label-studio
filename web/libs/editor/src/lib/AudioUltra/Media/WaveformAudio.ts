@@ -181,6 +181,11 @@ export class WaveformAudio extends Events<WaveformAudioEvents> {
   };
 
   mediaWaiting = () => {
+    // If this has already buffered the time segment we are on, we don't need to report waiting
+    if (this.el && this.el.buffered.length > 0 && this.el.currentTime > this.el.buffered.end(0)) {
+      return;
+    }
+
     this.invoke("waiting");
   };
 
