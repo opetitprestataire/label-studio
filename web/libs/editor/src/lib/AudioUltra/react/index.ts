@@ -5,9 +5,15 @@ import { isTimeRelativelySimilar } from "../Common/Utils";
 import type { Layer } from "../Visual/Layer";
 import { Waveform, type WaveformFrameState, type WaveformOptions } from "../Waveform";
 import { ff } from "@humansignal/core";
-import { useSyncedBuffering } from "../../../hooks/useSyncedBuffering";
+import { useSyncedBuffering, type SyncedBufferingProps } from "../../../hooks/useSyncedBuffering";
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
+
+const useNoopBuffering = (_props: SyncedBufferingProps) => {
+  return [false, () => {}] as const;
+};
+
+const useBuffering = isSyncedBuffering ? useSyncedBuffering : useNoopBuffering;
 
 export const useWaveform = (
   containter: MutableRefObject<HTMLElement | null | undefined>,
@@ -28,7 +34,7 @@ export const useWaveform = (
   const [zoom, setZoom] = useState(1);
   const [volume, setVolume] = useState(options?.volume ?? 1);
   const [playing, setPlaying] = useState(false);
-  const [buffering, setBuffering] = useSyncedBuffering({
+  const [buffering, setBuffering] = useBuffering({
     buffering: options?.buffering,
     onBuffering: options?.onBuffering,
   });
@@ -47,7 +53,7 @@ export const useWaveform = (
   }, [settings, waveform.current]);
 
   useEffect(() => {
-    if (!waveform.current) return;
+    if (!waveform.current || !isSyncedBuffering) return;
     waveform.current.buffering = buffering;
   }, [buffering]);
 

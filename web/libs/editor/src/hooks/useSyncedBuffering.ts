@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { debounce } from "../utils/debounce";
 import { type Atom, atom, useAtomValue, useSetAtom } from "jotai";
 
-interface SyncedBufferingProps {
+export interface SyncedBufferingProps {
   onBuffering?: (buffering: boolean) => void;
   buffering?: boolean;
 }
