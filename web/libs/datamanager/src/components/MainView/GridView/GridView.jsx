@@ -150,13 +150,15 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
   }, [fields, hiddenFields]);
   const hasImage = fieldsData.some((f) => f.currentType === "Image");
 
-  const rowHeight = fieldsData
-    .filter((f) => f.parent?.alias === "data")
-    .reduce((res, f) => {
-      const height = !hasImage ? TEXT_ONLY_CELL_HEIGHT : (DataGroups[f.currentType] ?? DataGroups.TextDataGroup).height;
+  const rowHeight = hasImage
+    ? fieldsData
+        .filter((f) => f.parent?.alias === "data")
+        .reduce((res, f) => {
+          const height = (DataGroups[f.currentType] ?? DataGroups.TextDataGroup).height;
 
-      return res + height;
-    }, 16);
+          return res + height;
+        }, 16)
+    : TEXT_ONLY_CELL_HEIGHT;
   const finalRowHeight = (rowHeight + 32) * (hasImage ? Math.max(1, (7 - columnCount) * 0.5) : 1);
 
   const renderItem = useCallback(
