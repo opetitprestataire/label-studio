@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { ff } from "@humansignal/core";
 import { usePersistentState } from "@humansignal/core/lib/hooks/usePersistentState";
 import type { MSTAnnotation, MSTStore } from "../../stores/types";
-import Summary from "../Summary/Summary";
+import TaskSummary from "../TaskSummary/TaskSummary";
 import Grid from "./Grid";
 
 import styles from "./ViewAll.module.scss";
@@ -33,7 +33,7 @@ export const ViewAll = ({ store: annotationStore, annotations, root }: Props) =>
         </div>
         {tab === "summary" && (
           <div>
-            <Summary store={annotationStore} annotations={annotations} />
+            <TaskSummary store={annotationStore} annotations={annotations} />
           </div>
         )}
         {tab === "compare" && (

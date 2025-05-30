@@ -4,12 +4,12 @@ import { LabelingSummary } from "./LabelingSummary";
 import { NumbersSummary } from "./NumbersSummary";
 import type { ControlTag, LabelAttrs, ObjectTagEntry, ObjectTypes } from "./types";
 
-type SummaryProps = {
+type TaskSummaryProps = {
   annotations: MSTAnnotation[];
   store: MSTStore["annotationStore"];
 };
 
-const Summary = ({ annotations: all, store: annotationStore }: SummaryProps) => {
+const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryProps) => {
   const task = annotationStore.store.task;
   const data = task.dataObj;
   // skip unsubmitted drafts
@@ -75,4 +75,4 @@ const Summary = ({ annotations: all, store: annotationStore }: SummaryProps) => 
   );
 };
 
-export default Summary;
+export default TaskSummary;
