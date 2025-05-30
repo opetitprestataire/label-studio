@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type FC, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePersistentJSONState } from "@humansignal/core/lib/hooks/usePersistentState";
 import { TimelineContextProvider } from "../../../components/Timeline/Context";
 import { ErrorMessage } from "../../../components/ErrorMessage/ErrorMessage";
@@ -36,9 +36,10 @@ interface AudioUltraProps {
   item: any;
   settings?: TimelineSettings;
   changeSetting?: (key: string, value: any) => void;
+  children: ReactNode;
 }
 
-const AudioUltraView: FC<AudioUltraProps> = ({ item, settings = {}, changeSetting = () => {} }) => {
+const AudioUltraView: FC<AudioUltraProps> = ({ item, children, settings = {}, changeSetting = () => {} }) => {
   const rootRef = useRef<HTMLElement | null>();
   const isDarkMode = getCurrentTheme() === "Dark";
   // Initialize state from settings passed via props
@@ -244,9 +245,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item, settings = {}, changeSettin
 
   return (
     <Block name="audio-tag">
-      {item.errors?.map((error: any, i: any) => (
-        <ErrorMessage key={`err-${i}`} error={error} />
-      ))}
+      {children}
       <div
         ref={(el) => {
           rootRef.current = el;
@@ -328,7 +327,11 @@ const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
 
   return (
     <TimelineContextProvider value={contextValue}>
-      <AudioUltraView item={item} />
+      <AudioUltraView item={item}>
+        {item.errors?.map((error: any, i: number) => (
+          <ErrorMessage key={`err-${i}`} error={error} />
+        ))}
+      </AudioUltraView>
     </TimelineContextProvider>
   );
 };

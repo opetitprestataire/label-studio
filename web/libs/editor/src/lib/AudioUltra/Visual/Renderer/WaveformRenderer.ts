@@ -49,7 +49,7 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
   draw(context: RenderContext): void {
     this.lastRenderContext = context;
     this.drawMiddleLine();
-    
+
     this.rateLimitedRenderer.scheduleDraw(
       { context, renderer: this },
       ({ context, renderer }) => {
@@ -82,7 +82,7 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
           renderer.renderPartialWave(context, layer, iStart, iEnd, deltaX);
         }
       },
-      false // not a zoom operation
+      false, // not a zoom operation
     );
   }
 

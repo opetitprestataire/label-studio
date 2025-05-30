@@ -26,7 +26,6 @@ import { GridRendererPlugin } from "./Plugins/GridRendererPlugin";
 import type { RenderContext, Renderer } from "./Renderer";
 import type { WaveformAudio } from "../../Media/WaveformAudio";
 import type { RendererPlugin } from "./Plugins/RendererPlugin";
-import { debounce } from "lodash";
 import { RateLimitedRenderer } from "./RateLimitedRenderer";
 
 export interface SpectrogramRendererConfig {
@@ -198,14 +197,14 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     ) {
       return;
     }
-    
+
     // Use rate-limited draw for spectrogram
     this.rateLimitedRenderer.scheduleDraw(
       { context, renderer: this },
       ({ context, renderer }) => {
         renderer._draw(context);
       },
-      false // not a zoom operation
+      false, // not a zoom operation
     );
   }
 

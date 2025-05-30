@@ -9,6 +9,9 @@ export const AudioView = {
   get root() {
     return cy.get(".lsf-audio-tag");
   },
+  get errorContainer() {
+    return this.root.find('[data-testid^="error:"]', { timeout: 30000 });
+  },
   get drawingArea() {
     return this.root.find("canvas");
   },
@@ -226,5 +229,15 @@ export const AudioView = {
         deltaY: backward ? -speed : speed,
       });
     }
+  },
+
+  /**
+   * Checks if an error message is displayed in the audio view
+   * @param {string} errorText - The error text to check for
+   */
+  hasError(errorText: string) {
+    cy.log(`Checking for error message: "${errorText}"`);
+    this.errorContainer.should("exist");
+    this.errorContainer.contains(errorText).should("exist");
   },
 };

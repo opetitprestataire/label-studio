@@ -17,7 +17,16 @@ export interface SliderProps {
   onChange: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
-export const Slider: FC<SliderProps> = ({ description, info, max, min, value, step = 1, showInput=true, onChange }) => {
+export const Slider: FC<SliderProps> = ({
+  description,
+  info,
+  max,
+  min,
+  value,
+  step = 1,
+  showInput = true,
+  onChange,
+}) => {
   const sliderRef = useRef<HTMLDivElement>();
   const [valueError, setValueError] = useState<number | string | undefined>();
 

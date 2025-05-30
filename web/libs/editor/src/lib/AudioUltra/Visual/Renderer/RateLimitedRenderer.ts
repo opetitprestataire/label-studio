@@ -10,7 +10,7 @@ export class RateLimitedRenderer {
   } | null = null;
   private drawScheduled = false;
   private readonly minFrameTime: number;
-  private currentWindowStart: number = 0;
+  private currentWindowStart = 0;
   private zoomDebounce: number | null = null;
 
   /**
@@ -18,7 +18,10 @@ export class RateLimitedRenderer {
    * @param fps The minimum frames per second to maintain (default: 30)
    * @param zoomDebounceMs The debounce time for zoom operations in milliseconds (default: 50)
    */
-  constructor(fps: number = 30, private readonly zoomDebounceMs: number = 50) {
+  constructor(
+    fps = 30,
+    private readonly zoomDebounceMs: number = 50,
+  ) {
     this.minFrameTime = 1000 / fps;
     this.currentWindowStart = performance.now();
   }
@@ -31,11 +34,7 @@ export class RateLimitedRenderer {
    * @param drawFn The function to call for drawing
    * @param isZoom Whether this is a zoom operation
    */
-  scheduleDraw<T>(
-    context: T,
-    drawFn: (context: T) => void,
-    isZoom: boolean = false
-  ) {
+  scheduleDraw<T>(context: T, drawFn: (context: T) => void, isZoom = false) {
     if (isZoom) {
       // Handle zoom operations with debouncing
       if (this.zoomDebounce) {
