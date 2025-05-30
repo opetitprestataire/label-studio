@@ -154,6 +154,9 @@ const OutlinerInnerTreeComponent: FC<OutlinerInnerTreeProps> = observer(({ regio
       },
     ): void => {
       const region = regionsTree.find((region: any) => region.key === node.key);
+
+      if (!region) return;
+
       // pos is equal to label name
       const pos = region.pos;
 
