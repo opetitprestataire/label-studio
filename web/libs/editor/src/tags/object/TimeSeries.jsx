@@ -569,7 +569,6 @@ const Model = types
         console.warn("TimeSeries (seek): model instance is not alive. Skipping operation.");
         return;
       }
-      if (data.initiator === self.name) return;
       if (typeof data.time !== "number" || isNaN(data.time)) {
         // console.error("TimeSeries _handleSeek: Invalid data.time received.", data.time);
         return;
@@ -612,7 +611,6 @@ const Model = types
         console.warn("TimeSeries (play): model instance is not alive. Skipping operation.");
         return;
       }
-      if (data.initiator === self.name) return;
       if (typeof data.time !== "number" || isNaN(data.time)) {
         // console.error("TimeSeries _handlePlay: Invalid data.time received.", data.time);
         return;
@@ -634,7 +632,6 @@ const Model = types
         console.warn("TimeSeries (pause): model instance is not alive. Skipping operation.");
         return;
       }
-      if (data.initiator === self.name) return;
       self.isPlaying = false;
       self.playStartTime = null;
       self.playStartPosition = null;
@@ -831,7 +828,7 @@ const Model = types
           // If native is already seconds/indices, relative time is just offset from minKey.
           relativeTime = centerTime - minKey;
         }
-        self.syncSend({ time: relativeTime, initiator: self.name }, "seek");
+        self.syncSend({ time: relativeTime }, "seek");
       }
     },
   }));
@@ -1181,7 +1178,7 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
       } else {
         relativeTime = finalTime - minKey;
       }
-      item.syncSend({ time: relativeTime, initiator: item.name }, "seek");
+      item.syncSend({ time: relativeTime }, "seek");
     }
   };
 

@@ -161,7 +161,6 @@ const Model = types
         {
           playing: self.ref.current.playing,
           time: self.ref.current.frameSteppedTime(),
-          initiator: self.name,
           ...data,
         },
         event,
@@ -186,7 +185,6 @@ const Model = types
     },
 
     handleSync(data) {
-      if (data.initiator === self.name) return;
       if (!self.ref.current) return;
 
       const video = self.ref.current;
@@ -205,7 +203,6 @@ const Model = types
     },
 
     handleSyncSpeed(data) {
-      if (data.initiator === self.name) return;
       if (isDefined(data.speed)) {
         self.speed = data.speed;
       }
