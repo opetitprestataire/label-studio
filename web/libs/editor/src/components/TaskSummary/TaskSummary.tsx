@@ -48,14 +48,17 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
       { type: object.type, value: "parsedValue" in object ? object.parsedValue : (object._value ?? object.value) },
     ]),
   );
-  
+
   const values = [
-    // Conditionally include Agreement based on project settings
-    ...(showAgreement && typeof task?.agreement === "number" ? [{
-      title: "Agreement",
-      value: `${task.agreement.toFixed(2)}%`,
-      info: "Overall agreement over all submitted annotations",
-    }] : []),
+    ...(showAgreement && typeof task?.agreement === "number"
+      ? [
+          {
+            title: "Agreement",
+            value: `${task.agreement.toFixed(2)}%`,
+            info: "Overall agreement over all submitted annotations",
+          },
+        ]
+      : []),
     {
       title: "Annotations",
       value: annotations.filter((a) => a.type === "annotation").length,
