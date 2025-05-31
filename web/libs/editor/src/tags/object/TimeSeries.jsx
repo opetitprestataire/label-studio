@@ -716,7 +716,7 @@ const Model = types
     // _updateViewForTime expects its `time` argument to be in the NATIVE units of keysRange
     _updateViewForTime(time) {
       if (!isAlive(self)) return;
-      if (time === null || !isFinite(time)) {
+      if (time === null || !Number.isFinite(time)) {
         // console.warn("TimeSeries _updateViewForTime: Received null or non-finite time.");
         return;
       }
@@ -776,7 +776,11 @@ const Model = types
       let newTimeStartNative = minKey + (newPixelStart / self.canvasWidth) * timeRangeDurationNative;
       let newTimeEndNative = minKey + (newPixelEnd / self.canvasWidth) * timeRangeDurationNative;
 
-      if (!isFinite(newTimeStartNative) || !isFinite(newTimeEndNative) || newTimeStartNative >= newTimeEndNative) {
+      if (
+        !Number.isFinite(newTimeStartNative) ||
+        !Number.isFinite(newTimeEndNative) ||
+        newTimeStartNative >= newTimeEndNative
+      ) {
         newTimeStartNative = boundedTime - currentBrushWidthNative / 2;
         newTimeEndNative = boundedTime + currentBrushWidthNative / 2;
         if (newTimeStartNative < minKey) {
@@ -789,11 +793,15 @@ const Model = types
         }
         newTimeStartNative = Math.max(minKey, newTimeStartNative);
         newTimeEndNative = Math.min(maxKey, newTimeEndNative);
-        if (!isFinite(newTimeStartNative) || !isFinite(newTimeEndNative) || newTimeStartNative >= newTimeEndNative)
+        if (
+          !Number.isFinite(newTimeStartNative) ||
+          !Number.isFinite(newTimeEndNative) ||
+          newTimeStartNative >= newTimeEndNative
+        )
           return;
       }
 
-      if (isFinite(newTimeStartNative) && isFinite(newTimeEndNative)) {
+      if (Number.isFinite(newTimeStartNative) && Number.isFinite(newTimeEndNative)) {
         self.updateTR([newTimeStartNative, newTimeEndNative], self.scale); // updateTR expects native units
         self.seekTo = boundedTime; // seekTo stores native units
       }
