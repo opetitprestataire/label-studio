@@ -16,6 +16,9 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
   const annotations = all.filter((a) => a.pk);
   const allTags = [...annotationStore.names];
 
+  // Check if agreement should be shown based on project settings
+  const showAgreement = annotationStore.store.project?.review_settings?.show_agreement_to_reviewers ?? false;
+
   const controlTags: [string, MSTControlTag][] = allTags.filter(([_, control]) => control.isControlTag) as [
     string,
     MSTControlTag,
@@ -45,13 +48,14 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
       { type: object.type, value: "parsedValue" in object ? object.parsedValue : (object._value ?? object.value) },
     ]),
   );
-
+  
   const values = [
-    {
+    // Conditionally include Agreement based on project settings
+    ...(showAgreement && typeof task?.agreement === "number" ? [{
       title: "Agreement",
-      value: task?.agreement ? `${task.agreement.toFixed(2)}%` : "N/A",
+      value: `${task.agreement.toFixed(2)}%`,
       info: "Overall agreement over all submitted annotations",
-    },
+    }] : []),
     {
       title: "Annotations",
       value: annotations.filter((a) => a.type === "annotation").length,
