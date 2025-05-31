@@ -2,37 +2,39 @@ import { render, screen } from "@testing-library/react";
 import type { MSTAnnotation, MSTStore } from "../../stores/types";
 import TaskSummary from "./TaskSummary";
 
-// Mock child components
-jest.mock("./NumbersSummary", () => ({
-  NumbersSummary: ({ values }: { values: Array<{ title: string; value: number | string; info: string }> }) => (
-    <div data-testid="numbers-summary">
-      {values.map((value) => (
-        <div key={value.title} data-testid={`number-card-${value.title.toLowerCase()}`}>
-          <span data-testid="title">{value.title}</span>
-          <span data-testid="value">{value.value}</span>
-          <span data-testid="info">{value.info}</span>
-        </div>
-      ))}
+// Mock external dependencies only
+jest.mock("@humansignal/ui", () => ({
+  Tooltip: ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <div data-tooltip={title}>{children}</div>
+  ),
+  Userpic: ({ user, children, className }: { user: any; children?: React.ReactNode; className?: string }) => (
+    <div className={className} data-testid="userpic">
+      {children || user?.displayName?.[0] || "U"}
     </div>
   ),
 }));
 
-jest.mock("./LabelingSummary", () => ({
-  LabelingSummary: ({ annotations, controls }: { annotations: any[]; controls: any[] }) => (
-    <div data-testid="labeling-summary">
-      <span data-testid="annotations-count">{annotations.length}</span>
-      <span data-testid="controls-count">{controls.length}</span>
-    </div>
+jest.mock("@humansignal/icons", () => ({
+  IconInfoOutline: ({ size, style }: { size?: number; style?: any }) => (
+    <span data-testid="info-icon" style={style}>ℹ</span>
+  ),
+  IconSparks: ({ style }: { style?: any }) => (
+    <span data-testid="sparks-icon" style={style}>✨</span>
   ),
 }));
 
-jest.mock("./DataSummary", () => ({
-  DataSummary: ({ data_types, data }: { data_types: any; data: any }) => (
-    <div data-testid="data-summary">
-      <span data-testid="data-types-count">{Object.keys(data_types).length}</span>
-      <span data-testid="data-keys-count">{Object.keys(data).length}</span>
-    </div>
-  ),
+// Mock the labelings renderers module
+jest.mock("./labelings", () => ({
+  renderers: {
+    choices: (results: any[], control: any) => {
+      const choices = results.flatMap(r => r.value?.choices || []);
+      return choices.length > 0 ? choices.join(", ") : "-";
+    },
+    textarea: (results: any[], control: any) => {
+      const texts = results.map(r => r.value?.text).filter(Boolean);
+      return texts.length > 0 ? texts.join(", ") : "-";
+    },
+  },
 }));
 
 describe("TaskSummary", () => {
@@ -128,8 +130,9 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    expect(screen.getByTestId("number-card-agreement")).toBeInTheDocument();
+    expect(screen.getByText("Agreement")).toBeInTheDocument();
     expect(screen.getByText("85.50%")).toBeInTheDocument();
+    expect(screen.getByText("Overall agreement over all submitted annotations")).toBeInTheDocument();
   });
 
   it("hides agreement when show_agreement_to_reviewers is false", () => {
@@ -146,7 +149,8 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    expect(screen.queryByTestId("number-card-agreement")).not.toBeInTheDocument();
+    expect(screen.queryByText("Agreement")).not.toBeInTheDocument();
+    expect(screen.queryByText("85.50%")).not.toBeInTheDocument();
   });
 
   it("hides agreement when project settings are not available", () => {
@@ -159,7 +163,7 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    expect(screen.queryByTestId("number-card-agreement")).not.toBeInTheDocument();
+    expect(screen.queryByText("Agreement")).not.toBeInTheDocument();
   });
 
   it("counts submitted annotations correctly", () => {
@@ -172,8 +176,9 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    expect(screen.getByTestId("number-card-annotations")).toBeInTheDocument();
+    expect(screen.getByText("Annotations")).toBeInTheDocument();
     expect(screen.getByText("2")).toBeInTheDocument(); // Only submitted annotations
+    expect(screen.getByText("Number of submitted annotations")).toBeInTheDocument();
   });
 
   it("excludes annotations without results from count", () => {
@@ -199,8 +204,9 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    expect(screen.getByTestId("number-card-predictions")).toBeInTheDocument();
+    expect(screen.getByText("Predictions")).toBeInTheDocument();
     expect(screen.getByText("2")).toBeInTheDocument(); // Only predictions
+    expect(screen.getByText("Number of predictions")).toBeInTheDocument();
   });
 
   it("filters out annotations without pk (drafts)", () => {
@@ -213,29 +219,83 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    // Should pass only the annotation with pk to LabelingSummary
-    expect(screen.getByTestId("annotations-count")).toHaveTextContent("1");
+    // Should only show one annotation in the labeling summary table
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("#1")).toBeInTheDocument();
   });
 
-  it("processes control tags correctly", () => {
+  it("renders labeling summary table with correct headers", () => {
     const annotations = [createMockAnnotation()];
     const store = createMockStore({
       names: new Map([
-        createMockControlTag("label1", "choices"),
-        createMockControlTag("label2", "textarea"),
-        createMockObjectTag("text"), // should be filtered out
+        createMockControlTag("sentiment", "choices"),
+        createMockControlTag("category", "choices"),
+        createMockObjectTag("text"),
       ]),
     });
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    // Should pass 2 control tags to LabelingSummary
-    expect(screen.getByTestId("controls-count")).toHaveTextContent("2");
+    expect(screen.getByText("Annotation ID")).toBeInTheDocument();
+    expect(screen.getByText("sentiment")).toBeInTheDocument();
+    expect(screen.getByText("category")).toBeInTheDocument();
+    expect(screen.getByText("choices")).toBeInTheDocument(); // badge type
   });
 
-  it("processes object tags for data types correctly", () => {
+  it("displays annotation results in labeling summary", () => {
+    const annotations = [
+      createMockAnnotation({
+        pk: 1,
+        user: { id: 1, displayName: "Alice" },
+        versions: {
+          result: [{ from_name: "sentiment", to_name: "text", type: "choices", value: { choices: ["positive"] } }],
+        },
+      }),
+    ];
+    const store = createMockStore({
+      names: new Map([
+        createMockControlTag("sentiment", "choices"),
+        createMockObjectTag("text"),
+      ]),
+    });
+
+    render(<TaskSummary annotations={annotations} store={store} />);
+
+    expect(screen.getByText("Alice")).toBeInTheDocument();
+    expect(screen.getByText("#1")).toBeInTheDocument();
+    expect(screen.getByText("positive")).toBeInTheDocument();
+  });
+
+  it("shows prediction icon for prediction annotations", () => {
+    const annotations = [
+      createMockAnnotation({
+        pk: 1,
+        type: "prediction",
+        user: { id: 1, displayName: "Model" },
+        results: [{ toJSON: () => ({ from_name: "sentiment", type: "choices", value: { choices: ["positive"] } }) }],
+      }),
+    ];
+    const store = createMockStore({
+      names: new Map([
+        createMockControlTag("sentiment", "choices"),
+        createMockObjectTag("text"),
+      ]),
+    });
+
+    render(<TaskSummary annotations={annotations} store={store} />);
+
+    expect(screen.getByTestId("sparks-icon")).toBeInTheDocument();
+    expect(screen.getByText("Model")).toBeInTheDocument();
+  });
+
+  it("renders data summary table correctly", () => {
     const annotations = [createMockAnnotation()];
     const store = createMockStore({
+      store: {
+        task: {
+          dataObj: { text: "Sample text", image: "image.jpg" },
+        },
+      },
       names: new Map([
         createMockControlTag("label"),
         createMockObjectTag("text", "text"),
@@ -245,8 +305,8 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    // Should pass 2 object tags to DataSummary
-    expect(screen.getByTestId("data-types-count")).toHaveTextContent("2");
+    expect(screen.getByText("text")).toBeInTheDocument();
+    expect(screen.getByText("image")).toBeInTheDocument();
   });
 
   it("handles control tags with per_region setting", () => {
@@ -260,7 +320,7 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    expect(screen.getByTestId("controls-count")).toHaveTextContent("1");
+    expect(screen.getByText("regionLabel")).toBeInTheDocument();
   });
 
   it("handles control tags without children", () => {
@@ -274,7 +334,7 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    expect(screen.getByTestId("controls-count")).toHaveTextContent("1");
+    expect(screen.getByText("simpleLabel")).toBeInTheDocument();
   });
 
   it("handles object tags with parsedValue", () => {
@@ -288,7 +348,7 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    expect(screen.getByTestId("data-types-count")).toHaveTextContent("1");
+    expect(screen.getByText("image")).toBeInTheDocument();
   });
 
   it("handles empty annotations array", () => {
@@ -297,8 +357,7 @@ describe("TaskSummary", () => {
 
     render(<TaskSummary annotations={annotations} store={store} />);
 
-    expect(screen.getByText("0")).toBeInTheDocument(); // annotations count
-    expect(screen.getByTestId("annotations-count")).toHaveTextContent("0");
+    expect(screen.getByText("0")).toBeInTheDocument(); // annotations count should be 0
   });
 
   it("handles missing task agreement", () => {
@@ -319,30 +378,10 @@ describe("TaskSummary", () => {
     render(<TaskSummary annotations={annotations} store={store} />);
 
     // Should not display agreement when it's undefined
-    expect(screen.queryByTestId("number-card-agreement")).not.toBeInTheDocument();
+    expect(screen.queryByText("Agreement")).not.toBeInTheDocument();
   });
 
-  it("passes correct data to DataSummary", () => {
-    const annotations = [createMockAnnotation()];
-    const taskData = { text: "Sample text", image: "image.jpg", id: 123 };
-    const store = createMockStore({
-      store: {
-        task: {
-          dataObj: taskData,
-        },
-      },
-      names: new Map([
-        createMockObjectTag("text"),
-        createMockObjectTag("image"),
-      ]),
-    });
-
-    render(<TaskSummary annotations={annotations} store={store} />);
-
-    expect(screen.getByTestId("data-keys-count")).toHaveTextContent("3");
-  });
-
-  it("displays correct info messages for numbers summary", () => {
+  it("displays correct info messages with tooltips", () => {
     const annotations = [
       createMockAnnotation({ type: "annotation" }),
       createMockAnnotation({ type: "prediction" }),
@@ -353,5 +392,47 @@ describe("TaskSummary", () => {
 
     expect(screen.getByText("Number of submitted annotations")).toBeInTheDocument();
     expect(screen.getByText("Number of predictions")).toBeInTheDocument();
+    expect(screen.getAllByTestId("info-icon")).toHaveLength(2); // Two info icons for tooltips
+  });
+
+  it("shows dash when no results for a control tag", () => {
+    const annotations = [
+      createMockAnnotation({
+        versions: {
+          result: [], // no results for any control
+        },
+      }),
+    ];
+    const store = createMockStore({
+      names: new Map([
+        createMockControlTag("sentiment", "choices"),
+        createMockObjectTag("text"),
+      ]),
+    });
+
+    render(<TaskSummary annotations={annotations} store={store} />);
+
+    expect(screen.getByText("-")).toBeInTheDocument();
+  });
+
+  it("processes object tags correctly for data types", () => {
+    const annotations = [createMockAnnotation()];
+    const store = createMockStore({
+      names: new Map([
+        createMockControlTag("label"),
+        createMockObjectTag("text", "text"),
+        createMockObjectTag("image", "image"),
+        ["nonObjectTag", { isObjectTag: false }], // should be filtered out
+        ["objectWithoutDollar", { isObjectTag: true, value: "noDollar" }], // should be filtered out
+      ]),
+    });
+
+    render(<TaskSummary annotations={annotations} store={store} />);
+
+    // Should only show object tags that have $ in their value
+    expect(screen.getByText("text")).toBeInTheDocument();
+    expect(screen.getByText("image")).toBeInTheDocument();
+    expect(screen.queryByText("nonObjectTag")).not.toBeInTheDocument();
+    expect(screen.queryByText("objectWithoutDollar")).not.toBeInTheDocument();
   });
 }); 
