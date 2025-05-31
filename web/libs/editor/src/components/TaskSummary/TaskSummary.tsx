@@ -61,7 +61,8 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
       : []),
     {
       title: "Annotations",
-      value: annotations.filter((a) => a.type === "annotation").length,
+      // exclude draft annotations
+      value: annotations.filter((a) => a.type === "annotation" && a.versions?.result?.length > 0).length,
       info: "Number of submitted annotations",
     },
     {
