@@ -37,7 +37,13 @@ export const LabelingSummary = ({ annotations, controls }: Props) => {
             </td>
             {controls.map((control) => {
               // display only submitted results, not the current draft
-              const results = (annotation.versions.result ?? []).filter((result) => result.from_name === control.name);
+              let results = [];
+              if (annotation.type === "prediction") {
+                results = annotation.results?.map(result => result.toJSON()).filter(result => result.from_name === control.name) ?? [];
+              }
+              else {
+                results = (annotation.versions.result ?? []).filter((result) => result.from_name === control.name);
+              }
               const renderer = renderers[control.type];
               const text = !results.length
                 ? "-"
