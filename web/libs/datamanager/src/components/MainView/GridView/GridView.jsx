@@ -13,7 +13,6 @@ import { SkeletonLoader } from "../../Common/SkeletonLoader";
 import { GridViewContext, GridViewProvider } from "./GridPreview";
 import "./GridView.scss";
 import { clsx } from "clsx";
-clsx;
 import { groupBy } from "../../../utils/utils";
 
 const TEXT_ONLY_CELL_HEIGHT = 250;
