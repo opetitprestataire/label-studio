@@ -107,7 +107,7 @@ Index-based TimeSeries (no timestamps at X axis).
 </View>
 
 <!-- {
-  "video": "/static/samples/opossum_snow.mp4",
+  "video": "https://app.heartex.ai/static/samples/opossum_snow.mp4",
   "ts": {
       "value": [
         10.7036820361892644,
@@ -206,7 +206,7 @@ Index-based TimeSeries (no timestamps at X axis).
 </View>
 
 <!-- {
-  "video": "/static/samples/opossum_snow.mp4",
+  "video": "https://app.heartex.ai/static/samples/opossum_snow.mp4",
   "accel_data": "/samples/time-series.csv?time=time&values=accel_x%2Caccel_y&sep=%2C&tf=%H:%m:%d.%f",
   "gyro_data": "/samples/time-series.csv?time=time&values=gyro_x%2Cgyro_y&sep=%2C&tf=%H:%m:%d.%f"
 }
