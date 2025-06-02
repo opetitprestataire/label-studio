@@ -214,7 +214,7 @@ class InactivitySessionTimeoutMiddleWare(CommonMiddleware):
         current_time = time.time()
         last_login = request.session['last_login'] if 'last_login' in request.session else 0
 
-        if flag_set('fflag_feat_utc_46_session_timeout_policy'):
+        if flag_set('fflag_feat_utc_46_session_timeout_policy', user=request.user):
             org_max_session_age = timedelta(
                 hours=request.user.active_organization.session_timeout_policy.max_session_age
             ).total_seconds()
