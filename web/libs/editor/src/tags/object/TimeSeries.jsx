@@ -24,8 +24,8 @@ import PersistentStateMixin from "../../mixins/PersistentState";
 import { parseCSV, parseValue, tryToParseJSON } from "../../utils/data";
 import { fixMobxObserve } from "../../utils/utilities";
 
+import "./TimeSeries/MultiChannel";
 import "./TimeSeries/Channel";
-
 /**
  * The `TimeSeries` tag can be used to label time series data. Read more about Time Series Labeling on [the time series template page](../templates/time_series.html).
  *
@@ -90,7 +90,7 @@ const TagAttrs = types.model({
 const Model = types
   .model("TimeSeriesModel", {
     type: "timeseries",
-    children: Types.unionArray(["channel", "timeseriesoverview", "view", "hypertext"]),
+    children: Types.unionArray(["channel", "timeseriesoverview", "view", "hypertext", "multichannel"]),
 
     width: 840,
     margin: types.frozen({ top: 20, right: 20, bottom: 30, left: 50, min: 10, max: 10 }),
@@ -137,6 +137,24 @@ const Model = types
 
     get parseTimeFn() {
       return self.timeformat && self.timecolumn ? d3.utcParse(self.timeformat) : Number;
+    },
+
+    get channelsMap() {
+      const res = {};
+      const itemsToVisit = [...self.children];
+      let item;
+      while ((item = itemsToVisit.shift())) {
+        if (item.type === "channel") {
+          res[item.columnName] = item;
+        } else {
+          itemsToVisit.push(...item.children);
+        }
+      }
+      return res;
+    },
+
+    get channels() {
+      return Object.values(self.channelsMap);
     },
 
     parseTime(time) {
@@ -578,7 +596,7 @@ const Overview = observer(({ item, data, series }) => {
   const { margin, keyColumn: idX } = item;
   const width = Math.max(fullWidth - margin.left - margin.right, 0);
   // const data = store.task.dataObj;
-  let keys = item.children.map((c) => c.columnName);
+  let keys = Object.keys(item.channelsMap);
 
   if (item.overviewchannels) {
     const channels = item.overviewchannels
@@ -697,7 +715,7 @@ const Overview = observer(({ item, data, series }) => {
     .on("end", brushended);
 
   const drawPath = (key) => {
-    const channel = item.children.find((c) => c.columnName === key);
+    const channel = item.channelsMap[key];
     const color = channel ? channel.strokecolor : "steelblue";
     const y = d3
       .scaleLinear()
@@ -776,7 +794,7 @@ const Overview = observer(({ item, data, series }) => {
         .attr("viewBox", [0, 0, width + margin.left + margin.right, focusHeight + margin.bottom]);
 
       gChannels.current.selectAll("path").remove();
-      for (const key of keys) drawPath(key);
+      for (const key of Object.keys(item.channelsMap)) drawPath(key);
 
       drawAxis();
       // gb.current.selectAll("*").remove();
