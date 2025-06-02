@@ -176,8 +176,6 @@ export class DataManager {
       ...config.interfaces,
     });
 
-    console.log(this.toolbar);
-
     this.api = new APIProxy(
       this.apiConfig({
         apiGateway: config.apiGateway,
