@@ -2,7 +2,7 @@
 
 
 
-https://github.com/user-attachments/assets/79c18b32-93ae-4e5e-b702-57e857f8f2fa
+<video src="https://htx-pub.s3.us-east-1.amazonaws.com/docs/timeseries-video-audio-sync.mp4" style="max-width:800px" />
 
 
 
