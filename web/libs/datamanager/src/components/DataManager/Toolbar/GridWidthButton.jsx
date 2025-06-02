@@ -33,6 +33,10 @@ export const GridWidthButton = injector(({ view, isGrid, gridWidth, responsiveIm
     [view],
   );
 
+  const handleResponsiveImagesToggle = useCallback((e) => {
+    view.setGridResponsiveImage(!e.target.checked);
+  }, []);
+
   return isGrid ? (
     <Dropdown.Trigger
       content={
@@ -59,12 +63,7 @@ export const GridWidthButton = injector(({ view, isGrid, gridWidth, responsiveIm
           {hasImage && (
             <div className="grid grid-cols-[1fr_min-content] gap-base items-center">
               <span>Fit images to width</span>
-              <Toggle
-                checked={!responsiveImage}
-                onChange={(e) => {
-                  view.setGridResponsiveImage(!e.target.checked);
-                }}
-              />
+              <Toggle checked={!responsiveImage} onChange={handleResponsiveImagesToggle} />
             </div>
           )}
         </div>
