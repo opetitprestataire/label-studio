@@ -387,7 +387,10 @@ export const TabStore = types
     },
 
     fetchColumns() {
-      const columns = self.columnsRaw;
+      // Start with raw columns from backend and inject pseudo control-tag column
+      let columns = [...self.columnsRaw];
+      columns = self.addControlTagColumn(columns);
+
       const targets = unique(columns.map((c) => c.target));
       const hiddenColumns = {};
       const addedColumns = new Set();
@@ -467,6 +470,34 @@ export const TabStore = types
       });
 
       self.defaultHidden = TabHiddenColumns.create(hiddenColumns);
+    },
+
+    /**
+     * Ensure the pseudo column that corresponds to the default control tag exists.
+     * Returns a new columns array that includes the pseudo column (if not already present).
+     * _No_ direct mutations of columnsTargetMap or availableFilters happen here –
+     * they will be handled by the normal column-processing logic later in fetchColumns.
+     */
+    addControlTagColumn(columns) {
+      const controlColumnID = "text_annotation";
+
+      const already = columns.some((c) => c.id === controlColumnID && c.target === "annotations");
+      if (already) return columns;
+
+      const controlColumn = {
+        id: controlColumnID,
+        title: "text_annotation",
+        alias: "text_annotation",
+        type: "Text",
+        target: "annotations",
+        parent: null,
+        children: null,
+        orderable: false,
+        filterable: true,
+        visibility_defaults: {},
+      };
+
+      return [...columns, controlColumn];
     },
 
     fetchTabs: flow(function* (tab, taskID, labeling) {
