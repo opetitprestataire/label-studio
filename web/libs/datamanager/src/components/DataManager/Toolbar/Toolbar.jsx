@@ -11,7 +11,6 @@ const injector = inject(({ store }) => {
 
 export const Toolbar = injector(
   observer(({ store }) => {
-    console.log(store.SDK.toolbarInstruments);
     return (
       <Block name="tab-panel">
         {store.SDK.toolbarInstruments.map((section, i) => {
