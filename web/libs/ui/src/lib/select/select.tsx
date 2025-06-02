@@ -226,7 +226,7 @@ export const Select = forwardRef(
           <button
             variant="outline"
             aria-expanded={isOpen}
-            className={cnm(styles.selectTrigger, triggerClassName ?? "", {
+            className={cnm(triggerClassName ?? "", styles.selectTrigger, {
               [styles.isInline]: isInline,
               [styles.isOpen]: isOpen,
               [styles.isDisabled]: disabled,
