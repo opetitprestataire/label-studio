@@ -377,9 +377,9 @@ describe("GridView", () => {
       const view = { ...mockView, gridResponsiveImage: true };
 
       renderWithBEM(
-        <GridViewProvider
-          data={[row]}
-          view={view}
+        <GridViewProvider 
+          data={[row]} 
+          view={view} 
           fields={mockFields.map((f) => ({ ...f, alias: f.id.split(":")[1] }))}
         >
           <Block name="grid-view">
@@ -395,22 +395,10 @@ describe("GridView", () => {
         </GridViewProvider>,
       );
 
-      // First find the cell by its ID text
-      const cellId = screen.getByText(row.id.toString());
-      console.log("Cell ID element:", cellId?.outerHTML);
-
-      // Then find the cell element by looking up from the ID
-      const cell = cellId.closest(".dm-grid-view__cell");
-      console.log("Cell element:", cell?.outerHTML);
-
-      // Then find the cell content
-      const cellContent = cell?.querySelector(".dm-grid-view__cell-content");
-      console.log("Cell content element:", cellContent?.outerHTML);
-
-      // Finally find the cell body
-      const cellBody = cellContent?.querySelector(".dm-grid-view__cell-body");
-      console.log("Cell body element:", cellBody?.outerHTML);
-
+      const cellBody = screen.getByText(row.id.toString())
+        .closest(".dm-grid-view__cell")
+        ?.querySelector(".dm-grid-view__cell-body");
+      
       expect(cellBody).toHaveClass("dm-grid-view__cell-body_responsive");
     });
 
