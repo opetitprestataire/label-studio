@@ -2,6 +2,8 @@ import { getRoot } from "mobx-state-tree";
 import { AnnotationPreview } from "../Common/AnnotationPreview/AnnotationPreview";
 import { Block } from "../../utils/bem";
 
+export const IMAGE_SIZE_COEFFICIENT = 8;
+
 export const ImageDataGroup = (column) => {
   const {
     value,
@@ -10,7 +12,7 @@ export const ImageDataGroup = (column) => {
     columnCount,
   } = column;
   const root = getRoot(original);
-  const imageHeight = ImageDataGroup.height * Math.max(1, 8 - columnCount);
+  const imageHeight = ImageDataGroup.height * Math.max(1, IMAGE_SIZE_COEFFICIENT - columnCount);
 
   return original.total_annotations === 0 || !root.showPreviews ? (
     <Block name="grid-image-wrapper">

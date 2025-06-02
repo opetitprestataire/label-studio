@@ -13,6 +13,7 @@ import { SkeletonLoader } from "../../Common/SkeletonLoader";
 import { GridViewContext, GridViewProvider } from "./GridPreview";
 import "./GridView.scss";
 import { groupBy } from "../../../utils/utils";
+import { IMAGE_SIZE_COEFFICIENT } from "../../DataGroups/ImageDataGroup";
 
 const NO_IMAGE_CELL_HEIGHT = 250;
 const CELL_HEADER_HEIGHT = 32;
@@ -144,7 +145,8 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
           return res + height;
         }, 16)
     : NO_IMAGE_CELL_HEIGHT;
-  const finalRowHeight = CELL_HEADER_HEIGHT + rowHeight * (hasImage ? Math.max(1, (7 - columnCount) * 0.5) : 1);
+  const finalRowHeight =
+    CELL_HEADER_HEIGHT + rowHeight * (hasImage ? Math.max(1, (IMAGE_SIZE_COEFFICIENT - columnCount) * 0.5) : 1);
 
   const renderItem = useCallback(
     ({ style, rowIndex, columnIndex }) => {
