@@ -79,7 +79,7 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
 
   return (
     <div className="p-4">
-      <h2 className="px-4">Review Summary</h2>
+      <h2 className="px-4 mb-4">Review Summary</h2>
       <NumbersSummary values={values} />
       <LabelingSummary annotations={annotations} controls={controls} />
       <h2 className="px-4">Task Data</h2>

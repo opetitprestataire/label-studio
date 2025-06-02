@@ -8,9 +8,9 @@ type DataSummaryProps = {
 
 export const DataSummary = ({ data_types, data }: DataSummaryProps) => {
   return (
-    <table className="table-auto w-full">
+    <table className="table-auto w-full border border-neutral-border rounded-small border-collapse">
       <thead>
-        <tr>
+        <tr className="bg-neutral-surface">
           {Object.entries(data_types).map(([field, { type }]) => (
             <th key={field} className="px-4 py-2 text-left whitespace-nowrap">
               {field} <SummaryBadge>{type}</SummaryBadge>
