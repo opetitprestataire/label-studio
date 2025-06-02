@@ -3,7 +3,7 @@ import { averageMinMax, clamp } from "../../Common/Utils";
 import type { Renderer, RenderContext } from "./Renderer";
 import type { WaveformAudio } from "../../Media/WaveformAudio";
 import { RateLimitedRenderer } from "./RateLimitedRenderer";
-import { RATE_LIMITED_RENDER_FPS, CACHE_RENDER_THRESHOLD } from "../constants";
+import { CACHE_RENDER_THRESHOLD } from "../constants";
 import { isFF, FF_AUDIO_SPECTROGRAMS } from "../../../../utils/feature-flags";
 
 const isAudioSpectrograms = isFF(FF_AUDIO_SPECTROGRAMS);
@@ -41,7 +41,7 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
     this.backgroundLayer = backgroundLayer;
     this.config = config;
     this.onRenderTransfer = onRenderTransfer;
-    this.rateLimitedRenderer = new RateLimitedRenderer(RATE_LIMITED_RENDER_FPS);
+    this.rateLimitedRenderer = new RateLimitedRenderer();
   }
 
   init(context: RenderContext, audio: WaveformAudio): void {

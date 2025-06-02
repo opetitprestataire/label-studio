@@ -1,6 +1,5 @@
 import type { WindowFunctionType } from "./WindowFunctions";
 import type { ColorScheme } from "./ColorMapper";
-import { isFF, FF_AUDIO_SPECTROGRAMS } from "../../../utils/feature-flags";
 
 export const SPECTROGRAM_DEFAULTS = {
   FFT_SAMPLES: 512,
@@ -27,7 +26,7 @@ export const DEBOUNCE_PAINT_AMOUNT = 0; // ms, for ~60fps
 export const SPECTROGRAM_MAX_COMPUTATIONS = 2000;
 
 // Target FPS for rate limited rendering
-export const RATE_LIMITED_RENDER_FPS = isFF(FF_AUDIO_SPECTROGRAMS) ? 15 : 60;
+export const RATE_LIMITED_RENDER_FPS = 60;
 
 // Pre-cache spectrogram data for the current window size
 export const PRECACHE = true;

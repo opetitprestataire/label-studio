@@ -22,7 +22,6 @@ import type { RenderContext, Renderer } from "./Renderer/Renderer";
 import { LayerM } from "./Composition/LayerM";
 import { isFF, FF_AUDIO_SPECTROGRAMS } from "../../../utils/feature-flags";
 import { RateLimitedRenderer } from "./Renderer/RateLimitedRenderer";
-import { RATE_LIMITED_RENDER_FPS } from "./constants";
 
 interface VisualizerEvents {
   draw: (visualizer: Visualizer) => void;
@@ -201,7 +200,7 @@ export class Visualizer extends Events<VisualizerEvents> {
       );
     }
 
-    this.rateLimitedTransfer = new RateLimitedRenderer(RATE_LIMITED_RENDER_FPS);
+    this.rateLimitedTransfer = new RateLimitedRenderer();
   }
 
   init(audio: WaveformAudio) {

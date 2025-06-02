@@ -1,3 +1,5 @@
+import { RATE_LIMITED_RENDER_FPS } from "../constants";
+
 /**
  * A utility class that provides rate-limited rendering functionality.
  * Handles both debounced zoom operations and rate-limited scrolling.
@@ -9,7 +11,8 @@ export class RateLimitedRenderer {
     drawFn: (context: any) => void;
   } | null = null;
   private drawScheduled = false;
-  private readonly minFrameTime: number;
+  private _fps = RATE_LIMITED_RENDER_FPS;
+  private _minFrameTime: number = 1000 / RATE_LIMITED_RENDER_FPS;
   private currentWindowStart = 0;
   private zoomDebounce: number | null = null;
 
@@ -19,11 +22,24 @@ export class RateLimitedRenderer {
    * @param zoomDebounceMs The debounce time for zoom operations in milliseconds (default: 50)
    */
   constructor(
-    fps = 30,
+    fps = RATE_LIMITED_RENDER_FPS,
     private readonly zoomDebounceMs: number = 50,
   ) {
-    this.minFrameTime = 1000 / fps;
+    this.fps = fps;
     this.currentWindowStart = performance.now();
+  }
+
+  set fps(fps: number) {
+    this._fps = fps;
+    this._minFrameTime = 1000 / this._fps;
+  }
+
+  get fps() {
+    return this._fps;
+  }
+
+  get minFrameTime() {
+    return this._minFrameTime;
   }
 
   /**

@@ -89,7 +89,9 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     this.gridLayer = gridLayer;
     this.onRenderTransfer = onRenderTransfer;
     this.progressContainer = progressContainer;
-    this.rateLimitedRenderer = new RateLimitedRenderer(RATE_LIMITED_RENDER_FPS);
+    // The spectrogram renderer requires a lower fps to accommodate the spectrogram rendering and maintain a smooth experience
+    // with the waveform renderer, and other external tags.
+    this.rateLimitedRenderer = new RateLimitedRenderer(RATE_LIMITED_RENDER_FPS / 4);
     // Move all config fields to this.config
     this.spectrogramMinDb = config.spectrogramMinDb;
     this.spectrogramScale = config.spectrogramScale;
