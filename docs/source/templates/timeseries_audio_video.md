@@ -72,7 +72,7 @@ Requirements: Label Studio >= 1.20
 
 # Configurations
 
-# Index based TimeSeries + Video + TimeSeriesLabels
+## Index based TimeSeries + Video + TimeSeriesLabels
 
 * Index-based TimeSeries (no timestamps at X axis)
 * _Note_: One value equals one second because the time axis is not specified in the TimeSeries tag. The video is synced with this idea — one sample equals one second if timestamps are not provided.
