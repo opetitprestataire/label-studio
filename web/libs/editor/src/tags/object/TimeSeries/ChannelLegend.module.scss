@@ -7,13 +7,15 @@
     .channel {
       opacity: 0.5;
     }
+
     .channel.hovered {
       opacity: 1;
     }
   }
 
 }
-.channelMarker:before {
+
+.channelMarker::before {
   content: '';
   display: inline-block;
   width: var(--marker-size);
@@ -22,7 +24,8 @@
   border: 1px solid var(--marker-color);
   border-radius: 50%;
 }
-.channelMarker.hidden:before {
+
+.channelMarker.hidden::before {
   background-color: var(--marker-hidden-color);
   border: 1px solid var(--marker-color);
 }
