@@ -67,14 +67,13 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
       : []),
     {
       title: "Annotations",
-      // exclude draft annotations
-      value: annotations.filter((a) => a.type === "annotation" && a.versions?.result?.length > 0).length,
-      info: "Number of submitted annotations",
+      value: annotations.filter((a) => a.type === "annotation").length,
+      info: "Number of submitted annotations. Table shows only submitted results, not current drafts.",
     },
     {
       title: "Predictions",
       value: annotations.filter((a) => a.type === "prediction").length,
-      info: "Number of predictions",
+      info: "Number of predictions. They are not included in the agreement calculation.",
     },
   ];
 
