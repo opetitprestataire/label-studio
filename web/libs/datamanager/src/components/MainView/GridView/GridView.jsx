@@ -18,7 +18,7 @@ import { groupBy } from "../../../utils/utils";
 
 const TEXT_ONLY_CELL_HEIGHT = 150;
 
-const GridHeader = observer(({ row, selected }) => {
+export const GridHeader = observer(({ row, selected, onSelect }) => {
   const isSelected = selected.isSelected(row.id);
   return (
     <Elem name="cell-header">
@@ -26,7 +26,7 @@ const GridHeader = observer(({ row, selected }) => {
         <Checkbox
           checked={isSelected}
           ariaLabel={`${isSelected ? "Unselect" : "Select"} Task ${row.id}`}
-          onChange={() => {}}
+          onChange={() => onSelect?.(row.id)}
         />
         <span>{row.id}</span>
       </Space>
@@ -79,7 +79,7 @@ export const GridBody = observer(({ row, fields, columnCount }) => {
   });
 });
 
-const GridDataGroup = observer(({ type, value, field, row, columnCount, hasImage }) => {
+export const GridDataGroup = observer(({ type, value, field, row, columnCount, hasImage }) => {
   const DataTypeComponent = DataGroups[type];
 
   return isFF(FF_LOPS_E_3) && row.loading === field.alias ? (
@@ -91,7 +91,7 @@ const GridDataGroup = observer(({ type, value, field, row, columnCount, hasImage
   );
 });
 
-const GridCell = observer(({ view, selected, row, fields, onClick, columnCount, ...props }) => {
+export const GridCell = observer(({ view, selected, row, fields, onClick, columnCount, ...props }) => {
   const { setCurrentTaskId, imageField } = useContext(GridViewContext);
 
   const handleBodyClick = useCallback(
@@ -106,7 +106,7 @@ const GridCell = observer(({ view, selected, row, fields, onClick, columnCount, 
   return (
     <Elem {...props} name="cell" onClick={onClick} mod={{ selected: selected.isSelected(row.id) }}>
       <Elem name="cell-content">
-        <GridHeader view={view} row={row} fields={fields} selected={view.selected} />
+        <GridHeader view={view} row={row} fields={fields} selected={view.selected} onSelect={view.selected.toggleSelected} />
         <Elem name="cell-body" onClick={handleBodyClick} mod={{ responsive: view.gridResponsiveImage }}>
           <GridBody view={view} row={row} fields={fields} columnCount={columnCount} />
         </Elem>
