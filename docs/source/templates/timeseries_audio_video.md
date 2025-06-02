@@ -239,8 +239,3 @@ Fixes #5359: Video/audio sync doesn't work
 
 This enables synchronized playback and seeking between Video, Audio, and TimeSeries components when they share the same sync group. Multiple TimeSeries components can also sync with each other, allowing for coordinated view updates across different time series data. For example:
 
-
-**Feature flag**
-```
-fflag_feat_optic_2125_timeseries_sync=1 label-studio
-```
