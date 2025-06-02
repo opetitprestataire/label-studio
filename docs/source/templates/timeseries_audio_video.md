@@ -13,7 +13,7 @@ meta_description: Template for timeseries synchronization with audio and video.
 
 
 
-https://github.com/user-attachments/assets/79c18b32-93ae-4e5e-b702-57e857f8f2fa
+<video src="https://htx-pub.s3.us-east-1.amazonaws.com/docs/timeseries-video-audio-sync.mp4" controls style="max-width:800px" />
 
 
 
@@ -77,7 +77,7 @@ Requirements: Label Studio >= 1.20
 * Index-based TimeSeries (no timestamps at X axis)
 * _Note_: One value equals one second because the time axis is not specified in the TimeSeries tag. The video is synced with this idea — one sample equals one second if timestamps are not provided.
 
-```
+```xml
 <View>
   <Video name="video" value="$video" sync="group_a"/>
   
@@ -158,7 +158,7 @@ Requirements: Label Studio >= 1.20
 * TimeSeries, Audio and Video are synced together
 * Choices and timeline labels are used as control tags for labeling
 
-```
+```xml
 <View>
   <Video name="video" value="$video" sync="group_a"/>
   <Audio name="audio" value="$video" sync="group_a"/>
@@ -205,7 +205,7 @@ Requirements: Label Studio >= 1.20
 ```
 
 **Example for time-series-accel.csv for accel_x, accel_y**
-```
+```csv
 time,accel_x,accel_y
 00:01:01.000000,-0.056646571671882806,2.1066649495524605
 00:01:02.000000,-0.6888765232989033,0.35646668995794306
@@ -220,7 +220,7 @@ time,accel_x,accel_y
 ```
 
 **Example for time-series-gyro.csv for gyro_x, gyro_y**
-```
+```csv
 time,gyro_x,gyro_y
 00:01:01.000000,-0.776563940219835,-1.1115451852904443
 00:01:02.000000,0.17111212343134966,-1.377696478819913
