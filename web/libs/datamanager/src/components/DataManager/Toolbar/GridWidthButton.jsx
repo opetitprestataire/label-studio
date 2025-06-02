@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { Button } from "../../Common/Button/Button";
 import { Dropdown } from "../../Common/Dropdown/DropdownComponent";
 import { Toggle } from "../../Common/Form";
-import { IconSettings } from "@humansignal/icons";
+import { IconSettings, IconMinus, IconPlus } from "@humansignal/icons";
 
 const injector = inject(({ store }) => {
   const view = store?.currentView;
@@ -40,11 +40,19 @@ export const GridWidthButton = injector(({ view, isGrid, gridWidth, responsiveIm
           <div className="grid grid-cols-[1fr_min-content] gap-base items-center">
             <span>Columns: {width}</span>
             <Button.Group>
-              <Button onClick={() => setGridWidth(width - 1)} disabled={width === 1}>
-                -
+              <Button
+                onClick={() => setGridWidth(width - 1)}
+                disabled={width === 1}
+                rawClassName="aspect-square h-6 !p-0"
+              >
+                <IconMinus />
               </Button>
-              <Button onClick={() => setGridWidth(width + 1)} disabled={width === 10}>
-                +
+              <Button
+                onClick={() => setGridWidth(width + 1)}
+                disabled={width === 10}
+                rawClassName="aspect-square h-6 !p-0"
+              >
+                <IconPlus />
               </Button>
             </Button.Group>
           </div>
