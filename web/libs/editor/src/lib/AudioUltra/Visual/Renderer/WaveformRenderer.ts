@@ -3,7 +3,7 @@ import { averageMinMax, clamp } from "../../Common/Utils";
 import type { Renderer, RenderContext } from "./Renderer";
 import type { WaveformAudio } from "../../Media/WaveformAudio";
 import { RateLimitedRenderer } from "./RateLimitedRenderer";
-import { RATE_LIMITED_RENDER_FPS, FORCE_FULL_WAVEFORM_RENDER, WAVEFORM_SEAM_GAP_FILL } from "../constants";
+import { RATE_LIMITED_RENDER_FPS, FORCE_FULL_WAVEFORM_RENDER } from "../constants";
 
 export interface WaveformRendererConfig {
   renderId: number;
@@ -49,6 +49,7 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
   draw(context: RenderContext): void {
     this.lastRenderContext = context;
     this.drawMiddleLine();
+
     this.rateLimitedRenderer.scheduleDraw(
       { context, renderer: this },
       ({ context, renderer }) => {
@@ -63,7 +64,7 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
         const scrollLeftPx = context.scrollLeftPx;
         const samplesPerPx = context.samplesPerPx;
         const iStart = clamp(scrollLeftPx * samplesPerPx, 0, dataLength);
-        const iEnd = clamp(Math.ceil(scrollLeftPx * samplesPerPx + (context.width + 1) * samplesPerPx), 0, dataLength);
+        const iEnd = clamp(Math.ceil(iStart + context.width * samplesPerPx), 0, dataLength);
         const zoom = context.zoom;
         const amp = renderer.config.amp ?? 1;
         const deltaX = scrollLeftPx - renderer.lastWaveformRenderedScrollLeftPx;
@@ -146,37 +147,17 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
     const shiftAmount = -deltaX;
     const sampleDiff = Math.round(deltaX * samplesPerPx);
     layer.shift(shiftAmount, 0);
-    // Pixel ratio for HiDPI safety
-    const ratio = layer.pixelRatio;
-    // Clear the newly exposed area after shifting to prevent ghosting artifacts
-    if (shiftAmount > 0) {
-      // Shifted right, clear the left (including seam gap)
-      const clearWidth = (shiftAmount + WAVEFORM_SEAM_GAP_FILL) * ratio;
-      layer.context.clearRect(0, 0, clearWidth, layer.height * ratio);
-    } else if (shiftAmount < 0) {
-      // Shifted left, clear the right (including seam gap)
-      const clearX = (layer.width + shiftAmount - WAVEFORM_SEAM_GAP_FILL) * ratio;
-      const clearWidth = (-shiftAmount + WAVEFORM_SEAM_GAP_FILL) * ratio;
-      layer.context.clearRect(clearX, 0, clearWidth, layer.height * ratio);
-    }
-    // Ensure full opacity for waveform drawing
-    const prevAlpha = layer.context.globalAlpha;
-    layer.context.globalAlpha = 1;
     for (let channelNumber = 0; channelNumber < channelCount; channelNumber++) {
       let sStart = iStart;
       let sEnd = iEnd;
       if (deltaX > 0) {
-        // Right shift: draw overlap at the seam
-        sStart = Math.floor(iEnd - sampleDiff - WAVEFORM_SEAM_GAP_FILL * samplesPerPx);
-        x = Math.max(-4, Math.floor(context.width + shiftAmount - WAVEFORM_SEAM_GAP_FILL - 2));
+        sStart = iEnd - sampleDiff;
+        x = clamp(context.width + shiftAmount - 2, 0, context.width);
       } else {
-        // Left shift: draw overlap at the seam
-        sEnd = Math.ceil(iStart - sampleDiff + WAVEFORM_SEAM_GAP_FILL * samplesPerPx);
+        sEnd = iStart - sampleDiff;
         x = 0;
       }
-      // Ensure we don't go out of bounds
-      sStart = Math.max(0, sStart);
-      sEnd = Math.min(dataLength, sEnd + Math.ceil(samplesPerPx * 2));
+      sEnd = clamp(sEnd + samplesPerPx * 2, 0, dataLength);
       const renderIterator = this.renderSlice(layer, height, sStart, sEnd, channelNumber, x, context);
       const render = () => {
         if (this.config.renderId !== renderId) return;
@@ -186,8 +167,6 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
         } else {
           if (context && context.notifyRenderComplete) context.notifyRenderComplete();
           this.onRenderTransfer?.();
-          // Restore previous alpha
-          layer.context.globalAlpha = prevAlpha;
         }
       };
       render();
@@ -223,7 +202,6 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
     for (let i = 0; i < bufferChunkSize; i++) {
       const slice = bufferChunks[i];
       const sliceLength = slice.length;
-      // Use Math.floor for start, Math.ceil for end
       const chunkStart = Math.floor(clamp(iStart - total, 0, sliceLength));
       const chunkEnd = Math.ceil(clamp(iEnd - total, 0, sliceLength));
       total += sliceLength;

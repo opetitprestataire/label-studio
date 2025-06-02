@@ -218,7 +218,7 @@ export class Timeline {
 
     // Enforce a minimum pixel spacing between labels to prevent overlap
     const minLabelSpacing = 40; // px, adjust as needed
-    let lastLabelX = -Infinity;
+    let lastLabelX = Number.NEGATIVE_INFINITY;
 
     for (let i = segmentStart; i < segmentEnd; i += interval) {
       const time = toPrecision(i, precision);
