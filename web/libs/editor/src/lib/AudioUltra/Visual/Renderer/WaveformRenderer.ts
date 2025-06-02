@@ -3,8 +3,10 @@ import { averageMinMax, clamp } from "../../Common/Utils";
 import type { Renderer, RenderContext } from "./Renderer";
 import type { WaveformAudio } from "../../Media/WaveformAudio";
 import { RateLimitedRenderer } from "./RateLimitedRenderer";
-import { RATE_LIMITED_RENDER_FPS, FORCE_FULL_WAVEFORM_RENDER } from "../constants";
+import { RATE_LIMITED_RENDER_FPS, CACHE_RENDER_THRESHOLD } from "../constants";
+import { isFF, FF_AUDIO_SPECTROGRAMS } from "../../../../utils/feature-flags";
 
+const isAudioSpectrograms = isFF(FF_AUDIO_SPECTROGRAMS);
 export interface WaveformRendererConfig {
   renderId: number;
   waveHeight: number;
@@ -64,28 +66,26 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
         const scrollLeftPx = context.scrollLeftPx;
         const samplesPerPx = context.samplesPerPx;
         const iStart = clamp(scrollLeftPx * samplesPerPx, 0, dataLength);
-        const iEnd = clamp(Math.ceil(iStart + context.width * samplesPerPx), 0, dataLength);
+        const iEnd = clamp(iStart + context.width * samplesPerPx, 0, dataLength);
+        const renderableData = iEnd - iStart;
         const zoom = context.zoom;
         const amp = renderer.config.amp ?? 1;
         const deltaX = scrollLeftPx - renderer.lastWaveformRenderedScrollLeftPx;
+        const waveformWillFullRender = isAudioSpectrograms
+          ? Math.abs(deltaX) >= context.width
+          : renderableData < CACHE_RENDER_THRESHOLD;
 
-        if (FORCE_FULL_WAVEFORM_RENDER) {
+        if (
+          context.width !== renderer.lastWaveformRenderedWidth ||
+          zoom !== renderer.lastWaveformRenderedZoom ||
+          amp !== renderer.lastRenderedAmp ||
+          waveformWillFullRender
+        ) {
           for (let i = 0; i < audio.channelCount; i++) {
             renderer.renderWave(context, i, layer, iStart, iEnd);
           }
         } else {
-          if (
-            context.width !== renderer.lastWaveformRenderedWidth ||
-            zoom !== renderer.lastWaveformRenderedZoom ||
-            amp !== renderer.lastRenderedAmp ||
-            Math.abs(deltaX) >= context.width
-          ) {
-            for (let i = 0; i < audio.channelCount; i++) {
-              renderer.renderWave(context, i, layer, iStart, iEnd);
-            }
-          } else {
-            renderer.renderPartialWave(context, layer, iStart, iEnd, deltaX);
-          }
+          renderer.renderPartialWave(context, layer, iStart, iEnd, deltaX);
         }
       },
       false,

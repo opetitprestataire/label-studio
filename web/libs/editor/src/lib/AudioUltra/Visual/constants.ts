@@ -1,5 +1,6 @@
 import type { WindowFunctionType } from "./WindowFunctions";
 import type { ColorScheme } from "./ColorMapper";
+import { isFF, FF_AUDIO_SPECTROGRAMS } from "../../../utils/feature-flags";
 
 export const SPECTROGRAM_DEFAULTS = {
   FFT_SAMPLES: 512,
@@ -26,7 +27,7 @@ export const DEBOUNCE_PAINT_AMOUNT = 0; // ms, for ~60fps
 export const SPECTROGRAM_MAX_COMPUTATIONS = 2000;
 
 // Target FPS for rate limited rendering
-export const RATE_LIMITED_RENDER_FPS = 15;
+export const RATE_LIMITED_RENDER_FPS = isFF(FF_AUDIO_SPECTROGRAMS) ? 15 : 60;
 
 // Pre-cache spectrogram data for the current window size
 export const PRECACHE = true;
@@ -69,4 +70,9 @@ export const WAVEFORM_SEAM_GAP_FILL = 10;
 // Maximum number of FFT cache entries per channel (for LRU cache)
 export const SPECTROGRAM_FFT_CACHE_MAX_ENTRIES = 50000;
 
-export const FORCE_FULL_WAVEFORM_RENDER = true;
+/**
+ * Governed by the feature flag FF_AUDIO_SPECTROGRAMS
+ * If the feature flag is enabled, this is ignored.
+ * @deprecated
+ */
+export const CACHE_RENDER_THRESHOLD = 10000000;
