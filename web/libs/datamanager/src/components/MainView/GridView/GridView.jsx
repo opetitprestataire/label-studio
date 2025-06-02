@@ -15,7 +15,7 @@ import "./GridView.scss";
 import { clsx } from "clsx";
 import { groupBy } from "../../../utils/utils";
 
-const TEXT_ONLY_CELL_HEIGHT = 250;
+const NO_IMAGE_CELL_HEIGHT = 250;
 
 export const GridHeader = observer(({ row, selected, onSelect }) => {
   const isSelected = selected.isSelected(row.id);
@@ -143,7 +143,7 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
 
           return res + height;
         }, 16)
-    : TEXT_ONLY_CELL_HEIGHT;
+    : NO_IMAGE_CELL_HEIGHT;
   const finalRowHeight = (rowHeight + 32) * (hasImage ? Math.max(1, (7 - columnCount) * 0.5) : 1);
 
   const renderItem = useCallback(
