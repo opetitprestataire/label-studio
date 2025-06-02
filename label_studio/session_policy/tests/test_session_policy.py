@@ -1,19 +1,16 @@
 import pytest
 from organizations.tests.factories import OrganizationFactory
-from projects.tests.factories import ProjectFactory
 from rest_framework import status
 from rest_framework.test import APIClient
 from session_policy.models import SessionTimeoutPolicy
-from tests.utils import mock_feature_flag
+
+from label_studio.tests.conftest import fflag_feat_utc_46_session_timeout_policy_on  # noqa: F401
 
 
 @pytest.mark.django_db
-@mock_feature_flag(flag_name='fflag_feat_utc_46_session_timeout_policy', value=True)
-def test_session_timeout_policy():
-    # Create organization and project
+def test_session_timeout_policy(fflag_feat_utc_46_session_timeout_policy_on):
     organization = OrganizationFactory()
 
-    # Create API client and perform actual login
     client = APIClient()
     user = organization.created_by
     user.set_password('testpass123')
@@ -27,10 +24,8 @@ def test_session_timeout_policy():
     response = client.get('/api/projects/')
     assert response.status_code == status.HTTP_200_OK
 
-    # Get or create session timeout policy with 0 hours
-    # We need to access the organization's session_timeout_policy field to trigger AutoOneToOneField
-    # The first request should be triggering this in middleware anyway, but can behave differently in parallelized test execution
-    _ = organization.session_timeout_policy
+    # Get the session timeout policy and set it to 0 hours
+    # Object already exists after the first request since its an AutoOneToOneField
     timeout_policy = SessionTimeoutPolicy.objects.get(organization=organization)
     timeout_policy.max_session_age = 0
     timeout_policy.max_time_between_activity = 0
