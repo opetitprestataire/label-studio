@@ -10,8 +10,9 @@ meta_description: Template for time series synchronization with audio and video.
 
 <img src="/images/templates/timeseries_audio_video.png" alt="" class="gif-border" width="552px" height="408px" />
 
+This template enables synchronized playback and seeking between `Video`, `Audio`, and `TimeSeries` components when they share the same sync group. Multiple `TimeSeries` components can also sync with each other, allowing for coordinated view updates across different time series data. 
 
-Use this template to synchronize time series data with audio and video components, allowing you to coordinate playback and seek across different media types:
+For example:
 
 <video src="https://htx-pub.s3.us-east-1.amazonaws.com/docs/timeseries-video-audio-sync.mp4" controls style="max-width:800px" />
 
@@ -170,7 +171,7 @@ Index-based TimeSeries (no timestamps at X axis).
 ```html
 <View>
   <Video name="video" value="$video" sync="group_a"/>
-  <Audio name="audio" value="$video" sync="group_a"/>
+  <!-- <Audio name="audio" value="$video" sync="group_a"/> -->
   
   <TimeSeriesLabels name="timelinelabels" toName="accel_timeseries">
     <Label value="A"/>
@@ -243,19 +244,4 @@ time,gyro_x,gyro_y
 00:01:10.000000,-0.29753925483100785,-0.7699832734123578
 ```
 
-
-# Advanced information
-
-Fixes #4892: How can we label video and time series signals while watching them together?
-Fixes #5359: Video/audio sync doesn't work
-
-- Add sync attribute to TimeSeries tag model to enable group-based synchronization
-- Compose TimeSeries with SyncableMixin for event broadcasting and handling
-- Implement sync event handlers for seek, play, and pause events
-- Add smooth view updates during audio/video playback
-- Prevent event flooding by suppressing sync events during playback
-- Maintain view window size during playback
-- Map media timeline to TimeSeries range (start/end points)
-
-This enables synchronized playback and seeking between Video, Audio, and TimeSeries components when they share the same sync group. Multiple TimeSeries components can also sync with each other, allowing for coordinated view updates across different time series data. For example:
 
