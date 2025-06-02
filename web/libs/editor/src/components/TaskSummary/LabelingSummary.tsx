@@ -7,9 +7,10 @@ import { renderers } from "./labelings";
 type Props = {
   annotations: MSTAnnotation[];
   controls: ControlTag[];
+  onSelect: (entity: MSTAnnotation) => void;
 };
 
-export const LabelingSummary = ({ annotations, controls }: Props) => {
+export const LabelingSummary = ({ annotations, controls, onSelect }: Props) => {
   return (
     <table className="mb-wide border border-neutral-border rounded-small border-collapse">
       <thead>
@@ -26,7 +27,7 @@ export const LabelingSummary = ({ annotations, controls }: Props) => {
         {annotations.map((annotation) => (
           <tr key={annotation.id} className="odd:bg-neutral-surface [&_td]:align-top">
             <td className="px-4 py-2 whitespace-nowrap">
-              <div className="flex gap-tight items-center">
+              <div className="flex gap-tight items-center cursor-pointer" onClick={() => onSelect(annotation)}>
                 <Userpic
                   user={annotation.user}
                   className={annotation.type === "prediction" ? "!bg-accent-plum-subtle text-accent-plum-bold" : ""}

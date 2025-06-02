@@ -16,6 +16,14 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
   const annotations = all.filter((a) => a.pk);
   const allTags = [...annotationStore.names];
 
+  const onSelect = (entity: MSTAnnotation) => {
+    if (entity.type === "annotation") {
+      annotationStore.selectAnnotation(entity.id);
+    } else {
+      annotationStore.selectPrediction(entity.id);
+    }
+  };
+
   // Check if agreement should be shown based on project settings
   const showAgreement = annotationStore.store.project?.review_settings?.show_agreement_to_reviewers ?? false;
 
@@ -81,7 +89,7 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
     <div className="p-4">
       <h2 className="px-4 mb-4">Review Summary</h2>
       <NumbersSummary values={values} />
-      <LabelingSummary annotations={annotations} controls={controls} />
+      <LabelingSummary annotations={annotations} controls={controls} onSelect={onSelect} />
       <h2 className="px-4">Task Data</h2>
       <DataSummary data_types={dataTypes} data={data} />
     </div>
