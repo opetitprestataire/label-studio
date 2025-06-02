@@ -16,7 +16,7 @@ import { clsx } from "clsx";
 clsx;
 import { groupBy } from "../../../utils/utils";
 
-const TEXT_ONLY_CELL_HEIGHT = 150;
+const TEXT_ONLY_CELL_HEIGHT = 250;
 
 export const GridHeader = observer(({ row, selected, onSelect }) => {
   const isSelected = selected.isSelected(row.id);
@@ -35,18 +35,18 @@ export const GridHeader = observer(({ row, selected, onSelect }) => {
 });
 
 export const GridBody = observer(({ row, fields, columnCount }) => {
+  const { hasImage } = useContext(GridViewContext);
   const dataFields = fields.filter((f) => f.parent?.alias === "data");
   const group = groupBy(dataFields, (f) => f.currentType);
-  const hasImage = dataFields.some((f) => f.currentType === "Image");
 
   return Object.entries(group).map(([type, fields]) => {
     return (
       <div
         key={type}
         className={clsx("h-full w-full", {
-          "overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-border scrollbar-track-transparent ":
-            type === "Text" || type === "Unknown",
-          "overflow-y-auto": !hasImage,
+          "overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-border scrollbar-track-transparent":
+            type !== "Image" || type === "Unknown",
+          "h-auto": !hasImage || hasImage,
         })}
       >
         {fields.map((field, index) => {
@@ -92,7 +92,7 @@ export const GridDataGroup = observer(({ type, value, field, row, columnCount, h
 });
 
 export const GridCell = observer(({ view, selected, row, fields, onClick, columnCount, ...props }) => {
-  const { setCurrentTaskId, imageField } = useContext(GridViewContext);
+  const { setCurrentTaskId, imageField, hasImage } = useContext(GridViewContext);
 
   const handleBodyClick = useCallback(
     (e) => {
@@ -113,7 +113,12 @@ export const GridCell = observer(({ view, selected, row, fields, onClick, column
           selected={view.selected}
           onSelect={view.selected.toggleSelected}
         />
-        <Elem name="cell-body" onClick={handleBodyClick} mod={{ responsive: view.gridResponsiveImage }}>
+        <Elem
+          name="cell-body"
+          rawClassName={clsx({ "overflow-auto": !hasImage })}
+          onClick={handleBodyClick}
+          mod={{ responsive: view.gridResponsiveImage }}
+        >
           <GridBody view={view} row={row} fields={fields} columnCount={columnCount} />
         </Elem>
       </Elem>

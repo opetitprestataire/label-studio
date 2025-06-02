@@ -8,8 +8,8 @@ import { IconSettings, IconMinus, IconPlus } from "@humansignal/icons";
 const injector = inject(({ store }) => {
   const view = store?.currentView;
 
-  const dataTypes = store?.project?.data_types ?? {};
-  const hasImage = Object.values(dataTypes).some((type) => type === "Image") ?? false;
+  const cols = view.fieldsAsColumns ?? [];
+  const hasImage = cols.some(({ type }) => type === "Image") ?? false;
 
   return {
     view,

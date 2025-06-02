@@ -52,6 +52,7 @@
         display: grid;
         grid-auto-flow: row;
         grid-template-rows: minmax(1rem, 1fr);
+      grid-template-columns: 100%;
       }
 
       img {
@@ -97,8 +98,6 @@
         }
       }
     }
-
-
 
     &_selected &-header {
       background-color: var(--color-primary-emphasis);
