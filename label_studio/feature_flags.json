@@ -2148,6 +2148,33 @@
       "version": 4,
       "deleted": false
     },
+    "fflag_feat_front_bros58_timeseries_multichannel_short": {
+      "key": "fflag_feat_front_bros58_timeseries_multichannel_short",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "99504b973dab4599b2438b5769df30df",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
+      "deleted": false
+    },
     "fflag_feat_front_dev-2536_comment_notifications_short": {
       "key": "fflag_feat_front_dev-2536_comment_notifications_short",
       "on": false,
@@ -3041,7 +3068,7 @@
     },
     "fflag_feat_optic_2125_timeseries_sync": {
       "key": "fflag_feat_optic_2125_timeseries_sync",
-      "on": false,
+      "on": true,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
@@ -3063,7 +3090,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 2,
+      "version": 3,
       "deleted": false
     },
     "fflag_feat_optic_378_limit_projects_per_page_to_ten_short": {
@@ -3199,6 +3226,33 @@
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
       "version": 3,
+      "deleted": false
+    },
+    "fflag_feat_utc_46_session_timeout_policy": {
+      "key": "fflag_feat_utc_46_session_timeout_policy",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "be7ce7b1242a4e82a5c1239d8a4f7195",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
       "deleted": false
     },
     "fflag_feature_all_optic_1421_cold_start_v2": {
@@ -4401,6 +4455,33 @@
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
       "version": 8,
+      "deleted": false
+    },
+    "fflag_root_13_annotation_results_filtering": {
+      "key": "fflag_root_13_annotation_results_filtering",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "4ab31fe3b28f4abd90ac0558b7d41584",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
       "deleted": false
     },
     "fix_backend_dev_3134_exclude_deactivated_users": {
