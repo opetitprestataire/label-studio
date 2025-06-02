@@ -5,75 +5,88 @@ category: Time Series Analysis
 cat: time-series-analysis
 order: 750
 meta_title: Time Series + Audio + Video Data Labeling Template
-meta_description: Template for timeseries synchronization with audio and video.
+meta_description: Template for time series synchronization with audio and video.
 ---
 
+<img src="/images/templates/timeseries_audio_video.png" alt="" class="gif-border" width="552px" height="408px" />
+
+
+Use this template to synchronize time series data with audio and video components, allowing you to coordinate playback and seek across different media types:
 
 <video src="https://htx-pub.s3.us-east-1.amazonaws.com/docs/timeseries-video-audio-sync.mp4" controls style="max-width:800px" />
 
+!!! note
+    **Requirements:** Label Studio >= 1.20
+
+## Time units and syncing
+
+All sync messages use relative seconds from the start of each component. 
+
+There are two types of configurations, and configuration you use determines how the time series converts the relative seconds:
+
+- **Time-based**: Converts to absolute timestamps
+- **Index-based**: Uses relative seconds as indices
 
 
-## Overview
-TimeSeries can synchronize with Audio and Video components, allowing coordinated playback and seeking across different media types.
+### Time-based time series
 
-Requirements: Label Studio >= 1.20
+* Converts relative seconds to absolute timestamps. 
+* Maintains precise temporal alignment with media, any custom sampling rate
+* Examples: 
+  * 30s in video = 30s from start in time series
+  * If the time series starts at the 5th second, it will serve as the starting point for other media. Therefore, the `0` second of the video will begin at the 5th second of the time series, and this offset will always be applied.
 
-## Time Units
-- All sync messages use relative seconds from the start of each component
-- TimeSeries converts these relative seconds based on its configuration:
-  - Time-based: Converts to absolute timestamps
-  - Index-based: Uses relative seconds as indices
-
-## Configuration
-1. Time-based TimeSeries:
-   ```xml
+To specify a time-based time series, use the following format:
+  
+```xml
    <TimeSeries name="ts" timeColumn="timestamp" timeFormat="%Y-%m-%d %H:%M:%S">
-   ```
+```
 
-2. Index-based TimeSeries:
-   ```xml
+### Index-based time series
+
+- Uses direct indices as relative seconds
+- Each second in media = one index in the time series, sampling rate is always 1 Hz
+- Suitable mostly for debugging and tests
+- Example: 
+  - 30s in video = index 30 in the time series
+
+To specify an index-based time series, use the following format:
+
+```xml
    <TimeSeries name="ts">
-   ```
+```
 
-## Synchronization Behavior
+### Best practices
 
-1. **Time-based TimeSeries:**
-   - Converts relative seconds to absolute timestamps
-   - Maintains precise temporal alignment with media, any custom sampling rate
-   - Example: 30s in video = 30s from start in TimeSeries
-   - If the TimeSeries starts at the 5th second, it will serve as the starting point for other media. Therefore, the 0 second of the video will begin at the 5th second of the TimeSeries, and this offset will always be applied.
+**Use time-based time series when:**
+- Data has actual timestamps
+- Precise temporal alignment is needed
+- Working with multiple media types
 
-2. **Index-based TimeSeries:**
-   - Uses direct indices as relative seconds
-   - Each second in media = one index in TimeSeries, sampling rate is 1 Hz always
-   - Example: 30s in video = index 30 in TimeSeries
-   - Suitable mostly for debugging and tests
+**Use index-based time series when:**
+- Data is sequential
+- No actual timestamps are available
+- Simple 1 sample <=> 1 second mapping with media time is sufficient
 
-## Length Mismatches
+## Handling length mismatches
+
+You may have mismatched lengths in your data. When this occurs:
+
 - Sync works up to the length of the shorter component
 - Components stop at their respective ends
 - No data loss occurs, but sync stops at the shorter component's end
 
-## Best Practices
-1. Use time-based TimeSeries when:
-   - Data has actual timestamps
-   - Precise temporal alignment is needed
-   - Working with multiple media types
 
-2. Use index-based TimeSeries when:
-   - Data is sequential
-   - No actual timestamps are available
-   - Simple 1 sample <=> 1 second mapping with media time is sufficient
+## Labeling Configurations
 
+### Index-based TimeSeries + Video + TimeSeriesLabels
 
-# Configurations
+Index-based TimeSeries (no timestamps at X axis). 
 
-## Index based TimeSeries + Video + TimeSeriesLabels
+!!! note
+    One value equals one second because the time axis is not specified in the `TimeSeries` tag. The video is synced with this idea — one sample equals one second if timestamps are not provided.
 
-* Index-based TimeSeries (no timestamps at X axis)
-* _Note_: One value equals one second because the time axis is not specified in the TimeSeries tag. The video is synced with this idea — one sample equals one second if timestamps are not provided.
-
-```xml
+```html
 <View>
   <Video name="video" value="$video" sync="group_a"/>
   
@@ -148,13 +161,13 @@ Requirements: Label Studio >= 1.20
 } -->
 ```
 
-## Time-based multiple TimeSeries + Audio + Video + TimeSeriesLabels
+### Time-based multiple TimeSeries + Audio + Video + TimeSeriesLabels
 
 * Time-based TimeSeries
 * TimeSeries, Audio and Video are synced together
 * Choices and timeline labels are used as control tags for labeling
 
-```xml
+```html
 <View>
   <Video name="video" value="$video" sync="group_a"/>
   <Audio name="audio" value="$video" sync="group_a"/>
@@ -231,7 +244,7 @@ time,gyro_x,gyro_y
 ```
 
 
-# Advanced Information
+# Advanced information
 
 Fixes #4892: How can we label video and time series signals while watching them together?
 Fixes #5359: Video/audio sync doesn't work
