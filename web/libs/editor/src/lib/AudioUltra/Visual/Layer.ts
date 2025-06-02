@@ -79,7 +79,7 @@ export class Layer extends Events<LayerEvents> {
    * Float value of the layer opacity between 0 and 1.
    */
   private opacity = 1;
-  private _pixelRatio = 1;
+  private pixelRatio = 1;
 
   name: string;
 
@@ -102,7 +102,7 @@ export class Layer extends Events<LayerEvents> {
   set width(value: number) {
     if (!this.canvas) return;
 
-    this.canvas.width = value * this._pixelRatio;
+    this.canvas.width = value * this.pixelRatio;
 
     if (this.canvas instanceof HTMLCanvasElement) {
       this.canvas.style.width = `${value}px`;
@@ -116,15 +116,11 @@ export class Layer extends Events<LayerEvents> {
   set height(value: number) {
     if (!this.canvas) return;
 
-    this.canvas.height = value * this._pixelRatio;
+    this.canvas.height = value * this.pixelRatio;
 
     if (this.canvas instanceof HTMLCanvasElement) {
       this.canvas.style.height = `${value}px`;
     }
-  }
-
-  get pixelRatio() {
-    return this._pixelRatio;
   }
 
   get isGroup() {
@@ -138,7 +134,7 @@ export class Layer extends Events<LayerEvents> {
     this.group = options.group ?? undefined;
     this.container = options.container;
     this.offscreen = options.offscreen ?? false;
-    this._pixelRatio = options.pixelRatio ?? 1;
+    this.pixelRatio = options.pixelRatio ?? 1;
     this.index = options.index ?? this.index;
     this.compositeOperation = options.compositeOperation ?? this.compositeOperation;
     this.compositeAsGroup = options.compositeAsGroup ?? this.compositeAsGroup;
@@ -185,41 +181,36 @@ export class Layer extends Events<LayerEvents> {
    * @param y Point Y
    */
   moveTo(x: number, y: number) {
-    this.context?.moveTo(x * this._pixelRatio, y * this._pixelRatio);
+    this.context?.moveTo(x * this.pixelRatio, y * this.pixelRatio);
   }
 
   lineTo(x: number, y: number) {
-    this.context?.lineTo(x * this._pixelRatio, y * this._pixelRatio);
+    this.context?.lineTo(x * this.pixelRatio, y * this.pixelRatio);
   }
 
   fillRect(x: number, y: number, width: number, height: number) {
-    this.context?.fillRect(
-      x * this._pixelRatio,
-      y * this._pixelRatio,
-      width * this._pixelRatio,
-      height * this._pixelRatio,
-    );
+    this.context?.fillRect(x * this.pixelRatio, y * this.pixelRatio, width * this.pixelRatio, height * this.pixelRatio);
   }
 
   roundRect(x: number, y: number, width: number, height: number, radius: number) {
     this.context?.beginPath();
     this.context?.roundRect(
-      x * this._pixelRatio,
-      y * this._pixelRatio,
-      width * this._pixelRatio,
-      height * this._pixelRatio,
+      x * this.pixelRatio,
+      y * this.pixelRatio,
+      width * this.pixelRatio,
+      height * this.pixelRatio,
       radius,
     );
     this.context?.fill();
   }
 
   fillText(text: string, x: number, y: number, maxWidth?: number) {
-    this.context?.fillText(text, x * this._pixelRatio, y * this._pixelRatio, maxWidth);
+    this.context?.fillText(text, x * this.pixelRatio, y * this.pixelRatio, maxWidth);
   }
 
   fitText(text: string, x: number, y: number, maxWidth: number) {
     if (!this.context) return;
-    const finalWidth = maxWidth / this._pixelRatio;
+    const finalWidth = maxWidth / this.pixelRatio;
     const ellipsisWidth = this.measureText("...").width;
     let textWidth = this.measureText(text).width;
     let finalText = text;
@@ -292,7 +283,7 @@ export class Layer extends Events<LayerEvents> {
     this.clear();
 
     // Draw the buffer canvas to the current canvas shifted by x and y
-    this.context.drawImage(this._bufferCanvas, x * this._pixelRatio, y * this._pixelRatio);
+    this.context.drawImage(this._bufferCanvas, x * this.pixelRatio, y * this.pixelRatio);
   }
 
   shift(x: number, y: number) {
@@ -323,12 +314,12 @@ export class Layer extends Events<LayerEvents> {
 
   set lineWidth(width: number) {
     if (!this.context) return;
-    this.context.lineWidth = width * this._pixelRatio;
+    this.context.lineWidth = width * this.pixelRatio;
   }
 
   get lineWidth() {
     if (!this.context) return 0;
-    return this.context.lineWidth / this._pixelRatio;
+    return this.context.lineWidth / this.pixelRatio;
   }
 
   set font(font: string) {
@@ -434,14 +425,14 @@ export class Layer extends Events<LayerEvents> {
 
   private createVisibleCanvas() {
     const canvas = document.createElement("canvas");
-    const { _pixelRatio } = this;
+    const { pixelRatio } = this;
 
     const width = this.container.clientWidth;
     const height = this.options.height ?? 100;
 
     canvas.id = `waveform-layer-${this.options.name ?? "default"}`;
-    canvas.width = width * _pixelRatio;
-    canvas.height = height * _pixelRatio;
+    canvas.width = width * pixelRatio;
+    canvas.height = height * pixelRatio;
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     canvas.style.visibility = this.isVisible ? "visible" : "hidden";
@@ -459,13 +450,13 @@ export class Layer extends Events<LayerEvents> {
     let canvas: HTMLCanvasElement | OffscreenCanvas;
 
     if (OFFSCREEN_CANVAS_SUPPORTED && !USE_FALLBACK) {
-      const { _pixelRatio } = this;
+      const { pixelRatio } = this;
       const width = this.container.clientWidth;
       const height = this.options.height ?? 100;
 
       // For better performance we're using experimental
       // OffscreenCanvas as a rendering backend
-      canvas = new OffscreenCanvas(width * _pixelRatio, height * _pixelRatio);
+      canvas = new OffscreenCanvas(width * pixelRatio, height * pixelRatio);
       // Note: OffscreenCanvas does not support style or DOM events
       this._context = canvas.getContext("2d")!;
 
@@ -495,7 +486,7 @@ export class Layer extends Events<LayerEvents> {
     let canvas: HTMLCanvasElement | OffscreenCanvas;
 
     if (OFFSCREEN_CANVAS_SUPPORTED && !USE_FALLBACK) {
-      const { _pixelRatio } = this;
+      const { pixelRatio } = this;
 
       // Base this on the existing canvas size
       // Otherwise we will get possibly a missing portion of buffer content
@@ -505,7 +496,7 @@ export class Layer extends Events<LayerEvents> {
 
       // For better performance we're using experimental
       // OffscreenCanvas as a rendering backend
-      canvas = new OffscreenCanvas(width * _pixelRatio, height * _pixelRatio);
+      canvas = new OffscreenCanvas(width * pixelRatio, height * pixelRatio);
 
       this._bufferContext = canvas.getContext("2d")!;
 
