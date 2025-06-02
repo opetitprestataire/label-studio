@@ -44,8 +44,14 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
   const dataTypes: ObjectTypes = Object.fromEntries(
     objectTags.map(([name, object]) => [
       name,
-      // images use `parsedValue` instead of `_value`
-      { type: object.type, value: "parsedValue" in object ? object.parsedValue : (object._value ?? object.value) },
+      // most of tags has `updateValue()` method which resolves `value` and stores it in `_value`
+      // Image tag uses `parsedValue` instead of `_value`
+      // Pdf tag uses `_url` instead of `_value`
+      // for other tags with complex logic (like TimeSeries) we use `value` for now, which is not ideal
+      {
+        type: object.type,
+        value: "parsedValue" in object ? object.parsedValue : (object._url ?? object._value ?? object.value),
+      },
     ]),
   );
 
