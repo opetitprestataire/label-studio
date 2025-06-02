@@ -10,7 +10,7 @@ meta_description: Template for time series synchronization with audio and video.
 
 <img src="/images/templates/timeseries_audio_video.png" alt="" class="gif-border" width="552px" height="408px" />
 
-This template enables synchronized playback and seeking between `Video`, `Audio`, and `TimeSeries` components when they share the same sync group. Multiple `TimeSeries` components can also sync with each other, allowing for coordinated view updates across different time series data. 
+This template demonstrates the synchronization of media streams with the corresponding sensor data by mapping audio or video frames to the appropriate time-series timestamps.
 
 For example:
 
