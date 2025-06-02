@@ -30,9 +30,9 @@ export const LabelingSummary = ({ annotations, controls }: Props) => {
           }
 
           return (
-            <tr key={annotation.id} className="odd:bg-neutral-surface">
+            <tr key={annotation.id} className="odd:bg-neutral-surface [&_td]:align-top">
               <td className="px-4 py-2 whitespace-nowrap">
-                <div className="flex gap-tight items-center h-full">
+                <div className="flex gap-tight items-center">
                   <Userpic
                     user={annotation.user}
                     className={annotation.type === "prediction" ? "!bg-accent-plum-subtle text-accent-plum-bold" : ""}
