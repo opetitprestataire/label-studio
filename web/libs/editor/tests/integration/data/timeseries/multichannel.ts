@@ -19,13 +19,11 @@ export const multiChannwlCnfig = `
           <Channel column="velocity"
                    units="miles/h"
                    displayFormat=",.1f"
-                   strokeColor="#1f77b4"
                    legend="Velocity"/>
 
           <Channel column="acceleration"
                    units="miles/h^2"
                    displayFormat=",.1f"
-                   strokeColor="#ff7f0e"
                    legend="Acceleration"/>
        </MultiChannel>
     </TimeSeries>

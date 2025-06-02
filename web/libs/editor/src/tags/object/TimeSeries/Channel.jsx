@@ -72,10 +72,10 @@ const TagAttrs = types.model({
   height: types.optional(types.string, "200"),
 
   strokewidth: types.optional(types.string, "1"),
-  strokecolor: types.optional(types.string, "#1f77b4"),
+  strokecolor: types.optional(types.string, ff.isActive(FF_MULTICHANNEL_TS) ? "" : "#1f77b4"),
 
   markersize: types.optional(types.string, "0"),
-  markercolor: types.optional(types.string, "#1f77b4"),
+  markercolor: types.optional(types.string, ff.isActive(FF_MULTICHANNEL_TS) ? "" : "#1f77b4"),
   markersymbol: types.optional(types.string, "circle"),
 
   datarange: types.maybe(types.string),

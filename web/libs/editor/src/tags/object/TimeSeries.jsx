@@ -26,6 +26,7 @@ import { fixMobxObserve } from "../../utils/utilities";
 
 import "./TimeSeries/MultiChannel";
 import "./TimeSeries/Channel";
+import { getChannelColor } from "./TimeSeries/palette";
 /**
  * The `TimeSeries` tag can be used to label time series data. Read more about Time Series Labeling on [the time series template page](../templates/time_series.html).
  *
@@ -339,6 +340,17 @@ const Model = types
   }))
 
   .actions((self) => ({
+    afterCreate() {
+      self.channels.forEach((channel, idx) => {
+        if (channel.strokecolor === "") {
+          channel.strokecolor = getChannelColor(idx);
+        }
+        if (channel.markercolor === "") {
+          channel.markercolor = getChannelColor(idx);
+        }
+      });
+    },
+
     setData(data) {
       self.data = data;
       self.valueLoaded = true;

@@ -5,6 +5,7 @@ import { TagParentMixin } from "../../../mixins/TagParentMixin";
 import Registry from "../../../core/Registry";
 import TimeSeriesVisualizer from "../../../components/TimeSeries/TimeSeriesVisualizer";
 import ChannelLegend from "./ChannelLegend";
+import { getChannelColor } from "./palette";
 
 // MultiChannel model for grouped display of channels
 const Model = types
@@ -39,6 +40,16 @@ const Model = types
     },
   }))
   .actions((self) => ({
+    afterCreate() {
+      self.channels.forEach((channel, idx) => {
+        if (channel.strokecolor === "") {
+          channel.strokecolor = getChannelColor(idx);
+        }
+        if (channel.markercolor === "") {
+          channel.markercolor = getChannelColor(idx);
+        }
+      });
+    },
     toggleChannelVisibility(channelId) {
       self.isChannelHiddenMap = {
         ...self.isChannelHiddenMap,
