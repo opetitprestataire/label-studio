@@ -16,10 +16,14 @@ jest.mock("@humansignal/ui", () => ({
 
 jest.mock("@humansignal/icons", () => ({
   IconInfoOutline: ({ size, style }: { size?: number; style?: any }) => (
-    <span data-testid="info-icon" style={style}>ℹ</span>
+    <span data-testid="info-icon" style={style}>
+      ℹ
+    </span>
   ),
   IconSparks: ({ style }: { style?: any }) => (
-    <span data-testid="sparks-icon" style={style}>✨</span>
+    <span data-testid="sparks-icon" style={style}>
+      ✨
+    </span>
   ),
 }));
 
@@ -27,31 +31,32 @@ jest.mock("@humansignal/icons", () => ({
 jest.mock("./labelings", () => ({
   renderers: {
     choices: (results: any[], control: any) => {
-      const choices = results.flatMap(r => r.value?.choices || []);
+      const choices = results.flatMap((r) => r.value?.choices || []);
       return choices.length > 0 ? choices.join(", ") : "-";
     },
     textarea: (results: any[], control: any) => {
-      const texts = results.map(r => r.value?.text).filter(Boolean);
+      const texts = results.map((r) => r.value?.text).filter(Boolean);
       return texts.length > 0 ? texts.join(", ") : "-";
     },
   },
 }));
 
 describe("TaskSummary", () => {
-  const createMockAnnotation = (overrides: Partial<MSTAnnotation> = {}): MSTAnnotation => ({
-    id: "1",
-    pk: 1,
-    type: "annotation",
-    user: { id: 1, displayName: "John Doe" },
-    createdBy: "John Doe",
-    versions: {
-      result: [{ from_name: "label", to_name: "text", type: "choices", value: { choices: ["positive"] } }],
-    },
-    results: [],
-    ...overrides,
-  }) as MSTAnnotation;
+  const createMockAnnotation = (overrides: Partial<MSTAnnotation> = {}): MSTAnnotation =>
+    ({
+      id: "1",
+      pk: 1,
+      type: "annotation",
+      user: { id: 1, displayName: "John Doe" },
+      createdBy: "John Doe",
+      versions: {
+        result: [{ from_name: "label", to_name: "text", type: "choices", value: { choices: ["positive"] } }],
+      },
+      results: [],
+      ...overrides,
+    }) as MSTAnnotation;
 
-  const createMockControlTag = (name: string, type: string = "choices") => [
+  const createMockControlTag = (name: string, type = "choices") => [
     name,
     {
       isControlTag: true,
@@ -65,7 +70,7 @@ describe("TaskSummary", () => {
     },
   ];
 
-  const createMockObjectTag = (name: string, type: string = "text") => [
+  const createMockObjectTag = (name: string, type = "text") => [
     name,
     {
       isObjectTag: true,
@@ -75,28 +80,25 @@ describe("TaskSummary", () => {
     },
   ];
 
-  const createMockStore = (overrides: any = {}): MSTStore["annotationStore"] => ({
-    store: {
-      task: {
-        dataObj: { text: "Sample text", id: 1 },
-        agreement: 85.5,
-        ...overrides.task,
-      },
-      project: {
-        review_settings: {
-          show_agreement_to_reviewers: true,
+  const createMockStore = (overrides: any = {}): MSTStore["annotationStore"] =>
+    ({
+      store: {
+        task: {
+          dataObj: { text: "Sample text", id: 1 },
+          agreement: 85.5,
+          ...overrides.task,
         },
-        ...overrides.project,
+        project: {
+          review_settings: {
+            show_agreement_to_reviewers: true,
+          },
+          ...overrides.project,
+        },
+        ...overrides.store,
       },
-      ...overrides.store,
-    },
-    names: new Map([
-      createMockControlTag("label"),
-      createMockObjectTag("text"),
-      ...overrides.names || [],
-    ]),
-    ...overrides,
-  }) as MSTStore["annotationStore"];
+      names: new Map([createMockControlTag("label"), createMockObjectTag("text"), ...(overrides.names || [])]),
+      ...overrides,
+    }) as MSTStore["annotationStore"];
 
   it("renders the review summary heading", () => {
     const annotations = [createMockAnnotation()];
@@ -253,10 +255,7 @@ describe("TaskSummary", () => {
       }),
     ];
     const store = createMockStore({
-      names: new Map([
-        createMockControlTag("sentiment", "choices"),
-        createMockObjectTag("text"),
-      ]),
+      names: new Map([createMockControlTag("sentiment", "choices"), createMockObjectTag("text")]),
     });
 
     render(<TaskSummary annotations={annotations} store={store} />);
@@ -276,10 +275,7 @@ describe("TaskSummary", () => {
       }),
     ];
     const store = createMockStore({
-      names: new Map([
-        createMockControlTag("sentiment", "choices"),
-        createMockObjectTag("text"),
-      ]),
+      names: new Map([createMockControlTag("sentiment", "choices"), createMockObjectTag("text")]),
     });
 
     render(<TaskSummary annotations={annotations} store={store} />);
@@ -313,7 +309,7 @@ describe("TaskSummary", () => {
     const annotations = [createMockAnnotation()];
     const controlWithPerRegion = createMockControlTag("regionLabel");
     controlWithPerRegion[1].perregion = true;
-    
+
     const store = createMockStore({
       names: new Map([controlWithPerRegion]),
     });
@@ -327,7 +323,7 @@ describe("TaskSummary", () => {
     const annotations = [createMockAnnotation()];
     const controlWithoutChildren = createMockControlTag("simpleLabel");
     controlWithoutChildren[1].children = undefined;
-    
+
     const store = createMockStore({
       names: new Map([controlWithoutChildren]),
     });
@@ -341,7 +337,7 @@ describe("TaskSummary", () => {
     const annotations = [createMockAnnotation()];
     const objectWithParsedValue = createMockObjectTag("image", "image");
     objectWithParsedValue[1].parsedValue = "parsed-image-url.jpg";
-    
+
     const store = createMockStore({
       names: new Map([objectWithParsedValue]),
     });
@@ -382,10 +378,7 @@ describe("TaskSummary", () => {
   });
 
   it("displays correct info messages with tooltips", () => {
-    const annotations = [
-      createMockAnnotation({ type: "annotation" }),
-      createMockAnnotation({ type: "prediction" }),
-    ];
+    const annotations = [createMockAnnotation({ type: "annotation" }), createMockAnnotation({ type: "prediction" })];
     const store = createMockStore();
 
     render(<TaskSummary annotations={annotations} store={store} />);
@@ -404,10 +397,7 @@ describe("TaskSummary", () => {
       }),
     ];
     const store = createMockStore({
-      names: new Map([
-        createMockControlTag("sentiment", "choices"),
-        createMockObjectTag("text"),
-      ]),
+      names: new Map([createMockControlTag("sentiment", "choices"), createMockObjectTag("text")]),
     });
 
     render(<TaskSummary annotations={annotations} store={store} />);
@@ -435,4 +425,4 @@ describe("TaskSummary", () => {
     expect(screen.queryByText("nonObjectTag")).not.toBeInTheDocument();
     expect(screen.queryByText("objectWithoutDollar")).not.toBeInTheDocument();
   });
-}); 
+});
