@@ -2,7 +2,7 @@
 
 
 
-<video src="https://htx-pub.s3.us-east-1.amazonaws.com/docs/timeseries-video-audio-sync.mp4" style="max-width:800px" />
+<video src="https://htx-pub.s3.us-east-1.amazonaws.com/docs/timeseries-video-audio-sync.mp4" controls style="max-width:800px" />
 
 
 
