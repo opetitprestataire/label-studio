@@ -106,7 +106,13 @@ export const GridCell = observer(({ view, selected, row, fields, onClick, column
   return (
     <Elem {...props} name="cell" onClick={onClick} mod={{ selected: selected.isSelected(row.id) }}>
       <Elem name="cell-content">
-        <GridHeader view={view} row={row} fields={fields} selected={view.selected} onSelect={view.selected.toggleSelected} />
+        <GridHeader
+          view={view}
+          row={row}
+          fields={fields}
+          selected={view.selected}
+          onSelect={view.selected.toggleSelected}
+        />
         <Elem name="cell-body" onClick={handleBodyClick} mod={{ responsive: view.gridResponsiveImage }}>
           <GridBody view={view} row={row} fields={fields} columnCount={columnCount} />
         </Elem>

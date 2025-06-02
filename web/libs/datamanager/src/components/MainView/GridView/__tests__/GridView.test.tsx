@@ -377,9 +377,9 @@ describe("GridView", () => {
       const view = { ...mockView, gridResponsiveImage: true };
 
       renderWithBEM(
-        <GridViewProvider 
-          data={[row]} 
-          view={view} 
+        <GridViewProvider
+          data={[row]}
+          view={view}
           fields={mockFields.map((f) => ({ ...f, alias: f.id.split(":")[1] }))}
         >
           <Block name="grid-view">
@@ -395,10 +395,11 @@ describe("GridView", () => {
         </GridViewProvider>,
       );
 
-      const cellBody = screen.getByText(row.id.toString())
+      const cellBody = screen
+        .getByText(row.id.toString())
         .closest(".dm-grid-view__cell")
         ?.querySelector(".dm-grid-view__cell-body");
-      
+
       expect(cellBody).toHaveClass("dm-grid-view__cell-body_responsive");
     });
 
