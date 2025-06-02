@@ -1,5 +1,5 @@
 ---
-title: Time Series Labeling for Audio and Video Synchronization
+title: Time Series Labeling with Audio and Video Synchronization
 type: templates
 category: Time Series Analysis
 cat: time-series-analysis
@@ -7,10 +7,6 @@ order: 750
 meta_title: Time Series + Audio + Video Data Labeling Template
 meta_description: Template for timeseries synchronization with audio and video.
 ---
-
-
-# TimeSeries + Audio + Video Synchronization
-
 
 
 <video src="https://htx-pub.s3.us-east-1.amazonaws.com/docs/timeseries-video-audio-sync.mp4" controls style="max-width:800px" />
