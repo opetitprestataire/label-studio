@@ -2,13 +2,13 @@
 """
 import logging
 import time
+from datetime import timedelta
 from uuid import uuid4
 
 import ujson as json
 from core.feature_flags import flag_set
 from core.utils.contextlog import ContextLog
 from csp.middleware import CSPMiddleware
-from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth import logout
 from django.core.exceptions import MiddlewareNotUsed
