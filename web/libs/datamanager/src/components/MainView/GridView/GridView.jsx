@@ -4,7 +4,7 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeGrid } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import { Block, Elem } from "../../../utils/bem";
-import { Checkbox } from "@humansignal/ui";
+import { Checkbox, cnm } from "@humansignal/ui";
 import { Space } from "../../Common/Space/Space";
 import { getProperty, prepareColumns } from "../../Common/Table/utils";
 import * as DataGroups from "../../DataGroups";
@@ -12,7 +12,6 @@ import { FF_GRID_PREVIEW, FF_LOPS_E_3, isFF } from "../../../utils/feature-flags
 import { SkeletonLoader } from "../../Common/SkeletonLoader";
 import { GridViewContext, GridViewProvider } from "./GridPreview";
 import "./GridView.scss";
-import { clsx } from "clsx";
 import { groupBy } from "../../../utils/utils";
 
 const NO_IMAGE_CELL_HEIGHT = 250;
@@ -43,7 +42,7 @@ export const GridBody = observer(({ row, fields, columnCount }) => {
     return (
       <div
         key={type}
-        className={clsx("h-full w-full", {
+        className={cnm("h-full w-full", {
           "overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-border scrollbar-track-transparent":
             type !== "Image" || type === "Unknown",
           "h-auto": !hasImage || hasImage,
@@ -115,7 +114,7 @@ export const GridCell = observer(({ view, selected, row, fields, onClick, column
         />
         <Elem
           name="cell-body"
-          rawClassName={clsx({ "overflow-auto": !hasImage })}
+          rawClassName={cnm({ "overflow-auto": !hasImage })}
           onClick={handleBodyClick}
           mod={{ responsive: view.gridResponsiveImage }}
         >
