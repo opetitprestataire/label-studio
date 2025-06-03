@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { MSTObjectTag, MSTTagImage, RawResult } from "../../stores/types";
 
 export type LabelAttrs = { value: string; background?: string };

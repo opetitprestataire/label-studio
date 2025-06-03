@@ -1,7 +1,6 @@
-import type { ReactNode } from "react";
 import type { RawResult } from "../../stores/types";
 import { contrastColor, convertToRGBA } from "../../utils/colors";
-import type { ControlTag, RendererType } from "./types";
+import type { RendererType } from "./types";
 
 const resultValue = (result: RawResult) => {
   if (result.type === "textarea") {
