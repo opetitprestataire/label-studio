@@ -886,10 +886,7 @@ class ChannelD3 extends React.Component {
     }
 
     const px = this.x(time) + 0.5; // align to pixel grid like tracker
-    this.playhead
-      .attr("x1", px)
-      .attr("x2", px)
-      .style("display", "block");
+    this.playhead.attr("x1", px).attr("x2", px).style("display", "block");
   };
 }
 
