@@ -40,7 +40,7 @@ Native units = *ms* when `timeformat` is a date, otherwise raw numeric indices/s
 
 ---
 
-## 2. Synchronisation between widgets
+## 2. Synchronisation between object tags
 
 The **SyncableMixin** provides a small intra-tab message bus.
 
@@ -110,7 +110,6 @@ Identical logic but uses scaled brush coordinate.
 ## 5. Adding new functionality
 * **New attributes** – extend `TagAttrs` with MST `types.optional`, then read `item.<attr>` in views.
 * **Styling** – prefer Tailwind utility classes or inline SVG attributes.
-* **Sync events** – add to `SyncEvent` union and provide handlers.
 * **Performance** – huge datasets are thinned with `sparseValues()`; thresholds controlled by `zoomStep`.
 
 ---

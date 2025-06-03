@@ -60,23 +60,32 @@ To specify an index-based time series, use the following format:
 ### Best practices
 
 **Use time-based time series when:**
-- Data has actual timestamps
-- Precise temporal alignment is needed
-- Working with multiple media types
+- Data has actual timestamps.
+- Precise temporal alignment is needed.
+- Working with multiple media types.
 
 **Use index-based time series when:**
-- Data is sequential
-- No actual timestamps are available
-- Simple 1 sample <=> 1 second mapping with media time is sufficient
+- Data is sequential.
+- No actual timestamps are available.
+- Simple 1 sample <=> 1 second mapping with media time is sufficient.
 
-## Handling length mismatches
+## Handling length, duration, sample and frame rates mismatches
+
+**Timeseries length and video duration**
 
 You may have mismatched lengths in your data. When this occurs:
 
-- Sync works up to the length of the shorter component
-- Components stop at their respective ends
-- No data loss occurs, but sync stops at the shorter component's end
+- Sync works up to the length of the shorter component.
+- Components stop at their respective ends; however, other components with a longer length/duration can continue playing.
 
+**Timeseries sample rate and video frame rate**
+
+!!! attention
+    It's extremely important to set `frameRate` for your video. Otherwise, you will get incorrect labeling synchronization between timeseries and video.
+  
+We recommend converting your video using these scripts: https://labelstud.io/tags/video#Video-format.
+
+Also, it is recommended to use integer multiples for sample rates and frame rates in your time series, audio, and videos. This approach simplifies aligning samples and frames and allows for smooth navigation across various media sources. For example, if the video frame rate is _30 frames per second_, having _60 (or 90, 120, ...) samples per second_ for the time series is beneficial.
 
 ## Labeling Configurations
 
@@ -89,7 +98,7 @@ Index-based TimeSeries (no timestamps at X axis).
 
 ```html
 <View>
-  <Video name="video" value="$video" sync="group_a"/>
+  <Video name="video" value="$video" frameRate="30" sync="group_a"/>
   
   <TimeSeries name="timeseries"
               value="$ts" valueType="json"
@@ -170,7 +179,7 @@ Index-based TimeSeries (no timestamps at X axis).
 
 ```html
 <View>
-  <Video name="video" value="$video" sync="group_a"/>
+  <Video name="video" value="$video" frameRate="30" sync="group_a"/>
   <!-- <Audio name="audio" value="$video" sync="group_a"/> -->
   
   <TimeSeriesLabels name="timelinelabels" toName="accel_timeseries">
