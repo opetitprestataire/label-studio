@@ -34,6 +34,7 @@ TimeSeries (MST model + React container)
 | `canvasWidth`        | `number`            | Cached width in px for correct math |
 | `isPlaying` & co.    | …                   | Playback loop state |
 | `cursorcolor`        | `string`            | Hex/colour string for playhead |
+| `suppressSync`       | `boolean`           | Temporarily disable sync events (during overview drag) |
 
 Native units = *ms* when `timeformat` is a date, otherwise raw numeric indices/seconds.
 
@@ -50,6 +51,7 @@ The **SyncableMixin** provides a small intra-tab message bus.
 * Outgoing events are emitted via `syncSend`:
   * Overview brush drag → `emitSeekSync()` (fires on `updateTR`).
   * Manual click on main plot → handled in `handleMainAreaClick`.
+  * **Note**: Overview dragging temporarily sets `suppressSync = true` to prevent cursor jumps.
 * Incoming events call `_handleSeek`, `_handlePlay`, `_handlePause` which in turn
   * move cursor (`cursorTime`),
   * optionally restart playback loop,
@@ -85,6 +87,12 @@ Identical logic but uses scaled brush coordinate.
 * If click time is **inside** `brushRange` we call `setCursor(time)` – only cursor moves.
 * If outside – `_updateViewForTime` recentres view and may emit sync.
 
+### 3.5 Overview dragging behavior
+* When user starts dragging the overview brush (`brushstarted`), `suppressSync` is set to `true`.
+* This prevents `emitSeekSync()` from firing during the drag, keeping cursor fixed.
+* On `brushended`, `suppressSync` is reset to `false` (with 0ms delay to let range settle).
+* Result: dragging overview changes viewport without moving playhead or syncing with video/audio.
+
 ---
 
 ## 4. Important actions
@@ -95,6 +103,7 @@ Identical logic but uses scaled brush coordinate.
 | `setCursorAndSeek(t)`  | Update both `cursorTime` & `seekTo` (internal only) |
 | `setCursor(t)`         | Update only `cursorTime` (no brush movement) |
 | `_updateViewForTime(t)`| Convert time → pixels & adjust brush + cursor |
+| `setSuppressSync(flag)`| Temporarily disable sync emissions |
 
 ---
 
