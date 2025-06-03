@@ -1171,10 +1171,7 @@ const Overview = observer(({ item, data, series }) => {
       cursorLine.current.style("display", "none");
       return;
     }
-    cursorLine.current
-      .attr("x1", pos)
-      .attr("x2", pos)
-      .style("display", "block");
+    cursorLine.current.attr("x1", pos).attr("x2", pos).style("display", "block");
   }, [item.cursorTime, width]);
 
   item.regs.map((r) => fixMobxObserve(r.start, r.end, r.selected, r.hidden, r.style?.fillcolor));
@@ -1235,8 +1232,7 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
     const [minKey, maxKey] = item.keysRange;
     const finalTime = Math.max(minKey, Math.min(timeClicked, maxKey));
 
-    const insideView =
-      item.brushRange && finalTime >= item.brushRange[0] && finalTime <= item.brushRange[1];
+    const insideView = item.brushRange && finalTime >= item.brushRange[0] && finalTime <= item.brushRange[1];
 
     if (insideView) {
       // Just move cursor without changing brush range
@@ -1247,7 +1243,7 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
     }
 
     if (isFF(FF_TIMESERIES_SYNC)) {
-      const referenceTime = insideView ? finalTime : item.centerTime ?? finalTime;
+      const referenceTime = insideView ? finalTime : (item.centerTime ?? finalTime);
       let relativeTime;
       if (item.isDate) {
         relativeTime = (referenceTime - minKey) / 1000;
