@@ -122,6 +122,8 @@ const Model = types
     playbackSpeed: 1,
     // Cursor position in native units (same units as keysRange). Used for visual playhead.
     cursorTime: null,
+    // Suppress sync while user drags overview
+    suppressSync: false,
   }))
   .views((self) => ({
     get regionsTimeRanges() {
@@ -371,6 +373,13 @@ const Model = types
 
     resetSeekTo() {
       self.seekTo = null;
+    },
+
+    /**
+     * Suppress sync while user drags overview
+     */
+    setSuppressSync(flag) {
+      self.suppressSync = flag;
     },
 
     /**
@@ -844,6 +853,7 @@ const Model = types
     emitSeekSync() {
       if (!isAlive(self)) return;
       if (!isFF(FF_TIMESERIES_SYNC)) return;
+      if (self.suppressSync) return;
 
       const centerTime = self.centerTime; // centerTime is in NATIVE units (ms if isDate, else seconds/indices)
       if (centerTime !== null && self.sync && !self.isPlaying) {
@@ -942,6 +952,9 @@ const Overview = observer(({ item, data, series }) => {
     } else {
       startX = null;
     }
+
+    // Suppress sync while user drags overview
+    item.setSuppressSync(true);
   }
 
   function brushed() {
@@ -1010,6 +1023,9 @@ const Overview = observer(({ item, data, series }) => {
       if (moved[1] > width) moved = [width - half * 2, width];
       gb.current.call(brush.move, moved);
     }
+
+    // Re-enable sync after drag ends (next tick to let range settle)
+    setTimeout(() => item.setSuppressSync(false), 0);
   }
 
   const brush = d3
