@@ -116,6 +116,8 @@ const Model = types
     playStartPosition: null,
     animationFrameId: null,
     playbackSpeed: 1,
+    // Cursor position in native units (same units as keysRange). Used for visual playhead.
+    cursorTime: null,
   }))
   .views((self) => ({
     get regionsTimeRanges() {
@@ -805,6 +807,9 @@ const Model = types
       if (Number.isFinite(newTimeStartNative) && Number.isFinite(newTimeEndNative)) {
         self.updateTR([newTimeStartNative, newTimeEndNative], self.scale); // updateTR expects native units
         self.seekTo = boundedTime; // seekTo stores native units
+
+        // Update persistent cursor position for rendering playhead
+        self.cursorTime = boundedTime;
       }
     },
 
@@ -1180,12 +1185,19 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
     const [minKey, maxKey] = item.keysRange;
     const finalTime = Math.max(minKey, Math.min(timeClicked, maxKey));
 
+    // First update the local view so cursor/playheads move instantly and center is recalculated
+    if (typeof item._updateViewForTime === "function") {
+      item._updateViewForTime(finalTime);
+    }
+
     if (isFF(FF_TIMESERIES_SYNC)) {
+      // Use the updated cursorTime (center of view) to compute relative seconds
+      const centerNative = item.cursorTime ?? finalTime;
       let relativeTime;
       if (item.isDate) {
-        relativeTime = (finalTime - minKey) / 1000;
+        relativeTime = (centerNative - minKey) / 1000;
       } else {
-        relativeTime = finalTime - minKey;
+        relativeTime = centerNative - minKey;
       }
       item.syncSend({ time: relativeTime }, "seek");
     }
