@@ -35,7 +35,12 @@ There are two types of configurations, and configuration you use determines how 
 * Maintains precise temporal alignment with media, any custom sampling rate
 * Examples: 
   * 30s in video = 30s from start in time series
-  * If the time series starts at the 5th second, it will serve as the starting point for other media. Therefore, the `0` second of the video will begin at the 5th second of the time series, and this offset will always be applied.
+  * **Offset behaviour:** The very first timestamp in the time-series is treated as *t = 0* for every synced media.  
+    For example, if the earliest sample in the CSV is at absolute 5 s, then:
+    - `timeSeries[0]` = **5 s** (absolute) → considered **0 s** in sync space.  
+    - When you click at 2 s on the time-series, the video will seek to *5 s + 2 s = 7 s* of real video time.  
+    - Conversely, seeking to 0 s in the video will position the playhead at the first time-series sample (5 s absolute).
+    This constant offset is applied in every direction (seek / play / pause) and guarantees perfect alignment regardless of how the raw clocks are shifted.
 
 To specify a time-based time series, use the following format:
   
@@ -104,6 +109,7 @@ Index-based TimeSeries (no timestamps at X axis).
               value="$ts" valueType="json"
               sync="group_a" sep=","
               overviewWidth="10%"
+              fixedScale="true"
               >
     <Channel column="value" strokeColor="#FF0000"/>
     <Channel column="value" strokeColor="#00FF00"/>
@@ -195,6 +201,7 @@ Index-based TimeSeries (no timestamps at X axis).
               timeFormat="%H:%M:%S.%f"
               timeDisplayFormat="%H:%M:%S.%f"
               overviewWidth="10%"
+              fixedScale="true"
   >
     <Channel column="accel_x" strokeColor="#FF0000" height="100"/>
     <Channel column="accel_y" strokeColor="#00FF00" height="100"/>
@@ -208,6 +215,7 @@ Index-based TimeSeries (no timestamps at X axis).
               timeFormat="%H:%M:%S.%f"
               timeDisplayFormat="%H:%M:%S.%f"
               overviewWidth="10%"
+              fixedScale="true"
   >
     <Channel column="gyro_x" strokeColor="#0000FF" height="100"/>
     <Channel column="gyro_y" strokeColor="#FF00FF" height="100"/>
