@@ -9,6 +9,11 @@ type TaskSummaryProps = {
   store: MSTStore["annotationStore"];
 };
 
+interface Annotation {
+  id: string | number;
+  type: "annotation" | "prediction";
+}
+
 const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryProps) => {
   const task = annotationStore.store.task;
   const data = task.dataObj;
@@ -16,7 +21,7 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
   const annotations = all.filter((a) => a.pk);
   const allTags = [...annotationStore.names];
 
-  const onSelect = (entity: MSTAnnotation) => {
+  const onSelect = (entity: Annotation) => {
     if (entity.type === "annotation") {
       annotationStore.selectAnnotation(entity.id);
     } else {
