@@ -860,7 +860,7 @@ class ChannelD3 extends React.Component {
       .attr("class", "playhead")
       .attr("y1", 0)
       .attr("y2", this.height)
-      .attr("stroke", "#1e90ff") // blue color
+      .attr("stroke", this.props.item.parent?.cursorcolor || "#1e90ff")
       .attr("stroke-width", 2)
       .attr("pointer-events", "none")
       .style("display", "none");

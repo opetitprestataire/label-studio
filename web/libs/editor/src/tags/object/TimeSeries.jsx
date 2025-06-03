@@ -62,6 +62,7 @@ import { FF_TIMESERIES_SYNC, isFF } from "../../utils/feature-flags";
  * @param {string} value Key used to look up the data, either URLs for your time-series if valueType=url, otherwise expects JSON
  * @param {url|json} [valueType=url] Format of time series data provided. If set to "url" then Label Studio loads value references inside `value` key, otherwise it expects JSON.
  * @param {string} [sync] Object name to sync with.
+ * @param {string} [cursorColor] Color of the playback cursors used in sync (hex or any SVG-compatible color string)
  * @param {string} [timeColumn] Column name or index that provides temporal values. If your time series data has no temporal column then one is automatically generated.
  * @param {string} [timeFormat] Pattern used to parse values inside timeColumn, parsing is provided by d3, and follows `strftime` implementation
  * @param {string} [timeDisplayFormat] Format used to display temporal value. Can be a number or a date. If a temporal column is a date, use strftime to format it. If it's a number, use [d3 number](https://github.com/d3/d3-format#locale_format) formatting.
@@ -89,6 +90,9 @@ const TagAttrs = types.model({
   // visibilitycontrols: types.optional(types.boolean, false), // show channel visibility controls
   hotkey: types.maybeNull(types.string),
   sync: types.maybeNull(types.string),
+
+  // Color of the playback cursors (hex or any SVG-compatible color string)
+  cursorcolor: types.optional(types.string, "#1e90ff"),
 });
 
 const Model = types
@@ -367,6 +371,21 @@ const Model = types
 
     resetSeekTo() {
       self.seekTo = null;
+    },
+
+    /**
+     * Update cursorTime & seekTo without changing view.
+     */
+    setCursorAndSeek(time) {
+      self.cursorTime = time;
+      self.seekTo = time;
+    },
+
+    /**
+     * Update cursorTime only (no brush move).
+     */
+    setCursor(time) {
+      self.cursorTime = time;
     },
 
     scrollToRegion(r) {
@@ -903,6 +922,7 @@ const Overview = observer(({ item, data, series }) => {
   const gChannels = React.useRef();
   const gAxis = React.useRef();
   const gb = React.useRef();
+  const cursorLine = React.useRef();
 
   const scale = item.isDate ? d3.scaleTime() : d3.scaleLinear();
   const x = scale.domain(d3.extent(data[idX])).range([0, width]);
@@ -1073,6 +1093,17 @@ const Overview = observer(({ item, data, series }) => {
     // give a bit more space for brush moving
     gb.current.select(".handle--w").style("transform", "translate(-1px, 0)");
     gb.current.select(".handle--e").style("transform", "translate(1px, 0)");
+
+    // Playhead cursor line
+    cursorLine.current = focus.current
+      .append("line")
+      .attr("class", "overview-playhead")
+      .attr("y1", 0)
+      .attr("y2", focusHeight)
+      .attr("stroke", item.cursorcolor || "#1e90ff")
+      .attr("stroke-width", 2)
+      .attr("pointer-events", "none")
+      .style("display", "none");
   }, [node]);
 
   React.useEffect(() => {
@@ -1126,6 +1157,25 @@ const Overview = observer(({ item, data, series }) => {
       item.resetSeekTo(); // Use the action instead of direct modification
     }
   }, [item.seekTo, width]);
+
+  // Update playhead position on cursorTime or width changes
+  React.useEffect(() => {
+    if (!cursorLine.current) return;
+    const time = item.cursorTime;
+    if (time === null || !Number.isFinite(time)) {
+      cursorLine.current.style("display", "none");
+      return;
+    }
+    const pos = x(time);
+    if (!Number.isFinite(pos)) {
+      cursorLine.current.style("display", "none");
+      return;
+    }
+    cursorLine.current
+      .attr("x1", pos)
+      .attr("x2", pos)
+      .style("display", "block");
+  }, [item.cursorTime, width]);
 
   item.regs.map((r) => fixMobxObserve(r.start, r.end, r.selected, r.hidden, r.style?.fillcolor));
 
@@ -1185,19 +1235,24 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
     const [minKey, maxKey] = item.keysRange;
     const finalTime = Math.max(minKey, Math.min(timeClicked, maxKey));
 
-    // First update the local view so cursor/playheads move instantly and center is recalculated
-    if (typeof item._updateViewForTime === "function") {
+    const insideView =
+      item.brushRange && finalTime >= item.brushRange[0] && finalTime <= item.brushRange[1];
+
+    if (insideView) {
+      // Just move cursor without changing brush range
+      item.setCursor(finalTime);
+    } else if (typeof item._updateViewForTime === "function") {
+      // Re-center only when outside current view
       item._updateViewForTime(finalTime);
     }
 
     if (isFF(FF_TIMESERIES_SYNC)) {
-      // Use the updated cursorTime (center of view) to compute relative seconds
-      const centerNative = item.cursorTime ?? finalTime;
+      const referenceTime = insideView ? finalTime : item.centerTime ?? finalTime;
       let relativeTime;
       if (item.isDate) {
-        relativeTime = (centerNative - minKey) / 1000;
+        relativeTime = (referenceTime - minKey) / 1000;
       } else {
-        relativeTime = centerNative - minKey;
+        relativeTime = referenceTime - minKey;
       }
       item.syncSend({ time: relativeTime }, "seek");
     }
