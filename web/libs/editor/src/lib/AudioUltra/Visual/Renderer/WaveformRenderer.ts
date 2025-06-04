@@ -44,7 +44,7 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
     this.rateLimitedRenderer = new RateLimitedRenderer();
   }
 
-  init(context: RenderContext, audio: WaveformAudio): void {
+  init(_context: RenderContext, audio: WaveformAudio): void {
     this.audio = audio;
   }
 
@@ -229,7 +229,14 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
     layer.restore();
   }
 
-  renderChunk(chunk: Float32Array, layer: Layer, height: number, offset: number, zero: number, context: RenderContext) {
+  renderChunk(
+    chunk: Float32Array,
+    layer: Layer,
+    height: number,
+    offset: number,
+    zero: number,
+    _context: RenderContext,
+  ) {
     layer.save();
     const renderable = averageMinMax(chunk);
     const amp = this.config.amp ?? 1;

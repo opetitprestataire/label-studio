@@ -49,9 +49,9 @@ export function downsampleLog(fftData: Float32Array, bins: number): Float32Array
     // Clamp to valid range
     startF = Math.max(0, startF);
     endF = Math.max(startF + 1, endF); // Ensure at least one bin
-    let sum = 0,
-      max = Number.NEGATIVE_INFINITY,
-      count = 0;
+    let sum = 0;
+    let max = Number.NEGATIVE_INFINITY;
+    let count = 0;
     for (let j = startF; j < endF && j < binCount; j++) {
       sum += fftData[j];
       max = Math.max(max, fftData[j]);

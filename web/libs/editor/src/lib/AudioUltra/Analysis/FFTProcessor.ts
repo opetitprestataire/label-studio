@@ -45,7 +45,7 @@ export class FFTProcessor {
       this.fftInputBuffer = new Float32Array(this.options.fftSamples);
       // webfft might need interleaved input (real, imag, real, imag, ...)
       this.fftInterleavedInputBuffer = new Float32Array(this.options.fftSamples * 2);
-    } catch (error) {
+    } catch (_error) {
       this.webfftInstance = null;
       this.fftInputBuffer = null;
       this.fftInterleavedInputBuffer = null;

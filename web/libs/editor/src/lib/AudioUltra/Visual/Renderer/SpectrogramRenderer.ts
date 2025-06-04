@@ -115,7 +115,7 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
         this.renderProgress(progress);
         this.onRenderTransfer?.();
       },
-      onBatchComplete: (batchId, metadata) => {
+      onBatchComplete: (_batchId, metadata) => {
         if (!metadata) return;
         if (
           metadata.type === "current-view-partial" &&
@@ -310,7 +310,7 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
         this.redrawSpectrogramFromCache("delta-0");
       }
     } catch (error) {
-      console.warn("Error during spectrogram sync/schedule phase:" + error);
+      console.warn(`Error during spectrogram sync/schedule phase:${error}`);
     }
 
     for (const plugin of this.plugins) {
@@ -377,7 +377,6 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
           yTop = zero + channelHeight * (1 - (i + 1) / binCount);
           binHeight = channelHeight / binCount;
           break;
-        case "mel":
         default:
           yBottom = zero + channelHeight * (1 - i / binCount);
           yTop = zero + channelHeight * (1 - (i + 1) / binCount);
@@ -532,7 +531,7 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
       return Math.max(1, Math.floor(this.fftSamples / this.spectrogramHopFactor));
     }
     const fftSamples = this.fftProcessor.fftSamples;
-    const baseHopSize = Math.max(1, Math.floor(fftSamples / this.spectrogramHopFactor));
+    const _baseHopSize = Math.max(1, Math.floor(fftSamples / this.spectrogramHopFactor));
     const samplesPerPx = this.lastRenderContext.samplesPerPx;
     const width = this.lastRenderContext.width;
     const dataLength = this.audio?.dataLength ?? 0;
@@ -594,7 +593,7 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     this.redrawSpectrogramSliceFromCache(correlationId, iStart, iEnd);
   }
 
-  public redrawSpectrogramSliceFromCache(correlationId: string | undefined, startSample: number, endSample: number) {
+  public redrawSpectrogramSliceFromCache(_correlationId: string | undefined, startSample: number, endSample: number) {
     if (!this.lastRenderContext || this.isDestroyed || !this.spectrogram?.isVisible || !this.audio) return;
 
     if (this.spectrogramDrawing) return console.warn("redrawSpectrogramSliceFromCache already running.");

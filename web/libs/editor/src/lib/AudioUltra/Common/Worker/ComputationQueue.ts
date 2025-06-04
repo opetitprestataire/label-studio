@@ -25,7 +25,7 @@ export interface ComputationProgress {
 }
 
 // Queue options for initialization
-export interface ComputationQueueOptions<T = any> {
+export interface ComputationQueueOptions<_T = any> {
   onCleared?: () => void | Promise<void>;
   onProgress?: (progress: DetailedComputationProgress) => void | Promise<void>; // New signature
   onBatchComplete?: (batchId: string, metadata: any) => void;
@@ -242,7 +242,7 @@ export class ComputationQueue<T = any> {
    * @param id Task identifier
    * @returns True if the task is pending
    */
-  public hasTask(id: string): boolean {
+  public hasTask(_id: string): boolean {
     // No direct hasTask, but we can check if any batch contains the task
     // For now, just check if there are pending tasks
     return this.highWorker.hasPendingTasks() || this.normalWorker.hasPendingTasks() || this.lowWorker.hasPendingTasks();

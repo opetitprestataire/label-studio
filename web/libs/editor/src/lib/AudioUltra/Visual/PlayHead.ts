@@ -155,7 +155,7 @@ export class Playhead extends Events<PlayheadEvents> {
     ctx.restore();
   }
 
-  updatePositionFromTime(time: number, renderVisible = false, useClamp = true) {
+  updatePositionFromTime(time: number, _renderVisible = false, useClamp = true) {
     const newX = (time / this.wf.duration - this.scroll) * this.fullWidth;
     const x = useClamp ? clamp(newX, 0, this.fullWidth) : newX;
 

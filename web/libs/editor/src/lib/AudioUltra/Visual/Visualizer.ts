@@ -363,7 +363,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.wrapper.scrollLeft = clamped * this.fullWidth;
   }
 
-  _setScrollLeft(value: number, redraw = true) {
+  _setScrollLeft(value: number, _redraw = true) {
     const maxScroll = this.scrollWidth / this.fullWidth;
     this.scrollLeft = clamp(value, 0, maxScroll);
     this.draw();
@@ -654,7 +654,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     }
 
     this.invoke("layerAdded", [layer]);
-    layer.on("layerUpdated", (layer) => {
+    layer.on("layerUpdated", (_layer) => {
       const mainLayer = this.getLayer("main");
       this.setContainerHeight();
 
@@ -757,7 +757,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.wrapper.addEventListener("click", this.handleSeek);
     this.wrapper.addEventListener("mousedown", this.handleMouseDown);
 
-    this.wrapper.addEventListener("scroll", (e) => {
+    this.wrapper.addEventListener("scroll", (_e) => {
       const scrollLeft = this.wrapper.scrollLeft / this.fullWidth;
       this.wf.invoke("scroll", [scrollLeft]);
       this._setScrollLeft(scrollLeft);
@@ -1087,10 +1087,9 @@ export class Visualizer extends Events<VisualizerEvents> {
     if (this.splitChannels) {
       // Each channel gets an equal split of the spectrogram area
       return totalAvailableHeight / channelCount;
-    } else {
-      // Spectrogram uses the full height when not split
-      return totalAvailableHeight;
     }
+    // Spectrogram uses the full height when not split
+    return totalAvailableHeight;
   }
 
   setAmp(amp: number) {

@@ -70,7 +70,7 @@ export class MelBanks {
    * Converts Mel scale value back to frequency in Hz.
    */
   private melToHz(mel: number): number {
-    return 700 * (Math.pow(10, mel / 2595) - 1);
+    return 700 * (10 ** (mel / 2595) - 1);
   }
 
   /**

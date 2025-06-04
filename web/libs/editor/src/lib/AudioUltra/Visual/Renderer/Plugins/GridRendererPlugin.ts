@@ -70,7 +70,7 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
   /**
    * RendererPlugin interface: store audio and state.
    */
-  public init(audio: WaveformAudio, state: RenderContext): void {
+  public init(audio: WaveformAudio, _state: RenderContext): void {
     this.audio = audio;
     this.gridNeedsRedraw = true;
   }
@@ -120,7 +120,7 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
     const labelBgColor = colorMapper.magnitudeToColor(0);
     const labelColor = colorMapper.magnitudeToColor(1);
     const labelPadding = 2;
-    const pixelRatio = this.layer["pixelRatio"] ?? 1;
+    const pixelRatio = this.layer.pixelRatio ?? 1;
     this.layer.clear();
     this.layer.save();
     ctx.font = `${fontSize * pixelRatio}px sans-serif`;
@@ -145,7 +145,7 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
       const decades = Math.floor(Math.log10(nyquist)) - 1;
       for (let d = 1; d <= decades; d++) {
         for (const m of [1, 2, 5]) {
-          const f = m * Math.pow(10, d);
+          const f = m * 10 ** d;
           if (f > nyquist) break;
           gridFreqs.push(f);
         }
@@ -154,8 +154,8 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
       if (gridFreqs[gridFreqs.length - 1] !== nyquist) gridFreqs.push(nyquist);
     } else if (scale === "mel") {
       const mel = (f: number) => 2595 * Math.log10(1 + f / 700);
-      const invMel = (m: number) => 700 * (Math.pow(10, m / 2595) - 1);
-      const melMax = mel(nyquist);
+      const _invMel = (m: number) => 700 * (10 ** (m / 2595) - 1);
+      const _melMax = mel(nyquist);
       const melGridPoints = [0, 500, 1000, 2000, 4000, 8000, 12000, 16000];
       const specificMelFreqs = melGridPoints.filter((f) => f <= nyquist);
       // Ensure 0Hz is present for Mel scale if not already by melGridPoints filter for f <= nyquist
@@ -229,7 +229,8 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
       const rectWidth = (textMetrics.width + rectPaddingX * 2) / pixelRatio;
       const rectHeight = fontSize + rectPaddingY * 2;
       const rectX = textX - rectPaddingX;
-      let rectY: number, textY: number;
+      let rectY: number;
+      let textY: number;
 
       if (scale === "linear" && freq === 0) {
         rectY = y - rectHeight;

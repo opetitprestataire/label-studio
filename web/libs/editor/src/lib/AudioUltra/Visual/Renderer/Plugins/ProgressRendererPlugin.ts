@@ -127,7 +127,11 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
    * Render the progress overlay. Accepts optional progress data.
    */
   public renderProgress(progress?: DetailedComputationProgress) {
-    if (progress == undefined || progress.overall.overallPercentage == 100 || progress.overall.overallPercentage == 0) {
+    if (
+      progress === undefined ||
+      progress.overall.overallPercentage === 100 ||
+      progress.overall.overallPercentage === 0
+    ) {
       this._hideProgressOverlay();
       return;
     }
@@ -191,10 +195,10 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
     text.style.marginBottom = "1px";
 
     if (cachingTotal === 0) {
-      let fftCacheCount = 0;
+      let _fftCacheCount = 0;
       if (fftCache) {
         for (const channelMap of fftCache.values()) {
-          fftCacheCount += channelMap.size;
+          _fftCacheCount += channelMap.size;
         }
       }
       text.textContent = `${this.labels?.cached || "Cached"}`;
@@ -223,7 +227,7 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
    * Create the per-priority bars (VIEW, PRECACHE).
    */
   private _createPriorityBars(batchGroups: Record<string, BatchProgress[]>): HTMLElement {
-    const cfg = this.config;
+    const _cfg = this.config;
     const colorMapper = this.colorMapper;
     const container = document.createElement("div");
     const priorities: { key: string; color: string; label: string }[] = [
@@ -234,9 +238,9 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
     for (const { key, color, label } of priorities) {
       const batches = batchGroups[key] || [];
       const batchCount = batches.length;
-      let completedTasks = 0,
-        activeTasks = 0,
-        totalTasks = 0;
+      let completedTasks = 0;
+      let activeTasks = 0;
+      let totalTasks = 0;
       batches.forEach((batch) => {
         completedTasks += batch.completedTasks;
         activeTasks += batch.activeTasks;
@@ -330,7 +334,7 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
    * Ensure the overlay container exists and is styled.
    */
   private _ensureProgressOverlay(): HTMLDivElement {
-    const cfg = this.config;
+    const _cfg = this.config;
     let overlay = this.container.querySelector("#spectrogram-progress-overlay") as HTMLDivElement;
     if (!overlay) {
       overlay = document.createElement("div");
@@ -376,14 +380,14 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
   /**
    * RendererPlugin interface: init method.
    */
-  public init(audio: WaveformAudio, state: RenderContext): void {
+  public init(_audio: WaveformAudio, _state: RenderContext): void {
     this.renderProgress();
   }
 
   /**
    * RendererPlugin interface: render method.
    */
-  public render(state: RenderContext): void {
+  public render(_state: RenderContext): void {
     this.renderProgress();
   }
 
