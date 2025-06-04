@@ -93,6 +93,7 @@ export const GridDataGroup = observer(({ type, value, field, row, columnCount, h
 
 export const GridCell = observer(({ view, selected, row, fields, onClick, columnCount, ...props }) => {
   const { setCurrentTaskId, imageField, hasImage } = useContext(GridViewContext);
+  const responsive = !view.gridFitImageToWidth;
 
   const handleBodyClick = useCallback(
     (e) => {
@@ -117,7 +118,7 @@ export const GridCell = observer(({ view, selected, row, fields, onClick, column
           name="cell-body"
           rawClassName={cnm({ "overflow-auto": !hasImage })}
           onClick={handleBodyClick}
-          mod={{ responsive: view.gridResponsiveImage }}
+          mod={{ responsive }}
         >
           <GridBody view={view} row={row} fields={fields} columnCount={columnCount} />
         </Elem>
