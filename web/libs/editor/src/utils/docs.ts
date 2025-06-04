@@ -26,4 +26,4 @@ export function getDocsUrl(pathOSS: string, pathEnterprise?: string): string {
   const base = isEnterprise ? "https://docs.humansignal.com/" : "https://labelstud.io/";
   const path = isEnterprise && pathEnterprise ? pathEnterprise : pathOSS;
   return base.replace(/\/$/, "") + "/" + path.replace(/^\//, "");
-} 
+}

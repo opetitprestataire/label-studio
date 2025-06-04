@@ -108,7 +108,15 @@ const OutlinerEmptyState = () => (
   <EmptyState
     icon={<IconLsLabeling width={24} height={24} />}
     header="Labeled regions will appear here"
-    description={<><span>Start labeling and track your results<br />using this panel</span></>}
+    description={
+      <>
+        <span>
+          Start labeling and track your results
+          <br />
+          using this panel
+        </span>
+      </>
+    }
     learnMore={{ href: getDocsUrl("guide/labeling"), text: "Learn more", trackId: "regions-panel-learn-more" }}
   />
 );

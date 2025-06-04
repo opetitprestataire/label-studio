@@ -107,7 +107,7 @@ const HistoryEmptyState = () => (
   <EmptyState
     icon={<IconHistoryRewind width={24} height={24} />}
     header="View annotation activity"
-    description={<>See a log of user actions for this annotation</>}    
+    description={<>See a log of user actions for this annotation</>}
   />
 );
 

@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { IconExternal } from "@humansignal/ui";
 
 interface EmptyStateProps {
@@ -31,12 +31,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon, header, descriptio
         {icon}
       </div>
       <div className="flex flex-col items-center w-full gap-1">
-        <div className="font-medium text-body-medium leading-tight text-center text-neutral-content">
-          {header}
-        </div>
-        <div className="text-body-small text-neutral-content-subtler text-center w-full">
-          {description}
-        </div>
+        <div className="font-medium text-body-medium leading-tight text-center text-neutral-content">{header}</div>
+        <div className="text-body-small text-neutral-content-subtler text-center w-full">{description}</div>
       </div>
       {learnMore && !isWhiteLabel && (
         <div className="flex justify-center items-center w-full pt-tight mt-tight">
@@ -45,7 +41,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon, header, descriptio
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-body-small text-primary-link hover:underline"
-            {...(learnMore.trackId ? { 'data-track-id': learnMore.trackId } : {})}
+            {...(learnMore.trackId ? { "data-track-id": learnMore.trackId } : {})}
           >
             {learnMore.text}
             <IconExternal width={16} height={16} className="ml-1" />
@@ -54,4 +50,4 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon, header, descriptio
       )}
     </div>
   );
-}; 
+};
