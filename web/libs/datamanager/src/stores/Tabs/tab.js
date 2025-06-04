@@ -290,7 +290,7 @@ export const Tab = types
       self.save();
     },
 
-    setgridFitImageToWidth(responsive) {
+    setGridFitImageToWidth(responsive) {
       self.gridFitImageToWidth = responsive;
       self.save();
     },
