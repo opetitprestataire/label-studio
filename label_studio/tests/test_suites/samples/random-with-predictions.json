@@ -1,35 +1,5 @@
 [
   {
-    "_description": {
-      "purpose": "Sample test data for time series labeling with pre-generated predictions",
-      "use_case": "Testing time series annotation workflows, prediction import, and activity recognition models",
-      "data_type": "Time series CSV data with labeled time segments",
-      "predictions": [
-        {
-          "activity": "Run",
-          "time_range": "0-40 seconds", 
-          "confidence": 0.95,
-          "description": "High confidence prediction for running activity"
-        },
-        {
-          "activity": "Walk", 
-          "time_range": "60-91 seconds",
-          "confidence": 0.85,
-          "description": "Good confidence prediction for walking activity"
-        }
-      ],
-      "data_source": "External CSV file containing time series sensor data",
-      "label_config_type": "TimeSeries with TimeSeriesLabels control",
-      "testing_scenarios": [
-        "Import tasks with existing predictions",
-        "Validate prediction format and structure", 
-        "Test time series labeling interface",
-        "Verify prediction confidence scoring",
-        "Check external data source linking"
-      ]
-    }
-  },
-  {
     "predictions": [
       {
         "result": [
