@@ -35,7 +35,7 @@ export const GridWidthButton = injector(({ view, isGrid, gridWidth, fitImageToWi
 
   const handleResponsiveImagesToggle = useCallback(
     (e) => {
-      view.setgridFitImageToWidth(e.target.checked);
+      view.setGridFitImageToWidth(e.target.checked);
     },
     [view],
   );
