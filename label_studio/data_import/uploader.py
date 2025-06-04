@@ -132,7 +132,11 @@ def tasks_from_url(file_upload_ids, project, user, url, could_be_tasks_list):
             url, verify=project.organization.should_verify_ssl_certs(), stream=True, headers={'Accept-Encoding': None}
         )
         file_content = response.content
-        check_tasks_max_file_size(int(response.headers['content-length']))
+        try:
+            content_length = int(response.headers.get('content-length', len(file_content)))
+        except (TypeError, ValueError):
+            content_length = len(file_content)
+        check_tasks_max_file_size(content_length)
         file_upload = create_file_upload(user, project, SimpleUploadedFile(filename, file_content))
         if file_upload.format_could_be_tasks_list:
             could_be_tasks_list = True
