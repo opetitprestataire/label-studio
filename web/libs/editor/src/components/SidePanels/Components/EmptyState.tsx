@@ -8,7 +8,7 @@ interface EmptyStateProps {
   learnMore?: {
     href: string;
     text: string;
-    trackId?: string;
+    testId?: string;
   };
 }
 
@@ -41,7 +41,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon, header, descriptio
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-body-small text-primary-link hover:underline"
-            {...(learnMore.trackId ? { "data-track-id": learnMore.trackId } : {})}
+            {...(learnMore.testId ? { "data-testid": learnMore.testId } : {})}
           >
             {learnMore.text}
             <IconExternal width={16} height={16} className="ml-1" />

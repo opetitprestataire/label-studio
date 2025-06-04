@@ -93,7 +93,7 @@ const RelationsTab: FC<any> = inject("store")(
                 learnMore={{
                   href: getDocsUrl("guide/labeling#Add-relations-between-annotations"),
                   text: "Learn more",
-                  trackId: "relations-panel-learn-more",
+                  testId: "relations-panel-learn-more",
                 }}
               />
             )}

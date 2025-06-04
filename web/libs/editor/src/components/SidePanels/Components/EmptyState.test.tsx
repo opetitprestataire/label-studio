@@ -4,7 +4,7 @@ import { EmptyState } from "./EmptyState";
 const icon = <svg data-testid="icon" />;
 const header = "Test Header";
 const description = <>Test description</>;
-const learnMore = { href: "https://docs.example.com", text: "Learn more", trackId: "test-track-id" };
+const learnMore = { href: "https://docs.example.com", text: "Learn more", testId: "test-learn-more-link" };
 
 describe("EmptyState", () => {
   it("renders icon, header, description, and learn more link", () => {
@@ -14,7 +14,7 @@ describe("EmptyState", () => {
     expect(screen.getByText("Test description")).toBeInTheDocument();
     const link = screen.getByRole("link", { name: /learn more/i });
     expect(link).toHaveAttribute("href", learnMore.href);
-    expect(link).toHaveAttribute("data-track-id", learnMore.trackId);
+    expect(link).toHaveAttribute("data-testid", learnMore.testId);
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", expect.stringContaining("noopener"));
   });
@@ -24,7 +24,7 @@ describe("EmptyState", () => {
     expect(screen.queryByRole("link", { name: /learn more/i })).not.toBeInTheDocument();
   });
 
-  it("does not render data-track-id if not provided", () => {
+  it("does not render data-testid if not provided", () => {
     render(
       <EmptyState
         icon={icon}
@@ -34,7 +34,7 @@ describe("EmptyState", () => {
       />,
     );
     const link = screen.getByRole("link", { name: /learn more/i });
-    expect(link).not.toHaveAttribute("data-track-id");
+    expect(link).not.toHaveAttribute("data-testid");
   });
 
   it("hides learn more link in whitelabel mode", () => {
