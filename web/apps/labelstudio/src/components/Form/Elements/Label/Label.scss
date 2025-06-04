@@ -33,6 +33,7 @@
   &__label {
     display: flex;
     align-items: center;
+    white-space: pre-line;
   }
 
   &_size_large &__text {
