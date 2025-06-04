@@ -109,6 +109,7 @@ The following table lists the agreement metrics available in Label Studio Enterp
 | [Intersection over 1D timeseries spans](#Intersection-over-one-dimension-example) | TimeSeriesLabels | Time Series | Evaluates whether two given one-dimensional time series spans have points in common. |
 | [Exact matching pairwise comparison](#Exact-matching-choices-example) | Pairwise | Comparison | Evaluates whether the results exactly match. | 
 | [Exact matching rating](#Exact-matching-choices-example) | Rating | Evaluation, Rating | Evaluates the ratings assigned to tasks exactly match. |
+| [IOU distance for brushes](#Intersection-over-Union-example) | BrushLabels | Computer Vision, Object Detection | Evaluates the overlap compared to the union (IOU) of two brush mask regions. |
 
 ### Basic matching function
 
@@ -122,7 +123,7 @@ Performs the default evaluation function for each control tag. For example for `
 | BrushLabels      | IOU distance for brushes           |
 | Choices          | Exact match                        |
 | DateTime         | Exact match                        |
-| EllipseLabels    | Naive                              |
+| EllipseLabels    | Naive*                             |
 | HyperTextLabels  | Intersection over HTML Spans       |
 | KeyPointLabels   | Distance between keypoints         |
 | Labels           | 1D region intersection             |
@@ -133,15 +134,16 @@ Performs the default evaluation function for each control tag. For example for `
 | Ranker           | Average precision                  |
 | Rating           | Exact match                        |
 | RectangleLabels  | IOU over bounding boxes            |
-| Relations        | Naive                              |
+| Relations        | Naive*                             |
 | Region           | 1D region intersection no labels   |
-| Shortcut         | Naive                              |
+| Shortcut         | Naive*                             |
 | Taxonomy         | Common subtree matches (IOU)       |
-| TextArea         | Levenshtein Edit Distance          |
+| TextArea         | Levenshtein edit distance          |
 | TimeSeriesLabels | 1D region intersection timeseries  |
-| TimelineLabels   | Unordered naive                    |
+| TimelineLabels   | Naive*                             |
 | VideoRectangle   | IOU                                |
 
+\* Naive -- “Naive” is Label Studio’s simplest pairwise agreement metric, and is essentially a python dictionary equality on the annotations' results.
 
 
 {% enddetails %}
