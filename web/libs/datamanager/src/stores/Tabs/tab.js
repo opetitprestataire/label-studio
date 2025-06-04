@@ -34,7 +34,7 @@ export const Tab = types
     columnsWidth: types.map(types.maybeNull(types.number)),
     columnsDisplayType: types.map(types.maybeNull(types.string)),
     gridWidth: 4,
-    gridFitImageToWidth: false,
+    gridResponsiveImage: false,
 
     enableFilters: false,
     renameMode: false,
@@ -205,7 +205,7 @@ export const Tab = types
         columnsWidth: self.columnsWidth.toPOJO(),
         columnsDisplayType: self.columnsDisplayType.toPOJO(),
         gridWidth: self.gridWidth,
-        gridFitImageToWidth: self.gridFitImageToWidth,
+        gridResponsiveImage: self.gridResponsiveImage,
         semantic_search: self.semantic_search?.toJSON() ?? [],
         threshold: self.threshold?.toJSON(),
       };
@@ -290,8 +290,8 @@ export const Tab = types
       self.save();
     },
 
-    setGridFitImageToWidth(responsive) {
-      self.gridFitImageToWidth = responsive;
+    setGridResponsiveImage(responsive) {
+      self.gridResponsiveImage = responsive;
       self.save();
     },
 

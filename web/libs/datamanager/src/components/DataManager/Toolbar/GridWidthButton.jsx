@@ -15,12 +15,12 @@ const injector = inject(({ store }) => {
     view,
     isGrid: view.type === "grid",
     gridWidth: view?.gridWidth,
-    fitImageToWidth: view?.gridFitImageToWidth,
+    responsiveImage: view?.gridResponsiveImage,
     hasImage,
   };
 });
 
-export const GridWidthButton = injector(({ view, isGrid, gridWidth, fitImageToWidth, hasImage, size }) => {
+export const GridWidthButton = injector(({ view, isGrid, gridWidth, responsiveImage, hasImage, size }) => {
   const [width, setWidth] = useState(gridWidth);
 
   const setGridWidth = useCallback(
@@ -35,7 +35,7 @@ export const GridWidthButton = injector(({ view, isGrid, gridWidth, fitImageToWi
 
   const handleResponsiveImagesToggle = useCallback(
     (e) => {
-      view.setGridFitImageToWidth(e.target.checked);
+      view.setGridResponsiveImage(!e.target.checked);
     },
     [view],
   );
@@ -66,7 +66,7 @@ export const GridWidthButton = injector(({ view, isGrid, gridWidth, fitImageToWi
           {hasImage && (
             <div className="grid grid-cols-[1fr_min-content] gap-base items-center">
               <span>Fit images to width</span>
-              <Toggle checked={fitImageToWidth} onChange={handleResponsiveImagesToggle} />
+              <Toggle checked={!responsiveImage} onChange={handleResponsiveImagesToggle} />
             </div>
           )}
         </div>
