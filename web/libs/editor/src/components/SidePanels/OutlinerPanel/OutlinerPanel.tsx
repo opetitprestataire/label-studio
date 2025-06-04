@@ -6,6 +6,9 @@ import { OutlinerTree } from "./OutlinerTree";
 import { ViewControls } from "./ViewControls";
 import "./OutlinerPanel.scss";
 import { IconInfo } from "@humansignal/icons";
+import { IconLsLabeling } from "@humansignal/ui";
+import { EmptyState } from "../Components/EmptyState";
+import { getDocsUrl } from "../../../utils/docs";
 
 interface OutlinerPanelProps extends PanelProps {
   regions: any;
@@ -22,14 +25,14 @@ OutlinerFFClasses.push("ff_hide_all_regions");
 const OutlinerPanelComponent: FC<OutlinerPanelProps> = ({ regions, ...props }) => {
   const [group, setGroup] = useState();
   const onOrderingChange = useCallback(
-    (value) => {
+    (value: any) => {
       regions.setSort(value);
     },
     [regions],
   );
 
   const onGroupingChange = useCallback(
-    (value) => {
+    (value: any) => {
       regions.setGrouping(value);
       setGroup(value);
     },
@@ -37,7 +40,7 @@ const OutlinerPanelComponent: FC<OutlinerPanelProps> = ({ regions, ...props }) =
   );
 
   const onFilterChange = useCallback(
-    (value) => {
+    (value: any) => {
       regions.setFilteredRegions(value);
     },
     [regions],
@@ -66,21 +69,21 @@ const OutlinerPanelComponent: FC<OutlinerPanelProps> = ({ regions, ...props }) =
 
 const OutlinerStandAlone: FC<OutlinerPanelProps> = ({ regions }) => {
   const onOrderingChange = useCallback(
-    (value) => {
+    (value: any) => {
       regions.setSort(value);
     },
     [regions],
   );
 
   const onGroupingChange = useCallback(
-    (value) => {
+    (value: any) => {
       regions.setGrouping(value);
     },
     [regions],
   );
 
   const onFilterChange = useCallback(
-    (value) => {
+    (value: any) => {
       regions.setFilteredRegions(value);
     },
     [regions],
@@ -100,6 +103,15 @@ const OutlinerStandAlone: FC<OutlinerPanelProps> = ({ regions }) => {
     </Block>
   );
 };
+
+const OutlinerEmptyState = () => (
+  <EmptyState
+    icon={<IconLsLabeling width={24} height={24} />}
+    header="Labeled regions will appear here"
+    description={<><span>Start labeling and track your results<br />using this panel</span></>}
+    learnMore={{ href: getDocsUrl("guide/labeling"), text: "Learn more", trackId: "regions-panel-learn-more" }}
+  />
+);
 
 const OutlinerTreeComponent: FC<OutlinerTreeComponentProps> = observer(({ regions }) => {
   const allRegionsHidden = regions?.regions?.length > 0 && regions?.filter?.length === 0;
@@ -136,7 +148,7 @@ const OutlinerTreeComponent: FC<OutlinerTreeComponentProps> = observer(({ region
           />
         </>
       ) : (
-        <Elem name="empty">Regions not added</Elem>
+        <OutlinerEmptyState />
       )}
     </>
   );
