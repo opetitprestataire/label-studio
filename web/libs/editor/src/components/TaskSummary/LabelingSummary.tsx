@@ -45,11 +45,14 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
           </>
         ),
         cell: cellFn(control, renderers[control.type]),
+        size: 120,
       }),
     );
     columns.unshift({
       header: "Annotation ID",
       accessorKey: "id",
+      size: 200,
+      minSize: 150,
       cell: ({ row }) => {
         const annotation = row.original;
 
@@ -74,34 +77,59 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
     data: annotations,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    columnResizeMode: "onChange",
+    enableColumnResizing: true,
+    defaultColumn: {
+      minSize: 80,
+      maxSize: 800,
+    },
   });
 
   return (
     <div className="overflow-x-auto pb-tight mb-base">
-      <table className="border border-neutral-border rounded-small border-collapse">
-        <thead>
+      <div className="border border-neutral-border rounded-small border-collapse w-full">
+        <div>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="*:text-left *:whitespace-nowrap *:px-4 *:py-2 bg-neutral-surface">
+            <div key={headerGroup.id} className="flex *:flex-shrink-0 *:overflow-hidden *:text-ellipsis *:text-left *:whitespace-nowrap *:px-4 *:py-2 bg-neutral-surface">
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <div
+                  key={header.id}
+                  style={{
+                    width: header.getSize(),
+                    position: 'relative',
+                  }}
+                >
                   {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                </th>
+                  {header.column.getCanResize() && (
+                    <div
+                      onMouseDown={header.getResizeHandler()}
+                      onTouchStart={header.getResizeHandler()}
+                      className={`absolute right-0 top-0 h-full px-[3px] hover:px-[2px] hover:ml-[-1px] w-[1px] hover:w-[3px] cursor-col-resize select-none touch-none bg-neutral-border hover:bg-neutral-border-hover ${
+                        header.column.getIsResizing() ? "bg-neutral-border-hover" : ""
+                      }`}
+                    />
+                  )}
+                </div>
               ))}
-            </tr>
+            </div>
           ))}
-        </thead>
-        <tbody>
+        </div>
+        <div>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="even:bg-neutral-surface [&_td]:align-top">
+            <div key={row.id} className="flex *:flex-shrink-0 *:overflow-hidden *:text-ellipsis even:bg-neutral-surface [&_td]:align-top">
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="px-4 py-2 whitespace-nowrap">
+                <div
+                  key={cell.id}
+                  className="px-4 py-2 whitespace-nowrap"
+                  style={{ width: cell.column.getSize() }}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
+                </div>
               ))}
-            </tr>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   );
 };
