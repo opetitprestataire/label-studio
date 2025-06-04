@@ -90,13 +90,19 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
       <div className="border border-neutral-border rounded-small border-collapse w-full">
         <div>
           {table.getHeaderGroups().map((headerGroup) => (
-            <div key={headerGroup.id} className="flex *:flex-shrink-0 *:overflow-hidden *:text-ellipsis *:text-left *:whitespace-nowrap *:px-4 *:py-2 bg-neutral-surface">
+            <div
+              key={headerGroup.id}
+              className={[
+                "flex *:flex-shrink-0 *:px-4 *:py-2 bg-neutral-surface",
+                "*:overflow-hidden *:text-ellipsis *:text-left *:whitespace-nowrap",
+              ].join(" ")}
+            >
               {headerGroup.headers.map((header) => (
                 <div
                   key={header.id}
                   style={{
                     width: header.getSize(),
-                    position: 'relative',
+                    position: "relative",
                   }}
                 >
                   {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
@@ -104,9 +110,11 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
                     <div
                       onMouseDown={header.getResizeHandler()}
                       onTouchStart={header.getResizeHandler()}
-                      className={`absolute right-0 top-0 h-full px-[3px] hover:px-[2px] hover:ml-[-1px] w-[1px] hover:w-[3px] cursor-col-resize select-none touch-none bg-neutral-border hover:bg-neutral-border-hover ${
+                      className={[
+                        "absolute right-0 top-0 h-full px-[3px] hover:px-[2px] hover:ml-[-1px] w-[1px] hover:w-[3px]",
+                        "cursor-col-resize select-none touch-none bg-neutral-border hover:bg-neutral-border-hover",
                         header.column.getIsResizing() ? "bg-neutral-border-hover" : ""
-                      }`}
+                      ].join(" ")}
                     />
                   )}
                 </div>
@@ -116,13 +124,15 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
         </div>
         <div>
           {table.getRowModel().rows.map((row) => (
-            <div key={row.id} className="flex *:flex-shrink-0 *:overflow-hidden *:text-ellipsis even:bg-neutral-surface [&_td]:align-top">
+            <div
+              key={row.id}
+              className={[
+                "flex *:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top",
+                "*:overflow-hidden *:text-ellipsis",
+              ].join(" ")}
+            >
               {row.getVisibleCells().map((cell) => (
-                <div
-                  key={cell.id}
-                  className="px-4 py-2 whitespace-nowrap"
-                  style={{ width: cell.column.getSize() }}
-                >
+                <div key={cell.id} className="px-4 py-2 whitespace-nowrap" style={{ width: cell.column.getSize() }}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               ))}
