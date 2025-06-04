@@ -18,7 +18,7 @@ const cellFn = (control: ControlTag, render: RendererType) => (props: { row: Row
   const results = annotation.results.filter((result) => result.from_name === control.name);
   const content = !results.length
     ? "-"
-    : (render(results, control) ?? `${results.length} result${results.length > 1 ? "s" : ""}`);
+    : (render?.(results, control) ?? `${results.length} result${results.length > 1 ? "s" : ""}`);
   return content;
 };
 
