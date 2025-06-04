@@ -391,7 +391,7 @@ export class Layer extends Events<LayerEvents> {
         context.globalAlpha = targetOpacity;
       }
     } catch (e) {
-      console.error(`[Layer.drawToRegion] Outer Error:`, e, `Layer: ${this.name}, size: ${this.width}x${this.height}`);
+      console.error("[Layer.drawToRegion] Outer Error:", e, `Layer: ${this.name}, size: ${this.width}x${this.height}`);
     }
   }
 
