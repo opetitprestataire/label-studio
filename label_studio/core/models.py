@@ -52,7 +52,7 @@ class DeletedRow(models.Model):
     Useful for using as backup for deleted rows, in case we need to restore them.
     """
 
-    model = models.CharField(max_length=255)   # tasks.task, projects.project, etc.
+    model = models.CharField(max_length=1024)   # tasks.task, projects.project, etc.
     row_id = models.IntegerField(null=True)   # primary key of the deleted row. task.id, project.id, etc.
     data = JSONField(null=True, blank=True)   # serialized json of the deleted row.
     reason = models.TextField(null=True, blank=True)   # reason for deletion.
@@ -65,14 +65,14 @@ class DeletedRow(models.Model):
     user_id = models.IntegerField(null=True, blank=True)
 
     @classmethod
-    def serialize_and_create(cls, model, **kwargs):
+    def serialize_and_create(cls, model, **kwargs) -> 'DeletedRow':
         data = json.loads(serializers.serialize('json', [model]))[0]
         model = data['model']
         row_id = int(data['pk'])
         return cls.objects.create(model=model, row_id=row_id, data=data, **kwargs)
 
     @classmethod
-    def bulk_serialize_and_create(cls, queryset, **kwargs):
+    def bulk_serialize_and_create(cls, queryset, **kwargs) -> list['DeletedRow']:
         serialized_data = json.loads(serializers.serialize('json', queryset))
         bulk_objects = []
         for data in serialized_data:
