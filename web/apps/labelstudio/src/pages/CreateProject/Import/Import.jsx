@@ -26,13 +26,12 @@ function flatten(nested) {
 
 // Keep in sync with core.settings.SUPPORTED_EXTENSIONS on the BE.
 const supportedExtensions = {
-  text: ["txt"],
-  audio: ["wav", "mp3", "flac", "m4a", "ogg"],
-  video: ["mp4", "webp", "webm"],
-  image: ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"],
+  text: ["txt", "json"],
+  audio: ["flac", "m4a", "mp3", "ogg", "wav"],
+  video: ["mp4", "webm"],
+  image: ["bmp", "gif", "jpg", "jpeg", "png", "svg", "webp"],
   html: ["html", "htm", "xml"],
-  timeSeries: ["csv", "tsv"],
-  pdf: ["pdf"],
+  structuredData: ["csv", "tsv"],
   common: ["csv", "tsv", "txt", "json"],
 };
 const allSupportedExtensions = flatten(Object.values(supportedExtensions));
@@ -83,24 +82,7 @@ function getFiles(files) {
   });
 }
 
-const Footer = () => {
-  return (
-    <Modal.Footer className="import-footer">
-      <IconInfo className={scn(importClass.elem("info-icon"), "mr-1")} width="20" height="20" />
-      <span>
-        See the&nbsp;documentation to{" "}
-        <a target="_blank" href="https://labelstud.io/guide/predictions.html" rel="noreferrer">
-          import preannotated data
-        </a>{" "}
-        or&nbsp;to{" "}
-        <a target="_blank" href="https://labelstud.io/guide/storage.html" rel="noreferrer">
-          sync data from a&nbsp;database or&nbsp;cloud storage
-        </a>
-        .
-      </span>
-    </Modal.Footer>
-  );
-};
+
 
 const Upload = ({ children, sendFiles }) => {
   const [hovered, setHovered] = useState(false);
@@ -327,7 +309,7 @@ export const ImportPage = ({
     if (project?.id !== undefined) {
       loadFilesList().then((files) => {
         if (csvHandling) return;
-        // empirical guess on start if we have some possible tasks list/time series problem
+        // empirical guess on start if we have some possible tasks list/structured data problem
         if (Array.isArray(files) && files.some(({ file }) => /\.[ct]sv$/.test(file))) {
           setCsvHandling("choose");
         }
@@ -392,9 +374,9 @@ export const ImportPage = ({
         <Upload sendFiles={sendFiles} project={project}>
           <div className={scn("flex gap-4 min-h-full", { "justify-center": !showList })}>
             {!showList && (
-              <div className="flex gap-4 justify-center items-start">
-                <label htmlFor="file-input">
-                  <div className={dropzoneClass.elem("content")}>
+                  <div className="flex gap-4 justify-center items-start w-full">
+                  <label htmlFor="file-input" className="w-full">
+                  <div className={`${dropzoneClass.elem("content")} w-full`}>
                     <header>
                       Drag & drop files here
                       <br />
@@ -402,33 +384,53 @@ export const ImportPage = ({
                     </header>
                     <IconFileUpload height="64" className={dropzoneClass.elem("icon")} />
                     <dl>
-                      <dt>Text</dt>
-                      <dd>{supportedExtensions.text.join(", ")}</dd>
+                      <dt>Images</dt>
+                      <dd>{supportedExtensions.image.join(", ")}</dd>
                       <dt>Audio</dt>
                       <dd>{supportedExtensions.audio.join(", ")}</dd>
                       <dt>Video</dt>
-                      <dd>mpeg4/H.264 webp, webm* {/* Keep in sync with supportedExtensions.video */}</dd>
-                      <dt>Images</dt>
-                      <dd>{supportedExtensions.image.join(", ")}</dd>
-                      <dt>HTML</dt>
+                      <dd>{supportedExtensions.video.join(", ")}*</dd>
+                      <dt>HTML / HyperText</dt>
                       <dd>{supportedExtensions.html.join(", ")}</dd>
-                      <dt>Time Series</dt>
-                      <dd>{supportedExtensions.timeSeries.join(", ")}</dd>
-                      <dt>Common Formats</dt>
-                      <dd>{supportedExtensions.common.join(", ")}</dd>
+                      <dt>Text</dt>
+                      <dd>{supportedExtensions.text.join(", ")}</dd>
+                      <dt>Structured data</dt>
+                      <dd>{supportedExtensions.structuredData.join(", ")}</dd>
                     </dl>
-                    <b>
-                      * – Support depends on the browser
-                      <br />* – Direct media uploads have{" "}
-                      <a href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI">
-                        limitations
-                      </a>{" "}
-                      and we strongly recommend using{" "}
-                      <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
-                        Cloud Storage
-                      </a>{" "}
-                      instead
-                    </b>
+                                        <div>
+                      <b>Tips:</b>
+                      <ul className="mt-2 ml-4 list-disc font-normal">
+                        <li>
+                          Direct media uploads have{" "}
+                          <a href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI">
+                            limitations
+                          </a>{" "}
+                          and we strongly recommend using{" "}
+                          <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
+                            Cloud Storage
+                          </a>{" "}
+                          instead (JSONL is supported via cloud storage).
+                        </li>
+                        <li>
+                          Video format support depends on the browser.{" "}
+                          <a href="https://labelstud.io/tags/video#Video-format" target="_blank" rel="noreferrer">
+                            Learn more
+                          </a>
+                          .
+                        </li>
+                        <li>
+                          See the documentation to{" "}
+                          <a target="_blank" href="https://labelstud.io/guide/predictions.html" rel="noreferrer">
+                            import preannotated data
+                          </a>{" "}
+                          or to{" "}
+                          <a target="_blank" href="https://labelstud.io/guide/storage.html" rel="noreferrer">
+                            sync data from a database or cloud storage
+                          </a>
+                          .
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </label>
               </div>
@@ -483,8 +485,8 @@ export const ImportPage = ({
               </div>
             )}
 
-            <div className="w-[650px]">
-              {projectConfigured && ff.isFF(ff.FF_JSON_PREVIEW) ? (
+            {ff.isFF(ff.FF_JSON_PREVIEW) && projectConfigured && (
+              <div className="w-[650px]">
                 <SimpleCard title="Expected input preview" className="w-[650px] h-full">
                   {sampleConfig.data ? (
                     <CodeBlock
@@ -500,7 +502,10 @@ export const ImportPage = ({
                     <div className="w-full pt-4 text-lg text-negative-content">Unable to load sample data</div>
                   ) : null}
                 </SimpleCard>
-              ) : ff.isFF(ff.FF_JSON_PREVIEW) ? (
+              </div>
+            )}
+            {ff.isFF(ff.FF_JSON_PREVIEW) && !projectConfigured && (
+              <div className="w-[650px]">
                 <SimpleCard title="Expected input preview" className="w-[650px] h-full">
                   Set up your{" "}
                   <button
@@ -513,13 +518,13 @@ export const ImportPage = ({
                   </button>{" "}
                   to generate an input preview.
                 </SimpleCard>
-              ) : null}
-            </div>
+              </div>
+            )}
           </div>
         </Upload>
       </main>
 
-      <Footer />
+
     </div>
   );
 };
