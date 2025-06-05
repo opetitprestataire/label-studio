@@ -87,7 +87,7 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
 
   return (
     <div className="overflow-x-auto pb-tight mb-base">
-      <div className="border border-neutral-border rounded-small border-collapse w-full">
+      <div className="border border-neutral-border rounded-small border-collapse w-max">
         <div>
           {table.getHeaderGroups().map((headerGroup) => (
             <div
@@ -111,9 +111,10 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
                       onMouseDown={header.getResizeHandler()}
                       onTouchStart={header.getResizeHandler()}
                       className={[
-                        "absolute right-0 top-0 h-full px-[3px] hover:px-[2px] hover:ml-[-1px] w-[1px] hover:w-[3px]",
-                        "cursor-col-resize select-none touch-none bg-neutral-border hover:bg-neutral-border-hover",
-                        header.column.getIsResizing() ? "bg-neutral-border-hover" : ""
+                        "absolute right-0 top-0 h-full w-[4px]",
+                        "after:content-[''] after:absolute after:bg-neutral-border",
+                        "after:right-0 after:top-0 after:h-full after:w-[1px] hover:after:w-[2px]",
+                        "cursor-col-resize select-none touch-none",
                       ].join(" ")}
                     />
                   )}
