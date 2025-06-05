@@ -204,9 +204,7 @@ There are two secure mechanisms in which Label Studio fetches media data from cl
 <div class="enterprise-only">
 
 !!! note
-    You can control whether your organization allows the use of storage proxy at the organization level:
-    1. Navigate to your organization's Billing page
-    2. Look for the "Enable Storage Proxy" toggle
+    You can control whether your organization allows the use of storage proxy at the organization level: navigate to your organization's Billing page and look for the "Enable Storage Proxy" toggle. 
 
     When "Enable Storage Proxy" is disabled, users in your organization will not be able to create or modify source storage connections that have "Presigned URLs" turned OFF. This restriction ensures that all storage connections must use presigned URLs when the "Enable Storage Proxy" at the organization level is OFF.
 
