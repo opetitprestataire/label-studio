@@ -24,7 +24,7 @@ def test_session_timeout_policy(fflag_feat_utc_46_session_timeout_policy_on):
     response = client.get('/api/projects/')
     assert response.status_code == status.HTTP_200_OK
 
-    # Get the session timeout policy and set it to 0 hours
+    # Get the session timeout policy and set it to 0 minutes
     # Object already exists after the first request since its an AutoOneToOneField
     timeout_policy = SessionTimeoutPolicy.objects.get(organization=organization)
     timeout_policy.max_session_age = 0
