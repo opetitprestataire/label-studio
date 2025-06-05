@@ -93,11 +93,6 @@ export const TabFilterType = types
       const view = getRoot(self).currentView;
       const viewColumnDisplayType = view?.columnsDisplayType?.get?.(self.field.id);
 
-      // // If column has custom filter string, force String type behavior
-      // if (self.field.hasCustomFilterString) {
-      //   return "String";
-      // }
-
       return viewColumnDisplayType ?? self.field.type;
     },
   }));

@@ -154,7 +154,8 @@ export const Tab = types
         // Use custom filter string as template if column has one, otherwise normalize the user input
         if (el.filter.field.hasCustomFilterString) {
           const userValue = el.currentValue || "";
-          // Substitute user input into the filter_string template
+          // Spoof type as String for backend and substitute user input into template
+          filterItem.type = "String";
           filterItem.value = substituteFilterString(el.filter.field.filter_string, userValue);
         } else {
           filterItem.value = normalizeFilterValue(filterItem.type, filterItem.operator, filterItem.value);

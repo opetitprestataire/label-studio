@@ -56,7 +56,10 @@ export const FilterOperation = observer(({ filter, field, operator, value }) => 
   };
   const availableOperators = filter.cellView?.filterOperators;
   const Input = selected?.input;
-  const operatorList = allowedFilterOperations(types, getRoot(filter)?.SDK?.type);
+  let operatorList = allowedFilterOperations(types, getRoot(filter)?.SDK?.type);
+  if (filter.filter.field.hasCustomFilterString) {
+    operatorList = operatorList.filter((op) => op.key === "contains" || op.key === "not_contains");
+  }
   const operators = operatorList.map(({ key, label }) => ({ value: key, label }));
 
   return Input ? (
