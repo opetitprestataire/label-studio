@@ -15,7 +15,22 @@ const THRESHOLD_MIN_DIFF = 0.001;
 
 // Helper function to substitute user input into filter string templates
 const substituteFilterString = (template, userValue) => {
-  return template.replace(/\{value\}/g, userValue);
+  // Convert the value to a string-quoted list format
+  let listValue = [];
+
+  if (userValue === null || userValue === undefined) {
+    listValue = [];
+  } else if (Array.isArray(userValue)) {
+    listValue = userValue.map((item) => String(item));
+  } else if (typeof userValue === "object") {
+    listValue = [];
+  } else {
+    listValue = [String(userValue)];
+  }
+
+  const stringValue = JSON.stringify(listValue);
+
+  return template.replace(/\{value\}/g, stringValue);
 };
 
 export const Tab = types
