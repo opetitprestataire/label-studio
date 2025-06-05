@@ -16,7 +16,7 @@
 }
 
 .settings {
-  &__field + &__field {
+  &__field+&__field {
     margin-top: 10px;
     color: var(--color-neutral-content);
   }
@@ -29,7 +29,7 @@
     cursor: pointer;
   }
 
-  .settings__field + .settings__field {
+  .settings__field+.settings__field {
     margin-top: 16px;
   }
 
@@ -50,6 +50,7 @@
       line-height: 20px;
       letter-spacing: 0.25px;
       text-align: left;
+      color: var(--color-neutral-content-subtler);
     }
   }
 }
@@ -68,7 +69,7 @@
     box-shadow: inset 0 -2px 0 0 rgba(var(--color-neutral-shadow-raw) / 8%), 0 1px 4px rgba(var(--color-neutral-shadow-raw) / 6%);
   }
 
-  &__key + &__key {
+  &__key+&__key {
     margin-left: 4px;
   }
 
@@ -79,7 +80,7 @@
     padding-right: 8px;
   }
 
-  &__key-group + &__key-group {
+  &__key-group+&__key-group {
     margin-top: 5px;
     border-top: 2px solid var(--color-neutral-border);
   }
