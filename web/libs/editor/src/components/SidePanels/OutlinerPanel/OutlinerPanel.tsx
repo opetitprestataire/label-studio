@@ -31,7 +31,7 @@ const OutlinerFFClasses: string[] = [];
 OutlinerFFClasses.push("ff_hide_all_regions");
 
 const OutlinerPanelComponent: FC<OutlinerPanelProps> = ({ regions, ...props }) => {
-  const [group, setGroup] = useState<GroupingOptions>();
+  const [group, setGroup] = useState<GroupingOptions>(regions.group);
   const onOrderingChange = useCallback(
     (value: OrderingOptions) => {
       regions.setSort(value);
