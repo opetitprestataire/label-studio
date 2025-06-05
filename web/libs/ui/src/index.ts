@@ -29,3 +29,4 @@ export * from "./utils/utils";
 
 // TODO: Remove when DIA-2142 and DIA-2175 are delivered
 export * from "./shadcn";
+export * from "./utils/utils";

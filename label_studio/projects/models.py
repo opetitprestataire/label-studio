@@ -418,8 +418,10 @@ class Project(ProjectMixin, models.Model):
             f'{self.maximum_annotations} and percentage {self.overlap_cohort_percentage}'
         )
         # if only maximum annotations parameter is tweaked
-        if maximum_annotations_changed and (not overlap_cohort_percentage_changed or self.maximum_annotations == 1):
-            tasks_with_overlap = self.tasks.filter(overlap__gt=1)
+        if maximum_annotations_changed and not overlap_cohort_percentage_changed:
+            # if there are tasks with overlap > 1 and maximum annotations has not been set to 1, preserve the cohort.
+            # but if maximum_annotations is set to 1, then all tasks should be affected (since there is no longer a distinct cohort)
+            tasks_with_overlap = self.tasks.filter(overlap__gt=1) if self.maximum_annotations > 1 else self.tasks.all()
             if tasks_with_overlap.exists():
                 # if there is a part with overlapped tasks, affect only them
                 tasks_with_overlap.update(overlap=self.maximum_annotations)
@@ -433,8 +435,17 @@ class Project(ProjectMixin, models.Model):
             bulk_update_stats_project_tasks(tasks_with_overlap, project=self)
 
         # if cohort slider is tweaked
-        elif overlap_cohort_percentage_changed and self.maximum_annotations > 1:
-            self._rearrange_overlap_cohort()
+        elif overlap_cohort_percentage_changed:
+            if self.maximum_annotations == 1:
+                if maximum_annotations_changed:
+                    self.tasks.update(overlap=1)
+                    bulk_update_stats_project_tasks(self.tasks.all(), project=self)
+                else:
+                    logger.info(
+                        f'Project {str(self)}: cohort percentage was changed but maximum annotations was not and is 1; taking no action'
+                    )
+            else:
+                self._rearrange_overlap_cohort()
 
         # if adding/deleting tasks and cohort settings are applied
         elif tasks_number_changed and self.overlap_cohort_percentage < 100 and self.maximum_annotations > 1:
@@ -531,7 +542,6 @@ class Project(ProjectMixin, models.Model):
 
             if self.num_tasks == 0:
                 logger.debug(f'Project {self} has no tasks: nothing to validate here. Ensure project summary is empty')
-                logger.info(f'calling reset project_id={self.id} validate_config() num_tasks={self.num_tasks}')
                 summary.reset()
                 return
 
@@ -555,9 +565,6 @@ class Project(ProjectMixin, models.Model):
                 logger.debug(
                     f'Project {self} has no annotations and drafts: nothing to validate here. '
                     f'Ensure annotations-related project summary is empty'
-                )
-                logger.info(
-                    f'calling reset project_id={self.id} validate_config() num_annotations={self.num_annotations} num_drafts={self.num_drafts}'
                 )
                 summary.reset(tasks_data_based=False)
                 return
@@ -792,12 +799,8 @@ class Project(ProjectMixin, models.Model):
                 summary = ProjectSummary.objects.select_for_update().get(project=self)
                 # Ensure project.summary is consistent with current tasks / annotations
                 if self.num_tasks == 0:
-                    logger.info(f'calling reset project_id={self.id} Project.save() num_tasks={self.num_tasks}')
                     summary.reset()
                 elif self.num_annotations == 0 and self.num_drafts == 0:
-                    logger.info(
-                        f'calling reset project_id={self.id} Project.save() num_annotations={self.num_annotations} num_drafts={self.num_drafts}'
-                    )
                     summary.reset(tasks_data_based=False)
 
     def get_member_ids(self):
@@ -1203,11 +1206,6 @@ class ProjectSummary(models.Model):
         return self.project.has_permission(user)
 
     def reset(self, tasks_data_based=True):
-        import traceback
-
-        logger.info(
-            f'reset summary project_id={self.project_id} {tasks_data_based=} {self.all_data_columns=} {traceback.format_stack(limit=4)=}'
-        )
         if tasks_data_based:
             self.all_data_columns = {}
             self.common_data_columns = []
@@ -1237,8 +1235,6 @@ class ProjectSummary(models.Model):
             self.common_data_columns = list(sorted(common_data_columns))
         else:
             self.common_data_columns = list(sorted(set(self.common_data_columns) & common_data_columns))
-        logger.info(f'update summary.all_data_columns project_id={self.project_id} {self.all_data_columns=}')
-        logger.info(f'update summary.common_data_columns project_id={self.project_id} {self.common_data_columns=}')
         self.save(update_fields=['all_data_columns', 'common_data_columns'])
 
     def remove_data_columns(self, tasks):
@@ -1261,8 +1257,6 @@ class ProjectSummary(models.Model):
                 if key in common_data_columns:
                     common_data_columns.remove(key)
             self.common_data_columns = common_data_columns
-        logger.info(f'remove summary.all_data_columns project_id={self.project_id} {self.all_data_columns=}')
-        logger.info(f'remove summary.common_data_columns project_id={self.project_id} {self.common_data_columns=}')
         self.save(
             update_fields=[
                 'all_data_columns',

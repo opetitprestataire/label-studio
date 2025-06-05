@@ -159,7 +159,7 @@ const ConfigureSettings = ({ template }) => {
         return (
           <li key={key}>
             <Select
-              className="border"
+              triggerClassName="border"
               value={value}
               onChange={onChange}
               options={options.type}

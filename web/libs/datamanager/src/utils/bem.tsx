@@ -12,6 +12,7 @@ import {
   useContext,
 } from "react";
 import { FF_MEMORY_LEAK_FIX, isFF } from "./feature-flags";
+import { clsx } from "clsx";
 
 interface CNMod {
   [key: string]: unknown;
@@ -193,15 +194,14 @@ export const BemWithSpecifiContext = (context?: Context<CN | null>) => {
     ) => {
       const rootClass = cn(name);
       const finalMix = ([] as [CNMix?]).concat(mix).filter((cn) => !!cn);
-      const className = [
+      const className = clsx(
         rootClass
           .mod(mod)
           .mix(...(finalMix as CNMix[]), rest.className)
           .toClassName(),
         rawClassName,
-      ]
-        .filter(Boolean)
-        .join(" ");
+      );
+
       const finalProps =
         tag.toString() === "Symbol(react.fragment)" ? { ...rest, ref } : ({ ...rest, ref, className } as any);
 
@@ -224,16 +224,14 @@ export const BemWithSpecifiContext = (context?: Context<CN | null>) => {
 
       const finalMix = ([] as [CNMix?]).concat(mix).filter((cn) => !!cn);
 
-      const className = [
+      const className = clsx(
         (block ? cn(block) : blockCtx)!
           .elem(name)
           .mod(mod)
           .mix(...(finalMix as CNMix[]), rest.className)
           .toClassName(),
         rawClassName,
-      ]
-        .filter(Boolean)
-        .join(" ");
+      );
 
       const finalProps: any = { ...rest, ref, className };
 
