@@ -13,6 +13,11 @@ import { FF_ANNOTATION_RESULTS_FILTERING, isFF } from "../../utils/feature-flags
 const THRESHOLD_MIN = 0;
 const THRESHOLD_MIN_DIFF = 0.001;
 
+// Helper function to substitute user input into filter string templates
+const substituteFilterString = (template, userValue) => {
+  return template.replace(/\{value\}/g, userValue);
+};
+
 export const Tab = types
   .model("View", {
     id: StringOrNumberID,
@@ -146,7 +151,14 @@ export const Tab = types
           type: el.filter.currentType,
         };
 
-        filterItem.value = normalizeFilterValue(filterItem.type, filterItem.operator, filterItem.value);
+        // Use custom filter string as template if column has one, otherwise normalize the user input
+        if (el.filter.field.hasCustomFilterString) {
+          const userValue = el.currentValue || "";
+          // Substitute user input into the filter_string template
+          filterItem.value = substituteFilterString(el.filter.field.filter_string, userValue);
+        } else {
+          filterItem.value = normalizeFilterValue(filterItem.type, filterItem.operator, filterItem.value);
+        }
 
         return filterItem;
       });

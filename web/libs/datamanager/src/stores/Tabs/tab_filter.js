@@ -41,8 +41,14 @@ export const TabFilter = types
 
     get component() {
       const operationsList = Filters[self.filter.currentType] ?? Filters.String;
+      const allowedOps = allowedFilterOperations(operationsList, getRoot(self)?.SDK?.type);
 
-      return allowedFilterOperations(operationsList, getRoot(self)?.SDK?.type);
+      // If column has custom filter string, only allow contains and not_contains
+      if (self.filter.field.hasCustomFilterString) {
+        return allowedOps.filter((op) => op.key === "contains" || op.key === "not_contains");
+      }
+
+      return allowedOps;
     },
 
     get componentValueType() {

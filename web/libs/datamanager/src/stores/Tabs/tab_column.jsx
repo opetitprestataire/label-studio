@@ -76,6 +76,7 @@ export const TabColumn = types
     orderable: types.optional(types.boolean, true),
     internal: types.optional(types.boolean, false),
     help: types.maybeNull(types.string),
+    filter_string: types.optional(types.maybeNull(types.string), null),
   })
   .views((self) => ({
     get hidden() {
@@ -194,6 +195,10 @@ export const TabColumn = types
       const cellView = CellViews[self.type] ?? CellViews[normalizeCellAlias(self.alias)];
 
       return cellView?.filterable !== false;
+    },
+
+    get hasCustomFilterString() {
+      return self.filter_string !== null && self.filter_string !== undefined;
     },
   }))
   .actions((self) => ({
