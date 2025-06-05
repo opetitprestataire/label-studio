@@ -210,6 +210,8 @@ There are two secure mechanisms in which Label Studio fetches media data from cl
 
 </div>
 
+<br/>
+
 {% details <b>See more details</b> %}
 
 ##### Pre-signed URLs
