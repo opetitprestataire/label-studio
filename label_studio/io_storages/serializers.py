@@ -4,6 +4,8 @@ import os
 
 from io_storages.base_models import ExportStorage, ImportStorage
 from rest_framework import serializers
+from label_studio.core.utils.common import load_func
+from django.conf import settings
 from tasks.models import Task
 from tasks.serializers import AnnotationSerializer, TaskSerializer
 from users.models import User
@@ -12,6 +14,13 @@ from users.models import User
 class ImportStorageSerializer(serializers.ModelSerializer):
     type = serializers.ReadOnlyField(default=os.path.basename(os.path.dirname(__file__)))
     synchronizable = serializers.BooleanField(required=False, default=True)
+
+    def validate(self, data):
+        data = super(ImportStorageSerializer, self).validate(data)
+        if settings.IMPORT_STORAGE_SERIALIZER_VALIDATE:
+            validate_func = load_func(settings.IMPORT_STORAGE_SERIALIZER_VALIDATE)
+            data = validate_func(self, data)
+        return data
 
     class Meta:
         model = ImportStorage
