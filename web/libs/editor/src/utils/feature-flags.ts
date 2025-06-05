@@ -187,12 +187,6 @@ export const FF_IMAGE_MEMORY_USAGE = "fflag_feat_front_optic_1479_improve_image_
 export const FF_VIDEO_FRAME_SEEK_PRECISION = "fflag_fix_front_optic_1608_improve_video_frame_seek_precision_short";
 
 /**
- * Allow to filter tasks in Data Manager by control tag labels used in annotation results
- * @link https://app.launchdarkly.com/projects/default/flags/fflag_root_13_annotation_results_filtering
- */
-export const FF_ANNOTATION_RESULTS_FILTERING = "fflag_root_13_annotation_results_filtering";
-
-/**
  * Allows the time series component to participate in synchronized playback with other media components (like audio and video)
  * when the feature flag is enabled, while maintaining independent operation when the flag is disabled.
  *
