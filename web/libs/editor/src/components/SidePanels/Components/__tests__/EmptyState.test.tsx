@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { EmptyState } from "./EmptyState";
+import { EmptyState } from "../EmptyState";
 
 const icon = <svg data-testid="icon" />;
 const header = "Test Header";
