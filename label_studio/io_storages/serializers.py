@@ -2,13 +2,14 @@
 """
 import os
 
+from django.conf import settings
 from io_storages.base_models import ExportStorage, ImportStorage
 from rest_framework import serializers
-from label_studio.core.utils.common import load_func
-from django.conf import settings
 from tasks.models import Task
 from tasks.serializers import AnnotationSerializer, TaskSerializer
 from users.models import User
+
+from label_studio.core.utils.common import load_func
 
 
 class ImportStorageSerializer(serializers.ModelSerializer):
