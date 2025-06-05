@@ -1,4 +1,6 @@
 import { type Instance, types } from "mobx-state-tree";
+import { ff } from "@humansignal/core";
+import { FF_DEV_3391 } from "../utils/feature-flags";
 
 /**
  * Supress all additional events during this window in ms.
@@ -135,8 +137,14 @@ const SyncableMixin = types
   .actions((self) => ({
     afterCreate() {
       if (!self.sync) return;
+      if (ff.isActive(FF_DEV_3391) && !self.annotationStore.initialized) {
+        return;
+      }
 
-      self.syncManager = SyncManagerFactory.get(self.sync, self.name);
+      const sync = ff.isActive(FF_DEV_3391) ? `${self.sync}@${self.annotation.id}` : self.sync;
+      const fallbackSync = ff.isActive(FF_DEV_3391) ? `${self.name}@${self.annotation.id}` : self.name;
+
+      self.syncManager = SyncManagerFactory.get(sync, fallbackSync);
       self.syncManager!.register(self as Instance<typeof SyncableMixin>);
       (self as Instance<typeof SyncableMixin>).registerSyncHandlers();
     },
