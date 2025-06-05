@@ -3,19 +3,29 @@ import { OutlinerPanel } from "../OutlinerPanel";
 
 // Mock the dependencies
 jest.mock("../../../../utils/bem", () => ({
-  Block: ({ children, ...props }: any) => <div data-testid="block" {...props}>{children}</div>,
-  Elem: ({ children, ...props }: any) => <div data-testid="elem" {...props}>{children}</div>,
+  Block: ({ children, ...props }: any) => (
+    <div data-testid="block" {...props}>
+      {children}
+    </div>
+  ),
+  Elem: ({ children, ...props }: any) => (
+    <div data-testid="elem" {...props}>
+      {children}
+    </div>
+  ),
 }));
 
 jest.mock("../../PanelBase", () => ({
-  PanelBase: ({ children, ...props }: any) => <div data-testid="panel-base" {...props}>{children}</div>,
+  PanelBase: ({ children, ...props }: any) => (
+    <div data-testid="panel-base" {...props}>
+      {children}
+    </div>
+  ),
 }));
 
 jest.mock("../OutlinerTree", () => ({
   OutlinerTree: ({ regions, footer }: any) => (
-    <div data-testid="outliner-tree">
-      {footer && <div data-testid="outliner-tree-footer">{footer}</div>}
-    </div>
+    <div data-testid="outliner-tree">{footer && <div data-testid="outliner-tree-footer">{footer}</div>}</div>
   ),
 }));
 
@@ -42,12 +52,7 @@ jest.mock("../../Components/EmptyState", () => ({
       <div data-testid="empty-state-header">{header}</div>
       <div data-testid="empty-state-description">{description}</div>
       {learnMore && (
-        <a
-          href={learnMore.href}
-          data-testid={learnMore.testId}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href={learnMore.href} data-testid={learnMore.testId} target="_blank" rel="noopener noreferrer">
           {learnMore.text}
         </a>
       )}
@@ -187,14 +192,12 @@ describe("OutlinerPanel", () => {
 
       expect(screen.getByTestId("block")).toBeInTheDocument();
       expect(screen.getByTestId("icon-info")).toBeInTheDocument();
-      const titleElem = screen.getAllByTestId("elem").find(elem => 
-        elem.textContent === "All regions hidden"
-      );
+      const titleElem = screen.getAllByTestId("elem").find((elem) => elem.textContent === "All regions hidden");
       expect(titleElem).toBeInTheDocument();
-      
-      const descriptionElem = screen.getAllByTestId("elem").find(elem => 
-        elem.textContent === "Adjust or remove the filters to view"
-      );
+
+      const descriptionElem = screen
+        .getAllByTestId("elem")
+        .find((elem) => elem.textContent === "Adjust or remove the filters to view");
       expect(descriptionElem).toBeInTheDocument();
     });
 
@@ -204,7 +207,7 @@ describe("OutlinerPanel", () => {
         regions: [
           { id: "1", type: "rectangle" },
           { id: "2", type: "polygon" },
-          { id: "3", type: "ellipse" }
+          { id: "3", type: "ellipse" },
         ],
         filter: [{ id: "1", type: "rectangle" }], // 2 regions hidden
       };
@@ -214,7 +217,7 @@ describe("OutlinerPanel", () => {
       expect(screen.getByTestId("outliner-tree")).toBeInTheDocument();
       const footer = screen.getByTestId("outliner-tree-footer");
       expect(footer).toBeInTheDocument();
-      
+
       // Check for hidden regions count message
       expect(footer.textContent).toContain("There are 2 hidden regions");
       expect(footer.textContent).toContain("Adjust or remove filters to view");
@@ -225,7 +228,7 @@ describe("OutlinerPanel", () => {
         ...mockRegions,
         regions: [
           { id: "1", type: "rectangle" },
-          { id: "2", type: "polygon" }
+          { id: "2", type: "polygon" },
         ],
         filter: [{ id: "1", type: "rectangle" }], // 1 region hidden
       };
@@ -242,11 +245,11 @@ describe("OutlinerPanel", () => {
         ...mockRegions,
         regions: [
           { id: "1", type: "rectangle" },
-          { id: "2", type: "polygon" }
+          { id: "2", type: "polygon" },
         ],
         filter: [
           { id: "1", type: "rectangle" },
-          { id: "2", type: "polygon" }
+          { id: "2", type: "polygon" },
         ], // All regions shown
       };
 
@@ -272,4 +275,4 @@ describe("OutlinerPanel", () => {
       expect(panelBase).toBeInTheDocument();
     });
   });
-}); 
+});

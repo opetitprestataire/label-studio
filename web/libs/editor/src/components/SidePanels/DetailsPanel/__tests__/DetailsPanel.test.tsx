@@ -3,8 +3,16 @@ import { Relations, Info } from "../DetailsPanel";
 
 // Mock the dependencies
 jest.mock("../../../../utils/bem", () => ({
-  Block: ({ children, ...props }: any) => <div data-testid="block" {...props}>{children}</div>,
-  Elem: ({ children, ...props }: any) => <div data-testid="elem" {...props}>{children}</div>,
+  Block: ({ children, ...props }: any) => (
+    <div data-testid="block" {...props}>
+      {children}
+    </div>
+  ),
+  Elem: ({ children, ...props }: any) => (
+    <div data-testid="elem" {...props}>
+      {children}
+    </div>
+  ),
 }));
 
 jest.mock("../../../Comments/Comments", () => ({
@@ -45,12 +53,7 @@ jest.mock("../../Components/EmptyState", () => ({
       <div data-testid="empty-state-header">{header}</div>
       <div data-testid="empty-state-description">{description}</div>
       {learnMore && (
-        <a
-          href={learnMore.href}
-          data-testid={learnMore.testId}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href={learnMore.href} data-testid={learnMore.testId} target="_blank" rel="noopener noreferrer">
           {learnMore.text}
         </a>
       )}
@@ -127,7 +130,7 @@ describe("DetailsPanel", () => {
         expect(learnMoreLink).toBeInTheDocument();
         expect(learnMoreLink).toHaveAttribute(
           "href",
-          "https://docs.example.com/guide/labeling#Add-relations-between-annotations"
+          "https://docs.example.com/guide/labeling#Add-relations-between-annotations",
         );
         expect(learnMoreLink).toHaveAttribute("target", "_blank");
         expect(learnMoreLink).toHaveAttribute("rel", "noopener noreferrer");
@@ -145,9 +148,7 @@ describe("DetailsPanel", () => {
         render(<Relations currentEntity={mockCurrentEntityWithoutRelations} />);
 
         const allElems = screen.getAllByTestId("elem");
-        const relationsCountElem = allElems.find(elem => 
-          elem.textContent?.includes("Relations (")
-        );
+        const relationsCountElem = allElems.find((elem) => elem.textContent?.includes("Relations ("));
         expect(relationsCountElem).toBeUndefined();
       });
     });
@@ -170,9 +171,7 @@ describe("DetailsPanel", () => {
         render(<Relations currentEntity={mockCurrentEntityWithRelations} />);
 
         const allElems = screen.getAllByTestId("elem");
-        const relationsCountElem = allElems.find(elem => 
-          elem.textContent === "Relations (3)"
-        );
+        const relationsCountElem = allElems.find((elem) => elem.textContent === "Relations (3)");
         expect(relationsCountElem).toBeInTheDocument();
       });
     });
@@ -183,13 +182,13 @@ describe("DetailsPanel", () => {
       size: 2,
       list: [
         { id: "region1", type: "rectangle" },
-        { id: "region2", type: "polygon" }
-      ]
+        { id: "region2", type: "polygon" },
+      ],
     };
 
     const mockSelectionEmpty = {
       size: 0,
-      list: []
+      list: [],
     };
 
     describe("when nothingSelected is true", () => {
@@ -225,9 +224,7 @@ describe("DetailsPanel", () => {
         render(<Info selection={mockSelectionEmpty} />);
 
         const allElems = screen.getAllByTestId("elem");
-        const selectionDetailsElem = allElems.find(elem => 
-          elem.textContent === "Selection Details"
-        );
+        const selectionDetailsElem = allElems.find((elem) => elem.textContent === "Selection Details");
         expect(selectionDetailsElem).toBeUndefined();
       });
 
@@ -263,9 +260,7 @@ describe("DetailsPanel", () => {
         render(<Info selection={mockSelectionWithRegions} />);
 
         const allElems = screen.getAllByTestId("elem");
-        const selectionDetailsElem = allElems.find(elem => 
-          elem.textContent === "Selection Details"
-        );
+        const selectionDetailsElem = allElems.find((elem) => elem.textContent === "Selection Details");
         expect(selectionDetailsElem).toBeInTheDocument();
       });
 
@@ -285,7 +280,7 @@ describe("DetailsPanel", () => {
 
         const mainDetails = screen.getAllByTestId("main-details");
         const metaDetails = screen.getAllByTestId("meta-details");
-        
+
         expect(mainDetails).toHaveLength(2);
         expect(metaDetails).toHaveLength(2);
       });
@@ -295,7 +290,7 @@ describe("DetailsPanel", () => {
       it("handles selection with size 0 but non-empty list", () => {
         const edgeCaseSelection = {
           size: 0,
-          list: [{ id: "region1", type: "rectangle" }] // Inconsistent state
+          list: [{ id: "region1", type: "rectangle" }], // Inconsistent state
         };
 
         render(<Info selection={edgeCaseSelection} />);
@@ -308,17 +303,17 @@ describe("DetailsPanel", () => {
       it("handles selection with positive size but empty list", () => {
         const edgeCaseSelection = {
           size: 1,
-          list: [] // Inconsistent state
+          list: [], // Inconsistent state
         };
 
         render(<Info selection={edgeCaseSelection} />);
 
         // Should not render empty state based on size property
         expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
-        
+
         // But also won't render region items since list is empty
         expect(screen.queryByTestId("region-item")).not.toBeInTheDocument();
       });
     });
   });
-}); 
+});
