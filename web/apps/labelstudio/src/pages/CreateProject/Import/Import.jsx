@@ -25,12 +25,12 @@ function flatten(nested) {
 
 // Keep in sync with core.settings.SUPPORTED_EXTENSIONS on the BE.
 const supportedExtensions = {
-  text: ["txt", "json"],
+  text: ["txt"],
   audio: ["flac", "m4a", "mp3", "ogg", "wav"],
   video: ["mp4", "webm"],
   image: ["bmp", "gif", "jpg", "jpeg", "png", "svg", "webp"],
   html: ["html", "htm", "xml"],
-  structuredData: ["csv", "tsv"],
+  structuredData: ["csv", "tsv", "json"],
   common: ["csv", "tsv", "txt", "json"],
 };
 const allSupportedExtensions = flatten(Object.values(supportedExtensions));
@@ -406,14 +406,7 @@ export const ImportPage = ({
                           <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
                             Cloud Storage
                           </a>{" "}
-                          instead (JSONL is supported via cloud storage).
-                        </li>
-                        <li>
-                          Video format support depends on the browser.{" "}
-                          <a href="https://labelstud.io/tags/video#Video-format" target="_blank" rel="noreferrer">
-                            Learn more
-                          </a>
-                          .
+                          instead.
                         </li>
                         <li>
                           See the documentation to{" "}
@@ -425,6 +418,31 @@ export const ImportPage = ({
                             sync data from a database or cloud storage
                           </a>
                           .
+                        </li>
+                        <li>
+                          Video format support depends on your browser.{" "}
+                          <a href="https://labelstud.io/tags/video#Video-format" target="_blank" rel="noreferrer">
+                            Learn more
+                          </a>
+                          .
+                        </li>                        
+                      </ul>
+                      <b>Other formats:</b>
+                      <ul>
+                        <li>
+                          JSONL is supported via cloud storage but can't be uploaded directly.
+                        </li>
+                        <li>
+                          Parquet is only supported on {" "}
+                          <a href="https://humansignal.com/pricing/">
+                            Label Studio Enterprise.
+                          </a>
+                        </li>
+                        <li>
+                          PDF documents can be embeded via URL or{" "}
+                          <a href="https://labelstud.io/blog/new-in-label-studio-1-15-fundamental-tools-for-pdf-labeling/">
+                            converted to images
+                          </a>
                         </li>
                       </ul>
                     </div>
