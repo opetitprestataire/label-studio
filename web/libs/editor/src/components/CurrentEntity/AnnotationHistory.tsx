@@ -128,7 +128,7 @@ const AnnotationHistoryComponent: FC<any> = ({
   const isDraftSelected =
     !annotationStore.selectedHistory && (annotation.draftSelected || (!annotation.versions.draft && hasChanges));
 
-  // Show empty state if no history and no draft
+  // Show the empty state when there are no changes, no draft, and no history items available.
   if (!hasChanges && !annotation.versions.draft && (!history || history.length === 0)) {
     return <HistoryEmptyState />;
   }
