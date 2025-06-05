@@ -30,6 +30,7 @@ class SessionTimeoutPolicyView(generics.RetrieveUpdateAPIView):
 
     serializer_class = SessionTimeoutPolicySerializer
     permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'patch']  # Explicitly specify allowed methods
 
     def get_object(self):
         # Get the organization from the request
