@@ -425,10 +425,7 @@ export const ImportPage = ({
                             Learn more
                           </a>
                           .
-                        </li>                        
-                      </ul>
-                      <b>Other formats:</b>
-                      <ul>
+                        </li>
                         <li>
                           JSONL is supported via cloud storage but can't be uploaded directly.
                         </li>
