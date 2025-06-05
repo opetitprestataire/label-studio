@@ -22,8 +22,8 @@ export function getDocsBaseUrl(): string {
  * @returns {string} Full documentation URL
  */
 export function getDocsUrl(pathOSS: string, pathEnterprise?: string): string {
+  const base = getDocsBaseUrl();
   const isEnterprise = typeof window !== "undefined" && window.APP_SETTINGS?.billing?.enterprise;
-  const base = isEnterprise ? "https://docs.humansignal.com/" : "https://labelstud.io/";
   const path = isEnterprise && pathEnterprise ? pathEnterprise : pathOSS;
   return `${base.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
 }
