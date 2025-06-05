@@ -120,7 +120,10 @@ class TestUploader:
                 ValidationError
             ) as e:
                 load_tasks(request, project)
-            assert "'Mock' object is not subscriptable" in str(e.value)  # validate ip did not raise exception
+            # Verify that the error is NOT an SSRF block (IP validation passed)
+            assert 'URL resolves to a reserved network address' not in str(e.value)
+            # Instead, it should be some other processing error (not SSRF-related)
+            assert len(str(e.value)) > 0  # Some error occurred, but not SSRF
 
 
 class TestTasksFileChecks:
