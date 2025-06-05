@@ -201,8 +201,6 @@ When enabled, Label Studio automatically lists files from the storage bucket and
 
 There are two secure mechanisms in which Label Studio fetches media data from cloud storage: via pre-signed URLS and via proxy. Which one you use depends on whether you have **Use pre-signed URLs** toggled on or off when setting up your source storage. **Use pre-signed URLs** is used by default. Proxy storage is enabled when **Use pre-signed URLs** is OFF.
 
-{% details <b>See more details</b> %}
-
 <div class="enterprise-only">
 
 !!! note
@@ -214,6 +212,7 @@ There are two secure mechanisms in which Label Studio fetches media data from cl
 
 </div>
 
+{% details <b>See more details</b> %}
 
 ##### Pre-signed URLs
 
