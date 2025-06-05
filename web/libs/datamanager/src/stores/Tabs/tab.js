@@ -30,7 +30,7 @@ const substituteFilterString = (template, userValue) => {
 
   const stringValue = JSON.stringify(listValue);
 
-  return template.replace(/\{value\}/g, stringValue);
+  return template.replace(/__VALUE_PLACEHOLDER__/g, stringValue);
 };
 
 export const Tab = types
