@@ -1976,7 +1976,7 @@
     {
         "url": "/api/session-policy/",
         "module": "session_policy.api.SessionTimeoutPolicyView",
-        "name": "session-policy",
+        "name": "session_policy:session-policy",
         "decorators": ""
     }
 ]
