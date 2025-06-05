@@ -1,13 +1,12 @@
 import { ff } from "@humansignal/core";
 import { SampleDatasetSelect } from "@humansignal/app-common/blocks/SampleDatasetSelect/SampleDatasetSelect";
-import { IconError, IconFileUpload, IconInfo, IconTrash, IconUpload } from "@humansignal/icons";
+import { IconError, IconFileUpload, IconTrash, IconUpload } from "@humansignal/icons";
 import { Badge } from "@humansignal/shad/components/ui/badge";
 import { cn as scn } from "@humansignal/shad/utils";
 import { Button } from "apps/labelstudio/src/components";
 import { useAtomValue } from "jotai";
 import Input from "libs/datamanager/src/components/Common/Input/Input";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { Modal } from "../../../components/Modal/Modal";
 import { useAPI } from "../../../providers/ApiProvider";
 import { cn } from "../../../utils/bem";
 import { unique } from "../../../utils/helpers";
@@ -81,8 +80,6 @@ function getFiles(files) {
       .then(resolve);
   });
 }
-
-
 
 const Upload = ({ children, sendFiles }) => {
   const [hovered, setHovered] = useState(false);
@@ -374,8 +371,8 @@ export const ImportPage = ({
         <Upload sendFiles={sendFiles} project={project}>
           <div className={scn("flex gap-4 min-h-full", { "justify-center": !showList })}>
             {!showList && (
-                  <div className="flex gap-4 justify-center items-start w-full">
-                  <label htmlFor="file-input" className="w-full">
+              <div className="flex gap-4 justify-center items-start w-full">
+                <label htmlFor="file-input" className="w-full">
                   <div className={`${dropzoneClass.elem("content")} w-full`}>
                     <header>
                       Drag & drop files here
@@ -397,7 +394,7 @@ export const ImportPage = ({
                       <dt>Structured data</dt>
                       <dd>{supportedExtensions.structuredData.join(", ")}</dd>
                     </dl>
-                                        <div>
+                    <div>
                       <b>Tips:</b>
                       <ul className="mt-2 ml-4 list-disc font-normal">
                         <li>
@@ -523,8 +520,6 @@ export const ImportPage = ({
           </div>
         </Upload>
       </main>
-
-
     </div>
   );
 };
