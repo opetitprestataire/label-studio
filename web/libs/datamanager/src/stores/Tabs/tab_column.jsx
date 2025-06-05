@@ -74,6 +74,7 @@ export const TabColumn = types
     children: types.maybeNull(types.array(types.late(() => types.reference(TabColumn)))),
     target: types.enumeration(["tasks", "annotations"]),
     orderable: types.optional(types.boolean, true),
+    internal: types.optional(types.boolean, false),
     help: types.maybeNull(types.string),
   })
   .views((self) => ({
@@ -143,7 +144,7 @@ export const TabColumn = types
         const childColumns = [].concat(...self.children.map((subColumn) => subColumn.asField));
 
         result.push(...childColumns);
-      } else {
+      } else if (!self.internal) {
         result.push({
           ...self,
           id: self.key,

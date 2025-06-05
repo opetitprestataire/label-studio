@@ -91,8 +91,10 @@ export const TabStore = types
 
     get columns() {
       const cols = self.columnsTargetMap ?? new Map();
-
-      return cols.get(self.selected?.target ?? "tasks") ?? [];
+      const list = cols.get(self.selected?.target ?? "tasks") ?? [];
+      // // Filter out internal columns so they never reach grid/column selector
+      // return list.filter((c) => !c.internal);
+      return list;
     },
 
     get dataStore() {
@@ -456,6 +458,9 @@ export const TabStore = types
             field: columnID,
             schema: col.schema ?? null,
           });
+          // if (col.internal) {
+          //   return;
+          // }
         }
 
         Object.entries(visibility ?? {}).forEach(([key, visible]) => {
