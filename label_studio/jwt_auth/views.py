@@ -225,5 +225,4 @@ class LSAPITokenRotateView(TokenViewBase):
 
     def create_token(self, user):
         """Create a new token for the user. Can be overridden by child classes to use different token classes."""
-        print(f'\n{self.token_class.__dict__}\n')
         return self.token_class.for_user(user)
