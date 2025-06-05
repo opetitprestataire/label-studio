@@ -15,22 +15,7 @@ const THRESHOLD_MIN_DIFF = 0.001;
 
 // Helper function to substitute user input into filter string templates
 const substituteFilterString = (template, userValue) => {
-  // Convert the value to a string-quoted list format
-  let listValue = [];
-
-  if (userValue === null || userValue === undefined) {
-    listValue = [];
-  } else if (Array.isArray(userValue)) {
-    listValue = userValue.map((item) => String(item));
-  } else if (typeof userValue === "object") {
-    listValue = [];
-  } else {
-    listValue = [String(userValue)];
-  }
-
-  const stringValue = JSON.stringify(listValue);
-
-  return template.replace(/__VALUE_PLACEHOLDER__/g, stringValue);
+  return template.replace(/__VALUE_PLACEHOLDER__/g, JSON.stringify(userValue));
 };
 
 export const Tab = types
@@ -171,7 +156,7 @@ export const Tab = types
           const userValue = el.currentValue || "";
           // Spoof type as String for backend and substitute user input into template
           filterItem.type = "String";
-          filterItem.value = substituteFilterString(el.filter.field.filter_string, userValue);
+          filterItem.value = substituteFilterString(el.filter.field.filter_string, userValue, el.filter.type);
         } else {
           filterItem.value = normalizeFilterValue(filterItem.type, filterItem.operator, filterItem.value);
         }
