@@ -91,8 +91,8 @@ export const TabStore = types
 
     get columns() {
       const cols = self.columnsTargetMap ?? new Map();
-
-      return cols.get(self.selected?.target ?? "tasks") ?? [];
+      const list = cols.get(self.selected?.target ?? "tasks") ?? [];
+      return list.filter((c) => !c.internal);
     },
 
     get dataStore() {
