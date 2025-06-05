@@ -80,7 +80,7 @@
     padding-right: 8px;
   }
 
-  &__key-group+&__key-group {
+  &__key-group + &__key-group {
     margin-top: 5px;
     border-top: 2px solid var(--color-neutral-border);
   }
