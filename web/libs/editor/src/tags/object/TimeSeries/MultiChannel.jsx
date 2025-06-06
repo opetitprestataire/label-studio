@@ -7,7 +7,20 @@ import TimeSeriesVisualizer from "../../../components/TimeSeries/TimeSeriesVisua
 import ChannelLegend from "./ChannelLegend";
 import { getChannelColor } from "./palette";
 
-// MultiChannel model for grouped display of channels
+/**
+ * MultiChannel tag for grouped display of channels on the same plot
+ * @param {string} [height="200"] height of the plot
+ * @param {boolean} [showAxis=true] whether to show both axes
+ * @param {boolean} [showYAxis=true] whether to show the y-axis
+ * @param {boolean} [fixedScale] whether to use a fixed scale for all channels. If not set, inherits from parent TimeSeries tag
+ * @example
+ * <TimeSeries name="ts" value="$timeseries" valuetype="json">
+ *   <MultiChannel height="300" showAxis={true} showYAxis={true}>
+ *     <Channel column="velocity" legend="Velocity"/>
+ *     <Channel column="acceleration" legend="Acceleration"/>
+ *   </MultiChannel>
+ * </TimeSeries>
+ */
 const Model = types
   .model("MultiChannelModel", {
     id: types.optional(types.identifier, () => Math.random().toString(36).slice(2)),
