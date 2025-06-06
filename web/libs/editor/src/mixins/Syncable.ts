@@ -144,6 +144,8 @@ const SyncableMixin = types
       if (ff.isActive(FF_DEV_3391)) {
         if (!self.annotationStore.initialized) return;
 
+        // different annotations have their own independent trees and should have independent
+        // sync managers; also history items are also independent, so should have the same
         const postfix = `@${self.annotationOrHistoryItem?.id}`;
         sync += postfix;
         fallbackSync += postfix;
