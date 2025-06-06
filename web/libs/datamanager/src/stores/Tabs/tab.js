@@ -13,7 +13,11 @@ import { FF_ANNOTATION_RESULTS_FILTERING, isFF } from "../../utils/feature-flags
 const THRESHOLD_MIN = 0;
 const THRESHOLD_MIN_DIFF = 0.001;
 
-const substituteFilterString = (template, userValue) => {
+const substituteFilterString = (template, userValue, filter_type) => {
+  if (filter_type === "Number") {
+    return template.replace(/__VALUE_PLACEHOLDER__/g, userValue);
+  }
+
   return template.replace(/__VALUE_PLACEHOLDER__/g, JSON.stringify(userValue));
 };
 

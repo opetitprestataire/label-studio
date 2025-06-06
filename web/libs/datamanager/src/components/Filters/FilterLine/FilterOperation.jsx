@@ -58,7 +58,10 @@ export const FilterOperation = observer(({ filter, field, operator, value }) => 
   const Input = selected?.input;
   let operatorList = allowedFilterOperations(types, getRoot(filter)?.SDK?.type);
   if (filter.filter.field.hasCustomFilterString) {
-    operatorList = operatorList.filter((op) => op.key === "contains" || op.key === "not_contains");
+    operatorList = operatorList.filter(
+      // TODO: per-filer-type operator list, so Textarea doesn't get both contains and equal
+      (op) => ["contains", "not_contains", "equal", "not_equal"].includes(op.key),
+    );
   }
   const operators = operatorList.map(({ key, label }) => ({ value: key, label }));
 
