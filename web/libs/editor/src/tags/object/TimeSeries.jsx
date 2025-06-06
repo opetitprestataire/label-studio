@@ -92,7 +92,7 @@ const TagAttrs = types.model({
   sync: types.maybeNull(types.string),
 
   // Color of the playback cursors (hex or any SVG-compatible color string)
-  cursorcolor: types.optional(types.string, "#1e90ff"),
+  cursorcolor: types.optional(types.string, "var(--color-neutral-inverted-surface)"),
 });
 
 const Model = types
