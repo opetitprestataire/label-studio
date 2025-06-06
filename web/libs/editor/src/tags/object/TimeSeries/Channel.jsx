@@ -32,7 +32,7 @@ import { getCurrentTheme } from "@humansignal/ui";
  *                     `.3` (12.3456 -> 12.3, 1.2345 -> 1.23, 12345 -> 1.23e+4)<br/>
  *        `f` - treat as float, default precision is .6: `f` (12 -> 12.000000) `.2f` (12 -> 12.00) `.0f` (12.34 -> 12)<br/>
  *        `%` - treat as percents and format accordingly: `%.0` (0.128 -> 13%) `%.1` (1.2345 -> 123.4%)
- * @param {number} [height] height of the plot
+ * @param {number} [height=200] height of the plot
  * @param {string=} [strokeColor=#f48a42] plot stroke color, expects hex value
  * @param {number=} [strokeWidth=1] plot stroke width
  * @param {string=} [markerColor=#f48a42] plot stroke color, expects hex value
