@@ -178,7 +178,7 @@ To specify an index-based time series, use the following format:
 - Simple 1 sample <=> 1 second mapping with media time is sufficient.
 
 
-### Labeling configuration
+#### Labeling configuration
 
 <br><br>
 
