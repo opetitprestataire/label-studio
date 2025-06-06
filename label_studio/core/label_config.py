@@ -273,7 +273,14 @@ def generate_sample_task_without_check(label_config, mode='upload', secure_mode=
 
         # detect secured mode - objects served as URLs
         value_type = p.get('valueType') or p.get('valuetype')
-        only_urls = secure_mode or value_type == 'url'
+
+        only_urls = value_type == 'url'
+        if secure_mode and p.tag in ['Paragraphs', 'HyperText', 'Text']:
+            # In secure mode default valueType for Paragraphs and RichText is "url"
+            only_urls = only_urls or value_type is None
+        if p.tag == 'TimeSeries':
+            # for TimeSeries default valueType is "url"
+            only_urls = only_urls or value_type is None
 
         example_from_field_name = examples.get('$' + value)
         if example_from_field_name:
@@ -306,9 +313,6 @@ def generate_sample_task_without_check(label_config, mode='upload', secure_mode=
                     value_columns.append(ts_child.get('column'))
             sep = p.get('sep')
             time_format = p.get('timeFormat')
-
-            # for TimeSeries default valueType is "url"
-            only_urls = only_urls or value_type is None
 
             if only_urls:
                 # data is URL
