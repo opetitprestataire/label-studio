@@ -4,6 +4,7 @@ import { flexRender, getCoreRowModel, useReactTable, createColumnHelper } from "
 import type { ColumnDef, Row } from "@tanstack/react-table";
 import type { MSTAnnotation } from "../../stores/types";
 import { renderers } from "./labelings";
+import { ResizeHandler } from "./ResizeHandler";
 import { SummaryBadge } from "./SummaryBadge";
 import type { AnnotationSummary, ControlTag, RendererType } from "./types";
 
@@ -106,18 +107,7 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
                   }}
                 >
                   {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  {header.column.getCanResize() && (
-                    <div
-                      onMouseDown={header.getResizeHandler()}
-                      onTouchStart={header.getResizeHandler()}
-                      className={[
-                        "absolute right-0 top-0 h-full w-[4px]",
-                        "after:content-[''] after:absolute after:bg-neutral-border",
-                        "after:right-0 after:top-0 after:h-full after:w-[1px] hover:after:w-[2px]",
-                        "cursor-col-resize select-none touch-none",
-                      ].join(" ")}
-                    />
-                  )}
+                  <ResizeHandler header={header} />
                 </div>
               ))}
             </div>

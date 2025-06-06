@@ -1,4 +1,7 @@
+import { useMemo } from "react";
+import { flexRender, getCoreRowModel, useReactTable, createColumnHelper } from "@tanstack/react-table";
 import { SummaryBadge } from "./SummaryBadge";
+import { ResizeHandler } from "./ResizeHandler";
 import type { ObjectTypes } from "./types";
 
 type DataSummaryProps = {
@@ -7,28 +10,84 @@ type DataSummaryProps = {
 };
 
 export const DataSummary = ({ data_types, data }: DataSummaryProps) => {
+  const columns = useMemo(() => {
+    const columnHelper = createColumnHelper<Record<string, any>>();
+    
+    return Object.entries(data_types).map(([field, { type }]) =>
+      columnHelper.accessor(field, {
+        id: field,
+        header: () => (
+          <>
+            {field} <SummaryBadge>{type}</SummaryBadge>
+          </>
+        ),
+        cell: ({ getValue }) => {
+          const value = getValue();
+          return typeof value === "object" ? JSON.stringify(value) : value;
+        },
+        size: 300,
+        maxSize: 800,
+      }),
+    );
+  }, [data_types]);
+
+  const table = useReactTable({
+    data: [data],
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    columnResizeMode: "onChange",
+    enableColumnResizing: true,
+    defaultColumn: {
+      minSize: 80,
+      maxSize: 800,
+    },
+  });
+
   return (
     <div className="overflow-x-auto pb-tight mb-base">
-      <table className="table-auto border border-neutral-border rounded-small border-collapse">
-        <thead>
-          <tr className="bg-neutral-surface">
-            {Object.entries(data_types).map(([field, { type }]) => (
-              <th key={field} className="px-4 py-2 text-left whitespace-nowrap">
-                {field} <SummaryBadge>{type}</SummaryBadge>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {Object.entries(data_types).map(([field, { value }]) => (
-              <td key={field} className="px-4 py-2 align-top">
-                {typeof value === "object" ? JSON.stringify(value) : value}
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+      <div className="border border-neutral-border rounded-small border-collapse w-max">
+        <div>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <div
+              key={headerGroup.id}
+              className={[
+                "flex *:flex-shrink-0 *:px-4 *:py-2 bg-neutral-surface",
+                "*:overflow-hidden *:text-ellipsis *:text-left *:whitespace-nowrap",
+              ].join(" ")}
+            >
+              {headerGroup.headers.map((header) => (
+                <div
+                  key={header.id}
+                  style={{
+                    width: header.getSize(),
+                    position: "relative",
+                  }}
+                >
+                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  <ResizeHandler header={header} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div>
+          {table.getRowModel().rows.map((row) => (
+            <div
+              key={row.id}
+              className={[
+                "flex *:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top",
+                "*:overflow-hidden *:text-ellipsis",
+              ].join(" ")}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <div key={cell.id} className="px-4 py-2 whitespace-nowrap" style={{ width: cell.column.getSize() }}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
