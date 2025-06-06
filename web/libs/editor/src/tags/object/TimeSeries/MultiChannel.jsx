@@ -9,12 +9,13 @@ import { getChannelColor } from "./palette";
 
 /**
  * MultiChannel tag for grouped display of channels on the same plot
+ * @name MultiChannel
  * @param {string} [height="200"] height of the plot
  * @param {boolean} [showAxis=true] whether to show both axes
  * @param {boolean} [showYAxis=true] whether to show the y-axis
  * @param {boolean} [fixedScale] whether to use a fixed scale for all channels. If not set, inherits from parent TimeSeries tag
  * @example
- * <TimeSeries name="ts" value="$timeseries" valuetype="json">
+ * <TimeSeries name="ts" value="$timeseries" valueType="json">
  *   <MultiChannel height="300" showAxis={true} showYAxis={true}>
  *     <Channel column="velocity" legend="Velocity"/>
  *     <Channel column="acceleration" legend="Acceleration"/>
