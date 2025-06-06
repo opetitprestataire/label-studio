@@ -12,16 +12,23 @@ This document explains how the **TimeSeries** component in Label Studio is built
 TimeSeries (MST model + React container)
 ├── Channels (one per data column) – individual SVG plots
 │   ├── Hover tracker (grey)          – shows XY under mouse
-│   └── Playhead line   (blue)        – current playback position
+│   └── Playhead line   (customizable) – current playback position
+├── MultiChannel (grouped visualization) – multiple channels in single plot
+│   ├── Channel Legend               – interactive channel visibility controls
+│   ├── TimeSeriesVisualizer         – unified D3 rendering component
+│   └── Automatic color palette     – consistent channel colors
 ├── Overview (small plot at bottom)   – brush for zoom / pan
-│   └── Playhead line   (blue)
+│   └── Playhead line   (customizable)
 └── Region brushes                    – user labelled time ranges
 ```
 
 * **Model** – `TimeSeriesModel` (MobX-state-tree). Holds data, view state and actions. Mixin order:
   `SyncableMixin → ObjectBase → PersistentStateMixin → AnnotationMixin → Model`.  
 * **View**  – `HtxTimeSeriesViewRTS` (React) renders overview + channel children.
-* **Channels** – rendered by `ChannelD3`. Each channel draws its own line + tracker + brushes.
+* **Channels** – legacy rendering via `ChannelD3` (being replaced by TimeSeriesVisualizer).
+* **MultiChannel** – `MultiChannelModel` + `HtxMultiChannel` component that groups channels together.
+* **TimeSeriesVisualizer** – unified D3 rendering component that replaces `ChannelD3` for both single and multi-channel views.
+* **ChannelLegend** – interactive legend with visibility controls and hover highlighting.
 * **Overview** – rendered inside the same file; supplies brush that changes `brushRange`.
 
 ### Important reactive fields
@@ -33,14 +40,50 @@ TimeSeries (MST model + React container)
 | `scale`              | `number`            | Cached zoom factor (forces rerender) |
 | `canvasWidth`        | `number`            | Cached width in px for correct math |
 | `isPlaying` & co.    | …                   | Playback loop state |
-| `cursorcolor`        | `string`            | Hex/colour string for playhead |
+| `cursorcolor`        | `string`            | Hex/colour string for playhead (default: `--color-neutral-inverted-surface`) |
 | `suppressSync`       | `boolean`           | Temporarily disable sync events (during overview drag) |
 
 Native units = *ms* when `timeformat` is a date, otherwise raw numeric indices/seconds.
 
 ---
 
-## 2. Synchronisation between object tags
+## 2. MultiChannel functionality
+
+The **MultiChannel** tag enables grouping multiple data channels in a single visualization with the following features:
+
+### 2.1 Channel Legend
+Interactive legend component that allows users to:
+* Toggle channel visibility by clicking on legend items
+* Highlight channels on hover for better visual focus
+* Automatically assigns colors from a predefined palette
+
+### 2.2 Color Palette System
+* Automatic color assignment based on channel index
+* Colors from design system: grape, mango, kale, persimmon, sand, kiwi, canteloupe, fig, plum, blueberry
+* Optimized for contrast and accessibility
+* Located in `palette.js` with `getChannelColor(index)` function
+
+### 2.3 TimeSeriesVisualizer
+Unified D3-based rendering component that **replaces the legacy `ChannelD3`** approach:
+* Supports both single channel and multichannel visualizations
+* Handles brush interactions for region creation
+* Manages playhead cursor positioning
+* Provides consistent rendering logic across MultiChannel and Channel
+* Eliminates code duplication between single and multi-channel rendering
+
+### 2.4 Usage Example
+```xml
+<TimeSeries name="ts" value="$timeseries" cursorColor="#ff0000">
+  <MultiChannel height="300" showAxis={true}>
+    <Channel column="velocity" legend="Velocity" units="m/s"/>
+    <Channel column="acceleration" legend="Acceleration" units="m/s²"/>
+  </MultiChannel>
+</TimeSeries>
+```
+
+---
+
+## 3. Synchronisation between object tags
 
 The **SyncableMixin** provides a small intra-tab message bus.
 
@@ -61,9 +104,9 @@ Audio tags honour `mute` logic so that only one sound is audible.
 
 ---
 
-## 3. Playback cursor implementation
+## 4. Playback cursor implementation
 
-### 3.1 Data flow
+### 4.1 Data flow
 1. **Source of truth** – `cursorTime` in the model (native units).
 2. `cursorTime` is written by:
    * Playback loop (`playbackLoop`),
@@ -72,7 +115,7 @@ Audio tags honour `mute` logic so that only one sound is audible.
    * Manual click (`setCursor`) when inside current view.
 3. Channels and Overview subscribe through React `useEffect`s and D3 – whenever `item.cursorTime` changes they reposition their SVG playhead line.
 
-### 3.2 Channel playhead (`ChannelD3`)
+### 4.2 Channel playhead (`TimeSeriesVisualizer` / legacy `ChannelD3`)
 ```js
 this.playhead = this.main.append('line')
   .attr('stroke', parent.cursorcolor)
@@ -80,14 +123,16 @@ this.playhead = this.main.append('line')
 ```
 `updatePlayhead(time)` hides the line if the time is outside current `x.domain()` or `null`.
 
-### 3.3 Overview playhead
+**Note**: In modern MultiChannel components, this logic is handled by `TimeSeriesVisualizer` which provides unified cursor management across all channels.
+
+### 4.3 Overview playhead
 Identical logic but uses scaled brush coordinate.
 
-### 3.4 Click without recentering
+### 4.4 Click without recentering
 * If click time is **inside** `brushRange` we call `setCursor(time)` – only cursor moves.
 * If outside – `_updateViewForTime` recentres view and may emit sync.
 
-### 3.5 Overview dragging behavior
+### 4.5 Overview dragging behavior
 * When user starts dragging the overview brush (`brushstarted`), `suppressSync` is set to `true`.
 * This prevents `emitSeekSync()` from firing during the drag, keeping cursor fixed.
 * On `brushended`, `suppressSync` is reset to `false` (with 0ms delay to let range settle).
@@ -95,7 +140,7 @@ Identical logic but uses scaled brush coordinate.
 
 ---
 
-## 4. Important actions
+## 5. Important actions
 | Action                 | Purpose |
 |------------------------|---------|
 | `updateTR(range)`      | Central method to change visible window; triggers rerender + optional sync |
@@ -107,10 +152,13 @@ Identical logic but uses scaled brush coordinate.
 
 ---
 
-## 5. Adding new functionality
+## 6. Adding new functionality
 * **New attributes** – extend `TagAttrs` with MST `types.optional`, then read `item.<attr>` in views.
+* **New MultiChannel features** – modify `MultiChannelModel` actions or extend `ChannelLegend` component.
+* **Color customization** – extend `palette.js` or add channel-specific color attributes.
 * **Styling** – prefer Tailwind utility classes or inline SVG attributes.
 * **Performance** – huge datasets are thinned with `sparseValues()`; thresholds controlled by `zoomStep`.
+* **Visualization** – extend `TimeSeriesVisualizer` for custom D3 rendering behaviors.
 
 ---
 
@@ -120,3 +168,8 @@ Identical logic but uses scaled brush coordinate.
 | **Native units** | Raw numeric time values used in dataset (ms for dates, seconds/indices otherwise) |
 | **Relative seconds** | Seconds offset from dataset start – format used in sync messages |
 | **Brush** | D3 brush in Overview controlling visible window (`brushRange`) |
+| **MultiChannel** | Component that groups multiple data channels in a single visualization |
+| **Channel Legend** | Interactive legend component for controlling channel visibility and highlighting |
+| **TimeSeriesVisualizer** | Unified D3-based rendering component that replaces legacy `ChannelD3` |
+| **ChannelD3** | Legacy D3 rendering component (being replaced by TimeSeriesVisualizer) |
+| **Color Palette** | Predefined set of colors automatically assigned to channels |
