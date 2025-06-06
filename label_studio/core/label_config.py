@@ -300,10 +300,10 @@ def generate_sample_task_without_check(label_config, mode='upload', secure_mode=
             # TimeSeries special case - generate signals on-the-fly
             time_column = p.get('timeColumn')
             value_columns = []
-            for ts_child in p:
-                if ts_child.tag != 'Channel':
-                    continue
-                value_columns.append(ts_child.get('column'))
+            if hasattr(p, 'findall'):
+                channels = p.findall('.//Channel[@column]')
+                for ts_child in channels:
+                    value_columns.append(ts_child.get('column'))
             sep = p.get('sep')
             time_format = p.get('timeFormat')
 
