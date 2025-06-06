@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { IconSparks, Userpic } from "@humansignal/ui";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper } from "@tanstack/react-table";
 import type { ColumnDef, Row } from "@tanstack/react-table";
-import type { MSTAnnotation } from "../../stores/types";
+import type { MSTAnnotation, MSTResult } from "../../stores/types";
 import { renderers } from "./labelings";
 import { ResizeHandler } from "./ResizeHandler";
 import { SummaryBadge } from "./SummaryBadge";
@@ -23,6 +23,15 @@ const cellFn = (control: ControlTag, render: RendererType) => (props: { row: Row
   return content;
 };
 
+const convertPredictionResult = (result: MSTResult) => {
+  const json = result.toJSON();
+  return {
+    ...json,
+    // those are real results, so they have full names with @annotation-id postfix
+    from_name: json.from_name.replace(/@.*$/, ""),
+  };
+};
+
 const columnHelper = createColumnHelper<AnnotationSummary>();
 
 export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props) => {
@@ -33,7 +42,7 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
     createdBy: annotation.user?.displayName ?? annotation.createdBy,
     results:
       annotation.type === "prediction"
-        ? (annotation.results?.map((result) => result.toJSON()) ?? [])
+        ? (annotation.results?.map(convertPredictionResult) ?? [])
         : (annotation.versions.result ?? []),
   }));
   const columns = useMemo(() => {
