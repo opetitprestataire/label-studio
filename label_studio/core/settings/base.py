@@ -231,6 +231,7 @@ INSTALLED_APPS = [
     'ml_models',
     'ml_model_providers',
     'jwt_auth',
+    'session_policy',
 ]
 
 MIDDLEWARE = [
@@ -684,6 +685,7 @@ STORAGE_IN_PROGRESS_TIMER = float(get_env('STORAGE_IN_PROGRESS_TIMER', 5.0))
 STORAGE_EXPORT_CHUNK_SIZE = int(get_env('STORAGE_EXPORT_CHUNK_SIZE', 100))
 
 USE_NGINX_FOR_EXPORT_DOWNLOADS = get_bool_env('USE_NGINX_FOR_EXPORT_DOWNLOADS', False)
+USE_NGINX_FOR_UPLOADS = get_bool_env('USE_NGINX_FOR_UPLOADS', True)
 
 if get_env('MINIO_STORAGE_ENDPOINT') and not get_bool_env('MINIO_SKIP', False):
     CLOUD_FILE_STORAGE_ENABLED = True
@@ -848,3 +850,6 @@ RESOLVER_PROXY_GCS_DOWNLOAD_URL = get_env(
 RESOLVER_PROXY_GCS_HTTP_TIMEOUT = int(get_env('RESOLVER_PROXY_GCS_HTTP_TIMEOUT', 5))
 RESOLVER_PROXY_ENABLE_ETAG_CACHE = get_bool_env('RESOLVER_PROXY_ENABLE_ETAG_CACHE', True)
 RESOLVER_PROXY_CACHE_TIMEOUT = int(get_env('RESOLVER_PROXY_CACHE_TIMEOUT', 3600))
+
+# Advanced validator for ImportStorageSerializer in enterprise
+IMPORT_STORAGE_SERIALIZER_VALIDATE = None
