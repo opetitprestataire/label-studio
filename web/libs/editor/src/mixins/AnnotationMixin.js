@@ -30,12 +30,16 @@ export const AnnotationMixin = types.model("AnnotationMixin", {}).views((self) =
       }
 
       // return connected annotation, not the globally selected one
-      return Types.getParentOfTypeString(self, "Annotation") ?? Types.getParentOfTypeString(self, "HistoryItem");
+      return Types.getParentOfTypeString(self, "Annotation");
     }
 
     const as = self.annotationStore;
 
     return as?.selectedHistory ?? as?.selected;
+  },
+
+  get annotationOrHistoryItem() {
+    return Types.getParentOfTypeString(self, "Annotation") ?? Types.getParentOfTypeString(self, "HistoryItem");
   },
 
   get annotationStore() {

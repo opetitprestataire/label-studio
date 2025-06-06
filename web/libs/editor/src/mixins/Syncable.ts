@@ -137,12 +137,17 @@ const SyncableMixin = types
   .actions((self) => ({
     afterCreate() {
       if (!self.sync) return;
-      if (ff.isActive(FF_DEV_3391) && !self.annotationStore.initialized) {
-        return;
-      }
 
-      const sync = ff.isActive(FF_DEV_3391) ? `${self.sync}@${self.annotation.id}` : self.sync;
-      const fallbackSync = ff.isActive(FF_DEV_3391) ? `${self.name}@${self.annotation.id}` : self.name;
+      let sync = self.sync;
+      let fallbackSync = self.name;
+
+      if (ff.isActive(FF_DEV_3391)) {
+        if (!self.annotationStore.initialized) return;
+
+        const postfix = `@${self.annotationOrHistoryItem?.id}`;
+        sync += postfix;
+        fallbackSync += postfix;
+      }
 
       self.syncManager = SyncManagerFactory.get(sync, fallbackSync);
       self.syncManager!.register(self as Instance<typeof SyncableMixin>);
