@@ -18,6 +18,8 @@ const Model = types
 
     showaxis: types.optional(types.boolean, true),
     showyaxis: types.optional(types.boolean, true),
+
+    fixedscale: types.maybe(types.boolean),
   })
   .volatile((self) => ({
     isChannelHiddenMap: {},

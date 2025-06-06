@@ -738,7 +738,12 @@ class TimeSeriesVisualizerD3 extends React.Component {
     const originY = channel.y.range()[0];
     const { item } = this.props;
     // overwrite parent's
-    const fixedscale = item.fixedscale === undefined ? item.parent?.fixedscale : item.fixedscale;
+    const fixedscale =
+      channelItem.fixedscale === undefined
+        ? item.fixedscale === undefined
+          ? item.parent?.fixedscale
+          : item.fixedscale
+        : channelItem.fixedscale;
 
     if (item.timerange) {
       const timerange = item.timerange.split(",").map(Number);
