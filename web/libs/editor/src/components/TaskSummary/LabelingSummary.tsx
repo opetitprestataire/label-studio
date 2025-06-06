@@ -88,7 +88,7 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
 
   return (
     <div className="overflow-x-auto pb-tight mb-base">
-      <div className="border border-neutral-border rounded-small border-collapse w-max">
+      <div className="border border-neutral-border rounded-small border-collapse overflow-hidden w-max">
         <div>
           {table.getHeaderGroups().map((headerGroup) => (
             <div
@@ -118,12 +118,12 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
             <div
               key={row.id}
               className={[
-                "flex *:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top",
+                "flex *:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top *:px-4 *:py-2",
                 "*:overflow-hidden *:text-ellipsis",
               ].join(" ")}
             >
               {row.getVisibleCells().map((cell) => (
-                <div key={cell.id} className="px-4 py-2" style={{ width: cell.column.getSize() }}>
+                <div key={cell.id} style={{ width: cell.column.getSize() }}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               ))}
