@@ -98,6 +98,7 @@ const HtxMultiChannel = observer(({ item }) => {
         series={item.parent?.dataHash}
         range={item.parent?.brushRange}
         ranges={item.parent?.regs}
+        cursorTime={item.parent?.cursorTime}
       />
     </div>
   );

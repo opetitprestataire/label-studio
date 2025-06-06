@@ -936,6 +936,7 @@ const HtxChannelViewD3 = ({ item }) => {
         series={item.parent?.dataHash}
         range={item.parent?.brushRange}
         ranges={item.parent?.regs}
+        cursorTime={item.parent?.cursorTime}
       />
     );
   }
