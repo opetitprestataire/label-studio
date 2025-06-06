@@ -48,10 +48,9 @@ Also, it is recommended to use integer multiples for sample rates and frame rate
 
 ## Time-based time series
 
-* Converts relative seconds to absolute timestamps. 
-* Maintains precise temporal alignment with media, any custom sampling rate
-* Examples:
-  * **Offset behaviour:** The very first timestamp in the timeseries is treated as *t = 0* for every synced media. For example, if the earliest sample in the CSV is at absolute 5 s, then:
+* Maintains precise temporal alignment with video, audio and other timeseries
+* Converts relative seconds to absolute timestamps.
+* **Offset behaviour:** The very first timestamp in the timeseries is treated as *t = 0* for every synced media. For example, if the earliest sample in the CSV is at absolute 5 s, then:
     - `timeSeries[0]` = **5 s** (absolute) → considered **0 s** in sync space.  
     - When you click at 2 s on the timeseries, the video will seek to *5 s + 2 s = 7 s* of real video time.
     - Conversely, seeking to 0 s in the video will position the playhead at the first timeseries sample (5 s absolute).
@@ -64,15 +63,16 @@ To specify a time-based time series, use the following format:
 ```
 
 **Use time-based time series when:**
+
 - Data has actual timestamps.
 - Precise temporal alignment is needed.
 - Working with multiple media types.
 
-### Labeling Configuration: Time-based multiple TimeSeries + Audio + Video + TimeSeriesLabels
+#### Labeling Configuration
 
 * Time-based TimeSeries
-* TimeSeries, Audio and Video are synced together
-* Choices and timeline labels are used as control tags for labeling
+* Multiple TimeSeries, Audio and Video are synced together
+* TimeSeriesLabels are used as control tag for labeling
 
 ```html
 <View>
@@ -178,12 +178,15 @@ To specify an index-based time series, use the following format:
 - Simple 1 sample <=> 1 second mapping with media time is sufficient.
 
 
-### Labeling configuration: Index-based TimeSeries + Video + TimeSeriesLabels
+### Labeling configuration
+
+<br><br>
 
 {% details <b>Index-based TimeSeries (no timestamps at X axis)</b> %}
 
-!!! note
-    One value equals one second because the time axis is not specified in the `TimeSeries` tag. The video is synced with this idea — one sample equals one second if timestamps are not provided.
+* Index-based TimeSeries + Video + TimeSeriesLabels
+* One value equals one second because the time axis is not specified in the `TimeSeries` tag. The video is synced with this idea — one sample equals one second if timestamps are not provided.
+
 
 ```html
 <View>
