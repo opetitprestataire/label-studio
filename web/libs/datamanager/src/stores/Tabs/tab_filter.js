@@ -41,8 +41,7 @@ export const TabFilter = types
 
     get component() {
       const operationsList = Filters[self.filter.currentType] ?? Filters.String;
-      const allowedOps = allowedFilterOperations(operationsList, getRoot(self)?.SDK?.type);
-      return allowedOps;
+      return allowedFilterOperations(operationsList, getRoot(self)?.SDK?.type);
     },
 
     get componentValueType() {

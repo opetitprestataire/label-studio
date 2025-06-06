@@ -13,7 +13,6 @@ import { FF_ANNOTATION_RESULTS_FILTERING, isFF } from "../../utils/feature-flags
 const THRESHOLD_MIN = 0;
 const THRESHOLD_MIN_DIFF = 0.001;
 
-// Helper function to substitute user input into filter string templates
 const substituteFilterString = (template, userValue) => {
   return template.replace(/__VALUE_PLACEHOLDER__/g, JSON.stringify(userValue));
 };
@@ -151,7 +150,6 @@ export const Tab = types
           type: el.filter.currentType,
         };
 
-        // Use custom filter string as template if column has one, otherwise normalize the user input
         if (el.filter.field.hasCustomFilterString) {
           const userValue = el.currentValue || "";
           // Spoof type as String for backend and substitute user input into template
