@@ -1,6 +1,6 @@
 import { ff } from "@humansignal/core";
 import { FF_MULTICHANNEL_TS } from "@humansignal/core/lib/utils/feature-flags";
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { getRoot, types } from "mobx-state-tree";
 
@@ -859,12 +859,15 @@ const HtxChannelViewD3 = ({ item }) => {
   // if (channels && !channels.includes(item.value.substr(1))) return null;
 
   if (ff.isActive(FF_MULTICHANNEL_TS)) {
+    const channels = useMemo(() => {
+      return [item];
+    }, [item]);
     return (
       <TimeSeriesVisualizer
         time={item.parent?.keyColumn}
         column={item.columnName}
         item={item}
-        channels={[item]}
+        channels={channels}
         data={item.parent?.dataObj}
         series={item.parent?.dataHash}
         range={item.parent?.brushRange}

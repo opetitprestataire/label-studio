@@ -298,7 +298,7 @@ class TimeSeriesVisualizerD3 extends React.Component {
       const channel = this.channels[column];
       const dataY = value[column];
       channel.trackerPoint.attr("cy", channel.y(dataY));
-      if (dataY === null || isChannelHiddenMap[channel.id]) {
+      if (dataY === null || isChannelHiddenMap?.[channel.id]) {
         channel.trackerPoint.style("display", "none");
         channel.trackerValue.style("display", "none");
       } else {
@@ -404,9 +404,9 @@ class TimeSeriesVisualizerD3 extends React.Component {
     }
     g2.attr("transform", `translate(${this.state.width},0)`);
 
-    const [leftChannelItem, rightChannelItem] = this.props.channels.filter((item) => item.showaxis && item.showyaxis);
-    const leftChannel = this.channels[leftChannelItem.columnName];
-    const rightChannel = this.channels[rightChannelItem.columnName];
+    const channelsAllowedToAxis = this.props.channels.filter((item) => item.showaxis && item.showyaxis);
+    const leftChannel = channelsAllowedToAxis.length > 0 && this.channels[channelsAllowedToAxis[0].columnName];
+    const rightChannel = channelsAllowedToAxis.length > 1 && this.channels[channelsAllowedToAxis[1].columnName];
     if (leftChannel) {
       g.call(d3.axisLeft(leftChannel.y).tickFormat(leftChannel.formatValue).tickSize(3))
         .call((g) => g.select(".domain").remove())
@@ -849,7 +849,7 @@ class TimeSeriesVisualizerD3 extends React.Component {
     const { isChannelHiddenMap, highlightedChannelId } = this.props.item;
     for (const channel of Object.values(this.channels)) {
       const isDimmed = highlightedChannelId && highlightedChannelId !== channel.id;
-      const isHidden = !!isChannelHiddenMap[channel.id];
+      const isHidden = !!isChannelHiddenMap?.[channel.id];
       const opacity = isDimmed ? 0.3 : undefined;
       const display = isHidden ? "none" : undefined;
       channel.path.style("opacity", opacity).style("display", display);
