@@ -855,15 +855,28 @@ class ChannelD3 extends React.Component {
   renderPlayhead = () => {
     if (this.playhead) return; // already rendered
 
+    // Create a group to hold both line and triangle
     this.playhead = this.main
-      .append("line")
+      .append("g")
       .attr("class", "playhead")
-      .attr("y1", 0)
-      .attr("y2", this.height)
-      .attr("stroke", this.props.item.parent?.cursorcolor || "var(--color-neutral-inverted-surface)")
-      .attr("stroke-width", 2)
       .attr("pointer-events", "none")
       .style("display", "none");
+
+    const color = this.props.item.parent?.cursorcolor || "var(--color-neutral-inverted-surface)";
+
+    // Vertical line
+    this.playheadLine = this.playhead
+      .append("line")
+      .attr("y1", 6) // Start below small handle
+      .attr("y2", this.height)
+      .attr("stroke", color)
+      .attr("stroke-width", 2);
+
+    // Upside-down house handle at top (pentagon like audio player)
+    this.playheadHandle = this.playhead
+      .append("polygon")
+      .attr("points", "-4,0 4,0 4,7 1,10 -1,10 -4,7") // Upside-down house shape
+      .attr("fill", color);
   };
 
   /*
@@ -886,7 +899,7 @@ class ChannelD3 extends React.Component {
     }
 
     const px = this.x(time) + 0.5; // align to pixel grid like tracker
-    this.playhead.attr("x1", px).attr("x2", px).style("display", "block");
+    this.playhead.attr("transform", `translate(${px},0)`).style("display", "block");
   };
 }
 

@@ -1110,16 +1110,28 @@ const Overview = observer(({ item, data, series }) => {
     gb.current.select(".handle--w").style("transform", "translate(-1px, 0)");
     gb.current.select(".handle--e").style("transform", "translate(1px, 0)");
 
-    // Playhead cursor line
+    // Playhead cursor with triangle handle
     cursorLine.current = focus.current
-      .append("line")
+      .append("g")
       .attr("class", "overview-playhead")
-      .attr("y1", 0)
-      .attr("y2", focusHeight)
-      .attr("stroke", item.cursorcolor || "var(--color-neutral-inverted-surface)")
-      .attr("stroke-width", 2)
       .attr("pointer-events", "none")
       .style("display", "none");
+
+    const cursorColor = item.cursorcolor || "var(--color-neutral-inverted-surface)";
+
+    // Vertical line
+    cursorLine.current
+      .append("line")
+      .attr("y1", 5) // Start below small handle
+      .attr("y2", focusHeight)
+      .attr("stroke", cursorColor)
+      .attr("stroke-width", 2);
+
+    // Upside-down house handle at top (pentagon like audio player)
+    cursorLine.current
+      .append("polygon")
+      .attr("points", "-4,0 4,0 4,7 1,10 -1,10 -4,7") // Upside-down house shape (1.5x wider)
+      .attr("fill", cursorColor);
   }, [node]);
 
   React.useEffect(() => {
@@ -1187,7 +1199,7 @@ const Overview = observer(({ item, data, series }) => {
       cursorLine.current.style("display", "none");
       return;
     }
-    cursorLine.current.attr("x1", pos).attr("x2", pos).style("display", "block");
+    cursorLine.current.attr("transform", `translate(${pos},0)`).style("display", "block");
   }, [item.cursorTime, width]);
 
   item.regs.map((r) => fixMobxObserve(r.start, r.end, r.selected, r.hidden, r.style?.fillcolor));
