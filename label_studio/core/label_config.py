@@ -308,7 +308,7 @@ def generate_sample_task_without_check(label_config, mode='upload', secure_mode=
             time_format = p.get('timeFormat')
 
             # for TimeSeries default valueType is "url"
-            only_urls = only_urls or value_type == None
+            only_urls = only_urls or value_type is None
 
             if only_urls:
                 # data is URL
