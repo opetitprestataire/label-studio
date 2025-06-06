@@ -86,6 +86,10 @@ export const renderers: Record<string, RendererType> = {
     if (!results.length) return "-";
     if (control.per_region) return null;
 
-    return resultValue(results[0]);
+    const value = resultValue(results[0]);
+
+    if (!value) return null;
+
+    return <span className="text-ellipsis line-clamp-6">{value}</span>;
   },
 };

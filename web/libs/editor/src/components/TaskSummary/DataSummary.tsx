@@ -95,7 +95,7 @@ export const DataSummary = ({ data_types, data }: DataSummaryProps) => {
               ].join(" ")}
             >
               {row.getVisibleCells().map((cell) => (
-                <div key={cell.id} className="px-4 py-2 whitespace-nowrap" style={{ width: cell.column.getSize() }}>
+                <div key={cell.id} className="px-4 py-2" style={{ width: cell.column.getSize() }}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               ))}

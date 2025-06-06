@@ -46,7 +46,7 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
           </>
         ),
         cell: cellFn(control, renderers[control.type]),
-        size: 120,
+        size: 150,
       }),
     );
     columns.unshift({
@@ -123,7 +123,7 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
               ].join(" ")}
             >
               {row.getVisibleCells().map((cell) => (
-                <div key={cell.id} className="px-4 py-2 whitespace-nowrap" style={{ width: cell.column.getSize() }}>
+                <div key={cell.id} className="px-4 py-2" style={{ width: cell.column.getSize() }}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               ))}
