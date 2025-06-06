@@ -204,9 +204,6 @@ const _Annotation = types
     };
 
     const getCreatedAt = (snapshot) => {
-      if (snapshot.type === "prediction") {
-        return snapshot.created_at ?? snapshot.createdDate;
-      }
       return snapshot.draft_created_at ?? snapshot.created_at ?? snapshot.createdDate;
     };
 
