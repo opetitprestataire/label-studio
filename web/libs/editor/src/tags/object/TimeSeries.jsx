@@ -1116,7 +1116,7 @@ const Overview = observer(({ item, data, series }) => {
       .attr("class", "overview-playhead")
       .attr("y1", 0)
       .attr("y2", focusHeight)
-      .attr("stroke", item.cursorcolor || "#1e90ff")
+      .attr("stroke", item.cursorcolor || "var(--color-neutral-inverted-surface)")
       .attr("stroke-width", 2)
       .attr("pointer-events", "none")
       .style("display", "none");
