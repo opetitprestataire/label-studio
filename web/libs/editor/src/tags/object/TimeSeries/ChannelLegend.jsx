@@ -20,7 +20,11 @@ const ChannelLegend = observer(({ item }) => {
             className={clsx(styles.channel, "cursor-pointer select-none", { [styles.hovered]: isHighlighted })}
             onMouseEnter={() => item.setHighlightedChannel(channel.id)}
             onMouseLeave={() => item.clearHighlightedChannel()}
-            onClick={() => item.toggleChannelVisibility(channel.id)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              item.toggleChannelVisibility(channel.id);
+            }}
             style={{
               "--marker-color": channel.strokecolor,
             }}
