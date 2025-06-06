@@ -12,7 +12,7 @@ type DataSummaryProps = {
 export const DataSummary = ({ data_types, data }: DataSummaryProps) => {
   const columns = useMemo(() => {
     const columnHelper = createColumnHelper<Record<string, any>>();
-    
+
     return Object.entries(data_types).map(([field, { type }]) =>
       columnHelper.accessor(field, {
         id: field,
@@ -23,7 +23,22 @@ export const DataSummary = ({ data_types, data }: DataSummaryProps) => {
         ),
         cell: ({ getValue }) => {
           const value = getValue();
-          return typeof value === "object" ? JSON.stringify(value) : value;
+
+          // List: [{ id: <id>, body: text, title: text }, ...]
+          // Paragraphs: [{ <nameKey>: name, <textKey>: text }, ...]
+          if (Array.isArray(value)) {
+            return JSON.stringify(value);
+          }
+
+          // Timeseries: <channel name>: [array of values]
+          // Table: <key>: <value>
+          if (typeof value === "object") {
+            return Object.entries(value)
+              .map(([key, value]) => `${key}: ${String(value).substring(0, 300)}`)
+              .join("\n");
+          }
+
+          return value;
         },
         size: 300,
         maxSize: 800,

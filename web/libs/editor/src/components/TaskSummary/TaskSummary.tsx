@@ -60,10 +60,14 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
       // most of tags has `updateValue()` method which resolves `value` and stores it in `_value`
       // Image tag uses `parsedValue` instead of `_value`
       // Pdf tag uses `_url` instead of `_value`
+      // TimeSeries tag uses `dataObj` instead of `_value`, it's always an object {<channel name>: [array of values]}
       // for other tags with complex logic (like TimeSeries) we use `value` for now, which is not ideal
       {
         type: object.type,
-        value: "parsedValue" in object ? object.parsedValue : (object._url ?? object._value ?? object.value),
+        value:
+          "parsedValue" in object
+            ? object.parsedValue
+            : (object.dataObj ?? object._url ?? object._value ?? object.value),
       },
     ]),
   );
