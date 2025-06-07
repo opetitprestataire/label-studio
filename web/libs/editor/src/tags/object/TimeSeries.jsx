@@ -18,6 +18,7 @@ import {
   getRegionColor,
   idFromValue,
   sparseValues,
+  handleTimeSeriesMainAreaClick,
 } from "./TimeSeries/helpers";
 import { AnnotationMixin } from "../../mixins/AnnotationMixin";
 import PersistentStateMixin from "../../mixins/PersistentState";
@@ -425,6 +426,36 @@ const Model = types
      */
     setCursor(time) {
       self.cursorTime = time;
+    },
+
+    /**
+     * Restart playback from a specific time position
+     * @param {number} time - The time in native units to restart playback from
+     */
+    restartPlaybackFromTime(time) {
+      if (!self.isPlaying) return;
+      
+      // Cancel the current animation frame
+      if (self.animationFrameId) {
+        cancelAnimationFrame(self.animationFrameId);
+        self.animationFrameId = null;
+      }
+      
+      // Convert native time to relative seconds for playback state
+      const [minKey] = self.keysRange;
+      let relativeTimeForPlayback;
+      if (self.isDate) {
+        relativeTimeForPlayback = (time - minKey) / 1000;
+      } else {
+        relativeTimeForPlayback = time - minKey;
+      }
+      
+      // Update the play start position to the new time
+      self.playStartPosition = relativeTimeForPlayback;
+      self.playStartTime = performance.now();
+      
+      // Restart the playback loop
+      self.playbackLoop();
     },
 
     scrollToRegion(r) {
@@ -901,7 +932,8 @@ const Model = types
           // If native is already seconds/indices, relative time is just offset from minKey.
           relativeTime = centerTime - minKey;
         }
-        self.syncSend({ time: relativeTime }, "seek");
+        // Include current playing state to prevent other media from pausing during seek
+        self.syncSend({ time: relativeTime, playing: self.isPlaying }, "seek");
       }
     },
   }));
@@ -1241,74 +1273,7 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
   const ref = React.createRef();
 
   const handleMainAreaClick = (event) => {
-    if (!isAlive(item) || !isFF(FF_TIMESERIES_SYNC) || event.target.closest(".htx-timeseries-overview")) {
-      return;
-    }
-
-    const mainDisplayElement = ref.current;
-    if (
-      !mainDisplayElement ||
-      !item.brushRange ||
-      item.brushRange.length !== 2 ||
-      !item.canvasWidth ||
-      !item.keysRange ||
-      item.keysRange.length !== 2
-    ) {
-      console.warn("TimeSeries: Click handling skipped, essential data missing or component not ready.", {
-        hasRef: !!mainDisplayElement,
-        brushRange: item.brushRange,
-        canvasWidth: item.canvasWidth,
-        keysRange: item.keysRange,
-      });
-      return;
-    }
-
-    // Use the TimeSeries margin (not child component margins) for coordinate calculation
-    const { left: marginLeft = 0, right: marginRight = 0 } = item.margin || {};
-    const plottingAreaWidth = item.canvasWidth - marginLeft - marginRight;
-
-    if (plottingAreaWidth <= 0) {
-      console.warn(`TimeSeries: Plotting area width (${plottingAreaWidth}) is not positive.`);
-      return;
-    }
-
-    const rect = mainDisplayElement.getBoundingClientRect();
-
-    let clickX = event.clientX - rect.left - marginLeft;
-    clickX = Math.max(0, Math.min(clickX, plottingAreaWidth));
-
-    const [brushTimeStartNative, brushTimeEndNative] = item.brushRange;
-    const brushDurationNative = brushTimeEndNative - brushTimeStartNative;
-
-    if (brushDurationNative <= 0) {
-      console.warn(`TimeSeries: Brush duration (${brushDurationNative}) is not positive.`);
-      return;
-    }
-
-    const timeClicked = brushTimeStartNative + (clickX / plottingAreaWidth) * brushDurationNative;
-    const [minKey, maxKey] = item.keysRange;
-    const finalTime = Math.max(minKey, Math.min(timeClicked, maxKey));
-
-    const insideView = item.brushRange && finalTime >= item.brushRange[0] && finalTime <= item.brushRange[1];
-
-    if (insideView) {
-      // Just move cursor without changing brush range
-      item.setCursor(finalTime);
-    } else if (typeof item._updateViewForTime === "function") {
-      // Re-center only when outside current view
-      item._updateViewForTime(finalTime);
-    }
-
-    if (isFF(FF_TIMESERIES_SYNC)) {
-      const referenceTime = insideView ? finalTime : (item.centerTime ?? finalTime);
-      let relativeTime;
-      if (item.isDate) {
-        relativeTime = (referenceTime - minKey) / 1000;
-      } else {
-        relativeTime = referenceTime - minKey;
-      }
-      item.syncSend({ time: relativeTime }, "seek");
-    }
+    handleTimeSeriesMainAreaClick(event, item, ref.current);
   };
 
   React.useEffect(() => {

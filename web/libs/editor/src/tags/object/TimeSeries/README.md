@@ -132,7 +132,24 @@ Identical logic but uses scaled brush coordinate.
 * If click time is **inside** `brushRange` we call `setCursor(time)` – only cursor moves.
 * If outside – `_updateViewForTime` recentres view and may emit sync.
 
-### 4.5 Overview dragging behavior
+### 4.5 Click during playback synchronization
+* **Problem solved**: Previously, clicking during video playback would seek the video but TimeSeries cursor would continue from its old position.
+* **Solution**: When `isPlaying` is true and user clicks, the `restartPlaybackFromTime(time)` action:
+  * Cancels current animation frame
+  * Converts clicked time to relative seconds for playback state
+  * Updates `playStartPosition` and `playStartTime` to the clicked position
+  * Restarts the playback loop from the new position
+* **Result**: Both video and TimeSeries cursor jump to clicked position and continue playing synchronously.
+
+### 4.6 Shared click handling logic
+* `handleTimeSeriesMainAreaClick()` in `helpers.js` provides unified click handling for both:
+  * TimeSeries main component (`TimeSeries.jsx`)
+  * TimeSeriesVisualizer component (`TimeSeriesVisualizer.jsx` for MultiChannel)
+* Eliminates code duplication (~80 lines reduced to single function call)
+* Handles coordinate calculation, boundary checks, cursor updates, and playback restart logic
+* Uses proper MobX-state-tree actions to avoid protection errors
+
+### 4.7 Overview dragging behavior
 * When user starts dragging the overview brush (`brushstarted`), `suppressSync` is set to `true`.
 * This prevents `emitSeekSync()` from firing during the drag, keeping cursor fixed.
 * On `brushended`, `suppressSync` is reset to `false` (with 0ms delay to let range settle).
@@ -147,12 +164,32 @@ Identical logic but uses scaled brush coordinate.
 | `scrollToRegion(r)`    | Ensure a labelled region is visible (may expand brush) |
 | `setCursorAndSeek(t)`  | Update both `cursorTime` & `seekTo` (internal only) |
 | `setCursor(t)`         | Update only `cursorTime` (no brush movement) |
+| `restartPlaybackFromTime(t)` | Restart playback loop from specific time (handles click during playback) |
 | `_updateViewForTime(t)`| Convert time → pixels & adjust brush + cursor |
 | `setSuppressSync(flag)`| Temporarily disable sync emissions |
 
 ---
 
-## 6. Adding new functionality
+## 6. Helper functions
+The `helpers.js` file contains shared utility functions used across TimeSeries components:
+
+### 6.1 Click handling
+* **`handleTimeSeriesMainAreaClick(event, timeSeriesItem, mainDisplayElement)`** – Unified click handling logic used by both:
+  * TimeSeries main component
+  * TimeSeriesVisualizer (for MultiChannel)
+* Handles coordinate calculation, boundary checks, view updates, and playback synchronization
+* Automatically calls appropriate actions (`setCursor`, `_updateViewForTime`, `restartPlaybackFromTime`)
+* Ensures MobX-state-tree compliance by using proper actions instead of direct property modification
+
+### 6.2 Other utilities  
+* **`sparseValues()`** – Data thinning for performance with large datasets
+* **`getRegionColor()`** – Color calculation for labeled regions  
+* **`formatTrackerTime()`** – Time formatting for tracker display
+* **`checkD3EventLoop()`** – D3 event loop prevention
+
+---
+
+## 7. Adding new functionality
 * **New attributes** – extend `TagAttrs` with MST `types.optional`, then read `item.<attr>` in views.
 * **New MultiChannel features** – modify `MultiChannelModel` actions or extend `ChannelLegend` component.
 * **Color customization** – extend `palette.js` or add channel-specific color attributes.
@@ -162,7 +199,7 @@ Identical logic but uses scaled brush coordinate.
 
 ---
 
-## 7. Glossary
+## 8. Glossary
 | Term           | Meaning |
 |---------------|---------|
 | **Native units** | Raw numeric time values used in dataset (ms for dates, seconds/indices otherwise) |
@@ -173,3 +210,5 @@ Identical logic but uses scaled brush coordinate.
 | **TimeSeriesVisualizer** | Unified D3-based rendering component that replaces legacy `ChannelD3` |
 | **ChannelD3** | Legacy D3 rendering component (being replaced by TimeSeriesVisualizer) |
 | **Color Palette** | Predefined set of colors automatically assigned to channels |
+| **Playback Sync** | Real-time synchronization between video/audio playback and TimeSeries cursor position |
+| **Click Handling** | Unified logic for processing user clicks on TimeSeries visualizations |
