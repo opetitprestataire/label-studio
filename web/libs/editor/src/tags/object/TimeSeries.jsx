@@ -1250,7 +1250,6 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
       !mainDisplayElement ||
       !item.brushRange ||
       item.brushRange.length !== 2 ||
-      !item.margin ||
       !item.canvasWidth ||
       !item.keysRange ||
       item.keysRange.length !== 2
@@ -1258,14 +1257,14 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
       console.warn("TimeSeries: Click handling skipped, essential data missing or component not ready.", {
         hasRef: !!mainDisplayElement,
         brushRange: item.brushRange,
-        margin: item.margin,
         canvasWidth: item.canvasWidth,
         keysRange: item.keysRange,
       });
       return;
     }
 
-    const { left: marginLeft = 0, right: marginRight = 0 } = item.margin;
+    // Use the TimeSeries margin (not child component margins) for coordinate calculation
+    const { left: marginLeft = 0, right: marginRight = 0 } = item.margin || {};
     const plottingAreaWidth = item.canvasWidth - marginLeft - marginRight;
 
     if (plottingAreaWidth <= 0) {

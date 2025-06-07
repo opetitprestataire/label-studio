@@ -404,7 +404,8 @@ class TimeSeriesVisualizerD3 extends React.Component {
     if (!item.showaxis) return;
 
     const { width } = this.state;
-    const { margin } = item;
+    // Use parent TimeSeries margin for consistent coordinate system
+    const margin = item.parent?.margin || item.margin;
     const tickSize = this.height + margin.top;
     const shift = -margin.top;
 
@@ -585,7 +586,8 @@ class TimeSeriesVisualizerD3 extends React.Component {
     const isDarkMode = getCurrentTheme() === "Dark";
     const { item, time, channels } = this.props;
     const { isDate, slicesCount } = item.parent;
-    const { margin } = item;
+    // Use parent TimeSeries margin for consistent coordinate system with click handling
+    const margin = item.parent?.margin || item.margin;
     const height = this.height;
     this.clipPathId = `clip_${item.id}`;
 
@@ -687,7 +689,8 @@ class TimeSeriesVisualizerD3 extends React.Component {
     const markerId = `marker_${item.id}`;
     const column = item.columnName;
     const { time, range } = this.props;
-    const { margin } = item;
+    // Use parent TimeSeries margin for consistent coordinate system
+    const margin = item.parent?.margin || item.margin;
     const height = this.height;
 
     const channel = (this.channels[column] = { id: item.id, units: item.units });
@@ -888,7 +891,8 @@ class TimeSeriesVisualizerD3 extends React.Component {
 
     if (width !== prevState.width) {
       const { item, range } = this.props;
-      const { margin } = item;
+      // Use parent TimeSeries margin for consistent coordinate system
+      const margin = item.parent?.margin || item.margin;
       const height = this.height;
       const svg = d3.select(this.ref.current).selectAll("svg");
 
