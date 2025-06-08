@@ -1,8 +1,6 @@
 import * as d3 from "d3";
 import Utils from "../../../utils";
 import { defaultStyle } from "../../../core/Constants";
-import { FF_TIMESERIES_SYNC, isFF } from "../../../utils/feature-flags";
-import { isAlive } from "mobx-state-tree";
 
 export const line = (x, y) =>
   d3
@@ -62,86 +60,3 @@ export const formatRegion = (node) => {
 };
 
 export const formatTrackerTime = (time) => new Date(time).toUTCString();
-
-/**
- * Shared click handling logic for TimeSeries and TimeSeriesVisualizer components
- * @param {Event} event - The click event
- * @param {Object} timeSeriesItem - The TimeSeries model instance
- * @param {HTMLElement} mainDisplayElement - The main display element reference
- */
-export function handleTimeSeriesMainAreaClick(event, timeSeriesItem, mainDisplayElement) {
-  if (!isAlive(timeSeriesItem) || !isFF(FF_TIMESERIES_SYNC) || event.target.closest(".htx-timeseries-overview")) {
-    return;
-  }
-
-  if (
-    !mainDisplayElement ||
-    !timeSeriesItem.brushRange ||
-    timeSeriesItem.brushRange.length !== 2 ||
-    !timeSeriesItem.canvasWidth ||
-    !timeSeriesItem.keysRange ||
-    timeSeriesItem.keysRange.length !== 2
-  ) {
-    console.warn("TimeSeries: Click handling skipped, essential data missing or component not ready.", {
-      hasRef: !!mainDisplayElement,
-      brushRange: timeSeriesItem.brushRange,
-      canvasWidth: timeSeriesItem.canvasWidth,
-      keysRange: timeSeriesItem.keysRange,
-    });
-    return;
-  }
-
-  // Use the TimeSeries margin for coordinate calculation
-  const { left: marginLeft = 0, right: marginRight = 0 } = timeSeriesItem.margin || {};
-  const plottingAreaWidth = timeSeriesItem.canvasWidth - marginLeft - marginRight;
-
-  if (plottingAreaWidth <= 0) {
-    console.warn(`TimeSeries: Plotting area width (${plottingAreaWidth}) is not positive.`);
-    return;
-  }
-
-  const rect = mainDisplayElement.getBoundingClientRect();
-
-  let clickX = event.clientX - rect.left - marginLeft;
-  clickX = Math.max(0, Math.min(clickX, plottingAreaWidth));
-
-  const [brushTimeStartNative, brushTimeEndNative] = timeSeriesItem.brushRange;
-  const brushDurationNative = brushTimeEndNative - brushTimeStartNative;
-
-  if (brushDurationNative <= 0) {
-    console.warn(`TimeSeries: Brush duration (${brushDurationNative}) is not positive.`);
-    return;
-  }
-
-  const timeClicked = brushTimeStartNative + (clickX / plottingAreaWidth) * brushDurationNative;
-  const [minKey, maxKey] = timeSeriesItem.keysRange;
-  const finalTime = Math.max(minKey, Math.min(timeClicked, maxKey));
-
-  const insideView =
-    timeSeriesItem.brushRange && finalTime >= timeSeriesItem.brushRange[0] && finalTime <= timeSeriesItem.brushRange[1];
-
-  if (insideView) {
-    // Just move cursor without changing brush range
-    timeSeriesItem.setCursor(finalTime);
-  } else if (typeof timeSeriesItem._updateViewForTime === "function") {
-    // Re-center only when outside current view
-    timeSeriesItem._updateViewForTime(finalTime);
-  }
-
-  // If we're currently playing, update the playback state to restart from the clicked position
-  if (timeSeriesItem.isPlaying) {
-    timeSeriesItem.restartPlaybackFromTime(finalTime);
-  }
-
-  if (isFF(FF_TIMESERIES_SYNC)) {
-    const referenceTime = insideView ? finalTime : (timeSeriesItem.centerTime ?? finalTime);
-    let relativeTime;
-    if (timeSeriesItem.isDate) {
-      relativeTime = (referenceTime - minKey) / 1000;
-    } else {
-      relativeTime = referenceTime - minKey;
-    }
-    // Include current playing state to prevent other media from pausing during seek
-    timeSeriesItem.syncSend({ time: relativeTime, playing: timeSeriesItem.isPlaying }, "seek");
-  }
-}

@@ -4,13 +4,7 @@ import { observer } from "mobx-react";
 import * as d3 from "d3";
 import { errorBuilder } from "../../core/DataValidator/ConfigValidator";
 import { cloneNode } from "../../core/Helpers";
-import {
-  checkD3EventLoop,
-  getOptimalWidth,
-  getRegionColor,
-  sparseValues,
-  handleTimeSeriesMainAreaClick,
-} from "../../tags/object/TimeSeries/helpers";
+import { checkD3EventLoop, getOptimalWidth, getRegionColor, sparseValues } from "../../tags/object/TimeSeries/helpers";
 import { markerSymbol } from "../../tags/object/TimeSeries/symbols";
 import { fixMobxObserve } from "../../utils/utilities";
 import { getCurrentTheme } from "@humansignal/ui";
@@ -938,10 +932,6 @@ class TimeSeriesVisualizerD3 extends React.Component {
     this.updateTracker(this.x(this.trackerX));
   }
 
-  handleMainAreaClick = (event) => {
-    handleTimeSeriesMainAreaClick(event, this.props.item.parent, this.ref.current);
-  };
-
   render() {
     this.props.ranges.map((r) =>
       fixMobxObserve(r.start, r.end, r.selected, r.inSelection, r.highlighted, r.hidden, r.style?.fillcolor),
@@ -953,7 +943,7 @@ class TimeSeriesVisualizerD3 extends React.Component {
       this.props.cursorTime,
     );
 
-    return <div className="htx-timeseries-channel" ref={this.ref} onClick={this.handleMainAreaClick} />;
+    return <div className="htx-timeseries-channel" ref={this.ref} />;
   }
 }
 
