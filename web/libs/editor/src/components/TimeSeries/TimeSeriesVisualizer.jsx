@@ -4,7 +4,13 @@ import { observer } from "mobx-react";
 import * as d3 from "d3";
 import { errorBuilder } from "../../core/DataValidator/ConfigValidator";
 import { cloneNode } from "../../core/Helpers";
-import { checkD3EventLoop, getOptimalWidth, getRegionColor, sparseValues, handleTimeSeriesMainAreaClick } from "../../tags/object/TimeSeries/helpers";
+import {
+  checkD3EventLoop,
+  getOptimalWidth,
+  getRegionColor,
+  sparseValues,
+  handleTimeSeriesMainAreaClick,
+} from "../../tags/object/TimeSeries/helpers";
 import { markerSymbol } from "../../tags/object/TimeSeries/symbols";
 import { fixMobxObserve } from "../../utils/utilities";
 import { getCurrentTheme } from "@humansignal/ui";

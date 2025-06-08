@@ -117,7 +117,8 @@ export function handleTimeSeriesMainAreaClick(event, timeSeriesItem, mainDisplay
   const [minKey, maxKey] = timeSeriesItem.keysRange;
   const finalTime = Math.max(minKey, Math.min(timeClicked, maxKey));
 
-  const insideView = timeSeriesItem.brushRange && finalTime >= timeSeriesItem.brushRange[0] && finalTime <= timeSeriesItem.brushRange[1];
+  const insideView =
+    timeSeriesItem.brushRange && finalTime >= timeSeriesItem.brushRange[0] && finalTime <= timeSeriesItem.brushRange[1];
 
   if (insideView) {
     // Just move cursor without changing brush range

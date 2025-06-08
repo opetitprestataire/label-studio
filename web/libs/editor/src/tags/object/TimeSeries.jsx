@@ -434,13 +434,13 @@ const Model = types
      */
     restartPlaybackFromTime(time) {
       if (!self.isPlaying) return;
-      
+
       // Cancel the current animation frame
       if (self.animationFrameId) {
         cancelAnimationFrame(self.animationFrameId);
         self.animationFrameId = null;
       }
-      
+
       // Convert native time to relative seconds for playback state
       const [minKey] = self.keysRange;
       let relativeTimeForPlayback;
@@ -449,11 +449,11 @@ const Model = types
       } else {
         relativeTimeForPlayback = time - minKey;
       }
-      
+
       // Update the play start position to the new time
       self.playStartPosition = relativeTimeForPlayback;
       self.playStartTime = performance.now();
-      
+
       // Restart the playback loop
       self.playbackLoop();
     },
