@@ -34,7 +34,7 @@ const RelationsList: FC<RelationsListProps> = observer(({ relations }) => {
   return (
     <>
       {relations.map((rel, i) => {
-        return <RelationItem key={i} relation={rel} />;
+        return <RelationItem key={rel.id} relation={rel} />;
       })}
     </>
   );
