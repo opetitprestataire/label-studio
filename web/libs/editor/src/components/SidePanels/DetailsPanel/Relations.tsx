@@ -16,7 +16,7 @@ import { RegionItem } from "./RegionItem";
 import { Select } from "@humansignal/ui";
 import "./Relations.scss";
 
-const RealtionsComponent: FC<any> = ({ relationStore }) => {
+const RelationsComponent: FC<any> = ({ relationStore }) => {
   const relations = relationStore.orderedRelations;
 
   return (
@@ -173,4 +173,4 @@ const RelationMeta: FC<any> = observer(({ relation }) => {
   );
 });
 
-export const Relations = observer(RealtionsComponent);
+export const Relations = observer(RelationsComponent);
