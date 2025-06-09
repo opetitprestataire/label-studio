@@ -2,7 +2,8 @@ import type { MSTAnnotation, MSTControlTag, MSTStore } from "../../stores/types"
 import { DataSummary } from "./DataSummary";
 import { LabelingSummary } from "./LabelingSummary";
 import { NumbersSummary } from "./NumbersSummary";
-import type { ControlTag, LabelAttrs, ObjectTagEntry, ObjectTypes } from "./types";
+import type { ControlTag, ObjectTagEntry, ObjectTypes } from "./types";
+import { getLabelColors } from "./utils";
 
 type TaskSummaryProps = {
   annotations: MSTAnnotation[];
@@ -40,14 +41,7 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
     name,
     type: control.type,
     to_name: control.toname,
-    label_attrs:
-      control.children?.reduce(
-        (acc, { value, background }) => {
-          acc[value] = { value, background };
-          return acc;
-        },
-        {} as Record<string, LabelAttrs>,
-      ) ?? {},
+    label_attrs: getLabelColors(control),
     per_region: !!control.perregion,
   }));
 

@@ -1,6 +1,6 @@
 import type { RawResult } from "../../stores/types";
-import { contrastColor, convertToRGBA } from "../../utils/colors";
 import type { RendererType } from "./types";
+import { getLabelCounts } from "./utils";
 
 const resultValue = (result: RawResult) => {
   if (result.type === "textarea") {
@@ -12,34 +12,24 @@ const resultValue = (result: RawResult) => {
 
 const LabelsRenderer: RendererType = (results, control) => {
   const labels = results.flatMap(resultValue).flat();
-  const labelAmounts: [string, number][] = Object.entries(
-    labels.reduce((acc, label) => {
-      acc[label] = (acc[label] || 0) + 1;
-      return acc;
-    }, {}),
-  );
-  const labelColors = Object.fromEntries(
-    Object.entries(control.label_attrs).map(([lbl, attr]) => [lbl, attr.background]),
-  );
 
   if (!labels.length) return "-";
 
+  const labelCounts = getLabelCounts(labels, control.label_attrs);
+
   return (
     <span className="flex gap-2 flex-wrap">
-      {labelAmounts.map(([label, amount]) => {
-        const color = labelColors[label];
-        const background = color ? convertToRGBA(color, 0.3) : undefined;
-
+      {Object.entries(labelCounts).filter(([_, data]) => data.count > 0).map(([label, data]) => {
         return (
           <span
             className="inline-block px-2 whitespace-nowrap rounded-4"
             style={{
-              borderLeft: `4px solid ${color ?? "var(--color-grape-200)"}`,
-              color: background ? contrastColor(background) : undefined,
-              background: background ?? "var(--color-grape-200)",
+              borderLeft: `4px solid ${data.border}`,
+              color: data.color,
+              background: data.background,
             }}
           >
-            <b>{amount}</b> {label}
+            <b>{data.count}</b> {label}
           </span>
         );
       })}

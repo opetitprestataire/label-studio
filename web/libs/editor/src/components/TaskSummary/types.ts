@@ -1,13 +1,22 @@
 import type { ReactNode } from "react";
 import type { MSTObjectTag, MSTTagImage, RawResult } from "../../stores/types";
 
-export type LabelAttrs = { value: string; background?: string };
+export type LabelColors = {
+  value: string;
+  border: string;
+  color?: string;
+  background: string;
+};
+
+export type LabelCounts = LabelColors & {
+  count: number;
+}
 
 export type ControlTag = {
   name: string;
   type: string;
   to_name: string;
-  label_attrs: Record<string, LabelAttrs>;
+  label_attrs: Record<string, LabelColors>;
   per_region?: boolean;
 };
 
