@@ -136,33 +136,6 @@
       "version": 3,
       "deleted": false
     },
-    "ff_all_fit_29_org_settings_page": {
-      "key": "ff_all_fit_29_org_settings_page",
-      "on": false,
-      "prerequisites": [],
-      "targets": [],
-      "contextTargets": [],
-      "rules": [],
-      "fallthrough": {
-        "variation": 0
-      },
-      "offVariation": 1,
-      "variations": [
-        true,
-        false
-      ],
-      "clientSideAvailability": {
-        "usingMobileKey": false,
-        "usingEnvironmentId": false
-      },
-      "clientSide": false,
-      "salt": "109dbd50896a4840bf8fdbc6d8215a45",
-      "trackEvents": false,
-      "trackEventsFallthrough": false,
-      "debugEventsUntilDate": null,
-      "version": 2,
-      "deleted": false
-    },
     "ff_back_2004_async_review_24032022_short": {
       "key": "ff_back_2004_async_review_24032022_short",
       "on": false,
@@ -1133,6 +1106,33 @@
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
       "version": 4,
+      "deleted": false
+    },
+    "fflag_feat_all_fit_29_org_settings_page": {
+      "key": "fflag_feat_all_fit_29_org_settings_page",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "3bd966466ef444048252b1acb46906b5",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
       "deleted": false
     },
     "fflag_feat_all_leap_1081_reviewer_flow_updates": {
@@ -3122,7 +3122,7 @@
     },
     "fflag_feat_optic_2125_timeseries_sync": {
       "key": "fflag_feat_optic_2125_timeseries_sync",
-      "on": false,
+      "on": true,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
@@ -3144,7 +3144,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 4,
+      "version": 5,
       "deleted": false
     },
     "fflag_feat_optic_378_limit_projects_per_page_to_ten_short": {
