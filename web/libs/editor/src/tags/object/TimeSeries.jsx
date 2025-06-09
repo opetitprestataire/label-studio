@@ -29,6 +29,7 @@ import "./TimeSeries/MultiChannel";
 import "./TimeSeries/Channel";
 import { getChannelColor } from "./TimeSeries/palette";
 import { FF_TIMESERIES_SYNC, isFF } from "../../utils/feature-flags";
+import { ff, FF_MULTICHANNEL_TS } from "@humansignal/core";
 /**
  * The `TimeSeries` tag can be used to label time series data. Read more about Time Series Labeling on [the time series template page](../templates/time_series.html).
  *
@@ -127,6 +128,18 @@ const Model = types
     suppressSync: false,
   }))
   .views((self) => ({
+    // This condition shows that essential data missing or component not ready
+    get isNotReady() {
+      return (
+        !self.brushRange ||
+        self.brushRange.length !== 2 ||
+        !self.margin ||
+        !self.canvasWidth ||
+        !self.keysRange ||
+        self.keysRange.length !== 2
+      );
+    },
+
     get regionsTimeRanges() {
       if (!isAlive(self)) return [];
       return self.regs.map((r) => {
@@ -935,6 +948,38 @@ const Model = types
         self.syncSend({ time: relativeTime, playing: self.isPlaying }, "seek");
       }
     },
+
+    plotClickHandler(timeClicked) {
+      if (!isAlive(self) || !isFF(FF_TIMESERIES_SYNC) || !self.sync) return;
+      if (self.isNotReady) return;
+
+      const [minKey, maxKey] = self.keysRange;
+      const finalTime = Math.max(minKey, Math.min(timeClicked, maxKey));
+
+      const insideView = self.brushRange && finalTime >= self.brushRange[0] && finalTime <= self.brushRange[1];
+
+      if (insideView) {
+        // Just move cursor without changing brush range
+        self.setCursor(finalTime);
+      } else if (typeof self._updateViewForTime === "function") {
+        // Re-center only when outside current view
+        self._updateViewForTime(finalTime);
+      }
+
+      // If we're currently playing, update the playback state to restart from the clicked position
+      if (self.isPlaying) {
+        self.restartPlaybackFromTime(finalTime);
+      }
+
+      let relativeTime;
+      if (self.isDate) {
+        relativeTime = (finalTime - minKey) / 1000;
+      } else {
+        relativeTime = finalTime - minKey;
+      }
+      // Include current playing state to prevent other media from pausing during seek
+      self.syncSend({ time: relativeTime, playing: self.isPlaying }, "seek");
+    },
   }));
 
 function useWidth() {
@@ -1377,7 +1422,11 @@ const HtxTimeSeriesViewRTS = ({ item }) => {
     );
 
   return (
-    <div ref={ref} className="htx-timeseries" onClick={handleMainAreaClick}>
+    <div
+      ref={ref}
+      className="htx-timeseries"
+      onClick={ff.isActive(FF_MULTICHANNEL_TS) ? undefined : handleMainAreaClick}
+    >
       <ObjectTag item={item}>
         {Tree.renderChildren(item, item.annotation)}
         <Overview data={item.dataObj} series={item.dataHash} item={item} range={item.brushRange} />

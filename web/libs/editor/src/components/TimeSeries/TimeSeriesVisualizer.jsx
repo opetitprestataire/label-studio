@@ -6,6 +6,7 @@ import { errorBuilder } from "../../core/DataValidator/ConfigValidator";
 import { cloneNode } from "../../core/Helpers";
 import { checkD3EventLoop, getOptimalWidth, getRegionColor, sparseValues } from "../../tags/object/TimeSeries/helpers";
 import { markerSymbol } from "../../tags/object/TimeSeries/symbols";
+import {} from "../../utils/feature-flags";
 import { fixMobxObserve } from "../../utils/utilities";
 import { getCurrentTheme } from "@humansignal/ui";
 
@@ -138,6 +139,7 @@ class TimeSeriesVisualizerD3 extends React.Component {
         region.onClickRegion(d3.event.sourceEvent);
       } else {
         parent?.annotation.unselectAreas();
+        parent?.plotClickHandler(+value);
       }
       return;
     }
