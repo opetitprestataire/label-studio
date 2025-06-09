@@ -108,7 +108,7 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
               key={headerGroup.id}
               className={cnm(
                 "flex [&>*]:flex-shrink-0 [&>*]:px-4 [&>*]:py-2 bg-neutral-surface",
-                "[&>*]:overflow-hidden [&>*]:text-ellipsis [&>*]:text-left [&>*]:whitespace-nowrap",
+                "[&>*]:text-left [&>*]:whitespace-nowrap",
               )}
             >
               {headerGroup.headers.map((header) => (
@@ -119,7 +119,9 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
                     position: "relative",
                   }}
                 >
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  <div className="overflow-hidden text-ellipsis">
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </div>
                   <ResizeHandler header={header} />
                 </div>
               ))}
