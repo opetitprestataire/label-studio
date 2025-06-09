@@ -85,4 +85,14 @@ export const renderers: Record<string, RendererType> = {
 
     return <span className="text-ellipsis line-clamp-6">{value}</span>;
   },
+  rating: (results, control) => {
+    if (!results.length) return "-";
+    if (control.per_region) return null;
+
+    const value = resultValue(results[0]);
+
+    if (!value) return null;
+
+    return "★".repeat(value);
+  }
 };
