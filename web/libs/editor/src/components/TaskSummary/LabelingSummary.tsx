@@ -55,7 +55,7 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
           </>
         ),
         cell: cellFn(control, renderers[control.type]),
-        size: 150,
+        size: 250,
       }),
     );
     columns.unshift({
