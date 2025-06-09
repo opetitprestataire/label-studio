@@ -51,12 +51,12 @@ export const renderers: Record<string, RendererType> = {
   timeserieslabels: LabelsRenderer,
   paragraphlabels: LabelsRenderer,
   timelinelabels: LabelsRenderer,
-  number: (results, control) => {
+  number: (results) => {
     if (!results.length) return "-";
 
     return resultValue(results[0]);
   },
-  choices: (results, control) => {
+  choices: (results) => {
     const choices = results.flatMap(resultValue).flat();
     const unique = [...new Set(choices)];
 
