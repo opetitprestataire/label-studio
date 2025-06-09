@@ -1,7 +1,7 @@
 .channelLegend {
   --marker-size: 10px;
-  --marker-color:  var(--color-primary-surface, #4C5FA9);
-  --marker-hidden-color: var(--color-neutral-surface, #F9F8F6);
+  --marker-color:  var(--color-primary-surface);
+  --marker-hidden-color: var(--color-neutral-surface);
 
   &.hovering {
     .channel {
