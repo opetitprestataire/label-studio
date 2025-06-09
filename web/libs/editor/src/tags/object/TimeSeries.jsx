@@ -29,7 +29,8 @@ import "./TimeSeries/MultiChannel";
 import "./TimeSeries/Channel";
 import { getChannelColor } from "./TimeSeries/palette";
 import { FF_TIMESERIES_SYNC, isFF } from "../../utils/feature-flags";
-import { ff, FF_MULTICHANNEL_TS } from "@humansignal/core";
+import { FF_MULTICHANNEL_TS } from "@humansignal/core/lib/utils/feature-flags";
+import { ff } from "@humansignal/core";
 /**
  * The `TimeSeries` tag can be used to label time series data. Read more about Time Series Labeling on [the time series template page](../templates/time_series.html).
  *
