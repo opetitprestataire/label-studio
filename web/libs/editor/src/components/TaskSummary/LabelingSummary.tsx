@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { IconSparks, Userpic } from "@humansignal/ui";
+import { cnm, IconSparks, Userpic } from "@humansignal/ui";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper } from "@tanstack/react-table";
 import type { ColumnDef, Row } from "@tanstack/react-table";
 import type { MSTAnnotation, MSTResult } from "../../stores/types";
@@ -106,10 +106,10 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
           {table.getHeaderGroups().map((headerGroup) => (
             <div
               key={headerGroup.id}
-              className={[
-                "flex *:flex-shrink-0 *:px-4 *:py-2 bg-neutral-surface",
-                "*:overflow-hidden *:text-ellipsis *:text-left *:whitespace-nowrap",
-              ].join(" ")}
+              className={cnm(
+                "flex [&>*]:flex-shrink-0 [&>*]:px-4 [&>*]:py-2 bg-neutral-surface",
+                "[&>*]:overflow-hidden [&>*]:text-ellipsis [&>*]:text-left [&>*]:whitespace-nowrap",
+              )}
             >
               {headerGroup.headers.map((header) => (
                 <div
@@ -130,10 +130,10 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
           {table.getRowModel().rows.map((row) => (
             <div
               key={row.id}
-              className={[
-                "flex *:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top *:px-4 *:py-2",
-                "*:overflow-hidden *:text-ellipsis",
-              ].join(" ")}
+              className={cnm(
+                "flex [&>*]:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top [&>*]:px-4 [&>*]:py-2",
+                "[&>*]:overflow-hidden [&>*]:text-ellipsis",
+              )}
             >
               {row.getVisibleCells().map((cell) => (
                 <div key={cell.id} style={{ width: cell.column.getSize() }}>

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper } from "@tanstack/react-table";
+import { cnm } from "@humansignal/ui";
 import { SummaryBadge } from "./SummaryBadge";
 import { ResizeHandler } from "./ResizeHandler";
 import type { ObjectTypes } from "./types";
@@ -70,10 +71,10 @@ export const DataSummary = ({ data_types }: { data_types: ObjectTypes }) => {
           {table.getHeaderGroups().map((headerGroup) => (
             <div
               key={headerGroup.id}
-              className={[
-                "flex *:flex-shrink-0 *:px-4 *:py-2 bg-neutral-surface",
-                "*:overflow-hidden *:text-ellipsis *:text-left *:whitespace-nowrap",
-              ].join(" ")}
+              className={cnm(
+                "flex [&>*]:flex-shrink-0 [&>*]:px-4 [&>*]:py-2 bg-neutral-surface",
+                "[&>*]:overflow-hidden [&>*]:text-ellipsis [&>*]:text-left [&>*]:whitespace-nowrap",
+              )}
             >
               {headerGroup.headers.map((header) => (
                 <div
@@ -94,10 +95,10 @@ export const DataSummary = ({ data_types }: { data_types: ObjectTypes }) => {
           {table.getRowModel().rows.map((row) => (
             <div
               key={row.id}
-              className={[
-                "flex *:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top *:px-4 *:py-2",
-                "*:overflow-hidden *:text-ellipsis",
-              ].join(" ")}
+              className={cnm(
+                "flex [&>*]:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top [&>*]:px-4 [&>*]:py-2",
+                "[&>*]:overflow-hidden [&>*]:text-ellipsis",
+              )}
             >
               {row.getVisibleCells().map((cell) => (
                 <div key={cell.id} style={{ width: cell.column.getSize() }}>

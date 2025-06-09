@@ -1,3 +1,4 @@
+import { cnm } from "@humansignal/ui";
 import type { RawResult } from "../../stores/types";
 import type { RendererType } from "./types";
 import { getLabelCounts } from "./utils";
@@ -66,10 +67,10 @@ export const renderers: Record<string, RendererType> = {
         {unique.map((choice) => (
           <span
             key={choice}
-            className={[
+            className={cnm(
               "inline-block whitespace-nowrap rounded-4 px-2",
               "bg-primary-background border border-primary-emphasis text-accent-grape-dark",
-            ].join(" ")}
+            )}
           >
             {choice}
           </span>
