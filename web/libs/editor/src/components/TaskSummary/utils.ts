@@ -4,6 +4,11 @@ import { ControlTag, LabelColors, LabelCounts } from "./types";
 
 const defaultLabelColor = "var(--color-grape-200)";
 
+/**
+ * Get label colors for a control. Calculates background and border colors for each label.
+ * @param control
+ * @returns record of label colors
+ */
 export const getLabelColors = (control: MSTControlTag) => {
   if (!control.children) return {};
 
@@ -24,6 +29,12 @@ export const getLabelColors = (control: MSTControlTag) => {
   return labelColors;
 };
 
+/**
+ * Get label counts for a control. Extends color info with count.
+ * @param {string[]} labels - list of labels to count
+ * @param labelColors - record of label colors from `getLabelColors()`
+ * @returns record with label counts and colors
+ */
 export const getLabelCounts = (labels: string[], labelColors: Record<string, LabelColors>) => {
   const labelCounts: Record<string, LabelCounts> = Object.fromEntries(
     Object.entries(labelColors).map(([lbl, attr]) => [lbl, { ...attr, count: 0 }]),
@@ -40,6 +51,11 @@ export const getLabelCounts = (labels: string[], labelColors: Record<string, Lab
   return labelCounts;
 };
 
+/**
+ * Sort controls: global classifications first, then labels, then per-regions
+ * @param controls - list of controls to sort
+ * @returns sorted list of controls
+ */
 export const sortControls = (controls: ControlTag[]) => {
   return controls.sort((a, b) => {
     if (a.per_region && !b.per_region) return 1;
