@@ -369,16 +369,31 @@ def _is_strftime_string(s):
     return '%' in s
 
 
-def generate_time_series_json(time_column, value_columns, time_format=None, delta='S'):
-    """Generate sample for time series
-    
-    Args:
-        time_column: Name of the time column
-        value_columns: List of value column names
-        time_format: strftime format string for time formatting
-        delta: Time delta between samples. Can be pandas frequency string like:
-               'S' (seconds, default), 'T'/'min' (minutes), 'H' (hours), 'D' (days)
-    """
+def _get_smallest_time_freq(time_format):
+    """Determine the smallest time component in strftime format and return pandas frequency"""
+    if not time_format:
+        return 'D'  # default to daily
+
+    # Order from smallest to largest (we want the smallest one)
+    time_components = [
+        ('%S', 's'),  # second
+        ('%M', 'min'),  # minute
+        ('%H', 'h'),  # hour
+        ('%d', 'D'),  # day
+        ('%m', 'MS'),  # month start
+        ('%Y', 'YS'),  # year start
+    ]
+
+    # Find the smallest time component present in the format
+    for strftime_code, pandas_freq in time_components:
+        if strftime_code in time_format:
+            return pandas_freq
+
+    return 'D'  # default to daily if no time components found
+
+
+def generate_time_series_json(time_column, value_columns, time_format=None):
+    """Generate sample for time series"""
     n = 100
     if time_format is not None and not _is_strftime_string(time_format):
         time_fmt_map = {'yyyy-MM-dd': '%Y-%m-%d'}
@@ -387,10 +402,26 @@ def generate_time_series_json(time_column, value_columns, time_format=None, delt
     if time_format is None:
         times = np.arange(n).tolist()
     else:
-        times = pd.date_range('2020-01-01', periods=n, freq=delta).strftime(time_format).tolist()
+        # Automatically determine the appropriate frequency based on time format
+        freq = _get_smallest_time_freq(time_format)
+        times = pd.date_range('2020-01-01', periods=n, freq=freq)
+        new_times = []
+        prev_time_str = None
+        for time in times:
+            time_str = time.strftime(time_format)
+
+            # Check if formatted string is monotonic (to handle cycling due to format truncation)
+            if prev_time_str is not None and time_str <= prev_time_str:
+                break
+
+            new_times.append(time_str)
+            prev_time_str = time_str  # Update prev_time_str for next iteration
+
+        times = new_times
+
     ts = {time_column: times}
     for value_col in value_columns:
-        ts[value_col] = np.random.randn(n).tolist()
+        ts[value_col] = np.random.randn(len(times)).tolist()
     return ts
 
 
