@@ -130,7 +130,8 @@ Scenario("Hiding bulk visibility toggle", ({ I, LabelStudio, AtImageView, AtLabe
   I.seeElement(ALL_VISIBLE_SELECTOR);
 });
 
-Scenario("Checking regions grouped by label", async ({ I, LabelStudio }) => {
+// Test with FF_DEV_3873 disabled (old UI)
+Scenario("Checking regions grouped by label (old UI)", async ({ I, LabelStudio }) => {
   const checkVisible = async (num) => {
     switch (num) {
       case 0:
@@ -170,10 +171,80 @@ Scenario("Checking regions grouped by label", async ({ I, LabelStudio }) => {
   };
 
   await I.amOnPage("/");
+  LabelStudio.setFeatureFlags({
+    fflag_feat_front_dev_3873_labeling_ui_improvements_short: false,
+  });
   LabelStudio.init({ annotations, config, data });
   LabelStudio.waitForObjectsReady();
   I.executeScript(switchRegionTreeView, "label");
   I.see("Grouped by Label");
+  await checkVisible(3);
+  hideOne();
+  await checkVisible(2);
+  showOne();
+  await checkVisible(3);
+  hideAll();
+  await checkVisible(0);
+  showOne();
+  await checkVisible(1);
+  hideOne();
+  await checkVisible(0);
+  showAll();
+  await checkVisible(3);
+  hideOne();
+  await checkVisible(2);
+  hideAll();
+  await checkVisible(0);
+});
+
+// Test with FF_DEV_3873 enabled (new UI)
+Scenario("Checking regions grouped by label (new UI)", async ({ I, LabelStudio }) => {
+  const checkVisible = async (num) => {
+    switch (num) {
+      case 0:
+        I.seeElement(ALL_HIDDEN_SELECTOR);
+        I.seeElement(ONE_HIDDEN_SELECTOR);
+        I.dontSeeElement(ONE_VISIBLE_SELECTOR);
+        break;
+      case 1:
+      case 2:
+        I.seeElement(ALL_VISIBLE_SELECTOR);
+        I.seeElement(ONE_VISIBLE_SELECTOR);
+        I.seeElement(ONE_HIDDEN_SELECTOR);
+        break;
+      case 3:
+        I.seeElement(ALL_VISIBLE_SELECTOR);
+        I.seeElement(ONE_VISIBLE_SELECTOR);
+        I.dontSeeElement(ONE_HIDDEN_SELECTOR);
+        break;
+    }
+    const count = await I.executeScript(countKonvaShapes);
+
+    assert.strictEqual(count, num);
+  };
+  const hideAll = () => {
+    I.click(ALL_VISIBLE_SELECTOR);
+  };
+  const showAll = () => {
+    I.click(ALL_HIDDEN_SELECTOR);
+  };
+  const hideOne = () => {
+    I.moveCursorTo(ONE_VISIBLE_SELECTOR);
+    I.click(ONE_VISIBILITY_TOGGLE_BUTTON);
+  };
+  const showOne = () => {
+    I.moveCursorTo(ONE_HIDDEN_SELECTOR);
+    I.click(ONE_VISIBILITY_TOGGLE_BUTTON);
+  };
+
+  await I.amOnPage("/");
+  LabelStudio.setFeatureFlags({
+    fflag_feat_front_dev_3873_labeling_ui_improvements_short: true,
+  });
+  LabelStudio.init({ annotations, config, data });
+  LabelStudio.waitForObjectsReady();
+  I.executeScript(switchRegionTreeView, "label");
+  I.see("By Label");
   await checkVisible(3);
   hideOne();
   await checkVisible(2);
