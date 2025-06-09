@@ -1,44 +1,34 @@
 // Color tokens from Figma
 const colorTokens = {
   grape: {
-    400: "var(--color-grape-400)",
-    hex: "#6D87F1",
+    base: "var(--color-accent-grape-base)",
   },
   blueberry: {
-    400: "var(--color-blueberry-400)",
-    hex: "#5B8AF4",
+    base: "var(--color-accent-blueberry-base)",
   },
   kale: {
-    400: "var(--color-kale-400)",
-    hex: "#36B37E",
+    base: "var(--color-accent-kale-base)",
   },
   kiwi: {
-    400: "var(--color-kiwi-400)",
-    hex: "#79F2C0",
+    base: "var(--color-accent-kiwi-base)",
   },
   mango: {
-    400: "var(--color-mango-400)",
-    hex: "#FFAB00",
+    base: "var(--color-accent-mango-base)",
   },
   canteloupe: {
-    400: "var(--color-canteloupe-400)",
-    hex: "#FF8B00",
+    base: "var(--color-accent-canteloupe-base)",
   },
   persimmon: {
-    400: "var(--color-persimmon-400)",
-    hex: "#FF5630",
+    base: "var(--color-accent-persimmon-base)",
   },
   plum: {
-    400: "var(--color-plum-400)",
-    hex: "#8777D9",
+    base: "var(--color-accent-plum-base)",
   },
   fig: {
-    400: "var(--color-fig-400)",
-    hex: "#6554C0",
+    base: "var(--color-accent-fig-base)",
   },
   sand: {
-    700: "var(--color-sand-700)",
-    hex: "#505F79",
+    bold: "var(--color-accent-sand-bold)",
   },
 };
 
@@ -52,5 +42,5 @@ const colorOrder = ["grape", "mango", "kale", "persimmon", "sand", "kiwi", "cant
  */
 export const getChannelColor = (index) => {
   const colorName = colorOrder[index % colorOrder.length];
-  return colorTokens[colorName][colorName === "sand" ? "700" : "400"];
+  return colorTokens[colorName][colorName === "sand" ? "bold" : "base"];
 };
