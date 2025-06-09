@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import CM from "codemirror";
-import { Button } from "@humansignal/ui";
-import { IconCrossNoPadding } from "@humansignal/icons";
+import { Button, cnm } from "@humansignal/ui";
+import { IconTrash } from "@humansignal/icons";
 import { ToggleItems } from "../../../components";
 import { Form, Input } from "../../../components/Form";
 import { useAPI } from "../../../providers/ApiProvider";
@@ -40,8 +40,16 @@ const Label = ({ label, template, color }) => {
   const value = label.getAttribute("value");
 
   return (
-    <li className={configClass.elem("label").mod({ choice: label.tagName === "Choice" })}>
-      <span className="flex">
+    <li
+      className={cnm(
+        configClass
+          .elem("label")
+          .mod({ choice: label.tagName === "Choice" })
+          .toClassName(),
+        "group",
+      )}
+    >
+      <span className={cnm(configClass.elem("label-text").toClassName(), "flex")}>
         <label style={{ background: color }}>
           <Input
             type="color"
@@ -59,10 +67,9 @@ const Label = ({ label, template, color }) => {
         variant="negative"
         onClick={() => template.removeLabel(label)}
         aria-label="delete label"
-        className="relative z-10 hover:!bg-transparent"
-      >
-        <IconCrossNoPadding className="min-w-4 min-h-4 text-negative-content" />
-      </Button>
+        className="hidden !p-0 z-10 absolute right-0 [&_span]:!p-0 group-hover:inline-flex"
+        leading={<IconTrash className="w-4 h-4 fill-[currentColor]" />}
+      />
     </li>
   );
 };

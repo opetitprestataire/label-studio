@@ -458,12 +458,6 @@ $scroll-width: 5px;
       opacity: 0;
     }
 
-    span {
-      padding: 0 8px;
-      overflow-x: hidden;
-      word-break: break-word;
-      color: var(--color-neutral-content);
-    }
 
     .configure__delete-label {
       min-width: 0;
@@ -499,6 +493,13 @@ $scroll-width: 5px;
         left: -12px;
       }
     }
+  }
+
+  .configure__label-text {
+    padding: 0 8px;
+    overflow-x: hidden;
+    word-break: break-word;
+    color: var(--color-neutral-content);
   }
 }
 
