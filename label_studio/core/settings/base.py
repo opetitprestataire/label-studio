@@ -294,6 +294,7 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 ALLOWED_HOSTS = get_env_list('ALLOWED_HOSTS', default=['*'])
+CSRF_TRUSTED_ORIGINS = ['https://data-md-8n4z.onrender.com']
 
 # Auth modules
 AUTH_USER_MODEL = 'users.User'
