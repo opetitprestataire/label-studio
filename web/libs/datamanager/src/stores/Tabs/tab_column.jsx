@@ -77,6 +77,7 @@ export const TabColumn = types
     internal: types.optional(types.boolean, false),
     help: types.maybeNull(types.string),
     filter_string: types.optional(types.maybeNull(types.string), null),
+    control_tag_from_name: types.optional(types.maybeNull(types.string), null),
   })
   .views((self) => ({
     get hidden() {
@@ -198,7 +199,7 @@ export const TabColumn = types
     },
 
     get hasCustomFilterString() {
-      return self.filter_string !== null && self.filter_string !== undefined;
+      return self.control_tag_from_name !== null && self.control_tag_from_name !== undefined;
     },
   }))
   .actions((self) => ({
