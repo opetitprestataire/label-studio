@@ -17,7 +17,6 @@ interface Annotation {
 
 const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryProps) => {
   const task = annotationStore.store.task;
-  const data = task.dataObj;
   // skip unsubmitted drafts
   const annotations = all.filter((a) => a.pk);
   const allTags = [...annotationStore.names];
@@ -99,7 +98,7 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
       <NumbersSummary values={values} />
       <LabelingSummary annotations={annotations} controls={controls} onSelect={onSelect} />
       <h2 className="px-4">Task Data</h2>
-      <DataSummary data_types={dataTypes} data={data} />
+      <DataSummary data_types={dataTypes} />
     </div>
   );
 };

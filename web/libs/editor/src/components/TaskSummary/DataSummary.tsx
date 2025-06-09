@@ -4,12 +4,11 @@ import { SummaryBadge } from "./SummaryBadge";
 import { ResizeHandler } from "./ResizeHandler";
 import type { ObjectTypes } from "./types";
 
-type DataSummaryProps = {
-  data_types: ObjectTypes;
-  data: Record<string, any>;
-};
+export const DataSummary = ({ data_types }: { data_types: ObjectTypes }) => {
+  const data: Record<string, any> = useMemo(() => {
+    return Object.fromEntries(Object.entries(data_types).map(([field, { value }]) => [field, value]))
+  }, [data_types]);
 
-export const DataSummary = ({ data_types, data }: DataSummaryProps) => {
   const columns = useMemo(() => {
     const columnHelper = createColumnHelper<Record<string, any>>();
 
