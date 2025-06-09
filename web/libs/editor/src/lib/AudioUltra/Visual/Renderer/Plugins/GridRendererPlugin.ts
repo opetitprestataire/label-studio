@@ -153,9 +153,6 @@ export class GridRendererPlugin implements RendererPlugin<GridRendererPluginConf
       if (gridFreqs[0] !== 0) gridFreqs.unshift(0);
       if (gridFreqs[gridFreqs.length - 1] !== nyquist) gridFreqs.push(nyquist);
     } else if (scale === "mel") {
-      const mel = (f: number) => 2595 * Math.log10(1 + f / 700);
-      const _invMel = (m: number) => 700 * (10 ** (m / 2595) - 1);
-      const _melMax = mel(nyquist);
       const melGridPoints = [0, 500, 1000, 2000, 4000, 8000, 12000, 16000];
       const specificMelFreqs = melGridPoints.filter((f) => f <= nyquist);
       // Ensure 0Hz is present for Mel scale if not already by melGridPoints filter for f <= nyquist

@@ -530,8 +530,6 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     if (!this.fftProcessor) {
       return Math.max(1, Math.floor(this.fftSamples / this.spectrogramHopFactor));
     }
-    const fftSamples = this.fftProcessor.fftSamples;
-    const _baseHopSize = Math.max(1, Math.floor(fftSamples / this.spectrogramHopFactor));
     const samplesPerPx = this.lastRenderContext.samplesPerPx;
     const width = this.lastRenderContext.width;
     const dataLength = this.audio?.dataLength ?? 0;

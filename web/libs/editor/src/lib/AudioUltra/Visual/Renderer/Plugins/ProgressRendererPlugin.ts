@@ -148,11 +148,9 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
     overlay.setAttribute("aria-label", this.ariaLabel || "Spectrogram progress overlay");
 
     // Aggregate progress data
-    const { cachingTotal, cachingProcessed, batchGroups } = this._aggregateProgress(progress);
+    const { cachingTotal, cachingProcessed } = this._aggregateProgress(progress);
     // Render overall bar and text
     overlay.appendChild(this._createOverallBar(cachingTotal, cachingProcessed));
-    // Render per-priority bars
-    // overlay.appendChild(this._createPriorityBars(batchGroups));
   }
 
   /**
@@ -181,7 +179,7 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
    */
   private _createOverallBar(cachingTotal: number, cachingProcessed: number): HTMLElement {
     const colorMapper = this.colorMapper;
-    const fftCache = this.fftCache;
+    const _fftCache = this.fftCache;
     const wrapper = document.createElement("div");
     wrapper.style.marginBottom = "3px";
     wrapper.style.borderBottom = "1px solid #555";
@@ -195,12 +193,6 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
     text.style.marginBottom = "1px";
 
     if (cachingTotal === 0) {
-      let _fftCacheCount = 0;
-      if (fftCache) {
-        for (const channelMap of fftCache.values()) {
-          _fftCacheCount += channelMap.size;
-        }
-      }
       text.textContent = `${this.labels?.cached || "Cached"}`;
     } else {
       text.textContent = `${this.labels?.caching || "Caching"}: ${cachingProcessed} / ${cachingTotal} (${Math.round((cachingProcessed / cachingTotal) * 100)}%)`;
@@ -227,7 +219,6 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
    * Create the per-priority bars (VIEW, PRECACHE).
    */
   private _createPriorityBars(batchGroups: Record<string, BatchProgress[]>): HTMLElement {
-    const _cfg = this.config;
     const colorMapper = this.colorMapper;
     const container = document.createElement("div");
     const priorities: { key: string; color: string; label: string }[] = [
@@ -334,7 +325,6 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
    * Ensure the overlay container exists and is styled.
    */
   private _ensureProgressOverlay(): HTMLDivElement {
-    const _cfg = this.config;
     let overlay = this.container.querySelector("#spectrogram-progress-overlay") as HTMLDivElement;
     if (!overlay) {
       overlay = document.createElement("div");
@@ -397,9 +387,4 @@ export class ProgressRendererPlugin implements RendererPlugin<ProgressRendererPl
   public destroy(): void {
     this._hideProgressOverlay();
   }
-}
-
-// Utility function for clamping
-function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
 }
