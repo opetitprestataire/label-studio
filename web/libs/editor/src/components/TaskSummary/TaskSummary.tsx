@@ -44,9 +44,9 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
     per_region: !!control.perregion,
   }));
   // place all controls with the same to_name together
-  const groupped = Object.groupBy(controlsList, (control) => control.to_name);
+  const grouped = Object.groupBy(controlsList, (control) => control.to_name);
   // show global classifications first, then labels, then per-regions
-  const controls = Object.entries(groupped).flatMap(([_, controls]) => sortControls(controls!));
+  const controls = Object.entries(grouped).flatMap(([_, controls]) => sortControls(controls!));
 
   const objectTags: ObjectTagEntry[] = allTags.filter(
     ([_, tag]) => tag.isObjectTag && tag.value.includes("$"),
