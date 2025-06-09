@@ -12,17 +12,9 @@ interface EmptyStateProps {
   };
 }
 
-declare global {
-  interface Window {
-    APP_SETTINGS?: {
-      whitelabel_is_active?: boolean;
-      [key: string]: any;
-    };
-  }
-}
-
 export const EmptyState: React.FC<EmptyStateProps> = ({ icon, header, description, learnMore }) => {
   // White-label check for docs link hiding
+  // @ts-ignore
   const isWhiteLabel = typeof window !== "undefined" && window.APP_SETTINGS?.whitelabel_is_active === true;
 
   return (
