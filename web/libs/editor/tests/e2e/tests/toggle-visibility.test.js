@@ -173,14 +173,14 @@ Scenario("Checking regions grouped by label", async ({ I, LabelStudio }) => {
   LabelStudio.init({ annotations, config, data });
   LabelStudio.waitForObjectsReady();
   I.executeScript(switchRegionTreeView, "label");
-  
+
   // Check for either text that might appear based on feature flag state
   try {
     I.see("By Label");
   } catch (e) {
     I.see("Grouped by Label");
   }
-  
+
   await checkVisible(3);
   hideOne();
   await checkVisible(2);
