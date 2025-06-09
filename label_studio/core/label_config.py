@@ -371,7 +371,7 @@ def _is_strftime_string(s):
 
 def generate_time_series_json(time_column, value_columns, time_format=None, delta='S'):
     """Generate sample for time series
-    
+
     Args:
         time_column: Name of the time column
         value_columns: List of value column names
