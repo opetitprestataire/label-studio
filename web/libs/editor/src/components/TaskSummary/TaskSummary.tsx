@@ -31,7 +31,7 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
   };
 
   // Check if agreement should be shown based on project settings
-  const showAgreement = annotationStore.store.project?.review_settings?.show_agreement_to_reviewers ?? false;
+  const showAgreement = annotationStore.store.project?.review_settings?.show_agreement_to_reviewers ?? true;
 
   const controlTags: [string, MSTControlTag][] = allTags.filter(([_, control]) => control.isControlTag) as [
     string,
@@ -71,7 +71,8 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
       ? [
           {
             title: "Agreement",
-            value: `${task.agreement.toFixed(2)}%`,
+            // 2 decimals but without trailing zeros
+            value: `${Math.round(task.agreement * 100) / 100}%`,
             info: "Overall agreement over all submitted annotations",
           },
         ]
