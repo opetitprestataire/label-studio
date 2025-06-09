@@ -369,8 +369,16 @@ def _is_strftime_string(s):
     return '%' in s
 
 
-def generate_time_series_json(time_column, value_columns, time_format=None):
-    """Generate sample for time series"""
+def generate_time_series_json(time_column, value_columns, time_format=None, delta='S'):
+    """Generate sample for time series
+    
+    Args:
+        time_column: Name of the time column
+        value_columns: List of value column names
+        time_format: strftime format string for time formatting
+        delta: Time delta between samples. Can be pandas frequency string like:
+               'S' (seconds, default), 'T'/'min' (minutes), 'H' (hours), 'D' (days)
+    """
     n = 100
     if time_format is not None and not _is_strftime_string(time_format):
         time_fmt_map = {'yyyy-MM-dd': '%Y-%m-%d'}
@@ -379,7 +387,7 @@ def generate_time_series_json(time_column, value_columns, time_format=None):
     if time_format is None:
         times = np.arange(n).tolist()
     else:
-        times = pd.date_range('2020-01-01', periods=n, freq='D').strftime(time_format).tolist()
+        times = pd.date_range('2020-01-01', periods=n, freq=delta).strftime(time_format).tolist()
     ts = {time_column: times}
     for value_col in value_columns:
         ts[value_col] = np.random.randn(n).tolist()

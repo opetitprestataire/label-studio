@@ -120,6 +120,7 @@ def samples_time_series(request):
     time_column = request.GET.get('time', '')
     value_columns = request.GET.get('values', '').split(',')
     time_format = request.GET.get('tf')
+    delta = request.GET.get('delta', 'S')  # Default to seconds
 
     # separator processing
     separator = request.GET.get('sep', ',')
@@ -138,7 +139,7 @@ def samples_time_series(request):
         max_column_n = max([int(v) for v in value_columns] + [0])
         value_columns = range(1, max_column_n + 1)
 
-    ts = generate_time_series_json(time_column, value_columns, time_format)
+    ts = generate_time_series_json(time_column, value_columns, time_format, delta)
     csv_data = pd.DataFrame.from_dict(ts).to_csv(index=False, header=header, sep=separator).encode('utf-8')
 
     # generate response data as file
