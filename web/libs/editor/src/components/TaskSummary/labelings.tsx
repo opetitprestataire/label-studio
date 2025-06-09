@@ -25,7 +25,7 @@ const LabelsRenderer: RendererType = (results, control) => {
   if (!labels.length) return "-";
 
   return (
-    <span className="flex gap-2">
+    <span className="flex gap-2 flex-wrap">
       {labelAmounts.map(([label, amount]) => {
         const color = labelColors[label];
         const background = color ? convertToRGBA(color, 0.3) : undefined;
@@ -70,11 +70,14 @@ export const renderers: Record<string, RendererType> = {
     if (!choices.length) return null;
 
     return (
-      <span className="flex gap-2">
+      <span className="flex gap-2 flex-wrap">
         {unique.map((choice) => (
           <span
             key={choice}
-            className="inline-block px-2 bg-primary-background border border-primary-emphasis text-accent-grape-dark whitespace-nowrap rounded-4 mr-2"
+            className={[
+              "inline-block whitespace-nowrap rounded-4 px-2",
+              "bg-primary-background border border-primary-emphasis text-accent-grape-dark",
+            ].join(" ")}
           >
             {choice}
           </span>
