@@ -3,7 +3,7 @@ import { DataSummary } from "./DataSummary";
 import { LabelingSummary } from "./LabelingSummary";
 import { NumbersSummary } from "./NumbersSummary";
 import type { ControlTag, ObjectTagEntry, ObjectTypes } from "./types";
-import { getLabelColors } from "./utils";
+import { getLabelColors, sortControls } from "./utils";
 
 type TaskSummaryProps = {
   annotations: MSTAnnotation[];
@@ -37,13 +37,17 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
     string,
     MSTControlTag,
   ][];
-  const controls: ControlTag[] = controlTags.map(([name, control]) => ({
+  const controlsList: ControlTag[] = controlTags.map(([name, control]) => ({
     name,
     type: control.type,
     to_name: control.toname,
     label_attrs: getLabelColors(control),
     per_region: !!control.perregion,
   }));
+  // place all controls with the same to_name together
+  const groupped = Object.groupBy(controlsList, control => control.to_name);
+  // show global classifications first, then labels, then per-regions
+  const controls = Object.entries(groupped).flatMap(([_, controls]) => sortControls(controls!))
 
   const objectTags: ObjectTagEntry[] = allTags.filter(
     ([_, tag]) => tag.isObjectTag && tag.value.includes("$"),

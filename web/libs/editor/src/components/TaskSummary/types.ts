@@ -17,7 +17,7 @@ export type ControlTag = {
   type: string;
   to_name: string;
   label_attrs: Record<string, LabelColors>;
-  per_region?: boolean;
+  per_region: boolean;
 };
 
 export type AnnotationSummary = {

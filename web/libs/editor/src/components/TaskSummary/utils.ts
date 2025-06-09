@@ -1,6 +1,6 @@
 import type { MSTControlTag } from "../../stores/types";
 import { contrastColor, convertToRGBA } from "../../utils/colors";
-import { LabelColors, LabelCounts } from "./types";
+import { ControlTag, LabelColors, LabelCounts } from "./types";
 
 const defaultLabelColor = "var(--color-grape-200)";
 
@@ -39,3 +39,14 @@ export const getLabelCounts = (labels: string[], labelColors: Record<string, Lab
 
   return labelCounts;
 };
+
+export const sortControls = (controls: ControlTag[]) => {
+  return controls.sort((a, b) => {
+    if (a.per_region && !b.per_region) return 1;
+    if (!a.per_region && b.per_region) return -1;
+    // for non-per-region controls, put classification controls first and labels next
+    if (a.type.endsWith("labels") && !b.type.endsWith("labels")) return 1;
+    if (!a.type.endsWith("labels") && b.type.endsWith("labels")) return -1;
+    return 0;
+  });
+}
