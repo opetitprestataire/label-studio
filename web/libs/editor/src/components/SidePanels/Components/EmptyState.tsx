@@ -23,8 +23,18 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon, header, descriptio
         {icon}
       </div>
       <div className="flex flex-col items-center w-full gap-1">
-        <div className="font-medium text-body-medium leading-tight text-center text-neutral-content" data-testid="empty-state-header">{header}</div>
-        <div className="text-body-small text-neutral-content-subtler text-center w-full" data-testid="empty-state-description">{description}</div>
+        <div
+          className="font-medium text-body-medium leading-tight text-center text-neutral-content"
+          data-testid="empty-state-header"
+        >
+          {header}
+        </div>
+        <div
+          className="text-body-small text-neutral-content-subtler text-center w-full"
+          data-testid="empty-state-description"
+        >
+          {description}
+        </div>
       </div>
       {learnMore && !isWhiteLabel && (
         <div className="flex justify-center items-center w-full pt-tight mt-tight">
