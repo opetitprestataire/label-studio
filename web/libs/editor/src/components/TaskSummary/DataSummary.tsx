@@ -23,6 +23,12 @@ export const DataSummary = ({ data_types }: { data_types: ObjectTypes }) => {
         cell: ({ getValue }) => {
           const value = getValue();
 
+          // super simple support for images
+          // @todo create a proper data type handler for all data types
+          if (type === "image") {
+            return <img src={value} className="w-full" />;
+          }
+
           // List: [{ id: <id>, body: text, title: text }, ...]
           // Paragraphs: [{ <nameKey>: name, <textKey>: text }, ...]
           if (Array.isArray(value)) {
