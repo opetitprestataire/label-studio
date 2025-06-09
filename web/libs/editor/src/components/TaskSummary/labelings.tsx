@@ -19,20 +19,22 @@ const LabelsRenderer: RendererType = (results, control) => {
 
   return (
     <span className="flex gap-2 flex-wrap">
-      {Object.entries(labelCounts).filter(([_, data]) => data.count > 0).map(([label, data]) => {
-        return (
-          <span
-            className="inline-block px-2 whitespace-nowrap rounded-4"
-            style={{
-              borderLeft: `4px solid ${data.border}`,
-              color: data.color,
-              background: data.background,
-            }}
-          >
-            <b>{data.count}</b> {label}
-          </span>
-        );
-      })}
+      {Object.entries(labelCounts)
+        .filter(([_, data]) => data.count > 0)
+        .map(([label, data]) => {
+          return (
+            <span
+              className="inline-block px-2 whitespace-nowrap rounded-4"
+              style={{
+                borderLeft: `4px solid ${data.border}`,
+                color: data.color,
+                background: data.background,
+              }}
+            >
+              <b>{data.count}</b> {label}
+            </span>
+          );
+        })}
     </span>
   );
 };
@@ -94,5 +96,5 @@ export const renderers: Record<string, RendererType> = {
     if (!value) return null;
 
     return "★".repeat(value);
-  }
+  },
 };

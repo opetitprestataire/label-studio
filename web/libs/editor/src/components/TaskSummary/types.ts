@@ -10,7 +10,7 @@ export type LabelColors = {
 
 export type LabelCounts = LabelColors & {
   count: number;
-}
+};
 
 export type ControlTag = {
   name: string;

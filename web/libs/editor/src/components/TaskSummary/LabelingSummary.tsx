@@ -51,7 +51,11 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
         id: control.name,
         header: () => (
           <>
-            {control.name} <SummaryBadge>{control.per_region ? "per-region " : ""}{control.type}</SummaryBadge>
+            {control.name}{" "}
+            <SummaryBadge>
+              {control.per_region ? "per-region " : ""}
+              {control.type}
+            </SummaryBadge>
           </>
         ),
         cell: cellFn(control, renderers[control.type]),

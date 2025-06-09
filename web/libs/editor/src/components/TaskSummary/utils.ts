@@ -1,6 +1,6 @@
 import type { MSTControlTag } from "../../stores/types";
 import { contrastColor, convertToRGBA } from "../../utils/colors";
-import { ControlTag, LabelColors, LabelCounts } from "./types";
+import type { ControlTag, LabelColors, LabelCounts } from "./types";
 
 const defaultLabelColor = "var(--color-grape-200)";
 
@@ -13,7 +13,7 @@ export const getLabelColors = (control: MSTControlTag) => {
   if (!control.children) return {};
 
   const labelColors: Record<string, LabelColors> = {};
-  
+
   for (const item of control.children) {
     const color = item.background;
     const background = color ? convertToRGBA(color, 0.3) : undefined;
@@ -23,9 +23,9 @@ export const getLabelColors = (control: MSTControlTag) => {
       border: color ?? defaultLabelColor,
       color: background ? contrastColor(background) : undefined,
       background: background ?? defaultLabelColor,
-    }
+    };
   }
-  
+
   return labelColors;
 };
 
@@ -65,4 +65,4 @@ export const sortControls = (controls: ControlTag[]) => {
     if (!a.type.endsWith("labels") && b.type.endsWith("labels")) return -1;
     return 0;
   });
-}
+};

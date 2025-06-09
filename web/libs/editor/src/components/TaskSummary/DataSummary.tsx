@@ -6,7 +6,7 @@ import type { ObjectTypes } from "./types";
 
 export const DataSummary = ({ data_types }: { data_types: ObjectTypes }) => {
   const data: Record<string, any> = useMemo(() => {
-    return Object.fromEntries(Object.entries(data_types).map(([field, { value }]) => [field, value]))
+    return Object.fromEntries(Object.entries(data_types).map(([field, { value }]) => [field, value]));
   }, [data_types]);
 
   const columns = useMemo(() => {
@@ -26,7 +26,7 @@ export const DataSummary = ({ data_types }: { data_types: ObjectTypes }) => {
           // super simple support for images
           // @todo create a proper data type handler for all data types
           if (type === "image") {
-            return <img src={value} className="w-full" />;
+            return <img src={value} alt={field} className="w-full" />;
           }
 
           // List: [{ id: <id>, body: text, title: text }, ...]
