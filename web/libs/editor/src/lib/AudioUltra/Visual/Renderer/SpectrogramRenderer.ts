@@ -17,7 +17,7 @@ import {
   RATE_LIMITED_RENDER_FPS,
 } from "../constants";
 import { LRUCache } from "../../Common/LRUCache";
-import { FFTProcessor, type SpectrogramScale } from "../../Analysis/FFTProcessor";
+import type { FFTProcessor, SpectrogramScale } from "../../Analysis/FFTProcessor";
 import type { ColorMapper, ColorScheme } from "../ColorMapper";
 import type { WindowFunctionType } from "../WindowFunctions";
 import { downsampleLinear, downsampleLog, downsampleMel } from "./Downsampler";
@@ -177,10 +177,12 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     this.lastRenderContext = context;
     // Initialize FFT processor if not already set and sampleRate is available
     if (!this.fftProcessor && audio.sampleRate) {
-      this.fftProcessor = new FFTProcessor({
-        fftSamples: this.fftSamples,
-        windowingFunction: this.windowFunction,
-        sampleRate: audio.sampleRate,
+      import("../../Analysis/FFTProcessor").then((processor) => {
+        this.fftProcessor = new processor.FFTProcessor({
+          fftSamples: this.fftSamples,
+          windowingFunction: this.windowFunction,
+          sampleRate: audio.sampleRate,
+        });
       });
     }
 
