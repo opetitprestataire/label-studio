@@ -57,7 +57,7 @@ export const FilterOperation = observer(({ filter, field, operator, value }) => 
   const availableOperators = filter.cellView?.filterOperators;
   const Input = selected?.input;
   let operatorList = allowedFilterOperations(types, getRoot(filter)?.SDK?.type);
-  if (filter.filter.field.hasCustomFilterString) {
+  if (filter.filter.field.isAnnotationResultsFilter) {
     // We want at most one of "equal" or "contains" per filter type
     // They resolve to the same backend query in this custom case
     operatorList = operatorList.filter((op) => {

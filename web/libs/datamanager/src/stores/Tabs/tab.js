@@ -9,7 +9,6 @@ import { History } from "../../utils/history";
 import { CustomJSON, StringOrNumberID, ThresholdType } from "../types";
 import { clamp } from "../../utils/helpers";
 import { FF_ANNOTATION_RESULTS_FILTERING, isFF } from "../../utils/feature-flags";
-import Registry from "../../../../editor/src/core/Registry";
 
 const THRESHOLD_MIN = 0;
 const THRESHOLD_MIN_DIFF = 0.001;
@@ -147,34 +146,15 @@ export const Tab = types
           type: el.filter.currentType,
         };
 
-        if (el.filter.field.hasCustomFilterString) {
+        if (el.filter.field.isAnnotationResultsFilter) {
           const userValue = el.currentValue || "";
-          // Spoof type as String for backend and substitute user input into template
+          // Filter type will always be String because we are building a custom JSON filter
           filterItem.type = "String";
-          // build a result object with the user value
           const parsedLabelConfig = self.root.project.parsed_label_config || {};
-          const control_tag_name = el.filter.field.control_tag_from_name;
-          const controlTag = parsedLabelConfig[control_tag_name];
-          // console.log(`el: ${el}, el.filter: ${el.filter}, el.filter.field: ${el.filter.field}, controlTag: ${controlTag}, parsedLabelConfig: ${parsedLabelConfig}`);
-          // console.log(parsedLabelConfig)
-          // console.log(Registry.objectTypes())
-          // console.log('registry ', Registry)
-          // const item = Result.create({
-          //   type: controlTag.type.toLowerCase(),
-          //   from_name: el.filter.field.control_tag_from_name,
-          //   to_name: controlTag.to_name[0],
-          //   // main_value: userValue,
-          //   value: {
-          //     [controlTag.type.toLowerCase()]: [userValue],
-          //   },
-          // });
-          // const model = Registry.getModelByTag(controlTag.type.toLowerCase())
-          // const view = Registry.getViewByTag(controlTag.type.toLowerCase())
-          // const val = JSON.stringify({[tag.valueType]: [userValue]})
-          // console.log('val ', val)
-          // filterItem.value = val;
-          window.registry = Registry;
-          // TODO: hardcoding 2 special cases here because we are unable to look up valueType from the control tag's view
+          const prefix = "annotations_results_json.";
+          const fieldId = el.filter.field.id;
+          const controlTagName = fieldId.includes(prefix) ? fieldId.slice(fieldId.indexOf(prefix) + prefix.length) : "";
+          const controlTag = parsedLabelConfig[controlTagName];
           let valueType = controlTag.type.toLowerCase();
           if (valueType === "textarea") {
             valueType = "text";
@@ -183,7 +163,7 @@ export const Tab = types
           }
           const val = JSON.stringify([
             {
-              from_name: control_tag_name,
+              from_name: controlTagName,
               value: { [valueType]: userValue },
             },
           ]);

@@ -77,7 +77,6 @@ export const TabColumn = types
     // internal columns are not visible in the column selector, but are used for filtering
     internal: types.optional(types.boolean, false),
     help: types.maybeNull(types.string),
-    control_tag_from_name: types.optional(types.maybeNull(types.string), null),
   })
   .views((self) => ({
     get hidden() {
@@ -198,8 +197,8 @@ export const TabColumn = types
       return cellView?.filterable !== false;
     },
 
-    get hasCustomFilterString() {
-      return self.control_tag_from_name !== null && self.control_tag_from_name !== undefined;
+    get isAnnotationResultsFilter() {
+      return self.id.includes("annotations_results_json.");
     },
   }))
   .actions((self) => ({
