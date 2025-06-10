@@ -146,8 +146,8 @@ export const Tab = types
           type: el.filter.currentType,
         };
 
+        const userValue = normalizeFilterValue(filterItem.type, filterItem.operator, filterItem.value);
         if (el.filter.field.isAnnotationResultsFilter) {
-          const userValue = el.currentValue || "";
           // Filter type will always be String because we are building a custom JSON filter
           filterItem.type = "String";
           const parsedLabelConfig = self.root.project.parsed_label_config || {};
@@ -169,7 +169,7 @@ export const Tab = types
           ]);
           filterItem.value = val;
         } else {
-          filterItem.value = normalizeFilterValue(filterItem.type, filterItem.operator, filterItem.value);
+          filterItem.value = userValue;
         }
 
         return filterItem;
