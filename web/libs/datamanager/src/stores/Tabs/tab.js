@@ -75,7 +75,7 @@ export const Tab = types
     },
 
     get targetColumns() {
-      return self.columns.filter((c) => c.target === self.target);
+      return self.columns.filter((c) => c.target === self.target && !c.internal);
     },
 
     // get fields formatted as columns structure for react-table
