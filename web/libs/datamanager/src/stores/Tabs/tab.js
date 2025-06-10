@@ -146,32 +146,7 @@ export const Tab = types
           type: el.filter.currentType,
         };
 
-        const userValue = normalizeFilterValue(filterItem.type, filterItem.operator, filterItem.value);
-        if (el.filter.field.isAnnotationResultsFilter) {
-          // Filter type will always be String because we are building a custom JSON filter
-          filterItem.type = "String";
-          const parsedLabelConfig = self.root.project.parsed_label_config || {};
-          const prefix = "annotations_results_json.";
-          const fieldId = el.filter.field.id;
-          const controlTagName = fieldId.includes(prefix) ? fieldId.slice(fieldId.indexOf(prefix) + prefix.length) : "";
-          const controlTag = parsedLabelConfig[controlTagName];
-          let valueType = controlTag.type.toLowerCase();
-          if (valueType === "textarea") {
-            valueType = "text";
-          } else if (valueType === "pairwise") {
-            valueType = "selected";
-          }
-          const val = JSON.stringify([
-            {
-              from_name: controlTagName,
-              value: { [valueType]: userValue },
-            },
-          ]);
-          filterItem.value = val;
-        } else {
-          filterItem.value = userValue;
-        }
-
+        filterItem.value = normalizeFilterValue(filterItem.type, filterItem.operator, filterItem.value);
         return filterItem;
       });
     },
