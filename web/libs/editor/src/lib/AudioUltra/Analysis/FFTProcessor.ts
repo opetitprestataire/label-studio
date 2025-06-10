@@ -1,5 +1,5 @@
-import { ComputeWorker } from "../Common/Worker";
-import type { WindowFunctionType } from "../Visual/WindowFunctions";
+import webfft from "webfft";
+import { applyWindowFunction, type WindowFunctionType } from "../Visual/WindowFunctions";
 import { MelBanks } from "./MelBanks";
 import { SPECTROGRAM_DEFAULTS } from "../Visual/constants";
 
@@ -16,11 +16,15 @@ export interface FFTProcessorOptions {
  */
 export class FFTProcessor {
   private options: FFTProcessorOptions;
-  private worker: ComputeWorker | null = null;
+  private webfftInstance: webfft | null = null;
 
   // Added a cache for MelBanks instances to avoid recreating them constantly
   private melBanksCache: MelBanks | null = null;
   private melBanksCacheKey: string | null = null;
+
+  // Persistent buffers for performance
+  private fftInputBuffer: Float32Array | null = null;
+  private fftInterleavedInputBuffer: Float32Array | null = null;
 
   constructor(options: FFTProcessorOptions) {
     this.options = {
@@ -33,12 +37,18 @@ export class FFTProcessor {
 
   private initialize() {
     try {
-      // eslint-disable-next-line
-      // @ts-ignore
-      this.worker = new ComputeWorker(new Worker(new URL("./FFTWorker.ts", import.meta.url)));
-    } catch (error) {
-      console.error("Failed to initialize FFT worker:", error);
-      this.worker = null;
+      this.webfftInstance = new webfft(this.options.fftSamples);
+      // Run profiling immediately after initialization
+      (this.webfftInstance as any).profile();
+
+      // Pre-allocate buffers
+      this.fftInputBuffer = new Float32Array(this.options.fftSamples);
+      // webfft might need interleaved input (real, imag, real, imag, ...)
+      this.fftInterleavedInputBuffer = new Float32Array(this.options.fftSamples * 2);
+    } catch (_error) {
+      this.webfftInstance = null;
+      this.fftInputBuffer = null;
+      this.fftInterleavedInputBuffer = null;
     }
   }
 
@@ -53,12 +63,12 @@ export class FFTProcessor {
     this.options = { ...this.options, ...newOptions };
 
     if (needsReinitialization) {
-      this.worker?.destroy();
-      this.initialize();
-      this.melBanksCache = null;
+      this.webfftInstance?.dispose(); // Clean up old instance if exists
+      this.initialize(); // Re-initialize with a new size
+      this.melBanksCache = null; // Clear MelBanks cache if FFT size changes
       this.melBanksCacheKey = null;
     } else if (needsMelCacheClear) {
-      this.melBanksCache = null;
+      this.melBanksCache = null; // Clear MelBanks cache if the sample rate changes
       this.melBanksCacheKey = null;
     }
   }
@@ -71,19 +81,67 @@ export class FFTProcessor {
    * @param buffer The input audio data segment.
    * @returns The power spectrum (magnitude) or null if FFT failed.
    */
-  async calculatePowerSpectrum(buffer: Float32Array): Promise<Float32Array | null> {
-    if (!this.worker || buffer.length === 0) {
+  calculatePowerSpectrum(buffer: Float32Array): Float32Array | null {
+    if (!this.webfftInstance || !this.fftInputBuffer || !this.fftInterleavedInputBuffer || buffer.length === 0) {
       return this.handleFFTError();
     }
 
-    try {
-      const result = await this.worker.compute({
-        fftSamples: this.options.fftSamples,
-        windowingFunction: this.options.windowingFunction,
-        buffer,
-      });
+    // Ensure the input buffer has the correct data, applying windowing
+    // Use slice(0, fftSamples) in case the input buffer is longer
+    const inputSlice = buffer.slice(0, this.options.fftSamples);
 
-      return result.data;
+    // Copy sliced data into the pre-allocated buffer
+    // Pad with zeros if inputSlice is shorter than fftSamples
+    this.fftInputBuffer.set(inputSlice);
+    if (inputSlice.length < this.options.fftSamples) {
+      this.fftInputBuffer.fill(0, inputSlice.length);
+    }
+
+    // Now apply the window function IN-PLACE to the fftInputBuffer
+    applyWindowFunction(this.fftInputBuffer, this.options.windowingFunction);
+
+    try {
+      // Prepare interleaved input for webfft (assuming real input)
+      for (let i = 0; i < this.options.fftSamples; i++) {
+        this.fftInterleavedInputBuffer[2 * i] = this.fftInputBuffer[i]; // Real part (now correctly windowed)
+        this.fftInterleavedInputBuffer[2 * i + 1] = 0; // Imaginary part
+      }
+
+      // Perform FFT
+      const fftResult = this.webfftInstance.fft(this.fftInterleavedInputBuffer);
+
+      // Add a check for a valid FFT result
+      if (!fftResult) {
+        console.error("WebFFT returned invalid result", fftResult);
+        return this.handleFFTError();
+      }
+
+      // Cast the result after the check using any as a workaround
+      const validFftResult = fftResult as any;
+
+      // Calculate magnitude (power spectrum)
+      // Output is complex (real, imag), we need sqrt(real^2 + imag^2)
+      // Result is half the size + 1 (due to symmetry)
+      const spectrumSize = this.options.fftSamples / 2 + 1;
+      const powerSpectrum = new Float32Array(spectrumSize);
+      const normFactor = this.options.fftSamples; // Normalization factor (FFT size)
+
+      // Handle DC component (index 0)
+      const dcReal = validFftResult[0];
+      powerSpectrum[0] = Math.abs(dcReal) / normFactor;
+
+      // Handle remaining bins up to Nyquist
+      for (let i = 1; i < spectrumSize; i++) {
+        const real = validFftResult[2 * i];
+        const imag = validFftResult[2 * i + 1];
+        // Normalize the magnitude
+        // Note: Standard normalization often uses N for power, 2/N for amplitude spectrum (excluding DC/Nyquist)
+        // We are calculating power (magnitude squared implicitly via dB conversion later),
+        // but normalizing magnitude by N here is common before dB.
+        powerSpectrum[i] = Math.sqrt(real * real + imag * imag) / normFactor;
+      }
+
+      return powerSpectrum;
     } catch (error) {
       console.error("Error during FFT calculation:", error);
       return this.handleFFTError();
@@ -136,16 +194,19 @@ export class FFTProcessor {
    * Returns a fallback array when FFT calculation fails.
    */
   private handleFFTError(): Float32Array | null {
+    // Return null to indicate failure, let the caller decide on fallback
     return null;
   }
 
   /**
-   * Cleans up the worker instance.
+   * Cleans up the WebFFT instance.
    */
   dispose() {
-    this.worker?.destroy();
-    this.worker = null;
-    this.melBanksCache = null;
+    this.webfftInstance?.dispose();
+    this.webfftInstance = null;
+    this.fftInputBuffer = null;
+    this.fftInterleavedInputBuffer = null;
+    this.melBanksCache = null; // Clear cache on dispose
     this.melBanksCacheKey = null;
   }
 

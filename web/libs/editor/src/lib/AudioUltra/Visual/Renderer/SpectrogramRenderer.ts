@@ -6,8 +6,10 @@ import {
   MAX_LOG_DISPLAY_BINS,
   MAX_MEL_DISPLAY_BINS,
   PRECACHE,
+  SEAM_GAP_FILL,
   SPECTROGRAM_BUFFER_NORMAL_SEC,
   SPECTROGRAM_BUFFER_NORMAL_WINDOWS,
+  SPECTROGRAM_CACHE_CLEAR_FACTOR,
   SPECTROGRAM_FFT_CACHE_MAX_ENTRIES,
   SPECTROGRAM_HIGH_BATCH_SIZE,
   SPECTROGRAM_MAX_COMPUTATIONS,
@@ -187,32 +189,136 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     }
   }
 
-  public async render(context: RenderContext, layer: Layer): Promise<void> {
-    if (!this.audio || !this.fftProcessor) return;
+  public draw(context: RenderContext): void {
+    if (
+      this.isDestroyed ||
+      !this.spectrogram?.isVisible ||
+      !this.audio ||
+      !this.fftProcessor ||
+      !this.spectrogram.isVisible
+    ) {
+      return;
+    }
+    // Use rate-limited draw for spectrogram
+    this.rateLimitedRenderer.scheduleDraw(
+      { context, renderer: this },
+      ({ context, renderer }) => {
+        renderer._draw(context);
+      },
+      false, // not a zoom operation
+    );
+  }
 
+  private _draw(context: RenderContext): void {
     this.lastRenderContext = context;
-    const { width, scrollLeftPx, zoom } = context;
-    const channelHeight = this.config.channelHeight;
-    const channelCount = this.audio.channelCount;
+    const scrollLeftPx = context.scrollLeftPx;
+    const deltaX = scrollLeftPx - this.lastSpectrogramRenderedScrollLeftPx;
+    try {
+      const dataLength = this.audio?.dataLength ?? 0;
+      const cacheLimitExceeded =
+        this.computationQueue.getQueueSizes().high > context.width * SPECTROGRAM_CACHE_CLEAR_FACTOR;
+      const needsFullRender =
+        !this.audio ||
+        context.width !== this.lastSpectrogramRenderedWidth ||
+        context.zoom !== this.lastSpectrogramRenderedZoom ||
+        this.spectrogramNeedsRedraw ||
+        Math.abs(deltaX) >= context.width ||
+        cacheLimitExceeded;
 
-    // Clear the layer
-    layer.clear();
+      if (needsFullRender || deltaX > 0) {
+        this.computationQueue.cancelBatchesByPriority([TaskPriority.NORMAL, TaskPriority.LOW]);
+      }
 
-    // Calculate visible range
-    const startTime = scrollLeftPx / zoom;
-    const endTime = (scrollLeftPx + width) / zoom;
-    const startSample = Math.floor(startTime * this.audio.sampleRate);
-    const endSample = Math.ceil(endTime * this.audio.sampleRate);
+      if (needsFullRender) {
+        if (cacheLimitExceeded) this.forceCachedExcedLimit += 1;
+        this.computationQueue.clear();
+        this.spectrogram.clear();
+        const hopSize = this._getCurrentHopSize();
+        if (!this.fftProcessor) return;
+        const fftSize = this.fftProcessor.fftSamples;
+        const visibleStartSample = Math.floor(clamp(scrollLeftPx * context.samplesPerPx, 0, dataLength));
+        const visibleEndSample = Math.ceil(
+          clamp(visibleStartSample + context.width * context.samplesPerPx, 0, dataLength),
+        );
+        const highStart = visibleStartSample;
+        const highEnd = visibleEndSample;
+        const visibleWindowSamples = highEnd - highStart;
+        const tasksScheduled = this._scheduleSpectrogramTasks(
+          highStart,
+          highEnd,
+          TaskPriority.HIGH,
+          hopSize,
+          fftSize,
+          dataLength,
+          "current-view",
+          SPECTROGRAM_HIGH_BATCH_SIZE,
+        );
 
-    // Render each channel
-    for (let channel = 0; channel < channelCount; channel++) {
-      await this.renderSpectrogramSlice(layer, channelHeight, startSample, endSample, channel);
+        if (tasksScheduled === 0) {
+          this.redrawSpectrogramFromCache("all-in-cache");
+        }
+
+        if (PRECACHE && this.audio) {
+          const sampleRate = this.audio.sampleRate;
+          const normalBufferSamples = Math.max(
+            visibleWindowSamples,
+            Math.round(SPECTROGRAM_BUFFER_NORMAL_SEC * sampleRate),
+          );
+          const normalStart = highEnd;
+          const normalEnd = normalStart + normalBufferSamples;
+          this._scheduleSpectrogramTasks(
+            normalStart,
+            normalEnd,
+            TaskPriority.NORMAL,
+            hopSize,
+            fftSize,
+            dataLength,
+            "precache-view-normal",
+            SPECTROGRAM_NORMAL_BATCH_SIZE,
+          );
+        }
+
+        this.lastSpectrogramRenderedScrollLeftPx = scrollLeftPx;
+        this.lastSpectrogramRenderedWidth = context.width;
+        this.lastSpectrogramRenderedZoom = context.zoom;
+        this.spectrogramNeedsRedraw = false;
+      } else if (Math.abs(deltaX) > 0) {
+        const shiftAmount = -deltaX;
+        this.spectrogram.shift(shiftAmount, 0);
+        this.lastSpectrogramRenderedScrollLeftPx = scrollLeftPx;
+        const iStart = Math.floor(clamp(scrollLeftPx * context.samplesPerPx, 0, dataLength));
+        const iEnd = Math.ceil(clamp(iStart + context.width * context.samplesPerPx, 0, dataLength));
+        const sampleDiff = Math.round(deltaX * context.samplesPerPx);
+        let sliceStartSample: number;
+        let sliceEndSample: number;
+        const seamPxSamples = Math.ceil(context.samplesPerPx * SEAM_GAP_FILL);
+        if (deltaX > 0) {
+          sliceStartSample = Math.max(0, iEnd - sampleDiff - seamPxSamples);
+          sliceEndSample = iEnd;
+        } else {
+          sliceStartSample = iStart;
+          sliceEndSample = Math.min(dataLength, iStart - sampleDiff + seamPxSamples);
+        }
+        const bufferSamples = 0;
+        sliceStartSample = Math.floor(clamp(sliceStartSample - bufferSamples, 0, dataLength));
+        sliceEndSample = Math.ceil(clamp(sliceEndSample + bufferSamples, 0, dataLength));
+        const tasksScheduled = this.schedulePartialSpectrogramComputations(sliceStartSample, sliceEndSample);
+        if (tasksScheduled === 0) {
+          this.redrawSpectrogramSliceFromCache("all-in-cache", sliceStartSample, sliceEndSample);
+        }
+      } else {
+        this.redrawSpectrogramFromCache("delta-0");
+      }
+    } catch (error) {
+      console.warn(`Error during spectrogram sync/schedule phase:${error}`);
     }
 
-    // Render plugins
     for (const plugin of this.plugins) {
       plugin.render(context);
     }
+
+    // Call transfer immediately since we want to show the waveform updates right away
+    this.onRenderTransfer?.();
   }
 
   destroy(): void {
@@ -283,42 +389,7 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
     }
   }
 
-  private async calculateHopSpectrum(channelIndex: number, hopStartSample: number): Promise<Float32Array | null> {
-    if (!this.lastRenderContext || !this.audio || !this.fftProcessor) return null;
-    const fftSize = this.fftProcessor.fftSamples;
-    const dataLength = this.lastRenderContext.dataLength;
-    const requiredEndSample = hopStartSample + fftSize;
-    if (requiredEndSample > dataLength) {
-      return null;
-    }
-    const buffer = this.getChannelDataSlice(channelIndex, hopStartSample, requiredEndSample);
-    if (!buffer) return null;
-    const linearSpectrum = await this.fftProcessor.calculatePowerSpectrum(buffer);
-    if (!linearSpectrum) return null;
-    let finalSpectrum: Float32Array | null = null;
-    if (this.spectrogramScale === "mel") {
-      finalSpectrum = this.fftProcessor.convertToMelScale(linearSpectrum, this.numberOfMelBands);
-    } else if (this.spectrogramScale === "log") {
-      finalSpectrum = linearSpectrum;
-    } else {
-      finalSpectrum = linearSpectrum;
-    }
-    if (finalSpectrum) {
-      if (!this.fftCache.has(channelIndex)) {
-        this.fftCache.set(channelIndex, new LRUCache<number, Float32Array>(SPECTROGRAM_FFT_CACHE_MAX_ENTRIES));
-      }
-      this.fftCache.get(channelIndex)!.set(hopStartSample, finalSpectrum);
-    }
-    return finalSpectrum;
-  }
-
-  private getFFTFromCache(channelNumber: number, hopStartSample: number): Float32Array | null {
-    const cache = this.fftCache.get(channelNumber);
-    if (!cache) return null;
-    return cache.get(hopStartSample) ?? null;
-  }
-
-  private async renderSpectrogramSlice(
+  renderSpectrogramSlice(
     layer: Layer,
     channelHeight: number,
     iStart: number,
@@ -351,10 +422,7 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
       const centerSample = iStart + (x - pixelStartX + 0.5) * samplesPerPx;
       const hopIndex = Math.max(0, Math.floor((centerSample - fftWindowHalf) / hopSize + 0.5));
       const hopStartSample = hopIndex * hopSize;
-      let hopSpectrum = this.getFFTFromCache(channelNumber, hopStartSample);
-      if (hopSpectrum === null) {
-        hopSpectrum = await this.calculateHopSpectrum(channelNumber, hopStartSample);
-      }
+      const hopSpectrum = this.getFFTFromCache(channelNumber, hopStartSample);
       if (hopSpectrum !== null) {
         this.renderFFTData(hopSpectrum, layer, channelHeight, x, zero);
       }
@@ -478,6 +546,40 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
   private hasFFTInCache(channelIndex: number, hopStartSample: number): boolean {
     if (!this.fftCache.has(channelIndex)) return false;
     return this.fftCache.get(channelIndex)!.has(hopStartSample);
+  }
+
+  public getFFTFromCache(channelIndex: number, hopStartSample: number): Float32Array | null {
+    if (!this.hasFFTInCache(channelIndex, hopStartSample)) return null;
+    return this.fftCache.get(channelIndex)!.get(hopStartSample) || null;
+  }
+
+  private calculateHopSpectrum(channelIndex: number, hopStartSample: number): Float32Array | null {
+    if (!this.lastRenderContext || !this.audio || !this.fftProcessor) return null;
+    const fftSize = this.fftProcessor.fftSamples;
+    const dataLength = this.lastRenderContext.dataLength;
+    const requiredEndSample = hopStartSample + fftSize;
+    if (requiredEndSample > dataLength) {
+      return null;
+    }
+    const buffer = this.getChannelDataSlice(channelIndex, hopStartSample, requiredEndSample);
+    if (!buffer) return null;
+    const linearSpectrum = this.fftProcessor.calculatePowerSpectrum(buffer);
+    if (!linearSpectrum) return null;
+    let finalSpectrum: Float32Array | null = null;
+    if (this.spectrogramScale === "mel") {
+      finalSpectrum = this.fftProcessor.convertToMelScale(linearSpectrum, this.numberOfMelBands);
+    } else if (this.spectrogramScale === "log") {
+      finalSpectrum = linearSpectrum;
+    } else {
+      finalSpectrum = linearSpectrum;
+    }
+    if (finalSpectrum) {
+      if (!this.fftCache.has(channelIndex)) {
+        this.fftCache.set(channelIndex, new LRUCache<number, Float32Array>(SPECTROGRAM_FFT_CACHE_MAX_ENTRIES));
+      }
+      this.fftCache.get(channelIndex)!.set(hopStartSample, finalSpectrum);
+    }
+    return finalSpectrum;
   }
 
   public redrawSpectrogramFromCache(correlationId?: string) {
@@ -645,10 +747,5 @@ export class SpectrogramRenderer implements Renderer<SpectrogramRendererConfig> 
         plugin.onResize();
       }
     }
-  }
-
-  public draw(context: RenderContext): void {
-    if (!this.audio || !this.fftProcessor) return;
-    this.render(context, this.spectrogram);
   }
 }
