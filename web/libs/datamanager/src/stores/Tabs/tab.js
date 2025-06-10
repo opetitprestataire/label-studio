@@ -75,7 +75,7 @@ export const Tab = types
     },
 
     get targetColumns() {
-      return self.columns.filter((c) => c.target === self.target && !c.internal);
+      return self.columns.filter((c) => c.target === self.target && !c.filter_only);
     },
 
     // get fields formatted as columns structure for react-table
@@ -110,7 +110,7 @@ export const Tab = types
 
     get currentFilters() {
       if (!isFF(FF_ANNOTATION_RESULTS_FILTERING)) {
-        return self.filters.filter((f) => f.target === self.target && !f.field.internal);
+        return self.filters.filter((f) => f.target === self.target && !f.field.filter_only);
       }
       return self.filters.filter((f) => f.target === self.target);
     },

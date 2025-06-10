@@ -74,10 +74,9 @@ export const TabColumn = types
     children: types.maybeNull(types.array(types.late(() => types.reference(TabColumn)))),
     target: types.enumeration(["tasks", "annotations"]),
     orderable: types.optional(types.boolean, true),
-    // internal columns are not visible in the column selector, but are used for filtering
-    internal: types.optional(types.boolean, false),
+    // these columns are not visible in the column selector, but are used for filtering
+    filter_only: types.optional(types.boolean, false),
     help: types.maybeNull(types.string),
-    control_tag_from_name: types.optional(types.maybeNull(types.string), null),
   })
   .views((self) => ({
     get hidden() {
@@ -146,7 +145,7 @@ export const TabColumn = types
         const childColumns = [].concat(...self.children.map((subColumn) => subColumn.asField));
 
         result.push(...childColumns);
-      } else if (!self.internal) {
+      } else if (!self.filter_only) {
         result.push({
           ...self,
           id: self.key,

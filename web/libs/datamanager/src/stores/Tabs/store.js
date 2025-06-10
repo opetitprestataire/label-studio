@@ -91,9 +91,7 @@ export const TabStore = types
 
     get columns() {
       const cols = self.columnsTargetMap ?? new Map();
-      const list = cols.get(self.selected?.target ?? "tasks") ?? [];
-      // return list.filter((c) => !c.internal);
-      return list;
+      return cols.get(self.selected?.target ?? "tasks") ?? [];
     },
 
     get dataStore() {
@@ -475,7 +473,7 @@ export const TabStore = types
       const response = yield getRoot(self).apiCall("tabs");
       const tabs = response.tabs ?? response ?? [];
       const columnIds = self.columns.map((c) => c.id);
-      const internalColumnIds = self.columns.filter((c) => c.internal).map((c) => c.id);
+      const internalColumnIds = self.columns.filter((c) => c.filter_only).map((c) => c.id);
 
       const snapshots = tabs.map((t) => {
         const { data, ...tab } = dataCleanup(t, columnIds, internalColumnIds);
@@ -516,7 +514,7 @@ export const TabStore = types
       if (!isNaN(tabKey) && !isNaN(tabId)) {
         const tabData = yield getRoot(self).apiCall("tab", { tabId });
         const columnIds = (self.columns ?? []).map((c) => c.id);
-        const internalColumnIds = (self.columns ?? []).filter((c) => c.internal).map((c) => c.id);
+        const internalColumnIds = (self.columns ?? []).filter((c) => c.filter_only).map((c) => c.id);
         const { data, ...tabClean } = dataCleanup(tabData, columnIds, internalColumnIds);
 
         self.views.push({
