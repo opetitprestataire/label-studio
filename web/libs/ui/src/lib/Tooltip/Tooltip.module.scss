@@ -84,6 +84,16 @@
         transform: translate(-50%, -50%) rotate(45deg);
       }
     }
+    &_bottom-left {
+      margin-left: calc(calc(var(--offset-x) - (var(--pointer-size) / 2)) * -1);
+      --animation-start: 10px;
+
+      &::before {
+        top: 0;
+        left: 24px;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+    }
 
     &_top-left {
       margin-left: calc(calc(var(--offset-x) - (var(--pointer-size) / 2)) * -1);
