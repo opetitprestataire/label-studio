@@ -868,12 +868,20 @@ export class Visualizer extends Events<VisualizerEvents> {
     if (!this.wf.loaded) return;
 
     if (this.isZooming(e)) {
+      // Store the current time position before zooming
+      const currentTimePosition = this.wf.currentTime;
+
       // Calculate zoom delta based on trackpad sensitivity
       const zoomDelta = e.deltaY * 0.1;
       const newZoom = this.zoom * (1 - zoomDelta);
 
       // Set the new zoom level
-      setTimeout(() => this.setZoom(newZoom), 0);
+      setTimeout(() => {
+        this.setZoom(newZoom);
+        // Restore the time position after zooming
+        this.wf.currentTime = currentTimePosition;
+        this.updateCursorToTime(currentTimePosition);
+      }, 0);
     } else if (this.zoom > 1) {
       // Base values
       const maxScroll = this.scrollWidth;
