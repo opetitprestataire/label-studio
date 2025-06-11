@@ -1,6 +1,6 @@
 import { ff } from "@humansignal/core";
 import { SampleDatasetSelect } from "@humansignal/app-common/blocks/SampleDatasetSelect/SampleDatasetSelect";
-import { IconError, IconFileUpload, IconInfoOutline, IconTrash, IconUpload } from "@humansignal/icons";
+import { IconError, IconFileUpload, IconInfoOutline, IconTrash, IconUpload, IconCode } from "@humansignal/icons";
 import { Badge } from "@humansignal/shad/components/ui/badge";
 import { cn as scn } from "@humansignal/shad/utils";
 import { Button } from "apps/labelstudio/src/components";
@@ -493,10 +493,10 @@ export const ImportPage = ({
             )}
 
             {ff.isFF(ff.FF_JSON_PREVIEW) && (
-              <div className="w-full">
-                <SimpleCard title="Expected input preview" className="w-full h-full">
-                  {projectConfigured ? (
-                    sampleConfig.data ? (
+              <div className="w-full h-full flex flex-col min-h-[400px]">
+                {projectConfigured ? (
+                  <SimpleCard title="Expected input preview" className="w-full h-full">
+                    {sampleConfig.data ? (
                       <CodeBlock
                         title="Expected input preview"
                         code={sampleConfig?.data ?? ""}
@@ -508,22 +508,33 @@ export const ImportPage = ({
                       </div>
                     ) : sampleConfig.isError ? (
                       <div className="w-full pt-4 text-lg text-negative-content">Unable to load sample data</div>
-                    ) : null
-                  ) : (
-                    <>
-                      Set up your{" "}
-                      <button
-                        type="button"
-                        look="link"
-                        onClick={openConfig}
-                        className="border-none bg-none p-0 m-0 text-primary-content underline"
-                      >
-                        labeling configuration
-                      </button>{" "}
-                      to generate an input preview.
-                    </>
-                  )}
-                </SimpleCard>
+                    ) : null}
+                  </SimpleCard>
+                ) : (
+                  <SimpleCard className="w-full h-full flex flex-col items-center justify-center text-center p-wide">
+                    <div className="flex flex-col items-center gap-tight">
+                      <div className="bg-primary-background rounded-largest p-tight flex items-center justify-center">
+                        <IconCode className="w-6 h-6 text-primary-icon" />
+                      </div>
+                      <div className="flex flex-col items-center gap-tighter">
+                        <div className="text-label-small text-neutral-content font-medium">
+                          View sample JSON input
+                        </div>
+                        <div className="text-body-smaller text-neutral-content-subtler text-center">
+                          Set up your{" "}
+                          <button
+                            type="button"
+                            onClick={openConfig}
+                            className="border-none bg-none p-0 m-0 text-primary-content underline hover:text-primary-content-hover transition-colors"
+                          >
+                            labeling configuration
+                          </button>{" "}
+                          to view a sample JSON input
+                        </div>
+                      </div>
+                    </div>
+                  </SimpleCard>
+                )}
               </div>
             )}
           </div>
