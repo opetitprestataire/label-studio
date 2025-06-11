@@ -2,11 +2,11 @@ import { observer } from "mobx-react";
 import { createContext, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSDK } from "../../../providers/SDKProvider";
 import { isDefined } from "../../../utils/utils";
-import { Button } from "@humansignal/ui";
 import { Icon } from "../Icon/Icon";
 import { modal } from "../Modal/Modal";
-import { IconCode, IconGear, IconGearNewUI } from "@humansignal/icons";
-import { AutoSizerTable, Tooltip } from "@humansignal/ui";
+import { IconCode, IconGear, IconGearNewUI, IconCopyOutline } from "@humansignal/icons";
+import { AutoSizerTable, Tooltip, Button } from "@humansignal/ui";
+import { useCopyText } from "@humansignal/core/lib/hooks/useCopyText";
 import "./Table.scss";
 import { TableCheckboxCell } from "./TableCheckbox";
 import { tableCN, TableContext } from "./TableContext";
@@ -130,20 +130,19 @@ export const Table = observer(
         };
 
         return (
-          <Tooltip title="Show task source">
-            <Button
-              look="string"
-              onClick={() => {
-                modal({
-                  title: `Source for task ${out?.id}`,
-                  style: { width: 800 },
-                  body: <TaskSourceView content={out} onTaskLoad={onTaskLoad} sdkType={type} />,
-                });
-              }}
-            >
-              <Icon icon={IconCode} />
-            </Button>
-          </Tooltip>
+          <Button
+            look="string"
+            className="w-6 h-6 p-0 text-primary-content hover:text-primary-content-hover"
+            onClick={() => {
+              modal({
+                title: `Source for task ${out?.id}`,
+                style: { width: 800 },
+                body: <TaskSourceView content={out} onTaskLoad={onTaskLoad} sdkType={type} />,
+              });
+            }}
+            leading={<Icon icon={IconCode} />}
+            tooltip="Show task source"
+          />
         );
       },
     });
@@ -445,5 +444,40 @@ const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
     });
   }, []);
 
-  return <pre>{source ? JSON.stringify(source, null, "  ") : null}</pre>;
+  const jsonString = useMemo(() => {
+    return source ? JSON.stringify(source, null, 2) : "";
+  }, [source]);
+
+  const [handleCopy, copied] = useCopyText(jsonString);
+
+  return (
+    <div
+      className="bg-neutral-surface rounded-small font-mono text-body-small leading-body-small overflow-auto max-h-[500px]"
+      style={{ position: "relative" }}
+    >
+      <div style={{ padding: "16px", paddingTop: "16px" }}>
+        <Tooltip title={copied ? "Copied!" : "Copy JSON"}>
+          <Button
+            look="string"
+            variant="neutral"
+            style={{
+              position: "absolute",
+              top: "8px",
+              right: "8px",
+              width: 32,
+              height: 32,
+              padding: 0,
+              zIndex: 10,
+              color: "var(--color-neutral-content-subtle)",
+            }}
+            onClick={handleCopy}
+            leading={<Icon icon={IconCopyOutline} style={{ color: "var(--color-neutral-content-subtle)" }} />}
+          />
+        </Tooltip>
+        <pre className="m-0 whitespace-pre-wrap break-words max-w-full" style={{ marginRight: "40px" }}>
+          {jsonString}
+        </pre>
+      </div>
+    </div>
+  );
 };
