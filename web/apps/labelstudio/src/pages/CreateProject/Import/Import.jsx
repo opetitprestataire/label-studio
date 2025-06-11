@@ -517,9 +517,9 @@ export const ImportPage = ({
                         <IconCode className="w-6 h-6 text-primary-icon" />
                       </div>
                       <div className="flex flex-col items-center gap-tighter">
-                        <div className="text-label-small text-neutral-content font-medium">View sample JSON input</div>
+                        <div className="text-label-small text-neutral-content font-medium">View JSON input format</div>
                         <div className="text-body-small text-neutral-content-subtler text-center">
-                          Set up your{" "}
+                          Setup your{" "}
                           <button
                             type="button"
                             onClick={openConfig}
@@ -527,7 +527,7 @@ export const ImportPage = ({
                           >
                             labeling configuration
                           </button>{" "}
-                          to view a sample JSON input
+                          first to preview the expected JSON data format
                         </div>
                       </div>
                     </div>
