@@ -1,6 +1,6 @@
 import { ff } from "@humansignal/core";
 import { SampleDatasetSelect } from "@humansignal/app-common/blocks/SampleDatasetSelect/SampleDatasetSelect";
-import { IconError, IconFileUpload, IconInfoOutline, IconTrash, IconUpload, IconCode } from "@humansignal/icons";
+import { IconErrorAlt, IconFileUpload, IconInfoOutline, IconTrash, IconUpload, IconCode } from "@humansignal/icons";
 import { Badge } from "@humansignal/shad/components/ui/badge";
 import { cn as scn } from "@humansignal/shad/utils";
 import { Button } from "apps/labelstudio/src/components";
@@ -126,7 +126,7 @@ const ErrorMessage = ({ error }) => {
 
   return (
     <div className={importClass.elem("error")}>
-      <IconError style={{ marginRight: 8 }} />
+      <IconErrorAlt width="24" height="24" />
       {error.id && `[${error.id}] `}
       {error.detail || error.message}
       {extra && ` (${extra})`}
@@ -439,7 +439,8 @@ export const ImportPage = ({
             )}
 
             {showList && (
-              <div className="w-1/2">
+              <div className="w-full">
+                <SimpleCard title="Files" className="w-full h-full">
                 <table>
                   <tbody>
                     {sample && (
@@ -483,7 +484,8 @@ export const ImportPage = ({
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                  </table>
+                </SimpleCard>
               </div>
             )}
 
