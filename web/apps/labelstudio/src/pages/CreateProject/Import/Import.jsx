@@ -389,6 +389,7 @@ export const ImportPage = ({
                               target="_blank"
                               rel="noreferrer"
                               className="inline-flex items-center"
+                              aria-label="Learn more about video format support"
                             >
                               <IconInfoOutline className="w-4 h-4 text-primary-content hover:text-primary-content-hover" />
                             </a>
