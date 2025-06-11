@@ -194,7 +194,6 @@ const Grouping = <T extends string>({
     );
   }, [value, optionsList, readableValue, direction, onChange]);
 
-
   return (
     <Dropdown.Trigger content={dropdownContent} style={{ width: 200 }}>
       <Button
