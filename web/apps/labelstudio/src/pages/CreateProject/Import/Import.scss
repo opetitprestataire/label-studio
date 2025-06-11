@@ -91,8 +91,8 @@
   }
 
   &__file-status {
-    background: var(--kale_400);
-    border: 1px solid var(--kale_400);
+    background: var(--color-positive-surface);
+    border: 1px solid var(--color-positive-surface);
     border-radius: 4px;
     width: 160px;
     height: 6px;
@@ -100,7 +100,7 @@
 
     &_uploading {
       border: 1px solid var(--color-primary-border-subtle);
-      background-color: var(--grape_500);
+      background-color: var(--color-primary-surface);
       background-repeat: repeat;
       background-position: 40px;
       background-size: 37px 100%;
