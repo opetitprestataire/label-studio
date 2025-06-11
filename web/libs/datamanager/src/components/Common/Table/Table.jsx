@@ -133,15 +133,7 @@ export const Table = observer(
           <Tooltip title="Show task source">
             <Button
               look="string"
-              style={{
-                width: 24,
-                height: 24,
-                padding: 0,
-                color: "var(--color-primary-surface)",
-                "&:hover": {
-                  color: "var(--color-primary-surface-hover)",
-                },
-              }}
+              className="w-6 h-6 p-0 text-primary-content hover:text-primary-content-hover"
               onClick={() => {
                 modal({
                   title: `Source for task ${out?.id}`,
