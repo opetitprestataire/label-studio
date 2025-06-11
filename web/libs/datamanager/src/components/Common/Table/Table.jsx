@@ -2,11 +2,11 @@ import { observer } from "mobx-react";
 import { createContext, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSDK } from "../../../providers/SDKProvider";
 import { isDefined } from "../../../utils/utils";
-import { Button } from "../Button/Button";
 import { Icon } from "../Icon/Icon";
 import { modal } from "../Modal/Modal";
 import { IconCode, IconGear, IconGearNewUI, IconCopyOutline } from "@humansignal/icons";
-import { AutoSizerTable, Tooltip } from "@humansignal/ui";
+import { AutoSizerTable, Tooltip, Button } from "@humansignal/ui";
+import { useCopyText } from "@humansignal/core/lib/hooks/useCopyText";
 import "./Table.scss";
 import { TableCheckboxCell } from "./TableCheckbox";
 import { tableCN, TableContext } from "./TableContext";
@@ -132,8 +132,16 @@ export const Table = observer(
         return (
           <Tooltip title="Show task source">
             <Button
-              type="link"
-              style={{ width: 32, height: 32, padding: 0 }}
+              look="string"
+              style={{
+                width: 24,
+                height: 24,
+                padding: 0,
+                color: "var(--color-primary-surface)",
+                "&:hover": {
+                  color: "var(--color-primary-surface-hover)",
+                },
+              }}
               onClick={() => {
                 modal({
                   title: `Source for task ${out?.id}`,
@@ -141,7 +149,7 @@ export const Table = observer(
                   body: <TaskSourceView content={out} onTaskLoad={onTaskLoad} sdkType={type} />,
                 });
               }}
-              icon={<Icon icon={IconCode} />}
+              leading={<Icon icon={IconCode} />}
             />
           </Tooltip>
         );
@@ -429,7 +437,6 @@ const innerElementType = forwardRef(({ children, ...rest }, ref) => {
 
 const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
   const [source, setSource] = useState(content);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     onTaskLoad().then((response) => {
@@ -446,32 +453,11 @@ const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
     });
   }, []);
 
-  const handleCopy = useCallback(async () => {
-    if (!source) return;
-
-    const jsonString = JSON.stringify(source, null, 2);
-
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(jsonString);
-      } else {
-        // Fallback for non-secure contexts
-        const textArea = document.createElement("textarea");
-        textArea.value = jsonString;
-        textArea.style.position = "fixed";
-        textArea.style.opacity = "0";
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-      }
-
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      console.error("Failed to copy to clipboard:", error);
-    }
+  const jsonString = useMemo(() => {
+    return source ? JSON.stringify(source, null, 2) : "";
   }, [source]);
+
+  const [handleCopy, copied] = useCopyText(jsonString);
 
   return (
     <div
@@ -481,7 +467,8 @@ const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
       <div style={{ padding: "16px", paddingTop: "16px" }}>
         <Tooltip title={copied ? "Copied!" : "Copy JSON"}>
           <Button
-            type="link"
+            look="string"
+            variant="neutral"
             style={{
               position: "absolute",
               top: "8px",
@@ -493,14 +480,12 @@ const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
               color: "var(--color-neutral-content-subtle)",
             }}
             onClick={handleCopy}
-            icon={<Icon icon={IconCopyOutline} style={{ color: "var(--color-neutral-content-subtle)" }} />}
+            leading={<Icon icon={IconCopyOutline} style={{ color: "var(--color-neutral-content-subtle)" }} />}
           />
         </Tooltip>
-        {source ? (
-          <pre className="m-0 whitespace-pre-wrap break-words max-w-full" style={{ marginRight: "40px" }}>
-            {JSON.stringify(source, null, 2)}
-          </pre>
-        ) : null}
+        <pre className="m-0 whitespace-pre-wrap break-words max-w-full" style={{ marginRight: "40px" }}>
+          {jsonString}
+        </pre>
       </div>
     </div>
   );
