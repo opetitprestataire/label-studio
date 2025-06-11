@@ -385,19 +385,20 @@ export const ImportPage = ({
                       <dd>{supportedExtensions.image.join(", ")}</dd>
                       <dt>Audio</dt>
                       <dd>{supportedExtensions.audio.join(", ")}</dd>
-                      <dt className="flex items-center gap-1">
-                        Video
-                        <Tooltip title="Video format support depends on your browser. Click to learn more.">
-                          <a
-                            href="https://labelstud.io/tags/video#Video-format"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <IconInfoOutline className="w-4 h-4 text-primary-content hover:text-primary-content-hover" />
-                          </a>
-                        </Tooltip>
+                      <dt>
+                        <div className="flex items-center gap-1">
+                          Video
+                          <Tooltip title="Video format support depends on your browser. Click to learn more.">
+                            <a
+                              href="https://labelstud.io/tags/video#Video-format"
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center"
+                            >
+                              <IconInfoOutline className="w-4 h-4 text-primary-content hover:text-primary-content-hover" />
+                            </a>
+                          </Tooltip>
+                        </div>
                       </dt>
                       <dd>{supportedExtensions.video.join(", ")}</dd>
                       <dt>HTML / HyperText</dt>
