@@ -224,6 +224,7 @@ Scenario(
     I.seeElement('[data-testid="phrase:4"] [aria-label="play"]');
 
     I.wait(2);
+    I.waitTicks(3);
 
     // Plays the second paragraph segment when the audio progresses to the second paragraph segment
     I.seeElement('[data-testid="phrase:1"] [aria-label="pause"]');
@@ -233,6 +234,7 @@ Scenario(
     I.seeElement('[data-testid="phrase:4"] [aria-label="play"]');
 
     I.wait(2);
+    I.waitTicks(3);
 
     // Plays the third paragraph segment when the audio progresses to the third paragraph segment
     I.seeElement('[data-testid="phrase:2"] [aria-label="pause"]');
@@ -399,6 +401,7 @@ Scenario(
     AtAudioView.clickPlayButton();
 
     I.wait(2);
+    I.waitTicks(3);
 
     I.executeScript(() => {
       document.querySelector('[data-testid="phrases-wrapper"]').scrollTo(0, 1000);

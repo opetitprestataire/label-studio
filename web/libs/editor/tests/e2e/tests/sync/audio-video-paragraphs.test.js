@@ -134,6 +134,7 @@ Scenario(
 
     I.click('[aria-label="pause"]');
     I.wait(1);
+    I.waitTicks(3);
     {
       I.say("Audio, Video and Paragraph Audio are played to the same time and are now paused");
 
