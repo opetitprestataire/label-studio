@@ -87,7 +87,7 @@ def delete_tasks_annotations(project, queryset, **kwargs):
 
     # take only tasks where annotations are going to be deleted
     real_task_ids = set(list(annotations.values_list('task__id', flat=True)))
-    annotations_ids = list(annotations.values_list('id', flat=True))
+    annotations_ids = list(annotations.values('id'))
     # remove deleted annotations from project.summary
     project.summary.remove_created_annotations_and_labels(annotations)
     # also remove drafts for the task. This includes task and annotation level
