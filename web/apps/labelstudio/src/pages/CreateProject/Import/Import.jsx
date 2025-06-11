@@ -517,9 +517,7 @@ export const ImportPage = ({
                         <IconCode className="w-6 h-6 text-primary-icon" />
                       </div>
                       <div className="flex flex-col items-center gap-tighter">
-                        <div className="text-label-small text-neutral-content font-medium">
-                          View sample JSON input
-                        </div>
+                        <div className="text-label-small text-neutral-content font-medium">View sample JSON input</div>
                         <div className="text-body-smaller text-neutral-content-subtler text-center">
                           Set up your{" "}
                           <button
