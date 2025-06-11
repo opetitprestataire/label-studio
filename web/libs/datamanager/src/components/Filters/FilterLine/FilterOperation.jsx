@@ -64,7 +64,13 @@ export const FilterOperation = observer(({ filter, field, operator, value }) => 
     const allowedOperators = hasEqualOperators ? ["equal", "not_equal"] : ["contains", "not_contains"];
     operatorList = operatorList.filter((op) => allowedOperators.includes(op.key));
   }
-  const operators = operatorList.map(({ key, label }) => ({ value: key, label }));
+  const operators = operatorList.map(({ key, label }) => {
+    if (filter.filter.field.isAnnotationResultsFilter) {
+      if (key === "contains") label = "includes all";
+      if (key === "not_contains") label = "does not include all";
+    }
+    return { value: key, label };
+  });
 
   return Input ? (
     <>
