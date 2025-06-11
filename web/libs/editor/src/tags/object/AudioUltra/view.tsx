@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { type FC, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type FC, type ReactNode, useCallback, useEffect, useMemo, useRef } from "react";
 import { usePersistentJSONState } from "@humansignal/core/lib/hooks/usePersistentState";
 import { TimelineContextProvider } from "../../../components/Timeline/Context";
 import { ErrorMessage } from "../../../components/ErrorMessage/ErrorMessage";
@@ -11,26 +11,18 @@ import type { Region } from "../../../lib/AudioUltra/Regions/Region";
 import type { Segment } from "../../../lib/AudioUltra/Regions/Segment";
 import type { Regions } from "../../../lib/AudioUltra/Regions/Regions";
 import { Block } from "../../../utils/bem";
-import { useSpectrogramControls } from "../../../lib/AudioUltra/hooks/useSpectrogramControls";
+import { useSpectrogramControls as useSpectrogramControlsHook } from "../../../lib/AudioUltra/hooks/useSpectrogramControls";
+import { getCurrentTheme } from "@humansignal/ui";
+import { FF_AUDIO_SPECTROGRAMS, isFF } from "../../../utils/feature-flags";
 
 import "./view.scss";
-import { getCurrentTheme } from "@humansignal/ui";
-import type { WindowFunctionType } from "libs/editor/src/lib/AudioUltra/Visual/WindowFunctions";
-import type { ColorScheme } from "libs/editor/src/lib/AudioUltra/Visual/ColorMapper";
 
 // Define Defaults
-const DEFAULT_COLOR_SCHEME = "viridis";
-const DEFAULT_FFT_SAMPLES = 512;
-const DEFAULT_MEL_BANDS = 64;
-const DEFAULT_WINDOWING_FUNCTION = "hann";
 const NORMALIZED_STEP = 0.1;
 
-// Default setting values
-const DEFAULT_SETTINGS = {
-  playpauseHotkey: "audio:playpause",
-  loopRegion: false,
-  autoPlayNewSegments: true,
-};
+const isAudioSpectrograms = isFF(FF_AUDIO_SPECTROGRAMS);
+
+const useSpectrogramControls = isAudioSpectrograms ? useSpectrogramControlsHook : () => {};
 
 interface AudioUltraProps {
   item: any;
@@ -42,19 +34,6 @@ interface AudioUltraProps {
 const AudioUltraView: FC<AudioUltraProps> = ({ item, children, settings = {}, changeSetting = () => {} }) => {
   const rootRef = useRef<HTMLElement | null>();
   const isDarkMode = getCurrentTheme() === "Dark";
-  // Initialize state from settings passed via props
-  const [spectrogramFftSamples, setSpectrogramFftSamples] = useState(
-    settings.spectrogramFftSamples ?? DEFAULT_FFT_SAMPLES,
-  );
-  const [numberOfMelBands, setNumberOfMelBands] = useState(settings.numberOfMelBands ?? DEFAULT_MEL_BANDS);
-  const [spectrogramWindowingFunction, setSpectrogramWindowingFunction] = useState(
-    settings.spectrogramWindowingFunction ?? DEFAULT_WINDOWING_FUNCTION,
-  );
-  const [spectrogramColorScheme, setSpectrogramColorScheme] = useState(
-    settings.spectrogramColorScheme ?? DEFAULT_COLOR_SCHEME,
-  );
-  const [spectrogramMinDb, setSpectrogramMinDb] = useState(settings.spectrogramMinDb ?? -60);
-  const [spectrogramMaxDb, setSpectrogramMaxDb] = useState(settings.spectrogramMaxDb ?? 0);
 
   const { waveform, ...controls } = useWaveform(rootRef, {
     src: item._value,
@@ -78,9 +57,11 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item, children, settings = {}, ch
     rate: item.defaultspeed ? Number(item.defaultspeed) : 1,
     muted: item.muted === "true",
     onLoad: (wf) => {
-      const spectrogramLayer = wf.getLayer("spectrogram");
-      if (spectrogramLayer) {
-        spectrogramLayer.setVisibility(item.spectrogram);
+      if (isAudioSpectrograms) {
+        const spectrogramLayer = wf.getLayer("spectrogram");
+        if (spectrogramLayer) {
+          spectrogramLayer.setVisibility(item.spectrogram);
+        }
       }
       item.onLoad(wf);
     },
@@ -105,7 +86,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item, children, settings = {}, ch
     },
   });
 
-  const spectrogramControls = useSpectrogramControls(waveform);
+  useSpectrogramControls(waveform);
 
   useEffect(() => {
     const hotkeys = Hotkey("Audio", "Audio Segmentation");
@@ -195,53 +176,6 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item, children, settings = {}, ch
       hotkeys.unbindAll();
     };
   }, []);
-
-  // --- Update Handlers to use changeSetting ---
-
-  const handleFftSamplesChange = useCallback(
-    (samples: number) => {
-      setSpectrogramFftSamples(samples);
-      // changeSetting('spectrogramFftSamples', samples); // Persist via context/hook
-      spectrogramControls.setFftSamples(samples);
-    },
-    [changeSetting, spectrogramControls],
-  );
-
-  const handleMelBandsChange = useCallback(
-    (bands: number) => {
-      setNumberOfMelBands(bands);
-      // changeSetting('numberOfMelBands', bands);
-      spectrogramControls.setMelBands(bands);
-    },
-    [changeSetting, spectrogramControls],
-  );
-
-  const handleWindowingFunctionChange = useCallback(
-    (windowFunction: WindowFunctionType) => {
-      setSpectrogramWindowingFunction(windowFunction);
-      // changeSetting('spectrogramWindowingFunction', windowFunction);
-      spectrogramControls.setWindowingFunction(windowFunction);
-    },
-    [changeSetting, spectrogramControls],
-  );
-
-  const handleColorSchemeChange = useCallback(
-    (schemeName: ColorScheme) => {
-      setSpectrogramColorScheme(schemeName);
-      // changeSetting('spectrogramColorScheme', schemeName);
-      spectrogramControls.setColorScheme(schemeName);
-    },
-    [changeSetting, spectrogramControls],
-  );
-
-  const handleDbRangeChange = useCallback(
-    (minDb: number, maxDb: number) => {
-      setSpectrogramMinDb(minDb);
-      setSpectrogramMaxDb(maxDb);
-      spectrogramControls.setDbRange(minDb, maxDb);
-    },
-    [spectrogramControls],
-  );
 
   return (
     <Block name="audio-tag">

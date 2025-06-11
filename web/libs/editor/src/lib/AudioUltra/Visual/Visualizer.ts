@@ -395,10 +395,11 @@ export class Visualizer extends Events<VisualizerEvents> {
       // Render all available channels using the renderer
       this.renderAvailableChannels();
     }
-    // Ensure compositing is always done after all drawing
-    this.transferImage();
 
     this.invoke("draw", [this]);
+
+    // Ensure compositing is always done after all drawing
+    this.transferImage();
   }
 
   destroy() {
@@ -973,7 +974,6 @@ export class Visualizer extends Events<VisualizerEvents> {
     }
 
     this.draw();
-    this.transferImage();
   };
 
   public transferImage() {
