@@ -5,7 +5,7 @@ import { isDefined } from "../../../utils/utils";
 import { Button } from "../Button/Button";
 import { Icon } from "../Icon/Icon";
 import { modal } from "../Modal/Modal";
-import { IconCode, IconGear, IconGearNewUI } from "@humansignal/icons";
+import { IconCode, IconGear, IconGearNewUI, IconCopyOutline } from "@humansignal/icons";
 import { AutoSizerTable, Tooltip } from "@humansignal/ui";
 import "./Table.scss";
 import { TableCheckboxCell } from "./TableCheckbox";
@@ -429,6 +429,7 @@ const innerElementType = forwardRef(({ children, ...rest }, ref) => {
 
 const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
   const [source, setSource] = useState(content);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     onTaskLoad().then((response) => {
@@ -445,5 +446,59 @@ const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
     });
   }, []);
 
-  return <pre>{source ? JSON.stringify(source, null, "  ") : null}</pre>;
+  const handleCopy = useCallback(async () => {
+    if (!source) return;
+    
+    const jsonString = JSON.stringify(source, null, 2);
+    
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(jsonString);
+      } else {
+        // Fallback for non-secure contexts
+        const textArea = document.createElement("textarea");
+        textArea.value = jsonString;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+    }
+  }, [source]);
+
+  return (
+    <div className="bg-neutral-surface rounded-small font-mono text-body-small leading-body-small overflow-auto max-h-[500px]" style={{ position: 'relative' }}>
+      <div style={{ padding: '16px', paddingTop: '16px' }}>
+        <Tooltip title={copied ? "Copied!" : "Copy JSON"}>
+          <Button
+            type="link"
+            style={{ 
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              width: 32, 
+              height: 32, 
+              padding: 0,
+              zIndex: 10,
+              color: 'var(--color-neutral-content-subtle)'
+            }}
+            onClick={handleCopy}
+            icon={<Icon icon={IconCopyOutline} style={{ color: 'var(--color-neutral-content-subtle)' }} />}
+          />
+        </Tooltip>
+        {source ? (
+          <pre className="m-0 whitespace-pre-wrap break-words max-w-full" style={{ marginRight: '40px' }}>
+            {JSON.stringify(source, null, 2)}
+          </pre>
+        ) : null}
+      </div>
+    </div>
+  );
 };
