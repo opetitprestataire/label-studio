@@ -441,49 +441,49 @@ export const ImportPage = ({
             {showList && (
               <div className="w-full">
                 <SimpleCard title="Files" className="w-full h-full">
-                <table>
-                  <tbody>
-                    {sample && (
-                      <tr key={sample.url}>
-                        <td>
-                          <div className="flex items-center gap-2">
-                            {sample.title}
-                            <Badge variant="info" className="h-5 text-xs rounded-sm">
-                              Sample
-                            </Badge>
-                          </div>
-                        </td>
-                        <td>{sample.description}</td>
-                        <td>
-                          <Button
-                            size="icon"
-                            look="destructive"
-                            rawClassName="h-6 w-6 p-0"
-                            onClick={() => onSampleDatasetSelect(undefined)}
-                          >
-                            <IconTrash className="w-3 h-3" />
-                          </Button>
-                        </td>
-                      </tr>
-                    )}
-                    {files.uploading.map((file, idx) => (
-                      <tr key={`${idx}-${file.name}`}>
-                        <td>{file.name}</td>
-                        <td colSpan={2}>
-                          <span className={importClass.elem("file-status").mod({ uploading: true })} />
-                        </td>
-                      </tr>
-                    ))}
-                    {files.uploaded.map((file) => (
-                      <tr key={file.file}>
-                        <td>{file.file}</td>
-                        <td>
-                          <span className={importClass.elem("file-status")} />
-                        </td>
-                        <td>{file.size}</td>
-                      </tr>
-                    ))}
-                  </tbody>
+                  <table>
+                    <tbody>
+                      {sample && (
+                        <tr key={sample.url}>
+                          <td>
+                            <div className="flex items-center gap-2">
+                              {sample.title}
+                              <Badge variant="info" className="h-5 text-xs rounded-sm">
+                                Sample
+                              </Badge>
+                            </div>
+                          </td>
+                          <td>{sample.description}</td>
+                          <td>
+                            <Button
+                              size="icon"
+                              look="destructive"
+                              rawClassName="h-6 w-6 p-0"
+                              onClick={() => onSampleDatasetSelect(undefined)}
+                            >
+                              <IconTrash className="w-3 h-3" />
+                            </Button>
+                          </td>
+                        </tr>
+                      )}
+                      {files.uploading.map((file, idx) => (
+                        <tr key={`${idx}-${file.name}`}>
+                          <td>{file.name}</td>
+                          <td colSpan={2}>
+                            <span className={importClass.elem("file-status").mod({ uploading: true })} />
+                          </td>
+                        </tr>
+                      ))}
+                      {files.uploaded.map((file) => (
+                        <tr key={file.file}>
+                          <td>{file.file}</td>
+                          <td>
+                            <span className={importClass.elem("file-status")} />
+                          </td>
+                          <td>{file.size}</td>
+                        </tr>
+                      ))}
+                    </tbody>
                   </table>
                 </SimpleCard>
               </div>
