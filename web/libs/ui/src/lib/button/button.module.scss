@@ -163,8 +163,8 @@
     color-mix(in srgb, var(--color-accent-plum-base), transparent 10%) 100%
   );
 
-  &:hover {
-    --background-color: var(--color-warning-emphasis-subtle,);
+  &:hover:not(.waiting) {
+    --background-color: var(--color-warning-emphasis-subtle);
 
     background-image: linear-gradient(
       90deg,
@@ -200,7 +200,7 @@
     );
   }
 
-  &:disabled {
+  &:disabled:not(.waiting) {
     background-image: none;
   }
 
@@ -218,7 +218,7 @@
     color-mix(in srgb, var(--color-accent-plum-base), transparent 75%) 100%
   );
 
-  &:hover {
+  &:hover:not(.waiting) {
     background-image: linear-gradient(
       90deg,
       color-mix(in srgb, var(--color-accent-canteloupe-base), transparent 80%),
@@ -239,7 +239,7 @@
     background-size: 200% 100%;
   }
 
-  &:disabled {
+  &:disabled:not(.waiting) {
     --background-color: var(--color-neutral-surface);
     --background-color-hover: var(--color-neutral-surface);
     --background-color-active: var(--color-neutral-surface);
