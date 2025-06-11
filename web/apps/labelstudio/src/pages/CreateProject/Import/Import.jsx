@@ -148,7 +148,6 @@ export const ImportPage = ({
   addColumns,
   openLabelingConfig,
 }) => {
-  const [_loading, setLoading] = useState(false);
   const [error, setError] = useState();
   const api = useAPI();
   const projectConfigured = project?.label_config !== "<View></View>";
@@ -199,7 +198,6 @@ export const ImportPage = ({
   );
 
   const onStart = () => {
-    setLoading(true);
     setError(null);
   };
   const onError = (err) => {
@@ -212,7 +210,6 @@ export const ImportPage = ({
       err = { message, extra };
     }
     setError(err);
-    setLoading(false);
     onWaiting?.(false);
   };
   const onFinish = useCallback(
@@ -221,13 +218,12 @@ export const ImportPage = ({
 
       dispatch({ ids: file_upload_ids });
       if (could_be_tasks_list && !csvHandling) setCsvHandling("choose");
-      setLoading(true);
       onWaiting?.(false);
       addColumns(data_columns);
 
-      return loadFilesList(file_upload_ids).then(() => setLoading(false));
+      return loadFilesList(file_upload_ids);
     },
-    [addColumns, loadFilesList, setLoading],
+    [addColumns, loadFilesList],
   );
 
   const importFilesImmediately = useCallback(
@@ -280,7 +276,6 @@ export const ImportPage = ({
       const url = urlRef.current?.value;
 
       if (!url) {
-        setLoading(false);
         return;
       }
       urlRef.current.value = "";
