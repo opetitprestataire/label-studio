@@ -8,6 +8,7 @@ import { TabSelectedItems } from "./tab_selected_items";
 import { History } from "../../utils/history";
 import { CustomJSON, StringOrNumberID, ThresholdType } from "../types";
 import { clamp } from "../../utils/helpers";
+import { isSelfServe } from "../../utils/billing";
 import { FF_ANNOTATION_RESULTS_FILTERING, isFF } from "../../utils/feature-flags";
 
 const THRESHOLD_MIN = 0;
@@ -110,10 +111,10 @@ export const Tab = types
     },
 
     get currentFilters() {
-      if (!isFF(FF_ANNOTATION_RESULTS_FILTERING)) {
-        return self.filters.filter((f) => f.target === self.target && !f.field.isAnnotationResultsFilterColumn);
+      if (isFF(FF_ANNOTATION_RESULTS_FILTERING) && !isSelfServe()) {
+        return self.filters.filter((f) => f.target === self.target);
       }
-      return self.filters.filter((f) => f.target === self.target);
+      return self.filters.filter((f) => f.target === self.target && !f.field.isAnnotationResultsFilterColumn);
     },
 
     get currentOrder() {
