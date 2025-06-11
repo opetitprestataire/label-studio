@@ -876,12 +876,14 @@ export class Visualizer extends Events<VisualizerEvents> {
       const newZoom = this.zoom * (1 - zoomDelta);
 
       // Set the new zoom level
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.setZoom(newZoom);
-        // Restore the time position after zooming
-        this.wf.currentTime = currentTimePosition;
         this.updateCursorToTime(currentTimePosition);
-      }, 0);
+        // If the audio is not playing, we need to transfer the image to ensure the cursor is updated accurately
+        if (!this.wf.playing) {
+          this.transferImage();
+        }
+      });
     } else if (this.zoom > 1) {
       // Base values
       const maxScroll = this.scrollWidth;
