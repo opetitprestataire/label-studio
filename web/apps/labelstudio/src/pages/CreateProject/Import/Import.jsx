@@ -148,7 +148,7 @@ export const ImportPage = ({
   addColumns,
   openLabelingConfig,
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [error, setError] = useState();
   const api = useAPI();
   const projectConfigured = project?.label_config !== "<View></View>";
