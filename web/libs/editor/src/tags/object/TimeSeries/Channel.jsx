@@ -1,8 +1,11 @@
-import React from "react";
+import { ff } from "@humansignal/core";
+import { FF_MULTICHANNEL_TS } from "@humansignal/core/lib/utils/feature-flags";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { getRoot, types } from "mobx-state-tree";
 
 import * as d3 from "d3";
+import TimeSeriesVisualizer from "../../../components/TimeSeries/TimeSeriesVisualizer";
 import Registry from "../../../core/Registry";
 import Types from "../../../core/Types";
 import { cloneNode, guidGenerator } from "../../../core/Helpers";
@@ -29,7 +32,7 @@ import { getCurrentTheme } from "@humansignal/ui";
  *                     `.3` (12.3456 -> 12.3, 1.2345 -> 1.23, 12345 -> 1.23e+4)<br/>
  *        `f` - treat as float, default precision is .6: `f` (12 -> 12.000000) `.2f` (12 -> 12.00) `.0f` (12.34 -> 12)<br/>
  *        `%` - treat as percents and format accordingly: `%.0` (0.128 -> 13%) `%.1` (1.2345 -> 123.4%)
- * @param {number} [height] height of the plot
+ * @param {number} [height=200] height of the plot
  * @param {string=} [strokeColor=#f48a42] plot stroke color, expects hex value
  * @param {number=} [strokeWidth=1] plot stroke width
  * @param {string=} [markerColor=#f48a42] plot stroke color, expects hex value
@@ -69,16 +72,17 @@ const TagAttrs = types.model({
   height: types.optional(types.string, "200"),
 
   strokewidth: types.optional(types.string, "1"),
-  strokecolor: types.optional(types.string, "#1f77b4"),
+  strokecolor: types.optional(types.string, ff.isActive(FF_MULTICHANNEL_TS) ? "" : "#1f77b4"),
 
   markersize: types.optional(types.string, "0"),
-  markercolor: types.optional(types.string, "#1f77b4"),
+  markercolor: types.optional(types.string, ff.isActive(FF_MULTICHANNEL_TS) ? "" : "#1f77b4"),
   markersymbol: types.optional(types.string, "circle"),
 
   datarange: types.maybe(types.string),
   timerange: types.maybe(types.string),
 
   showaxis: types.optional(types.boolean, true),
+  showyaxis: types.optional(types.boolean, true),
 
   fixedscale: types.maybe(types.boolean),
 
@@ -101,6 +105,12 @@ const Model = types
       }
       column = column.toLowerCase();
       return column;
+    },
+    get series() {
+      return item.parent?.dataHash;
+    },
+    get margin() {
+      return self.parent?.margin;
     },
   }));
 
@@ -688,6 +698,8 @@ class ChannelD3 extends React.Component {
       .attr("marker-end", item.markersize > 0 ? `url(#${markerId})` : "");
 
     this.renderTracker();
+    this.renderPlayhead();
+    this.updatePlayhead(this.props.cursorTime);
     this.updateTracker(0); // initial value, will be updated in setRangeWithScaling
     this.renderYAxis();
     this.setRangeWithScaling(range);
@@ -797,6 +809,9 @@ class ChannelD3 extends React.Component {
     this.renderXAxis();
     this.renderYAxis();
     this.updateTracker(this.x(this.trackerX));
+
+    // Sync playhead with new scale/domain
+    this.updatePlayhead(this.props.cursorTime);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -827,6 +842,11 @@ class ChannelD3 extends React.Component {
     }
 
     this.renderBrushes(this.props.ranges, flushBrushes);
+
+    const cursorChanged = this.props.cursorTime !== prevProps.cursorTime;
+    if (cursorChanged || width !== prevState.width || flushBrushes) {
+      this.updatePlayhead(this.props.cursorTime);
+    }
   }
 
   render() {
@@ -837,6 +857,60 @@ class ChannelD3 extends React.Component {
 
     return <div className="htx-timeseries-channel" ref={this.ref} />;
   }
+
+  /*
+   * Render persistent playhead (cursor that shows current playback position).
+   * The line is separate from the hover tracker and is updated via `updatePlayhead`.
+   */
+  renderPlayhead = () => {
+    if (this.playhead) return; // already rendered
+
+    // Create a group to hold both line and triangle
+    this.playhead = this.main
+      .append("g")
+      .attr("class", "playhead")
+      .attr("pointer-events", "none")
+      .style("display", "none");
+
+    const color = this.props.item.parent?.cursorcolor || "var(--color-neutral-inverted-surface)";
+
+    // Vertical line
+    this.playheadLine = this.playhead
+      .append("line")
+      .attr("y1", 6) // Start below small handle
+      .attr("y2", this.height)
+      .attr("stroke", color)
+      .attr("stroke-width", 2);
+
+    // Upside-down house handle at top (pentagon like audio player)
+    this.playheadHandle = this.playhead
+      .append("polygon")
+      .attr("points", "-4,0 4,0 4,7 1,10 -1,10 -4,7") // Upside-down house shape
+      .attr("fill", color);
+  };
+
+  /*
+   * Update playhead position on timeline.
+   * @param {number|null} time Native time value. If null, hides playhead.
+   */
+  updatePlayhead = (time) => {
+    if (!this.playhead) return;
+
+    if (time === null || !Number.isFinite(time)) {
+      this.playhead.style("display", "none");
+      return;
+    }
+
+    // Check if time is within current x domain to avoid drawing off-screen
+    const domain = this.x.domain();
+    if (time < domain[0] || time > domain[1]) {
+      this.playhead.style("display", "none");
+      return;
+    }
+
+    const px = this.x(time) + 0.5; // align to pixel grid like tracker
+    this.playhead.attr("transform", `translate(${px},0)`).style("display", "block");
+  };
 }
 
 const ChannelD3Observed = observer(ChannelD3);
@@ -848,6 +922,25 @@ const HtxChannelViewD3 = ({ item }) => {
   // if (channels) channels = channels.split(",");
   // if (channels && !channels.includes(item.value.substr(1))) return null;
 
+  if (ff.isActive(FF_MULTICHANNEL_TS)) {
+    const channels = useMemo(() => {
+      return [item];
+    }, [item]);
+    return (
+      <TimeSeriesVisualizer
+        time={item.parent?.keyColumn}
+        column={item.columnName}
+        item={item}
+        channels={channels}
+        data={item.parent?.dataObj}
+        series={item.parent?.dataHash}
+        range={item.parent?.brushRange}
+        ranges={item.parent?.regs}
+        cursorTime={item.parent?.cursorTime}
+      />
+    );
+  }
+
   return (
     <ChannelD3Observed
       time={item.parent?.keyColumn}
@@ -857,6 +950,7 @@ const HtxChannelViewD3 = ({ item }) => {
       series={item.parent?.dataHash}
       range={item.parent?.brushRange}
       ranges={item.parent?.regs}
+      cursorTime={item.parent?.cursorTime}
     />
   );
 };
