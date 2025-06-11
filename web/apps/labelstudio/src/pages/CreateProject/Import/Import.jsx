@@ -373,13 +373,13 @@ export const ImportPage = ({
               <div className="flex gap-4 justify-center items-start w-full h-full">
                 <label htmlFor="file-input" className="w-full h-full">
                   <div className={`${dropzoneClass.elem("content")} w-full`}>
-                  <IconFileUpload height="64" className={dropzoneClass.elem("icon")} />
+                    <IconFileUpload height="64" className={dropzoneClass.elem("icon")} />
                     <header>
                       Drag & drop files here
                       <br />
                       or click to browse
                     </header>
-                    
+
                     <dl>
                       <dt>Images</dt>
                       <dd>{supportedExtensions.image.join(", ")}</dd>
