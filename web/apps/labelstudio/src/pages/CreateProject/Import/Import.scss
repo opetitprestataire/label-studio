@@ -197,7 +197,6 @@
     transition: all 300ms ease-out;
     position: absolute;
     inset: 18px;
-    display: flex;
     pointer-events: none;
     border: 2px dashed transparent;
     border-radius: var(--corner-radius-medium);
@@ -213,7 +212,6 @@
   }
 
   &_hovered {
-
     &::before {
       content: "Drop file(s) to upload";
       position: absolute;
