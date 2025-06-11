@@ -420,8 +420,8 @@ export const ImportPage = ({
                         </li>
                         <li>
                           For PDFs, use{" "}
-                          <a href="https://labelstud.io/blog/new-in-label-studio-1-15-fundamental-tools-for-pdf-labeling/">
-                            multi-image labelling
+                          <a href="https://labelstud.io/templates/multi-page-document-annotation">
+                            multi-image labeling
                           </a>
                           . JSONL or Parquet (Enterprise only) files require cloud storage.
                         </li>
