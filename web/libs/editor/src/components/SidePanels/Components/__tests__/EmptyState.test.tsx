@@ -17,22 +17,29 @@ describe("EmptyState", () => {
   };
 
   it("renders icon, header, description, and learn more link", () => {
-    render(<EmptyState icon={testData.icon} header={testData.header} description={testData.description} learnMore={testData.learnMore} />);
-    
+    render(
+      <EmptyState
+        icon={testData.icon}
+        header={testData.header}
+        description={testData.description}
+        learnMore={testData.learnMore}
+      />,
+    );
+
     // Test that the main component renders
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
-    
+
     // Test icon rendering
     expect(screen.getByTestId("icon")).toBeInTheDocument();
-    
+
     // Test header rendering
     expect(screen.getByTestId("empty-state-header")).toBeInTheDocument();
     expect(screen.getByText(testData.header)).toBeInTheDocument();
-    
+
     // Test description rendering
     expect(screen.getByTestId("empty-state-description")).toBeInTheDocument();
     expect(screen.getByText("Test description")).toBeInTheDocument();
-    
+
     // Test learn more link
     const link = screen.getByRole("link", { name: /learn more/i });
     expect(link).toBeInTheDocument();
@@ -44,7 +51,7 @@ describe("EmptyState", () => {
 
   it("does not render learn more link if not provided", () => {
     render(<EmptyState icon={testData.icon} header={testData.header} description={testData.description} />);
-    
+
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
     expect(screen.getByTestId("icon")).toBeInTheDocument();
     expect(screen.getByText(testData.header)).toBeInTheDocument();
@@ -61,7 +68,7 @@ describe("EmptyState", () => {
         learnMore={{ href: testData.learnMore.href, text: testData.learnMore.text }}
       />,
     );
-    
+
     const link = screen.getByRole("link", { name: /learn more/i });
     expect(link).toBeInTheDocument();
     expect(link).not.toHaveAttribute("data-testid");
@@ -70,9 +77,16 @@ describe("EmptyState", () => {
   it("hides learn more link in whitelabel mode", () => {
     // @ts-ignore
     window.APP_SETTINGS = { whitelabel_is_active: true };
-    
-    render(<EmptyState icon={testData.icon} header={testData.header} description={testData.description} learnMore={testData.learnMore} />);
-    
+
+    render(
+      <EmptyState
+        icon={testData.icon}
+        header={testData.header}
+        description={testData.description}
+        learnMore={testData.learnMore}
+      />,
+    );
+
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
     expect(screen.getByTestId("icon")).toBeInTheDocument();
     expect(screen.getByText(testData.header)).toBeInTheDocument();
@@ -87,9 +101,9 @@ describe("EmptyState", () => {
         <strong>Bold part</strong>
       </div>
     );
-    
+
     render(<EmptyState icon={testData.icon} header={testData.header} description={complexDescription} />);
-    
+
     expect(screen.getByTestId("empty-state-description")).toBeInTheDocument();
     expect(screen.getByText("First part")).toBeInTheDocument();
     expect(screen.getByText("Bold part")).toBeInTheDocument();
