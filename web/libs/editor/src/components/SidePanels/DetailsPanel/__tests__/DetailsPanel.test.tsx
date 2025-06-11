@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { Relations, Info } from "../DetailsPanel";
 
 // Mock the dependencies
