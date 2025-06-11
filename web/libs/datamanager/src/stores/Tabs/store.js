@@ -21,27 +21,31 @@ const restoreValue = (name) => {
   return value ? value === "true" : false;
 };
 
-const dataCleanup = (tab, columnIds, internalColumnIds) => {
+const dataCleanup = (tab, columns) => {
   const { data } = tab;
 
   if (!data) return { ...tab };
 
   if (data.filters) {
     data.filters.items = data.filters.items.filter(({ filter }) => {
-      return columnIds.includes(filter.replace(/^filter:/, ""));
+      return !!columns.find((c) => c.id === filter.replace(/^filter:/, ""));
     });
   }
 
   ["columnsDisplayType", "columnWidths"].forEach((key) => {
     data[key] = Object.fromEntries(
       Object.entries(data[key] ?? {}).filter(([col]) => {
-        return columnIds.includes(col) && !internalColumnIds.includes(col);
+        const match = columns.find((c) => c.id === col);
+        return !!match && !match.isAnnotationResultsFilterColumn;
       }),
     );
   });
 
   Object.entries(data.hiddenColumns ?? {}).forEach(([key, list]) => {
-    data.hiddenColumns[key] = list.filter((k) => columnIds.includes(k) && !internalColumnIds.includes(k));
+    data.hiddenColumns[key] = list.filter((k) => {
+      const match = columns.find((c) => c.id === k);
+      return !!match && !match.isAnnotationResultsFilterColumn;
+    });
   });
 
   return { ...tab, data };
@@ -472,11 +476,9 @@ export const TabStore = types
       const tabId = Number.parseInt(tab);
       const response = yield getRoot(self).apiCall("tabs");
       const tabs = response.tabs ?? response ?? [];
-      const columnIds = self.columns.map((c) => c.id);
-      const internalColumnIds = self.columns.filter((c) => c.filter_only).map((c) => c.id);
 
       const snapshots = tabs.map((t) => {
-        const { data, ...tab } = dataCleanup(t, columnIds, internalColumnIds);
+        const { data, ...tab } = dataCleanup(t, self.columns ?? []);
 
         return {
           ...tab,
@@ -513,9 +515,7 @@ export const TabStore = types
 
       if (!isNaN(tabKey) && !isNaN(tabId)) {
         const tabData = yield getRoot(self).apiCall("tab", { tabId });
-        const columnIds = (self.columns ?? []).map((c) => c.id);
-        const internalColumnIds = (self.columns ?? []).filter((c) => c.filter_only).map((c) => c.id);
-        const { data, ...tabClean } = dataCleanup(tabData, columnIds, internalColumnIds);
+        const { data, ...tabClean } = dataCleanup(tabData, self.columns ?? []);
 
         self.views.push({
           ...tabClean,
