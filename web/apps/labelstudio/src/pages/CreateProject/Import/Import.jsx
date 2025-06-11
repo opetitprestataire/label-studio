@@ -518,7 +518,7 @@ export const ImportPage = ({
                       </div>
                       <div className="flex flex-col items-center gap-tighter">
                         <div className="text-label-small text-neutral-content font-medium">View sample JSON input</div>
-                        <div className="text-body-smaller text-neutral-content-subtler text-center">
+                        <div className="text-body-small text-neutral-content-subtler text-center">
                           Set up your{" "}
                           <button
                             type="button"
