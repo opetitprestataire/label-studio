@@ -1,6 +1,6 @@
 import { ff } from "@humansignal/core";
 import { SampleDatasetSelect } from "@humansignal/app-common/blocks/SampleDatasetSelect/SampleDatasetSelect";
-import { IconError, IconFileUpload, IconTrash, IconUpload } from "@humansignal/icons";
+import { IconError, IconFileUpload, IconInfoOutline, IconTrash, IconUpload } from "@humansignal/icons";
 import { Badge } from "@humansignal/shad/components/ui/badge";
 import { cn as scn } from "@humansignal/shad/utils";
 import { Button } from "apps/labelstudio/src/components";
@@ -14,7 +14,7 @@ import { sampleDatasetAtom } from "../utils/atoms";
 import "./Import.scss";
 import samples from "./samples.json";
 import { importFiles } from "./utils";
-import { CodeBlock, SimpleCard, Spinner } from "@humansignal/ui";
+import { CodeBlock, SimpleCard, Spinner, Tooltip } from "@humansignal/ui";
 
 const importClass = cn("upload_page");
 const dropzoneClass = cn("dropzone");
@@ -26,12 +26,11 @@ function flatten(nested) {
 // Keep in sync with core.settings.SUPPORTED_EXTENSIONS on the BE.
 const supportedExtensions = {
   text: ["txt"],
-  audio: ["flac", "m4a", "mp3", "ogg", "wav"],
+  audio: ["wav", "mp3", "flac", "m4a", "ogg"],
   video: ["mp4", "webm"],
   image: ["bmp", "gif", "jpg", "jpeg", "png", "svg", "webp"],
   html: ["html", "htm", "xml"],
   structuredData: ["csv", "tsv", "json"],
-  common: ["csv", "tsv", "txt", "json"],
 };
 const allSupportedExtensions = flatten(Object.values(supportedExtensions));
 
@@ -369,24 +368,38 @@ export const ImportPage = ({
 
       <main>
         <Upload sendFiles={sendFiles} project={project}>
-          <div className={scn("flex gap-4 min-h-full", { "justify-center": !showList })}>
+          <div className={scn("flex gap-4 w-full min-h-full", { "justify-center": !showList })}>
             {!showList && (
-              <div className="flex gap-4 justify-center items-start w-full">
-                <label htmlFor="file-input" className="w-full">
+              <div className="flex gap-4 justify-center items-start w-full h-full">
+                <label htmlFor="file-input" className="w-full h-full">
                   <div className={`${dropzoneClass.elem("content")} w-full`}>
+                  <IconFileUpload height="64" className={dropzoneClass.elem("icon")} />
                     <header>
                       Drag & drop files here
                       <br />
                       or click to browse
                     </header>
-                    <IconFileUpload height="64" className={dropzoneClass.elem("icon")} />
+                    
                     <dl>
                       <dt>Images</dt>
                       <dd>{supportedExtensions.image.join(", ")}</dd>
                       <dt>Audio</dt>
                       <dd>{supportedExtensions.audio.join(", ")}</dd>
-                      <dt>Video</dt>
-                      <dd>{supportedExtensions.video.join(", ")}*</dd>
+                      <dt className="flex items-center gap-1">
+                        Video
+                        <Tooltip title="Video format support depends on your browser. Click to learn more.">
+                          <a
+                            href="https://labelstud.io/tags/video#Video-format"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <IconInfoOutline className="w-4 h-4 text-primary-content hover:text-primary-content-hover" />
+                          </a>
+                        </Tooltip>
+                      </dt>
+                      <dd>{supportedExtensions.video.join(", ")}</dd>
                       <dt>HTML / HyperText</dt>
                       <dd>{supportedExtensions.html.join(", ")}</dd>
                       <dt>Text</dt>
@@ -394,52 +407,33 @@ export const ImportPage = ({
                       <dt>Structured data</dt>
                       <dd>{supportedExtensions.structuredData.join(", ")}</dd>
                     </dl>
-                    <div>
-                      <b>Tips:</b>
+                    <div className="tips">
+                      <b>Important:</b>
                       <ul className="mt-2 ml-4 list-disc font-normal">
                         <li>
-                          Direct media uploads have{" "}
-                          <a href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI">
-                            limitations
-                          </a>{" "}
-                          and we strongly recommend using{" "}
+                          We recommend{" "}
                           <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
                             Cloud Storage
                           </a>{" "}
-                          instead.
+                          over direct uploads due to{" "}
+                          <a href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI">
+                            upload limitations
+                          </a>
+                          .
                         </li>
                         <li>
-                          See the documentation to{" "}
+                          For PDFs, use{" "}
+                          <a href="https://labelstud.io/blog/new-in-label-studio-1-15-fundamental-tools-for-pdf-labeling/">
+                            multi-image labelling
+                          </a>
+                          . JSONL or Parquet files require cloud storage (Enterprise only).
+                        </li>
+                        <li>
+                          Check the documentation to{" "}
                           <a target="_blank" href="https://labelstud.io/guide/predictions.html" rel="noreferrer">
                             import preannotated data
-                          </a>{" "}
-                          or to{" "}
-                          <a target="_blank" href="https://labelstud.io/guide/storage.html" rel="noreferrer">
-                            sync data from a database or cloud storage
                           </a>
                           .
-                        </li>
-                        <li>
-                          Video format support depends on your browser.{" "}
-                          <a href="https://labelstud.io/tags/video#Video-format" target="_blank" rel="noreferrer">
-                            Learn more
-                          </a>
-                          .
-                        </li>
-                        <li>
-                          JSONL is supported via cloud storage but can't be uploaded directly.
-                        </li>
-                        <li>
-                          Parquet is only supported on {" "}
-                          <a href="https://humansignal.com/pricing/">
-                            Label Studio Enterprise.
-                          </a>
-                        </li>
-                        <li>
-                          PDF documents can be embeded via URL or{" "}
-                          <a href="https://labelstud.io/blog/new-in-label-studio-1-15-fundamental-tools-for-pdf-labeling/">
-                            converted to images
-                          </a>
                         </li>
                       </ul>
                     </div>
