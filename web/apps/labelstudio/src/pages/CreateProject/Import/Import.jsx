@@ -492,38 +492,37 @@ export const ImportPage = ({
               </div>
             )}
 
-            {ff.isFF(ff.FF_JSON_PREVIEW) && projectConfigured && (
-              <div className="w-[650px]">
-                <SimpleCard title="Expected input preview" className="w-[650px] h-full">
-                  {sampleConfig.data ? (
-                    <CodeBlock
-                      title="Expected input preview"
-                      code={sampleConfig?.data ?? ""}
-                      className="w-[650px] h-full"
-                    />
-                  ) : sampleConfig.isLoading ? (
-                    <div className="w-full flex justify-center py-12">
-                      <Spinner className="h-6 w-6" />
-                    </div>
-                  ) : sampleConfig.isError ? (
-                    <div className="w-full pt-4 text-lg text-negative-content">Unable to load sample data</div>
-                  ) : null}
-                </SimpleCard>
-              </div>
-            )}
-            {ff.isFF(ff.FF_JSON_PREVIEW) && !projectConfigured && (
-              <div className="w-[650px]">
-                <SimpleCard title="Expected input preview" className="w-[650px] h-full">
-                  Set up your{" "}
-                  <button
-                    type="button"
-                    look="link"
-                    onClick={openConfig}
-                    className="border-none bg-none p-0 m-0 text-primary-content underline"
-                  >
-                    labeling configuration
-                  </button>{" "}
-                  to generate an input preview.
+            {ff.isFF(ff.FF_JSON_PREVIEW) && (
+              <div className="w-full">
+                <SimpleCard title="Expected input preview" className="w-full h-full">
+                  {projectConfigured ? (
+                    sampleConfig.data ? (
+                      <CodeBlock
+                        title="Expected input preview"
+                        code={sampleConfig?.data ?? ""}
+                        className="w-full h-full"
+                      />
+                    ) : sampleConfig.isLoading ? (
+                      <div className="w-full flex justify-center py-12">
+                        <Spinner className="h-6 w-6" />
+                      </div>
+                    ) : sampleConfig.isError ? (
+                      <div className="w-full pt-4 text-lg text-negative-content">Unable to load sample data</div>
+                    ) : null
+                  ) : (
+                    <>
+                      Set up your{" "}
+                      <button
+                        type="button"
+                        look="link"
+                        onClick={openConfig}
+                        className="border-none bg-none p-0 m-0 text-primary-content underline"
+                      >
+                        labeling configuration
+                      </button>{" "}
+                      to generate an input preview.
+                    </>
+                  )}
                 </SimpleCard>
               </div>
             )}
