@@ -448,9 +448,9 @@ const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
 
   const handleCopy = useCallback(async () => {
     if (!source) return;
-    
+
     const jsonString = JSON.stringify(source, null, 2);
-    
+
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(jsonString);
@@ -465,7 +465,7 @@ const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
         document.execCommand("copy");
         document.body.removeChild(textArea);
       }
-      
+
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
@@ -474,27 +474,30 @@ const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
   }, [source]);
 
   return (
-    <div className="bg-neutral-surface rounded-small font-mono text-body-small leading-body-small overflow-auto max-h-[500px]" style={{ position: 'relative' }}>
-      <div style={{ padding: '16px', paddingTop: '16px' }}>
+    <div
+      className="bg-neutral-surface rounded-small font-mono text-body-small leading-body-small overflow-auto max-h-[500px]"
+      style={{ position: "relative" }}
+    >
+      <div style={{ padding: "16px", paddingTop: "16px" }}>
         <Tooltip title={copied ? "Copied!" : "Copy JSON"}>
           <Button
             type="link"
-            style={{ 
-              position: 'absolute',
-              top: '8px',
-              right: '8px',
-              width: 32, 
-              height: 32, 
+            style={{
+              position: "absolute",
+              top: "8px",
+              right: "8px",
+              width: 32,
+              height: 32,
               padding: 0,
               zIndex: 10,
-              color: 'var(--color-neutral-content-subtle)'
+              color: "var(--color-neutral-content-subtle)",
             }}
             onClick={handleCopy}
-            icon={<Icon icon={IconCopyOutline} style={{ color: 'var(--color-neutral-content-subtle)' }} />}
+            icon={<Icon icon={IconCopyOutline} style={{ color: "var(--color-neutral-content-subtle)" }} />}
           />
         </Tooltip>
         {source ? (
-          <pre className="m-0 whitespace-pre-wrap break-words max-w-full" style={{ marginRight: '40px' }}>
+          <pre className="m-0 whitespace-pre-wrap break-words max-w-full" style={{ marginRight: "40px" }}>
             {JSON.stringify(source, null, 2)}
           </pre>
         ) : null}
