@@ -284,7 +284,7 @@ class App extends Component {
               }}
             >
               {newUIEnabled ? (
-                isBulkMode ? (
+                isBulkMode || !store.hasInterface("side-column") ? (
                   <>
                     {mainContent}
                     {store.hasInterface("topbar") && <BottomBar store={store} />}
@@ -301,7 +301,7 @@ class App extends Component {
                     {store.hasInterface("topbar") && <BottomBar store={store} />}
                   </SideTabsPanels>
                 )
-              ) : isBulkMode ? (
+              ) : isBulkMode || !store.hasInterface("side-column") ? (
                 mainContent
               ) : (
                 <SidePanels
