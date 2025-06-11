@@ -42,7 +42,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
 
     const onChangeHandler = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (typeof checked === undefined) {
+        if (typeof checked === "undefined") {
           setIsChecked(e.target.checked);
         }
         onChange?.(e);
