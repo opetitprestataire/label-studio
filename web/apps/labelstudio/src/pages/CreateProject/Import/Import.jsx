@@ -422,7 +422,7 @@ export const ImportPage = ({
                           <a href="https://labelstud.io/blog/new-in-label-studio-1-15-fundamental-tools-for-pdf-labeling/">
                             multi-image labelling
                           </a>
-                          . JSONL or Parquet files require cloud storage (Enterprise only).
+                          . JSONL or Parquet (Enterprise only) files require cloud storage.
                         </li>
                         <li>
                           Check the documentation to{" "}
