@@ -249,7 +249,7 @@ Scenario(
     }
 
     AtVideoView.clickPlayButton();
-    I.wait(1);
+    I.wait(2);
     {
       I.say("Audio, Video are playing");
 
@@ -261,7 +261,7 @@ Scenario(
     }
 
     AtVideoView.clickPauseButton();
-    I.wait(1);
+    I.wait(2);
     {
       I.say("Audio, Video are played to the same time and are now paused");
 
@@ -671,8 +671,7 @@ Scenario(
     I.seeElement('[data-testid="phrase:3"] [aria-label="play"]');
     I.seeElement('[data-testid="phrase:4"] [aria-label="play"]');
 
-    I.wait(2);
-    I.waitTicks(3);
+    I.wait(1.5);
 
     // Plays the second paragraph segment when the audio progresses to the second paragraph segment
     I.seeElement('[data-testid="phrase:1"] [aria-label="pause"]');
@@ -681,8 +680,7 @@ Scenario(
     I.seeElement('[data-testid="phrase:3"] [aria-label="play"]');
     I.seeElement('[data-testid="phrase:4"] [aria-label="play"]');
 
-    I.wait(2);
-    I.waitTicks(3);
+    I.wait(1.5);
 
     // Plays the third paragraph segment when the audio progresses to the third paragraph segment
     I.seeElement('[data-testid="phrase:2"] [aria-label="pause"]');
