@@ -88,87 +88,8 @@ const annotations = [
 
 const params = { annotations: [{ id: "test", result: annotations }], config, data };
 
-Scenario(
-  "Play/pause is synced between audio, video and paragraphs when interacting with paragraph interface",
-  async ({ I, LabelStudio, AtAudioView, AtVideoView }) => {
-    LabelStudio.setFeatureFlags({
-      ff_front_dev_2715_audio_3_280722_short: true,
-      fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
-    });
-
-    I.amOnPage("/");
-
-    LabelStudio.init(params);
-
-    await AtAudioView.waitForAudio();
-    await AtAudioView.lookForStage();
-
-    {
-      I.say("Audio, Video, and Paragraph Audio are starting at 0");
-
-      const [{ currentTime: startingParagraphAudioTime }, { currentTime: startingAudioTime }] =
-        await AtAudioView.getCurrentAudio();
-      const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
-
-      assert.equal(startingAudioTime, startingVideoTime);
-      assert.equal(startingAudioTime, startingParagraphAudioTime);
-      assert.equal(startingParagraphAudioTime, 0);
-    }
-
-    I.click('[aria-label="play"]');
-    I.wait(1);
-    {
-      I.say("Audio, Video, and Paragraph Audio are playing");
-
-      const [{ paused: paragraphAudioPaused }, { paused: audioPaused }] = await AtAudioView.getCurrentAudio();
-      const [{ paused: videoPaused }] = await AtVideoView.getCurrentVideo();
-
-      assert.equal(
-        audioPaused,
-        videoPaused,
-        `Audio paused=${audioPaused} and Video paused=${videoPaused} are not equal`,
-      );
-      assert.equal(audioPaused, paragraphAudioPaused);
-      assert.equal(paragraphAudioPaused, false);
-    }
-
-    I.click('[aria-label="pause"]');
-    I.wait(1);
-    I.waitTicks(3);
-    {
-      I.say("Audio, Video and Paragraph Audio are played to the same time and are now paused");
-
-      const [
-        { currentTime: currentParagraphAudioTime, paused: paragraphAudioPaused },
-        { currentTime: currentAudioTime, paused: audioPaused },
-      ] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: currentVideoTime, paused: videoPaused }] = await AtVideoView.getCurrentVideo();
-
-      assert.equal(audioPaused, videoPaused);
-      assert.equal(audioPaused, paragraphAudioPaused);
-      assert.equal(paragraphAudioPaused, true);
-
-      I.assertTimesInSync(
-        currentAudioTime,
-        currentVideoTime,
-        `Audio currentTime and video currentTime to be the same. Got audio=${currentAudioTime} video=${currentVideoTime}`,
-      );
-      I.assertTimesInSync(
-        currentAudioTime,
-        currentParagraphAudioTime,
-        `Audio currentTime and paragraph audio currentTime to be the same. Got audio=${currentAudioTime} paragraph audio=${currentParagraphAudioTime}`,
-      );
-      I.assertTimesInSync(
-        currentParagraphAudioTime,
-        currentVideoTime,
-        `Paragraph audio currentTime and video currentTime to be the same. Got audio=${currentParagraphAudioTime} video=${currentVideoTime}`,
-      );
-    }
-  },
-);
-
 // Scenario(
-//   "Play/pause is synced between audio, video when interacting with audio interface",
+//   "Play/pause is synced between audio, video and paragraphs when interacting with paragraph interface",
 //   async ({ I, LabelStudio, AtAudioView, AtVideoView }) => {
 //     LabelStudio.setFeatureFlags({
 //       ff_front_dev_2715_audio_3_280722_short: true,
@@ -183,45 +104,124 @@ Scenario(
 //     await AtAudioView.lookForStage();
 
 //     {
-//       I.say("Audio, Video are starting at 0");
+//       I.say("Audio, Video, and Paragraph Audio are starting at 0");
 
-//       const [, { currentTime: currentAudioTime }] = await AtAudioView.getCurrentAudio();
-//       const [{ currentTime: currentVideoTime }] = await AtVideoView.getCurrentVideo();
+//       const [{ currentTime: startingParagraphAudioTime }, { currentTime: startingAudioTime }] =
+//         await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
 
-//       assert.equal(currentAudioTime, currentVideoTime);
-//       assert.equal(currentAudioTime, 0);
+//       assert.equal(startingAudioTime, startingVideoTime);
+//       assert.equal(startingAudioTime, startingParagraphAudioTime);
+//       assert.equal(startingParagraphAudioTime, 0);
 //     }
 
-//     AtAudioView.clickPlayButton();
+//     I.click('[aria-label="play"]');
 //     I.wait(1);
 //     {
-//       I.say("Audio, Video are playing");
+//       I.say("Audio, Video, and Paragraph Audio are playing");
 
-//       const [, { paused: audioPaused }] = await AtAudioView.getCurrentAudio();
+//       const [{ paused: paragraphAudioPaused }, { paused: audioPaused }] = await AtAudioView.getCurrentAudio();
 //       const [{ paused: videoPaused }] = await AtVideoView.getCurrentVideo();
 
-//       assert.equal(audioPaused, videoPaused);
-//       assert.equal(audioPaused, false);
+//       assert.equal(
+//         audioPaused,
+//         videoPaused,
+//         `Audio paused=${audioPaused} and Video paused=${videoPaused} are not equal`,
+//       );
+//       assert.equal(audioPaused, paragraphAudioPaused);
+//       assert.equal(paragraphAudioPaused, false);
 //     }
 
-//     AtAudioView.clickPauseButton();
+//     I.click('[aria-label="pause"]');
 //     I.wait(1);
+//     I.waitTicks(3);
 //     {
-//       I.say("Audio, Video are played to the same time and are now paused");
+//       I.say("Audio, Video and Paragraph Audio are played to the same time and are now paused");
 
-//       const [, { currentTime: currentAudioTime, paused: audioPaused }] = await AtAudioView.getCurrentAudio();
+//       const [
+//         { currentTime: currentParagraphAudioTime, paused: paragraphAudioPaused },
+//         { currentTime: currentAudioTime, paused: audioPaused },
+//       ] = await AtAudioView.getCurrentAudio();
 //       const [{ currentTime: currentVideoTime, paused: videoPaused }] = await AtVideoView.getCurrentVideo();
 
 //       assert.equal(audioPaused, videoPaused);
-//       assert.equal(audioPaused, true);
+//       assert.equal(audioPaused, paragraphAudioPaused);
+//       assert.equal(paragraphAudioPaused, true);
+
 //       I.assertTimesInSync(
 //         currentAudioTime,
 //         currentVideoTime,
-//         `Audio currentTime and video currentTime drifted too far. Got audio=${currentAudioTime} video=${currentVideoTime}`,
+//         `Audio currentTime and video currentTime to be the same. Got audio=${currentAudioTime} video=${currentVideoTime}`,
+//       );
+//       I.assertTimesInSync(
+//         currentAudioTime,
+//         currentParagraphAudioTime,
+//         `Audio currentTime and paragraph audio currentTime to be the same. Got audio=${currentAudioTime} paragraph audio=${currentParagraphAudioTime}`,
+//       );
+//       I.assertTimesInSync(
+//         currentParagraphAudioTime,
+//         currentVideoTime,
+//         `Paragraph audio currentTime and video currentTime to be the same. Got audio=${currentParagraphAudioTime} video=${currentVideoTime}`,
 //       );
 //     }
 //   },
 // );
+
+Scenario(
+  "Play/pause is synced between audio, video when interacting with audio interface",
+  async ({ I, LabelStudio, AtAudioView, AtVideoView }) => {
+    LabelStudio.setFeatureFlags({
+      ff_front_dev_2715_audio_3_280722_short: true,
+      fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
+    });
+
+    I.amOnPage("/");
+
+    LabelStudio.init(params);
+
+    await AtAudioView.waitForAudio();
+    await AtAudioView.lookForStage();
+
+    {
+      I.say("Audio, Video are starting at 0");
+
+      const [, { currentTime: currentAudioTime }] = await AtAudioView.getCurrentAudio();
+      const [{ currentTime: currentVideoTime }] = await AtVideoView.getCurrentVideo();
+
+      assert.equal(currentAudioTime, currentVideoTime);
+      assert.equal(currentAudioTime, 0);
+    }
+
+    AtAudioView.clickPlayButton();
+    I.wait(1);
+    {
+      I.say("Audio, Video are playing");
+
+      const [, { paused: audioPaused }] = await AtAudioView.getCurrentAudio();
+      const [{ paused: videoPaused }] = await AtVideoView.getCurrentVideo();
+
+      assert.equal(audioPaused, videoPaused);
+      assert.equal(audioPaused, false);
+    }
+
+    AtAudioView.clickPauseButton();
+    I.wait(1);
+    {
+      I.say("Audio, Video are played to the same time and are now paused");
+
+      const [, { currentTime: currentAudioTime, paused: audioPaused }] = await AtAudioView.getCurrentAudio();
+      const [{ currentTime: currentVideoTime, paused: videoPaused }] = await AtVideoView.getCurrentVideo();
+
+      assert.equal(audioPaused, videoPaused);
+      assert.equal(audioPaused, true);
+      I.assertTimesInSync(
+        currentAudioTime,
+        currentVideoTime,
+        `Audio currentTime and video currentTime drifted too far. Got audio=${currentAudioTime} video=${currentVideoTime}`,
+      );
+    }
+  },
+);
 
 Scenario(
   "Play/pause is synced between audio, video when interacting with video interface",
