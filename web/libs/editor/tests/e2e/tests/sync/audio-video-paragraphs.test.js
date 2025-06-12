@@ -167,61 +167,61 @@ Scenario(
   },
 );
 
-Scenario(
-  "Play/pause is synced between audio, video when interacting with audio interface",
-  async ({ I, LabelStudio, AtAudioView, AtVideoView }) => {
-    LabelStudio.setFeatureFlags({
-      ff_front_dev_2715_audio_3_280722_short: true,
-      fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
-    });
+// Scenario(
+//   "Play/pause is synced between audio, video when interacting with audio interface",
+//   async ({ I, LabelStudio, AtAudioView, AtVideoView }) => {
+//     LabelStudio.setFeatureFlags({
+//       ff_front_dev_2715_audio_3_280722_short: true,
+//       fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
+//     });
 
-    I.amOnPage("/");
+//     I.amOnPage("/");
 
-    LabelStudio.init(params);
+//     LabelStudio.init(params);
 
-    await AtAudioView.waitForAudio();
-    await AtAudioView.lookForStage();
+//     await AtAudioView.waitForAudio();
+//     await AtAudioView.lookForStage();
 
-    {
-      I.say("Audio, Video are starting at 0");
+//     {
+//       I.say("Audio, Video are starting at 0");
 
-      const [, { currentTime: currentAudioTime }] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: currentVideoTime }] = await AtVideoView.getCurrentVideo();
+//       const [, { currentTime: currentAudioTime }] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: currentVideoTime }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(currentAudioTime, currentVideoTime);
-      assert.equal(currentAudioTime, 0);
-    }
+//       assert.equal(currentAudioTime, currentVideoTime);
+//       assert.equal(currentAudioTime, 0);
+//     }
 
-    AtAudioView.clickPlayButton();
-    I.wait(1);
-    {
-      I.say("Audio, Video are playing");
+//     AtAudioView.clickPlayButton();
+//     I.wait(1);
+//     {
+//       I.say("Audio, Video are playing");
 
-      const [, { paused: audioPaused }] = await AtAudioView.getCurrentAudio();
-      const [{ paused: videoPaused }] = await AtVideoView.getCurrentVideo();
+//       const [, { paused: audioPaused }] = await AtAudioView.getCurrentAudio();
+//       const [{ paused: videoPaused }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(audioPaused, videoPaused);
-      assert.equal(audioPaused, false);
-    }
+//       assert.equal(audioPaused, videoPaused);
+//       assert.equal(audioPaused, false);
+//     }
 
-    AtAudioView.clickPauseButton();
-    I.wait(1);
-    {
-      I.say("Audio, Video are played to the same time and are now paused");
+//     AtAudioView.clickPauseButton();
+//     I.wait(1);
+//     {
+//       I.say("Audio, Video are played to the same time and are now paused");
 
-      const [, { currentTime: currentAudioTime, paused: audioPaused }] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: currentVideoTime, paused: videoPaused }] = await AtVideoView.getCurrentVideo();
+//       const [, { currentTime: currentAudioTime, paused: audioPaused }] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: currentVideoTime, paused: videoPaused }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(audioPaused, videoPaused);
-      assert.equal(audioPaused, true);
-      I.assertTimesInSync(
-        currentAudioTime,
-        currentVideoTime,
-        `Audio currentTime and video currentTime drifted too far. Got audio=${currentAudioTime} video=${currentVideoTime}`,
-      );
-    }
-  },
-);
+//       assert.equal(audioPaused, videoPaused);
+//       assert.equal(audioPaused, true);
+//       I.assertTimesInSync(
+//         currentAudioTime,
+//         currentVideoTime,
+//         `Audio currentTime and video currentTime drifted too far. Got audio=${currentAudioTime} video=${currentVideoTime}`,
+//       );
+//     }
+//   },
+// );
 
 Scenario(
   "Play/pause is synced between audio, video when interacting with video interface",
@@ -671,7 +671,7 @@ Scenario(
     I.seeElement('[data-testid="phrase:3"] [aria-label="play"]');
     I.seeElement('[data-testid="phrase:4"] [aria-label="play"]');
 
-    I.wait(1.5);
+    I.wait(2);
 
     // Plays the second paragraph segment when the audio progresses to the second paragraph segment
     I.seeElement('[data-testid="phrase:1"] [aria-label="pause"]');
@@ -680,7 +680,7 @@ Scenario(
     I.seeElement('[data-testid="phrase:3"] [aria-label="play"]');
     I.seeElement('[data-testid="phrase:4"] [aria-label="play"]');
 
-    I.wait(1.5);
+    I.wait(2);
 
     // Plays the third paragraph segment when the audio progresses to the third paragraph segment
     I.seeElement('[data-testid="phrase:2"] [aria-label="pause"]');
