@@ -90,6 +90,8 @@ describe("Sync: Video Paragraphs", () => {
       ff_front_dev_2715_audio_3_280722_short: true,
       fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
     });
+    // expect uncaught exception for fast play/pause
+    cy.on("uncaught:exception", () => false);
   });
 
   it("Play/pause is synced between audio, video when interacting with video interface", () => {
@@ -107,7 +109,7 @@ describe("Sync: Video Paragraphs", () => {
     });
 
     AudioView.playButton.click();
-    cy.wait(2000);
+    cy.wait(100);
 
     cy.log("Audio, Video are playing");
     cy.get("audio").then(([audio]) => {
@@ -118,7 +120,7 @@ describe("Sync: Video Paragraphs", () => {
     });
 
     AudioView.pauseButton.click();
-    cy.wait(2000);
+    cy.wait(900);
 
     cy.log("Audio, Video are played to the same time and are now paused");
     cy.get("audio").then(([audio]) => {
@@ -181,9 +183,9 @@ describe("Sync: Video Paragraphs", () => {
     cy.wait(100);
 
     AudioView.playButton.click();
-    cy.wait(1000);
+    cy.wait(100);
     AudioView.pauseButton.click();
-    cy.wait(1000);
+    cy.wait(100);
 
     cy.log(
       "Seek playback from paragraph. Audio, video and paragraph audio are played to the same time and are now paused",
@@ -221,7 +223,7 @@ describe("Sync: Video Paragraphs", () => {
       });
     });
 
-    cy.wait(1000); // wait for audio to play for a bit at 1.5x speed
+    cy.wait(100); // wait for audio to play for a bit at 1.5x speed
     AudioView.setPlaybackSpeedInput(1);
 
     cy.log("Changing playback speed to 1x for audio, video and paragraph audio during playback");

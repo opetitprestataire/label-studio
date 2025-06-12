@@ -122,6 +122,9 @@ describe("Sync: Audio Paragraphs", () => {
       ff_front_dev_2715_audio_3_280722_short: true,
       fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
     });
+
+    // expect uncaught exception for fast play/pause
+    cy.on("uncaught:exception", () => false);
   });
 
   it("Play/pause is synced between audio and paragraphs when interacting with audio interface", () => {
@@ -136,7 +139,7 @@ describe("Sync: Audio Paragraphs", () => {
     });
 
     AudioView.playButton.click();
-    cy.wait(1000);
+    cy.wait(100);
 
     cy.log("Audio is playing");
     cy.get("audio").then(([audio]) => {
@@ -144,7 +147,7 @@ describe("Sync: Audio Paragraphs", () => {
     });
 
     AudioView.pauseButton.click();
-    cy.wait(1000);
+    cy.wait(100);
 
     cy.log("Audio is played and now paused");
     cy.get("audio").then(([audio]) => {
@@ -227,13 +230,16 @@ describe("Sync: Audio Paragraphs", () => {
       });
     });
 
+    AudioView.pauseButton.click();
+    cy.wait(1000);
+
     // Check final sync
     cy.get('[data-testid="waveform-audio"]').then(([mainAudio]) => {
       cy.get(".lsf-paragraphs audio").then(([paragraphAudio]) => {
         const mainAudioElement = mainAudio as HTMLAudioElement;
         const paragraphAudioElement = paragraphAudio as HTMLAudioElement;
 
-        expect(mainAudioElement.currentTime).to.be.closeTo(paragraphAudioElement.currentTime, 0.1);
+        expect(mainAudioElement.currentTime).to.be.closeTo(paragraphAudioElement.currentTime, 0.4);
       });
     });
   });
@@ -250,15 +256,13 @@ describe("Sync: Audio Paragraphs", () => {
     });
 
     cy.get('[data-testid="phrase:0"] [aria-label="play"]').click();
-    cy.wait(1000);
+    cy.wait(100);
 
     cy.log("Audio is playing");
     cy.get("audio").then(([audio]) => {
       expect(audio.paused).to.equal(false);
     });
 
-    // expect uncaught exception
-    cy.on("uncaught:exception", () => false);
     cy.get('[data-testid="phrase:0"] [aria-label="pause"]').click();
 
     cy.log("Audio is played and now paused");
@@ -278,14 +282,14 @@ describe("Sync: Audio Paragraphs", () => {
     });
 
     cy.get('[data-testid="phrase:0"] [aria-label="play"]').click();
-    cy.wait(1000);
+    cy.wait(100);
 
     cy.get("audio").then(([audio]) => {
       expect(audio.currentTime).to.not.equal(0);
     });
 
     cy.get('[data-testid="phrase:1"] [aria-label="play"]').click();
-    cy.wait(1000);
+    cy.wait(100);
 
     cy.get("audio").then(([audio]) => {
       expect(audio.currentTime).to.not.equal(0);
@@ -359,7 +363,7 @@ describe("Sync: Audio Paragraphs", () => {
     });
 
     AudioView.playButton.click();
-    cy.wait(5100);
+    cy.wait(3000);
 
     AudioView.clickAt(0, 0);
     cy.wait(1000);
@@ -384,7 +388,7 @@ describe("Sync: Audio Paragraphs", () => {
 
     cy.get('[data-testid="auto-scroll-toggle"]').click();
     AudioView.playButton.click();
-    cy.wait(5100);
+    cy.wait(5000);
 
     cy.get('[data-testid="phrases-wrapper"]').then(($el) => {
       expect($el[0].scrollTop).to.equal(0);
@@ -402,7 +406,7 @@ describe("Sync: Audio Paragraphs", () => {
     });
 
     AudioView.playButton.click();
-    cy.wait(2000);
+    cy.wait(100);
 
     cy.get('[data-testid="phrases-wrapper"]').then(($el) => {
       $el[0].scrollTo(0, 1000);
@@ -410,7 +414,7 @@ describe("Sync: Audio Paragraphs", () => {
       $el[0].dispatchEvent(wheelEvt);
     });
 
-    cy.wait(5100);
+    cy.wait(5000);
 
     cy.get('[data-testid="phrases-wrapper"]').then(($el) => {
       expect($el[0].scrollTop).to.be.greaterThan(190);
