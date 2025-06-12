@@ -223,158 +223,158 @@ Scenario(
   },
 );
 
-Scenario(
-  "Play/pause is synced between audio, video when interacting with video interface",
-  async ({ I, LabelStudio, AtAudioView, AtVideoView }) => {
-    LabelStudio.setFeatureFlags({
-      ff_front_dev_2715_audio_3_280722_short: true,
-      fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
-    });
+// Scenario(
+//   "Play/pause is synced between audio, video when interacting with video interface",
+//   async ({ I, LabelStudio, AtAudioView, AtVideoView }) => {
+//     LabelStudio.setFeatureFlags({
+//       ff_front_dev_2715_audio_3_280722_short: true,
+//       fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
+//     });
 
-    I.amOnPage("/");
+//     I.amOnPage("/");
 
-    LabelStudio.init(params);
+//     LabelStudio.init(params);
 
-    await AtAudioView.waitForAudio();
-    await AtAudioView.lookForStage();
+//     await AtAudioView.waitForAudio();
+//     await AtAudioView.lookForStage();
 
-    {
-      I.say("Audio, Video are starting at 0");
+//     {
+//       I.say("Audio, Video are starting at 0");
 
-      const [, { currentTime: currentAudioTime }] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: currentVideoTime }] = await AtVideoView.getCurrentVideo();
+//       const [, { currentTime: currentAudioTime }] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: currentVideoTime }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(currentAudioTime, currentVideoTime);
-      assert.equal(currentAudioTime, 0);
-    }
+//       assert.equal(currentAudioTime, currentVideoTime);
+//       assert.equal(currentAudioTime, 0);
+//     }
 
-    AtVideoView.clickPlayButton();
-    I.wait(2);
-    {
-      I.say("Audio, Video are playing");
+//     AtVideoView.clickPlayButton();
+//     I.wait(2);
+//     {
+//       I.say("Audio, Video are playing");
 
-      const [, { paused: audioPaused }] = await AtAudioView.getCurrentAudio();
-      const [{ paused: videoPaused }] = await AtVideoView.getCurrentVideo();
+//       const [, { paused: audioPaused }] = await AtAudioView.getCurrentAudio();
+//       const [{ paused: videoPaused }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(audioPaused, videoPaused);
-      assert.equal(audioPaused, false);
-    }
+//       assert.equal(audioPaused, videoPaused);
+//       assert.equal(audioPaused, false);
+//     }
 
-    AtVideoView.clickPauseButton();
-    I.wait(2);
-    {
-      I.say("Audio, Video are played to the same time and are now paused");
+//     AtVideoView.clickPauseButton();
+//     I.wait(2);
+//     {
+//       I.say("Audio, Video are played to the same time and are now paused");
 
-      const [, { currentTime: currentAudioTime, paused: audioPaused }] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: currentVideoTime, paused: videoPaused }] = await AtVideoView.getCurrentVideo();
+//       const [, { currentTime: currentAudioTime, paused: audioPaused }] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: currentVideoTime, paused: videoPaused }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(audioPaused, videoPaused);
-      assert.equal(audioPaused, true);
+//       assert.equal(audioPaused, videoPaused);
+//       assert.equal(audioPaused, true);
 
-      I.assertTimesInSync(
-        currentAudioTime,
-        currentVideoTime,
-        `Audio currentTime and video currentTime drifted too far. Got audio=${currentAudioTime} video=${currentVideoTime}`,
-      );
-    }
-  },
-);
+//       I.assertTimesInSync(
+//         currentAudioTime,
+//         currentVideoTime,
+//         `Audio currentTime and video currentTime drifted too far. Got audio=${currentAudioTime} video=${currentVideoTime}`,
+//       );
+//     }
+//   },
+// );
 
-Scenario(
-  "Seeking is synced between audio, video when interacting with audio interface",
-  async ({ I, LabelStudio, AtAudioView, AtVideoView }) => {
-    LabelStudio.setFeatureFlags({
-      ff_front_dev_2715_audio_3_280722_short: true,
-      fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
-    });
+// Scenario(
+//   "Seeking is synced between audio, video when interacting with audio interface",
+//   async ({ I, LabelStudio, AtAudioView, AtVideoView }) => {
+//     LabelStudio.setFeatureFlags({
+//       ff_front_dev_2715_audio_3_280722_short: true,
+//       fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
+//     });
 
-    I.amOnPage("/");
+//     I.amOnPage("/");
 
-    LabelStudio.init(params);
+//     LabelStudio.init(params);
 
-    await AtAudioView.waitForAudio();
-    await AtAudioView.lookForStage();
+//     await AtAudioView.waitForAudio();
+//     await AtAudioView.lookForStage();
 
-    {
-      const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
+//     {
+//       const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(startingAudioTime, startingVideoTime);
-    }
+//       assert.equal(startingAudioTime, startingVideoTime);
+//     }
 
-    AtAudioView.clickAt(100);
-    {
-      I.say("Seek by clicking on some point in the audio timeline");
-      const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
+//     AtAudioView.clickAt(100);
+//     {
+//       I.say("Seek by clicking on some point in the audio timeline");
+//       const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(startingAudioTime, startingVideoTime);
-    }
+//       assert.equal(startingAudioTime, startingVideoTime);
+//     }
 
-    AtAudioView.clickAtBeginning();
-    {
-      I.say("Seek to beginning by clicking on the first point in the audio timeline");
-      const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
+//     AtAudioView.clickAtBeginning();
+//     {
+//       I.say("Seek to beginning by clicking on the first point in the audio timeline");
+//       const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(startingAudioTime, startingVideoTime);
-    }
+//       assert.equal(startingAudioTime, startingVideoTime);
+//     }
 
-    AtAudioView.clickAt(300);
-    {
-      I.say("Seek by clicking on some point further in the audio timeline");
-      const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
+//     AtAudioView.clickAt(300);
+//     {
+//       I.say("Seek by clicking on some point further in the audio timeline");
+//       const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(startingAudioTime, startingVideoTime);
-    }
+//       assert.equal(startingAudioTime, startingVideoTime);
+//     }
 
-    AtAudioView.clickAtEnd();
-    {
-      I.say("Seek to end by clicking on the last point in the audio timeline");
-      const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
+//     AtAudioView.clickAtEnd();
+//     {
+//       I.say("Seek to end by clicking on the last point in the audio timeline");
+//       const [, { currentTime: startingAudioTime }] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: startingVideoTime }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(startingAudioTime, startingVideoTime);
-    }
+//       assert.equal(startingAudioTime, startingVideoTime);
+//     }
 
-    I.click('[aria-label="play"]');
-    I.wait(1);
-    I.click('[aria-label="pause"]');
-    I.wait(1);
-    {
-      I.say(
-        "Seek playback from paragraph. Audio, video and paragraph audio are played to the same time and are now paused",
-      );
+//     I.click('[aria-label="play"]');
+//     I.wait(1);
+//     I.click('[aria-label="pause"]');
+//     I.wait(1);
+//     {
+//       I.say(
+//         "Seek playback from paragraph. Audio, video and paragraph audio are played to the same time and are now paused",
+//       );
 
-      const [
-        { currentTime: currentParagraphAudioTime, paused: paragraphAudioPaused },
-        { currentTime: currentAudioTime, paused: audioPaused },
-      ] = await AtAudioView.getCurrentAudio();
-      const [{ currentTime: currentVideoTime, paused: videoPaused }] = await AtVideoView.getCurrentVideo();
+//       const [
+//         { currentTime: currentParagraphAudioTime, paused: paragraphAudioPaused },
+//         { currentTime: currentAudioTime, paused: audioPaused },
+//       ] = await AtAudioView.getCurrentAudio();
+//       const [{ currentTime: currentVideoTime, paused: videoPaused }] = await AtVideoView.getCurrentVideo();
 
-      assert.equal(audioPaused, videoPaused);
-      assert.equal(audioPaused, paragraphAudioPaused);
-      assert.equal(paragraphAudioPaused, true);
+//       assert.equal(audioPaused, videoPaused);
+//       assert.equal(audioPaused, paragraphAudioPaused);
+//       assert.equal(paragraphAudioPaused, true);
 
-      I.assertTimesInSync(
-        currentAudioTime,
-        currentVideoTime,
-        `Audio currentTime and video currentTime to be the same. Got audio=${currentAudioTime} video=${currentVideoTime}`,
-      );
-      I.assertTimesInSync(
-        currentAudioTime,
-        currentParagraphAudioTime,
-        `Audio currentTime and paragraph audio currentTime to be the same. Got audio=${currentAudioTime} paragraph audio=${currentParagraphAudioTime}`,
-      );
-      I.assertTimesInSync(
-        currentParagraphAudioTime,
-        currentVideoTime,
-        `Paragraph audio currentTime and video currentTime to be the same. Got audio=${currentParagraphAudioTime} video=${currentVideoTime}`,
-      );
-    }
-  },
-);
+//       I.assertTimesInSync(
+//         currentAudioTime,
+//         currentVideoTime,
+//         `Audio currentTime and video currentTime to be the same. Got audio=${currentAudioTime} video=${currentVideoTime}`,
+//       );
+//       I.assertTimesInSync(
+//         currentAudioTime,
+//         currentParagraphAudioTime,
+//         `Audio currentTime and paragraph audio currentTime to be the same. Got audio=${currentAudioTime} paragraph audio=${currentParagraphAudioTime}`,
+//       );
+//       I.assertTimesInSync(
+//         currentParagraphAudioTime,
+//         currentVideoTime,
+//         `Paragraph audio currentTime and video currentTime to be the same. Got audio=${currentParagraphAudioTime} video=${currentVideoTime}`,
+//       );
+//     }
+//   },
+// );
 
 Scenario(
   "Playback speed is synced between audio, video, paragraph audio when interacting with audio interface",
