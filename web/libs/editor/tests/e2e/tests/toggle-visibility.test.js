@@ -172,20 +172,19 @@ Scenario("Checking regions grouped by label", async ({ I, LabelStudio }) => {
   await I.amOnPage("/");
   LabelStudio.init({ annotations, config, data });
   LabelStudio.waitForObjectsReady();
-  I.executeScript(switchRegionTreeView, "label");
-  I.wait(1); // Give the UI time to update
-
-  // Debug: Check what grouping is actually set
-  const currentGrouping = await I.executeScript(() => {
-    return window.Htx.annotationStore.selected.regionStore.group;
-  });
-  I.say(`Current grouping: ${currentGrouping}`);
-
-  // First check if ViewControls are visible
-  I.seeElement(".lsf-view-controls");
-
-  // Use the test ID to check if the grouping is set to label
-  I.seeElement('[data-testid="grouping-label"]');
+  
+  // Wait for ViewControls to be visible
+  I.waitForElement(".lsf-view-controls", 5);
+  
+  // Switch to label grouping using UI interaction
+  I.click('[data-testid="grouping-manual"]');
+  I.waitForElement('.lsf-menu', 2);
+  
+  // Click on the "Group by Label" option in the dropdown
+  I.click('//div[contains(@class, "lsf-view-controls__label") and contains(text(), "Group by Label")]');
+  
+  // Wait for UI to update and verify the grouping button changed
+  I.waitForElement('[data-testid="grouping-label"]', 5);
 
   await checkVisible(3);
   hideOne();
