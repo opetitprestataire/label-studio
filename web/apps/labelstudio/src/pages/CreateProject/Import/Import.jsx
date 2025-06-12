@@ -31,7 +31,7 @@ const supportedExtensions = {
   image: ["bmp", "gif", "jpg", "jpeg", "png", "svg", "webp"],
   html: ["html", "htm", "xml"],
   pdf: ["pdf"],
-  structuredData: ["csv", "tsv", "json"],  
+  structuredData: ["csv", "tsv", "json"],
 };
 const allSupportedExtensions = flatten(Object.values(supportedExtensions));
 
