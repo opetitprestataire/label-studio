@@ -14,7 +14,7 @@ Use with the following data types: PDF.
 
 ### Supported control tags
 
-The `<Pdf>` is intended for document-level classification tasks and does not support applying annotations to the actual content of the PDF. 
+The `<Pdf>` tag is intended for document-level classification tasks and does not support applying annotations to the actual content of the PDF. 
 
 For example, if you want to apply labels for OCR tasks, you will need to convert the PDF into images first. For more information, see [Multi-Page Document Annotation](/templates/multi-page-document-annotation). 
 
