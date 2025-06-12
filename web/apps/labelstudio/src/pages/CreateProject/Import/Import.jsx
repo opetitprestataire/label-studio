@@ -30,7 +30,8 @@ const supportedExtensions = {
   video: ["mp4", "webm"],
   image: ["bmp", "gif", "jpg", "jpeg", "png", "svg", "webp"],
   html: ["html", "htm", "xml"],
-  structuredData: ["csv", "tsv", "json"],
+  pdf: ["pdf"],
+  structuredData: ["csv", "tsv", "json"],  
 };
 const allSupportedExtensions = flatten(Object.values(supportedExtensions));
 
@@ -197,9 +198,6 @@ export const ImportPage = ({
     [project?.id],
   );
 
-  const onStart = () => {
-    setError(null);
-  };
   const onError = (err) => {
     console.error(err);
     // @todo workaround for error about input size in a wrong html format
@@ -244,7 +242,7 @@ export const ImportPage = ({
 
   const sendFiles = useCallback(
     (files) => {
-      onStart();
+      setError(null);
       onWaiting?.(true);
       files = [...files]; // they can be array-like object
       const fd = new FormData();
@@ -258,7 +256,7 @@ export const ImportPage = ({
       }
       return importFilesImmediately(files, fd);
     },
-    [importFilesImmediately, onStart],
+    [importFilesImmediately],
   );
 
   const onUpload = useCallback(
@@ -272,7 +270,7 @@ export const ImportPage = ({
   const onLoadURL = useCallback(
     (e) => {
       e.preventDefault();
-      onStart();
+      setError(null);
       const url = urlRef.current?.value;
 
       if (!url) {
@@ -403,6 +401,8 @@ export const ImportPage = ({
                       <dd>{supportedExtensions.text.join(", ")}</dd>
                       <dt>Structured data</dt>
                       <dd>{supportedExtensions.structuredData.join(", ")}</dd>
+                      <dt>PDF</dt>
+                      <dd>{supportedExtensions.pdf.join(", ")}</dd>
                     </dl>
                     <div className="tips">
                       <b>Important:</b>
