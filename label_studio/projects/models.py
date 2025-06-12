@@ -2,6 +2,7 @@
 """
 import json
 import logging
+import time
 from typing import Any, Mapping, Optional
 
 from annoying.fields import AutoOneToOneField
@@ -28,7 +29,7 @@ from core.utils.common import (
 from core.utils.db import fast_first
 from django.conf import settings
 from django.core.validators import MaxLengthValidator, MinLengthValidator
-from django.db import models, transaction
+from django.db import OperationalError, models, transaction
 from django.db.models import Avg, BooleanField, Case, Count, JSONField, Max, Q, Sum, Value, When
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -451,6 +452,47 @@ class Project(ProjectMixin, models.Model):
         elif tasks_number_changed and self.overlap_cohort_percentage < 100 and self.maximum_annotations > 1:
             self._rearrange_overlap_cohort()
 
+    def _batch_update_with_retry(self, queryset, batch_size=500, max_retries=3, **update_fields):
+        """
+        Update tasks in batches with retry logic to handle deadlocks.
+
+        Args:
+            queryset: QuerySet of tasks to update
+            batch_size: Number of tasks to update in each batch
+            max_retries: Maximum number of retry attempts for each batch
+            **update_fields: Fields to update (e.g., overlap=1)
+        """
+        task_ids = list(queryset.values_list('id', flat=True))
+        total_tasks = len(task_ids)
+
+        for i in range(0, total_tasks, batch_size):
+            batch_ids = task_ids[i : i + batch_size]
+            retry_count = 0
+
+            while retry_count < max_retries:
+                try:
+                    with transaction.atomic():
+                        Task.objects.filter(id__in=batch_ids).update(**update_fields)
+                    break
+                except OperationalError as e:
+                    if 'deadlock detected' in str(e):
+                        retry_count += 1
+                        if retry_count >= max_retries:
+                            logger.error(
+                                f'Failed to update batch after {max_retries} retries. '
+                                f'Project: {self.id}, Batch: {i}-{i+len(batch_ids)}, Error: {e}'
+                            )
+                            raise
+                        else:
+                            wait_time = 0.1 * (2**retry_count)  # Exponential backoff
+                            logger.warning(
+                                f'Deadlock detected, retry {retry_count}/{max_retries} '
+                                f'for batch {i}-{i+len(batch_ids)}. Waiting {wait_time}s...'
+                            )
+                            time.sleep(wait_time)
+                    else:
+                        raise
+
     def _rearrange_overlap_cohort(self):
         """
         Rearrange overlap depending on annotation count in tasks
@@ -473,7 +515,9 @@ class Project(ProjectMixin, models.Model):
         if left_must_tasks > 0:
             # if there are unfinished tasks update tasks with count(annotations) >= overlap
             ids = list(tasks_with_max_annotations.values_list('id', flat=True))
-            all_project_tasks.filter(id__in=ids).update(overlap=max_annotations, is_labeled=True)
+            self._batch_update_with_retry(
+                all_project_tasks.filter(id__in=ids), overlap=max_annotations, is_labeled=True
+            )
             # order other tasks by count(annotations)
             tasks_with_min_annotations = (
                 tasks_with_min_annotations.annotate(anno=Count('annotations')).order_by('-anno').distinct()
@@ -481,16 +525,16 @@ class Project(ProjectMixin, models.Model):
             # assign overlap depending on annotation count
             # assign max_annotations and update is_labeled
             ids = list(tasks_with_min_annotations[:left_must_tasks].values_list('id', flat=True))
-            all_project_tasks.filter(id__in=ids).update(overlap=max_annotations)
+            self._batch_update_with_retry(all_project_tasks.filter(id__in=ids), overlap=max_annotations)
             # assign 1 to left
             ids = list(tasks_with_min_annotations[left_must_tasks:].values_list('id', flat=True))
             min_tasks_to_update = all_project_tasks.filter(id__in=ids)
-            min_tasks_to_update.update(overlap=1)
+            self._batch_update_with_retry(min_tasks_to_update, overlap=1)
         else:
             ids = list(tasks_with_max_annotations.values_list('id', flat=True))
-            all_project_tasks.filter(id__in=ids).update(overlap=max_annotations)
+            self._batch_update_with_retry(all_project_tasks.filter(id__in=ids), overlap=max_annotations)
             ids = list(tasks_with_min_annotations.values_list('id', flat=True))
-            all_project_tasks.filter(id__in=ids).update(overlap=1)
+            self._batch_update_with_retry(all_project_tasks.filter(id__in=ids), overlap=1)
         # update is labeled after tasks rearrange overlap
         bulk_update_stats_project_tasks(all_project_tasks, project=self)
 
