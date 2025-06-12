@@ -111,7 +111,7 @@ export const ActionsButton = injector(
           {titleContainer}
         </Dropdown.Trigger>
       ) : (
-        <Tooltip key={action.id} title={action.disabled_reason} alignment="bottom-center">
+        <Tooltip key={action.id} title={action.disabled_reason} disabled={!action.disabled} alignment="bottom-center">
           <div>
             <Menu.Item
               size={size}
