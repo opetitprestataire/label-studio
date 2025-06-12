@@ -685,7 +685,7 @@ const getRegionAbsoultePosition = async (shapeId) => {
 const switchRegionTreeView = async (viewName) => {
   Htx.annotationStore.selected.regionStore.setGrouping(viewName);
   // Wait a bit for the view to update
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100));
 };
 
 const serialize = () => window.Htx.annotationStore.selected.serializeAnnotation();
