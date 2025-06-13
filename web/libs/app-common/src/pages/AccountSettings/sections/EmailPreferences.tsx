@@ -37,6 +37,7 @@ export const EmailPreferences = () => {
   const api = useAPI();
   const [isAllowNewsLetter, setIsAllowNewsLetter] = useState(config.user.allow_newsletters);
   const [emailNotificationSettings, setEmailNotificationSettings] = useState(user?.lse_fields?.email_notification_settings ?? {});
+  const emailNotificationSettingsRef = useRef(emailNotificationSettings);
 
   const toggleHandler = useCallback(
     async (e: any, name: string, setIsLoading: (isLoading: boolean) => void, callApiBody: any) => {
@@ -50,8 +51,12 @@ export const EmailPreferences = () => {
         },
         body: callApiBody,
       });
-      if (response?.response?.lse_fields?.email_notification_settings) {
-        setEmailNotificationSettings(response.response.lse_fields.email_notification_settings);
+      // @ts-ignore
+      if (response?.lse_fields?.email_notification_settings) {
+        // @ts-ignore
+        setEmailNotificationSettings(response.lse_fields.email_notification_settings);
+        // @ts-ignore
+        emailNotificationSettingsRef.current = response.lse_fields.email_notification_settings;
       }
       setIsLoading(false);
     },
@@ -78,7 +83,7 @@ export const EmailPreferences = () => {
           {Object.entries(emailNotificationSettings).map(([id, { value, label }]: [string, any]) => {
             const notificationToggleHandler = (e: React.ChangeEvent<HTMLInputElement>, id: string, setIsLoading: (isLoading: boolean) => void) => {
               const newEmailNotificationSettings: Record<string, any> = {};
-              Object.entries(emailNotificationSettings).forEach(([key, {value}]: [string, any]) => {
+              Object.entries(emailNotificationSettingsRef.current).forEach(([key, {value}]: [string, any]) => {
                 if (key === id) {
                   newEmailNotificationSettings[key] = e.target.checked;
                 } else {
@@ -87,7 +92,6 @@ export const EmailPreferences = () => {
               });
               toggleHandler(e, id, setIsLoading, { email_notification_settings: newEmailNotificationSettings });
             };
-            console.log(id, value, label);
             return (
               <NotificationCheckbox key={id} id={id} label={label} checked={value} onToggle={notificationToggleHandler} />
             );
