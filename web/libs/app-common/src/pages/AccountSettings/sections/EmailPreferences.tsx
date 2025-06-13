@@ -31,28 +31,28 @@ const NotificationCheckbox = ({ id, label, checked, onToggle }: NotificationChec
 };
 
 export const EmailPreferences = () => {
-  const isEnterpriseEmailNotificationsEnabledRef = useRef(
-    ff.isActive(ff.FF_ENTERPRISE_EMAIL_NOTIFICATIONS) && window.APP_SETTINGS?.billing?.enterprise,
-  );
+  const isEnterpriseEmailNotificationsEnabled = ff.isActive(ff.FF_ENTERPRISE_EMAIL_NOTIFICATIONS) && window.APP_SETTINGS?.billing?.enterprise;
   const config = useConfig();
   const { user } = useCurrentUser();
   const api = useAPI();
   const [isAllowNewsLetter, setIsAllowNewsLetter] = useState(config.user.allow_newsletters);
+  const [emailNotificationSettings, setEmailNotificationSettings] = useState(user?.lse_fields?.email_notification_settings ?? {});
 
   const toggleHandler = useCallback(
-    async (e: any, name: string, setIsLoading: (isLoading: boolean) => void) => {
+    async (e: any, name: string, setIsLoading: (isLoading: boolean) => void, callApiBody: any) => {
       if (name === "allow_newsletters") {
         setIsAllowNewsLetter(e.target.checked);
       }
       setIsLoading(true);
-      await api.callApi("updateUser", {
+      const response = await api.callApi("updateUser", {
         params: {
           pk: user?.id,
         },
-        body: {
-          [name]: e.target.checked ? 1 : 0,
-        },
+        body: callApiBody,
       });
+      if (response?.response?.lse_fields?.email_notification_settings) {
+        setEmailNotificationSettings(response.response.lse_fields.email_notification_settings);
+      }
       setIsLoading(false);
     },
     [user?.id],
@@ -63,7 +63,6 @@ export const EmailPreferences = () => {
       ? "Subscribe for news and tips"
       : "Subscribe to HumanSignal news and tips from Heidi";
   }, []);
-  const emailNotificationSettings = user?.lse_fields?.email_notification_settings ?? {};
 
   return (
     <div id="email-preferences" className="flex flex-col gap-4">
@@ -71,14 +70,28 @@ export const EmailPreferences = () => {
         id="allow_newsletters"
         label={message}
         checked={isAllowNewsLetter}
-        onToggle={toggleHandler}
+        onToggle={(e, id, setIsLoading) => toggleHandler(e, id, setIsLoading, { allow_newsletters: e.target.checked ? 1 : 0 })}
       />
 
-      {isEnterpriseEmailNotificationsEnabledRef.current && (
+      {isEnterpriseEmailNotificationsEnabled && (
         <>
-          {Object.entries(emailNotificationSettings).map(([id, { value, label }]: [string, any]) => (
-            <NotificationCheckbox key={id} id={id} label={label} checked={value} onToggle={toggleHandler} />
-          ))}
+          {Object.entries(emailNotificationSettings).map(([id, { value, label }]: [string, any]) => {
+            const notificationToggleHandler = (e: React.ChangeEvent<HTMLInputElement>, id: string, setIsLoading: (isLoading: boolean) => void) => {
+              const newEmailNotificationSettings: Record<string, any> = {};
+              Object.entries(emailNotificationSettings).forEach(([key, {value}]: [string, any]) => {
+                if (key === id) {
+                  newEmailNotificationSettings[key] = e.target.checked;
+                } else {
+                  newEmailNotificationSettings[key] = value;
+                }
+              });
+              toggleHandler(e, id, setIsLoading, { email_notification_settings: newEmailNotificationSettings });
+            };
+            console.log(id, value, label);
+            return (
+              <NotificationCheckbox key={id} id={id} label={label} checked={value} onToggle={notificationToggleHandler} />
+            );
+          })}
         </>
       )}
     </div>
