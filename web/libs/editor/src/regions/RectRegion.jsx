@@ -363,7 +363,7 @@ const Model = types
     flipRegion() {
       const height = -self.height;
       // convert to radians
-      const alpha = self.rotation * Math.PI / 180;
+      const alpha = (self.rotation * Math.PI) / 180;
 
       self.height = height;
       self.x -= height * Math.sin(alpha);
