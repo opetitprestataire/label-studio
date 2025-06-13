@@ -5696,92 +5696,6 @@
         }
       }
     },
-    "$letter-spacing": {
-      "densest": {
-        "$type": "number",
-        "$value": "{@primitives.$typography.$letter-spacing.-20}",
-        "$description": "",
-        "$variable_metadata": {
-          "name": "letter-spacing/densest",
-          "figmaId": "VariableID:3139:42815",
-          "modes": {
-            "default": "{@primitives.$typography.$letter-spacing.-20}"
-          }
-        }
-      },
-      "denser": {
-        "$type": "number",
-        "$value": "{@primitives.$typography.$letter-spacing.-15}",
-        "$description": "",
-        "$variable_metadata": {
-          "name": "letter-spacing/denser",
-          "figmaId": "VariableID:3139:42817",
-          "modes": {
-            "default": "{@primitives.$typography.$letter-spacing.-15}"
-          }
-        }
-      },
-      "dense": {
-        "$type": "number",
-        "$value": "{@primitives.$typography.$letter-spacing.-10}",
-        "$description": "",
-        "$variable_metadata": {
-          "name": "letter-spacing/dense",
-          "figmaId": "VariableID:3139:42818",
-          "modes": {
-            "default": "{@primitives.$typography.$letter-spacing.-10}"
-          }
-        }
-      },
-      "base": {
-        "$type": "number",
-        "$value": "{@primitives.$typography.$letter-spacing.0}",
-        "$description": "",
-        "$variable_metadata": {
-          "name": "letter-spacing/base",
-          "figmaId": "VariableID:3139:42819",
-          "modes": {
-            "default": "{@primitives.$typography.$letter-spacing.0}"
-          }
-        }
-      },
-      "wide": {
-        "$type": "number",
-        "$value": "{@primitives.$typography.$letter-spacing.15}",
-        "$description": "",
-        "$variable_metadata": {
-          "name": "letter-spacing/wide",
-          "figmaId": "VariableID:3139:42820",
-          "modes": {
-            "default": "{@primitives.$typography.$letter-spacing.15}"
-          }
-        }
-      },
-      "wider": {
-        "$type": "number",
-        "$value": "{@primitives.$typography.$letter-spacing.25}",
-        "$description": "",
-        "$variable_metadata": {
-          "name": "letter-spacing/wider",
-          "figmaId": "VariableID:3139:42821",
-          "modes": {
-            "default": "{@primitives.$typography.$letter-spacing.25}"
-          }
-        }
-      },
-      "widest": {
-        "$type": "number",
-        "$value": "{@primitives.$typography.$letter-spacing.50}",
-        "$description": "",
-        "$variable_metadata": {
-          "name": "letter-spacing/widest",
-          "figmaId": "VariableID:3139:42822",
-          "modes": {
-            "default": "{@primitives.$typography.$letter-spacing.50}"
-          }
-        }
-      }
-    },
     "$paragraph-spacing": {
       "none": {
         "$type": "number",
@@ -5876,6 +5790,92 @@
           "figmaId": "VariableID:3141:42836",
           "modes": {
             "default": "{@sizing.$spacing.widest}"
+          }
+        }
+      }
+    },
+    "$letter-spacing": {
+      "densest": {
+        "$type": "number",
+        "$value": "{@primitives.$typography.$letter-spacing.-20}",
+        "$description": "",
+        "$variable_metadata": {
+          "name": "letter-spacing/densest",
+          "figmaId": "VariableID:3139:42815",
+          "modes": {
+            "default": "{@primitives.$typography.$letter-spacing.-20}"
+          }
+        }
+      },
+      "denser": {
+        "$type": "number",
+        "$value": "{@primitives.$typography.$letter-spacing.-15}",
+        "$description": "",
+        "$variable_metadata": {
+          "name": "letter-spacing/denser",
+          "figmaId": "VariableID:3139:42817",
+          "modes": {
+            "default": "{@primitives.$typography.$letter-spacing.-15}"
+          }
+        }
+      },
+      "dense": {
+        "$type": "number",
+        "$value": "{@primitives.$typography.$letter-spacing.-10}",
+        "$description": "",
+        "$variable_metadata": {
+          "name": "letter-spacing/dense",
+          "figmaId": "VariableID:3139:42818",
+          "modes": {
+            "default": "{@primitives.$typography.$letter-spacing.-10}"
+          }
+        }
+      },
+      "base": {
+        "$type": "number",
+        "$value": "{@primitives.$typography.$letter-spacing.0}",
+        "$description": "",
+        "$variable_metadata": {
+          "name": "letter-spacing/base",
+          "figmaId": "VariableID:3139:42819",
+          "modes": {
+            "default": "{@primitives.$typography.$letter-spacing.0}"
+          }
+        }
+      },
+      "wide": {
+        "$type": "number",
+        "$value": "{@primitives.$typography.$letter-spacing.15}",
+        "$description": "",
+        "$variable_metadata": {
+          "name": "letter-spacing/wide",
+          "figmaId": "VariableID:3139:42820",
+          "modes": {
+            "default": "{@primitives.$typography.$letter-spacing.15}"
+          }
+        }
+      },
+      "wider": {
+        "$type": "number",
+        "$value": "{@primitives.$typography.$letter-spacing.25}",
+        "$description": "",
+        "$variable_metadata": {
+          "name": "letter-spacing/wider",
+          "figmaId": "VariableID:3139:42821",
+          "modes": {
+            "default": "{@primitives.$typography.$letter-spacing.25}"
+          }
+        }
+      },
+      "widest": {
+        "$type": "number",
+        "$value": "{@primitives.$typography.$letter-spacing.50}",
+        "$description": "",
+        "$variable_metadata": {
+          "name": "letter-spacing/widest",
+          "figmaId": "VariableID:3139:42822",
+          "modes": {
+            "default": "{@primitives.$typography.$letter-spacing.50}"
           }
         }
       }
