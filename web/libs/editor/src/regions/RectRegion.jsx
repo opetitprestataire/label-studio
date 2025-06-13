@@ -360,6 +360,16 @@ const Model = types
 
     updateImageSize() {},
 
+    flipRegion() {
+      const height = -self.height;
+      // convert to radians
+      const alpha = self.rotation * Math.PI / 180;
+
+      self.height = height;
+      self.x -= height * Math.sin(alpha);
+      self.y -= height * Math.cos(alpha);
+    },
+
     /**
      * @example
      * {
