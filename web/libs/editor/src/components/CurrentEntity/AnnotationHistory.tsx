@@ -14,12 +14,11 @@ import {
   IconDraftCreated,
   IconSparks,
 } from "@humansignal/icons";
-import { Tooltip, Userpic, IconHistoryRewind } from "@humansignal/ui";
+import { Tooltip, Userpic } from "@humansignal/ui";
 import { Space } from "../../common/Space/Space";
 import { Block, Elem } from "../../utils/bem";
 import { humanDateDiff, userDisplayName } from "../../utils/utilities";
 import "./AnnotationHistory.scss";
-import { EmptyState } from "../SidePanels/Components/EmptyState";
 
 type HistoryItemType =
   | "prediction"
@@ -103,14 +102,6 @@ const DraftState: FC<{
   );
 });
 
-const HistoryEmptyState = () => (
-  <EmptyState
-    icon={<IconHistoryRewind width={24} height={24} />}
-    header="View annotation activity"
-    description={<>See a log of user actions for this annotation</>}
-  />
-);
-
 const AnnotationHistoryComponent: FC<any> = ({
   annotationStore,
   selectedHistory,
@@ -127,11 +118,6 @@ const AnnotationHistoryComponent: FC<any> = ({
   // if user makes changes at the first time there are no draft yet
   const isDraftSelected =
     !annotationStore.selectedHistory && (annotation.draftSelected || (!annotation.versions.draft && hasChanges));
-
-  // Show the empty state when there are no changes, no draft, and no history items available.
-  if (!hasChanges && !annotation.versions.draft && (!history || history.length === 0)) {
-    return <HistoryEmptyState />;
-  }
 
   return (
     <Block name="annotation-history" mod={{ inline }}>

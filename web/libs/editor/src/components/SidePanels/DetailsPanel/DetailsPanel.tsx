@@ -12,7 +12,7 @@ import { Relations as RelationsComponent } from "./Relations";
 // @ts-ignore
 import { RelationsControls } from "./RelationsControls";
 import { EmptyState } from "../Components/EmptyState";
-import { IconCursor, IconRelationLink } from "@humansignal/icons";
+import { IconCursor, IconRelationLink, IconHistoryRewind } from "@humansignal/icons";
 import { getDocsUrl } from "../../../utils/docs";
 
 interface DetailsPanelProps extends PanelProps {
@@ -123,9 +123,23 @@ const HistoryTab: FC<any> = inject("store")(
               Annotation History
               <span>#{currentEntity.pk ?? currentEntity.id}</span>
             </div>
-            <Elem name="section-content">
-              <AnnotationHistory inline enabled={showAnnotationHistory} />
-            </Elem>
+            {showEmptyState ? (
+              <EmptyState
+                icon={<IconHistoryRewind width={24} height={24} />}
+                header="View annotation activity"
+                description={<>See a log of user actions for this annotation</>}
+              />
+            ) : (
+              <>
+                <Elem name="section-head">
+                  Annotation History
+                  <span>#{currentEntity.pk ?? currentEntity.id}</span>
+                </Elem>
+                <Elem name="section-content">
+                  <AnnotationHistory inline enabled={showAnnotationHistory} />
+                </Elem>
+              </>
+            )}
           </Elem>
         </Block>
       </>
