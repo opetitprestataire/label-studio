@@ -62,7 +62,6 @@ class _Registry {
 
   getAvailableAreas(object: any, value: any) {
     const available = this.areas.get(object);
-    console.log(available, object);
 
     if (!available) return [];
     if (value) {

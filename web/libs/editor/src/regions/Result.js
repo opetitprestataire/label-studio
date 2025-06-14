@@ -84,6 +84,7 @@ const Result = types
       brushlabels: types.maybe(types.array(types.string)),
       timeserieslabels: types.maybe(types.array(types.string)),
       timelinelabels: types.maybe(types.array(types.string)), // new one
+      pixelwiselabels: types.maybe(types.array(types.string)),
       taxonomy: types.frozen(), // array of arrays of strings
       sequence: types.frozen(),
     }),

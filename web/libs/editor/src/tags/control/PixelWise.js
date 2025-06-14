@@ -39,8 +39,8 @@ const TagAttrs = types.model({
 
 const Model = types
   .model({
-    type: "brush",
-    removeDuplicatesNamed: "Erase",
+    type: "pixelwise",
+    removeDuplicatesNamed: "PixelWiseErase",
   })
   .views((self) => ({
     get hasStates() {
@@ -50,7 +50,7 @@ const Model = types
     },
   }))
   .volatile(() => ({
-    toolNames: ["PixelWise", "Erase"],
+    toolNames: ["PixelWise", "PixelWiseErase"],
   }));
 
 const PixelWiseModel = types.compose(

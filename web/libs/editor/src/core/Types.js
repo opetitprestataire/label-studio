@@ -45,7 +45,6 @@ function allModelsTypes() {
     {
       dispatcher: (sn) => {
         if (!sn) return types.literal(undefined);
-        console.log(sn.type);
         if (Registry.tags.includes(sn.type)) {
           return Registry.getModelByTag(sn.type);
         }

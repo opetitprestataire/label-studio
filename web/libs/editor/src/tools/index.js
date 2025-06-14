@@ -4,6 +4,7 @@
 import { Brush } from "./Brush";
 import { PixelWise } from "./PixelWise";
 import { Erase } from "./Erase";
+import { PixelWiseErase } from "./PixelWiseErase";
 import { KeyPoint } from "./KeyPoint";
 import { Polygon } from "./Polygon";
 import { Rect, Rect3Point } from "./Rect";
@@ -19,6 +20,7 @@ export {
   Brush,
   PixelWise,
   Erase,
+  PixelWiseErase,
   KeyPoint,
   Polygon,
   Rect,

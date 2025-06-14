@@ -61,6 +61,7 @@ export const renderers: Record<string, RendererType> = {
   timeserieslabels: LabelsRenderer,
   paragraphlabels: LabelsRenderer,
   timelinelabels: LabelsRenderer,
+  pixelwiselabels: LabelsRenderer,
   number: (results, control) => {
     if (!results.length) return "-";
 

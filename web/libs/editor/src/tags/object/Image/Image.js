@@ -408,6 +408,7 @@ const Model = types
         if (
           item.type === IMAGE_CONSTANTS.rectanglelabels ||
           item.type === IMAGE_CONSTANTS.brushlabels ||
+          item.type === IMAGE_CONSTANTS.pixelwiselabels ||
           item.type === IMAGE_CONSTANTS.ellipselabels
         ) {
           returnedControl = item;
@@ -716,6 +717,7 @@ const Model = types
         item_index: self.currentImage,
       };
 
+      console.log(areaRaw);
       self.drawingRegion = areaRaw;
       return self.drawingRegion;
     },
