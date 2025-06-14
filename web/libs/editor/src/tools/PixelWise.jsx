@@ -114,7 +114,7 @@ const _Tool = types
         const { currentArea, control, obj } = self;
         const source = currentArea.toJSON();
 
-        const value = { coordstype: "px", touches: source.touches, dynamic: source.dynamic };
+        const value = { strokeWidth: self.strokeWidth };
         const newArea = self.annotation.createResult(value, currentArea.results[0].value.toJSON(), control, obj);
 
         currentArea.setDrawing(false);
@@ -134,7 +134,7 @@ const _Tool = types
       },
 
       addPoint(x, y) {
-        brush.addPoint(Math.floor(x), Math.floor(y));
+        brush.addPoint(x, y, self.strokeWidth || self.control.strokeWidth);
       },
 
       mouseupEv(_ev, _, [x, y]) {
@@ -195,15 +195,9 @@ const _Tool = types
         if (brush && brush.type === "pixelwiseregion") {
           self.annotation.history.freeze();
           self.mode = "drawing";
+          isFirstBrushStroke = false;
           brush.setDrawing(true);
           self.obj.annotation.setIsDrawing(true);
-          isFirstBrushStroke = false;
-          brush.beginPath({
-            type: "add",
-            strokeWidth: self.strokeWidth || c.strokeWidth,
-          });
-
-          self.addPoint(x, y);
         } else {
           if (!self.canStartDrawing()) return;
           if (self.tagTypes.stateTypes === self.control.type && !self.control.isSelected) return;
@@ -212,17 +206,18 @@ const _Tool = types
           isFirstBrushStroke = true;
           self.obj.annotation.setIsDrawing(true);
           brush = self.createDrawingRegion({
-            touches: [],
-            coordstype: "px",
-          });
-
-          brush.beginPath({
-            type: "add",
             strokeWidth: self.strokeWidth || c.strokeWidth,
           });
-
-          self.addPoint(x, y);
         }
+
+        brush.beginPath({
+          type: "add",
+          strokeWidth: self.strokeWidth || c.strokeWidth,
+          x,
+          y,
+        });
+
+        self.addPoint(x, y);
       },
     };
   });

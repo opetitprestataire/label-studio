@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Group, Image, Layer, Shape } from "react-konva";
-import { observer } from "mobx-react";
-import { getParent, getRoot, getType, hasParent, isAlive, types } from "mobx-state-tree";
+import { Group, Image, Layer } from "react-konva";
+import { getType, isAlive, types } from "mobx-state-tree";
 
 import Registry from "../core/Registry";
 import NormalizationMixin from "../mixins/Normalization";
@@ -30,88 +29,8 @@ const highlightOptions = {
   shadowOpacity: 1,
 };
 
-const Points = types
-  .model("Points", {
-    id: types.optional(types.identifier, guidGenerator),
-    type: types.optional(types.enumeration(["add", "eraser"]), "add"),
-    points: types.array(types.number),
-    relativePoints: types.array(types.number),
-
-    /**
-     * Stroke width
-     */
-    strokeWidth: types.optional(types.number, 25),
-    relativeStrokeWidth: types.optional(types.number, 25),
-    /**
-     * Eraser size
-     */
-    eraserSize: types.optional(types.number, 25),
-  })
-  .views((self) => ({
-    get store() {
-      return getRoot(self);
-    },
-    get parent() {
-      if (!hasParent(self, 2)) return null;
-      return getParent(self, 2);
-    },
-    get stage() {
-      return self.parent?.parent;
-    },
-    get compositeOperation() {
-      return self.type === "add" ? "source-over" : "destination-out";
-    },
-  }))
-  .actions((self) => {
-    return {
-      updateImageSize(wp, hp, sw, sh) {
-        self.points = self.relativePoints.map((v, idx) => {
-          const isX = !(idx % 2);
-          const stageSize = isX ? sw : sh;
-
-          return (v * stageSize) / 100;
-        });
-        self.strokeWidth = (self.relativeStrokeWidth * sw) / 100;
-      },
-
-      setType(type) {
-        self.type = type;
-      },
-
-      addPoint(x, y) {
-        // scale it back because it would be scaled on draw
-        x = x / self.parent.scaleX;
-        y = y / self.parent.scaleY;
-        self.points.push(x);
-        self.points.push(y);
-      },
-
-      setPoints(points) {
-        self.points = points.map((c, i) => c / (i % 2 === 0 ? self.parent.scaleX : self.parent.scaleY));
-        self.relativePoints = points.map(
-          (c, i) => (c / (i % 2 === 0 ? self.stage.stageWidth : self.stage.stageHeight)) * 100,
-        );
-        self.relativeStrokeWidth = (self.strokeWidth / self.stage.stageWidth) * 100;
-      },
-
-      // rescale points to the new width and height from the original
-      rescale(origW, origH, destW) {
-        const s = destW / origW;
-
-        return self.points.map((p) => p * s);
-      },
-
-      scaledStrokeWidth(origW, origH, destW) {
-        const s = destW / origW;
-
-        return s * self.strokeWidth;
-      },
-    };
-  });
-
 /**
  * Rectangle object for Bounding Box
- *
  */
 const Model = types
   .model({
@@ -121,14 +40,11 @@ const Model = types
     type: "pixelwiseregion",
     object: types.late(() => types.reference(ImageModel)),
 
-    coordstype: types.optional(types.enumeration(["px", "perc"]), "perc"),
+    strokeWidth: types.number,
 
     rle: types.frozen(),
 
     maskDataURL: types.frozen(),
-
-    touches: types.array(Points),
-    currentTouch: types.maybeNull(types.reference(Points)),
   })
   .volatile(() => ({
     /**
@@ -156,6 +72,15 @@ const Model = types
     hideable: true,
     layerRef: undefined,
     imageData: null,
+    /**
+     * @type {HTMLCanvasElement}
+     */
+    pixelWiseRef: null,
+
+    /**
+     * @type {{x: number, y: number}}
+     */
+    lastPos: { x: 0, y: 0 },
   }))
   .views((self) => {
     return {
@@ -169,9 +94,6 @@ const Model = types
       },
       get strokeColor() {
         return rgbArrayToHex(self.colorParts);
-      },
-      get touchesLength() {
-        return self.touches.length;
       },
       get bboxCoordsCanvas() {
         if (!self.imageData) {
@@ -228,13 +150,38 @@ const Model = types
           bottom: self.parent.canvasToInternalY(bbox.bottom),
         };
       },
+
+      get dimensions() {
+        console.log(self.parent.currentImageEntity);
+        return {
+          stageWidth: self.parent.stageWidth,
+          stageHeight: self.parent.stageHeight,
+          imageWidth: self.parent.imageRef.width,
+          imageHeight: self.parent.imageRef.height,
+        };
+      },
+
+      get drawingOffset() {
+        const { dimensions } = self;
+
+        const scale = Math.min(
+          dimensions.stageWidth / dimensions.imageWidth,
+          dimensions.stageHeight / dimensions.imageHeight,
+        );
+
+        return {
+          offsetX: dimensions.imageWidth - dimensions.stageWidth / scale,
+          offsetY: dimensions.imageHeight - dimensions.stageHeight / scale,
+          scale,
+        };
+      },
     };
   })
   .actions((self) => {
     let pathPoints;
     let cachedPoints;
-    let lastPointX = -1;
-    let lastPointY = -1;
+    const lastPointX = -1;
+    const lastPointY = -1;
     let maskImage;
 
     return {
@@ -272,62 +219,43 @@ const Model = types
         }
       },
 
-      prepareCoords([x, y]) {
-        return self.parent.zoomOriginalCoords([x, y]);
-      },
-
-      preDraw(x, y) {
-        if (!self.layerRef) return;
-        const layer = self.layerRef;
-        const ctx = layer.canvas.context;
-
-        ctx.save();
-        if (isFF(FF_ZOOM_OPTIM)) {
-          ctx.beginPath();
-          ctx.rect(
-            self.parent.alignmentOffset.x,
-            self.parent.alignmentOffset.y,
-            self.parent.stageWidth * self.parent.stageScale,
-            self.parent.stageHeight * self.parent.stageScale,
-          );
-          ctx.clip();
-        }
-        ctx.beginPath();
-        if (cachedPoints.length / 2 > 3) {
-          ctx.moveTo(...self.prepareCoords([lastPointX, lastPointY]));
-        } else if (cachedPoints.length === 0) {
-          ctx.moveTo(...self.prepareCoords([x, y]));
-        } else {
-          ctx.moveTo(...self.prepareCoords([cachedPoints[0], cachedPoints[1]]));
-          for (let i = 0; i < cachedPoints.length / 2; i++) {
-            ctx.lineTo(...self.prepareCoords([cachedPoints[2 * i], cachedPoints[2 * i + 1]]));
-          }
-        }
-        ctx.lineTo(...self.prepareCoords([x, y]));
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-        ctx.lineWidth = pathPoints.strokeWidth * self.scaleX * self.parent.stageScale;
-        ctx.strokeStyle = self.strokeColor;
-        ctx.globalCompositeOperation = pathPoints.compositeOperation;
-        ctx.stroke();
-        ctx.restore();
-        lastPointX = x;
-        lastPointY = y;
-      },
-
-      beginPath({ type, strokeWidth, opacity = self.opacity }) {
+      beginPath({ type, strokeWidth, opacity = self.opacity, x = 0, y = 0 }) {
+        console.log(self.strokeWidth);
         // don't start to save another regions in the middle of drawing process
         self.object.annotation.pauseAutosave();
 
-        pathPoints = Points.create({ id: guidGenerator(), type, strokeWidth, opacity });
-        cachedPoints = [];
-        return pathPoints;
+        const { drawingOffset: offset } = self;
+        self.pixelWiseRef = self.pixelWiseRef ?? document.createElement("canvas");
+        self.pixelWiseRef.width = self.parent.currentImageEntity.naturalWidth;
+        self.pixelWiseRef.height = self.parent.currentImageEntity.naturalHeight;
+
+        const ctx = self.pixelWiseRef.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+
+        console.log(offset);
+        self.lastPos = PixelWiseDrawing.begin({
+          ctx,
+          x: Math.floor(x / offset.scale + offset.offsetX),
+          y: Math.floor(y / offset.scale + offset.offsetY),
+          brushSize: strokeWidth,
+          color: self.strokeColor,
+        });
+        self.layerRef?.batchDraw();
       },
 
-      addPoint(x, y) {
-        self.preDraw(x, y);
-        cachedPoints.push(x);
-        cachedPoints.push(y);
+      addPoint(x, y, strokeWidth) {
+        const ctx = self.pixelWiseRef.getContext("2d");
+        const { drawingOffset: offset } = self;
+        ctx.imageSmoothingEnabled = false;
+        self.lastPos = PixelWiseDrawing.draw({
+          ctx,
+          x: Math.floor(x / offset.scale + offset.offsetX),
+          y: Math.floor(y / offset.scale + offset.offsetY),
+          brushSize: strokeWidth,
+          color: self.strokeColor,
+          lastPos: self.lastPos,
+        });
+        self.layerRef?.batchDraw();
       },
 
       endPath() {
@@ -335,17 +263,6 @@ const Model = types
 
         // will resume in the next tick...
         annotation.startAutosave();
-
-        if (cachedPoints.length === 2) {
-          cachedPoints.push(cachedPoints[0]);
-          cachedPoints.push(cachedPoints[1]);
-        }
-        self.touches.push(pathPoints);
-        self.currentTouch = pathPoints;
-        pathPoints.setPoints(cachedPoints);
-        lastPointX = lastPointY = -1;
-        pathPoints = null;
-        cachedPoints = [];
 
         self.notifyDrawingFinished();
 
@@ -376,11 +293,11 @@ const Model = types
       },
 
       updateImageSize(wp, hp, sw, sh) {
-        if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
-          self.touches.forEach((stroke) => stroke.updateImageSize(wp, hp, sw, sh));
-
-          self.needsUpdate = self.needsUpdate + 1;
-        }
+        // if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
+        //   self.touches.forEach((stroke) => stroke.updateImageSize(wp, hp, sw, sh));
+        //
+        //   self.needsUpdate = self.needsUpdate + 1;
+        // }
       },
 
       addState(state) {
@@ -388,15 +305,15 @@ const Model = types
       },
 
       convertToImage() {
-        if (self.touches.length) {
-          const object = self.object;
-          const rle = Canvas.Region2RLE(self, object, {
-            color: self.strokeColor,
-          });
-
-          self.touches = [];
-          self.rle = Array.from(rle);
-        }
+        // if (self.touches.length) {
+        //   const object = self.object;
+        //   const rle = Canvas.Region2RLE(self, object, {
+        //     color: self.strokeColor,
+        //   });
+        //
+        //   self.touches = [];
+        //   self.rle = Array.from(rle);
+        // }
       },
 
       /**
@@ -429,19 +346,19 @@ const Model = types
         const object = self.object;
         const value = { format: "rle" };
 
-        if (options?.fast) {
-          value.rle = self.rle;
-
-          if (self.touches.length) value.touches = self.touches;
-          if (self.maskDataURL) value.maskDataURL = self.maskDataURL;
-        } else {
-          const rle = Canvas.Region2RLE(self, object);
-
-          if (!rle || !rle.length) return null;
-
-          // UInt8Array serializes as object, not an array :(
-          value.rle = Array.from(rle);
-        }
+        // if (options?.fast) {
+        //   value.rle = self.rle;
+        //
+        //   if (self.touches.length) value.touches = self.touches;
+        //   if (self.maskDataURL) value.maskDataURL = self.maskDataURL;
+        // } else {
+        //   const rle = Canvas.Region2RLE(self, object);
+        //
+        //   if (!rle || !rle.length) return null;
+        //
+        //   // UInt8Array serializes as object, not an array :(
+        //   value.rle = Array.from(rle);
+        // }
 
         return self.parent.createSerializedResult(self, value);
       },
@@ -457,54 +374,6 @@ const PixelWiseRegionModel = types.compose(
   IsReadyMixin,
   Model,
 );
-
-const HtxPixelWiseLayer = observer(({ item, setShapeRef, pointsList }) => {
-  const drawLine = useCallback((ctx, { points, strokeWidth, strokeColor, compositeOperation }) => {
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(points[0], points[1]);
-    for (let i = 0; i < points.length / 2; i++) {
-      ctx.lineTo(points[2 * i], points[2 * i + 1]);
-    }
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.lineWidth = strokeWidth;
-    ctx.strokeStyle = strokeColor;
-    ctx.globalCompositeOperation = compositeOperation;
-    ctx.stroke();
-    ctx.restore();
-  });
-
-  const sceneFunc = useCallback(
-    (context) => {
-      pointsList.forEach((points) => {
-        drawLine(context, {
-          points: points.points,
-          strokeWidth: points.strokeWidth,
-          strokeColor: item.strokeColor,
-          compositeOperation: points.compositeOperation,
-        });
-      });
-    },
-    [pointsList, pointsList.length, item.strokeColor],
-  );
-
-  const hitFunc = useCallback(
-    (context, shape) => {
-      pointsList.forEach((points) => {
-        drawLine(context, {
-          points: points.points,
-          strokeWidth: points.strokeWidth,
-          strokeColor: points.type === "eraser" ? "#ffffff" : shape.colorKey,
-          compositeOperation: "source-over",
-        });
-      });
-    },
-    [pointsList, pointsList.length],
-  );
-
-  return <Shape ref={(node) => setShapeRef(node)} sceneFunc={sceneFunc} hitFunc={hitFunc} />;
-});
 
 const HtxPixelWiseView = ({ item, setShapeRef }) => {
   const [image, setImage] = useState();
@@ -593,50 +462,6 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
   highlightedRef.current.highlighted = item.highlighted;
   highlightedRef.current.highlight = highlightedRef.current.highlighted ? highlightOptions : { shadowOpacity: 0 };
 
-  // Caching drawn brush strokes (from the rle field and from the touches field) for bounding box calculations and highlight applying
-  const drawCallback = useMemo(() => {
-    let done = false;
-
-    return async () => {
-      const { highlighted } = highlightedRef.current;
-      const layer = layerRef.current;
-      const isDrawing = item.parent?.drawingRegion === item;
-
-      if (isDrawing || !layer || done) return;
-      let highlightEl;
-
-      if (highlighted) {
-        highlightEl = layer.findOne(".highlight");
-        highlightEl.hide();
-      }
-      layer.draw();
-
-      const dataUrl = layer.canvas.toDataURL();
-
-      item.cacheImageData();
-
-      if (highlighted) {
-        highlightEl.show();
-        layer.draw();
-      }
-
-      highlightedImageRef.current.src = dataUrl;
-      done = true;
-    };
-  }, [
-    item.touches.length,
-    item.strokeColor,
-    item.parent?.stageScale,
-    store.annotationStore.selected?.id,
-    item.parent?.zoomingPositionX,
-    item.parent?.zoomingPositionY,
-    item.parent?.stageWidth,
-    item.parent?.stageHeight,
-    item.maskDataURL,
-    item.rle,
-    image,
-  ]);
-
   const setLayerRef = useCallback(
     (ref) => {
       if (isAlive(item)) {
@@ -683,19 +508,12 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
           setLayerRef(ref);
           layerRef.current = ref;
         }}
-        onDraw={() => {
-          setTimeout(drawCallback);
-        }}
-        clearBeforeDraw={!item.isDrawing}
         visible={!item.hidden}
-        clip={clip}
+        imageSmoothingEnabled={false}
       >
         <Group
           attrMy={item.needsUpdate}
           name="segmentation"
-          // onClick={e => {
-          //     e.cancelBubble = false;
-          // }}
           onMouseDown={(e) => {
             if (store.annotationStore.selected.isLinkingMode) {
               e.cancelBubble = true;
@@ -739,10 +557,15 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
           {/* RLE */}
           <Image image={image} hitFunc={imageHitFunc} width={item.parent.stageWidth} height={item.parent.stageHeight} />
 
-          {/* Touches */}
-          <Group>
-            <HtxPixelWiseLayer store={store} item={item} pointsList={item.touches} setShapeRef={setShapeRef} />
-          </Group>
+          {item.pixelWiseRef && (
+            <Image
+              image={item.pixelWiseRef}
+              width={item.parent.stageWidth}
+              height={item.parent.stageHeight}
+              perfectDrawingEnafled={true}
+              imageSmoothingEnabled={false}
+            />
+          )}
 
           {/* Highlight */}
           <Image
@@ -772,12 +595,81 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
   );
 };
 
+const PixelWiseDrawing = {
+  /**
+   * @param {{ctx: CanvasRenderingContext2D, x: number, y: number, brushSize: number, color: string, eraserMode: boolean}} param1
+   * @returns {{x: number, y: number}}
+   */
+  begin({ ctx, x, y, brushSize = 10, color = "red", eraserMode = false }) {
+    ctx.fillStyle = eraserMode ? "white" : color;
+    ctx.globalCompositeOperation = eraserMode ? "destination-out" : "source-over";
+
+    if (brushSize === 1) {
+      ctx.fillRect(x, y, 1, 1);
+    } else {
+      ctx.beginPath();
+      ctx.arc(x + 0.5, y + 0.5, brushSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return { x, y };
+  },
+
+  /**
+   * @param {{ctx: CanvasRenderingContext2D, x: number, y: number, brushSize: number, color: string, lastPos: {x: number, y: number}, eraserMode: boolean}} param1
+   * @returns {{x: number, y: number}}
+   */
+  draw({ ctx, x, y, brushSize = 10, color = "red", eraserMode = false, lastPos }) {
+    ctx.fillStyle = eraserMode ? "white" : color;
+    ctx.globalCompositeOperation = eraserMode ? "destination-out" : "source-over";
+
+    this.drawLine(ctx, lastPos.x, lastPos.y, x, y, brushSize);
+    return { x, y };
+  },
+
+  /**
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {number} x0
+   * @param {number} y0
+   * @param {number} x1
+   * @param {number} y1
+   * @param {number} size
+   */
+  drawLine(ctx, x0, y0, x1, y1, size) {
+    const dx = Math.abs(x1 - x0);
+    const dy = Math.abs(y1 - y0);
+    const sx = x0 < x1 ? 1 : -1;
+    const sy = y0 < y1 ? 1 : -1;
+    let err = dx - dy;
+
+    while (true) {
+      if (size === 1) {
+        ctx.fillRect(x0, y0, 1, 1);
+      } else {
+        ctx.beginPath();
+        ctx.arc(x0 + 0.5, y0 + 0.5, size / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (x0 === x1 && y0 === y1) break;
+      const e2 = 2 * err;
+      if (e2 > -dy) {
+        err -= dy;
+        x0 += sx;
+      }
+      if (e2 < dx) {
+        err += dx;
+        y0 += sy;
+      }
+    }
+  },
+};
+
 const HtxPixelWise = AliveRegion(HtxPixelWiseView, {
   renderHidden: true,
   shouldNotUsePortal: true,
 });
 
 Registry.addTag("pixelwiseregion", PixelWiseRegionModel, HtxPixelWise);
-Registry.addRegionType(PixelWiseRegionModel, "image", (value) => value.rle || value.touches || value.maskDataURL);
+Registry.addRegionType(PixelWiseRegionModel, "image", (value) => "strokeWidth" in value);
 
 export { PixelWiseRegionModel, HtxPixelWise };

@@ -53,10 +53,12 @@ const Area = types.union(
         // `sequence` and `ranges` are used for video regions
         !sn.sequence &&
         !sn.ranges &&
+        !sn.strokeWidth &&
         sn.value &&
         Object.values(sn.value).length <= 1
       )
         return ClassificationArea;
+
       // may be a tag itself or just its name
       const objectName = Tree.cleanUpId(sn.object.name || sn.object);
       // we have to use current config to detect Object tag by name
@@ -84,8 +86,8 @@ const Area = types.union(
   KeyPointRegionModel,
   EllipseRegionModel,
   PolygonRegionModel,
-  PixelWiseRegionModel,
   BrushRegionModel,
+  PixelWiseRegionModel,
   VideoRectangleRegionModel,
   ClassificationArea,
 );

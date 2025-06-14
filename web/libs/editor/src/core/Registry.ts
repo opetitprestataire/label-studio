@@ -65,9 +65,8 @@ class _Registry {
 
     if (!available) return [];
     if (value) {
-      for (const model of available) {
-        if (model.detectByValue && model.detectByValue(value)) return [model];
-      }
+      const res = available.find((m: any) => m.detectByValue?.(value));
+      return [res];
     }
     return available.filter((a: { detectByValue: any }) => !a.detectByValue);
   }

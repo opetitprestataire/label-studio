@@ -49,7 +49,7 @@ const splitRegions = (regions) => {
   for (i; i < l; i++) {
     const region = regions[i];
 
-    if (region.type === "brushregion") {
+    if (region.type === "brushregion" || region.type === "pixelwiseregion") {
       brushRegions.push(region);
     } else {
       shapeRegions.push(region);
@@ -94,7 +94,8 @@ const DrawingRegion = observer(({ item }) => {
   if (!drawingRegion) return null;
   if (item.multiImage && item.currentImage !== drawingRegion.item_index) return null;
 
-  const Wrapper = drawingRegion && drawingRegion.type === "brushregion" ? Fragment : Layer;
+  const isBrush = ["brushregion", "pixelwiseregion"].includes(drawingRegion.type);
+  const Wrapper = drawingRegion && isBrush ? Fragment : Layer;
 
   return <Wrapper>{drawingRegion ? <Region key={"drawing"} region={drawingRegion} /> : drawingRegion}</Wrapper>;
 });

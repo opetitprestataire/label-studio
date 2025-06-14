@@ -291,6 +291,15 @@ const Model = types
       return self.zoomScale;
     },
 
+    get layerZoomScalePosition() {
+      return {
+        scaleX: self.zoomScale,
+        scaleY: self.zoomScale,
+        x: self.zoomingPositionX + self.alignmentOffset.x,
+        y: self.zoomingPositionY + self.alignmentOffset.y,
+      };
+    },
+
     get hasTools() {
       return !!self.getToolsManager().allTools()?.length;
     },
@@ -717,7 +726,6 @@ const Model = types
         item_index: self.currentImage,
       };
 
-      console.log(areaRaw);
       self.drawingRegion = areaRaw;
       return self.drawingRegion;
     },
