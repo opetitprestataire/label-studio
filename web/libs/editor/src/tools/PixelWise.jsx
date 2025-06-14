@@ -112,8 +112,6 @@ const _Tool = types
     return {
       commitDrawingRegion() {
         const { currentArea, control, obj } = self;
-        const source = currentArea.toJSON();
-
         const value = { strokeWidth: self.strokeWidth };
         const newArea = self.annotation.createResult(value, currentArea.results[0].value.toJSON(), control, obj);
 

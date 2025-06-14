@@ -152,7 +152,6 @@ const Model = types
       },
 
       get dimensions() {
-        console.log(self.parent.currentImageEntity);
         return {
           stageWidth: self.parent.stageWidth,
           stageHeight: self.parent.stageHeight,
