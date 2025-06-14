@@ -119,12 +119,10 @@ const HistoryTab: FC<any> = inject("store")(
       <>
         <Block name="history">
           <Elem name="section-tab">
-            {!showEmptyState && (
-              <Elem name="section-head">
-                Annotation History
-                <span>#{currentEntity.pk ?? currentEntity.id}</span>
-              </Elem>
-            )}
+            <Elem name="section-head" className={showEmptyState ? "hidden" : ""}>
+              Annotation History
+              <span>#{currentEntity.pk ?? currentEntity.id}</span>
+            </Elem>
             <Elem name="section-content">
               <AnnotationHistory inline enabled={showAnnotationHistory} />
             </Elem>
