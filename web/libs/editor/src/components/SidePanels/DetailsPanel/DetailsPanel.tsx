@@ -119,9 +119,7 @@ const HistoryTab: FC<any> = inject("store")(
       <>
         <Block name="history">
           <Elem name="section-tab">
-            <div
-              className={`${cn("history").elem("section-head").toString()} ${showEmptyState ? "sr-only" : undefined}`}
-            >
+            <div className={cn("history").elem("section-head").toString()} data-hidden={showEmptyState}>
               Annotation History
               <span>#{currentEntity.pk ?? currentEntity.id}</span>
             </div>
