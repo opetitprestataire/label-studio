@@ -112,7 +112,10 @@ const _Tool = types
     return {
       commitDrawingRegion() {
         const { currentArea, control, obj } = self;
-        const value = { strokeWidth: self.strokeWidth };
+        const value = {
+          strokeWidth: self.strokeWidth,
+          imageData: currentArea.getImageData(),
+        };
         const newArea = self.annotation.createResult(value, currentArea.results[0].value.toJSON(), control, obj);
 
         currentArea.setDrawing(false);
@@ -205,6 +208,7 @@ const _Tool = types
           self.obj.annotation.setIsDrawing(true);
           brush = self.createDrawingRegion({
             strokeWidth: self.strokeWidth || c.strokeWidth,
+            imageData: null,
           });
         }
 

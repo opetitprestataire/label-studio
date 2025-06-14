@@ -40,11 +40,9 @@ const Model = types
     type: "pixelwiseregion",
     object: types.late(() => types.reference(ImageModel)),
 
-    strokeWidth: types.number,
-
     rle: types.frozen(),
-
-    maskDataURL: types.frozen(),
+    imageData: types.frozen(),
+    imageDataURL: types.frozen(),
   })
   .volatile(() => ({
     /**
@@ -71,11 +69,15 @@ const Model = types
     needsUpdate: 1,
     hideable: true,
     layerRef: undefined,
-    imageData: null,
     /**
      * @type {HTMLCanvasElement}
      */
     pixelWiseRef: null,
+
+    /**
+     * @type {CanvasRenderingContext2D}
+     */
+    pixelWiseCtx: null,
 
     /**
      * @type {{x: number, y: number}}
@@ -174,6 +176,15 @@ const Model = types
           scale,
         };
       },
+      getImageData() {
+        /**
+         * @type {HTMLCanvasElement}
+         */
+        const canvas = this.pixelWiseRef;
+        const context = canvas.getContext("2d");
+
+        return context.getImageData(0, 0, canvas.width, canvas.height);
+      },
     };
   })
   .actions((self) => {
@@ -186,18 +197,54 @@ const Model = types
     return {
       afterCreate() {
         self.updateMaskImage();
+        self.restoreFromImageData();
       },
 
       updateMaskImage() {
-        if (self.maskDataURL) {
-          if (!maskImage) maskImage = new window.Image();
+        console.log(self.imageDataURL);
+        if (self.imageDataURL) {
+          /**
+           * @type {HTMLCanvasElement}
+           */
+          const canvas = self.createPixelWise();
+          const context = canvas.getContext("2d");
+          const image = new window.Image();
 
-          maskImage.src = self.maskDataURL;
+          image.addEventListener("load", () => {
+            context.drawImage(image, 0, 0);
+          });
+          image.src = self.imageDataURL;
+        }
+      },
+
+      restoreFromImageData() {
+        if (self.imageData) {
+          /**
+           * @type {HTMLCanvasElement}
+           */
+          const canvas = self.createPixelWise();
+          const context = canvas.getContext("2d");
+
+          context.putImageData(self.imageData, 0, 0);
         }
       },
 
       getMaskImage() {
         return maskImage;
+      },
+
+      createPixelWise() {
+        if (!self.pixelWiseRef) {
+          self.pixelWiseRef = self.pixelWiseRef ?? document.createElement("canvas");
+          self.pixelWiseRef.width = self.parent.currentImageEntity.naturalWidth;
+          self.pixelWiseRef.height = self.parent.currentImageEntity.naturalHeight;
+        }
+
+        const ctx = self.pixelWiseRef.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        self.pixelWiseCtx = self.pixelWiseCtx ?? ctx;
+
+        return self.pixelWiseRef;
       },
 
       setLayerRef(ref) {
@@ -219,35 +266,26 @@ const Model = types
       },
 
       beginPath({ type, strokeWidth, opacity = self.opacity, x = 0, y = 0 }) {
-        console.log(self.strokeWidth);
-        // don't start to save another regions in the middle of drawing process
         self.object.annotation.pauseAutosave();
 
         const { drawingOffset: offset } = self;
-        self.pixelWiseRef = self.pixelWiseRef ?? document.createElement("canvas");
-        self.pixelWiseRef.width = self.parent.currentImageEntity.naturalWidth;
-        self.pixelWiseRef.height = self.parent.currentImageEntity.naturalHeight;
+        const pixelWise = self.createPixelWise();
 
-        const ctx = self.pixelWiseRef.getContext("2d");
-        ctx.imageSmoothingEnabled = false;
-
-        console.log(offset);
         self.lastPos = PixelWiseDrawing.begin({
-          ctx,
+          ctx: self.pixelWiseCtx,
           x: Math.floor(x / offset.scale + offset.offsetX),
           y: Math.floor(y / offset.scale + offset.offsetY),
           brushSize: strokeWidth,
           color: self.strokeColor,
         });
+
         self.layerRef?.batchDraw();
       },
 
       addPoint(x, y, strokeWidth) {
-        const ctx = self.pixelWiseRef.getContext("2d");
         const { drawingOffset: offset } = self;
-        ctx.imageSmoothingEnabled = false;
         self.lastPos = PixelWiseDrawing.draw({
-          ctx,
+          ctx: self.pixelWiseCtx,
           x: Math.floor(x / offset.scale + offset.offsetX),
           y: Math.floor(y / offset.scale + offset.offsetY),
           brushSize: strokeWidth,
@@ -343,21 +381,7 @@ const Model = types
        */
       serialize(options) {
         const object = self.object;
-        const value = { format: "rle" };
-
-        // if (options?.fast) {
-        //   value.rle = self.rle;
-        //
-        //   if (self.touches.length) value.touches = self.touches;
-        //   if (self.maskDataURL) value.maskDataURL = self.maskDataURL;
-        // } else {
-        //   const rle = Canvas.Region2RLE(self, object);
-        //
-        //   if (!rle || !rle.length) return null;
-        //
-        //   // UInt8Array serializes as object, not an array :(
-        //   value.rle = Array.from(rle);
-        // }
+        const value = { imageDataURL: self.pixelWiseRef.toDataURL("image/png") };
 
         return self.parent.createSerializedResult(self, value);
       },
@@ -553,9 +577,6 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
           }}
           listening={!suggestion}
         >
-          {/* RLE */}
-          <Image image={image} hitFunc={imageHitFunc} width={item.parent.stageWidth} height={item.parent.stageHeight} />
-
           {item.pixelWiseRef && (
             <Image
               image={item.pixelWiseRef}
@@ -596,7 +617,8 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
 
 const PixelWiseDrawing = {
   /**
-   * @param {{ctx: CanvasRenderingContext2D, x: number, y: number, brushSize: number, color: string, eraserMode: boolean}} param1
+   * Draws initial point on the canvas
+   * @param {{ctx: CanvasRenderingContext2D, x: number, y: number, brushSize: number, color: string, eraserMode: boolean}} options
    * @returns {{x: number, y: number}}
    */
   begin({ ctx, x, y, brushSize = 10, color = "red", eraserMode = false }) {
@@ -607,13 +629,14 @@ const PixelWiseDrawing = {
       ctx.fillRect(x, y, 1, 1);
     } else {
       ctx.beginPath();
-      ctx.arc(x + 0.5, y + 0.5, brushSize / 2, 0, Math.PI * 2);
+      ctx.arc(x + 0.5, y + 0.5, brushSize, 0, Math.PI * 2);
       ctx.fill();
     }
     return { x, y };
   },
 
   /**
+   * Draws a line between last and current position
    * @param {{ctx: CanvasRenderingContext2D, x: number, y: number, brushSize: number, color: string, lastPos: {x: number, y: number}, eraserMode: boolean}} param1
    * @returns {{x: number, y: number}}
    */
@@ -626,6 +649,8 @@ const PixelWiseDrawing = {
   },
 
   /**
+   * Interpolation algorithm to connect separate
+   * dots on the canvas
    * @param {CanvasRenderingContext2D} ctx
    * @param {number} x0
    * @param {number} y0
@@ -645,7 +670,7 @@ const PixelWiseDrawing = {
         ctx.fillRect(x0, y0, 1, 1);
       } else {
         ctx.beginPath();
-        ctx.arc(x0 + 0.5, y0 + 0.5, size / 2, 0, Math.PI * 2);
+        ctx.arc(x0 + 0.5, y0 + 0.5, size, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -669,6 +694,10 @@ const HtxPixelWise = AliveRegion(HtxPixelWiseView, {
 });
 
 Registry.addTag("pixelwiseregion", PixelWiseRegionModel, HtxPixelWise);
-Registry.addRegionType(PixelWiseRegionModel, "image", (value) => "strokeWidth" in value);
+Registry.addRegionType(
+  PixelWiseRegionModel,
+  "image",
+  (value) => "strokeWidth" in value || "imageData" in value || "imageDataURL" in value,
+);
 
 export { PixelWiseRegionModel, HtxPixelWise };
