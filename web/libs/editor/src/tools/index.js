@@ -2,6 +2,7 @@
 // export { default as KeyPoint } from "./KeyPoint";
 
 import { Brush } from "./Brush";
+import { PixelWise } from "./PixelWise";
 import { Erase } from "./Erase";
 import { KeyPoint } from "./KeyPoint";
 import { Polygon } from "./Polygon";
@@ -16,6 +17,7 @@ import { Selection } from "./Selection";
 
 export {
   Brush,
+  PixelWise,
   Erase,
   KeyPoint,
   Polygon,

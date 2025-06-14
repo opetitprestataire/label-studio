@@ -144,6 +144,8 @@ const IMAGE_CONSTANTS = {
   keypointlabels: "keypointlabels",
   polygonlabels: "polygonlabels",
   brushlabels: "brushlabels",
+  pixelwiseModel: "PixelWiseModel",
+  pixelwiselabels: "pixelwiselabels",
   brushModel: "BrushModel",
   ellipselabels: "ellipselabels",
 };

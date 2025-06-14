@@ -57,6 +57,6 @@ const HtxPixelWiseLabels = observer(({ item }) => {
   return <HtxLabels item={item} />;
 });
 
-Registry.addTag("brushlabels", PixelWiseLabelsModel, HtxPixelWiseLabels);
+Registry.addTag("pixelwiselabels", PixelWiseLabelsModel, HtxPixelWiseLabels);
 
 export { HtxPixelWiseLabels, PixelWiseLabelsModel };

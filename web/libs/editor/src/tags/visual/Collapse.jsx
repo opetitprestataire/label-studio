@@ -49,6 +49,7 @@ const PanelModel = types
       "keypoint",
       "brush",
       "rectanglelabels",
+      "pixelwiselabels",
       "ellipselabels",
       "polygonlabels",
       "keypointlabels",
