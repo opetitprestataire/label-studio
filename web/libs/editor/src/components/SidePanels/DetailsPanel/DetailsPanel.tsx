@@ -1,6 +1,6 @@
 import { inject, observer } from "mobx-react";
 import type { FC } from "react";
-import { Block, Elem, cn } from "../../../utils/bem";
+import { Block, Elem } from "../../../utils/bem";
 import { Comments as CommentsComponent } from "../../Comments/Comments";
 import { AnnotationHistory } from "../../CurrentEntity/AnnotationHistory";
 import { PanelBase, type PanelProps } from "../PanelBase";
@@ -12,7 +12,7 @@ import { Relations as RelationsComponent } from "./Relations";
 // @ts-ignore
 import { RelationsControls } from "./RelationsControls";
 import { EmptyState } from "../Components/EmptyState";
-import { IconCursor, IconRelationLink, IconHistoryRewind } from "@humansignal/icons";
+import { IconCursor, IconRelationLink } from "@humansignal/icons";
 import { getDocsUrl } from "../../../utils/docs";
 
 interface DetailsPanelProps extends PanelProps {
@@ -107,39 +107,21 @@ const RelationsTab: FC<any> = inject("store")(
 const HistoryTab: FC<any> = inject("store")(
   observer(function HistoryTab({ store, currentEntity }: any): JSX.Element {
     const showAnnotationHistory = store.hasInterface("annotations:history");
-    // Determine if the empty state will be shown
-    const annotation = store.annotationStore.selected;
-    const history = store.annotationStore.history;
-    const hasChanges = annotation?.history?.hasChanges;
-    const hasDraft = annotation?.versions?.draft;
-    const hasHistory = history && history.length > 0;
-    const showEmptyState = !hasChanges && !hasDraft && !hasHistory;
 
     return (
       <>
         <Block name="history">
           <Elem name="section-tab">
-            <div className={cn("history").elem("section-head").toString()} data-hidden={showEmptyState}>
-              Annotation History
-              <span>#{currentEntity.pk ?? currentEntity.id}</span>
-            </div>
-            {showEmptyState ? (
-              <EmptyState
-                icon={<IconHistoryRewind width={24} height={24} />}
-                header="View annotation activity"
-                description={<>See a log of user actions for this annotation</>}
-              />
-            ) : (
-              <>
-                <Elem name="section-head">
+            <AnnotationHistory
+              inline
+              enabled={showAnnotationHistory}
+              sectionHeader={
+                <>
                   Annotation History
                   <span>#{currentEntity.pk ?? currentEntity.id}</span>
-                </Elem>
-                <Elem name="section-content">
-                  <AnnotationHistory inline enabled={showAnnotationHistory} />
-                </Elem>
-              </>
-            )}
+                </>
+              }
+            />
           </Elem>
         </Block>
       </>
@@ -180,13 +162,16 @@ const GeneralPanel: FC<any> = inject("store")(
     return (
       <>
         <Elem name="section">
-          <Elem name="section-head">
-            Annotation History
-            <span>#{currentEntity.pk ?? currentEntity.id}</span>
-          </Elem>
-          <Elem name="section-content">
-            <AnnotationHistory inline enabled={showAnnotationHistory} />
-          </Elem>
+          <AnnotationHistory
+            inline
+            enabled={showAnnotationHistory}
+            sectionHeader={
+              <>
+                Annotation History
+                <span>#{currentEntity.pk ?? currentEntity.id}</span>
+              </>
+            }
+          />
         </Elem>
         <Elem name="section">
           <Elem name="view-control">
