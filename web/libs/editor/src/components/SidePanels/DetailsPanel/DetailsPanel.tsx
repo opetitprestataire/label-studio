@@ -1,6 +1,6 @@
 import { inject, observer } from "mobx-react";
 import type { FC } from "react";
-import { Block, Elem } from "../../../utils/bem";
+import { Block, Elem, cn } from "../../../utils/bem";
 import { Comments as CommentsComponent } from "../../Comments/Comments";
 import { AnnotationHistory } from "../../CurrentEntity/AnnotationHistory";
 import { PanelBase, type PanelProps } from "../PanelBase";
@@ -119,11 +119,9 @@ const HistoryTab: FC<any> = inject("store")(
       <>
         <Block name="history">
           <Elem name="section-tab">
-            <div className={showEmptyState ? "sr-only" : undefined}>
-              <Elem name="section-head">
-                Annotation History
-                <span>#{currentEntity.pk ?? currentEntity.id}</span>
-              </Elem>
+            <div className={`${cn("history").elem("section-head").toString()} ${showEmptyState ? "sr-only" : undefined}`} >
+              Annotation History
+              <span>#{currentEntity.pk ?? currentEntity.id}</span>
             </div>
             <Elem name="section-content">
               <AnnotationHistory inline enabled={showAnnotationHistory} />
