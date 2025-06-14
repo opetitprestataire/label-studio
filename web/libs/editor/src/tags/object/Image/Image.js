@@ -35,6 +35,9 @@ import { RELATIVE_STAGE_HEIGHT, RELATIVE_STAGE_WIDTH, SNAP_TO_PIXEL_MODE } from 
 import MultiItemObjectBase from "../MultiItemObjectBase";
 
 const IMAGE_PRELOAD_COUNT = 3;
+const ZOOM_INTENSITY = 0.009;
+const MIN_ZOOM = 0.1;
+const MAX_ZOOM = 100;
 
 /**
  * The `Image` tag shows an image on the page. Use for all image annotation tasks to display an image on the labeling interface.
@@ -89,6 +92,7 @@ const IMAGE_PRELOAD_COUNT = 3;
  * @param {top|center|bottom} [verticalAlignment=top]         - Where to align image vertically. Can be one of "top", "center", or "bottom"
  * @param {auto|original|fit} [defaultZoom=fit]               - Specify the initial zoom of the image within the viewport while preserving its ratio. Can be one of "auto", "original", or "fit"
  * @param {none|anonymous|use-credentials} [crossOrigin=none] - Configures CORS cross domain behavior for this image, either "none", "anonymous", or "use-credentials", similar to [DOM `img` crossOrigin property](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/crossOrigin).
+ * @param {boolean} [pixelWise=false] - Enables pixel-wise high precision labeling
  */
 const TagAttrs = types.model({
   value: types.maybeNull(types.string),
@@ -126,6 +130,8 @@ const TagAttrs = types.model({
   defaultzoom: types.optional(types.enumeration(["auto", "original", "fit"]), "fit"),
 
   crossorigin: types.optional(types.enumeration(["none", "anonymous", "use-credentials"]), "none"),
+
+  pixelwise: types.optional(types.boolean, false),
 });
 
 const IMAGE_CONSTANTS = {
@@ -914,11 +920,12 @@ const Model = types
       self.resetZoomPositionToCenter();
     },
 
-    handleZoom(val, mouseRelativePos = { x: self.canvasSize.width / 2, y: self.canvasSize.height / 2 }) {
+    handleZoom(val, mouseRelativePos = { x: self.canvasSize.width / 2, y: self.canvasSize.height / 2 }, pinch = false) {
       if (val) {
         let zoomScale = self.currentZoom;
 
-        zoomScale = val > 0 ? zoomScale * self.zoomBy : zoomScale / self.zoomBy;
+        const newZoom = clamp(self.currentZoom * Math.exp(val * (pinch ? -1 : 1) * ZOOM_INTENSITY), MIN_ZOOM, MAX_ZOOM);
+        zoomScale = pinch ? newZoom : val > 0 ? zoomScale * self.zoomBy : zoomScale / self.zoomBy;
         if (self.negativezoom !== true && zoomScale <= 1) {
           self.setZoom(1);
           self.setZoomPosition(0, 0);

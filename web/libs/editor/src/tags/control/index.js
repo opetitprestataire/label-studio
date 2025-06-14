@@ -16,6 +16,8 @@ import { TimelineLabelsModel } from "./TimelineLabels";
 import { VideoRectangleModel } from "./VideoRectangle";
 
 import { BrushLabelsModel } from "./BrushLabels";
+import { PixelWiseLabelsModel } from "./PixelWiseLabels";
+import { PixelWiseModel } from "./PixelWise";
 import { BrushModel } from "./Brush";
 import { EllipseLabelsModel } from "./EllipseLabels";
 import { EllipseModel } from "./Ellipse";
@@ -43,6 +45,8 @@ export {
   HyperTextLabelsModel,
   LabelsModel,
   ParagraphLabelsModel,
+  PixelWiseLabelsModel,
+  PixelWiseModel,
   TimeSeriesLabelsModel,
   TimelineLabelsModel,
   VideoRectangleModel,

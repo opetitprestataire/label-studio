@@ -84,7 +84,10 @@ if (isFF(FF_LSDV_4711)) imgDefaultProps.crossOrigin = "anonymous";
 const ImageRenderer = observer(
   forwardRef(({ src, onLoad, imageTransform, isLoaded }, ref) => {
     const imageStyles = useMemo(() => {
-      const style = imageTransform ?? {};
+      const style = {
+        // ...(imageTransform ?? {}),
+        opacity: 0,
+      };
 
       return { ...style, maxWidth: "unset", visibility: isLoaded ? "visible" : "hidden" };
     }, [imageTransform, isLoaded]);

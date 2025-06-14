@@ -1,5 +1,5 @@
-import { Component, createRef, forwardRef, Fragment, memo, useEffect, useRef, useState } from "react";
-import { Group, Layer, Line, Rect, Stage } from "react-konva";
+import { Component, createRef, forwardRef, Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
+import { Group, Layer, Line, Rect, Stage, Image as KonvaImage } from "react-konva";
 import { observer } from "mobx-react";
 import { getEnv, getRoot, isAlive } from "mobx-state-tree";
 
@@ -749,23 +749,22 @@ export default observer(
      * Handle to zoom
      */
     handleZoom = (e) => {
-      /**
-       * Disable if user doesn't use ctrl
-       */
-      if (e.evt && !e.evt.ctrlKey) {
-        return;
-      }
-      if (e.evt && e.evt.ctrlKey) {
-        /**
-         * Disable scrolling page
-         */
+      if (e.evt?.ctrlKey || e.evt?.metaKey || e.evt?.shiftKey) {
         e.evt.preventDefault();
-      }
-      if (e.evt) {
+
         const { item } = this.props;
         const stage = item.stageRef;
 
-        item.handleZoom(e.evt.deltaY, stage.getPointerPosition());
+        item.handleZoom(e.evt.deltaY, stage.getPointerPosition(), e.evt.ctrlKey || e.evt.metaKey);
+      } else if (e.evt) {
+        e.evt.preventDefault();
+        const { item } = this.props;
+
+        const newPos = {
+          x: item.zoomingPositionX - e.evt.deltaX,
+          y: item.zoomingPositionY - e.evt.deltaY,
+        };
+        item.setZoomPosition(newPos.x, newPos.y);
       }
     };
 
@@ -1134,6 +1133,19 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
   const regions = item.regs;
   const paginationEnabled = !!item.isMultiItem;
   const wrapperClasses = [styles.wrapperComponent, item.images.length > 1 ? styles.withGallery : styles.wrapper];
+  const image = useMemo(() => {
+    const ent = item.currentImageEntity;
+
+    if (ent.downloaded) {
+      const img = new window.Image();
+      img.src = ent.currentSrc;
+      img.width = Number.parseInt(item.stageWidth);
+      img.height = Number.parseInt(item.stageHeight);
+      return img;
+    }
+
+    return null;
+  }, [item.currentImageEntity?.downloaded]);
 
   if (paginationEnabled) wrapperClasses.push(styles.withPagination);
 
@@ -1150,10 +1162,9 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
 
   return (
     <>
-      {/* Hack to keep stage in place when there's no regions */}
-      {regions.length === 0 && (
-        <Layer>
-          <Line points={[0, 0, 0, 1]} stroke="rgba(0,0,0,0)" />
+      {image && (
+        <Layer imageSmoothingEnabled={false} perfectDrawEnabled={false}>
+          <KonvaImage image={image} width={item.stageWidth} height={item.stageHeight} />
         </Layer>
       )}
       {item.grid && item.sizeUpdated && <ImageGrid item={item} />}
