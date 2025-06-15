@@ -32,6 +32,7 @@ import {
 } from "../../utils/feature-flags";
 import { Pagination } from "../../common/Pagination/Pagination";
 import { Image } from "./Image";
+import { isHoveringNonTransparentPixel } from "../../regions/PixelWiseRegion/utils";
 
 Konva.showWarnings = false;
 
@@ -506,6 +507,15 @@ export default observer(
           return;
         }
       }
+
+      for (const reg of item.regs) {
+        if (reg.type !== "pixelwiseregion") continue;
+
+        if (reg.highlighted) {
+          reg.onClickRegion(e);
+          reg.setHighlight(false);
+        }
+      }
       return item.event("click", evt, x, y);
     };
 
@@ -716,6 +726,29 @@ export default observer(
         item.setZoomPosition(newPos.x, newPos.y);
       } else {
         item.event("mousemove", e, e.evt.offsetX, e.evt.offsetY);
+      }
+
+      // Handle pixelwise hover
+      if (!e.evt.ctrlKey && !e.evt.shiftKey) {
+        requestAnimationFrame(() => {
+          for (const region of item.regs) {
+            if (region.type !== "pixelwiseregion") continue;
+            region.setHighlight(false);
+            region.updateCursor(false);
+          }
+          for (const region of item.regs) {
+            if (region.type !== "pixelwiseregion") continue;
+
+            const checkHover = !region.selected && !region.isDrawing;
+            const hovered = isHoveringNonTransparentPixel(region);
+
+            if (hovered) {
+              region.setHighlight(true);
+              region.updateCursor(true);
+              break;
+            }
+          }
+        });
       }
     };
 

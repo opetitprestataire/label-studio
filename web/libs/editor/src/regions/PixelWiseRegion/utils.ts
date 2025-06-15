@@ -1,0 +1,118 @@
+export const PixelWiseDrawing = {
+  /**
+   * Draws initial point on the canvas
+   */
+  begin({
+    ctx,
+    x,
+    y,
+    brushSize = 10,
+    eraserMode = false,
+  }: { ctx: CanvasRenderingContext2D; x: number; y: number; brushSize: number; color: string; eraserMode: boolean }): {
+    x: number;
+    y: number;
+  } {
+    ctx.fillStyle = eraserMode ? "white" : "black";
+    ctx.globalCompositeOperation = eraserMode ? "destination-out" : "source-over";
+
+    if (brushSize === 1) {
+      ctx.fillRect(x, y, 1, 1);
+    } else {
+      ctx.beginPath();
+      ctx.arc(x + 0.5, y + 0.5, brushSize, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return { x, y };
+  },
+
+  /**
+   * Draws a line between last and current position
+   */
+  draw({
+    ctx,
+    x,
+    y,
+    brushSize = 10,
+    eraserMode = false,
+    lastPos,
+  }: {
+    ctx: CanvasRenderingContext2D;
+    x: number;
+    y: number;
+    brushSize: number;
+    color: string;
+    lastPos: { x: number; y: number };
+    eraserMode: boolean;
+  }): { x: number; y: number } {
+    ctx.fillStyle = eraserMode ? "white" : "black";
+    ctx.globalCompositeOperation = eraserMode ? "destination-out" : "source-over";
+
+    this.drawLine(ctx, lastPos.x, lastPos.y, x, y, brushSize);
+    return { x, y };
+  },
+
+  /**
+   * Interpolation algorithm to connect separate
+   * dots on the canvas
+   */
+  drawLine(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, size: number) {
+    const dx = Math.abs(x1 - x0);
+    const dy = Math.abs(y1 - y0);
+    const sx = x0 < x1 ? 1 : -1;
+    const sy = y0 < y1 ? 1 : -1;
+    let err = dx - dy;
+
+    while (true) {
+      if (size === 1) {
+        ctx.fillRect(x0, y0, 1, 1);
+      } else {
+        ctx.beginPath();
+        ctx.arc(x0 + 0.5, y0 + 0.5, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (x0 === x1 && y0 === y1) break;
+      const e2 = 2 * err;
+      if (e2 > -dy) {
+        err -= dy;
+        x0 += sx;
+      }
+      if (e2 < dx) {
+        err += dx;
+        y0 += sy;
+      }
+    }
+  },
+};
+
+export function isHoveringNonTransparentPixel(item: any) {
+  const stage = item.layerRef.getStage();
+  const pointer = stage.getPointerPosition();
+  const ctx = item.offscreenCanvas.getContext("2d");
+  if (!pointer) return false;
+
+  // Convert global pointer to image-local coordinates
+  const { drawingOffset: offset } = item;
+  const transform = item.imageRef.getAbsoluteTransform().copy().invert();
+  const localPos = transform.point(pointer);
+
+  const { width, height } = item.offscreenCanvas;
+
+  // Convert to pixel coords in the canvas backing the image
+  const x = Math.floor(localPos.x / offset.scale + offset.offsetX);
+  const y = Math.floor(localPos.y / offset.scale + offset.offsetX);
+
+  if (x < 0 || y < 0 || x >= width || y >= height) return false;
+
+  const alpha = ctx.getImageData(x, y, 1, 1).data[3];
+  return alpha > 0;
+}
+
+export function imageDataToCanvas(imageData: ImageData): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
+  const ctx = canvas.getContext("2d")!;
+  ctx.putImageData(imageData, 0, 0);
+  return canvas;
+}

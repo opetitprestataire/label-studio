@@ -120,7 +120,11 @@ const _Tool = types
 
         currentArea.setDrawing(false);
         self.applyActiveStates(newArea);
-        self.deleteRegion();
+        try {
+          self.deleteRegion();
+        } catch (e) {
+          /* do nothing*/
+        }
         newArea.notifyDrawingFinished();
         return newArea;
       },
@@ -194,18 +198,12 @@ const _Tool = types
 
         // Reset the timer if a user started drawing again
         if (brush && brush.type === "pixelwiseregion") {
-          self.annotation.history.freeze();
-          self.mode = "drawing";
           isFirstBrushStroke = false;
-          brush.setDrawing(true);
-          self.obj.annotation.setIsDrawing(true);
+          self.preapareDrawing();
         } else {
           if (!self.canStartDrawing()) return;
           if (self.tagTypes.stateTypes === self.control.type && !self.control.isSelected) return;
-          self.annotation.history.freeze();
-          self.mode = "drawing";
-          isFirstBrushStroke = true;
-          self.obj.annotation.setIsDrawing(true);
+          self.preapareDrawing();
           brush = self.createDrawingRegion({
             strokeWidth: self.strokeWidth || c.strokeWidth,
             imageData: null,
@@ -220,6 +218,12 @@ const _Tool = types
         });
 
         self.addPoint(x, y);
+      },
+      preapareDrawing() {
+        self.annotation.history.freeze();
+        self.mode = "drawing";
+        isFirstBrushStroke = true;
+        self.obj.annotation.setIsDrawing(true);
       },
     };
   });

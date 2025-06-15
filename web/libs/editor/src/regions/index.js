@@ -2,7 +2,7 @@ import { types } from "mobx-state-tree";
 
 import { AudioRegionModel } from "./AudioRegion";
 import { BrushRegionModel, HtxBrush } from "./BrushRegion";
-import { PixelWiseRegionModel, HtxPixelWise } from "./PixelWiseRegion";
+import { PixelWiseRegionModel, HtxPixelWise } from "./PixelWiseRegion/PixelWiseRegion";
 import { ParagraphsRegionModel } from "./ParagraphsRegion";
 import { TimeSeriesRegionModel } from "./TimeSeriesRegion";
 import { HtxKeyPoint, KeyPointRegionModel } from "./KeyPointRegion";
