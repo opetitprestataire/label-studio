@@ -5,6 +5,7 @@ import io
 import logging
 import mimetypes
 import os
+import hashlib
 
 try:
     import ujson as json
@@ -68,9 +69,32 @@ def check_request_files_size(files):
 
     check_tasks_max_file_size(total)
 
+def get_file_hash(file):
+    """Calculate SHA256 hash of the file"""
+    try:
+        sha256 = hashlib.sha256()
+        for chunk in file.chunks():
+            sha256.update(chunk)
+        return sha256.hexdigest()
+    except Exception as e:
+        logger.error(f'Error calculating file hash: {e}')
+        return None
 
-def create_file_upload(user, project, file):
+def full_files_hash():
+    """Calculate file_hash for all FileUpload instances in the project that do not have it set"""
+    files = FileUpload.objects.filter(file_hash=None)
+    for instance in files:
+        instance.file_hash = get_file_hash(instance.file)
+        instance.save(update_fields=['file_hash'])
+
+def create_file_upload(user, project, file: SimpleUploadedFile, ignore_duplicate=False):
+    file_hash = get_file_hash(file)
+    if ignore_duplicate and FileUpload.objects.filter(file_hash=file_hash, project=project).exists():
+        # If file with the same hash already exists, return None
+        return None
+
     instance = FileUpload(user=user, project=project, file=file)
+    instance.file_hash = file_hash
     if settings.SVG_SECURITY_CLEANUP:
         content_type, encoding = mimetypes.guess_type(str(instance.file.name))
         if content_type in ['image/svg+xml']:
@@ -252,7 +276,10 @@ def load_tasks(request, project):
         check_request_files_size(request.FILES)
         check_extensions(request.FILES)
         for filename, file in request.FILES.items():
-            file_upload = create_file_upload(request.user, project, file)
+            file_upload = create_file_upload(request.user, project, file, ignore_duplicate=settings.DATA_UPLOAD_IGNORE_DUPLICATES)
+            if file_upload is None:
+                # If file with the same hash already exists, skip it
+                continue
             if file_upload.format_could_be_tasks_list:
                 could_be_tasks_list = True
             file_upload_ids.append(file_upload.id)

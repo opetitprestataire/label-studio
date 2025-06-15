@@ -32,6 +32,7 @@ class FileUpload(models.Model):
     user = models.ForeignKey('users.User', related_name='file_uploads', on_delete=models.CASCADE)
     project = models.ForeignKey('projects.Project', related_name='file_uploads', on_delete=models.CASCADE)
     file = models.FileField(upload_to=upload_name_generator)
+    file_hash = models.CharField(max_length=64, null=True, blank=True, db_index=True)
 
     def has_permission(self, user):
         user.project = self.project  # link for activity log
