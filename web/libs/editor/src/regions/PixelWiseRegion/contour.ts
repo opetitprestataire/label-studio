@@ -124,7 +124,7 @@ export function generateMultiShapeOutline(item: {
   return contours.map((contour) => {
     const simplified = simplify(
       contour.map(([x, y]) => ({ x: x * scale, y: y * scale })),
-      0.5,
+      0.9,
       true,
     );
     return simplified.flatMap(({ x, y }) => [x, y]);

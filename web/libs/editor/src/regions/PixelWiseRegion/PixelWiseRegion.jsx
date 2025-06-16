@@ -451,8 +451,8 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
               lineJoin="round"
               lineCap="round"
               listening={false}
-              strokeScaleEnabled={true}
-              tension={0}
+              strokeScaleEnabled={false}
+              tension={0.2}
             />
           ))}
       </Layer>
