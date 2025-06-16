@@ -572,15 +572,21 @@ export default observer(
         }
 
         const isRightElementToCatchToolInteractions = (el) => {
+          // Pixelwise is like Brush, so treat it the same
+          // The only difference is that Pixelwise doesn't have a group inside
+          if (el.nodeType === "Layer" && !isMoveTool && el.attrs?.name === "pixelwise") {
+            return true;
+          }
+
           // It could be ruler ot segmentation
           if (el.nodeType === "Group") {
-            if ("ruler" === el?.attrs?.name) {
+            if (el?.attrs?.name === "ruler") {
               return true;
             }
             // segmentation is specific for Brushes
             // but click interaction on the region covers the case of the same MoveTool interaction here,
             // so it should ignore move tool interaction to prevent conflicts
-            if (!isMoveTool && "segmentation" === el?.attrs?.name) {
+            if (!isMoveTool && el?.attrs?.name === "segmentation") {
               return true;
             }
           }
@@ -732,7 +738,6 @@ export default observer(
       if (!e.evt.ctrlKey && !e.evt.shiftKey) {
         requestAnimationFrame(() => {
           for (const region of item.regs) {
-            if (region.type !== "pixelwiseregion") continue;
             region.setHighlight(false);
             region.updateCursor(false);
           }
@@ -1160,17 +1165,11 @@ const EntireStage = observer(
   },
 );
 
-const StageContent = observer(({ item, store, state, crosshairRef }) => {
-  if (!isAlive(item)) return null;
-  if (!store.task || !item.currentSrc) return null;
-
-  const regions = item.regs;
-  const paginationEnabled = !!item.isMultiItem;
-  const wrapperClasses = [styles.wrapperComponent, item.images.length > 1 ? styles.withGallery : styles.wrapper];
+const ImageLayer = observer(({ item }) => {
   const image = useMemo(() => {
     const ent = item.currentImageEntity;
 
-    if (ent.downloaded) {
+    if (ent && ent.downloaded) {
       const img = new window.Image();
       img.src = ent.currentSrc;
       img.width = Number.parseInt(item.stageWidth);
@@ -1180,6 +1179,21 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
 
     return null;
   }, [item.currentImageEntity?.downloaded]);
+
+  return image ? (
+    <Layer imageSmoothingEnabled={item.smoothing}>
+      <KonvaImage image={image} width={item.stageWidth} height={item.stageHeight} />
+    </Layer>
+  ) : null;
+});
+
+const StageContent = observer(({ item, store, state, crosshairRef }) => {
+  if (!isAlive(item)) return null;
+  if (!store.task || !item.currentSrc) return null;
+
+  const regions = item.regs;
+  const paginationEnabled = !!item.isMultiItem;
+  const wrapperClasses = [styles.wrapperComponent, item.images.length > 1 ? styles.withGallery : styles.wrapper];
 
   if (paginationEnabled) wrapperClasses.push(styles.withPagination);
 
@@ -1196,11 +1210,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
 
   return (
     <>
-      {image && (
-        <Layer imageSmoothingEnabled={false} perfectDrawEnabled={false}>
-          <KonvaImage image={image} width={item.stageWidth} height={item.stageHeight} />
-        </Layer>
-      )}
+      <ImageLayer item={item} />
       {item.grid && item.sizeUpdated && <ImageGrid item={item} />}
 
       {isFF(FF_LSDV_4930) ? <TransformerBack item={item} /> : null}

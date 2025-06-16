@@ -198,12 +198,18 @@ const _Tool = types
 
         // Reset the timer if a user started drawing again
         if (brush && brush.type === "pixelwiseregion") {
+          self.annotation.history.freeze();
+          self.mode = "drawing";
           isFirstBrushStroke = false;
-          self.preapareDrawing();
+          brush.setDrawing(true);
+          self.obj.annotation.setIsDrawing(true);
         } else {
           if (!self.canStartDrawing()) return;
           if (self.tagTypes.stateTypes === self.control.type && !self.control.isSelected) return;
-          self.preapareDrawing();
+          self.annotation.history.freeze();
+          self.mode = "drawing";
+          isFirstBrushStroke = true;
+          self.obj.annotation.setIsDrawing(true);
           brush = self.createDrawingRegion({
             strokeWidth: self.strokeWidth || c.strokeWidth,
             imageData: null,
@@ -216,14 +222,6 @@ const _Tool = types
           x,
           y,
         });
-
-        self.addPoint(x, y);
-      },
-      preapareDrawing() {
-        self.annotation.history.freeze();
-        self.mode = "drawing";
-        isFirstBrushStroke = true;
-        self.obj.annotation.setIsDrawing(true);
       },
     };
   });

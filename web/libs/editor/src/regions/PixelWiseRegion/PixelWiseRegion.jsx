@@ -22,16 +22,8 @@ import { PixelWiseDrawing } from "./utils";
 import chroma from "chroma-js";
 import { generateMultiShapeOutline } from "./hooks";
 
-const highlightOptions = {
-  shadowColor: "red",
-  shadowBlur: 1,
-  shadowOffsetY: 2,
-  shadowOffsetX: 2,
-  shadowOpacity: 1,
-};
-
 /**
- * Rectangle object for Bounding Box
+ * PixelWise masking region
  */
 const Model = types
   .model({
@@ -167,10 +159,10 @@ const Model = types
 
       get dimensions() {
         return {
-          stageWidth: self.parent?.stageWidth,
-          stageHeight: self.parent?.stageHeight,
-          imageWidth: self.parent?.imageRef.width,
-          imageHeight: self.parent?.imageRef.height,
+          stageWidth: self.parent?.stageWidth ?? 0,
+          stageHeight: self.parent?.stageHeight ?? 0,
+          imageWidth: self.parent?.imageRef.width ?? 0,
+          imageHeight: self.parent?.imageRef.height ?? 0,
         };
       },
 
@@ -251,10 +243,6 @@ const Model = types
         }
       },
 
-      getMaskImage() {
-        return maskImage;
-      },
-
       generateOutline() {
         self.setOutline(generateMultiShapeOutline(self));
       },
@@ -277,7 +265,7 @@ const Model = types
 
         if (!self.pixelWiseCtx) {
           const ctx = self.pixelWiseRef.getContext("2d");
-          ctx.imageSmoothingEnabled = false;
+          ctx.imageSmoothingEnabled = self.parent.smoothing;
           self.pixelWiseCtx = self.pixelWiseCtx ?? ctx;
         }
 
@@ -287,10 +275,10 @@ const Model = types
       composeMask() {
         const ctx = self.pixelWiseRef.getContext("2d");
 
-        // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        // ctx.globalCompositeOperation = "destination-atop";
-        // ctx.fillStyle = self.strokeColor;
-        // ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.globalCompositeOperation = "destination-atop";
+        ctx.fillStyle = self.strokeColor;
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.drawImage(self.offscreenCanvas, 0, 0);
         self.layerRef?.batchDraw();
       },
@@ -306,16 +294,6 @@ const Model = types
         if (ref) self.imageRef = ref;
       },
 
-      cacheImageData() {
-        if (!self.layerRef) {
-          self.imageData = null;
-        } else {
-          const canvas = self.layerRef.toCanvas();
-          const ctx = canvas.getContext("2d");
-
-          self.imageData = ctx.getImageData(0, 0, self.layerRef.canvas.width, self.layerRef.canvas.height);
-        }
-      },
       setLastPos(pos) {
         self.lastPos = pos;
       },
@@ -371,76 +349,27 @@ const Model = types
         annotation.autosave && setTimeout(() => annotation.autosave());
       },
 
-      endUpdatedMaskDataURL(maskDataURL) {
-        const { annotation } = self.object;
-
-        // will resume in the next tick...
-        annotation.startAutosave();
-
-        self.maskDataURL = maskDataURL;
-        self.updateMaskImage();
-
-        self.notifyDrawingFinished();
-
-        // ...so we run this toggled function also delayed
-        annotation.autosave && setTimeout(() => annotation.autosave());
-      },
-
-      convertPointsToMask() {},
-
       setScale(x, y) {
         self.scaleX = x;
         self.scaleY = y;
       },
 
       updateImageSize(wp, hp, sw, sh) {
-        // if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
-        //   self.touches.forEach((stroke) => stroke.updateImageSize(wp, hp, sw, sh));
-        //
-        //   self.needsUpdate = self.needsUpdate + 1;
-        // }
+        if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
+          self.composeMask();
+          self.generateOutline();
+
+          self.needsUpdate = self.needsUpdate + 1;
+        }
       },
 
       addState(state) {
         self.states.push(state);
       },
 
-      convertToImage() {
-        // if (self.touches.length) {
-        //   const object = self.object;
-        //   const rle = Canvas.Region2RLE(self, object, {
-        //     color: self.strokeColor,
-        //   });
-        //
-        //   self.touches = [];
-        //   self.rle = Array.from(rle);
-        // }
-      },
-
-      /**
-       * @example
-       * {
-       *   "original_width": 1920,
-       *   "original_height": 1280,
-       *   "image_rotation": 0,
-       *   "value": {
-       *     "format": "rle",
-       *     "rle": [0, 1, 1, 2, 3],
-       *     "brushlabels": ["Car"]
-       *   }
-       * }
-       * @typedef {Object} BrushRegionResult
-       * @property {number} original_width  - Width of the original image (px)
-       * @property {number} original_height - Height of the original image (px)
-       * @property {number} image_rotation  - Rotation degree of the image (deg)
-       * @property {Object} value
-       * @property {"rle"} value.format     - Format of the masks, only RLE is supported for now
-       * @property {number[]} value.rle     - RLE-encoded image
-       */
-
       /**
        * @param {object} options
-       * @param {boolean} [options.fast] Saving only touches, without RLE
+       * @param {boolean} [options.fast]
        * @return {BrushRegionResult}
        */
       serialize(options) {
@@ -499,9 +428,10 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
     <RegionWrapper item={item}>
       <Layer
         id={item.cleanId}
+        name="pixelwise"
         ref={item.setLayerRef}
         visible={!item.hidden}
-        imageSmoothingEnabled={false}
+        imageSmoothingEnabled={item.parent.smoothing}
         onMouseDown={(e) => {
           if (store.annotationStore.selected.isLinkingMode) {
             e.cancelBubble = true;
@@ -533,7 +463,7 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
             width={item.parent.stageWidth}
             height={item.parent.stageHeight}
             perfectDrawingEnafled={true}
-            imageSmoothingEnabled={false}
+            imageSmoothingEnabled={item.parent.smoothing}
             listening={false}
           />
         )}

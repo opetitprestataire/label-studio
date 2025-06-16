@@ -10,8 +10,8 @@ export const DrawingRegion = types.union({
     const tag = window.Htx.annotationStore.names.get(objectName);
     // provide value to detect Area by data
     const available = Registry.getAvailableAreas(tag.type, sn);
-
     // union of all available Areas for this Object type
+
     return types.union(...available, types.null);
   },
 });
