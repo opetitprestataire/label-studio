@@ -29,7 +29,10 @@ const Model = types
     type: "pixelwiseregion",
     object: types.late(() => types.reference(ImageModel)),
 
+    /** @type {ImageData} */
     imageData: types.frozen(),
+
+    /** @type {string} */
     imageDataURL: types.frozen(),
   })
   .volatile(() => ({
@@ -112,6 +115,7 @@ const Model = types
           bottom: imageBBox.y + imageBBox.height,
         };
       },
+
       /**
        * Brushes are processed in pixels, so percentages are derived values for them,
        * unlike for other tools.
@@ -170,11 +174,7 @@ const Model = types
 
     return {
       afterCreate() {
-        // Restores the region from saved image url (deserialize)
         self.updateMaskImage();
-
-        // Used when copying a regions from `drawingRegion` to a normal one
-        // e.g., commitDrawingRegion
         self.restoreFromImageData();
       },
 
@@ -182,34 +182,50 @@ const Model = types
         self.outline = outline;
       },
 
+      /**
+       * Restores image from a png data url (base64)
+       * Used when deserializing from result
+       */
       updateMaskImage() {
-        if (self.imageDataURL) {
-          self.createPixelWise();
-
+        if (!self.imageDataURL) return;
+        self.createPixelWise();
+        async function renderDataURL() {
           const context = self.offscreenCanvas.getContext("2d");
+          const pixelwise = self.pixelWiseRef;
           const image = new window.Image();
 
-          image.addEventListener("load", () => {
+          image.src = self.imageDataURL;
+
+          try {
+            await image.decode();
+            context.canvas.width = image.naturalWidth;
+            context.canvas.height = image.naturalHeight;
+            pixelwise.width = image.naturalWidth;
+            pixelwise.height = image.naturalHeight;
+
             context.drawImage(image, 0, 0);
             self.generateOutline();
             self.composeMask();
-          });
-          image.src = self.imageDataURL;
+          } catch (err) {
+            console.log(err);
+          }
         }
+        renderDataURL();
       },
 
+      /**
+       * Used to restore mask from image data when cloning the
+       * region. Used in `commitDrawingRegion`
+       */
       restoreFromImageData() {
-        if (self.imageData) {
-          /**
-           * @type {HTMLCanvasElement}
-           */
-          self.createPixelWise();
-          const context = self.offscreenCanvas.getContext("2d");
+        if (!self.imageData) return;
+        /** @type {HTMLCanvasElement} */
+        self.createPixelWise();
+        const context = self.offscreenCanvas.getContext("2d");
 
-          context.putImageData(self.imageData, 0, 0);
-          self.generateOutline();
-          self.composeMask();
-        }
+        context.putImageData(self.imageData, 0, 0);
+        self.generateOutline();
+        self.composeMask();
       },
 
       generateOutline() {
@@ -217,19 +233,17 @@ const Model = types
       },
 
       createPixelWise() {
+        const width = self.parent.currentImageEntity.naturalWidth;
+        const height = self.parent.currentImageEntity.naturalHeight;
+
         if (!self.pixelWiseRef) {
           self.pixelWiseRef = self.pixelWiseRef ?? document.createElement("canvas");
-          self.pixelWiseRef.width = self.parent.currentImageEntity.naturalWidth;
-          self.pixelWiseRef.height = self.parent.currentImageEntity.naturalHeight;
+          self.pixelWiseRef.width = width;
+          self.pixelWiseRef.height = height;
         }
 
         if (!self.offscreenCanvas) {
-          self.offscreenCanvas =
-            self.offscreenCanvas ??
-            new OffscreenCanvas(
-              self.parent.currentImageEntity.naturalWidth,
-              self.parent.currentImageEntity.naturalHeight,
-            );
+          self.offscreenCanvas = self.offscreenCanvas ?? new OffscreenCanvas(width, height);
         }
 
         if (!self.pixelWiseCtx) {
@@ -249,6 +263,8 @@ const Model = types
         ctx.fillStyle = self.strokeColor;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.drawImage(self.offscreenCanvas, 0, 0);
+
+        const canvas = ctx.canvas;
 
         requestAnimationFrame(() => {
           self.layerRef?.batchDraw();
@@ -348,7 +364,13 @@ const Model = types
         const tempCanvas = document.createElement("canvas");
         tempCanvas.width = self.offscreenCanvas.width;
         tempCanvas.height = self.offscreenCanvas.height;
-        tempCanvas.getContext("2d").drawImage(self.offscreenCanvas, 0, 0);
+        const ctx = tempCanvas.getContext("2d");
+
+        // Convert back to black mask
+        ctx.globalCompositeOperation = "destination-atop";
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.drawImage(self.offscreenCanvas, 0, 0);
 
         const object = self.object;
         const value = { imageDataURL: tempCanvas.toDataURL("image/png") };
