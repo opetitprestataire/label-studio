@@ -12,7 +12,7 @@ const FLAGS_OVERRIDE: Record<string, boolean> = {
   // Add your flags overrides as following:
   // [FF_FLAG_NAME]: boolean
   [FF_SAMPLE_DATASETS]: true,
-  [FF_BITMASK]: false,
+  [FF_BITMASK]: true,
 };
 
 /**

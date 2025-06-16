@@ -1258,7 +1258,7 @@ const ImageLayer = observer(({ item }) => {
   return image ? (
     <>
       <Layer imageSmoothingEnabled={item.smoothing}>
-        <KonvaImage image={image} width={item.stageWidth} height={item.stageHeight} />
+        <KonvaImage image={image} width={item.stageWidth} height={item.stageHeight} listening={false} />
       </Layer>
     </>
   ) : null;
@@ -1284,7 +1284,6 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
     suggestedBrush: suggestedBrushRegions,
     suggestedShape: suggestedShapeRegions,
   });
-  console.log(ff.isActive(ff.FF_BITMASK));
 
   return (
     <>
