@@ -16,6 +16,7 @@ import { AliveRegion } from "./AliveRegion";
 import { RegionWrapper } from "./RegionWrapper";
 import { BitmaskDrawing, getCanvasPixelBounds } from "./BitmaskRegion/utils";
 import chroma from "chroma-js";
+import { generateMultiShapeOutline } from "./BitmaskRegion/contour";
 
 /**
  * Bitmask masking region
@@ -202,7 +203,7 @@ const Model = types
 
       generateOutline() {
         // Keeping it here for future use.
-        // self.setOutline(generateMultiShapeOutline(self));
+        self.setOutline(generateMultiShapeOutline(self));
       },
 
       createBitmask() {
@@ -362,9 +363,12 @@ const BitmaskRegionModel = types.compose(
 );
 
 const HtxBitmaskView = ({ item, setShapeRef }) => {
+  const highlightedRegions = item.parent.regs.filter((r) => r.highlighted);
   const displayHighlight = useMemo(() => {
+    console.log(highlightedRegions);
+    if (highlightedRegions.length > 1) return false;
     return item.highlighted || item.selected;
-  }, [item.highlighted, item.isDrawing, item.selected]);
+  }, [item.highlighted, item.isDrawing, item.selected, highlightedRegions]);
 
   useEffect(() => {
     item.composeMask();
@@ -406,21 +410,22 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
         )}
       </Layer>
       <Layer listening={false} opacity={item.opacity}>
-        {displayHighlight &&
-          item.outline.map((points, i) => (
-            <Line
-              key={i}
-              points={points}
-              stroke={item.strokeColor}
-              strokeWidth={2}
-              closed
-              lineJoin="round"
-              lineCap="round"
-              listening={false}
-              strokeScaleEnabled={false}
-              tension={0.2}
-            />
-          ))}
+        {displayHighlight ||
+          (highlightedRegions.length > 1 &&
+            item.outline.map((points, i) => (
+              <Line
+                key={i}
+                points={points}
+                stroke={item.strokeColor}
+                strokeWidth={4}
+                closed
+                lineJoin="round"
+                lineCap="round"
+                listening={false}
+                strokeScaleEnabled={false}
+                tension={0.2}
+              />
+            )))}
       </Layer>
     </RegionWrapper>
   );
