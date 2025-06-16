@@ -2,22 +2,22 @@ import { useEffect, useMemo } from "react";
 import { Image, Layer, Line, Rect } from "react-konva";
 import { isAlive, types } from "mobx-state-tree";
 
-import Registry from "../../core/Registry";
-import NormalizationMixin from "../../mixins/Normalization";
-import RegionsMixin from "../../mixins/Regions";
-import { Geometry } from "../../components/InteractiveOverlays/Geometry";
-import { defaultStyle } from "../../core/Constants";
-import { guidGenerator } from "../../core/Helpers";
-import { AreaMixin } from "../../mixins/AreaMixin";
-import IsReadyMixin from "../../mixins/IsReadyMixin";
-import { KonvaRegionMixin } from "../../mixins/KonvaRegion";
-import { ImageModel } from "../../tags/object/Image";
-import { FF_DEV_3793, isFF } from "../../utils/feature-flags";
-import { AliveRegion } from "../AliveRegion";
-import { RegionWrapper } from "../RegionWrapper";
-import { PixelWiseDrawing } from "./utils";
+import Registry from "../core/Registry";
+import NormalizationMixin from "../mixins/Normalization";
+import RegionsMixin from "../mixins/Regions";
+import { Geometry } from "../components/InteractiveOverlays/Geometry";
+import { defaultStyle } from "../core/Constants";
+import { guidGenerator } from "../core/Helpers";
+import { AreaMixin } from "../mixins/AreaMixin";
+import IsReadyMixin from "../mixins/IsReadyMixin";
+import { KonvaRegionMixin } from "../mixins/KonvaRegion";
+import { ImageModel } from "../tags/object/Image";
+import { FF_DEV_3793, isFF } from "../utils/feature-flags";
+import { AliveRegion } from "./AliveRegion";
+import { RegionWrapper } from "./RegionWrapper";
+import { PixelWiseDrawing } from "./PixelWiseRegion/utils";
 import chroma from "chroma-js";
-import { generateMultiShapeOutline } from "./contour";
+import { generateMultiShapeOutline } from "./PixelWiseRegion/contour";
 
 /**
  * PixelWise masking region
