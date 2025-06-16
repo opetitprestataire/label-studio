@@ -142,11 +142,7 @@ const AnnotationHistoryComponent: FC<any> = ({
   if (shouldShowEmptyState) {
     return (
       <Block name="annotation-history" mod={{ inline, empty: true }}>
-        {sectionHeader && (
-          <Elem name="section-head" data-hidden="true">
-            {sectionHeader}
-          </Elem>
-        )}
+        {sectionHeader && <div className="lsf-annotation-history__section-head sr-only">{sectionHeader}</div>}
         {renderEmptyState ? renderEmptyState() : defaultEmptyState}
       </Block>
     );
