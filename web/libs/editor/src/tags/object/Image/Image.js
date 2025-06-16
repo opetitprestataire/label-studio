@@ -130,7 +130,7 @@ const TagAttrs = types.model({
 
   crossorigin: types.optional(types.enumeration(["none", "anonymous", "use-credentials"]), "none"),
 
-  pixelwise: types.optional(types.boolean, false),
+  bitmask: types.optional(types.boolean, false),
 });
 
 const IMAGE_CONSTANTS = {
@@ -143,8 +143,8 @@ const IMAGE_CONSTANTS = {
   keypointlabels: "keypointlabels",
   polygonlabels: "polygonlabels",
   brushlabels: "brushlabels",
-  pixelwiseModel: "PixelWiseModel",
-  pixelwiselabels: "pixelwiselabels",
+  bitmaskModel: "BitmaskModel",
+  bitmasklabels: "bitmasklabels",
   brushModel: "BrushModel",
   ellipselabels: "ellipselabels",
 };
@@ -416,7 +416,7 @@ const Model = types
         if (
           item.type === IMAGE_CONSTANTS.rectanglelabels ||
           item.type === IMAGE_CONSTANTS.brushlabels ||
-          item.type === IMAGE_CONSTANTS.pixelwiselabels ||
+          item.type === IMAGE_CONSTANTS.bitmasklabels ||
           item.type === IMAGE_CONSTANTS.ellipselabels
         ) {
           returnedControl = item;

@@ -6,7 +6,7 @@ import messages from "../../utils/messages";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import "./Image.scss";
 import { ff } from "@humansignal/core";
-import { FF_PIXELWISE } from "@humansignal/core/lib/utils/feature-flags";
+import { FF_BITMASK } from "@humansignal/core/lib/utils/feature-flags";
 
 /**
  * Coordinates in relative mode belong to a data domain consisting of percentages in the range from 0 to 100
@@ -90,7 +90,7 @@ const ImageRenderer = observer(
       // so we just hide it with 0x0 dimensions.
       //
       // Real dimension will still be available via `naturalWidth` and `naturalHeight`
-      const style = ff.isActive(FF_PIXELWISE)
+      const style = ff.isActive(FF_BITMASK)
         ? {
             width: 0,
             height: 0,

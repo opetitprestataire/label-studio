@@ -15,17 +15,17 @@ import { ImageModel } from "../tags/object/Image";
 import { FF_DEV_3793, isFF } from "../utils/feature-flags";
 import { AliveRegion } from "./AliveRegion";
 import { RegionWrapper } from "./RegionWrapper";
-import { PixelWiseDrawing } from "./PixelWiseRegion/utils";
+import { BitmaskDrawing } from "./BitmaskRegion/utils";
 import chroma from "chroma-js";
 
 /**
- * PixelWise masking region
+ * Bitmask masking region
  */
 const Model = types
   .model({
     id: types.optional(types.identifier, guidGenerator),
     pid: types.optional(types.string, guidGenerator),
-    type: "pixelwiseregion",
+    type: "bitmaskregion",
     object: types.late(() => types.reference(ImageModel)),
 
     /** @type {ImageData} */
@@ -49,10 +49,10 @@ const Model = types
     imageRef: undefined,
 
     /** @type {HTMLCanvasElement} */
-    pixelWiseRef: null,
+    bitmaskRef: null,
 
     /** @type {CanvasRenderingContext2D} */
-    pixelWiseCtx: null,
+    bitmaskCtx: null,
 
     /** @type {{x: number, y: number}} */
     lastPos: { x: 0, y: 0 },
@@ -160,7 +160,7 @@ const Model = types
 
       getImageData() {
         /** @type {HTMLCanvasElement} */
-        const canvas = this.pixelWiseRef;
+        const canvas = this.bitmaskRef;
         const context = canvas.getContext("2d");
 
         return context.getImageData(0, 0, canvas.width, canvas.height);
@@ -187,10 +187,10 @@ const Model = types
        */
       updateMaskImage() {
         if (!self.imageDataURL) return;
-        self.createPixelWise();
+        self.createBitmask();
         async function renderDataURL() {
           const context = self.offscreenCanvas.getContext("2d");
-          const pixelwise = self.pixelWiseRef;
+          const bitmask = self.bitmaskRef;
           const image = new window.Image();
 
           image.src = self.imageDataURL;
@@ -199,8 +199,8 @@ const Model = types
             await image.decode();
             context.canvas.width = image.naturalWidth;
             context.canvas.height = image.naturalHeight;
-            pixelwise.width = image.naturalWidth;
-            pixelwise.height = image.naturalHeight;
+            bitmask.width = image.naturalWidth;
+            bitmask.height = image.naturalHeight;
 
             context.drawImage(image, 0, 0);
             self.generateOutline();
@@ -219,7 +219,7 @@ const Model = types
       restoreFromImageData() {
         if (!self.imageData) return;
         /** @type {HTMLCanvasElement} */
-        self.createPixelWise();
+        self.createBitmask();
         const context = self.offscreenCanvas.getContext("2d");
 
         context.putImageData(self.imageData, 0, 0);
@@ -232,31 +232,31 @@ const Model = types
         // self.setOutline(generateMultiShapeOutline(self));
       },
 
-      createPixelWise() {
+      createBitmask() {
         const width = self.parent.currentImageEntity.naturalWidth;
         const height = self.parent.currentImageEntity.naturalHeight;
 
-        if (!self.pixelWiseRef) {
-          self.pixelWiseRef = self.pixelWiseRef ?? document.createElement("canvas");
-          self.pixelWiseRef.width = width;
-          self.pixelWiseRef.height = height;
+        if (!self.bitmaskRef) {
+          self.bitmaskRef = self.bitmaskRef ?? document.createElement("canvas");
+          self.bitmaskRef.width = width;
+          self.bitmaskRef.height = height;
         }
 
         if (!self.offscreenCanvas) {
           self.offscreenCanvas = self.offscreenCanvas ?? new OffscreenCanvas(width, height);
         }
 
-        if (!self.pixelWiseCtx) {
-          const ctx = self.pixelWiseRef.getContext("2d");
+        if (!self.bitmaskCtx) {
+          const ctx = self.bitmaskRef.getContext("2d");
           ctx.imageSmoothingEnabled = self.parent.smoothing;
-          self.pixelWiseCtx = self.pixelWiseCtx ?? ctx;
+          self.bitmaskCtx = self.bitmaskCtx ?? ctx;
         }
 
         return self.offscreenCanvas;
       },
 
       composeMask() {
-        const ctx = self.pixelWiseRef.getContext("2d");
+        const ctx = self.bitmaskRef.getContext("2d");
 
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.globalCompositeOperation = "destination-atop";
@@ -290,11 +290,11 @@ const Model = types
         self.object.annotation.pauseAutosave();
 
         const { drawingOffset: offset } = self;
-        self.createPixelWise();
+        self.createBitmask();
 
         requestAnimationFrame(() => {
           self.setLastPos(
-            PixelWiseDrawing.begin({
+            BitmaskDrawing.begin({
               ctx: self.offscreenCanvas.getContext("2d"),
               x: Math.floor(x / offset.scale + offset.offsetX),
               y: Math.floor(y / offset.scale + offset.offsetY),
@@ -312,7 +312,7 @@ const Model = types
         requestAnimationFrame(() => {
           const { drawingOffset: offset } = self;
           self.setLastPos(
-            PixelWiseDrawing.draw({
+            BitmaskDrawing.draw({
               ctx: self.offscreenCanvas.getContext("2d"),
               x: Math.floor(x / offset.scale + offset.offsetX),
               y: Math.floor(y / offset.scale + offset.offsetY),
@@ -381,8 +381,8 @@ const Model = types
     };
   });
 
-const PixelWiseRegionModel = types.compose(
-  "PixelWiseRegionModel",
+const BitmaskRegionModel = types.compose(
+  "BitmaskRegionModel",
   RegionsMixin,
   NormalizationMixin,
   AreaMixin,
@@ -391,7 +391,7 @@ const PixelWiseRegionModel = types.compose(
   Model,
 );
 
-const HtxPixelWiseView = ({ item, setShapeRef }) => {
+const HtxBitmaskView = ({ item, setShapeRef }) => {
   const displayHighlight = useMemo(() => {
     return item.highlighted || item.selected;
   }, [item.highlighted, item.isDrawing, item.selected]);
@@ -408,7 +408,7 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
     <RegionWrapper item={item}>
       <Layer
         id={item.cleanId}
-        name="pixelwise"
+        name="bitmask"
         ref={item.setLayerRef}
         visible={!item.hidden}
         imageSmoothingEnabled={item.parent.smoothing}
@@ -424,10 +424,10 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
           />
         )}
 
-        {item.pixelWiseRef && (
+        {item.bitmaskRef && (
           <Image
             ref={item.setImageRef}
-            image={item.pixelWiseRef}
+            image={item.bitmaskRef}
             width={item.parent.stageWidth}
             height={item.parent.stageHeight}
             listening={false}
@@ -455,12 +455,12 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
   );
 };
 
-const HtxPixelWise = AliveRegion(HtxPixelWiseView, {
+const HtxBitmask = AliveRegion(HtxBitmaskView, {
   renderHidden: true,
   shouldNotUsePortal: true,
 });
 
-Registry.addTag("pixelwiseregion", PixelWiseRegionModel, HtxPixelWise);
-Registry.addRegionType(PixelWiseRegionModel, "image", (value) => "imageData" in value || "imageDataURL" in value);
+Registry.addTag("bitmaskregion", BitmaskRegionModel, HtxBitmask);
+Registry.addRegionType(BitmaskRegionModel, "image", (value) => "imageData" in value || "imageDataURL" in value);
 
-export { PixelWiseRegionModel, HtxPixelWise };
+export { BitmaskRegionModel, HtxBitmask };

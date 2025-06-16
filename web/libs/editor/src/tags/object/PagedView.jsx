@@ -38,7 +38,7 @@ const Model = types.model({
     "polygonlabels",
     "keypointlabels",
     "brushlabels",
-    "pixelwiselabels",
+    "bitmasklabels",
     "hypertextlabels",
     "timeserieslabels",
     "text",

@@ -108,7 +108,7 @@ const NodeViews = {
     altIcon: IconBrushToolSmart,
   }),
 
-  PixelWiseRegionModel: NodeView({
+  BitmaskRegionModel: NodeView({
     name: "Brush",
     icon: IconBrushTool,
     altIcon: IconBrushToolSmart,

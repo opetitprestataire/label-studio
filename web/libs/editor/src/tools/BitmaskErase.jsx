@@ -49,7 +49,7 @@ const ToolView = observer(({ item }) => {
 });
 
 const _Tool = types
-  .model("PixelWiseEraserTool", {
+  .model("BitmaskEraserTool", {
     strokeWidth: types.optional(types.number, 10),
     group: "segmentation",
     unselectRegionOnToolChange: false,
@@ -133,7 +133,7 @@ const _Tool = types
         )
           return;
 
-        if (brush?.type === "pixelwiseregion") {
+        if (brush?.type === "bitmaskregion") {
           self.addPoint(x, y);
         }
       },
@@ -152,7 +152,7 @@ const _Tool = types
         brush = self.getSelectedShape;
         if (!brush) return;
 
-        if (brush && brush.type === "pixelwiseregion") {
+        if (brush && brush.type === "bitmaskregion") {
           self.mode = "drawing";
           brush.beginPath({
             type: "eraser",
@@ -167,6 +167,6 @@ const _Tool = types
     };
   });
 
-const PixelWiseErase = types.compose(_Tool.name, ToolMixin, BaseTool, DrawingTool, BrushCursorMixin, _Tool);
+const BitmaskErase = types.compose(_Tool.name, ToolMixin, BaseTool, DrawingTool, BrushCursorMixin, _Tool);
 
-export { PixelWiseErase };
+export { BitmaskErase };

@@ -1,4 +1,4 @@
-import { FF_PIXELWISE, FF_SAMPLE_DATASETS } from "./flags";
+import { FF_BITMASK, FF_SAMPLE_DATASETS } from "./flags";
 
 const FEATURE_FLAGS = window.APP_SETTINGS?.feature_flags || {};
 
@@ -12,7 +12,7 @@ const FLAGS_OVERRIDE: Record<string, boolean> = {
   // Add your flags overrides as following:
   // [FF_FLAG_NAME]: boolean
   [FF_SAMPLE_DATASETS]: true,
-  [FF_PIXELWISE]: true,
+  [FF_BITMASK]: true,
 };
 
 /**

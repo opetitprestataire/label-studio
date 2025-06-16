@@ -99,8 +99,8 @@ export const FF_MULTICHANNEL_TS = "fflag_feat_front_bros58_timeseries_multichann
 export const FF_ENTERPRISE_EMAIL_NOTIFICATIONS = "fflag_feat_front_fit_183_email_notifications_short";
 
 /**
- * PixelWise is a new image segmentation tool for masking that allows pixel-perfect editing
+ * Bitmask is a new image segmentation tool for masking that allows pixel-perfect editing
  *
  * @link https://app.launchdarkly.com/projects/default/flags/fflag_front_feat_bros_87_pixel_wise_16062025_short
  */
-export const FF_PIXELWISE = "fflag_front_feat_bros_87_pixel_wise_16062025_short";
+export const FF_BITMASK = "fflag_front_feat_bros_87_pixel_wise_16062025_short";

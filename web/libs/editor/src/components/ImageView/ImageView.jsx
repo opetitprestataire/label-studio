@@ -32,9 +32,9 @@ import {
 } from "../../utils/feature-flags";
 import { Pagination } from "../../common/Pagination/Pagination";
 import { Image } from "./Image";
-import { isHoveringNonTransparentPixel } from "../../regions/PixelWiseRegion/utils";
+import { isHoveringNonTransparentPixel } from "../../regions/BitmaskRegion/utils";
 import { ff } from "@humansignal/core";
-import { FF_PIXELWISE } from "@humansignal/core/lib/utils/feature-flags";
+import { FF_BITMASK } from "@humansignal/core/lib/utils/feature-flags";
 
 Konva.showWarnings = false;
 
@@ -52,7 +52,7 @@ const splitRegions = (regions) => {
   for (i; i < l; i++) {
     const region = regions[i];
 
-    if (region.type === "brushregion" || region.type === "pixelwiseregion") {
+    if (region.type === "brushregion" || region.type === "bitmaskregion") {
       brushRegions.push(region);
     } else {
       shapeRegions.push(region);
@@ -97,7 +97,7 @@ const DrawingRegion = observer(({ item }) => {
   if (!drawingRegion) return null;
   if (item.multiImage && item.currentImage !== drawingRegion.item_index) return null;
 
-  const isBrush = ["brushregion", "pixelwiseregion"].includes(drawingRegion.type);
+  const isBrush = ["brushregion", "bitmaskregion"].includes(drawingRegion.type);
   const Wrapper = drawingRegion && isBrush ? Fragment : Layer;
 
   return <Wrapper>{drawingRegion ? <Region key={"drawing"} region={drawingRegion} /> : drawingRegion}</Wrapper>;
@@ -563,9 +563,9 @@ export default observer(
         }
       }
 
-      if (ff.isActive(FF_PIXELWISE)) {
+      if (ff.isActive(FF_BITMASK)) {
         for (const reg of item.regs) {
-          if (reg.type !== "pixelwiseregion") continue;
+          if (reg.type !== "bitmaskregion") continue;
 
           if (reg.highlighted && !reg.selected) {
             reg.onClickRegion(e);
@@ -629,9 +629,9 @@ export default observer(
         }
 
         const isRightElementToCatchToolInteractions = (el) => {
-          // Pixelwise is like Brush, so treat it the same
-          // The only difference is that Pixelwise doesn't have a group inside
-          if (el.nodeType === "Layer" && !isMoveTool && el.attrs?.name === "pixelwise") {
+          // Bitmask is like Brush, so treat it the same
+          // The only difference is that Bitmask doesn't have a group inside
+          if (el.nodeType === "Layer" && !isMoveTool && el.attrs?.name === "bitmask") {
             return true;
           }
 
@@ -791,8 +791,8 @@ export default observer(
         item.event("mousemove", e, e.evt.offsetX, e.evt.offsetY);
       }
 
-      // Handle pixelwise hover
-      if (!e.evt.ctrlKey && !e.evt.shiftKey && ff.isActive(FF_PIXELWISE)) {
+      // Handle bitmask hover
+      if (!e.evt.ctrlKey && !e.evt.shiftKey && ff.isActive(FF_BITMASK)) {
         return; // for future use
         if (item.regs.some((r) => r.isDrawing)) return;
         requestAnimationFrame(() => {
@@ -801,7 +801,7 @@ export default observer(
             region.updateCursor(false);
           }
           for (const region of item.regs) {
-            if (region.type !== "pixelwiseregion") continue;
+            if (region.type !== "bitmaskregion") continue;
 
             const checkHover = !region.selected && !region.isDrawing;
             const hovered = isHoveringNonTransparentPixel(region);
@@ -1287,8 +1287,8 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
 
   return (
     <>
-      {ff.isActive(FF_PIXELWISE) && <ImageLayer item={item} />}
-      {ff.isActive(FF_PIXELWISE) && item.grid && item.sizeUpdated && <ImageGrid item={item} />}
+      {ff.isActive(FF_BITMASK) && <ImageLayer item={item} />}
+      {ff.isActive(FF_BITMASK) && item.grid && item.sizeUpdated && <ImageGrid item={item} />}
 
       {isFF(FF_LSDV_4930) ? <TransformerBack item={item} /> : null}
 

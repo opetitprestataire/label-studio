@@ -7,21 +7,21 @@ import SeparatedControlMixin from "../../mixins/SeparatedControlMixin";
 import { ToolManagerMixin } from "../../mixins/ToolManagerMixin";
 
 /**
- * The `PixelWise` tag is used for image segmentation tasks where you want to apply a mask or use a brush to draw a region on the image.
+ * The `Bitmask` tag is used for image segmentation tasks where you want to apply a mask or use a brush to draw a region on the image.
  *
  * Use with the following data types: image.
  * @example
  * <!--Basic image segmentation labeling configuration:-->
  * <View>
- *   <PixelWise name="labels" toName="image">
+ *   <Bitmask name="labels" toName="image">
  *     <Label value="Person" />
  *     <Label value="Animal" />
- *   </PixelWise>
+ *   </Bitmask>
  *   <Image name="image" value="$image" />
  * </View>
- * @name PixelWise
- * @regions PixelWiseRegion
- * @meta_title PixelWise Tag for Image Segmentation Labeling
+ * @name Bitmask
+ * @regions BitmaskRegion
+ * @meta_title Bitmask Tag for Image Segmentation Labeling
  * @meta_description Customize Label Studio with brush tags for image segmentation labeling for machine learning and data science projects.
  * @param {string} name                      - Name of the element
  * @param {string} toName                    - Name of the image to label
@@ -39,8 +39,8 @@ const TagAttrs = types.model({
 
 const Model = types
   .model({
-    type: "pixelwise",
-    removeDuplicatesNamed: "PixelWiseErase",
+    type: "bitmask",
+    removeDuplicatesNamed: "BitmaskErase",
   })
   .views((self) => ({
     get hasStates() {
@@ -50,11 +50,11 @@ const Model = types
     },
   }))
   .volatile(() => ({
-    toolNames: ["PixelWise", "PixelWiseErase"],
+    toolNames: ["Bitmask", "BitmaskErase"],
   }));
 
-const PixelWiseModel = types.compose(
-  "PixelWiseModel",
+const BitmaskModel = types.compose(
+  "BitmaskModel",
   ControlBase,
   AnnotationMixin,
   SeparatedControlMixin,
@@ -67,6 +67,6 @@ const HtxView = () => {
   return null;
 };
 
-Registry.addTag("pixelwise", PixelWiseModel, HtxView);
+Registry.addTag("bitmask", BitmaskModel, HtxView);
 
-export { HtxView, PixelWiseModel };
+export { HtxView, BitmaskModel };

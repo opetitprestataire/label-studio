@@ -30,8 +30,8 @@ const IconDot = ({ size }) => {
 const ToolView = observer(({ item }) => {
   return (
     <Tool
-      label="PixelWise"
-      ariaLabel="pixelwise-tool"
+      label="Bitmask"
+      ariaLabel="bitmask-tool"
       active={item.selected}
       shortcut={item.shortcut}
       extraShortcuts={item.extraShortcuts}
@@ -48,7 +48,7 @@ const ToolView = observer(({ item }) => {
 });
 
 const _Tool = types
-  .model("PixelWiseTool", {
+  .model("BitmaskTool", {
     strokeWidth: types.optional(types.number, 15),
     group: "segmentation",
     shortcut: "B",
@@ -63,12 +63,12 @@ const _Tool = types
       return () => <ToolView item={self} />;
     },
     get iconComponent() {
-      return self.dynamic ? NodeViews.PixelWiseRegionModel.altIcon : NodeViews.PixelWiseRegionModel.icon;
+      return self.dynamic ? NodeViews.BitmaskRegionModel.altIcon : NodeViews.BitmaskRegionModel.icon;
     },
     get tagTypes() {
       return {
-        stateTypes: "pixelwiselabels",
-        controlTagTypes: ["pixelwiselabels", "pixelwise"],
+        stateTypes: "bitmasklabels",
+        controlTagTypes: ["bitmasklabels", "bitmask"],
       };
     },
     get controls() {
@@ -199,7 +199,7 @@ const _Tool = types
         if (o && brush && o.multiImage && o.currentImage !== brush.item_index) return;
 
         // Reset the timer if a user started drawing again
-        if (brush && brush.type === "pixelwiseregion") {
+        if (brush && brush.type === "bitmaskregion") {
           self.annotation.history.freeze();
           self.mode = "drawing";
           isFirstBrushStroke = false;
@@ -228,8 +228,8 @@ const _Tool = types
     };
   });
 
-const PixelWiseCursorMixin = types
-  .model("PixelWiseCursorMixin")
+const BitmaskCursorMixin = types
+  .model("BitmaskCursorMixin")
   .views((self) => ({
     get cursorStyleRule() {
       const val = self.strokeWidth;
@@ -244,6 +244,6 @@ const PixelWiseCursorMixin = types
     },
   }));
 
-const PixelWise = types.compose(_Tool.name, ToolMixin, BaseTool, DrawingTool, PixelWiseCursorMixin, _Tool);
+const Bitmask = types.compose(_Tool.name, ToolMixin, BaseTool, DrawingTool, BitmaskCursorMixin, _Tool);
 
-export { PixelWise, PixelWiseCursorMixin };
+export { Bitmask, BitmaskCursorMixin };

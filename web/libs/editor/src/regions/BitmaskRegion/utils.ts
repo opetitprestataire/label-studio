@@ -1,4 +1,4 @@
-export const PixelWiseDrawing = {
+export const BitmaskDrawing = {
   /**
    * Draws initial point on the canvas
    */

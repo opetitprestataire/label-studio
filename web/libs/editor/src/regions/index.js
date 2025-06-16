@@ -2,7 +2,7 @@ import { types } from "mobx-state-tree";
 
 import { AudioRegionModel } from "./AudioRegion";
 import { BrushRegionModel, HtxBrush } from "./BrushRegion";
-import { PixelWiseRegionModel, HtxPixelWise } from "./PixelWiseRegion";
+import { BitmaskRegionModel, HtxBitmask } from "./BitmaskRegion";
 import { ParagraphsRegionModel } from "./ParagraphsRegion";
 import { TimeSeriesRegionModel } from "./TimeSeriesRegion";
 import { HtxKeyPoint, KeyPointRegionModel } from "./KeyPointRegion";
@@ -18,7 +18,7 @@ import { VideoRectangleRegionModel } from "./VideoRectangleRegion";
 const AllRegionsType = types.union(
   AudioRegionModel,
   BrushRegionModel,
-  PixelWiseRegionModel,
+  BitmaskRegionModel,
   EllipseRegionModel,
   TimeSeriesRegionModel,
   KeyPointRegionModel,
@@ -38,7 +38,7 @@ export {
   BrushRegionModel,
   EllipseRegionModel,
   HtxBrush,
-  HtxPixelWise,
+  HtxBitmask,
   HtxEllipse,
   HtxKeyPoint,
   HtxPolygon,

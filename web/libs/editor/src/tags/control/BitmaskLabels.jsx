@@ -7,26 +7,26 @@ import SelectedModelMixin from "../../mixins/SelectedModel";
 import Types from "../../core/Types";
 import { HtxLabels, LabelsModel } from "./Labels/Labels";
 import ControlBase from "./Base";
-import { PixelWiseModel } from "./PixelWise";
+import { BitmaskModel } from "./Bitmask";
 
 /**
- * The `PixelWiseLabels` tag for image segmentation tasks is used in the area where you want to apply a mask or use a brush to draw a region on the image.
+ * The `BitmaskLabels` tag for image segmentation tasks is used in the area where you want to apply a mask or use a brush to draw a region on the image.
  *
- * PixelWise operates on pixel level and outputs a png encoded in a Base64 data URL.
+ * Bitmask operates on pixel level and outputs a png encoded in a Base64 data URL.
  *
  * Use with the following data types: image.
  * @example
  * <!--Basic image segmentation labeling configuration-->
  * <View>
- *   <PixelWiseLabels name="labels" toName="image">
+ *   <BitmaskLabels name="labels" toName="image">
  *     <Label value="Person" />
  *     <Label value="Animal" />
- *   </PixelWiseLabels>
+ *   </BitmaskLabels>
  *   <Image name="image" value="$image" />
  * </View>
- * @name PixelWiseLabels
- * @regions PixelWiseRegion
- * @meta_title PixelWise Label Tag for Image Segmentation Labeling
+ * @name BitmaskLabels
+ * @regions BitmaskRegion
+ * @meta_title Bitmask Label Tag for Image Segmentation Labeling
  * @meta_description Customize Label Studio with brush label tags for image segmentation labeling for machine learning and data science projects.
  * @param {string} name                      - Name of the element
  * @param {string} toName                    - Name of the image to label
@@ -39,26 +39,26 @@ const Validation = types.model({
   controlledTags: Types.unionTag(["Image"]),
 });
 
-const ModelAttrs = types.model("PixelWiseLabelsModel", {
-  type: "pixelwiseregion",
+const ModelAttrs = types.model("BitmaskLabelsModel", {
+  type: "bitmaskregion",
   children: Types.unionArray(["label", "header", "view", "hypertext"]),
 });
 
-const PixelWiseLabelsModel = types.compose(
-  "PixelWiseLabelsModel",
+const BitmaskLabelsModel = types.compose(
+  "BitmaskLabelsModel",
   ControlBase,
   LabelsModel,
   ModelAttrs,
-  PixelWiseModel,
+  BitmaskModel,
   Validation,
   LabelMixin,
   SelectedModelMixin.props({ _child: "LabelModel" }),
 );
 
-const HtxPixelWiseLabels = observer(({ item }) => {
+const HtxBitmaskLabels = observer(({ item }) => {
   return <HtxLabels item={item} />;
 });
 
-Registry.addTag("pixelwiselabels", PixelWiseLabelsModel, HtxPixelWiseLabels);
+Registry.addTag("bitmasklabels", BitmaskLabelsModel, HtxBitmaskLabels);
 
-export { HtxPixelWiseLabels, PixelWiseLabelsModel };
+export { HtxBitmaskLabels, BitmaskLabelsModel };

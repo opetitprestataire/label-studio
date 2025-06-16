@@ -2,9 +2,9 @@
 // export { default as KeyPoint } from "./KeyPoint";
 
 import { Brush } from "./Brush";
-import { PixelWise } from "./PixelWise";
+import { Bitmask } from "./Bitmask";
 import { Erase } from "./Erase";
-import { PixelWiseErase } from "./PixelWiseErase";
+import { BitmaskErase } from "./BitmaskErase";
 import { KeyPoint } from "./KeyPoint";
 import { Polygon } from "./Polygon";
 import { Rect, Rect3Point } from "./Rect";
@@ -18,9 +18,9 @@ import { Selection } from "./Selection";
 
 export {
   Brush,
-  PixelWise,
+  Bitmask,
   Erase,
-  PixelWiseErase,
+  BitmaskErase,
   KeyPoint,
   Polygon,
   Rect,
