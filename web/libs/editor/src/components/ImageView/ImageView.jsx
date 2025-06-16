@@ -793,6 +793,7 @@ export default observer(
 
       // Handle pixelwise hover
       if (!e.evt.ctrlKey && !e.evt.shiftKey && ff.isActive(FF_PIXELWISE)) {
+        return; // for future use
         if (item.regs.some((r) => r.isDrawing)) return;
         requestAnimationFrame(() => {
           for (const region of item.regs) {

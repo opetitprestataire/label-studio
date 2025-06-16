@@ -12,6 +12,8 @@ import { PixelWiseModel } from "./PixelWise";
 /**
  * The `PixelWiseLabels` tag for image segmentation tasks is used in the area where you want to apply a mask or use a brush to draw a region on the image.
  *
+ * PixelWise operates on pixel level and outputs a png encoded in a Base64 data URL.
+ *
  * Use with the following data types: image.
  * @example
  * <!--Basic image segmentation labeling configuration-->
