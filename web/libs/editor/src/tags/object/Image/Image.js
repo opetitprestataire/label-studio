@@ -129,8 +129,6 @@ const TagAttrs = types.model({
   defaultzoom: types.optional(types.enumeration(["auto", "original", "fit"]), "fit"),
 
   crossorigin: types.optional(types.enumeration(["none", "anonymous", "use-credentials"]), "none"),
-
-  bitmask: types.optional(types.boolean, false),
 });
 
 const IMAGE_CONSTANTS = {

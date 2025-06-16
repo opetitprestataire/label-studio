@@ -1284,11 +1284,12 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
     suggestedBrush: suggestedBrushRegions,
     suggestedShape: suggestedShapeRegions,
   });
+  console.log(ff.isActive(ff.FF_BITMASK));
 
   return (
     <>
-      {ff.isActive(FF_BITMASK) && <ImageLayer item={item} />}
-      {ff.isActive(FF_BITMASK) && item.grid && item.sizeUpdated && <ImageGrid item={item} />}
+      {ff.isActive(ff.FF_BITMASK) && <ImageLayer item={item} />}
+      {item.grid && item.sizeUpdated && <ImageGrid item={item} />}
 
       {isFF(FF_LSDV_4930) ? <TransformerBack item={item} /> : null}
 
@@ -1310,7 +1311,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
       })}
       <Selection item={item} isPanning={state.isPanning} />
       <DrawingRegion item={item} />
-      {item.smoothing === false && (
+      {ff.isActive(ff.FF_BITMASK) && item.smoothing === false && (
         <GridLayer
           scale={item.zoomScale}
           stageWidth={item.stageWidth}

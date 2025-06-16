@@ -412,6 +412,7 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
         ref={item.setLayerRef}
         visible={!item.hidden}
         imageSmoothingEnabled={item.parent.smoothing}
+        listening={false}
       >
         {displayHighlight && (
           <Rect
