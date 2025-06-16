@@ -253,7 +253,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     }
 
     this.invoke("initialized", [this]);
-    setTimeout(() => this.draw(), 10);
+    requestAnimationFrame(() => this.draw());
   }
 
   private setInitialZoom() {
