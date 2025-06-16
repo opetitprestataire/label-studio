@@ -439,7 +439,7 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
           />
         )}
       </Layer>
-      <Layer listening={false}>
+      <Layer listening={false} opacity={item.opacity}>
         {displayHighlight &&
           item.outline.map((points, i) => (
             <Line

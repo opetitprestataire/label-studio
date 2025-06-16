@@ -33,6 +33,8 @@ import {
 import { Pagination } from "../../common/Pagination/Pagination";
 import { Image } from "./Image";
 import { isHoveringNonTransparentPixel } from "../../regions/PixelWiseRegion/utils";
+import { ff } from "@humansignal/core";
+import { FF_PIXELWISE } from "@humansignal/core/lib/utils/feature-flags";
 
 Konva.showWarnings = false;
 
@@ -556,12 +558,14 @@ export default observer(
         }
       }
 
-      for (const reg of item.regs) {
-        if (reg.type !== "pixelwiseregion") continue;
+      if (ff.isActive(FF_PIXELWISE)) {
+        for (const reg of item.regs) {
+          if (reg.type !== "pixelwiseregion") continue;
 
-        if (reg.highlighted && !reg.selected) {
-          reg.onClickRegion(e);
-          reg.setHighlight(false);
+          if (reg.highlighted && !reg.selected) {
+            reg.onClickRegion(e);
+            reg.setHighlight(false);
+          }
         }
       }
       return item.event("click", evt, x, y);
@@ -783,7 +787,7 @@ export default observer(
       }
 
       // Handle pixelwise hover
-      if (!e.evt.ctrlKey && !e.evt.shiftKey) {
+      if (!e.evt.ctrlKey && !e.evt.shiftKey && ff.isActive(FF_PIXELWISE)) {
         requestAnimationFrame(() => {
           for (const region of item.regs) {
             region.setHighlight(false);
@@ -844,13 +848,28 @@ export default observer(
 
         item.handleZoom(e.evt.deltaY, stage.getPointerPosition(), e.evt.ctrlKey || e.evt.metaKey);
       } else if (e.evt) {
-        e.evt.preventDefault();
+        // Two fingers scroll
         const { item } = this.props;
 
+        const maxScrollX = Math.round(item.stageWidth * item.zoomScale) - item.stageWidth;
+        const maxScrollY = Math.round(item.stageHeight * item.zoomScale) - item.stageHeight;
+
         const newPos = {
-          x: item.zoomingPositionX - e.evt.deltaX,
-          y: item.zoomingPositionY - e.evt.deltaY,
+          x: Math.min(0, Math.ceil(item.zoomingPositionX - e.evt.deltaX)),
+          y: Math.min(0, Math.ceil(item.zoomingPositionY - e.evt.deltaY)),
         };
+
+        // Calculate scroll boundaries to allow scrolling the page when reaching stage edges
+        const withinX = newPos.x !== 0 && newPos.x > -maxScrollX && item.zoomScale !== 1;
+        const withinY = newPos.y !== 0 && newPos.y > -maxScrollY && item.zoomScale !== 1;
+
+        // Detect scroll direction
+        const scrollingX = Math.abs(e.evt.deltaX) > Math.abs(e.evt.deltaY);
+        const scrollingY = Math.abs(e.evt.deltaY) > Math.abs(e.evt.deltaX);
+
+        if (withinX && scrollingX) e.evt.preventDefault();
+        if (withinY && scrollingY) e.evt.preventDefault();
+
         item.setZoomPosition(newPos.x, newPos.y);
       }
     };
@@ -1261,8 +1280,8 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
 
   return (
     <>
-      <ImageLayer item={item} />
-      {item.grid && item.sizeUpdated && <ImageGrid item={item} />}
+      {ff.isActive(FF_PIXELWISE) && <ImageLayer item={item} />}
+      {ff.isActive(FF_PIXELWISE) && item.grid && item.sizeUpdated && <ImageGrid item={item} />}
 
       {isFF(FF_LSDV_4930) ? <TransformerBack item={item} /> : null}
 

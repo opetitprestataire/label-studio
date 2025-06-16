@@ -937,12 +937,14 @@ const Model = types
 
         const newZoom = clamp(self.currentZoom * Math.exp(val * (pinch ? -1 : 1) * ZOOM_INTENSITY), MIN_ZOOM, MAX_ZOOM);
         zoomScale = pinch ? newZoom : val > 0 ? zoomScale * self.zoomBy : zoomScale / self.zoomBy;
+
         if (self.negativezoom !== true && zoomScale <= 1) {
           self.setZoom(1);
           self.setZoomPosition(0, 0);
           self.updateImageAfterZoom();
           return;
         }
+
         if (zoomScale <= 1) {
           self.setZoom(zoomScale);
           self.setZoomPosition(0, 0);
