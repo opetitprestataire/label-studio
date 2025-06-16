@@ -437,12 +437,15 @@ const Crosshair = memo(
   }),
 );
 
-const GridLayer = ({ scale, image, imageWidth, imageHeight, threshold = 8, color = "rgba(255,255,255,0.2)" }) => {
-  if (scale < threshold || !imageWidth || !imageHeight) return null;
+const GridLayer = ({ scale, naturalWidth, naturalHeight, stageWidth, stageHeight }) => {
+  const ZOOM_THRESHOLD = 8;
+
+  if (scale < ZOOM_THRESHOLD || !stageWidth || !stageHeight) return null;
 
   const scaling = useMemo(() => {
-    return Math.min(image.naturalWidth / imageWidth, image.naturalHeight / imageHeight);
-  });
+    return Math.min(naturalWidth / stageWidth, naturalHeight / stageHeight);
+  }, [naturalWidth, naturalHeight, stageWidth, stageHeight]);
+
   const step = 1 / scaling; // image pixel
 
   const { verticalPoints, horizontalPoints } = useMemo(() => {
@@ -450,22 +453,22 @@ const GridLayer = ({ scale, image, imageWidth, imageHeight, threshold = 8, color
     const hPts = [];
 
     // Grid starts from image origin (0, 0)
-    for (let x = 0; x <= imageWidth; x += step) {
-      vPts.push(x, 0, x, imageHeight, x, 0);
+    for (let x = 0; x <= stageWidth; x += step) {
+      vPts.push(x, 0, x, stageHeight, x, 0);
     }
 
-    for (let y = 0; y <= imageHeight; y += step) {
-      hPts.push(0, y, imageWidth, y, 0, y);
+    for (let y = 0; y <= stageHeight; y += step) {
+      hPts.push(0, y, stageWidth, y, 0, y);
     }
 
     return { verticalPoints: vPts, horizontalPoints: hPts };
-  }, [imageWidth, imageHeight]);
+  }, [stageWidth, stageHeight]);
 
   return (
     <FastLayer listening={false}>
       <Line
         points={verticalPoints}
-        stroke={color}
+        stroke="white"
         strokeWidth={1}
         strokeScaleEnabled={false}
         perfectDrawEnabled={false}
@@ -473,7 +476,7 @@ const GridLayer = ({ scale, image, imageWidth, imageHeight, threshold = 8, color
       />
       <Line
         points={horizontalPoints}
-        stroke={color}
+        stroke="white"
         strokeWidth={1}
         strokeScaleEnabled={false}
         perfectDrawEnabled={false}
@@ -482,7 +485,6 @@ const GridLayer = ({ scale, image, imageWidth, imageHeight, threshold = 8, color
     </FastLayer>
   );
 };
-
 /**
  * Component that creates an overlay on top
  * of the image to support Magic Wand tool
@@ -1232,15 +1234,6 @@ const ImageLayer = observer(({ item }) => {
       <Layer imageSmoothingEnabled={item.smoothing}>
         <KonvaImage image={image} width={item.stageWidth} height={item.stageHeight} />
       </Layer>
-      {item.smoothing === false && (
-        <GridLayer
-          scale={item.zoomScale}
-          image={image}
-          imageWidth={item.stageWidth}
-          imageHeight={item.stageHeight}
-          color="white"
-        />
-      )}
     </>
   ) : null;
 });
@@ -1291,6 +1284,15 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
       })}
       <Selection item={item} isPanning={state.isPanning} />
       <DrawingRegion item={item} />
+      {item.smoothing === false && (
+        <GridLayer
+          scale={item.zoomScale}
+          stageWidth={item.stageWidth}
+          stageHeight={item.stageHeight}
+          naturalWidth={item.currentImageEntity.naturalWidth}
+          naturalHeight={item.currentImageEntity.naturalHeight}
+        />
+      )}
 
       {item.crosshair && (
         <Crosshair

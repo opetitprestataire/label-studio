@@ -1,6 +1,11 @@
-import { useMemo } from "react";
 import simplify from "simplify-js";
 
+/**
+ * Generates outline contours from a pixel-based region/mask
+ *
+ * @param item - Object containing the canvas with pixel data and rendering properties
+ * @returns Array of flattened point coordinates forming contours around the shapes
+ */
 export function generateMultiShapeOutline(item: {
   highlighted: boolean;
   offscreenCanvas: HTMLCanvasElement;
@@ -14,6 +19,7 @@ export function generateMultiShapeOutline(item: {
   const { width, height } = item.offscreenCanvas;
   const data = ctx.getImageData(0, 0, width, height).data;
 
+  // Create a binary grid from the image data (1 for visible pixels, 0 for transparent)
   const grid: number[][] = [];
   for (let y = 0; y < height; y++) {
     const row: number[] = [];
@@ -35,6 +41,10 @@ export function generateMultiShapeOutline(item: {
   // Helper to check if two points are within 1 pixel (including diagonals)
   const isNear = (x1: number, y1: number, x2: number, y2: number) => Math.abs(x1 - x2) <= 1 && Math.abs(y1 - y2) <= 1;
 
+  /**
+   * Determines if a pixel is on the edge of a shape
+   * A pixel is an edge if it's non-transparent and has at least one transparent neighbor
+   */
   const isEdge = (x: number, y: number): boolean => {
     if (grid[y][x] === 0) return false;
     for (let dy = -1; dy <= 1; dy++) {
@@ -50,6 +60,10 @@ export function generateMultiShapeOutline(item: {
     return false;
   };
 
+  /**
+   * Traces a contour starting from a given point
+   * Uses a boundary-following algorithm to create a closed path
+   */
   const trace = (sx: number, sy: number) => {
     const path = [];
     const seen = new Set();
@@ -92,6 +106,7 @@ export function generateMultiShapeOutline(item: {
     return [];
   };
 
+  // Find and trace all contours in the image
   const contours: number[][][] = [];
   for (let y = 1; y < height - 1; y++) {
     for (let x = 1; x < width - 1; x++) {
@@ -104,6 +119,7 @@ export function generateMultiShapeOutline(item: {
     }
   }
 
+  // Scale and simplify the contours for rendering
   const scale = item.drawingOffset.scale;
   return contours.map((contour) => {
     const simplified = simplify(
@@ -113,15 +129,4 @@ export function generateMultiShapeOutline(item: {
     );
     return simplified.flatMap(({ x, y }) => [x, y]);
   });
-}
-
-export function useMultiShapeOutline(item: {
-  highlighted: boolean;
-  offscreenCanvas: HTMLCanvasElement;
-  drawingOffset: { scale: number };
-}) {
-  return useMemo(
-    () => generateMultiShapeOutline(item),
-    [item.highlighted, item.offscreenCanvas, item.drawingOffset.scale],
-  );
 }

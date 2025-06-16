@@ -17,7 +17,7 @@ import { AliveRegion } from "../AliveRegion";
 import { RegionWrapper } from "../RegionWrapper";
 import { PixelWiseDrawing } from "./utils";
 import chroma from "chroma-js";
-import { generateMultiShapeOutline } from "./hooks";
+import { generateMultiShapeOutline } from "./contour";
 
 /**
  * PixelWise masking region
@@ -250,7 +250,10 @@ const Model = types
         ctx.fillStyle = self.strokeColor;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.drawImage(self.offscreenCanvas, 0, 0);
-        self.layerRef?.batchDraw();
+
+        requestAnimationFrame(() => {
+          self.layerRef?.batchDraw();
+        });
       },
 
       setLayerRef(ref) {
