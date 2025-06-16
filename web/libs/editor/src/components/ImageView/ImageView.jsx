@@ -557,7 +557,7 @@ export default observer(
       for (const reg of item.regs) {
         if (reg.type !== "pixelwiseregion") continue;
 
-        if (reg.highlighted) {
+        if (reg.highlighted && !reg.selected) {
           reg.onClickRegion(e);
           reg.setHighlight(false);
         }

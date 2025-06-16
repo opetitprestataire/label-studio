@@ -1,12 +1,10 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Image, Layer, Line, Rect } from "react-konva";
-import { getType, isAlive, types } from "mobx-state-tree";
+import { isAlive, types } from "mobx-state-tree";
 
 import Registry from "../../core/Registry";
 import NormalizationMixin from "../../mixins/Normalization";
 import RegionsMixin from "../../mixins/Regions";
-
-import { ImageViewContext } from "../../components/ImageView/ImageViewContext";
 import { Geometry } from "../../components/InteractiveOverlays/Geometry";
 import { defaultStyle } from "../../core/Constants";
 import { guidGenerator } from "../../core/Helpers";
@@ -14,7 +12,6 @@ import { AreaMixin } from "../../mixins/AreaMixin";
 import IsReadyMixin from "../../mixins/IsReadyMixin";
 import { KonvaRegionMixin } from "../../mixins/KonvaRegion";
 import { ImageModel } from "../../tags/object/Image";
-import { colorToRGBAArray, rgbArrayToHex } from "../../utils/colors";
 import { FF_DEV_3793, isFF } from "../../utils/feature-flags";
 import { AliveRegion } from "../AliveRegion";
 import { RegionWrapper } from "../RegionWrapper";
@@ -29,63 +26,39 @@ const Model = types
   .model({
     id: types.optional(types.identifier, guidGenerator),
     pid: types.optional(types.string, guidGenerator),
-
     type: "pixelwiseregion",
     object: types.late(() => types.reference(ImageModel)),
 
-    rle: types.frozen(),
     imageData: types.frozen(),
     imageDataURL: types.frozen(),
   })
   .volatile(() => ({
     /**
-     * Higher values will result in a more curvy line. A value of 0 will result in no interpolation.
-     */
-    tension: 0.0,
-    /**
-     * Stroke color
-     */
-    // strokeColor: types.optional(types.string, "red"),
-
-    /**
      * Determines node opacity. Can be any number between 0 and 1
      */
     opacity: 0.6,
-    scaleX: 1,
-    scaleY: 1,
-
-    // points: types.array(types.array(types.number)),
-    // eraserpoints: types.array(types.array(types.number)),
-
-    mode: "brush",
-
     needsUpdate: 1,
     hideable: true,
+
+    /** @type {Layer} */
     layerRef: undefined,
+
+    /** @type {Image} */
     imageRef: undefined,
-    /**
-     * @type {HTMLCanvasElement}
-     */
+
+    /** @type {HTMLCanvasElement} */
     pixelWiseRef: null,
 
-    /**
-     * @type {CanvasRenderingContext2D}
-     */
+    /** @type {CanvasRenderingContext2D} */
     pixelWiseCtx: null,
 
-    /**
-     * @type {{x: number, y: number}}
-     */
+    /** @type {{x: number, y: number}} */
     lastPos: { x: 0, y: 0 },
 
-    /**
-     * @type {OffscreenCanvas}
-     */
+    /** @type {OffscreenCanvas} */
     offscreenCanvas: null,
 
-    /**
-     * @type {number[][]}
-     */
+    /** @type {number[][]} */
     outline: [],
   }))
   .views((self) => {
@@ -96,10 +69,10 @@ const Model = types
       get colorParts() {
         const style = self.style || self.tag || defaultStyle;
 
-        return colorToRGBAArray(style.strokecolor);
+        return chroma(style.strokecolor).rgb();
       },
       get strokeColor() {
-        return rgbArrayToHex(self.colorParts);
+        return chroma(self.colorParts).hex();
       },
       get bboxCoordsCanvas() {
         if (!self.imageData) {
@@ -182,9 +155,7 @@ const Model = types
       },
 
       getImageData() {
-        /**
-         * @type {HTMLCanvasElement}
-         */
+        /** @type {HTMLCanvasElement} */
         const canvas = this.pixelWiseRef;
         const context = canvas.getContext("2d");
 
@@ -193,15 +164,16 @@ const Model = types
     };
   })
   .actions((self) => {
-    let pathPoints;
-    let cachedPoints;
     const lastPointX = -1;
     const lastPointY = -1;
-    let maskImage;
 
     return {
       afterCreate() {
+        // Restores the region from saved image url (deserialize)
         self.updateMaskImage();
+
+        // Used when copying a regions from `drawingRegion` to a normal one
+        // e.g., commitDrawingRegion
         self.restoreFromImageData();
       },
 
@@ -211,19 +183,15 @@ const Model = types
 
       updateMaskImage() {
         if (self.imageDataURL) {
-          /**
-           * @type {HTMLCanvasElement}
-           */
           self.createPixelWise();
+
           const context = self.offscreenCanvas.getContext("2d");
           const image = new window.Image();
 
           image.addEventListener("load", () => {
-            requestIdleCallback(() => {
-              context.drawImage(image, 0, 0);
-              self.generateOutline();
-              self.composeMask();
-            });
+            context.drawImage(image, 0, 0);
+            self.generateOutline();
+            self.composeMask();
           });
           image.src = self.imageDataURL;
         }
@@ -244,7 +212,9 @@ const Model = types
       },
 
       generateOutline() {
+        console.time("Generating outline");
         self.setOutline(generateMultiShapeOutline(self));
+        console.timeEnd("Generating outline");
       },
 
       createPixelWise() {
@@ -321,7 +291,6 @@ const Model = types
       },
 
       addPoint(x, y, strokeWidth, options = { erase: false }) {
-        console.log(x, y, strokeWidth, options);
         requestAnimationFrame(() => {
           const { drawingOffset: offset } = self;
           self.setLastPos(
@@ -340,6 +309,7 @@ const Model = types
       },
 
       endPath() {
+        console.time("end");
         const { annotation } = self.object;
 
         // will resume in the next tick...
@@ -350,11 +320,7 @@ const Model = types
 
         // ...so we run this toggled function also delayed
         annotation.autosave && setTimeout(() => annotation.autosave());
-      },
-
-      setScale(x, y) {
-        self.scaleX = x;
-        self.scaleY = y;
+        console.timeEnd("end");
       },
 
       updateImageSize(wp, hp, sw, sh) {
@@ -376,6 +342,7 @@ const Model = types
        * @return {BrushRegionResult}
        */
       serialize(options) {
+        console.time("serialize");
         const tempCanvas = document.createElement("canvas");
         tempCanvas.width = self.offscreenCanvas.width;
         tempCanvas.height = self.offscreenCanvas.height;
@@ -383,6 +350,7 @@ const Model = types
 
         const object = self.object;
         const value = { imageDataURL: tempCanvas.toDataURL("image/png") };
+        console.timeEnd("serialize");
 
         return self.parent.createSerializedResult(self, value);
       },
@@ -400,28 +368,17 @@ const PixelWiseRegionModel = types.compose(
 );
 
 const HtxPixelWiseView = ({ item, setShapeRef }) => {
-  const [image, setImage] = useState();
-  const { suggestion } = useContext(ImageViewContext) ?? {};
-  const imageRef = useRef();
-  const currentColor = chroma(item.strokeColor).rgb();
-  const { store } = item;
-  const layerRef = useRef();
   const displayHighlight = useMemo(() => {
     return item.highlighted && !item.isDrawing && !item.selected;
   }, [item.highlighted, item.isDrawing, item.selected]);
 
   useEffect(() => {
-    item.composeMask();
+    try {
+      item.composeMask();
+    } catch (e) {
+      /* safe to ignore. sometimes called too early*/
+    }
   }, [item.strokeColor]);
-
-  const setLayerRef = useCallback(
-    (ref) => {
-      if (isAlive(item)) {
-        item.setLayerRef(ref);
-      }
-    },
-    [item],
-  );
 
   if (!item.parent) return null;
 
@@ -435,28 +392,6 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
         ref={item.setLayerRef}
         visible={!item.hidden}
         imageSmoothingEnabled={item.parent.smoothing}
-        onMouseDown={(e) => {
-          if (store.annotationStore.selected.isLinkingMode) {
-            e.cancelBubble = true;
-          }
-        }}
-        onClick={(e) => {
-          if (item.parent.getSkipInteractions()) return;
-          if (store.annotationStore.selected.isLinkingMode) {
-            item.onClickRegion(e);
-            return;
-          }
-
-          const tool = item.parent.getToolsManager().findSelectedTool();
-          const isMoveTool = tool && getType(tool).name === "MoveTool";
-
-          if (tool && !isMoveTool) return;
-
-          if (store.annotationStore.selected.isLinkingMode) {
-            stage.container().style.cursor = "default";
-            item.updateCursor(false);
-          }
-        }}
         globalCompositeOperation={displayHighlight ? "xor" : "source-over"}
       >
         {item.pixelWiseRef && (
@@ -465,8 +400,6 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
             image={item.pixelWiseRef}
             width={item.parent.stageWidth}
             height={item.parent.stageHeight}
-            perfectDrawingEnafled={true}
-            imageSmoothingEnabled={item.parent.smoothing}
             listening={false}
           />
         )}
