@@ -17,7 +17,6 @@ import { AliveRegion } from "./AliveRegion";
 import { RegionWrapper } from "./RegionWrapper";
 import { PixelWiseDrawing } from "./PixelWiseRegion/utils";
 import chroma from "chroma-js";
-import { generateMultiShapeOutline } from "./PixelWiseRegion/contour";
 
 /**
  * PixelWise masking region
@@ -229,7 +228,8 @@ const Model = types
       },
 
       generateOutline() {
-        self.setOutline(generateMultiShapeOutline(self));
+        // Keeping it here for future use.
+        // self.setOutline(generateMultiShapeOutline(self));
       },
 
       createPixelWise() {
@@ -393,15 +393,11 @@ const PixelWiseRegionModel = types.compose(
 
 const HtxPixelWiseView = ({ item, setShapeRef }) => {
   const displayHighlight = useMemo(() => {
-    return item.highlighted && !item.isDrawing && !item.selected;
+    return item.highlighted || item.selected;
   }, [item.highlighted, item.isDrawing, item.selected]);
 
   useEffect(() => {
-    try {
-      item.composeMask();
-    } catch (e) {
-      /* safe to ignore. sometimes called too early*/
-    }
+    item.composeMask();
   }, [item.strokeColor]);
 
   if (!item.parent) return null;
@@ -416,23 +412,22 @@ const HtxPixelWiseView = ({ item, setShapeRef }) => {
         ref={item.setLayerRef}
         visible={!item.hidden}
         imageSmoothingEnabled={item.parent.smoothing}
-        globalCompositeOperation={displayHighlight ? "xor" : "source-over"}
       >
-        {item.pixelWiseRef && (
-          <Image
-            ref={item.setImageRef}
-            image={item.pixelWiseRef}
+        {displayHighlight && (
+          <Rect
+            fill="black"
+            x={0}
+            y={0}
             width={item.parent.stageWidth}
             height={item.parent.stageHeight}
             listening={false}
           />
         )}
 
-        {displayHighlight && (
-          <Rect
-            fill="black"
-            x={0}
-            y={0}
+        {item.pixelWiseRef && (
+          <Image
+            ref={item.setImageRef}
+            image={item.pixelWiseRef}
             width={item.parent.stageWidth}
             height={item.parent.stageHeight}
             listening={false}

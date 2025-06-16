@@ -1261,7 +1261,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
   if (!isAlive(item)) return null;
   if (!store.task || !item.currentSrc) return null;
 
-  const regions = item.regs;
+  const regions = [...item.regs].sort((r) => (r.highlighted || r.selected ? 1 : 0));
   const paginationEnabled = !!item.isMultiItem;
   const wrapperClasses = [styles.wrapperComponent, item.images.length > 1 ? styles.withGallery : styles.wrapper];
 

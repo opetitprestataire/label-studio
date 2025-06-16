@@ -189,7 +189,9 @@ const _Tool = types
           return;
         const c = self.control;
         const o = self.obj;
+        const hasHighlighted = o.regs.some((r) => r.highlighted);
 
+        if (hasHighlighted) return;
         brush = self.getSelectedShape;
 
         // prevent drawing when current image is
