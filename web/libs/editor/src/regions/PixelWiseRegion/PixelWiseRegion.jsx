@@ -131,11 +131,12 @@ const Model = types
       },
 
       get dimensions() {
+        const image = self.parent;
         return {
-          stageWidth: self.parent?.stageWidth ?? 0,
-          stageHeight: self.parent?.stageHeight ?? 0,
-          imageWidth: self.parent?.imageRef.width ?? 0,
-          imageHeight: self.parent?.imageRef.height ?? 0,
+          stageWidth: image?.stageWidth ?? 0,
+          stageHeight: image?.stageHeight ?? 0,
+          imageWidth: image?.currentImageEntity.naturalWidth ?? 0,
+          imageHeight: image?.currentImageEntity.naturalHeight ?? 0,
         };
       },
 
@@ -212,9 +213,7 @@ const Model = types
       },
 
       generateOutline() {
-        console.time("Generating outline");
         self.setOutline(generateMultiShapeOutline(self));
-        console.timeEnd("Generating outline");
       },
 
       createPixelWise() {
