@@ -318,15 +318,13 @@ Data(shapesTable.filter(({ shapeName }) => shapeName === "Rectangle")).Scenario(
     // Flip the shape and keep the width;
     // we have to move the rotation handle to the left and down twice the width of the region,
     // with respect to 45° rotation
-    const shift = 50 * 2 / Math.SQRT2;
+    const shift = (50 * 2) / Math.SQRT2;
     AtImageView.drawByDrag(center[0] - 25 / Math.SQRT2, center[1] - 25 / Math.SQRT2, shift, shift);
 
-    const rotatedResult = { ...convertToImageSize(Shape.byBBox(
-      center[0] + 25 / Math.SQRT2,
-      center[1] + 125 / Math.SQRT2,
-      50,
-      100,
-    ).result), rotation: 180 + 45 }
+    const rotatedResult = {
+      ...convertToImageSize(Shape.byBBox(center[0] + 25 / Math.SQRT2, center[1] + 125 / Math.SQRT2, 50, 100).result),
+      rotation: 180 + 45,
+    };
 
     rectangleResult = await LabelStudio.serialize();
     // flipping is not very precise, so we have to increase the tolerance
