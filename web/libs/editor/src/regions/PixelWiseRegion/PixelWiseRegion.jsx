@@ -312,6 +312,7 @@ const Model = types
               y: Math.floor(y / offset.scale + offset.offsetY),
               brushSize: strokeWidth,
               color: self.strokeColor,
+              eraserMode: type === "eraser",
             }),
           );
 
@@ -319,7 +320,8 @@ const Model = types
         });
       },
 
-      addPoint(x, y, strokeWidth) {
+      addPoint(x, y, strokeWidth, options = { erase: false }) {
+        console.log(x, y, strokeWidth, options);
         requestAnimationFrame(() => {
           const { drawingOffset: offset } = self;
           self.setLastPos(
@@ -330,6 +332,7 @@ const Model = types
               brushSize: strokeWidth,
               color: self.strokeColor,
               lastPos: self.lastPos,
+              eraserMode: options.erase,
             }),
           );
           self.composeMask();

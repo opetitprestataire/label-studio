@@ -1,5 +1,5 @@
 import { Component, createRef, forwardRef, Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
-import { Group, Layer, Line, Rect, Stage, Image as KonvaImage } from "react-konva";
+import { Group, Layer, Line, Rect, Stage, Image as KonvaImage, FastLayer } from "react-konva";
 import { observer } from "mobx-react";
 import { getEnv, getRoot, isAlive } from "mobx-state-tree";
 
@@ -436,6 +436,52 @@ const Crosshair = memo(
     );
   }),
 );
+
+const GridLayer = ({ scale, image, imageWidth, imageHeight, threshold = 8, color = "rgba(255,255,255,0.2)" }) => {
+  if (scale < threshold || !imageWidth || !imageHeight) return null;
+
+  const scaling = useMemo(() => {
+    return Math.min(image.naturalWidth / imageWidth, image.naturalHeight / imageHeight);
+  });
+  const step = 1 / scaling; // image pixel
+
+  const { verticalPoints, horizontalPoints } = useMemo(() => {
+    const vPts = [];
+    const hPts = [];
+
+    // Grid starts from image origin (0, 0)
+    for (let x = 0; x <= imageWidth; x += step) {
+      vPts.push(x, 0, x, imageHeight, x, 0);
+    }
+
+    for (let y = 0; y <= imageHeight; y += step) {
+      hPts.push(0, y, imageWidth, y, 0, y);
+    }
+
+    return { verticalPoints: vPts, horizontalPoints: hPts };
+  }, [imageWidth, imageHeight]);
+
+  return (
+    <FastLayer listening={false}>
+      <Line
+        points={verticalPoints}
+        stroke={color}
+        strokeWidth={1}
+        strokeScaleEnabled={false}
+        perfectDrawEnabled={false}
+        opacity={0.2}
+      />
+      <Line
+        points={horizontalPoints}
+        stroke={color}
+        strokeWidth={1}
+        strokeScaleEnabled={false}
+        perfectDrawEnabled={false}
+        opacity={0.2}
+      />
+    </FastLayer>
+  );
+};
 
 /**
  * Component that creates an overlay on top
@@ -1166,24 +1212,36 @@ const EntireStage = observer(
 );
 
 const ImageLayer = observer(({ item }) => {
+  const imageEntity = item.currentImageEntity;
   const image = useMemo(() => {
     const ent = item.currentImageEntity;
 
     if (ent && ent.downloaded) {
       const img = new window.Image();
       img.src = ent.currentSrc;
-      img.width = Number.parseInt(item.stageWidth);
-      img.height = Number.parseInt(item.stageHeight);
+      img.width = Number.parseInt(ent.naturalWidth);
+      img.height = Number.parseInt(ent.naturalHeight);
       return img;
     }
 
     return null;
-  }, [item.currentImageEntity?.downloaded]);
+  }, [imageEntity?.downloaded]);
 
   return image ? (
-    <Layer imageSmoothingEnabled={item.smoothing}>
-      <KonvaImage image={image} width={item.stageWidth} height={item.stageHeight} />
-    </Layer>
+    <>
+      <Layer imageSmoothingEnabled={item.smoothing}>
+        <KonvaImage image={image} width={item.stageWidth} height={item.stageHeight} />
+      </Layer>
+      {item.smoothing === false && (
+        <GridLayer
+          scale={item.zoomScale}
+          image={image}
+          imageWidth={item.stageWidth}
+          imageHeight={item.stageHeight}
+          color="white"
+        />
+      )}
+    </>
   ) : null;
 });
 

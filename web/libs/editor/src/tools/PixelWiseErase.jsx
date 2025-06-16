@@ -108,7 +108,7 @@ const _Tool = types
       },
 
       addPoint(x, y) {
-        brush.addPoint(Math.floor(x), Math.floor(y));
+        brush.addPoint(Math.floor(x), Math.floor(y), self.strokeWidth, { erase: true });
       },
 
       setStroke(val) {
@@ -133,7 +133,7 @@ const _Tool = types
         )
           return;
 
-        if (brush?.type === "brushregion") {
+        if (brush?.type === "pixelwiseregion") {
           self.addPoint(x, y);
         }
       },
@@ -152,12 +152,14 @@ const _Tool = types
         brush = self.getSelectedShape;
         if (!brush) return;
 
-        if (brush && brush.type === "brushregion") {
+        if (brush && brush.type === "pixelwiseregion") {
           self.mode = "drawing";
           brush.beginPath({
             type: "eraser",
             opacity: 1,
             strokeWidth: self.strokeWidth,
+            x,
+            y,
           });
           self.addPoint(x, y);
         }
