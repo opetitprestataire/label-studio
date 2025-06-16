@@ -116,3 +116,43 @@ export function imageDataToCanvas(imageData: ImageData): HTMLCanvasElement {
   ctx.putImageData(imageData, 0, 0);
   return canvas;
 }
+
+export function getCanvasPixelBounds(
+  canvas: HTMLCanvasElement,
+  scale: number,
+): { left: number; top: number; right: number; bottom: number } | null {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+
+  const { width, height } = canvas;
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const index = (y * width + x) * 4;
+      const alpha = data[index + 3]; // alpha channel
+      if (alpha > 0) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+
+  const hasVisiblePixels = maxX >= minX && maxY >= minY;
+  if (!hasVisiblePixels) return null;
+
+  return {
+    left: minX * scale,
+    top: minY * scale,
+    right: (maxX + 1) * scale,
+    bottom: (maxY + 1) * scale,
+  };
+}

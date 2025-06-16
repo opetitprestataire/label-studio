@@ -567,7 +567,9 @@ export default observer(
         for (const reg of item.regs) {
           if (reg.type !== "bitmaskregion") continue;
 
-          if (reg.highlighted && !reg.selected) {
+          const hovered = isHoveringNonTransparentPixel(reg);
+
+          if (hovered && !reg.selected) {
             reg.onClickRegion(e);
             reg.setHighlight(false);
           }

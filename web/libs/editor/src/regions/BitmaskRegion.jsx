@@ -5,7 +5,6 @@ import { isAlive, types } from "mobx-state-tree";
 import Registry from "../core/Registry";
 import NormalizationMixin from "../mixins/Normalization";
 import RegionsMixin from "../mixins/Regions";
-import { Geometry } from "../components/InteractiveOverlays/Geometry";
 import { defaultStyle } from "../core/Constants";
 import { guidGenerator } from "../core/Helpers";
 import { AreaMixin } from "../mixins/AreaMixin";
@@ -15,7 +14,7 @@ import { ImageModel } from "../tags/object/Image";
 import { FF_DEV_3793, isFF } from "../utils/feature-flags";
 import { AliveRegion } from "./AliveRegion";
 import { RegionWrapper } from "./RegionWrapper";
-import { BitmaskDrawing } from "./BitmaskRegion/utils";
+import { BitmaskDrawing, getCanvasPixelBounds } from "./BitmaskRegion/utils";
 import chroma from "chroma-js";
 
 /**
@@ -62,6 +61,8 @@ const Model = types
 
     /** @type {number[][]} */
     outline: [],
+
+    bbox: null,
   }))
   .views((self) => {
     return {
@@ -77,42 +78,9 @@ const Model = types
         return chroma(self.colorParts).hex();
       },
       get bboxCoordsCanvas() {
-        if (!self.imageData) {
-          const points = { x: [], y: [] };
-
-          for (let i = 0; i in (self.touches?.[0]?.points ?? []); i += 2) {
-            const curX = (self.touches?.[0]?.points ?? [])[i];
-            const curY = (self.touches?.[0]?.points ?? [])[i + 1];
-
-            points.x.push(curX);
-            points.y.push(curY);
-          }
-          return {
-            left: Math.min(...points.x),
-            top: Math.min(...points.y),
-            right: Math.max(...points.x),
-            bottom: Math.max(...points.y),
-          };
+        if (self.offscreenCanvas) {
+          return self.bbox;
         }
-        const imageBBox = Geometry.getImageDataBBox(self.imageData.data, self.imageData.width, self.imageData.height);
-
-        if (!imageBBox) return null;
-        const {
-          stageScale: scale = 1,
-          zoomingPositionX: offsetX = 0,
-          zoomingPositionY: offsetY = 0,
-        } = self.parent || {};
-
-        imageBBox.x = imageBBox.x / scale - offsetX / scale;
-        imageBBox.y = imageBBox.y / scale - offsetY / scale;
-        imageBBox.width = imageBBox.width / scale;
-        imageBBox.height = imageBBox.height / scale;
-        return {
-          left: imageBBox.x,
-          top: imageBBox.y,
-          right: imageBBox.x + imageBBox.width,
-          bottom: imageBBox.y + imageBBox.height,
-        };
       },
 
       /**
@@ -120,7 +88,7 @@ const Model = types
        * unlike for other tools.
        */
       get bboxCoords() {
-        const bbox = self.bboxCoordsCanvas;
+        const bbox = self.bbox;
 
         if (!bbox) return null;
         if (!isFF(FF_DEV_3793)) return bbox;
@@ -203,6 +171,7 @@ const Model = types
             bitmask.height = image.naturalHeight;
 
             context.drawImage(image, 0, 0);
+
             self.generateOutline();
             self.composeMask();
           } catch (err) {
@@ -210,6 +179,10 @@ const Model = types
           }
         }
         renderDataURL();
+      },
+
+      setBBox(bbox) {
+        self.bbox = bbox;
       },
 
       /**
@@ -267,6 +240,7 @@ const Model = types
         const canvas = ctx.canvas;
 
         requestAnimationFrame(() => {
+          self.setBBox(getCanvasPixelBounds(self.offscreenCanvas, self.drawingOffset.scale));
           self.layerRef?.batchDraw();
         });
       },
@@ -327,7 +301,6 @@ const Model = types
       },
 
       endPath() {
-        console.time("end");
         const { annotation } = self.object;
 
         // will resume in the next tick...
@@ -338,7 +311,6 @@ const Model = types
 
         // ...so we run this toggled function also delayed
         annotation.autosave && setTimeout(() => annotation.autosave());
-        console.timeEnd("end");
       },
 
       updateImageSize(wp, hp, sw, sh) {
@@ -360,7 +332,6 @@ const Model = types
        * @return {BrushRegionResult}
        */
       serialize(options) {
-        console.time("serialize");
         const tempCanvas = document.createElement("canvas");
         tempCanvas.width = self.offscreenCanvas.width;
         tempCanvas.height = self.offscreenCanvas.height;
@@ -374,7 +345,6 @@ const Model = types
 
         const object = self.object;
         const value = { imageDataURL: tempCanvas.toDataURL("image/png") };
-        console.timeEnd("serialize");
 
         return self.parent.createSerializedResult(self, value);
       },
