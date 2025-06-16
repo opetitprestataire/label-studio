@@ -1,8 +1,11 @@
-import React from "react";
+import { ff } from "@humansignal/core";
+import { FF_MULTICHANNEL_TS } from "@humansignal/core/lib/utils/feature-flags";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { getRoot, types } from "mobx-state-tree";
 
 import * as d3 from "d3";
+import TimeSeriesVisualizer from "../../../components/TimeSeries/TimeSeriesVisualizer";
 import Registry from "../../../core/Registry";
 import Types from "../../../core/Types";
 import { cloneNode, guidGenerator } from "../../../core/Helpers";
@@ -29,7 +32,7 @@ import { getCurrentTheme } from "@humansignal/ui";
  *                     `.3` (12.3456 -> 12.3, 1.2345 -> 1.23, 12345 -> 1.23e+4)<br/>
  *        `f` - treat as float, default precision is .6: `f` (12 -> 12.000000) `.2f` (12 -> 12.00) `.0f` (12.34 -> 12)<br/>
  *        `%` - treat as percents and format accordingly: `%.0` (0.128 -> 13%) `%.1` (1.2345 -> 123.4%)
- * @param {number} [height] height of the plot
+ * @param {number} [height=200] height of the plot
  * @param {string=} [strokeColor=#f48a42] plot stroke color, expects hex value
  * @param {number=} [strokeWidth=1] plot stroke width
  * @param {string=} [markerColor=#f48a42] plot stroke color, expects hex value
@@ -69,16 +72,17 @@ const TagAttrs = types.model({
   height: types.optional(types.string, "200"),
 
   strokewidth: types.optional(types.string, "1"),
-  strokecolor: types.optional(types.string, "#1f77b4"),
+  strokecolor: types.optional(types.string, ff.isActive(FF_MULTICHANNEL_TS) ? "" : "#1f77b4"),
 
   markersize: types.optional(types.string, "0"),
-  markercolor: types.optional(types.string, "#1f77b4"),
+  markercolor: types.optional(types.string, ff.isActive(FF_MULTICHANNEL_TS) ? "" : "#1f77b4"),
   markersymbol: types.optional(types.string, "circle"),
 
   datarange: types.maybe(types.string),
   timerange: types.maybe(types.string),
 
   showaxis: types.optional(types.boolean, true),
+  showyaxis: types.optional(types.boolean, true),
 
   fixedscale: types.maybe(types.boolean),
 
@@ -101,6 +105,12 @@ const Model = types
       }
       column = column.toLowerCase();
       return column;
+    },
+    get series() {
+      return item.parent?.dataHash;
+    },
+    get margin() {
+      return self.parent?.margin;
     },
   }));
 
@@ -911,6 +921,25 @@ const HtxChannelViewD3 = ({ item }) => {
   // let channels = item.parent?.overviewchannels;
   // if (channels) channels = channels.split(",");
   // if (channels && !channels.includes(item.value.substr(1))) return null;
+
+  if (ff.isActive(FF_MULTICHANNEL_TS)) {
+    const channels = useMemo(() => {
+      return [item];
+    }, [item]);
+    return (
+      <TimeSeriesVisualizer
+        time={item.parent?.keyColumn}
+        column={item.columnName}
+        item={item}
+        channels={channels}
+        data={item.parent?.dataObj}
+        series={item.parent?.dataHash}
+        range={item.parent?.brushRange}
+        ranges={item.parent?.regs}
+        cursorTime={item.parent?.cursorTime}
+      />
+    );
+  }
 
   return (
     <ChannelD3Observed
