@@ -440,9 +440,10 @@ const Crosshair = memo(
 );
 
 const GridLayer = ({ scale, naturalWidth, naturalHeight, stageWidth, stageHeight }) => {
-  const ZOOM_THRESHOLD = 8;
+  const ZOOM_THRESHOLD = 20;
 
-  if (scale < ZOOM_THRESHOLD || !stageWidth || !stageHeight) return null;
+  const visible = scale > ZOOM_THRESHOLD;
+  if (!stageWidth || !stageHeight) return null;
 
   const scaling = useMemo(() => {
     return Math.min(naturalWidth / stageWidth, naturalHeight / stageHeight);
@@ -467,7 +468,7 @@ const GridLayer = ({ scale, naturalWidth, naturalHeight, stageWidth, stageHeight
   }, [stageWidth, stageHeight]);
 
   return (
-    <FastLayer listening={false}>
+    <FastLayer listening={false} visible={visible}>
       <Line
         points={verticalPoints}
         stroke="white"
@@ -475,6 +476,8 @@ const GridLayer = ({ scale, naturalWidth, naturalHeight, stageWidth, stageHeight
         strokeScaleEnabled={false}
         perfectDrawEnabled={false}
         opacity={0.2}
+        listening={false}
+        visible={visible}
       />
       <Line
         points={horizontalPoints}
@@ -483,6 +486,8 @@ const GridLayer = ({ scale, naturalWidth, naturalHeight, stageWidth, stageHeight
         strokeScaleEnabled={false}
         perfectDrawEnabled={false}
         opacity={0.2}
+        listening={false}
+        visible={visible}
       />
     </FastLayer>
   );
@@ -788,6 +793,7 @@ export default observer(
 
       // Handle pixelwise hover
       if (!e.evt.ctrlKey && !e.evt.shiftKey && ff.isActive(FF_PIXELWISE)) {
+        if (item.regs.some((r) => r.isDrawing)) return;
         requestAnimationFrame(() => {
           for (const region of item.regs) {
             region.setHighlight(false);
