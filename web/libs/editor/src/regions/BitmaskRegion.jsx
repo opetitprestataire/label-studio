@@ -276,15 +276,21 @@ const Model = types
 
       composeMask() {
         const ctx = self.bitmaskRef.getContext("2d");
-
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        
+        // Only clear if we're not in the middle of drawing
+        if (!self.isDrawing) {
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        }
+        
         ctx.globalCompositeOperation = "destination-atop";
         ctx.fillStyle = self.strokeColor;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.drawImage(self.offscreenCanvas, 0, 0);
 
-        const canvas = ctx.canvas;
-        self.layerRef?.batchDraw();
+        // Only batch draw if we're not in the middle of drawing
+        if (!self.isDrawing) {
+          self.layerRef?.batchDraw();
+        }
         console.timeEnd("compose mask");
       },
 
@@ -311,11 +317,21 @@ const Model = types
         console.time("begin drawing");
         self.object.annotation.pauseAutosave();
 
+        // Only create canvas if it doesn't exist
+        if (!self.offscreenCanvas) {
+          self.createCanvas();
+        }
+
         const { drawingOffset: offset } = self;
+        const ctx = self.offscreenCanvas.getContext("2d");
+
+        // Set up context properties once
+        ctx.fillStyle = type === "eraser" ? "white" : "black";
+        ctx.globalCompositeOperation = type === "eraser" ? "destination-out" : "source-over";
 
         self.setLastPos(
           BitmaskDrawing.begin({
-            ctx: self.offscreenCanvas.getContext("2d"),
+            ctx,
             x: Math.floor(x / offset.scale + offset.offsetX),
             y: Math.floor(y / offset.scale + offset.offsetY),
             brushSize: strokeWidth,
@@ -329,24 +345,24 @@ const Model = types
       },
 
       addPoint(x, y, strokeWidth, options = { erase: false }) {
-        requestAnimationFrame(() => {
-          console.time("add point");
-          const { drawingOffset: offset } = self;
-          self.setLastPos(
-            BitmaskDrawing.draw({
-              ctx: self.offscreenCanvas.getContext("2d"),
-              x: Math.floor(x / offset.scale + offset.offsetX),
-              y: Math.floor(y / offset.scale + offset.offsetY),
-              brushSize: strokeWidth,
-              color: self.strokeColor,
-              lastPos: self.lastPos,
-              eraserMode: options.erase,
-            }),
-          );
-          console.timeEnd("add point");
+        const { drawingOffset: offset } = self;
+        self.setLastPos(
+          BitmaskDrawing.draw({
+            ctx: self.offscreenCanvas.getContext("2d"),
+            x: Math.floor(x / offset.scale + offset.offsetX),
+            y: Math.floor(y / offset.scale + offset.offsetY),
+            brushSize: strokeWidth,
+            color: self.strokeColor,
+            lastPos: self.lastPos,
+            eraserMode: options.erase,
+          }),
+        );
 
+        // Only compose mask every few points or on significant changes
+        if (!self._lastComposeTime || Date.now() - self._lastComposeTime > 16) { // ~60fps
           self.composeMask();
-        });
+          self._lastComposeTime = Date.now();
+        }
       },
 
       endPath() {
