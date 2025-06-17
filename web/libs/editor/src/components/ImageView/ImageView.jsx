@@ -821,7 +821,7 @@ export default observer(
             if (region.type !== "bitmaskregion") continue;
 
             const checkHover = !region.selected && !region.isDrawing;
-            const hovered = isHoveringNonTransparentPixel(region);
+            const hovered = checkHover && isHoveringNonTransparentPixel(region);
 
             if (hovered) {
               // region.setHighlight(true);

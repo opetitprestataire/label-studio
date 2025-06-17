@@ -144,12 +144,17 @@ const Model = types
   .actions((self) => {
     const lastPointX = -1;
     const lastPointY = -1;
+    let disposer;
 
     return {
       afterCreate() {
-        console.log("create");
+        self.createCanvas();
         self.updateMaskImage();
         self.restoreFromImageData();
+
+        disposer = self.annotation.history.onUpdate((...args) => {
+          self.redraw();
+        });
       },
 
       setOutline(outline) {
@@ -162,7 +167,6 @@ const Model = types
        */
       updateMaskImage() {
         if (!self.imageDataURL) return;
-        self.createBitmask();
         async function renderDataURL() {
           const context = self.offscreenCanvas.getContext("2d");
           const bitmask = self.bitmaskRef;
@@ -181,23 +185,12 @@ const Model = types
 
             self.generateOutline();
             self.composeMask();
+            self.updateBBox();
           } catch (err) {
-            onsole.log(err);
+            console.log(err);
           }
         }
         renderDataURL();
-      },
-
-      redraw() {
-        if (self.offscreenCanvas && self.imageDataURL) {
-          const ctx = self.offscreenCanvas.getContext("2d");
-          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-          self.updateMaskImage();
-        }
-      },
-
-      setBBox(bbox) {
-        self.bbox = bbox;
       },
 
       /**
@@ -207,20 +200,44 @@ const Model = types
       restoreFromImageData() {
         if (!self.imageData) return;
         /** @type {HTMLCanvasElement} */
-        self.createBitmask();
         const context = self.offscreenCanvas.getContext("2d");
 
         context.putImageData(self.imageData, 0, 0);
         self.generateOutline();
         self.composeMask();
+        self.updateBBox();
+        self.imageData = null;
+      },
+
+      updateImageURL() {
+        const canvas = self.getImageSnapshotCanvas();
+        const imageURL = canvas.toDataURL("image/png");
+        self.setImageDataURL(imageURL);
+      },
+
+      redraw() {
+        if (self.bitmaskRef && self.offscreenCanvas && self.imageDataURL) {
+          requestIdleCallback(() => {
+            const ctx = self.offscreenCanvas.getContext("2d");
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            self.updateMaskImage();
+          });
+        }
+      },
+
+      setBBox(bbox) {
+        self.bbox = bbox;
+      },
+
+      setImageDataURL(url) {
+        self.imageDataURL = url;
       },
 
       generateOutline() {
-        // Keeping it here for future use.
         self.setOutline(generateMultiShapeOutline(self));
       },
 
-      createBitmask() {
+      createCanvas() {
         const width = self.parent.currentImageEntity.naturalWidth;
         const height = self.parent.currentImageEntity.naturalHeight;
 
@@ -244,20 +261,22 @@ const Model = types
       },
 
       composeMask() {
-        const ctx = self.bitmaskRef.getContext("2d");
-
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.globalCompositeOperation = "destination-atop";
-        ctx.fillStyle = self.strokeColor;
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.drawImage(self.offscreenCanvas, 0, 0);
-
-        const canvas = ctx.canvas;
-
         requestAnimationFrame(() => {
-          self.setBBox(getCanvasPixelBounds(self.offscreenCanvas, self.drawingOffset.scale));
+          const ctx = self.bitmaskRef.getContext("2d");
+
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          ctx.globalCompositeOperation = "destination-atop";
+          ctx.fillStyle = self.strokeColor;
+          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          ctx.drawImage(self.offscreenCanvas, 0, 0);
+
+          const canvas = ctx.canvas;
           self.layerRef?.batchDraw();
         });
+      },
+
+      updateBBox() {
+        self.setBBox(getCanvasPixelBounds(self.offscreenCanvas, self.drawingOffset.scale));
       },
 
       setLayerRef(ref) {
@@ -279,22 +298,19 @@ const Model = types
         self.object.annotation.pauseAutosave();
 
         const { drawingOffset: offset } = self;
-        self.createBitmask();
 
-        requestAnimationFrame(() => {
-          self.setLastPos(
-            BitmaskDrawing.begin({
-              ctx: self.offscreenCanvas.getContext("2d"),
-              x: Math.floor(x / offset.scale + offset.offsetX),
-              y: Math.floor(y / offset.scale + offset.offsetY),
-              brushSize: strokeWidth,
-              color: self.strokeColor,
-              eraserMode: type === "eraser",
-            }),
-          );
+        self.setLastPos(
+          BitmaskDrawing.begin({
+            ctx: self.offscreenCanvas.getContext("2d"),
+            x: Math.floor(x / offset.scale + offset.offsetX),
+            y: Math.floor(y / offset.scale + offset.offsetY),
+            brushSize: strokeWidth,
+            color: self.strokeColor,
+            eraserMode: type === "eraser",
+          }),
+        );
 
-          self.composeMask();
-        });
+        self.composeMask();
       },
 
       addPoint(x, y, strokeWidth, options = { erase: false }) {
@@ -311,6 +327,7 @@ const Model = types
               eraserMode: options.erase,
             }),
           );
+
           self.composeMask();
         });
       },
@@ -323,8 +340,8 @@ const Model = types
 
         self.notifyDrawingFinished();
         self.generateOutline();
-        const canvas = self.getImageSnapshotCanvas();
-        self.imageDataURL = canvas.toDataURL("image/png");
+        self.updateImageURL();
+        self.updateBBox();
 
         // ...so we run this toggled function also delayed
         annotation.autosave && setTimeout(() => annotation.autosave());
@@ -339,10 +356,10 @@ const Model = types
         }
       },
 
-      addState(state) {
-        self.states.push(state);
-      },
-
+      /**
+       * Prepared a bitmask for serialization/export
+       * @returns {HTMLCanvasElement}
+       */
       getImageSnapshotCanvas() {
         const tempCanvas = document.createElement("canvas");
         tempCanvas.width = self.offscreenCanvas.width;
