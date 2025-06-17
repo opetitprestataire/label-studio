@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Image, Layer, Line, Rect } from "react-konva";
 import { isAlive, types } from "mobx-state-tree";
 
@@ -17,6 +17,7 @@ import { RegionWrapper } from "./RegionWrapper";
 import { BitmaskDrawing, getCanvasPixelBounds } from "./BitmaskRegion/utils";
 import chroma from "chroma-js";
 import { generateMultiShapeOutline } from "./BitmaskRegion/contour";
+import { observe } from "mobx";
 
 /**
  * Bitmask masking region
@@ -144,7 +145,7 @@ const Model = types
   .actions((self) => {
     const lastPointX = -1;
     const lastPointY = -1;
-    let disposer;
+    const disposers = [];
 
     return {
       afterCreate() {
@@ -152,9 +153,24 @@ const Model = types
         self.updateMaskImage();
         self.restoreFromImageData();
 
-        disposer = self.annotation.history.onUpdate((...args) => {
-          self.redraw();
-        });
+        disposers.push(
+          observe(self, "strokeColor", () => {
+            console.log("compose mask");
+            self.composeMask();
+          }),
+        );
+        disposers.push(
+          observe(self, "imageDataURL", () => {
+            console.log("redraw");
+            self.redraw();
+          }),
+        );
+      },
+
+      beforeDestroy() {
+        for (const disposer of disposers) {
+          disposer();
+        }
       },
 
       setOutline(outline) {
@@ -183,8 +199,8 @@ const Model = types
 
             context.drawImage(image, 0, 0);
 
-            self.generateOutline();
             self.composeMask();
+            self.generateOutline();
             self.updateBBox();
           } catch (err) {
             console.log(err);
@@ -242,9 +258,7 @@ const Model = types
         const height = self.parent.currentImageEntity.naturalHeight;
 
         if (!self.bitmaskRef) {
-          self.bitmaskRef = self.bitmaskRef ?? document.createElement("canvas");
-          self.bitmaskRef.width = width;
-          self.bitmaskRef.height = height;
+          self.bitmaskRef = self.bitmaskRef ?? new OffscreenCanvas(width, height);
         }
 
         if (!self.offscreenCanvas) {
@@ -261,18 +275,18 @@ const Model = types
       },
 
       composeMask() {
-        requestAnimationFrame(() => {
-          const ctx = self.bitmaskRef.getContext("2d");
+        console.time("compose mask");
+        const ctx = self.bitmaskRef.getContext("2d");
 
-          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-          ctx.globalCompositeOperation = "destination-atop";
-          ctx.fillStyle = self.strokeColor;
-          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-          ctx.drawImage(self.offscreenCanvas, 0, 0);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.globalCompositeOperation = "destination-atop";
+        ctx.fillStyle = self.strokeColor;
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.drawImage(self.offscreenCanvas, 0, 0);
 
-          const canvas = ctx.canvas;
-          self.layerRef?.batchDraw();
-        });
+        const canvas = ctx.canvas;
+        self.layerRef?.batchDraw();
+        console.timeEnd("compose mask");
       },
 
       updateBBox() {
@@ -295,6 +309,7 @@ const Model = types
       },
 
       beginPath({ type, strokeWidth, opacity = self.opacity, x = 0, y = 0 }) {
+        console.time("begin drawing");
         self.object.annotation.pauseAutosave();
 
         const { drawingOffset: offset } = self;
@@ -311,10 +326,12 @@ const Model = types
         );
 
         self.composeMask();
+        console.timeEnd("begin drawing");
       },
 
       addPoint(x, y, strokeWidth, options = { erase: false }) {
         requestAnimationFrame(() => {
+          console.time("add point");
           const { drawingOffset: offset } = self;
           self.setLastPos(
             BitmaskDrawing.draw({
@@ -327,6 +344,7 @@ const Model = types
               eraserMode: options.erase,
             }),
           );
+          console.timeEnd("add point");
 
           self.composeMask();
         });
@@ -348,12 +366,12 @@ const Model = types
       },
 
       updateImageSize(wp, hp, sw, sh) {
-        if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
-          self.composeMask();
-          self.generateOutline();
-
-          self.needsUpdate = self.needsUpdate + 1;
-        }
+        // if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
+        //   self.composeMask();
+        //   self.generateOutline();
+        //
+        //   self.needsUpdate = self.needsUpdate + 1;
+        // }
       },
 
       /**
@@ -380,6 +398,7 @@ const Model = types
        * @return {BrushRegionResult}
        */
       serialize(options) {
+        self.updateImageURL();
         const value = { imageDataURL: self.imageDataURL };
         return self.parent.createSerializedResult(self, value);
       },
@@ -398,20 +417,28 @@ const BitmaskRegionModel = types.compose(
 
 const HtxBitmaskView = ({ item, setShapeRef }) => {
   const highlightedRegions = item.parent?.regs.filter((r) => r.highlighted);
+
   const displayHighlight = useMemo(() => {
     if (highlightedRegions?.length > 1) return false;
     return item.highlighted || item.selected;
   }, [item.highlighted, item.isDrawing, item.selected, highlightedRegions]);
 
-  useEffect(() => {
-    item.redraw();
-  }, [item.imageDataURL]);
+  const { width, height } = useMemo(() => {
+    if (!item.parent) return { width: 0, height: 0 };
+    return {
+      width: item.parent.stageWidth,
+      height: item.parent.stageHeight,
+    };
+  }, [item.parent?.stageWidth, item.parent?.stageHeight]);
 
-  useEffect(() => {
-    item.composeMask();
-  }, [item.strokeColor]);
+  // useEffect(() => {
+  //   console.log("redraw")
+  //   item.redraw();
+  // }, [item.imageDataURL]);
 
-  if (!item.parent) return null;
+  // useEffect(() => {
+  //   item.composeMask();
+  // }, [item.strokeColor]);
 
   const stage = item.parent?.stageRef;
 
@@ -422,33 +449,16 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
         name="bitmask"
         ref={item.setLayerRef}
         visible={!item.hidden}
-        imageSmoothingEnabled={item.parent.smoothing}
+        imageSmoothingEnabled={item.parent?.smoothing}
         listening={false}
       >
-        {displayHighlight && (
-          <Rect
-            fill="black"
-            x={0}
-            y={0}
-            width={item.parent.stageWidth}
-            height={item.parent.stageHeight}
-            listening={false}
-          />
-        )}
+        {displayHighlight && <Rect fill="black" x={0} y={0} width={width} height={height} listening={false} />}
 
-        {item.bitmaskRef && (
-          <Image
-            ref={item.setImageRef}
-            image={item.bitmaskRef}
-            width={item.parent.stageWidth}
-            height={item.parent.stageHeight}
-            listening={false}
-          />
-        )}
+        <Image ref={item.setImageRef} image={item.bitmaskRef} width={width} height={height} listening={false} />
       </Layer>
       <Layer listening={false} opacity={item.opacity}>
         {displayHighlight ||
-          (highlightedRegions.length > 1 &&
+          (highlightedRegions?.length > 1 &&
             item.outline.map((points, i) => (
               <Line
                 key={i}
@@ -461,6 +471,7 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
                 listening={false}
                 strokeScaleEnabled={false}
                 tension={0.2}
+                listening={false}
               />
             )))}
       </Layer>
