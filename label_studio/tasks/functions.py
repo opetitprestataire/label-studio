@@ -3,11 +3,10 @@ import logging
 import os
 import shutil
 import sys
-from itertools import batched
 
 from core.models import AsyncMigrationStatus
 from core.redis import start_job_async_or_sync
-from core.utils.common import batch
+from core.utils.common import batch, batched_iterator
 from data_export.mixins import ExportMixin
 from data_export.models import DataExport
 from data_export.serializers import ExportDataSerializer
@@ -214,7 +213,7 @@ def update_tasks_counters(queryset, from_scratch=True):
         chunk_size=settings.BATCH_SIZE
     )
 
-    for _batch in batched(tasks_iterator, settings.BATCH_SIZE):
+    for _batch in batched_iterator(tasks_iterator, settings.BATCH_SIZE):
         batch_list = []
         for task in _batch:
             task.total_annotations = task.new_total_annotations
