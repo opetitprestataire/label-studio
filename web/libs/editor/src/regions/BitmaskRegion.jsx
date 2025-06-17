@@ -78,12 +78,13 @@ const Model = types
         return isAlive(self) ? self.object : null;
       },
       get colorParts() {
-        const style = self.style || self.tag || defaultStyle;
+        const style = self.style?.strokecolor || self.tag?.strokecolor || defaultStyle?.strokecolor;
 
-        return chroma(style.strokecolor).rgb();
+        return style ? chroma(style).rgb() : [];
       },
       get strokeColor() {
-        return chroma(self.colorParts).hex();
+        const parts = self.colorParts;
+        return parts.length ? chroma(self.colorParts).hex() : "#000";
       },
       get bboxCoordsCanvas() {
         if (self.offscreenCanvas) {
@@ -275,7 +276,6 @@ const Model = types
       },
 
       composeMask() {
-        console.time("compose mask");
         const ctx = self.bitmaskRef.getContext("2d");
 
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
