@@ -564,15 +564,25 @@ export default observer(
       }
 
       if (ff.isActive(FF_BITMASK)) {
-        for (const reg of item.regs) {
-          if (reg.type !== "bitmaskregion") continue;
+        const selectedRegion = item.selectedRegions.find((r) => r.type === "bitmaskregion");
+        const currentTool = item.getToolsManager().findSelectedTool().toolName;
 
-          const hovered = isHoveringNonTransparentPixel(reg);
+        // We want to avoid weird behavior here with drawing while selecting another region
+        // so we just do nothing when clicked outside AND we have a tool selected
+        if (selectedRegion && currentTool === "BitmaskTool") {
+          return;
+        }
 
-          if (hovered && !reg.selected) {
-            reg.onClickRegion(e);
-            reg.setHighlight(false);
-          }
+        const hoveredRegion = item.regs.find((reg) => {
+          if (reg.type !== "bitmaskregion") return false;
+          if (reg.selected) return false;
+
+          return isHoveringNonTransparentPixel(reg);
+        });
+
+        if (hoveredRegion) {
+          hoveredRegion.onClickRegion(e);
+          return;
         }
       }
       return item.event("click", evt, x, y);
@@ -795,7 +805,6 @@ export default observer(
 
       // Handle bitmask hover
       if (!e.evt.ctrlKey && !e.evt.shiftKey && ff.isActive(FF_BITMASK)) {
-        return; // for future use
         if (item.regs.some((r) => r.isDrawing)) return;
         requestAnimationFrame(() => {
           for (const region of item.regs) {
@@ -809,7 +818,7 @@ export default observer(
             const hovered = isHoveringNonTransparentPixel(region);
 
             if (hovered) {
-              region.setHighlight(true);
+              // region.setHighlight(true);
               region.updateCursor(true);
               break;
             }

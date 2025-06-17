@@ -176,7 +176,7 @@ const Model = types
             self.generateOutline();
             self.composeMask();
           } catch (err) {
-            console.log(err);
+            onsole.log(err);
           }
         }
         renderDataURL();
@@ -363,9 +363,8 @@ const BitmaskRegionModel = types.compose(
 );
 
 const HtxBitmaskView = ({ item, setShapeRef }) => {
-  const highlightedRegions = item.parent.regs.filter((r) => r.highlighted);
+  const highlightedRegions = item.parent?.regs.filter((r) => r.highlighted);
   const displayHighlight = useMemo(() => {
-    console.log(highlightedRegions);
     if (highlightedRegions.length > 1) return false;
     return item.highlighted || item.selected;
   }, [item.highlighted, item.isDrawing, item.selected, highlightedRegions]);

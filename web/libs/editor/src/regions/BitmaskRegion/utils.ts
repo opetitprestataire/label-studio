@@ -86,26 +86,36 @@ export const BitmaskDrawing = {
 };
 
 export function isHoveringNonTransparentPixel(item: any) {
+  if (!item?.layerRef || !item?.offscreenCanvas || !item?.imageRef) {
+    return false;
+  }
+
   const stage = item.layerRef.getStage();
-  const pointer = stage.getPointerPosition();
+  const pointer = stage?.getPointerPosition();
   const ctx = item.offscreenCanvas.getContext("2d");
-  if (!pointer) return false;
+  
+  if (!pointer || !ctx) return false;
 
-  // Convert global pointer to image-local coordinates
-  const { drawingOffset: offset } = item;
-  const transform = item.imageRef.getAbsoluteTransform().copy().invert();
-  const localPos = transform.point(pointer);
+  try {
+    // Convert global pointer to image-local coordinates
+    const { drawingOffset: offset } = item;
+    const transform = item.imageRef.getAbsoluteTransform().copy().invert();
+    const localPos = transform.point(pointer);
 
-  const { width, height } = item.offscreenCanvas;
+    const { width, height } = item.offscreenCanvas;
 
-  // Convert to pixel coords in the canvas backing the image
-  const x = Math.floor(localPos.x / offset.scale + offset.offsetX);
-  const y = Math.floor(localPos.y / offset.scale + offset.offsetX);
+    // Convert to pixel coords in the canvas backing the image
+    const x = Math.floor(localPos.x / offset.scale + offset.offsetX);
+    const y = Math.floor(localPos.y / offset.scale + offset.offsetY);
 
-  if (x < 0 || y < 0 || x >= width || y >= height) return false;
+    if (x < 0 || y < 0 || x >= width || y >= height) return false;
 
-  const alpha = ctx.getImageData(x, y, 1, 1).data[3];
-  return alpha > 0;
+    const alpha = ctx.getImageData(x, y, 1, 1).data[3];
+    return alpha > 0;
+  } catch (error) {
+    console.warn('Error checking pixel transparency:', error);
+    return false;
+  }
 }
 
 export function imageDataToCanvas(imageData: ImageData): HTMLCanvasElement {
