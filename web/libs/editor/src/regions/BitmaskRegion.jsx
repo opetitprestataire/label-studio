@@ -83,8 +83,7 @@ const Model = types
         return style ? chroma(style).rgb() : [];
       },
       get strokeColor() {
-        const parts = self.colorParts;
-        return parts.length ? chroma(self.colorParts).hex() : "#000";
+        return chroma(self.colorParts).hex();
       },
       get bboxCoordsCanvas() {
         if (self.offscreenCanvas) {
@@ -430,15 +429,6 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
       height: item.parent.stageHeight,
     };
   }, [item.parent?.stageWidth, item.parent?.stageHeight]);
-
-  // useEffect(() => {
-  //   console.log("redraw")
-  //   item.redraw();
-  // }, [item.imageDataURL]);
-
-  // useEffect(() => {
-  //   item.composeMask();
-  // }, [item.strokeColor]);
 
   const stage = item.parent?.stageRef;
 
