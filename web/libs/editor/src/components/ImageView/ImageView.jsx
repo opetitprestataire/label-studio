@@ -563,6 +563,10 @@ export default observer(
         }
       }
 
+      // We can only handle Bitmask selection here because the way it works -- it overlays an
+      // entire stage with a single image that is not click-through, and there is no particular
+      // shape we can click on. Here we're relying on cursor position and non-transparent pixels
+      // of the mask to detect cursor-region collision.
       if (ff.isActive(FF_BITMASK)) {
         const selectedRegion = item.selectedRegions.find((r) => r.type === "bitmaskregion");
         const currentTool = item.getToolsManager().findSelectedTool().toolName;
@@ -803,7 +807,9 @@ export default observer(
         item.event("mousemove", e, e.evt.offsetX, e.evt.offsetY);
       }
 
-      // Handle bitmask hover
+      // Handle Bitmask hover
+      // We can only do it here due to Bitmask implementation. See `self.handleOnClick` method
+      // for a full explanation.
       if (!e.evt.ctrlKey && !e.evt.shiftKey && ff.isActive(FF_BITMASK)) {
         if (item.regs.some((r) => r.isDrawing)) return;
         requestAnimationFrame(() => {
