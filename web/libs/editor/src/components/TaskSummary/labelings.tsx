@@ -11,7 +11,7 @@ const resultValue = (result: RawResult) => {
   return result.value[result.type];
 };
 
-const LabelingChip = ({ children }: { children: string }) => {
+const LabelingChip = ({ children }: { children: string | number }) => {
   return (
     <span
       className={cnm(
@@ -95,7 +95,8 @@ export const renderers: Record<string, RendererType> = {
     if (!results.length) return "-";
     if (control.per_region) return null;
 
-    const values: string[] = resultValue(results[0]).map((item: string[]) => item.join(control.pathseparator ?? " / "));
+    // @todo use `pathseparator` from control
+    const values: string[] = resultValue(results[0]).map((item: string[]) => item.join(" / "));
 
     return (
       <span className="flex gap-2 flex-wrap">
@@ -109,16 +110,17 @@ export const renderers: Record<string, RendererType> = {
     if (!results.length) return "-";
     if (control.per_region) return null;
 
-    const texts = resultValue(results[0]);
+    const texts: string[] = resultValue(results[0]);
 
     if (!texts) return null;
 
+    // biome-ignore lint/suspicious/noArrayIndexKey: this piece won't be rerendered with updated data anyway and texts can be huge
     return <div className="text-ellipsis line-clamp-6">{texts.map((text, i) => <p key={i}>{text}</p>)}</div>;
   },
   ranker: (results) => {
     if (!results.length) return "-";
 
-    const value = resultValue(results[0]);
+    const value: Record<string, number[]> = resultValue(results[0]);
 
     return Object.entries(value).map(([bucket, items]) => {
       return (

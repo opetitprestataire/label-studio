@@ -43,7 +43,7 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
   // place all controls with the same to_name together
   const grouped = Object.groupBy(controlsList, (control) => control.to_name);
   // show global classifications first, then labels, then per-regions
-  const controls = Object.entries(grouped).flatMap(([_, controls]) => sortControls(controls!));
+  const controls = Object.entries(grouped).flatMap(([_, controls]) => sortControls(controls ?? []));
 
   const objectTags: ObjectTagEntry[] = allTags.filter(
     ([_, tag]) => tag.isObjectTag && tag.value.includes("$"),
@@ -61,6 +61,7 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
         value:
           "parsedValue" in object
             ? object.parsedValue
+            // @ts-expect-error dataObj and _url are very specific and not added to types
             : (object.dataObj ?? object._url ?? object._value ?? object.value),
       },
     ]),
