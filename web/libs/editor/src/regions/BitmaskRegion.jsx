@@ -28,11 +28,17 @@ const Model = types
     type: "bitmaskregion",
     object: types.late(() => types.reference(ImageModel)),
 
-    /** @type {ImageData} */
+    /**
+     * Used for fast cloning the region
+     * @type {ImageData}
+     */
     imageData: types.frozen(),
 
-    /** @type {string} */
-    imageDataURL: types.frozen(),
+    /**
+     * Used to restore an image from the result
+     * @type {string}
+     */
+    imageDataURL: types.optional(types.string, ""),
   })
   .volatile(() => ({
     /**
@@ -128,8 +134,7 @@ const Model = types
       },
 
       getImageData() {
-        /** @type {HTMLCanvasElement} */
-        const canvas = this.bitmaskRef;
+        const canvas = self.bitmaskRef;
         const context = canvas.getContext("2d");
 
         return context.getImageData(0, 0, canvas.width, canvas.height);
@@ -142,6 +147,7 @@ const Model = types
 
     return {
       afterCreate() {
+        console.log("create");
         self.updateMaskImage();
         self.restoreFromImageData();
       },
@@ -180,6 +186,14 @@ const Model = types
           }
         }
         renderDataURL();
+      },
+
+      redraw() {
+        if (self.offscreenCanvas && self.imageDataURL) {
+          const ctx = self.offscreenCanvas.getContext("2d");
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          self.updateMaskImage();
+        }
       },
 
       setBBox(bbox) {
@@ -309,6 +323,8 @@ const Model = types
 
         self.notifyDrawingFinished();
         self.generateOutline();
+        const canvas = self.getImageSnapshotCanvas();
+        self.imageDataURL = canvas.toDataURL("image/png");
 
         // ...so we run this toggled function also delayed
         annotation.autosave && setTimeout(() => annotation.autosave());
@@ -327,12 +343,7 @@ const Model = types
         self.states.push(state);
       },
 
-      /**
-       * @param {object} options
-       * @param {boolean} [options.fast]
-       * @return {BrushRegionResult}
-       */
-      serialize(options) {
+      getImageSnapshotCanvas() {
         const tempCanvas = document.createElement("canvas");
         tempCanvas.width = self.offscreenCanvas.width;
         tempCanvas.height = self.offscreenCanvas.height;
@@ -343,10 +354,16 @@ const Model = types
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.drawImage(self.offscreenCanvas, 0, 0);
+        return tempCanvas;
+      },
 
-        const object = self.object;
-        const value = { imageDataURL: tempCanvas.toDataURL("image/png") };
-
+      /**
+       * @param {object} options
+       * @param {boolean} [options.fast]
+       * @return {BrushRegionResult}
+       */
+      serialize(options) {
+        const value = { imageDataURL: self.imageDataURL };
         return self.parent.createSerializedResult(self, value);
       },
     };
@@ -365,9 +382,13 @@ const BitmaskRegionModel = types.compose(
 const HtxBitmaskView = ({ item, setShapeRef }) => {
   const highlightedRegions = item.parent?.regs.filter((r) => r.highlighted);
   const displayHighlight = useMemo(() => {
-    if (highlightedRegions.length > 1) return false;
+    if (highlightedRegions?.length > 1) return false;
     return item.highlighted || item.selected;
   }, [item.highlighted, item.isDrawing, item.selected, highlightedRegions]);
+
+  useEffect(() => {
+    item.redraw();
+  }, [item.imageDataURL]);
 
   useEffect(() => {
     item.composeMask();
