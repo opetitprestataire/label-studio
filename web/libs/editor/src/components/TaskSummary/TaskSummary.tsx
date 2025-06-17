@@ -29,9 +29,6 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
     }
   };
 
-  // Check if agreement should be shown based on project settings
-  const showAgreement = annotationStore.store.project?.review_settings?.show_agreement_to_reviewers ?? true;
-
   const controlTags: [string, MSTControlTag][] = allTags.filter(([_, control]) => control.isControlTag) as [
     string,
     MSTControlTag,
@@ -70,7 +67,8 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
   );
 
   const values = [
-    ...(showAgreement && typeof task?.agreement === "number"
+    // if agreement is unavailable for current user it's undefined
+    ...(typeof task?.agreement === "number"
       ? [
           {
             title: "Agreement",
