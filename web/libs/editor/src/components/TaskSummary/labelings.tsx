@@ -11,6 +11,19 @@ const resultValue = (result: RawResult) => {
   return result.value[result.type];
 };
 
+const LabelingChip = ({ children }: { children: string }) => {
+  return (
+    <span
+      className={cnm(
+        "inline-block whitespace-nowrap rounded-4 px-2",
+        "bg-primary-background border border-primary-emphasis text-accent-grape-dark",
+      )}
+    >
+      {children}
+    </span>
+  );
+};
+
 const LabelsRenderer: RendererType = (results, control) => {
   const labels = results.flatMap(resultValue).flat();
 
@@ -25,6 +38,7 @@ const LabelsRenderer: RendererType = (results, control) => {
         .map(([label, data]) => {
           return (
             <span
+              key={label}
               className="inline-block px-2 whitespace-nowrap rounded-4"
               style={{
                 borderLeft: `4px solid ${data.border}`,
@@ -51,29 +65,42 @@ export const renderers: Record<string, RendererType> = {
   timeserieslabels: LabelsRenderer,
   paragraphlabels: LabelsRenderer,
   timelinelabels: LabelsRenderer,
-  number: (results) => {
+  datetime: (results, control) => {
     if (!results.length) return "-";
+    if (control.per_region) return null;
+
+    return resultValue(results[0]);
+  },
+  number: (results, control) => {
+    if (!results.length) return "-";
+    if (control.per_region) return null;
 
     return resultValue(results[0]);
   },
   choices: (results) => {
     const choices = results.flatMap(resultValue).flat();
-    const unique = [...new Set(choices)];
+    const unique: string[] = [...new Set(choices)];
 
     if (!choices.length) return null;
 
     return (
       <span className="flex gap-2 flex-wrap">
         {unique.map((choice) => (
-          <span
-            key={choice}
-            className={cnm(
-              "inline-block whitespace-nowrap rounded-4 px-2",
-              "bg-primary-background border border-primary-emphasis text-accent-grape-dark",
-            )}
-          >
-            {choice}
-          </span>
+          <LabelingChip key={choice}>{choice}</LabelingChip>
+        ))}
+      </span>
+    );
+  },
+  taxonomy: (results, control) => {
+    if (!results.length) return "-";
+    if (control.per_region) return null;
+
+    const values: string[] = resultValue(results[0]).map((item: string[]) => item.join(control.pathseparator ?? " / "));
+
+    return (
+      <span className="flex gap-2 flex-wrap">
+        {values.map((value) => (
+          <LabelingChip key={value}>{value}</LabelingChip>
         ))}
       </span>
     );
@@ -82,11 +109,24 @@ export const renderers: Record<string, RendererType> = {
     if (!results.length) return "-";
     if (control.per_region) return null;
 
+    const texts = resultValue(results[0]);
+
+    if (!texts) return null;
+
+    return <div className="text-ellipsis line-clamp-6">{texts.map((text, i) => <p key={i}>{text}</p>)}</div>;
+  },
+  ranker: (results) => {
+    if (!results.length) return "-";
+
     const value = resultValue(results[0]);
 
-    if (!value) return null;
-
-    return <span className="text-ellipsis line-clamp-6">{value}</span>;
+    return Object.entries(value).map(([bucket, items]) => {
+      return (
+        <p key={bucket}>
+          <b>{bucket}</b>: <span className="inline-flex gap-2 flex-wrap">{items.map(item => <LabelingChip key={item}>{item}</LabelingChip>)}</span>
+        </p>
+      );
+    });
   },
   rating: (results, control) => {
     if (!results.length) return "-";
