@@ -134,7 +134,7 @@ export function isHoveringNonTransparentPixel(item: any) {
  * Calculates the bounding box of non-transparent pixels in a canvas.
  * This function scans the canvas pixel by pixel to find the minimum rectangle
  * that contains all visible (non-transparent) pixels.
- * 
+ *
  * @param canvas - The HTML canvas element to analyze
  * @param scale - Scale factor to apply to the returned coordinates
  * @returns {Object|null} An object containing the bounds of non-transparent pixels:
