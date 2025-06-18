@@ -1,5 +1,5 @@
 import { Component, createRef, forwardRef, Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
-import { Group, Layer, Line, Rect, Stage, Image as KonvaImage, FastLayer } from "react-konva";
+import { Group, Layer, Line, Rect, Stage, Image as KonvaImage, FastLayer, Circle } from "react-konva";
 import { observer } from "mobx-react";
 import { getEnv, getRoot, isAlive } from "mobx-state-tree";
 
@@ -35,11 +35,15 @@ import { Image } from "./Image";
 import { isHoveringNonTransparentPixel } from "../../regions/BitmaskRegion/utils";
 import { ff } from "@humansignal/core";
 import { FF_BITMASK } from "@humansignal/core/lib/utils/feature-flags";
+import { atom } from "jotai";
+import { JotaiStore } from "../../utils/JotaiStore";
 
 Konva.showWarnings = false;
 
 const hotkeys = Hotkey("Image");
 const imgDefaultProps = {};
+const cursorPositionAtom = atom([0, 0]);
+const cursorVisibilityAtom = atom(false);
 
 if (isFF(FF_LSDV_4711)) imgDefaultProps.crossOrigin = "anonymous";
 
@@ -448,8 +452,9 @@ const GridLayer = ({ scale, naturalWidth, naturalHeight, stageWidth, stageHeight
   const scaling = useMemo(() => {
     return Math.min(naturalWidth / stageWidth, naturalHeight / stageHeight);
   }, [naturalWidth, naturalHeight, stageWidth, stageHeight]);
+  const imageSmallerThanStage = naturalWidth < stageWidth || naturalHeight < stageHeight;
 
-  const step = 1 / scaling; // image pixel
+  const step = 1 / (imageSmallerThanStage ? 1 : scaling); // image pixel
 
   const { verticalPoints, horizontalPoints } = useMemo(() => {
     const vPts = [];
@@ -783,6 +788,7 @@ export default observer(
       item.freezeHistory();
 
       this.updateCrosshair(e);
+      this.updateCursor(e);
 
       const isMouseWheelClick = e.evt && e.evt.buttons === 4;
       const isDragging = e.evt && e.evt.buttons === 1;
@@ -838,6 +844,11 @@ export default observer(
         const { x, y } = e.currentTarget.getPointerPosition();
         this.crosshairRef.current.updatePointer(...this.props.item.fixZoomedCoords([x, y]));
       }
+    };
+
+    updateCursor = (e) => {
+      const { x, y } = e.currentTarget.getPointerPosition();
+      JotaiStore.set(cursorPositionAtom, [x, y]);
     };
 
     handleError = () => {
@@ -1137,11 +1148,13 @@ export default observer(
                   if (this.crosshairRef.current) {
                     this.crosshairRef.current.updateVisibility(true);
                   }
+                  JotaiStore.set(cursorVisibilityAtom, true);
                 }}
                 onMouseLeave={(e) => {
                   if (this.crosshairRef.current) {
                     this.crosshairRef.current.updateVisibility(false);
                   }
+                  JotaiStore.set(cursorVisibilityAtom, false);
                   const { width: stageWidth, height: stageHeight } = item.canvasSize;
                   const { offsetX: mouseposX, offsetY: mouseposY } = e.evt;
                   const newEvent = { ...e };
@@ -1232,14 +1245,15 @@ const EntireStage = observer(
           item.setStageRef(ref);
         }}
         className={[styles["image-element"], ...imagePositionClassnames].join(" ")}
+        style={{ cursor: "none" }}
         width={size.width}
         height={size.height}
         scaleX={item.zoomScale}
         scaleY={item.zoomScale}
         x={position.x}
         y={position.y}
-        offsetX={item.stageTranslate.x}
-        offsetY={item.stageTranslate.y}
+        // offsetX={item.stageTranslate.x}
+        // offsetY={item.stageTranslate.y}
         rotation={item.rotation}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
@@ -1268,16 +1282,61 @@ const ImageLayer = observer(({ item }) => {
       img.height = Number.parseInt(ent.naturalHeight);
       return img;
     }
-
     return null;
   }, [imageEntity?.downloaded]);
+
+  const { width, height } = useMemo(() => {
+    return {
+      width: Math.min(imageEntity.naturalWidth, item.stageWidth),
+      height: Math.min(imageEntity.naturalHeight, item.stageHeight),
+    };
+  }, [imageEntity.naturalWidth, imageEntity.naturalHeight, item.stageWidth, item.stageHeight]);
 
   return image ? (
     <>
       <Layer imageSmoothingEnabled={item.smoothing}>
-        <KonvaImage image={image} width={item.stageWidth} height={item.stageHeight} listening={false} />
+        <KonvaImage image={image} width={width} height={height} listening={false} />
       </Layer>
     </>
+  ) : null;
+});
+
+const CursorView = observer(({ item, tool }) => {
+  const [[x, y], setCursorPosition] = useState([0, 0]);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!item.stageRef) return;
+    const stage = item.stageRef;
+    const onMouseMove = (e) => {
+      const { x, y } = stage.getPointerPosition();
+      const { x: deltaX, y: deltaY } = stage.position();
+      const { x: scaleX, y: scaleY } = stage.scale();
+      setCursorPosition([(x - deltaX) / scaleX, (y - deltaY) / scaleY]);
+    };
+    const onMouseEnter = () => {
+      setVisible(true);
+    };
+    const onMouseLeave = () => {
+      setVisible(false);
+    };
+
+    stage.on("mousemove", onMouseMove);
+    stage.on("mouseenter", onMouseEnter);
+    stage.on("mouseleave", onMouseLeave);
+
+    return () => {
+      stage.off("mousemove", onMouseMove);
+      stage.off("mouseenter", onMouseEnter);
+      stage.off("mouseleave", onMouseLeave);
+    };
+  }, [item.stageRef]);
+
+  return visible ? (
+    <Layer>
+      <Circle x={x} y={y} radius={tool.strokeWidth + 2} stroke="black" strokeWidth={3} strokeScaleEnabled={false} />
+      <Circle x={x} y={y} radius={tool.strokeWidth + 2} stroke="white" strokeWidth={1} strokeScaleEnabled={false} />
+    </Layer>
   ) : null;
 });
 
@@ -1288,6 +1347,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
   const regions = [...item.regs].sort((r) => (r.highlighted || r.selected ? 1 : 0));
   const paginationEnabled = !!item.isMultiItem;
   const wrapperClasses = [styles.wrapperComponent, item.images.length > 1 ? styles.withGallery : styles.wrapper];
+  const tool = item.getToolsManager().findSelectedTool();
 
   if (paginationEnabled) wrapperClasses.push(styles.withPagination);
 
@@ -1301,6 +1361,8 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
     suggestedBrush: suggestedBrushRegions,
     suggestedShape: suggestedShapeRegions,
   });
+
+  console.log(item.zoomScale);
 
   return (
     <>
@@ -1343,6 +1405,10 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
           width={isFF(FF_ZOOM_OPTIM) ? item.containerWidth : item.stageWidth}
           height={isFF(FF_ZOOM_OPTIM) ? item.containerHeight : item.stageHeight}
         />
+      )}
+
+      {tool && (tool.toolName === "BitmaskTool" || tool.toolName === "BitmaskEraserTool") && (
+        <CursorView item={item} tool={tool} />
       )}
     </>
   );

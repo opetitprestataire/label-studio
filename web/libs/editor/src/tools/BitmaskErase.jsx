@@ -8,7 +8,7 @@ import { DrawingTool } from "../mixins/DrawingTool";
 import { IconEraserTool } from "@humansignal/icons";
 import { Tool } from "../components/Toolbar/Tool";
 import { Range } from "../common/Range/Range";
-import { BrushCursorMixin } from "./Brush";
+import { BitmaskCursorMixin } from "./Bitmask";
 
 const MIN_SIZE = 1;
 const MAX_SIZE = 50;
@@ -167,6 +167,6 @@ const _Tool = types
     };
   });
 
-const BitmaskErase = types.compose(_Tool.name, ToolMixin, BaseTool, DrawingTool, BrushCursorMixin, _Tool);
+const BitmaskErase = types.compose(_Tool.name, ToolMixin, BaseTool, DrawingTool, BitmaskCursorMixin, _Tool);
 
 export { BitmaskErase };

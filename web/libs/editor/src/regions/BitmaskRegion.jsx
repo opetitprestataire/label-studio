@@ -254,8 +254,9 @@ const Model = types
       },
 
       createCanvas() {
-        const width = self.parent.currentImageEntity.naturalWidth;
-        const height = self.parent.currentImageEntity.naturalHeight;
+        const ent = self.parent.currentImageEntity;
+        const width = Math.max(ent.naturalWidth, self.parent.stageWidth);
+        const height = Math.max(ent.naturalHeight, self.parent.stageHeight);
 
         if (!self.bitmaskRef) {
           self.bitmaskRef = self.bitmaskRef ?? new OffscreenCanvas(width, height);
@@ -276,21 +277,19 @@ const Model = types
 
       composeMask() {
         const ctx = self.bitmaskRef.getContext("2d");
-        
+
         // Only clear if we're not in the middle of drawing
         if (!self.isDrawing) {
           ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         }
-        
+
         ctx.globalCompositeOperation = "destination-atop";
         ctx.fillStyle = self.strokeColor;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.drawImage(self.offscreenCanvas, 0, 0);
 
-        // Only batch draw if we're not in the middle of drawing
-        if (!self.isDrawing) {
-          self.layerRef?.batchDraw();
-        }
+        // Always batch draw to ensure visual updates
+        self.layerRef?.batchDraw();
         console.timeEnd("compose mask");
       },
 
@@ -359,7 +358,8 @@ const Model = types
         );
 
         // Only compose mask every few points or on significant changes
-        if (!self._lastComposeTime || Date.now() - self._lastComposeTime > 16) { // ~60fps
+        if (!self._lastComposeTime || Date.now() - self._lastComposeTime > 16) {
+          // ~60fps
           self.composeMask();
           self._lastComposeTime = Date.now();
         }
@@ -381,12 +381,12 @@ const Model = types
       },
 
       updateImageSize(wp, hp, sw, sh) {
-        // if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
-        //   self.composeMask();
-        //   self.generateOutline();
-        //
-        //   self.needsUpdate = self.needsUpdate + 1;
-        // }
+        if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
+          self.composeMask();
+          self.generateOutline();
+
+          self.needsUpdate = self.needsUpdate + 1;
+        }
       },
 
       /**
@@ -438,13 +438,19 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
     return item.highlighted || item.selected;
   }, [item.highlighted, item.isDrawing, item.selected, highlightedRegions]);
 
+  const ent = item.parent?.currentImageEntity;
   const { width, height } = useMemo(() => {
     if (!item.parent) return { width: 0, height: 0 };
+    const ent = item.parent.currentImageEntity;
+    const { stageWidth: w, stageHeight: h } = item.parent;
+    const imageSmallerThanStage = ent.naturalWidth < w || ent.naturalHeight < h;
+    const scale = imageSmallerThanStage ? 1 : Math.min(ent.naturalWidth / w, ent.naturalHeight / h);
+
     return {
-      width: item.parent.stageWidth,
-      height: item.parent.stageHeight,
+      width: ent.naturalWidth / scale,
+      height: ent.naturalHeight / scale,
     };
-  }, [item.parent?.stageWidth, item.parent?.stageHeight]);
+  }, [item.parent?.stageWidth, item.parent?.stageHeight, ent?.naturalWidth, ent?.naturalHeight]);
 
   const stage = item.parent?.stageRef;
 

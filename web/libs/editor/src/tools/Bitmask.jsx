@@ -3,7 +3,6 @@ import { types } from "mobx-state-tree";
 
 import BaseTool from "./Base";
 import ToolMixin from "../mixins/Tool";
-import Canvas from "../utils/canvas";
 import { clamp, findClosestParent } from "../utils/utilities";
 import { DrawingTool } from "../mixins/DrawingTool";
 import { Tool } from "../components/Toolbar/Tool";
@@ -149,13 +148,10 @@ const _Tool = types
         brush.setDrawing(false);
         brush.endPath();
         if (isFirstBrushStroke) {
-          setTimeout(() => {
-            const newBrush = self.commitDrawingRegion();
-
-            self.obj.annotation.selectArea(newBrush);
-            self.annotation.history.unfreeze();
-            self.obj.annotation.setIsDrawing(false);
-          });
+          const newBrush = self.commitDrawingRegion();
+          self.obj.annotation.selectArea(newBrush);
+          self.annotation.history.unfreeze();
+          self.obj.annotation.setIsDrawing(false);
         } else {
           self.annotation.history.unfreeze();
           self.obj.annotation.setIsDrawing(false);
@@ -212,10 +208,12 @@ const _Tool = types
           self.mode = "drawing";
           isFirstBrushStroke = true;
           self.obj.annotation.setIsDrawing(true);
+          console.time("Creating new drawing region");
           brush = self.createDrawingRegion({
             strokeWidth: self.strokeWidth || c.strokeWidth,
             imageData: null,
           });
+          console.timeEnd("Creating new drawing region");
         }
 
         brush.beginPath({
@@ -233,7 +231,7 @@ const BitmaskCursorMixin = types
   .views((self) => ({
     get cursorStyleRule() {
       const val = self.strokeWidth;
-      return Canvas.createBrushSizeCircleCursor(val);
+      return "none";
     },
   }))
   .actions((self) => ({
