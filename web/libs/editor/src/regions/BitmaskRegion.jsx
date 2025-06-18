@@ -18,6 +18,7 @@ import { BitmaskDrawing, getCanvasPixelBounds } from "./BitmaskRegion/utils";
 import chroma from "chroma-js";
 import { generateMultiShapeOutline } from "./BitmaskRegion/contour";
 import { observe } from "mobx";
+import { LabelOnMask } from "../components/ImageView/LabelOnRegion";
 
 /**
  * Bitmask masking region
@@ -403,6 +404,7 @@ const Model = types
         if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
           self.composeMask();
           self.generateOutline();
+          self.updateBBox();
 
           self.needsUpdate = self.needsUpdate + 1;
         }
@@ -497,6 +499,16 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
                 listening={false}
               />
             )))}
+      </Layer>
+      <Layer
+        id={`${item.cleanId}_labels`}
+        ref={(ref) => {
+          if (ref) {
+            ref.canvas._canvas.style.opacity = item.opacity;
+          }
+        }}
+      >
+        <LabelOnMask item={item} color={item.strokeColor} />
       </Layer>
     </RegionWrapper>
   );
