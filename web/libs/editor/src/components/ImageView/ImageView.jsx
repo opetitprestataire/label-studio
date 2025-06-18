@@ -46,21 +46,29 @@ if (isFF(FF_LSDV_4711)) imgDefaultProps.crossOrigin = "anonymous";
 const splitRegions = (regions) => {
   const brushRegions = [];
   const shapeRegions = [];
+  const bitmaskRegions = [];
   const l = regions.length;
   let i = 0;
 
   for (i; i < l; i++) {
     const region = regions[i];
 
-    if (region.type === "brushregion" || region.type === "bitmaskregion") {
-      brushRegions.push(region);
-    } else {
-      shapeRegions.push(region);
+    switch (region.type) {
+      case "brushregion":
+        brushRegions.push(region);
+        break;
+      case "bitmaskregion":
+        bitmaskRegions.push(region);
+        break;
+      default:
+        shapeRegions.push(region);
+        break;
     }
   }
 
   return {
     brushRegions,
+    bitmaskRegions,
     shapeRegions,
   };
 };
@@ -69,27 +77,36 @@ const Region = memo(({ region, showSelected = false }) => {
   return useObserver(() => Tree.renderItem(region, region.annotation, true));
 });
 
-const RegionsLayer = memo(({ regions, name, useLayers, showSelected = false }) => {
+const RegionsLayer = memo(({ regions, name, useLayers, showSelected = false, smoothing = true }) => {
   const content = regions.map((el) => <Region key={`region-${el.id}`} region={el} showSelected={showSelected} />);
 
-  return useLayers === false ? content : <Layer name={name}>{content}</Layer>;
-});
-
-const Regions = memo(({ regions, useLayers = true, chunkSize = 15, suggestion = false, showSelected = false }) => {
-  return (
-    <ImageViewProvider value={{ suggestion }}>
-      {(chunkSize ? chunks(regions, chunkSize) : regions).map((chunk, i) => (
-        <RegionsLayer
-          key={`chunk-${i}`}
-          name={`chunk-${i}`}
-          regions={chunk}
-          useLayers={useLayers}
-          showSelected={showSelected}
-        />
-      ))}
-    </ImageViewProvider>
+  return useLayers === false ? (
+    content
+  ) : (
+    <Layer name={name} imageSmoothingEnabled={smoothing}>
+      {content}
+    </Layer>
   );
 });
+
+const Regions = memo(
+  ({ regions, useLayers = true, chunkSize = 15, suggestion = false, showSelected = false, smoothing = true }) => {
+    return (
+      <ImageViewProvider value={{ suggestion }}>
+        {(chunkSize ? chunks(regions, chunkSize) : regions).map((chunk, i) => (
+          <RegionsLayer
+            key={`chunk-${i}`}
+            name={`chunk-${i}`}
+            regions={chunk}
+            useLayers={useLayers}
+            showSelected={showSelected}
+            smoothing={smoothing}
+          />
+        ))}
+      </ImageViewProvider>
+    );
+  },
+);
 
 const DrawingRegion = observer(({ item }) => {
   const { drawingRegion } = item;
@@ -97,10 +114,14 @@ const DrawingRegion = observer(({ item }) => {
   if (!drawingRegion) return null;
   if (item.multiImage && item.currentImage !== drawingRegion.item_index) return null;
 
-  const isBrush = ["brushregion", "bitmaskregion"].includes(drawingRegion.type);
+  const isBrush = ["brushregion"].includes(drawingRegion.type);
   const Wrapper = drawingRegion && isBrush ? Fragment : Layer;
 
-  return <Wrapper>{drawingRegion ? <Region key={"drawing"} region={drawingRegion} /> : drawingRegion}</Wrapper>;
+  return (
+    <Wrapper imageSmoothingEnabled={item.smoothing}>
+      {drawingRegion ? <Region key={"drawing"} region={drawingRegion} /> : drawingRegion}
+    </Wrapper>
+  );
 });
 
 const SELECTION_COLOR = "#40A9FF";
@@ -1333,6 +1354,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
   if (!isAlive(item)) return null;
   if (!store.task || !item.currentSrc) return null;
 
+  // Keep selected or highlighted region on top
   const regions = [...item.regs].sort((r) => (r.highlighted || r.selected ? 1 : 0));
   const paginationEnabled = !!item.isMultiItem;
   const wrapperClasses = [styles.wrapperComponent, item.images.length > 1 ? styles.withGallery : styles.wrapper];
@@ -1340,14 +1362,20 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
 
   if (paginationEnabled) wrapperClasses.push(styles.withPagination);
 
-  const { brushRegions, shapeRegions } = splitRegions(regions);
+  const { brushRegions, shapeRegions, bitmaskRegions } = splitRegions(regions);
 
-  const { brushRegions: suggestedBrushRegions, shapeRegions: suggestedShapeRegions } = splitRegions(item.suggestions);
+  const {
+    brushRegions: suggestedBrushRegions,
+    shapeRegions: suggestedShapeRegions,
+    bitmaskRegions: suggestedBitmaskRegions,
+  } = splitRegions(item.suggestions);
 
   const renderableRegions = Object.entries({
     brush: brushRegions,
     shape: shapeRegions,
+    bitmask: bitmaskRegions,
     suggestedBrush: suggestedBrushRegions,
+    suggestedBismask: suggestedBitmaskRegions,
     suggestedShape: suggestedShapeRegions,
   });
 
@@ -1369,6 +1397,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
             regions={list}
             useLayers={isBrush === false}
             suggestion={isSuggestion}
+            smoothing={item.smoothing}
           />
         ) : (
           <Fragment key={groupName} />

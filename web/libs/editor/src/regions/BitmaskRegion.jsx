@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Image, Layer, Line, Rect } from "react-konva";
+import { Group, Image, Line, Rect } from "react-konva";
 import { isAlive, types } from "mobx-state-tree";
 
 import Registry from "../core/Registry";
@@ -200,14 +200,18 @@ const Model = types
 
             context.drawImage(image, 0, 0);
 
-            self.composeMask();
-            self.generateOutline();
-            self.updateBBox();
+            self.finalizeRegion();
           } catch (err) {
             console.log(err);
           }
         }
         renderDataURL();
+      },
+
+      finalizeRegion() {
+        self.composeMask();
+        self.generateOutline();
+        self.updateBBox();
       },
 
       updateImageURL() {
@@ -290,11 +294,14 @@ const Model = types
         self.setBBox(getCanvasPixelBounds(self.offscreenCanvas, self.scale));
       },
 
+      /**
+       * @param {Group} ref
+       */
       setLayerRef(ref) {
-        if (ref) {
-          ref.canvas._canvas.style.opacity = self.opacity;
-          self.layerRef = ref;
-        }
+        if (!ref) return;
+
+        const layer = ref.getParent();
+        self.layerRef = layer;
       },
 
       setImageRef(ref) {
@@ -362,23 +369,24 @@ const Model = types
       endPath() {
         const { annotation } = self.object;
 
-        // will resume in the next tick...
-        // annotation.startAutosave();
+        // we finalize the region and re-compute imageDataURL
+        // before enabling autosave to ensure that it's available
+        // for the draft at all times
+        self.finalizeRegion();
+        self.updateImageURL();
 
-        // self.generateOutline();
-        // self.updateImageURL();
-        // self.updateBBox();
-        // self.notifyDrawingFinished();
+        // will resume in the next tick...
+        annotation.startAutosave();
+
+        self.notifyDrawingFinished();
 
         // ...so we run this toggled function also delayed
-        // annotation.autosave && setTimeout(() => annotation.autosave());
+        annotation.autosave && setTimeout(() => annotation.autosave());
       },
 
       updateImageSize(wp, hp, sw, sh) {
         if (self.parent.stageWidth > 1 && self.parent.stageHeight > 1) {
-          self.composeMask();
-          self.generateOutline();
-          self.updateBBox();
+          self.finalizeRegion();
 
           self.needsUpdate = self.needsUpdate + 1;
         }
@@ -408,7 +416,6 @@ const Model = types
        * @return {BrushRegionResult}
        */
       serialize(options) {
-        self.updateImageURL();
         const value = { imageDataURL: self.imageDataURL };
         return self.parent.createSerializedResult(self, value);
       },
@@ -443,46 +450,44 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
 
   return (
     <RegionWrapper item={item}>
-      <Layer
-        id={item.cleanId}
-        name="bitmask"
-        ref={item.setLayerRef}
-        visible={!item.hidden}
-        imageSmoothingEnabled={item.parent?.smoothing}
-        listening={false}
-      >
-        {displayHighlight && <Rect fill="black" x={0} y={0} width={width} height={height} listening={false} />}
+      <Group ref={item.setLayerRef}>
+        <Group id={item.cleanId} name="bitmask" visible={!item.hidden} listening={false}>
+          {displayHighlight && (
+            <Rect fill="black" x={0} y={0} width={width} height={height} listening={false} opacity={0.7} />
+          )}
 
-        <Image ref={item.setImageRef} image={item.bitmaskRef} width={width} height={height} listening={false} />
-      </Layer>
-      <Layer listening={false} opacity={item.opacity}>
-        {displayHighlight ||
-          (highlightedRegions?.length > 1 &&
-            item.outline.map((points, i) => (
-              <Line
-                key={i}
-                points={points}
-                stroke={item.strokeColor}
-                strokeWidth={4}
-                closed
-                lineJoin="round"
-                lineCap="round"
-                strokeScaleEnabled={false}
-                tension={0.2}
-                listening={false}
-              />
-            )))}
-      </Layer>
-      <Layer
-        id={`${item.cleanId}_labels`}
-        ref={(ref) => {
-          if (ref) {
-            ref.canvas._canvas.style.opacity = item.opacity;
-          }
-        }}
-      >
-        <LabelOnMask item={item} color={item.strokeColor} />
-      </Layer>
+          <Image
+            ref={item.setImageRef}
+            image={item.bitmaskRef}
+            width={width}
+            height={height}
+            listening={false}
+            opacity={item.opacity}
+            imageSmoothingEnabled={item.parent?.smoothing}
+          />
+        </Group>
+        <Group listening={false} opacity={item.opacity}>
+          {displayHighlight ||
+            (highlightedRegions?.length > 1 &&
+              item.outline.map((points, i) => (
+                <Line
+                  key={i}
+                  points={points}
+                  stroke={item.strokeColor}
+                  strokeWidth={4}
+                  closed
+                  lineJoin="round"
+                  lineCap="round"
+                  strokeScaleEnabled={false}
+                  tension={0.2}
+                  listening={false}
+                />
+              )))}
+        </Group>
+        <Group id={`${item.cleanId}_labels`}>
+          <LabelOnMask item={item} color={item.strokeColor} />
+        </Group>
+      </Group>
     </RegionWrapper>
   );
 };
