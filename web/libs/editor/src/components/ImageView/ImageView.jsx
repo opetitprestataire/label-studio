@@ -47,12 +47,8 @@ const splitRegions = (regions) => {
   const brushRegions = [];
   const shapeRegions = [];
   const bitmaskRegions = [];
-  const l = regions.length;
-  let i = 0;
 
-  for (i; i < l; i++) {
-    const region = regions[i];
-
+  for (const region of regions) {
     switch (region.type) {
       case "brushregion":
         brushRegions.push(region);
@@ -1355,7 +1351,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
   if (!store.task || !item.currentSrc) return null;
 
   // Keep selected or highlighted region on top
-  const regions = [...item.regs].sort((r) => (r.highlighted || r.selected ? 1 : 0));
+  const regions = [...item.regs].sort((r) => (r.highlighted || r.selected ? 1 : -1));
   const paginationEnabled = !!item.isMultiItem;
   const wrapperClasses = [styles.wrapperComponent, item.images.length > 1 ? styles.withGallery : styles.wrapper];
   const tool = item.getToolsManager().findSelectedTool();
