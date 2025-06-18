@@ -133,7 +133,7 @@ Scenario("Bitmask hover and selection", async ({ I, LabelStudio, AtImageView, At
 
   I.say("Verify selection behavior");
   AtOutliner.seeRegions(1);
-  
+
   I.say("Click on the region");
   AtImageView.clickAt(30, 30);
   AtOutliner.seeSelectedRegion();
@@ -168,15 +168,15 @@ Scenario("Verify Bitmask drawing content", async ({ I, LabelStudio, AtImageView,
   const result = await LabelStudio.serialize();
   assert.strictEqual(result.length, 1);
   assert.ok(result[0].value.imageDataURL);
-  
+
   // Verify that the imageDataURL contains actual pixel data
   const imageData = result[0].value.imageDataURL;
-  assert.ok(imageData.startsWith('data:image/png;base64,'));
-  
+  assert.ok(imageData.startsWith("data:image/png;base64,"));
+
   // Decode base64 and verify it's not empty
-  const base64Data = imageData.replace('data:image/png;base64,', '');
-  const decodedData = Buffer.from(base64Data, 'base64');
-  assert.ok(decodedData.length > 0, 'Decoded image data should not be empty');
+  const base64Data = imageData.replace("data:image/png;base64,", "");
+  const decodedData = Buffer.from(base64Data, "base64");
+  assert.ok(decodedData.length > 0, "Decoded image data should not be empty");
 });
 
 Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, AtLabels }) => {
@@ -208,9 +208,9 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
   const result = await LabelStudio.serialize();
   assert.strictEqual(result.length, 1);
   assert.ok(result[0].value.imageDataURL);
-  
+
   // Get the bbox of the drawn region
-  const bbox = await I.executeScript(() => {
+  const bbox = I.executeScript(() => {
     const region = Htx.annotationStore.selected.regions[0];
     return region.bboxCoordsCanvas;
   });
@@ -221,17 +221,26 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
 
   // Verify that the bbox exists
   assert.ok(bbox, "Bounding box should exist");
-  
+
   // Calculate actual dimensions
   const width = bbox.right - bbox.left;
   const height = bbox.bottom - bbox.top;
-  
+
   // Verify that the bbox has the expected size
   assert.ok(width > 0, "Width should be positive");
   assert.ok(height > 0, "Height should be positive");
-  assert.ok(Math.abs(width - EXPECTED_SIZE) <= THRESHOLD, `Width should be close to ${EXPECTED_SIZE} pixels (got ${width})`);
-  assert.ok(Math.abs(height - EXPECTED_SIZE) <= THRESHOLD, `Height should be close to ${EXPECTED_SIZE} pixels (got ${height})`);
-  
+  assert.ok(
+    Math.abs(width - EXPECTED_SIZE) <= THRESHOLD,
+    `Width should be close to ${EXPECTED_SIZE} pixels (got ${width})`,
+  );
+  assert.ok(
+    Math.abs(height - EXPECTED_SIZE) <= THRESHOLD,
+    `Height should be close to ${EXPECTED_SIZE} pixels (got ${height})`,
+  );
+
   // Verify that the bbox is roughly square
-  assert.ok(Math.abs(width - height) <= THRESHOLD, `Width and height should be similar (got width=${width}, height=${height})`);
+  assert.ok(
+    Math.abs(width - height) <= THRESHOLD,
+    `Width and height should be similar (got width=${width}, height=${height})`,
+  );
 });

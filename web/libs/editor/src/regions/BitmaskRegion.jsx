@@ -491,7 +491,6 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
                 closed
                 lineJoin="round"
                 lineCap="round"
-                listening={false}
                 strokeScaleEnabled={false}
                 tension={0.2}
                 listening={false}
