@@ -451,10 +451,8 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
   return (
     <RegionWrapper item={item}>
       <Group ref={item.setLayerRef}>
-        <Group id={item.cleanId} name="bitmask" visible={!item.hidden} listening={false}>
-          {displayHighlight && (
-            <Rect fill="black" x={0} y={0} width={width} height={height} listening={false} opacity={0.7} />
-          )}
+        <Group id={item.cleanId} name="bitmask" visible={!item.hidden} listening={false} opacity={item.opacity}>
+          {displayHighlight && <Rect fill="black" x={0} y={0} width={width} height={height} listening={false} />}
 
           <Image
             ref={item.setImageRef}
@@ -462,7 +460,6 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
             width={width}
             height={height}
             listening={false}
-            opacity={item.opacity}
             imageSmoothingEnabled={item.parent?.smoothing}
           />
         </Group>
