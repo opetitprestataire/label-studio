@@ -10,6 +10,7 @@ export function generateMultiShapeOutline(item: {
   highlighted: boolean;
   offscreenCanvas: HTMLCanvasElement;
   drawingOffset: { scale: number };
+  scale: number;
 }) {
   if (!item.offscreenCanvas) return [];
 
@@ -120,7 +121,7 @@ export function generateMultiShapeOutline(item: {
   }
 
   // Scale and simplify the contours for rendering
-  const scale = item.drawingOffset.scale;
+  const { scale } = item;
   return contours.map((contour) => {
     const simplified = simplify(
       contour.map(([x, y]) => ({ x: x * scale, y: y * scale })),

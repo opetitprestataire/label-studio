@@ -93,7 +93,7 @@ export function isHoveringNonTransparentPixel(item: any) {
   const stage = item.layerRef.getStage();
   const pointer = stage?.getPointerPosition();
   const ctx = item.offscreenCanvas.getContext("2d");
-  
+
   if (!pointer || !ctx) return false;
 
   try {
@@ -105,15 +105,15 @@ export function isHoveringNonTransparentPixel(item: any) {
     const { width, height } = item.offscreenCanvas;
 
     // Convert to pixel coords in the canvas backing the image
-    const x = Math.floor(localPos.x / offset.scale + offset.offsetX);
-    const y = Math.floor(localPos.y / offset.scale + offset.offsetY);
+    const x = Math.floor(localPos.x / item.scale + offset.offsetX);
+    const y = Math.floor(localPos.y / item.scale + offset.offsetY);
 
     if (x < 0 || y < 0 || x >= width || y >= height) return false;
 
     const alpha = ctx.getImageData(x, y, 1, 1).data[3];
     return alpha > 0;
   } catch (error) {
-    console.warn('Error checking pixel transparency:', error);
+    console.warn("Error checking pixel transparency:", error);
     return false;
   }
 }

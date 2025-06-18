@@ -35,15 +35,11 @@ import { Image } from "./Image";
 import { isHoveringNonTransparentPixel } from "../../regions/BitmaskRegion/utils";
 import { ff } from "@humansignal/core";
 import { FF_BITMASK } from "@humansignal/core/lib/utils/feature-flags";
-import { atom } from "jotai";
-import { JotaiStore } from "../../utils/JotaiStore";
 
 Konva.showWarnings = false;
 
 const hotkeys = Hotkey("Image");
 const imgDefaultProps = {};
-const cursorPositionAtom = atom([0, 0]);
-const cursorVisibilityAtom = atom(false);
 
 if (isFF(FF_LSDV_4711)) imgDefaultProps.crossOrigin = "anonymous";
 
@@ -443,18 +439,15 @@ const Crosshair = memo(
   }),
 );
 
-const GridLayer = ({ scale, naturalWidth, naturalHeight, stageWidth, stageHeight }) => {
+const GridLayer = observer(({ item }) => {
   const ZOOM_THRESHOLD = 20;
 
-  const visible = scale > ZOOM_THRESHOLD;
-  if (!stageWidth || !stageHeight) return null;
-
-  const scaling = useMemo(() => {
-    return Math.min(naturalWidth / stageWidth, naturalHeight / stageHeight);
-  }, [naturalWidth, naturalHeight, stageWidth, stageHeight]);
+  const visible = item.zoomScale > ZOOM_THRESHOLD;
+  const { naturalWidth, naturalHeight } = item.currentImageEntity;
+  const { stageWidth, stageHeight } = item;
   const imageSmallerThanStage = naturalWidth < stageWidth || naturalHeight < stageHeight;
 
-  const step = 1 / (imageSmallerThanStage ? 1 : scaling); // image pixel
+  const step = 1 / (item.imageIsSmallerThanStage ? 1 : item.stageToImageRatio); // image pixel
 
   const { verticalPoints, horizontalPoints } = useMemo(() => {
     const vPts = [];
@@ -496,7 +489,7 @@ const GridLayer = ({ scale, naturalWidth, naturalHeight, stageWidth, stageHeight
       />
     </FastLayer>
   );
-};
+});
 /**
  * Component that creates an overlay on top
  * of the image to support Magic Wand tool
@@ -788,7 +781,6 @@ export default observer(
       item.freezeHistory();
 
       this.updateCrosshair(e);
-      this.updateCursor(e);
 
       const isMouseWheelClick = e.evt && e.evt.buttons === 4;
       const isDragging = e.evt && e.evt.buttons === 1;
@@ -844,11 +836,6 @@ export default observer(
         const { x, y } = e.currentTarget.getPointerPosition();
         this.crosshairRef.current.updatePointer(...this.props.item.fixZoomedCoords([x, y]));
       }
-    };
-
-    updateCursor = (e) => {
-      const { x, y } = e.currentTarget.getPointerPosition();
-      JotaiStore.set(cursorPositionAtom, [x, y]);
     };
 
     handleError = () => {
@@ -1148,13 +1135,11 @@ export default observer(
                   if (this.crosshairRef.current) {
                     this.crosshairRef.current.updateVisibility(true);
                   }
-                  JotaiStore.set(cursorVisibilityAtom, true);
                 }}
                 onMouseLeave={(e) => {
                   if (this.crosshairRef.current) {
                     this.crosshairRef.current.updateVisibility(false);
                   }
-                  JotaiStore.set(cursorVisibilityAtom, false);
                   const { width: stageWidth, height: stageHeight } = item.canvasSize;
                   const { offsetX: mouseposX, offsetY: mouseposY } = e.evt;
                   const newEvent = { ...e };
@@ -1301,7 +1286,7 @@ const ImageLayer = observer(({ item }) => {
   ) : null;
 });
 
-const CursorView = observer(({ item, tool }) => {
+const CursorLayer = observer(({ item, tool }) => {
   const [[x, y], setCursorPosition] = useState([0, 0]);
   const [visible, setVisible] = useState(false);
 
@@ -1332,10 +1317,14 @@ const CursorView = observer(({ item, tool }) => {
     };
   }, [item.stageRef]);
 
+  const size = useMemo(() => {
+    return (item.imageIsSmallerThanStage ? tool.strokeWidth : tool.strokeWidth / item.stageToImageRatio) + 2;
+  }, [tool.strokeWidth, item.imageIsSmallerThanStage, item.stageToImageRatio]);
+
   return visible ? (
     <Layer>
-      <Circle x={x} y={y} radius={tool.strokeWidth + 2} stroke="black" strokeWidth={3} strokeScaleEnabled={false} />
-      <Circle x={x} y={y} radius={tool.strokeWidth + 2} stroke="white" strokeWidth={1} strokeScaleEnabled={false} />
+      <Circle x={x} y={y} radius={size} stroke="black" strokeWidth={3} strokeScaleEnabled={false} />
+      <Circle x={x} y={y} radius={size} stroke="white" strokeWidth={1} strokeScaleEnabled={false} />
     </Layer>
   ) : null;
 });
@@ -1389,15 +1378,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
       })}
       <Selection item={item} isPanning={state.isPanning} />
       <DrawingRegion item={item} />
-      {ff.isActive(ff.FF_BITMASK) && item.smoothing === false && (
-        <GridLayer
-          scale={item.zoomScale}
-          stageWidth={item.stageWidth}
-          stageHeight={item.stageHeight}
-          naturalWidth={item.currentImageEntity.naturalWidth}
-          naturalHeight={item.currentImageEntity.naturalHeight}
-        />
-      )}
+      {ff.isActive(ff.FF_BITMASK) && item.smoothing === false && <GridLayer item={item} />}
 
       {item.crosshair && (
         <Crosshair
@@ -1408,7 +1389,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
       )}
 
       {tool && (tool.toolName === "BitmaskTool" || tool.toolName === "BitmaskEraserTool") && (
-        <CursorView item={item} tool={tool} />
+        <CursorLayer item={item} tool={tool} />
       )}
     </>
   );

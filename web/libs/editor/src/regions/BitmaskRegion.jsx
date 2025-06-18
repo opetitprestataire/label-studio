@@ -91,6 +91,10 @@ const Model = types
         }
       },
 
+      get scale() {
+        return self.parent.imageIsSmallerThanStage ? 1 : self.drawingOffset.scale;
+      },
+
       /**
        * Brushes are processed in pixels, so percentages are derived values for them,
        * unlike for other tools.
@@ -253,11 +257,22 @@ const Model = types
         self.setOutline(generateMultiShapeOutline(self));
       },
 
-      createCanvas() {
+      canvasSize() {
+        if (!self.parent) return { width: 0, height: 0 };
         const ent = self.parent.currentImageEntity;
-        const width = Math.max(ent.naturalWidth, self.parent.stageWidth);
-        const height = Math.max(ent.naturalHeight, self.parent.stageHeight);
+        const scale = self.parent.imageIsSmallerThanStage ? 1 : self.parent.stageToImageRatio;
 
+        return {
+          width: ent.naturalWidth / scale,
+          height: ent.naturalHeight / scale,
+        };
+      },
+
+      createCanvas() {
+        const { width, height } = {
+          width: self.parent.currentImageEntity.naturalWidth,
+          height: self.parent.currentImageEntity.naturalHeight,
+        };
         if (!self.bitmaskRef) {
           self.bitmaskRef = self.bitmaskRef ?? new OffscreenCanvas(width, height);
         }
@@ -294,7 +309,7 @@ const Model = types
       },
 
       updateBBox() {
-        self.setBBox(getCanvasPixelBounds(self.offscreenCanvas, self.drawingOffset.scale));
+        self.setBBox(getCanvasPixelBounds(self.offscreenCanvas, self.scale));
       },
 
       setLayerRef(ref) {
@@ -313,7 +328,6 @@ const Model = types
       },
 
       beginPath({ type, strokeWidth, opacity = self.opacity, x = 0, y = 0 }) {
-        console.time("begin drawing");
         self.object.annotation.pauseAutosave();
 
         // Only create canvas if it doesn't exist
@@ -331,8 +345,7 @@ const Model = types
         self.setLastPos(
           BitmaskDrawing.begin({
             ctx,
-            x: Math.floor(x / offset.scale + offset.offsetX),
-            y: Math.floor(y / offset.scale + offset.offsetY),
+            ...self.positionToStage(x, y),
             brushSize: strokeWidth,
             color: self.strokeColor,
             eraserMode: type === "eraser",
@@ -340,16 +353,13 @@ const Model = types
         );
 
         self.composeMask();
-        console.timeEnd("begin drawing");
       },
 
       addPoint(x, y, strokeWidth, options = { erase: false }) {
-        const { drawingOffset: offset } = self;
         self.setLastPos(
           BitmaskDrawing.draw({
             ctx: self.offscreenCanvas.getContext("2d"),
-            x: Math.floor(x / offset.scale + offset.offsetX),
-            y: Math.floor(y / offset.scale + offset.offsetY),
+            ...self.positionToStage(x, y),
             brushSize: strokeWidth,
             color: self.strokeColor,
             lastPos: self.lastPos,
@@ -363,6 +373,17 @@ const Model = types
           self.composeMask();
           self._lastComposeTime = Date.now();
         }
+      },
+
+      positionToStage(x, y) {
+        const { drawingOffset: offset } = self;
+        const smaller = self.parent.imageIsSmallerThanStage;
+        const ratio = smaller ? 1 : offset.scale;
+
+        return {
+          x: Math.floor(x / ratio + offset.offsetX),
+          y: Math.floor(y / ratio + offset.offsetY),
+        };
       },
 
       endPath() {
@@ -441,15 +462,7 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
   const ent = item.parent?.currentImageEntity;
   const { width, height } = useMemo(() => {
     if (!item.parent) return { width: 0, height: 0 };
-    const ent = item.parent.currentImageEntity;
-    const { stageWidth: w, stageHeight: h } = item.parent;
-    const imageSmallerThanStage = ent.naturalWidth < w || ent.naturalHeight < h;
-    const scale = imageSmallerThanStage ? 1 : Math.min(ent.naturalWidth / w, ent.naturalHeight / h);
-
-    return {
-      width: ent.naturalWidth / scale,
-      height: ent.naturalHeight / scale,
-    };
+    return item.canvasSize();
   }, [item.parent?.stageWidth, item.parent?.stageHeight, ent?.naturalWidth, ent?.naturalHeight]);
 
   const stage = item.parent?.stageRef;

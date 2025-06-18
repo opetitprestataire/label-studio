@@ -231,7 +231,7 @@ const BitmaskCursorMixin = types
   .views((self) => ({
     get cursorStyleRule() {
       const val = self.strokeWidth;
-      return "none";
+      return "crosshair";
     },
   }))
   .actions((self) => ({
