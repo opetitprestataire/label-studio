@@ -11,6 +11,11 @@ const config = `<View>
   </BitmaskLabels>
 </View>`;
 
+// Add cleanup hook
+Before(async ({ I }) => {
+  I.amOnPage("/");
+});
+
 Scenario("Basic Bitmask drawing", async ({ I, LabelStudio, AtImageView, AtLabels }) => {
   const params = {
     config,
@@ -204,20 +209,28 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
     [20, 20],
   ]);
 
+  // Wait for the drawing to be complete
+  await I.wait(0.1);
+
   I.say("Verify mask content and dimensions");
   const result = await LabelStudio.serialize();
   assert.strictEqual(result.length, 1);
   assert.ok(result[0].value.imageDataURL);
 
-  // Get the bbox of the drawn region
-  const bbox = I.executeScript(() => {
+  // Wait for the region to be fully processed
+  await I.wait(0.1);
+
+  // Get all data we need before making assertions
+  const bbox = await I.executeScript(() => {
     const region = Htx.annotationStore.selected.regions[0];
+    if (!region) throw new Error("Region not found");
+    if (!region.bboxCoordsCanvas) throw new Error("Bbox coordinates not available");
     return region.bboxCoordsCanvas;
   });
 
   // Define thresholds for assertions
-  const THRESHOLD = 5; // Increased threshold to account for coordinate space differences
-  const EXPECTED_SIZE = 40; // Changed from 20 to 40 since we draw from 20 to 40
+  const THRESHOLD = 5;
+  const EXPECTED_SIZE = 40;
 
   // Verify that the bbox exists
   assert.ok(bbox, "Bounding box should exist");
@@ -227,12 +240,11 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
   const height = bbox.bottom - bbox.top;
 
   // Verify that the bbox has the expected size
-  assert.ok(width > 0, "Width should be positive");
-  assert.ok(height > 0, "Height should be positive");
   assert.ok(
     Math.abs(width - EXPECTED_SIZE) <= THRESHOLD,
     `Width should be close to ${EXPECTED_SIZE} pixels (got ${width})`,
   );
+
   assert.ok(
     Math.abs(height - EXPECTED_SIZE) <= THRESHOLD,
     `Height should be close to ${EXPECTED_SIZE} pixels (got ${height})`,
