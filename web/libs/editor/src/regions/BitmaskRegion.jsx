@@ -31,16 +31,10 @@ const Model = types
     object: types.late(() => types.reference(ImageModel)),
 
     /**
-     * Used for fast cloning the region
-     * @type {ImageData}
-     */
-    imageData: types.frozen(),
-
-    /**
-     * Used to restore an image from the result
+     * Used to restore an image from the result or from a drawing region
      * @type {string}
      */
-    imageDataURL: types.optional(types.string, ""),
+    imageDataURL: types.maybeNull(types.optional(types.string, "")),
   })
   .volatile(() => ({
     /**
@@ -139,11 +133,11 @@ const Model = types
         };
       },
 
-      getImageData() {
-        const canvas = self.bitmaskRef;
-        const context = canvas.getContext("2d");
+      getImageDataURL() {
+        const canvas = self.getImageSnapshotCanvas();
+        const imageDataURL = canvas.toDataURL("image/png");
 
-        return context.getImageData(0, 0, canvas.width, canvas.height);
+        return imageDataURL;
       },
     };
   })
@@ -156,7 +150,6 @@ const Model = types
       afterCreate() {
         self.createCanvas();
         self.restoreFromImageDataURL(); // Only runs when the region is deserialized from result
-        self.restoreFromImageData(); // Only runs when converting DrawingRegion to a regular one
 
         // We want to update color of the color mask dynamically
         // so that changing label is reflected right away
@@ -217,25 +210,8 @@ const Model = types
         renderDataURL();
       },
 
-      /**
-       * Used to restore mask from image data when cloning the
-       * region. Used in `commitDrawingRegion`
-       */
-      restoreFromImageData() {
-        if (!self.imageData) return;
-        const context = self.offscreenCanvas.getContext("2d");
-
-        context.putImageData(self.imageData, 0, 0);
-        self.updateImageURL();
-        self.generateOutline();
-        self.composeMask();
-        self.updateBBox();
-      },
-
       updateImageURL() {
-        const canvas = self.getImageSnapshotCanvas();
-        const imageURL = canvas.toDataURL("image/png");
-        self.setImageDataURL(imageURL);
+        self.setImageDataURL(self.getImageDataURL());
       },
 
       redraw() {
@@ -387,15 +363,15 @@ const Model = types
         const { annotation } = self.object;
 
         // will resume in the next tick...
-        annotation.startAutosave();
+        // annotation.startAutosave();
 
-        self.generateOutline();
-        self.updateImageURL();
-        self.updateBBox();
-        self.notifyDrawingFinished();
+        // self.generateOutline();
+        // self.updateImageURL();
+        // self.updateBBox();
+        // self.notifyDrawingFinished();
 
         // ...so we run this toggled function also delayed
-        annotation.autosave && setTimeout(() => annotation.autosave());
+        // annotation.autosave && setTimeout(() => annotation.autosave());
       },
 
       updateImageSize(wp, hp, sw, sh) {
@@ -517,6 +493,6 @@ const HtxBitmask = AliveRegion(HtxBitmaskView, {
 });
 
 Registry.addTag("bitmaskregion", BitmaskRegionModel, HtxBitmask);
-Registry.addRegionType(BitmaskRegionModel, "image", (value) => "imageData" in value || "imageDataURL" in value);
+Registry.addRegionType(BitmaskRegionModel, "image", (value) => "imageDataURL" in value);
 
 export { BitmaskRegionModel, HtxBitmask };

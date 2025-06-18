@@ -53,6 +53,7 @@ const Area = types.union(
         // `sequence` and `ranges` are used for video regions
         !sn.sequence &&
         !sn.ranges &&
+        !sn.imageDataURL &&
         sn.value &&
         Object.values(sn.value).length <= 1
       )

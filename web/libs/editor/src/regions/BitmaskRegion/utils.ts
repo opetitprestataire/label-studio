@@ -85,6 +85,18 @@ export const BitmaskDrawing = {
   },
 };
 
+/**
+ * Checks if the mouse pointer is hovering over a non-transparent pixel in a canvas-based image.
+ * This function is used to determine if the user is interacting with a visible part of a bitmask region.
+ *
+ * @param item - An object containing references to the canvas layer, offscreen canvas, and image
+ * @param item.layerRef - Reference to the Konva layer containing the canvas
+ * @param item.offscreenCanvas - The offscreen canvas element containing the bitmask data
+ * @param item.imageRef - Reference to the Konva image element
+ * @param item.drawingOffset - Object containing offsetX and offsetY for drawing position
+ * @param item.scale - Scale factor of the image
+ * @returns {boolean} True if hovering over a non-transparent pixel, false otherwise
+ */
 export function isHoveringNonTransparentPixel(item: any) {
   if (!item?.layerRef || !item?.offscreenCanvas || !item?.imageRef) {
     return false;
@@ -118,15 +130,20 @@ export function isHoveringNonTransparentPixel(item: any) {
   }
 }
 
-export function imageDataToCanvas(imageData: ImageData): HTMLCanvasElement {
-  const canvas = document.createElement("canvas");
-  canvas.width = imageData.width;
-  canvas.height = imageData.height;
-  const ctx = canvas.getContext("2d")!;
-  ctx.putImageData(imageData, 0, 0);
-  return canvas;
-}
-
+/**
+ * Calculates the bounding box of non-transparent pixels in a canvas.
+ * This function scans the canvas pixel by pixel to find the minimum rectangle
+ * that contains all visible (non-transparent) pixels.
+ * 
+ * @param canvas - The HTML canvas element to analyze
+ * @param scale - Scale factor to apply to the returned coordinates
+ * @returns {Object|null} An object containing the bounds of non-transparent pixels:
+ *   - left: Leftmost x-coordinate of visible pixels
+ *   - top: Topmost y-coordinate of visible pixels
+ *   - right: Rightmost x-coordinate of visible pixels (exclusive)
+ *   - bottom: Bottommost y-coordinate of visible pixels (exclusive)
+ *   Returns null if no visible pixels are found
+ */
 export function getCanvasPixelBounds(
   canvas: HTMLCanvasElement,
   scale: number,
@@ -159,6 +176,8 @@ export function getCanvasPixelBounds(
   const hasVisiblePixels = maxX >= minX && maxY >= minY;
   if (!hasVisiblePixels) return null;
 
+  // Scale is applied to the points to compensate for
+  // the image being different size than the stage
   return {
     left: minX * scale,
     top: minY * scale,
