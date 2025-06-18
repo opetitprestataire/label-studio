@@ -1,5 +1,5 @@
 import { Component, createRef, forwardRef, Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
-import { Group, Layer, Line, Rect, Stage, Image as KonvaImage, FastLayer, Circle } from "react-konva";
+import { Group, Layer, Line, Rect, Stage, Image as KonvaImage, Circle } from "react-konva";
 import { observer } from "mobx-react";
 import { getEnv, getRoot, isAlive } from "mobx-state-tree";
 
@@ -439,7 +439,7 @@ const Crosshair = memo(
   }),
 );
 
-const GridLayer = observer(({ item }) => {
+const PixelGridLayer = observer(({ item }) => {
   const ZOOM_THRESHOLD = 20;
 
   const visible = item.zoomScale > ZOOM_THRESHOLD;
@@ -466,7 +466,7 @@ const GridLayer = observer(({ item }) => {
   }, [stageWidth, stageHeight]);
 
   return (
-    <FastLayer listening={false} visible={visible}>
+    <Layer listening={false} visible={visible}>
       <Line
         points={verticalPoints}
         stroke="white"
@@ -487,7 +487,7 @@ const GridLayer = observer(({ item }) => {
         listening={false}
         visible={visible}
       />
-    </FastLayer>
+    </Layer>
   );
 });
 /**
@@ -1378,7 +1378,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
       })}
       <Selection item={item} isPanning={state.isPanning} />
       <DrawingRegion item={item} />
-      {ff.isActive(ff.FF_BITMASK) && item.smoothing === false && <GridLayer item={item} />}
+      {ff.isActive(ff.FF_BITMASK) && item.smoothing === false && <PixelGridLayer item={item} />}
 
       {item.crosshair && (
         <Crosshair
@@ -1388,9 +1388,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
         />
       )}
 
-      {tool && (tool.toolName === "BitmaskTool" || tool.toolName === "BitmaskEraserTool") && (
-        <CursorLayer item={item} tool={tool} />
-      )}
+      {tool && tool.toolName.match(/bitmask/i) && <CursorLayer item={item} tool={tool} />}
     </>
   );
 });

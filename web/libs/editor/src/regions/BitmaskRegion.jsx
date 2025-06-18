@@ -92,7 +92,7 @@ const Model = types
       },
 
       get scale() {
-        return self.parent.imageIsSmallerThanStage ? 1 : self.drawingOffset.scale;
+        return self.parent?.imageIsSmallerThanStage ? 1 : self.drawingOffset.scale;
       },
 
       /**
@@ -154,15 +154,19 @@ const Model = types
     return {
       afterCreate() {
         self.createCanvas();
-        self.updateMaskImage();
-        self.restoreFromImageData();
+        self.restoreFromImageDataURL(); // Only runs when the region is deserialized from result
+        self.restoreFromImageData(); // Only runs when converting DrawingRegion to a regular one
 
+        // We want to update color of the color mask dynamically
+        // so that changing label is reflected right away
         disposers.push(
           observe(self, "strokeColor", () => {
-            console.log("compose mask");
             self.composeMask();
           }),
         );
+
+        // The only way to track changes history is through current `imageDataURL`
+        // because we don't store points or re-render entire path from scratch
         disposers.push(
           observe(self, "imageDataURL", () => {
             console.log("redraw");
@@ -185,7 +189,7 @@ const Model = types
        * Restores image from a png data url (base64)
        * Used when deserializing from result
        */
-      updateMaskImage() {
+      restoreFromImageDataURL() {
         if (!self.imageDataURL) return;
         async function renderDataURL() {
           const context = self.offscreenCanvas.getContext("2d");
@@ -219,14 +223,13 @@ const Model = types
        */
       restoreFromImageData() {
         if (!self.imageData) return;
-        /** @type {HTMLCanvasElement} */
         const context = self.offscreenCanvas.getContext("2d");
 
         context.putImageData(self.imageData, 0, 0);
+        self.updateImageURL();
         self.generateOutline();
         self.composeMask();
         self.updateBBox();
-        self.imageData = null;
       },
 
       updateImageURL() {
@@ -240,7 +243,7 @@ const Model = types
           requestIdleCallback(() => {
             const ctx = self.offscreenCanvas.getContext("2d");
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            self.updateMaskImage();
+            self.restoreFromImageDataURL();
           });
         }
       },
@@ -330,11 +333,6 @@ const Model = types
       beginPath({ type, strokeWidth, opacity = self.opacity, x = 0, y = 0 }) {
         self.object.annotation.pauseAutosave();
 
-        // Only create canvas if it doesn't exist
-        if (!self.offscreenCanvas) {
-          self.createCanvas();
-        }
-
         const { drawingOffset: offset } = self;
         const ctx = self.offscreenCanvas.getContext("2d");
 
@@ -392,10 +390,10 @@ const Model = types
         // will resume in the next tick...
         annotation.startAutosave();
 
-        self.notifyDrawingFinished();
         self.generateOutline();
         self.updateImageURL();
         self.updateBBox();
+        self.notifyDrawingFinished();
 
         // ...so we run this toggled function also delayed
         annotation.autosave && setTimeout(() => annotation.autosave());
