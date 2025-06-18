@@ -294,8 +294,8 @@ const Model = types
 const EllipseRegionModel = types.compose(
   "EllipseRegionModel",
   RegionsMixin,
-  NormalizationMixin,
   AreaMixin,
+  NormalizationMixin,
   KonvaRegionMixin,
   EditableRegion,
   Model,
