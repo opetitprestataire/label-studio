@@ -1351,8 +1351,6 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
     suggestedShape: suggestedShapeRegions,
   });
 
-  console.log(item.zoomScale);
-
   return (
     <>
       {ff.isActive(ff.FF_BITMASK) && <ImageLayer item={item} />}

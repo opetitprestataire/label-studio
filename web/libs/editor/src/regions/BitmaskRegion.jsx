@@ -170,7 +170,6 @@ const Model = types
         // because we don't store points or re-render entire path from scratch
         disposers.push(
           observe(self, "imageDataURL", () => {
-            console.log("redraw");
             self.redraw();
           }),
         );
@@ -309,7 +308,6 @@ const Model = types
 
         // Always batch draw to ensure visual updates
         self.layerRef?.batchDraw();
-        console.timeEnd("compose mask");
       },
 
       updateBBox() {

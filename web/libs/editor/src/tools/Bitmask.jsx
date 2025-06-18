@@ -208,12 +208,10 @@ const _Tool = types
           self.mode = "drawing";
           isFirstBrushStroke = true;
           self.obj.annotation.setIsDrawing(true);
-          console.time("Creating new drawing region");
           brush = self.createDrawingRegion({
             strokeWidth: self.strokeWidth || c.strokeWidth,
             imageData: null,
           });
-          console.timeEnd("Creating new drawing region");
         }
 
         brush.beginPath({
