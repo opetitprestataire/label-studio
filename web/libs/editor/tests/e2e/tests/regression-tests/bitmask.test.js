@@ -210,7 +210,7 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
   ]);
 
   // Wait for the drawing to be complete
-  await I.wait(0.1);
+  await I.wait(0.5);
 
   I.say("Verify mask content and dimensions");
   const result = await LabelStudio.serialize();
@@ -218,7 +218,7 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
   assert.ok(result[0].value.imageDataURL);
 
   // Wait for the region to be fully processed
-  await I.wait(0.1);
+  await I.wait(0.5);
 
   // Get all data we need before making assertions
   const bbox = await I.executeScript(() => {
