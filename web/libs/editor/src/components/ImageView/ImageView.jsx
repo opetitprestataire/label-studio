@@ -110,7 +110,7 @@ const DrawingRegion = observer(({ item }) => {
   if (!drawingRegion) return null;
   if (item.multiImage && item.currentImage !== drawingRegion.item_index) return null;
 
-  const isBrush = ["brushregion"].includes(drawingRegion.type);
+  const isBrush = drawingRegion.type === "brushregion";
   const Wrapper = drawingRegion && isBrush ? Fragment : Layer;
 
   return (
