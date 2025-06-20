@@ -256,3 +256,121 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
     `Width and height should be similar (got width=${width}, height=${height})`,
   );
 });
+
+Scenario("Verify Bitmask canvas fit", async ({ I, LabelStudio, AtImageView, AtLabels }) => {
+  const params = {
+    config,
+    data: { image: IMAGE },
+    annotations: [{ id: 1, result: [] }],
+  };
+
+  I.amOnPage("/");
+  LabelStudio.init(params);
+  LabelStudio.waitForObjectsReady();
+  await AtImageView.lookForStage();
+
+  I.say("Select Bitmask tool");
+  I.pressKey("B");
+  AtLabels.clickLabel("Test");
+
+  I.say("Draw a mask that covers the entire canvas height");
+  AtImageView.drawThroughPoints([
+    [10, 0],    // Start from top
+    [10, 100],  // Draw to bottom
+    [30, 100],  // Complete rectangle
+    [30, 0],    // Back to top
+    [10, 0],    // Close the path
+  ]);
+
+  // Wait for the drawing to be complete
+  await I.wait(0.5);
+
+  I.say("Verify mask content and image scaling");
+  const result = await LabelStudio.serialize();
+  assert.strictEqual(result.length, 1);
+  assert.ok(result[0].value.imageDataURL);
+
+  // Wait for the region to be fully processed
+  await I.wait(0.5);
+
+  // Ensure the region is selected
+  I.say("Ensure region is selected");
+  AtImageView.clickAt(20, 50); // Click in the middle of our drawn region
+  await I.wait(0.2);
+
+  // Get canvas dimensions and verify the underlying image scaling
+  const canvasInfo = await I.executeScript(() => {
+    // Get the canvas element
+    const canvas = document.querySelector('canvas');
+    if (!canvas) throw new Error("Canvas not found");
+    
+    // Get canvas dimensions
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    
+    // Get the original image element
+    const imageElement = document.querySelector('img');
+    if (!imageElement) throw new Error("Image element not found");
+    
+    // Get the original image dimensions
+    const imageWidth = imageElement.naturalWidth;
+    const imageHeight = imageElement.naturalHeight;
+    
+    // Get the region and its imageDataURL for verification
+    const region = Htx.annotationStore.selected.regions[0];
+    if (!region) throw new Error("Region not found");
+    
+    // For bitmask regions, imageDataURL is stored directly on the region
+    const imageDataURL = region.imageDataURL;
+    if (!imageDataURL) throw new Error("Region imageDataURL not available");
+    
+    return {
+      canvasWidth,
+      canvasHeight,
+      imageWidth,
+      imageHeight,
+      imageDataURL,
+    };
+  });
+
+  // Verify canvas dimensions exist
+  assert.ok(canvasInfo.canvasWidth > 0, "Canvas width should be positive");
+  assert.ok(canvasInfo.canvasHeight > 0, "Canvas height should be positive");
+  assert.ok(canvasInfo.imageWidth > 0, "Image width should be positive");
+  assert.ok(canvasInfo.imageHeight > 0, "Image height should be positive");
+  assert.ok(canvasInfo.imageDataURL, "Image data URL should exist");
+
+  // Verify that the image is properly scaled to fit the canvas
+  // The image should be scaled to match the canvas dimensions
+  const widthRatio = canvasInfo.canvasWidth / canvasInfo.imageWidth;
+  const heightRatio = canvasInfo.canvasHeight / canvasInfo.imageHeight;
+  
+  // Check that the scaling ratios are reasonable (image should be scaled to fit canvas)
+  assert.ok(widthRatio > 0, "Width scaling ratio should be positive");
+  assert.ok(heightRatio > 0, "Height scaling ratio should be positive");
+  
+  // The image should be scaled to fit the canvas, but we don't require uniform scaling
+  // as the image might be displayed with different aspect ratios or zoom levels
+  // Instead, verify that both dimensions are scaled appropriately
+  assert.ok(widthRatio >= 1 || heightRatio >= 1, "At least one dimension should be scaled up to fit canvas");
+  
+  // Log the scaling information for debugging
+  I.say(`Image scaling - Width: ${widthRatio.toFixed(3)}x, Height: ${heightRatio.toFixed(3)}x`);
+  I.say(`Canvas: ${canvasInfo.canvasWidth}x${canvasInfo.canvasHeight}, Image: ${canvasInfo.imageWidth}x${canvasInfo.imageHeight}`);
+
+  // Get the proper canvas and image frame sizes using the helper functions
+  const { width: canvasSizeWidth, height: canvasSizeHeight } = await AtImageView.getCanvasSize();
+  const { width: imageFrameWidth, height: imageFrameHeight } = await AtImageView.getImageFrameSize();
+
+  // Verify that the stage/canvas dimensions match the image frame dimensions
+  // The stage should be sized to fit the image properly
+  assert.ok(
+    Math.abs(canvasSizeWidth - imageFrameWidth) <= 1,
+    `Stage width (${canvasSizeWidth}) should match image frame width (${imageFrameWidth}) within 1 pixel`
+  );
+  
+  assert.ok(
+    Math.abs(canvasSizeHeight - imageFrameHeight) <= 1,
+    `Stage height (${canvasSizeHeight}) should match image frame height (${imageFrameHeight}) within 1 pixel`
+  );
+});
