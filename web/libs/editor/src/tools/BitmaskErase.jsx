@@ -108,7 +108,7 @@ const _Tool = types
       },
 
       addPoint(x, y) {
-        brush.addPoint(Math.floor(x), Math.floor(y), self.strokeWidth, { erase: true });
+        brush.addPoint(x, y, self.strokeWidth, { erase: true });
       },
 
       setStroke(val) {
