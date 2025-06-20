@@ -406,7 +406,7 @@ const BitmaskRegionModel = types.compose(
 );
 
 const HtxBitmaskView = ({ item, setShapeRef }) => {
-  const highlightedRegions = item.parent?.regs.filter((r) => r.highlighted);
+  const highlightedRegions = item.parent?.regs.filter((r) => r.highlighted) ?? [];
   const displayHighlight = item.highlighted || item.selected;
   const ent = item.parent?.currentImageEntity;
 
