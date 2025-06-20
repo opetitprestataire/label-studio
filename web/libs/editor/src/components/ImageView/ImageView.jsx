@@ -1335,14 +1335,37 @@ const CursorLayer = observer(({ item, tool }) => {
   }, [item.stageRef]);
 
   const size = useMemo(() => {
-    return (item.imageIsSmallerThanStage ? tool.strokeWidth : tool.strokeWidth / item.stageToImageRatio) + 2;
+    return item.imageIsSmallerThanStage ? tool.strokeWidth : tool.strokeWidth / item.stageToImageRatio;
   }, [tool.strokeWidth, item.imageIsSmallerThanStage, item.stageToImageRatio]);
 
   return visible ? (
-    <Layer>
-      <Circle x={x} y={y} radius={size} stroke="black" strokeWidth={3} strokeScaleEnabled={false} />
-      <Circle x={x} y={y} radius={size} stroke="white" strokeWidth={1} strokeScaleEnabled={false} />
-    </Layer>
+    tool.strokeWidth <= 2 ? (
+      <Layer listening={false}>
+        <Rect
+          x={x - size / 2}
+          y={y - size / 2}
+          width={size}
+          height={size}
+          stroke="black"
+          strokeWidth={3}
+          strokeScaleEnabled={false}
+        />
+        <Rect
+          x={x - size / 2}
+          y={y - size / 2}
+          width={size}
+          height={size}
+          stroke="white"
+          strokeWidth={1}
+          strokeScaleEnabled={false}
+        />
+      </Layer>
+    ) : (
+      <Layer listening={false}>
+        <Circle x={x} y={y} radius={size} stroke="black" strokeWidth={3} strokeScaleEnabled={false} />
+        <Circle x={x} y={y} radius={size} stroke="white" strokeWidth={1} strokeScaleEnabled={false} />
+      </Layer>
+    )
   ) : null;
 });
 
