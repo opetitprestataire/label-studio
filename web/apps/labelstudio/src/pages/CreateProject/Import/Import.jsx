@@ -385,9 +385,9 @@ export const ImportPage = ({
                             <a
                               href="https://labelstud.io/tags/video#Video-format"
                               target="_blank"
-                              rel="noreferrer"
+                              rel="noopener noreferrer"
                               className="inline-flex items-center"
-                              aria-label="Learn more about video format support"
+                              aria-label="Learn more about video format support (opens in a new tab)"
                             >
                               <IconInfoOutline className="w-4 h-4 text-primary-content hover:text-primary-content-hover" />
                             </a>
@@ -409,14 +409,15 @@ export const ImportPage = ({
                       <ul className="mt-2 ml-4 list-disc font-normal">
                         <li>
                           We recommend{" "}
-                          <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noreferrer">
+                          <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noopener noreferrer" aria-label="Cloud Storage documentation (opens in a new tab)">
                             Cloud Storage
                           </a>{" "}
                           over direct uploads due to{" "}
                           <a
                             href="https://labelstud.io/guide/tasks.html#Import-data-from-the-Label-Studio-UI"
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
+                            aria-label="Upload limitations documentation (opens in a new tab)"
                           >
                             upload limitations
                           </a>
@@ -427,7 +428,8 @@ export const ImportPage = ({
                           <a
                             href="https://labelstud.io/templates/multi-page-document-annotation"
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
+                            aria-label="Multi-image labeling documentation (opens in a new tab)"
                           >
                             multi-image labeling
                           </a>
