@@ -464,7 +464,7 @@ const PixelGridLayer = observer(({ item }) => {
   const { stageWidth, stageHeight } = item;
   const imageSmallerThanStage = naturalWidth < stageWidth || naturalHeight < stageHeight;
 
-  const step = 1 / (item.imageIsSmallerThanStage ? 1 : item.stageToImageRatio); // image pixel
+  const step = item.stageZoom; // image pixel
 
   const { verticalPoints, horizontalPoints } = useMemo(() => {
     const vPts = [];
@@ -1288,14 +1288,14 @@ const ImageLayer = observer(({ item }) => {
 
   const { width, height } = useMemo(() => {
     return {
-      width: Math.min(imageEntity.naturalWidth, item.stageWidth),
-      height: Math.min(imageEntity.naturalHeight, item.stageHeight),
+      width: imageEntity.naturalWidth,
+      height: imageEntity.naturalHeight,
     };
   }, [imageEntity.naturalWidth, imageEntity.naturalHeight, item.stageWidth, item.stageHeight]);
 
   return image ? (
     <>
-      <Layer imageSmoothingEnabled={item.smoothing}>
+      <Layer imageSmoothingEnabled={item.smoothing} scale={{ x: item.stageZoom, y: item.stageZoom }}>
         <KonvaImage image={image} width={width} height={height} listening={false} />
       </Layer>
     </>
@@ -1334,8 +1334,8 @@ const CursorLayer = observer(({ item, tool }) => {
   }, [item.stageRef]);
 
   const size = useMemo(() => {
-    return item.imageIsSmallerThanStage ? tool.strokeWidth : tool.strokeWidth / item.stageToImageRatio;
-  }, [tool.strokeWidth, item.imageIsSmallerThanStage, item.stageToImageRatio]);
+    return tool.strokeWidth * item.stageZoom;
+  }, [tool.strokeWidth, item.stageZoom]);
 
   return visible ? (
     <Layer listening={false}>

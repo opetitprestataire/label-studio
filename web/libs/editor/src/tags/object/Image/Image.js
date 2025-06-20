@@ -284,16 +284,6 @@ const Model = types
       }[self.rotation];
     },
 
-    get stageToImageRatio() {
-      const ent = self.currentImageEntity;
-      return Math.min(ent.naturalWidth / self.stageWidth, ent.naturalHeight / self.stageHeight);
-    },
-
-    get imageIsSmallerThanStage() {
-      const ent = self.currentImageEntity;
-      return ent.naturalWidth < self.stageWidth || ent.naturalHeight < self.stageHeight;
-    },
-
     get stageScale() {
       return self.zoomScale;
     },

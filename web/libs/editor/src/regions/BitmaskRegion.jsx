@@ -86,10 +86,6 @@ const Model = types
         }
       },
 
-      get scale() {
-        return self.parent?.imageIsSmallerThanStage ? 1 : self.drawingOffset.scale;
-      },
-
       /**
        * Brushes are processed in pixels, so percentages are derived values for them,
        * unlike for other tools.
@@ -115,21 +111,6 @@ const Model = types
           stageHeight: image?.stageHeight ?? 0,
           imageWidth: image?.currentImageEntity.naturalWidth ?? 0,
           imageHeight: image?.currentImageEntity.naturalHeight ?? 0,
-        };
-      },
-
-      get drawingOffset() {
-        const { dimensions } = self;
-
-        const scale = Math.min(
-          dimensions.stageWidth / dimensions.imageWidth,
-          dimensions.stageHeight / dimensions.imageHeight,
-        );
-
-        return {
-          offsetX: dimensions.imageWidth - dimensions.stageWidth / scale,
-          offsetY: dimensions.imageHeight - dimensions.stageHeight / scale,
-          scale,
         };
       },
 
@@ -243,11 +224,10 @@ const Model = types
       canvasSize() {
         if (!self.parent) return { width: 0, height: 0 };
         const ent = self.parent.currentImageEntity;
-        const scale = self.parent.imageIsSmallerThanStage ? 1 : self.parent.stageToImageRatio;
 
         return {
-          width: ent.naturalWidth / scale,
-          height: ent.naturalHeight / scale,
+          width: ent.naturalWidth * self.parent.stageZoom,
+          height: ent.naturalHeight * self.parent.stageZoom,
         };
       },
 
@@ -291,7 +271,7 @@ const Model = types
       },
 
       updateBBox() {
-        self.setBBox(getCanvasPixelBounds(self.offscreenCanvas, self.scale));
+        self.setBBox(getCanvasPixelBounds(self.offscreenCanvas, self.parent?.stageZoom ?? 1));
       },
 
       /**
@@ -315,7 +295,6 @@ const Model = types
       beginPath({ type, strokeWidth, opacity = self.opacity, x = 0, y = 0 }) {
         self.object.annotation.pauseAutosave();
 
-        const { drawingOffset: offset } = self;
         const ctx = self.offscreenCanvas.getContext("2d");
 
         // Set up context properties once
@@ -356,13 +335,9 @@ const Model = types
       },
 
       positionToStage(x, y) {
-        const { drawingOffset: offset } = self;
-        const smaller = self.parent.imageIsSmallerThanStage;
-        const ratio = smaller ? 1 : offset.scale;
-
         return {
-          x: Math.floor(x / ratio + offset.offsetX),
-          y: Math.floor(y / ratio + offset.offsetY),
+          x: Math.floor(x / self.parent.stageZoom),
+          y: Math.floor(y / self.parent.stageZoom),
         };
       },
 
