@@ -1,10 +1,11 @@
 import { getRoot } from "mobx-state-tree";
 import React, {} from "react";
 import { observer } from "mobx-react";
+import { reaction } from "mobx";
 import * as d3 from "d3";
 import { errorBuilder } from "../../core/DataValidator/ConfigValidator";
 import { cloneNode } from "../../core/Helpers";
-import { checkD3EventLoop, getOptimalWidth, getRegionColor, sparseValues } from "../../tags/object/TimeSeries/helpers";
+import { checkD3EventLoop, getRegionColor } from "../../tags/object/TimeSeries/helpers";
 import { markerSymbol } from "../../tags/object/TimeSeries/symbols";
 import {} from "../../utils/feature-flags";
 import { fixMobxObserve } from "../../utils/utilities";
@@ -27,19 +28,6 @@ class TimeSeriesVisualizerD3 extends React.Component {
   trackerValue;
 
   extent = [0, 0];
-
-  // if there is a huge data — use sliced data to optimize render
-  useOptimizedData = false;
-  // optimized data and count of slices come from parent
-  optimizedSeries = null;
-  // optimized data is enough to render zoomed data up to this level
-  // and it is equal to the count of slices
-  zoomStep = 10;
-
-  // d3 lines to render full line
-  line;
-  // and just a part of data on the screen
-  lineSlice;
 
   height = +this.props.item.height;
 
@@ -500,7 +488,6 @@ class TimeSeriesVisualizerD3 extends React.Component {
   initZoom() {
     const { data, item, time } = this.props;
     const times = data[time];
-    const upd = item.parent?.throttledRangeUpdate();
     const onZoom = () => {
       const e = d3.event;
 
@@ -523,7 +510,8 @@ class TimeSeriesVisualizerD3 extends React.Component {
         Math.min(+this.extent[1], range[1] - shift * scale * (1 - x / width)),
       ];
 
-      upd(zoomed, scale);
+      // Use immediate update for responsive zoom
+      item.parent?.updateTR(zoomed, scale);
     };
 
     this.main.on("wheel", onZoom);
@@ -547,6 +535,7 @@ class TimeSeriesVisualizerD3 extends React.Component {
 
     const { range } = this.props;
 
+    // Initialize D3 components and render initial state
     this.initializeComponent();
     for (const channel of this.props.channels) {
       this.initializeChannel(channel);
@@ -567,6 +556,10 @@ class TimeSeriesVisualizerD3 extends React.Component {
     this.renderBrushes(this.props.ranges);
 
     window.addEventListener("resize", this.changeWidth);
+    
+    // Set up MobX reactions for immediate updates when state changes
+    // This handles: overview brush changes, channel visibility toggles, and highlighting
+    this.setupMobXReactions();
   }
 
   get formatTime() {
@@ -577,21 +570,13 @@ class TimeSeriesVisualizerD3 extends React.Component {
     return this.props.item.parent?.formatDuration;
   }
 
-  // initially it checks do we even need this optimization
-  // but then this is a switch between optimized and original data
-  get slices() {
-    return this.props.item.parent?.dataSlices;
-  }
-
   initializeComponent() {
     const isDarkMode = getCurrentTheme() === "Dark";
     const { item, time, channels } = this.props;
-    const { isDate, slicesCount } = item.parent;
+    const { isDate } = item.parent;
     const { margin } = item;
     const height = this.height;
     this.clipPathId = `clip_${item.id}`;
-
-    this.zoomStep = slicesCount;
 
     let { series } = this.props;
 
@@ -612,14 +597,6 @@ class TimeSeriesVisualizerD3 extends React.Component {
         return x[column];
       });
     });
-
-    const optimizedWidthWithZoom = getOptimalWidth() * this.zoomStep;
-
-    this.useOptimizedData = series.length > optimizedWidthWithZoom;
-
-    if (this.useOptimizedData) {
-      this.optimizedSeries = sparseValues(series, optimizedWidthWithZoom);
-    }
 
     const offsetWidth = this.ref.current.offsetWidth;
     const width = offsetWidth ? offsetWidth - margin.left - margin.right : this.state.width;
@@ -700,11 +677,6 @@ class TimeSeriesVisualizerD3 extends React.Component {
       return x[column] !== null;
     });
 
-    if (this.optimizedSeries) {
-      channel.useOptimizedData = this.useOptimizedData;
-      channel.optimizedSeries = series;
-    }
-
     const times = series.map((x) => {
       return x[time];
     });
@@ -755,24 +727,63 @@ class TimeSeriesVisualizerD3 extends React.Component {
 
     markerSymbol(marker, item.markersymbol, item.markersize, item.markercolor);
 
-    channel.path = this.pathContainer.append("path").datum(series).attr("d", this.line);
-    // to render different zoomed slices of path
-    channel.path2 = this.pathContainer.append("path");
+    channel.path = this.pathContainer.append("path").datum(series)
+      .attr("d", channel.line)
+      .attr("vector-effect", "non-scaling-stroke")
+      .attr("fill", "none")
+      .attr("stroke-width", item.strokewidth || 1)
+      .attr("stroke", item.strokecolor || "steelblue")
+      .attr("marker-start", item.markersize > 0 ? `url(#${markerId})` : "")
+      .attr("marker-mid", item.markersize > 0 ? `url(#${markerId})` : "")
+      .attr("marker-end", item.markersize > 0 ? `url(#${markerId})` : "");
+  }
 
-    for (const path of [channel.path, channel.path2]) {
-      path
-        .attr("vector-effect", "non-scaling-stroke")
-        .attr("fill", "none")
-        .attr("stroke-width", item.strokewidth || 1)
-        .attr("stroke", item.strokecolor || "steelblue")
-        .attr("marker-start", item.markersize > 0 ? `url(#${markerId})` : "")
-        .attr("marker-mid", item.markersize > 0 ? `url(#${markerId})` : "")
-        .attr("marker-end", item.markersize > 0 ? `url(#${markerId})` : "");
-    }
+  setupMobXReactions() {
+    // Range reaction: Updates visualization when overview brush changes
+    this.rangeReaction = reaction(
+      () => this.props.item.parent?.brushRange?.slice(),
+      (newRange) => {
+        if (newRange && newRange.length === 2) {
+          this.setRangeWithScaling(newRange);
+        }
+      },
+      { fireImmediately: false }
+    );
+
+    // Visibility reaction: Updates channel visibility and highlighting immediately
+    this.visibilityReaction = reaction(
+      () => {
+        const { isChannelHiddenMap, highlightedChannelId } = this.props.item;
+        return {
+          hiddenMap: isChannelHiddenMap ? Object.assign({}, isChannelHiddenMap) : {},
+          highlighted: highlightedChannelId
+        };
+      },
+      ({ hiddenMap, highlighted }) => {
+        Object.values(this.channels).forEach((channel) => {
+          const isDimmed = highlighted && highlighted !== channel.id;
+          const isHidden = !!hiddenMap?.[channel.id];
+          const opacity = isDimmed ? 0.3 : null;
+          const display = isHidden ? "none" : null;
+          channel.path.style("opacity", opacity).style("display", display);
+        });
+      },
+      { fireImmediately: false }
+    );
   }
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.changeWidth);
+    
+    // Clean up MobX reactions
+    if (this.rangeReaction) {
+      this.rangeReaction();
+      this.rangeReaction = null;
+    }
+    if (this.visibilityReaction) {
+      this.visibilityReaction();
+      this.visibilityReaction = null;
+    }
   }
 
   setRangeWithScaling(range) {
@@ -783,19 +794,25 @@ class TimeSeriesVisualizerD3 extends React.Component {
   setChannelRangeWithScaling(channelItem, range) {
     const column = channelItem.columnName;
     const channel = this.channels[column];
+    const { time } = this.props;
     this.x.domain(range);
-    const current = this.x.range();
-    const all = channel.plotX.domain().map(this.x);
-    const scale = (all[1] - all[0]) / (current[1] - current[0]);
-    const left = Math.max(0, Math.floor((this.zoomStep * (current[0] - all[0])) / (all[1] - all[0])));
-    const right = Math.max(0, Math.floor((this.zoomStep * (current[1] - all[0])) / (all[1] - all[0])));
-    const translate = all[0] - current[0];
+    
+    // Recreate lineSlice with current range for proper filtering
+    channel.lineSlice = d3
+      .line()
+      .defined((d) => d[time] >= range[0] && d[time] <= range[1])
+      .y((d) => channel.y(d[column]))
+      .x((d) => this.x(d[time]));
 
-    let translateY = 0;
-    let scaleY = 1;
-    const originY = channel.y.range()[0];
     const { item } = this.props;
-    // overwrite parent's
+    
+    // Handle custom time range override
+    if (item.timerange) {
+      const timerange = item.timerange.split(",").map(Number);
+      this.x.domain(timerange);
+    }
+
+    // Handle Y-axis scaling
     const fixedscale =
       channelItem.fixedscale === undefined
         ? item.fixedscale === undefined
@@ -803,14 +820,8 @@ class TimeSeriesVisualizerD3 extends React.Component {
           : item.fixedscale
         : channelItem.fixedscale;
 
-    if (item.timerange) {
-      const timerange = item.timerange.split(",").map(Number);
-
-      this.x.domain(timerange);
-    }
-
     if (!fixedscale) {
-      // array slice may slow it down, so just find a min-max by ourselves
+      // Calculate min-max for the visible range to optimize Y-axis scaling
       const { data, time } = this.props;
       const values = data[column];
       // indices of the first and last displayed values
@@ -827,53 +838,15 @@ class TimeSeriesVisualizerD3 extends React.Component {
 
       if (item.datarange) {
         const datarange = item.datarange.split(",");
-
         if (datarange[0] !== "") min = new Number(datarange[0]);
         if (datarange[1] !== "") max = new Number(datarange[1]);
       }
 
-      // calc scale and shift
-      const diffY = d3.extent(values).reduce((a, b) => b - a); // max - min
-
-      scaleY = diffY / (max - min);
-      translateY = min / diffY;
-
       channel.y.domain([min, max]);
     }
 
-    // zoomStep - zoom level when we need to switch between optimized and original data
-    const strongZoom = scale > this.zoomStep;
-    const haveToSwitchData = strongZoom === this.useOptimizedData;
-
-    if (channel.optimizedSeries && haveToSwitchData) {
-      channel.useOptimizedData = !channel.useOptimizedData;
-      if (channel.useOptimizedData) {
-        channel.path.datum(channel.optimizedSeries);
-        channel.path.attr("d", this.line);
-      } else {
-        channel.path.attr("transform", "");
-      }
-    }
-
-    if (channel.useOptimizedData) {
-      channel.path.attr("transform", `translate(${translate} ${translateY}) scale(${scale} ${scaleY})`);
-      channel.path.attr("transform-origin", `left ${originY}`);
-      channel.path2.attr("d", "");
-    } else {
-      if (channel.optimizedSeries) {
-        channel.path.datum(this.slices[left]);
-        channel.path.attr("d", channel.lineSlice);
-        if (left !== right && this.slices[right]) {
-          channel.path2.datum(this.slices[right]);
-          channel.path2.attr("d", channel.lineSlice);
-        } else {
-          channel.path2.attr("d", "");
-        }
-      } else {
-        channel.path.attr("d", channel.lineSlice);
-        channel.path2.attr("d", "");
-      }
-    }
+    // Simple rendering: always use lineSlice for current range
+    channel.path.attr("d", channel.lineSlice);
 
     this.renderXAxis();
     this.renderYAxis();
@@ -911,16 +884,6 @@ class TimeSeriesVisualizerD3 extends React.Component {
     }
 
     this.renderBrushes(this.props.ranges, flushBrushes);
-
-    const { isChannelHiddenMap, highlightedChannelId } = this.props.item;
-    for (const channel of Object.values(this.channels)) {
-      const isDimmed = highlightedChannelId && highlightedChannelId !== channel.id;
-      const isHidden = !!isChannelHiddenMap?.[channel.id];
-      const opacity = isDimmed ? 0.3 : undefined;
-      const display = isHidden ? "none" : undefined;
-      channel.path.style("opacity", opacity).style("display", display);
-      channel.path2.style("opacity", opacity).style("display", display);
-    }
 
     const cursorChanged = this.props.cursorTime !== prevProps.cursorTime;
     if (cursorChanged || width !== prevState.width || flushBrushes) {
