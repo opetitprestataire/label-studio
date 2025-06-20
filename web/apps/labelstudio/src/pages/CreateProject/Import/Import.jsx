@@ -409,7 +409,12 @@ export const ImportPage = ({
                       <ul className="mt-2 ml-4 list-disc font-normal">
                         <li>
                           We recommend{" "}
-                          <a href="https://labelstud.io/guide/storage.html" target="_blank" rel="noopener noreferrer" aria-label="Cloud Storage documentation (opens in a new tab)">
+                          <a
+                            href="https://labelstud.io/guide/storage.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Cloud Storage documentation (opens in a new tab)"
+                          >
                             Cloud Storage
                           </a>{" "}
                           over direct uploads due to{" "}
