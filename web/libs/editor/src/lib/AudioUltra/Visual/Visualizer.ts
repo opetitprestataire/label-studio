@@ -436,6 +436,18 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.setScrollLeft(clamp(this.currentTime - offset, 0, 1));
   }
 
+  centerToTime(time: number) {
+    if (this.zoom === 1) {
+      this.setScrollLeft(0);
+      return;
+    }
+
+    const normalizedTime = time / this.wf.duration;
+    const offset = this.width / 2 / this.zoomedWidth;
+
+    this.setScrollLeft(clamp(normalizedTime - offset, 0, 1));
+  }
+
   /**
    * Update the visual render of the cursor in isolation
    */

@@ -3,7 +3,6 @@ import { averageMinMax, clamp } from "../../Common/Utils";
 import type { Renderer, RenderContext } from "./Renderer";
 import type { WaveformAudio } from "../../Media/WaveformAudio";
 import { RateLimitedRenderer } from "./RateLimitedRenderer";
-import { CACHE_RENDER_THRESHOLD } from "../constants";
 import { isFF, FF_AUDIO_SPECTROGRAMS } from "../../../../utils/feature-flags";
 
 const isAudioSpectrograms = isFF(FF_AUDIO_SPECTROGRAMS);
@@ -58,7 +57,6 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
         const audio = renderer.audio;
         const layer = renderer.layer;
         if (!audio || !layer || !layer.isVisible) {
-          renderer.lastWaveformRenderedWidth = 0;
           return;
         }
 
@@ -67,25 +65,10 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
         const samplesPerPx = context.samplesPerPx;
         const iStart = clamp(scrollLeftPx * samplesPerPx, 0, dataLength);
         const iEnd = clamp(iStart + context.width * samplesPerPx, 0, dataLength);
-        const renderableData = iEnd - iStart;
-        const zoom = context.zoom;
-        const amp = renderer.config.amp ?? 1;
-        const deltaX = scrollLeftPx - renderer.lastWaveformRenderedScrollLeftPx;
-        const waveformWillFullRender = isAudioSpectrograms
-          ? Math.abs(deltaX) >= context.width
-          : renderableData < CACHE_RENDER_THRESHOLD;
 
-        if (
-          context.width !== renderer.lastWaveformRenderedWidth ||
-          zoom !== renderer.lastWaveformRenderedZoom ||
-          amp !== renderer.lastRenderedAmp ||
-          waveformWillFullRender
-        ) {
-          for (let i = 0; i < audio.channelCount; i++) {
-            renderer.renderWave(context, i, layer, iStart, iEnd);
-          }
-        } else {
-          renderer.renderPartialWave(context, layer, iStart, iEnd, deltaX);
+        // Always do a full render to avoid tearing artifacts
+        for (let i = 0; i < audio.channelCount; i++) {
+          renderer.renderWave(context, i, layer, iStart, iEnd);
         }
       },
       false,
@@ -98,9 +81,6 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
   }
 
   public lastRenderedAmp = 0;
-  public lastWaveformRenderedWidth = 0;
-  public lastWaveformRenderedZoom = 0;
-  public lastWaveformRenderedScrollLeftPx = 0;
 
   renderWave(context: RenderContext, channelNumber: number, layer: Layer, iStart: number, iEnd: number): boolean {
     const renderId = this.config.renderId;
@@ -122,55 +102,13 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
       if (!next.done) {
         requestAnimationFrame(render);
       } else {
-        this.lastWaveformRenderedWidth = context.width;
-        this.lastWaveformRenderedZoom = zoom;
         this.lastRenderedAmp = amp;
-        this.lastWaveformRenderedScrollLeftPx = scrollLeftPx;
         this.onRenderTransfer?.();
         return true;
       }
     };
     render();
     return false;
-  }
-
-  renderPartialWave(context: RenderContext, layer: Layer, iStart: number, iEnd: number, deltaX: number) {
-    const renderId = this.config.renderId;
-    let x = 0;
-    const audio = this.audio;
-    const channelCount = audio?.channelCount ?? 1;
-    const height = this.config.waveHeight / channelCount;
-    const scrollLeftPx = context.scrollLeftPx;
-    const dataLength = context.dataLength;
-    this.lastWaveformRenderedScrollLeftPx = scrollLeftPx;
-    const samplesPerPx = context.samplesPerPx;
-    const shiftAmount = -deltaX;
-    const sampleDiff = Math.round(deltaX * samplesPerPx);
-    layer.shift(shiftAmount, 0);
-    for (let channelNumber = 0; channelNumber < channelCount; channelNumber++) {
-      let sStart = iStart;
-      let sEnd = iEnd;
-      if (deltaX > 0) {
-        sStart = iEnd - sampleDiff;
-        x = clamp(context.width + shiftAmount - 2, 0, context.width);
-      } else {
-        sEnd = iStart - sampleDiff;
-        x = 0;
-      }
-      sEnd = clamp(sEnd + samplesPerPx * 2, 0, dataLength);
-      const renderIterator = this.renderSlice(layer, height, sStart, sEnd, channelNumber, x, context);
-      const render = () => {
-        if (this.config.renderId !== renderId) return;
-        const next = renderIterator.next();
-        if (!next.done) {
-          requestAnimationFrame(render);
-        } else {
-          if (context && context.notifyRenderComplete) context.notifyRenderComplete();
-          this.onRenderTransfer?.();
-        }
-      };
-      render();
-    }
   }
 
   *renderSlice(
@@ -254,9 +192,6 @@ export class WaveformRenderer implements Renderer<WaveformRendererConfig> {
 
   public resetRenderState() {
     this.lastRenderedAmp = 0;
-    this.lastWaveformRenderedWidth = 0;
-    this.lastWaveformRenderedZoom = 0;
-    this.lastWaveformRenderedScrollLeftPx = 0;
   }
 
   public drawMiddleLine() {

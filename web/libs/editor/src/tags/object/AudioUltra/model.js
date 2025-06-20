@@ -253,7 +253,10 @@ export const AudioModel = types.compose(
 
         try {
           self._ws.setCurrentTime(time, true);
-          self._ws.syncCursor(); // sync cursor with current time
+          // Use requestAnimationFrame to ensure seek processing completes before centering
+          requestAnimationFrame(() => {
+            self._ws.centerToTime(time); // center view and sync cursor for external seeks
+          });
         } catch (err) {
           console.log(err);
         }

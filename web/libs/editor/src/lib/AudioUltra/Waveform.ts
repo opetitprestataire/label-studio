@@ -321,6 +321,21 @@ export class Waveform extends Events<WaveformEventTypes> {
     this.visualizer.transferImage();
   }
 
+  /**
+   * Center the view to a specific time and update the playhead.
+   * Used for external/sync seeks.
+   */
+  centerToTime(time: number) {
+    if (this.params.autoCenter && this.zoom > 1) {
+      this.visualizer.centerToTime(time);
+      // Use requestAnimationFrame to ensure scroll position is applied before updating playhead
+      requestAnimationFrame(() => {
+        this.visualizer.updateCursorToTime(time);
+        this.visualizer.draw();
+      });
+    }
+  }
+
   seek(value: number) {
     this.player.seek(value);
   }
