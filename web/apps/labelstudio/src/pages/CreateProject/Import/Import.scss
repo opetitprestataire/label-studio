@@ -107,7 +107,7 @@
 
   & > main {
     @include custom-scrollbar;
-    
+
     flex: 1;
     overflow-y: auto;
     background: linear-gradient(var(--color-neutral-background) 30%, rgb(255 255 255 / 0%)), linear-gradient(rgb(0 0 0 / 10%), var(--color-neutral-background) 100%);
@@ -228,17 +228,6 @@
     z-index: 10;
     border-radius: 5px;
     pointer-events: none;
-  }
-
-  // Constrain the height of the JSON preview CodeBlock to prevent dropzone from being pushed below the fold
-  .simple-card:has([title="Expected input preview"]) {
-    max-height: 400px;
-    
-    .code-block,
-    [class*="code-block"] {
-      max-height: 350px;
-      overflow-y: auto;
-    }
   }
 }
 
