@@ -91,34 +91,32 @@ export const BitmaskDrawing = {
  *
  * @param item - An object containing references to the canvas layer, offscreen canvas, and image
  * @param item.layerRef - Reference to the Konva layer containing the canvas
- * @param item.offscreenCanvas - The offscreen canvas element containing the bitmask data
+ * @param item.offscreenCanvasRef - The offscreen canvas element containing the bitmask data
  * @param item.imageRef - Reference to the Konva image element
- * @param item.drawingOffset - Object containing offsetX and offsetY for drawing position
  * @param item.scale - Scale factor of the image
  * @returns {boolean} True if hovering over a non-transparent pixel, false otherwise
  */
-export function isHoveringNonTransparentPixel(item: any) {
-  if (!item?.layerRef || !item?.offscreenCanvas || !item?.imageRef) {
+export function isHoveringNonTransparentPixel(item: any): boolean {
+  if (!item?.layerRef || !item?.offscreenCanvasRef || !item?.imageRef) {
     return false;
   }
 
   const stage = item.layerRef.getStage();
   const pointer = stage?.getPointerPosition();
-  const ctx = item.offscreenCanvas.getContext("2d");
+  const ctx = item.offscreenCanvasRef.getContext("2d");
 
   if (!pointer || !ctx) return false;
 
   try {
     // Convert global pointer to image-local coordinates
-    const { drawingOffset: offset } = item;
     const transform = item.imageRef.getAbsoluteTransform().copy().invert();
     const localPos = transform.point(pointer);
 
-    const { width, height } = item.offscreenCanvas;
+    const { width, height } = item.offscreenCanvasRef;
 
     // Convert to pixel coords in the canvas backing the image
-    const x = Math.floor(localPos.x / item.scale + offset.offsetX);
-    const y = Math.floor(localPos.y / item.scale + offset.offsetY);
+    const x = Math.floor(localPos.x / item.parent.stageZoom);
+    const y = Math.floor(localPos.y / item.parent.stageZoom);
 
     if (x < 0 || y < 0 || x >= width || y >= height) return false;
 

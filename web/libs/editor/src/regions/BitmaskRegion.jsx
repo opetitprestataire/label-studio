@@ -50,17 +50,21 @@ const Model = types
     /** @type {Image} */
     imageRef: undefined,
 
-    /** @type {HTMLCanvasElement} */
-    bitmaskRef: null,
-
-    /** @type {CanvasRenderingContext2D} */
-    bitmaskCtx: null,
-
     /** @type {{x: number, y: number}} */
     lastPos: { x: 0, y: 0 },
 
-    /** @type {OffscreenCanvas} */
-    offscreenCanvas: null,
+    /**
+     * This canvas will always have black pixels on transparent background.
+     * The main canvas we're drawing on.
+     * @type {OffscreenCanvas}
+     **/
+    offscreenCanvasRef: null,
+
+    /**
+     * Holds actual visible region brush strokes with color.
+     * @type {HTMLCanvasElement}
+     */
+    bitmaskCanvasRef: null,
 
     /** @type {number[][]} */
     outline: [],
@@ -81,7 +85,7 @@ const Model = types
         return chroma(self.colorParts).hex();
       },
       get bboxCoordsCanvas() {
-        if (self.offscreenCanvas) {
+        if (self.offscreenCanvasRef) {
           return self.bbox;
         }
       },
@@ -166,8 +170,8 @@ const Model = types
       restoreFromImageDataURL() {
         if (!self.imageDataURL) return;
         async function renderDataURL() {
-          const context = self.offscreenCanvas.getContext("2d");
-          const bitmask = self.bitmaskRef;
+          const context = self.offscreenCanvasRef.getContext("2d");
+          const bitmask = self.bitmaskCanvasRef;
           const image = new window.Image();
 
           image.src = self.imageDataURL;
@@ -200,9 +204,9 @@ const Model = types
       },
 
       redraw() {
-        if (self.bitmaskRef && self.offscreenCanvas && self.imageDataURL) {
+        if (self.bitmaskCanvasRef && self.offscreenCanvasRef && self.imageDataURL) {
           requestIdleCallback(() => {
-            const ctx = self.offscreenCanvas.getContext("2d");
+            const ctx = self.offscreenCanvasRef.getContext("2d");
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             self.restoreFromImageDataURL();
           });
@@ -236,25 +240,19 @@ const Model = types
           width: self.parent.currentImageEntity.naturalWidth,
           height: self.parent.currentImageEntity.naturalHeight,
         };
-        if (!self.bitmaskRef) {
-          self.bitmaskRef = self.bitmaskRef ?? new OffscreenCanvas(width, height);
+        if (!self.bitmaskCanvasRef) {
+          self.bitmaskCanvasRef = new OffscreenCanvas(width, height);
         }
 
-        if (!self.offscreenCanvas) {
-          self.offscreenCanvas = self.offscreenCanvas ?? new OffscreenCanvas(width, height);
+        if (!self.offscreenCanvasRef) {
+          self.offscreenCanvasRef = new OffscreenCanvas(width, height);
         }
 
-        if (!self.bitmaskCtx) {
-          const ctx = self.bitmaskRef.getContext("2d");
-          ctx.imageSmoothingEnabled = self.parent.smoothing;
-          self.bitmaskCtx = self.bitmaskCtx ?? ctx;
-        }
-
-        return self.offscreenCanvas;
+        return self.offscreenCanvasRef;
       },
 
       composeMask() {
-        const ctx = self.bitmaskRef.getContext("2d");
+        const ctx = self.bitmaskCanvasRef.getContext("2d");
 
         // Only clear if we're not in the middle of drawing
         if (!self.isDrawing) {
@@ -264,14 +262,14 @@ const Model = types
         ctx.globalCompositeOperation = "destination-atop";
         ctx.fillStyle = self.strokeColor;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.drawImage(self.offscreenCanvas, 0, 0);
+        ctx.drawImage(self.offscreenCanvasRef, 0, 0);
 
         // Always batch draw to ensure visual updates
         self.layerRef?.batchDraw();
       },
 
       updateBBox() {
-        self.setBBox(getCanvasPixelBounds(self.offscreenCanvas, self.parent?.stageZoom ?? 1));
+        self.setBBox(getCanvasPixelBounds(self.offscreenCanvasRef, self.parent?.stageZoom ?? 1));
       },
 
       /**
@@ -295,7 +293,7 @@ const Model = types
       beginPath({ type, strokeWidth, opacity = self.opacity, x = 0, y = 0 }) {
         self.object.annotation.pauseAutosave();
 
-        const ctx = self.offscreenCanvas.getContext("2d");
+        const ctx = self.offscreenCanvasRef.getContext("2d");
 
         // Set up context properties once
         ctx.fillStyle = type === "eraser" ? "white" : "black";
@@ -317,7 +315,7 @@ const Model = types
       addPoint(x, y, strokeWidth, options = { erase: false }) {
         self.setLastPos(
           BitmaskDrawing.draw({
-            ctx: self.offscreenCanvas.getContext("2d"),
+            ctx: self.offscreenCanvasRef.getContext("2d"),
             ...self.positionToStage(x, y),
             brushSize: strokeWidth,
             color: self.strokeColor,
@@ -373,15 +371,15 @@ const Model = types
        */
       getImageSnapshotCanvas() {
         const tempCanvas = document.createElement("canvas");
-        tempCanvas.width = self.offscreenCanvas.width;
-        tempCanvas.height = self.offscreenCanvas.height;
+        tempCanvas.width = self.offscreenCanvasRef.width;
+        tempCanvas.height = self.offscreenCanvasRef.height;
         const ctx = tempCanvas.getContext("2d");
 
         // Convert back to black mask
         ctx.globalCompositeOperation = "destination-atop";
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.drawImage(self.offscreenCanvas, 0, 0);
+        ctx.drawImage(self.offscreenCanvasRef, 0, 0);
         return tempCanvas;
       },
 
@@ -409,13 +407,9 @@ const BitmaskRegionModel = types.compose(
 
 const HtxBitmaskView = ({ item, setShapeRef }) => {
   const highlightedRegions = item.parent?.regs.filter((r) => r.highlighted);
-
-  const displayHighlight = useMemo(() => {
-    if (highlightedRegions?.length > 1) return false;
-    return item.highlighted || item.selected;
-  }, [item.highlighted, item.isDrawing, item.selected, highlightedRegions]);
-
+  const displayHighlight = item.highlighted || item.selected;
   const ent = item.parent?.currentImageEntity;
+
   const { width, height } = useMemo(() => {
     if (!item.parent) return { width: 0, height: 0 };
     return item.canvasSize();
@@ -427,11 +421,14 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
     <RegionWrapper item={item}>
       <Group ref={item.setLayerRef}>
         <Group id={item.cleanId} name="bitmask" visible={!item.hidden} listening={false} opacity={item.opacity}>
-          {displayHighlight && <Rect fill="black" x={0} y={0} width={width} height={height} listening={false} />}
+          {/* Displaying the overlay if 0 (just selected) or 1 (only highlighted region) */}
+          {displayHighlight && highlightedRegions.length < 2 && (
+            <Rect fill="black" x={0} y={0} width={width} height={height} listening={false} />
+          )}
 
           <Image
             ref={item.setImageRef}
-            image={item.bitmaskRef}
+            image={item.bitmaskCanvasRef}
             width={width}
             height={height}
             listening={false}
@@ -439,22 +436,22 @@ const HtxBitmaskView = ({ item, setShapeRef }) => {
           />
         </Group>
         <Group listening={false} opacity={item.opacity}>
-          {displayHighlight ||
-            (highlightedRegions?.length > 1 &&
-              item.outline.map((points, i) => (
-                <Line
-                  key={i}
-                  points={points}
-                  stroke={item.strokeColor}
-                  strokeWidth={4}
-                  closed
-                  lineJoin="round"
-                  lineCap="round"
-                  strokeScaleEnabled={false}
-                  tension={0.2}
-                  listening={false}
-                />
-              )))}
+          {displayHighlight &&
+            highlightedRegions.length > 1 &&
+            item.outline.map((points, i) => (
+              <Line
+                key={i}
+                points={points}
+                stroke={item.strokeColor}
+                strokeWidth={4}
+                closed
+                lineJoin="round"
+                lineCap="round"
+                strokeScaleEnabled={false}
+                tension={0.2}
+                listening={false}
+              />
+            ))}
         </Group>
         <Group id={`${item.cleanId}_labels`}>
           <LabelOnMask item={item} color={item.strokeColor} />

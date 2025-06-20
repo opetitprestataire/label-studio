@@ -8,16 +8,15 @@ import simplify from "simplify-js";
  */
 export function generateMultiShapeOutline(item: {
   highlighted: boolean;
-  offscreenCanvas: HTMLCanvasElement;
-  drawingOffset: { scale: number };
-  scale: number;
+  offscreenCanvasRef: HTMLCanvasElement;
+  parent: any;
 }) {
-  if (!item.offscreenCanvas) return [];
+  if (!item.offscreenCanvasRef) return [];
 
-  const ctx = item.offscreenCanvas.getContext("2d");
+  const ctx = item.offscreenCanvasRef.getContext("2d");
   if (!ctx) return [];
 
-  const { width, height } = item.offscreenCanvas;
+  const { width, height } = item.offscreenCanvasRef;
   const data = ctx.getImageData(0, 0, width, height).data;
 
   // Create a binary grid from the image data (1 for visible pixels, 0 for transparent)
@@ -121,11 +120,11 @@ export function generateMultiShapeOutline(item: {
   }
 
   // Scale and simplify the contours for rendering
-  const { scale } = item;
+  const scale = item.parent.stageZoom;
   return contours.map((contour) => {
     const simplified = simplify(
       contour.map(([x, y]) => ({ x: x * scale, y: y * scale })),
-      0.9,
+      1.5,
       true,
     );
     return simplified.flatMap(({ x, y }) => [x, y]);
