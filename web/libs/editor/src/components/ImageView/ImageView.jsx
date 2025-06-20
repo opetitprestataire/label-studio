@@ -1247,7 +1247,6 @@ const EntireStage = observer(
           item.setStageRef(ref);
         }}
         className={[styles["image-element"], ...imagePositionClassnames].join(" ")}
-        style={{ cursor: "none" }}
         width={size.width}
         height={size.height}
         scaleX={item.zoomScale}
