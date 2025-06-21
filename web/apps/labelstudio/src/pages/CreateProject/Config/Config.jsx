@@ -77,7 +77,8 @@ const Label = ({ label, template, color }) => {
 const ConfigureControl = ({ control, template }) => {
   const refLabels = React.useRef();
   const tagname = control.tagName;
-
+  const isedit = control.attributes.getNamedItem("isEdit");
+  if (isedit && !JSON.parse(isedit.value)) return null;
   if (tagname !== "Choices" && !tagname.endsWith("Labels")) return null;
   const palette = Palette();
 
