@@ -92,7 +92,7 @@ export const LabelingSummary = ({ hideInfo, annotations: all, controls, onSelect
               {annotation.type === "prediction" && <IconSparks size={18} />}
             </Userpic>
             <span>{annotation.createdBy}</span>
-            <span>#{annotation.id}</span>
+            {!hideInfo && <span>#{annotation.id}</span>}
           </button>
         );
       },
