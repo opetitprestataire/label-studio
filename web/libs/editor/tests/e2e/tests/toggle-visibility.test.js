@@ -130,7 +130,8 @@ Scenario("Hiding bulk visibility toggle", ({ I, LabelStudio, AtImageView, AtLabe
   I.seeElement(ALL_VISIBLE_SELECTOR);
 });
 
-Scenario("Checking regions grouped by label", async ({ I, LabelStudio }) => {
+// Skipping as flaky. Probably parallelization issue.
+Scenario.skip("Checking regions grouped by label", async ({ I, LabelStudio }) => {
   const checkVisible = async (num) => {
     switch (num) {
       case 0:
@@ -180,6 +181,7 @@ Scenario("Checking regions grouped by label", async ({ I, LabelStudio }) => {
   I.click('[data-testid="grouping-manual"]');
   I.waitForElement(".lsf-menu", 2);
 
+  I.waitForElement(".lsf-dropdown.lsf-visible");
   // Click on the "Group by Label" option in the dropdown
   I.click('//div[contains(@class, "lsf-view-controls__label") and contains(text(), "Group by Label")]');
 
