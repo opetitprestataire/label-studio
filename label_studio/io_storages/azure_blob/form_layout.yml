@@ -2,7 +2,8 @@
 title_container_prefix: &title_container_prefix
   - type: text
     name: title
-    label: Storage Title
+    label: Storage Name
+    required: true
   - type: text
     name: container
     label: Container Name
@@ -46,15 +47,26 @@ ImportStorage:
   - columnCount: 3
     fields: *azure_params
 
+  # Import method selection
+  - columnCount: 1
+    fields:
+      - type: select
+        name: use_blob_urls
+        label: Import method
+        description: Choose how to import your data from storage
+        placeholder: "Select an option"
+        required: true
+        options:
+          - value: true
+            label: "Files - Creates a separate task for each storage object (e.g. JPG, MP3, TXT)"
+          - value: false
+            label: "JSON - Treat each JSON file as a task definition (one or more tasks per file)"
+
   # 1 columns grid
   - columnCount: 1
     columns:
       - width: 600
-        fields:
-          - type: toggle
-            name: use_blob_urls
-            label: Treat every bucket object as a source file
-            description: If unchecked, treat every bucket object as a JSON-formatted task
+        fields: []
       - width: 600
         fields:
           - type: toggle
@@ -64,7 +76,7 @@ ImportStorage:
             value: true
           - type: counter
             name: presign_ttl
-            label: Expiration minutes
+            label: Set expiry for pre-signed URLs (minutes)
             min: 1
             value: 15
             dependency: presign
