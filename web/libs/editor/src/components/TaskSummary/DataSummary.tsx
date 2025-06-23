@@ -31,10 +31,12 @@ export const DataSummary = ({ data_types }: { data_types: ObjectTypes }) => {
           }
 
           if (type === "audio") {
+            // biome-ignore lint/a11y/useMediaCaption: that's user's media, captions can't be used
             return <audio src={value} controls className="w-full" />;
           }
 
           if (type === "video") {
+            // biome-ignore lint/a11y/useMediaCaption: that's user's media, captions can't be used
             return <video src={value} controls className="w-full" />;
           }
 
