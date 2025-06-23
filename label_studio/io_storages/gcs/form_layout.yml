@@ -69,8 +69,6 @@ ImportStorage:
   - columnCount: 1
     columns:
       - width: 600
-        fields: []
-      - width: 600
         fields:
           - type: toggle
             name: presign
