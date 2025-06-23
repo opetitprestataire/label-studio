@@ -71,7 +71,11 @@ export const LabelingSummary = ({ annotations: all, controls, onSelect }: Props)
         const annotation = row.original;
 
         return (
-          <button type="button" className="flex gap-tight items-center cursor-pointer" onClick={() => onSelect(annotation)}>
+          <button
+            type="button"
+            className="flex gap-tight items-center cursor-pointer"
+            onClick={() => onSelect(annotation)}
+          >
             <Userpic
               user={annotation.user}
               className={annotation.type === "prediction" ? "!bg-accent-plum-subtle text-accent-plum-bold" : ""}

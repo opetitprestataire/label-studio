@@ -115,7 +115,13 @@ export const renderers: Record<string, RendererType> = {
     if (!texts) return null;
 
     // biome-ignore lint/suspicious/noArrayIndexKey: this piece won't be rerendered with updated data anyway and texts can be huge
-    return <div className="text-ellipsis line-clamp-6">{texts.map((text, i) => <p key={i}>{text}</p>)}</div>;
+    return (
+      <div className="text-ellipsis line-clamp-6">
+        {texts.map((text, i) => (
+          <p key={i}>{text}</p>
+        ))}
+      </div>
+    );
   },
   ranker: (results) => {
     if (!results.length) return "-";
@@ -125,7 +131,12 @@ export const renderers: Record<string, RendererType> = {
     return Object.entries(value).map(([bucket, items]) => {
       return (
         <p key={bucket}>
-          <b>{bucket}</b>: <span className="inline-flex gap-2 flex-wrap">{items.map(item => <LabelingChip key={item}>{item}</LabelingChip>)}</span>
+          <b>{bucket}</b>:{" "}
+          <span className="inline-flex gap-2 flex-wrap">
+            {items.map((item) => (
+              <LabelingChip key={item}>{item}</LabelingChip>
+            ))}
+          </span>
         </p>
       );
     });

@@ -59,10 +59,8 @@ const TaskSummary = ({ annotations: all, store: annotationStore }: TaskSummaryPr
       {
         type: object.type,
         value:
-          "parsedValue" in object
-            ? object.parsedValue
-            // @ts-expect-error dataObj and _url are very specific and not added to types
-            : (object.dataObj ?? object._url ?? object._value ?? object.value),
+          // @ts-expect-error parsedValue, dataObj and _url are very specific and not added to types
+          object.parsedValue ?? object.dataObj ?? object._url ?? object._value ?? object.value,
       },
     ]),
   );
