@@ -48,7 +48,7 @@ export const LabelingSummary = ({ hideInfo, annotations: all, controls, onSelect
           ? currentUser?.id === annotation.user?.id
             ? "Me"
             : "User"
-          : annotation.user?.displayName ?? "User",
+          : (annotation.user?.displayName ?? "User"),
     results:
       annotation.type === "prediction"
         ? (annotation.results?.map(convertPredictionResult) ?? [])
