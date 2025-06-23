@@ -381,7 +381,7 @@ After you [configure access to your S3 bucket](#Configure-access-to-your-S3-buck
 2. For a specific project, open **Settings > Cloud Storage**.
 3. Click **Add Source Storage**.  
 4. In the dialog box that appears, select **Amazon S3** as the storage type.
-5. In the **Storage Title** field, type a name for the storage to appear in the Label Studio UI.
+5. In the **Storage Name** field, type a name for the storage to appear in the Label Studio UI.
 6. Specify the name of the S3 bucket, and if relevant, the bucket prefix to specify an internal folder or container.
 7. Adjust the remaining parameters:
     - In the **File Filter Regex** field, specify a regular expression to filter bucket objects. Use `.*` to collect all objects.
@@ -391,7 +391,7 @@ After you [configure access to your S3 bucket](#Configure-access-to-your-S3-buck
     - In the **Secret Access Key** field, specify the secret key of the temporary security credentials for an AWS account with access to your S3 bucket.
     - In the **Session Token** field, specify a session token of the temporary security credentials for an AWS account with access to your S3 bucket.
     - (Optional) Enable **Treat every bucket object as a source file** if your bucket contains BLOB storage files such as JPG, MP3, or similar file types. This setting creates a URL for each bucket object to use for labeling. Leave this option disabled if you have multiple JSON files in the bucket with one task per JSON file.
-    - (Optional) Enable **Recursive scan** to perform recursive scans over the bucket contents if you have nested folders in your S3 bucket.
+    - (Optional) Enable **Scan all sub-folders** to include files from all nested folders within your S3 bucket prefix.
     - Choose whether to disable [**Use pre-signed URLs**](#Pre-signed-URLs-vs-storage-proxies). 
         - **ON** - Label Studio generates a pre-signed URL to load media. 
         - **OFF** - Label Studio proxies media using its own backend.  
@@ -407,7 +407,7 @@ After you [configure access to your S3 bucket](#Configure-access-to-your-S3-buck
 2. For a specific project, open **Settings > Cloud Storage**.
 3. Click **Add Target Storage**.  
 4. In the dialog box that appears, select **Amazon S3** as the storage type.
-5. In the **Storage Title** field, type a name for the storage to appear in the Label Studio UI.
+5. In the **Storage Name** field, type a name for the storage to appear in the Label Studio UI.
 6. Specify the name of the S3 bucket, and if relevant, the bucket prefix to specify an internal folder or container.
 7. Adjust the remaining parameters:
     - In the **Region Name** field, specify the AWS region name. For example `us-east-1`.
@@ -547,7 +547,7 @@ In the Label Studio UI, do the following to set up the connection:
 2. For a specific project, open **Settings > Cloud Storage**.
 3. Click **Add Source Storage**.  
 4. In the dialog box that appears, select **Amazon S3 (IAM role access)** as the storage type.
-5. In the **Storage Title** field, type a name for the storage to appear in the Label Studio UI.
+5. In the **Storage Name** field, type a name for the storage to appear in the Label Studio UI.
 6. Specify the name of the S3 bucket, and if relevant, the bucket prefix to specify an internal folder or container.
 7. Adjust the remaining parameters:
     - In the **File Filter Regex** field, specify a regular expression to filter bucket objects. Use `.*` to collect all objects.
@@ -556,7 +556,7 @@ In the Label Studio UI, do the following to set up the connection:
     - In the **Role ARN** field, specify the Amazon Resource Name (ARN) of the IAM role that you created to grant access to Label Studio.
     - In the **External ID** field, specify the external ID that identifies Label Studio to your AWS account. You can find the external ID on your **Organization** page.
     - Enable **Treat every bucket object as a source file** if your bucket contains BLOB storage files such as JPG, MP3, or similar file types. This setting creates a URL for each bucket object to use for labeling. Leave this option disabled if you have multiple JSON files in the bucket with one task per JSON file.
-    - Enable **Recursive scan** to perform recursive scans over the bucket contents if you have nested folders in your S3 bucket.
+    - Enable **Scan all sub-folders** to include files from all nested folders within your S3 bucket prefix.
     - Choose whether to disable [**Use pre-signed URLs**](#Pre-signed-URLs-vs-storage-proxies). 
       - **ON** - Label Studio generates a pre-signed URL to load media. 
       - **OFF** - Label Studio proxies media using its own backend.  
@@ -572,7 +572,7 @@ In the Label Studio UI, do the following to set up a target storage connection t
 2. For a specific project, open **Settings > Cloud Storage**.
 3. Click **Add Target Storage**.  
 4. In the dialog box that appears, select **Amazon S3 (IAM role access)** as the storage type.
-5. In the **Storage Title** field, type a name for the storage to appear in the Label Studio UI.
+5. In the **** field, type a name for the storage to appear in the Label Studio UI.
 6. Specify the name of the S3 bucket, and if relevant, the bucket prefix to specify an internal folder or container.
 7. Adjust the remaining parameters:
     - In the **Region Name** field, specify the AWS region name. For example `us-east-1`.
@@ -693,7 +693,7 @@ In the Label Studio UI, do the following to set up the connection:
 2. For a specific project, open **Settings > Cloud Storage**.
 3. Click **Add Source Storage**.  
 4. In the dialog box that appears, select **Google Cloud Storage** as the storage type.
-5. In the **Storage Title** field, type a name for the storage to appear in the Label Studio UI.
+5. In the **** field, type a name for the storage to appear in the Label Studio UI.
 6. Specify the name of the GCS bucket, and if relevant, the bucket prefix to specify an internal folder or container.
 7. Adjust the remaining optional parameters:
     - In the **File Filter Regex** field, specify a regular expression to filter bucket objects. Use `.*` to collect all objects.
@@ -1147,7 +1147,7 @@ In the Label Studio UI, do the following to set up the connection:
 2. For a specific project, open **Settings > Cloud Storage**.
 3. Click **Add Source Storage**.  
 4. In the dialog box that appears, select **Microsoft Azure** as the storage type.
-5. In the **Storage Title** field, type a name for the storage to appear in the Label Studio UI.
+5. In the **** field, type a name for the storage to appear in the Label Studio UI.
 6. Specify the name of the Azure Blob container, and if relevant, the container prefix to specify an internal folder or container.
 7. Adjust the remaining optional parameters:
     - In the **File Filter Regex** field, specify a regular expression to filter bucket objects. Use `.*` to collect all objects.
@@ -1253,7 +1253,7 @@ In the Label Studio UI, do the following to set up the connection:
 <img src="/images/local-storage-settings.png" alt="Screenshot of the storage settings modal described in the preceding steps." class="gif-border">
   
 4. In the dialog box that appears, select **Local Files** as the storage type.
-5. In the **Storage Title** field, type a name for the storage to appear in the Label Studio UI.
+5. In the **** field, type a name for the storage to appear in the Label Studio UI.
 6. Specify an **Absolute local path** to the directory with your files. The local path must be an absolute path and include the `LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT` value. 
 
     For example, if `LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT=/home/user`, then your local path must be `/home/user/dataset1`. For more about that environment variable, see [Run Label Studio on Docker and use local storage](https://labelstud.io/guide/start#Run-Label-Studio-on-Docker-and-use-Local-Storage).  

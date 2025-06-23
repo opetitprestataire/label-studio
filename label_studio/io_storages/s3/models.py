@@ -188,7 +188,7 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
     recursive_scan = models.BooleanField(
         _('recursive scan'),
         default=False,
-        help_text=_('Perform recursive scan over the bucket content'),
+        help_text=_('Include files from all nested folders'),
     )
 
     @catch_and_reraise_from_none

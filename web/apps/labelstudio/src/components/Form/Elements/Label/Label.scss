@@ -6,7 +6,7 @@
     display: flex;
     margin-bottom: 0;
     font-size: 14px;
-    line-height: 120%;
+    line-height: 1.25rem;
   }
 
   &__description {
@@ -55,7 +55,7 @@
   &[data-required] &__text::after {
     content: "Required";
     font-size: 0.825rem;
-    color: var(--sand_500);
+    color: var(--color-neutral-content-subtler);
     margin-left: 0.325rem;
   }
 
