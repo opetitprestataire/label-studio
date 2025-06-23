@@ -149,7 +149,7 @@ export const create = (columns) => {
         const isLabelStream = getRoot(self).SDK?.mode === "labelstream";
         const taskParams = { taskID };
         if (isLabelStream) {
-          taskParams.interaction = 'labelstream';
+          taskParams.interaction = "labelstream";
         }
 
         const taskData = yield self.root.apiCall("task", taskParams);
