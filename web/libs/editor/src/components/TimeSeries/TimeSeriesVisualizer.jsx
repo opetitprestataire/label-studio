@@ -800,7 +800,6 @@ class TimeSeriesVisualizerD3 extends React.Component {
       this.setChannelRangeWithScaling(channelItem, range, { left, right, translate, scale });
     }
   }
-
   setChannelRangeWithScaling(channelItem, range, { left, right, translate, scale }) {
     const column = channelItem.columnName;
     const channel = this.channels[column];
