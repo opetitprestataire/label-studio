@@ -114,23 +114,22 @@ ImportStorage:
           - value: false
             label: "JSON - Treat each JSON file as a task definition (one or more tasks per file)"
 
-  # 2 columns grid
-  - columnCount: 2
+  # 1 column grid
+  - columnCount: 1
     columns:
       - fields:
-          - type: toggle
-            width: 580
-            name: presign
-            label: "Use pre-signed URLs (On)\n Proxy through Label Studio (Off)"
-            description: "When pre-signed URLs are enabled, all data bypasses Label Studio and user browsers directly read data from storage"
-            value: true
-      - fields:
-          - type: counter
-            name: presign_ttl
-            label: Expire pre-signed URLs (minutes)
-            min: 1
-            value: 15
-            dependency: presign
+        - type: toggle
+          width: 580
+          name: presign
+          label: "Use pre-signed URLs (On)\n Proxy through Label Studio (Off)"
+          description: "When pre-signed URLs are enabled, all data bypasses Label Studio and user browsers directly read data from storage"
+          value: true
+        - type: counter
+          name: presign_ttl
+          label: Expire pre-signed URLs (minutes)
+          min: 1
+          value: 15
+          dependency: presign
   - columnCount: 1
     columns:
       - fields:
