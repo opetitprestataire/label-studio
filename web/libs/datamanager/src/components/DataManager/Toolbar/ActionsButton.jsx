@@ -17,13 +17,45 @@ const injector = inject(({ store }) => ({
   hasSelected: store.currentView?.selected?.hasSelected ?? false,
 }));
 
-const buildDialogContent = (text, form, formRef) => {
+// const buildDialogContent = async (text, form, formRef, store) => {
+//   const formData = await store.fetchActionForm(actionId);
+
+//   return (
+//     <Block name="dialog-content">
+//       <Elem name="text">{text}</Elem>
+//       {formData && (
+//         <Elem name="form" style={{ paddingTop: 16 }}>
+//           <Form.Builder ref={formRef} fields={formData.toJSON()} autosubmit={false} withActions={false} />
+//         </Elem>
+//       )}
+//     </Block>
+//   );
+// };
+
+const DialogContent = ({ text, form, formRef, store, action }) => {
+  const [formData, setFormData] = useState(form);
+  useEffect(() => {
+    if (!formData) {
+      store.fetchActionForm(action.id).then((form) => {
+        console.log("form response", form);
+        setFormData(form);
+      });
+    }
+  }, [formData]);
+
+  console.log("formData", formData);
+  console.log("formData.toJSON", formData && formData.toJSON);
+  console.log("form", form);
+
+  const fields = formData && formData.toJSON ? formData.toJSON() : formData;
+  console.log("fields", fields);
+
   return (
     <Block name="dialog-content">
       <Elem name="text">{text}</Elem>
-      {form && (
+      {formData && (
         <Elem name="form" style={{ paddingTop: 16 }}>
-          <Form.Builder ref={formRef} fields={form.toJSON()} autosubmit={false} withActions={false} />
+          <Form.Builder ref={formRef} fields={fields} autosubmit={false} withActions={false} />
         </Elem>
       )}
     </Block>
@@ -124,7 +156,7 @@ const invokeAction = (action, destructive, store, formRef) => {
 
     dialog({
       title: title ? title : destructive ? "Destructive action" : "Confirm action",
-      body: buildDialogContent(text, form, formRef),
+      body: <DialogContent text={text} form={form} formRef={formRef} store={store} action={action} />,
       buttonLook: destructive ? "destructive" : "primary",
       onOk() {
         const body = formRef.current?.assembleFormData({ asJSON: true });

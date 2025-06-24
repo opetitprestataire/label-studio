@@ -546,6 +546,11 @@ export const AppStore = types
       self.SDK.updateActions(actions);
     }),
 
+    fetchActionForm: flow(function* (actionId) {
+      const form = yield self.apiCall("actionForm", { actionId });
+      return form;
+    }),
+
     fetchUsers: flow(function* () {
       const list = yield self.apiCall("users", {
         __useQueryCache: {
