@@ -76,7 +76,7 @@ const Model = types
     },
 
     get holdsState() {
-      if (self.onlyTime && !isDefined(self.time)) return false;
+      if (self.onlyTime) return isDefined(self.time);
       return isDefined(self.month) || isDefined(self.year);
     },
 
