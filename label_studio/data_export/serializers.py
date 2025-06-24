@@ -80,7 +80,7 @@ class BaseExportDataSerializer(FlexFieldsModelSerializer):
 class ConvertedFormatSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConvertedFormat
-        fields = ['id', 'status', 'export_type', 'traceback']
+        fields = ['id', 'status', 'export_type']
 
 
 class ExportSerializer(serializers.ModelSerializer):
