@@ -960,7 +960,7 @@ h6 {
 }
 
 .content-markdown h1+img {
-    margin-top: 2em;
+  margin-top: 2em;
 }
 
 /****************************
@@ -1548,8 +1548,10 @@ h1+.admonition {
   content: url(../images/design/enterprise-icon.svg);
 }
 
-.admonition + .admonition, .admonition + div.opensource-only, .admonition + div.enterprise-only {
-    margin-top: 1.5em
+.admonition+.admonition,
+.admonition+div.opensource-only,
+.admonition+div.enterprise-only {
+  margin-top: 1.5em
 }
 
 .content-markdown iframe {
@@ -2134,6 +2136,14 @@ Footer
 pre {
   position: relative;
   white-space: normal;
+}
+
+pre:has(.mermaid) .code-block-copy-button {
+  display: none;
+}
+
+pre:has(.mermaid) code.hljs {
+  background: transparent;
 }
 
 pre code.hljs {
