@@ -80,7 +80,15 @@ class BaseExportDataSerializer(FlexFieldsModelSerializer):
 class ConvertedFormatSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConvertedFormat
-        fields = ['id', 'status', 'export_type']
+        fields = ['id', 'status', 'export_type', 'traceback']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from django.conf import settings
+
+        if not getattr(settings, 'SHOW_TRACEBACK_FOR_EXPORT_CONVERTER', True):
+            # Remove traceback field if setting is disabled
+            self.fields.pop('traceback', None)
 
 
 class ExportSerializer(serializers.ModelSerializer):
