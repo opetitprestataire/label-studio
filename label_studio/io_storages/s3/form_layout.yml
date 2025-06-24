@@ -30,7 +30,7 @@ aws_params_import: &aws_params_import
     skipAutofill: true
     allowEmpty: false
     protectedValue: true
-    tooltip: "Leave blank if already set up as Environment Variable."
+    tooltip: "Leave blank if already set up as an Environment Variable."
   - type: password
     name: aws_secret_access_key
     label: Secret Access Key
@@ -38,7 +38,7 @@ aws_params_import: &aws_params_import
     skipAutofill: true
     allowEmpty: false
     protectedValue: true
-    tooltip: "Leave blank if already set up as Environment Variable."
+    tooltip: "Leave blank if already set up as an Environment Variable."
   - type: password
     name: aws_session_token
     autoComplete: "new-password"
