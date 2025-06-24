@@ -30,6 +30,7 @@ aws_params_import: &aws_params_import
     skipAutofill: true
     allowEmpty: false
     protectedValue: true
+    tooltip: "Leave blank if already set up as Environment Variable."
   - type: password
     name: aws_secret_access_key
     label: Secret Access Key
@@ -37,6 +38,7 @@ aws_params_import: &aws_params_import
     skipAutofill: true
     allowEmpty: false
     protectedValue: true
+    tooltip: "Leave blank if already set up as Environment Variable."
   - type: password
     name: aws_session_token
     autoComplete: "new-password"
@@ -111,15 +113,13 @@ ImportStorage:
             label: "Files - Creates a separate task for each storage object (e.g. JPG, MP3, TXT)"
           - value: false
             label: "JSON - Treat each JSON file as a task definition (one or more tasks per file)"
-      - type: toggle
-        name: recursive_scan
-        label: Scan all sub-folders
-        description: Include files from all nested folders
+
   # 2 columns grid
   - columnCount: 2
     columns:
       - fields:
           - type: toggle
+            width: 580
             name: presign
             label: "Use pre-signed URLs (On)\n Proxy through Label Studio (Off)"
             description: "When pre-signed URLs are enabled, all data bypasses Label Studio and user browsers directly read data from storage"
@@ -131,6 +131,13 @@ ImportStorage:
             min: 1
             value: 15
             dependency: presign
+  - columnCount: 1
+    columns:
+      - fields:
+          - type: toggle
+            name: recursive_scan
+            label: Scan all sub-folders
+            description: Include files from all nested folders
 
 ExportStorage:
   - columnCount: 3

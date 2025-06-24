@@ -15,8 +15,8 @@ title_bucket_prefix: &title_bucket_prefix
 gcs_credentials: &gcs_credentials
   - type: password
     name: google_application_credentials
-    label: Google Application Credentials, leave blank to use default credentials (ADC)
-    placeholder: Paste the contents of credentials.json here OR leave blank to use ADC
+    label: Google Application Credentials
+    footer: Paste the contents of credentials.json in this field OR leave it blank to use ADC.
     autoComplete: "new-password"
     skipAutofill: true
     allowEmpty: false
@@ -27,7 +27,7 @@ project_id: &project_id
   - type: text
     name: google_project_id
     label: Google Project ID
-    placeholder: 'Leave blank to inherit from the Google Application Credentials...'
+    footer: Leave blank to inherit from Google Application Credentials.
 
 ImportStorage:
   # Title, Bucket, Prefix
@@ -68,9 +68,9 @@ ImportStorage:
   # 1 columns grid
   - columnCount: 1
     columns:
-      - width: 600
-        fields:
+      - fields:
           - type: toggle
+            width: 580
             name: presign
             label: "Use pre-signed URLs (On)\n Proxy through Label Studio (Off)"
             description: "When pre-signed URLs are enabled, all data bypasses Label Studio and user browsers directly read data from storage"
