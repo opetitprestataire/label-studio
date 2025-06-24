@@ -147,8 +147,7 @@ ExportStorage:
   # 1 columns grid
   - columnCount: 1
     columns:
-      - width: 345
-        fields:
+      - fields:
           - type: toggle
             name: can_delete_objects
             label: Can delete objects from storage
