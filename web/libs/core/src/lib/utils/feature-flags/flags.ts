@@ -1,10 +1,5 @@
 //// LEGACY FLAGS ////
 // Consider all pre-XFN flags legacy. Should be revised and removed.
-/**
- * Aync import for task data
- * @deprecated
- */
-export const FF_LSDV_4915 = "fflag_feat_all_lsdv_4915_async_task_import_13042023_short";
 
 /**
  * Fix displaying of created_at in the review mode
