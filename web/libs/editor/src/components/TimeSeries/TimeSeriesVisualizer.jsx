@@ -917,11 +917,14 @@ class TimeSeriesVisualizerD3 extends React.Component {
       const svg = d3.select(this.ref.current).selectAll("svg");
 
       svg.attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom]);
+      // all width based scales should be updated
       this.x.range([0, width]);
       this.plotX.range([0, width]);
       for (const channel of Object.values(this.channels)) {
         channel.x.range([0, width]);
         channel.plotX.range([0, width]);
+        // Channels' charts will be successfully updated in `setRangeWithScaling` in all cases except for optimized data
+        // as in that case they are designed to be more static, so we have to do it right now
         if (channel.useOptimizedData) {
           channel.path.attr("d", channel.line);
         }
