@@ -257,14 +257,14 @@ describe("DetailsPanel", () => {
         expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
       });
 
-      it("renders region items when regions are selected", () => {
+      it("renders selection details when regions are selected", () => {
         render(<Info selection={mockSelectionWithRegions} />);
 
         const detailedRegions = screen.getAllByTestId("detailed-region");
         expect(detailedRegions).toHaveLength(2);
       });
 
-      it("renders region items when regions are selected", () => {
+      it("renders region info with specific regions selected", () => {
         render(<Info selection={mockSelectionWithRegions} />);
 
         const detailedRegions = screen.getAllByTestId("detailed-region");
