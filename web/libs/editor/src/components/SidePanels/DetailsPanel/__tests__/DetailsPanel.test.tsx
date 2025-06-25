@@ -4,24 +4,11 @@ import { Relations, Info } from "../DetailsPanel";
 
 // Mock the dependencies
 jest.mock("../../../../utils/bem", () => ({
-  Block: ({ children, name, mod, ...props }: any) => {
-    let className = name || "";
-    if (mod && Object.keys(mod).length > 0) {
-      // Add modifiers to the class name (simplified BEM implementation)
-      const modifiers = Object.entries(mod)
-        .filter(([_, value]) => value)
-        .map(([key, _]) => `${name}--${key}`)
-        .join(" ");
-      if (modifiers) {
-        className += ` ${modifiers}`;
-      }
-    }
-    return (
-      <div data-testid="block" className={className} {...props}>
-        {children}
-      </div>
-    );
-  },
+  Block: ({ children, ...props }: any) => (
+    <div data-testid="block" {...props}>
+      {children}
+    </div>
+  ),
   Elem: ({ children, ...props }: any) => (
     <div data-testid="elem" {...props}>
       {children}
@@ -44,7 +31,7 @@ jest.mock("../RegionDetails", () => ({
 
 jest.mock("../RegionItem", () => ({
   RegionItem: ({ region, mainDetails, metaDetails }: any) => (
-    <div className="detailed-region" data-testid="detailed-region">
+    <div data-testid="detailed-region">
       <div data-testid="region-id">{region.id}</div>
       {mainDetails && <div data-testid="main-details">Main Details</div>}
       {metaDetails && <div data-testid="meta-details">Meta Details</div>}
