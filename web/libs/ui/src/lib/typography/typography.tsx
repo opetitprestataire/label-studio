@@ -1,6 +1,6 @@
 import type React from "react";
 import { forwardRef, type PropsWithChildren } from "react";
-import clsx from "clsx";
+import { cnm } from "../../utils/utils";
 
 type VariantConfig<Sizes extends string> = {
   tag: Record<Sizes, keyof JSX.IntrinsicElements>;
@@ -84,7 +84,7 @@ const Typography = forwardRef<HTMLElement, PropsWithChildren<TypographyProps>>(
     const italicClass = style === "italic" ? "italic" : "";
 
     return (
-      <Tag ref={ref} className={clsx(baseClass, italicClass, className)}>
+      <Tag ref={ref} className={cnm(baseClass, "text-neutral-content", italicClass, className)}>
         {children}
       </Tag>
     );

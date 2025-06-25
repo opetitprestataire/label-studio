@@ -37,6 +37,11 @@ import { Typography } from '@humansignal/ui';
   This is a headline
 </Typography>
 
+// With custom color via className
+<Typography variant="body" size="medium" className="text-neutral-content-subtle">
+  This is subtle text
+</Typography>
+
 // With custom element
 <Typography variant="body" size="medium" as="span">
   This renders as a span
@@ -96,7 +101,7 @@ export const Display: TypographyStory = {
     size: "large",
     children: "Display Large - The quick brown fox jumps over the lazy dog",
   },
-  render: (args) => (
+  render: () => (
     <div className="space-y-4">
       <Typography variant="display" size="large">
         Display Large - The quick brown fox jumps over the lazy dog
@@ -126,7 +131,7 @@ export const Headline: TypographyStory = {
     size: "large",
     children: "Headline Large - The quick brown fox jumps over the lazy dog",
   },
-  render: (args) => (
+  render: () => (
     <div className="space-y-4">
       <Typography variant="headline" size="large">
         Headline Large - The quick brown fox jumps over the lazy dog
@@ -155,7 +160,7 @@ export const Title: TypographyStory = {
     size: "large",
     children: "Title Large - The quick brown fox jumps over the lazy dog",
   },
-  render: (args) => (
+  render: () => (
     <div className="space-y-4">
       <Typography variant="title" size="large">
         Title Large - The quick brown fox jumps over the lazy dog
@@ -184,7 +189,7 @@ export const Label: TypographyStory = {
     size: "medium",
     children: "Label Medium - The quick brown fox jumps over the lazy dog",
   },
-  render: (args) => (
+  render: () => (
     <div className="space-y-4">
       <Typography variant="label" size="medium">
         Label Medium - The quick brown fox jumps over the lazy dog
@@ -217,7 +222,7 @@ export const Body: TypographyStory = {
     children:
       "Body Medium - The quick brown fox jumps over the lazy dog. This is the standard body text size used for most content.",
   },
-  render: (args) => (
+  render: () => (
     <div className="space-y-4">
       <Typography variant="body" size="medium">
         Body Medium - The quick brown fox jumps over the lazy dog. This is the standard body text size used for most
@@ -243,6 +248,42 @@ export const Body: TypographyStory = {
   },
 };
 
+// Color variations
+export const Colors: TypographyStory = {
+  args: {
+    variant: "body",
+    size: "medium",
+    children: "This text demonstrates different neutral content colors",
+  },
+  render: () => (
+    <div className="space-y-4">
+      <Typography variant="headline" size="medium" className="text-neutral-content">
+        Default Color - Primary content with full contrast
+      </Typography>
+      <Typography variant="body" size="medium" className="text-neutral-content-subtle">
+        Subtle Color - Secondary content with reduced contrast
+      </Typography>
+      <Typography variant="body" size="medium" className="text-neutral-content-subtler">
+        Subtler Color - Tertiary content with further reduced contrast
+      </Typography>
+      <Typography variant="body" size="medium" className="text-neutral-content-subtlest">
+        Subtlest Color - Quaternary content with minimal contrast
+      </Typography>
+      <Typography variant="body" size="medium" className="text-negative-content">
+        Negative Color - Negative content with full contrast
+      </Typography>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Typography component supports different neutral content colors for creating visual hierarchy and emphasis.",
+      },
+    },
+  },
+};
+
 // All variants comparison
 export const AllVariants: TypographyStory = {
   args: {
@@ -250,7 +291,7 @@ export const AllVariants: TypographyStory = {
     size: "large",
     children: "Display Large",
   },
-  render: (args) => (
+  render: () => (
     <div className="space-y-8">
       <div>
         <h3 className="text-lg font-semibold mb-4">Display Variants</h3>
@@ -351,7 +392,7 @@ export const Styles: TypographyStory = {
     style: "normal",
     children: "Normal Style - The quick brown fox jumps over the lazy dog",
   },
-  render: (args) => (
+  render: () => (
     <div className="space-y-4">
       <Typography variant="headline" size="large" style="normal">
         Normal Style - The quick brown fox jumps over the lazy dog
@@ -384,7 +425,7 @@ export const CustomElements: TypographyStory = {
     as: "h1",
     children: "This renders as an H1 element",
   },
-  render: (args) => (
+  render: () => (
     <div className="space-y-4">
       <Typography variant="headline" size="large" as="h1">
         This renders as an H1 element
@@ -419,17 +460,17 @@ export const Interactive: TypographyStory = {
     size: "medium",
     children: "Interactive Typography Example",
   },
-  render: (args) => (
+  render: () => (
     <div className="space-y-6">
       <div className="p-4 border rounded-lg">
         <Typography variant="headline" size="medium" className="mb-2">
           Interactive Typography Example
         </Typography>
         <Typography variant="body" size="medium" className="mb-4">
-          This example shows how typography components can be used in interactive contexts. You can customize the
-          variant, size, and style using the controls below.
+          This example shows how <strong>typography components</strong> can be used in interactive contexts. You can
+          customize the variant, size, and style using the controls below.
         </Typography>
-        <Typography variant="label" size="small" style="italic">
+        <Typography variant="label" size="small" style="italic" className="text-neutral-content-subtle">
           Use the Storybook controls to experiment with different typography options.
         </Typography>
       </div>
