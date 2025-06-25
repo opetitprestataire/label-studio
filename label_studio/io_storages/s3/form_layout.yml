@@ -114,7 +114,7 @@ ImportStorage:
           - value: false
             label: "JSON - Treat each JSON file as a task definition (one or more tasks per file)"
 
-  # 1 column grid
+  # 2 column grid
   - columnCount: 2
     columns:
       - width: 468
