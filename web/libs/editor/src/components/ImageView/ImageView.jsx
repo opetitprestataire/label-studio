@@ -594,7 +594,7 @@ export default observer(
 
         // We want to avoid weird behavior here with drawing while selecting another region
         // so we just do nothing when clicked outside AND we have a tool selected
-        if (hasSelected && currentTool === "BitmaskTool") {
+        if (hasSelected && isBitmask) {
           return;
         }
 
