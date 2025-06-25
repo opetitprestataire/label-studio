@@ -1,6 +1,7 @@
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
-import LinkTo from "@storybook/addon-links/react";
+// import LinkTo from "@storybook/addon-links/react";
+const LinkTo = ({ kind, story, className, onClick, children }: any) => null;
 
 import type { Meta } from "@storybook/react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -763,6 +764,7 @@ const TokenCategorized = () => {
 
 const meta: Meta = {
   title: "Design/Tokens",
+  tags: ["!autodocs"],
   parameters: {
     layout: "fullscreen",
     docs: {
