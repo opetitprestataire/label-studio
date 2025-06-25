@@ -44,7 +44,7 @@ jest.mock("../RegionDetails", () => ({
 
 jest.mock("../RegionItem", () => ({
   RegionItem: ({ region, mainDetails, metaDetails }: any) => (
-    <div className="detailed-region">
+    <div className="detailed-region" data-testid="detailed-region">
       <div data-testid="region-id">{region.id}</div>
       {mainDetails && <div data-testid="main-details">Main Details</div>}
       {metaDetails && <div data-testid="meta-details">Meta Details</div>}
@@ -237,14 +237,14 @@ describe("DetailsPanel", () => {
       it("does not render region details on info panel when no selection", () => {
         render(<Info selection={mockSelectionEmpty} />);
 
-        const detailedRegions = document.querySelectorAll('[class*="detailed-region"]');
+        const detailedRegions = screen.queryAllByTestId("detailed-region");
         expect(detailedRegions).toHaveLength(0);
       });
 
       it("does not render info panel when no selection", () => {
         render(<Info selection={mockSelectionEmpty} />);
 
-        const detailedRegions = document.querySelectorAll('[class*="detailed-region"]');
+        const detailedRegions = screen.queryAllByTestId("detailed-region");
         expect(detailedRegions).toHaveLength(0);
       });
 
@@ -273,14 +273,14 @@ describe("DetailsPanel", () => {
       it("renders region items when regions are selected", () => {
         render(<Info selection={mockSelectionWithRegions} />);
 
-        const detailedRegions = document.querySelectorAll('[class*="detailed-region"]');
+        const detailedRegions = screen.getAllByTestId("detailed-region");
         expect(detailedRegions).toHaveLength(2);
       });
 
       it("renders region items when regions are selected", () => {
         render(<Info selection={mockSelectionWithRegions} />);
 
-        const detailedRegions = document.querySelectorAll('[class*="detailed-region"]');
+        const detailedRegions = screen.getAllByTestId("detailed-region");
         expect(detailedRegions).toHaveLength(2);
 
         // Check that specific regions are rendered
@@ -325,7 +325,7 @@ describe("DetailsPanel", () => {
         expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
 
         // But also won't render region items since list is empty
-        const detailedRegions = document.querySelectorAll('[class*="detailed-region"]');
+        const detailedRegions = screen.queryAllByTestId("detailed-region");
         expect(detailedRegions).toHaveLength(0);
       });
     });
