@@ -918,6 +918,14 @@ class TimeSeriesVisualizerD3 extends React.Component {
 
       svg.attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom]);
       this.x.range([0, width]);
+      this.plotX.range([0, width]);
+      for (const channel of Object.values(this.channels)) {
+        channel.x.range([0, width]);
+        channel.plotX.range([0, width]);
+        if (channel.useOptimizedData) {
+          channel.path.attr("d", channel.line);
+        }
+      }
       this.renderBrushCreator();
       svg.selectAll("clipPath rect").attr("width", width);
 
