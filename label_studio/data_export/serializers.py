@@ -82,13 +82,16 @@ class ConvertedFormatSerializer(serializers.ModelSerializer):
         model = ConvertedFormat
         fields = ['id', 'status', 'export_type', 'traceback']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def to_representation(self, instance):
         from django.conf import settings
 
+        data = super().to_representation(instance)
+
         if not getattr(settings, 'SHOW_TRACEBACK_FOR_EXPORT_CONVERTER', True):
-            # Remove traceback field if setting is disabled
-            self.fields.pop('traceback', None)
+            # Remove traceback field from output if setting is disabled
+            data.pop('traceback', None)
+
+        return data
 
 
 class ExportSerializer(serializers.ModelSerializer):
