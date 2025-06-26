@@ -110,9 +110,9 @@ ImportStorage:
         required: true
         options:
           - value: true
-            label: "Files - Creates a separate task for each storage object (e.g. JPG, MP3, TXT)"
+            label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)"
           - value: false
-            label: "JSON - Treat each JSON file as a task definition (one or more tasks per file)"
+            label: "JSON - Treat each JSON or JSONL file as a task definition (one or more tasks per file)"
 
   # 2 column grid
   - columnCount: 2
