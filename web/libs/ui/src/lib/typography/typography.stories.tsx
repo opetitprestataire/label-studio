@@ -58,14 +58,6 @@ import { Typography } from '@humansignal/ui';
   This will use primary color, not the default neutral color
 </Typography>
 \`\`\`
-
-## Text Color Override
-The component automatically detects text color classes in the \`className\` prop and prevents the default \`text-neutral-content\` from overriding them. Supported color patterns include:
-- \`text-neutral-*\` (content, content-subtle, etc.)
-- \`text-primary-*\` (content, icon, etc.)
-- \`text-negative-*\`, \`text-positive-*\`, \`text-warning-*\`
-- \`text-accent-{name}-{variant}\` (grape-dark, mango-base, etc.)
-- \`text-{color}-{number}\` (sand-500, grape-100, etc.)
         `,
       },
     },
@@ -102,199 +94,9 @@ export default meta;
 // Base story with controls
 export const Default: TypographyStory = {
   args: {
-    variant: "headline",
-    size: "large",
-    children: "This is a sample headline",
-  },
-};
-
-// Display variants
-export const Display: TypographyStory = {
-  args: {
-    variant: "display",
-    size: "large",
-    children: "Display Large - The quick brown fox jumps over the lazy dog",
-  },
-  render: () => (
-    <div className="space-y-4">
-      <Typography variant="display" size="large">
-        Display Large - The quick brown fox jumps over the lazy dog
-      </Typography>
-      <Typography variant="display" size="medium">
-        Display Medium - The quick brown fox jumps over the lazy dog
-      </Typography>
-      <Typography variant="display" size="small">
-        Display Small - The quick brown fox jumps over the lazy dog
-      </Typography>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Display variants are the largest typography styles, typically used for hero sections and main page titles.",
-      },
-    },
-  },
-};
-
-// Headline variants
-export const Headline: TypographyStory = {
-  args: {
-    variant: "headline",
-    size: "large",
-    children: "Headline Large - The quick brown fox jumps over the lazy dog",
-  },
-  render: () => (
-    <div className="space-y-4">
-      <Typography variant="headline" size="large">
-        Headline Large - The quick brown fox jumps over the lazy dog
-      </Typography>
-      <Typography variant="headline" size="medium">
-        Headline Medium - The quick brown fox jumps over the lazy dog
-      </Typography>
-      <Typography variant="headline" size="small">
-        Headline Small - The quick brown fox jumps over the lazy dog
-      </Typography>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: "Headline variants are used for section headers and important content titles.",
-      },
-    },
-  },
-};
-
-// Title variants
-export const Title: TypographyStory = {
-  args: {
-    variant: "title",
-    size: "large",
-    children: "Title Large - The quick brown fox jumps over the lazy dog",
-  },
-  render: () => (
-    <div className="space-y-4">
-      <Typography variant="title" size="large">
-        Title Large - The quick brown fox jumps over the lazy dog
-      </Typography>
-      <Typography variant="title" size="medium">
-        Title Medium - The quick brown fox jumps over the lazy dog
-      </Typography>
-      <Typography variant="title" size="small">
-        Title Small - The quick brown fox jumps over the lazy dog
-      </Typography>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: "Title variants are used for subsection headers and content titles.",
-      },
-    },
-  },
-};
-
-// Label variants
-export const Label: TypographyStory = {
-  args: {
-    variant: "label",
-    size: "medium",
-    children: "Label Medium - The quick brown fox jumps over the lazy dog",
-  },
-  render: () => (
-    <div className="space-y-4">
-      <Typography variant="label" size="medium">
-        Label Medium - The quick brown fox jumps over the lazy dog
-      </Typography>
-      <Typography variant="label" size="small">
-        Label Small - The quick brown fox jumps over the lazy dog
-      </Typography>
-      <Typography variant="label" size="smaller">
-        Label Smaller - The quick brown fox jumps over the lazy dog
-      </Typography>
-      <Typography variant="label" size="smallest">
-        Label Smallest - The quick brown fox jumps over the lazy dog
-      </Typography>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: "Label variants are used for form labels, buttons, and other UI elements that need emphasis.",
-      },
-    },
-  },
-};
-
-// Body variants
-export const Body: TypographyStory = {
-  args: {
     variant: "body",
     size: "medium",
-    children:
-      "Body Medium - The quick brown fox jumps over the lazy dog. This is the standard body text size used for most content.",
-  },
-  render: () => (
-    <div className="space-y-4">
-      <Typography variant="body" size="medium">
-        Body Medium - The quick brown fox jumps over the lazy dog. This is the standard body text size used for most
-        content.
-      </Typography>
-      <Typography variant="body" size="small">
-        Body Small - The quick brown fox jumps over the lazy dog. This is used for secondary content and captions.
-      </Typography>
-      <Typography variant="body" size="smaller">
-        Body Smaller - The quick brown fox jumps over the lazy dog. This is used for fine print and less important text.
-      </Typography>
-      <Typography variant="body" size="smallest">
-        Body Smallest - The quick brown fox jumps over the lazy dog. This is the smallest readable text size.
-      </Typography>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: "Body variants are used for main content text, paragraphs, and general reading material.",
-      },
-    },
-  },
-};
-
-// Color variations
-export const Colors: TypographyStory = {
-  args: {
-    variant: "body",
-    size: "medium",
-    children: "This text demonstrates different neutral content colors",
-  },
-  render: () => (
-    <div className="space-y-4">
-      <Typography variant="headline" size="medium" className="text-neutral-content">
-        Default Color - Primary content with full contrast
-      </Typography>
-      <Typography variant="body" size="medium" className="text-neutral-content-subtle">
-        Subtle Color - Secondary content with reduced contrast
-      </Typography>
-      <Typography variant="body" size="medium" className="text-neutral-content-subtler">
-        Subtler Color - Tertiary content with further reduced contrast
-      </Typography>
-      <Typography variant="body" size="medium" className="text-neutral-content-subtlest">
-        Subtlest Color - Quaternary content with minimal contrast
-      </Typography>
-      <Typography variant="body" size="medium" className="text-negative-content">
-        Negative Color - Negative content with full contrast
-      </Typography>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Typography component supports different neutral content colors for creating visual hierarchy and emphasis.",
-      },
-    },
+    children: "This is a sample body",
   },
 };
 
@@ -308,7 +110,7 @@ export const AllVariants: TypographyStory = {
   render: () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold mb-4">Display Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Display Variants</h3>
         <div className="space-y-2">
           <Typography variant="display" size="large">
             Display Large
@@ -323,7 +125,7 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-4">Headline Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Headline Variants</h3>
         <div className="space-y-2">
           <Typography variant="headline" size="large">
             Headline Large
@@ -338,7 +140,7 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-4">Title Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Title Variants</h3>
         <div className="space-y-2">
           <Typography variant="title" size="large">
             Title Large
@@ -353,7 +155,7 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-4">Label Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Label Variants</h3>
         <div className="space-y-2">
           <Typography variant="label" size="medium">
             Label Medium
@@ -371,7 +173,7 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-4">Body Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Body Variants</h3>
         <div className="space-y-2">
           <Typography variant="body" size="medium">
             Body Medium
@@ -467,6 +269,51 @@ export const CustomElements: TypographyStory = {
   },
 };
 
+// Color variations
+export const Colors: TypographyStory = {
+  args: {
+    variant: "body",
+    size: "medium",
+    children: "This text demonstrates different neutral content colors",
+  },
+  render: () => (
+    <div className="space-y-4">
+      <Typography variant="headline" size="medium" className="text-neutral-content">
+        Default Color - Primary content with full contrast
+      </Typography>
+      <Typography variant="body" size="medium" className="text-neutral-content-subtle">
+        Subtle Color - Secondary content with reduced contrast
+      </Typography>
+      <Typography variant="body" size="medium" className="text-neutral-content-subtler">
+        Subtler Color - Tertiary content with further reduced contrast
+      </Typography>
+      <Typography variant="body" size="medium" className="text-neutral-content-subtlest">
+        Subtlest Color - Quaternary content with minimal contrast
+      </Typography>
+      <Typography variant="body" size="medium" className="text-negative-content">
+        Negative Color - Negative content with full contrast
+      </Typography>
+      <Typography variant="body" size="medium" className="text-primary-content">
+        Primary content color (text-primary-content) - overrides default neutral
+      </Typography>
+      <Typography variant="body" size="medium" className="text-positive-content">
+        Positive content color (text-positive-content) - overrides default neutral
+      </Typography>
+      <Typography variant="body" size="medium" className="text-accent-grape-dark">
+        Accent grape dark color (text-accent-grape-dark) - overrides default neutral
+      </Typography>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Typography component supports different neutral content colors for creating visual hierarchy and emphasis. The component also automatically detects text color classes in the className prop and prevents the default text-neutral-content from overriding them, allowing custom colors to work properly.",
+      },
+    },
+  },
+};
+
 // Interactive example
 export const Interactive: TypographyStory = {
   args: {
@@ -494,73 +341,6 @@ export const Interactive: TypographyStory = {
     docs: {
       description: {
         story: "An interactive example showing how typography components work together in a real-world context.",
-      },
-    },
-  },
-};
-
-// Text color override example
-export const TextColorOverride: TypographyStory = {
-  args: {
-    variant: "body",
-    size: "medium",
-    children: "Text with custom color",
-  },
-  render: () => (
-    <div className="space-y-4 p-4 border rounded-lg">
-      <Typography variant="headline" size="medium" className="mb-4">
-        Text Color Override Examples
-      </Typography>
-
-      <div className="space-y-2">
-        <Typography variant="body" size="medium">
-          Default text color (text-neutral-content)
-        </Typography>
-
-        <Typography variant="body" size="medium" className="text-primary-content">
-          Primary content color (text-primary-content)
-        </Typography>
-
-        <Typography variant="body" size="medium" className="text-negative-content">
-          Negative content color (text-negative-content)
-        </Typography>
-
-        <Typography variant="body" size="medium" className="text-positive-content">
-          Positive content color (text-positive-content)
-        </Typography>
-
-        <Typography variant="body" size="medium" className="text-warning-content">
-          Warning content color (text-warning-content)
-        </Typography>
-
-        <Typography variant="body" size="medium" className="text-accent-grape-dark">
-          Accent grape dark color (text-accent-grape-dark)
-        </Typography>
-
-        <Typography variant="body" size="medium" className="text-sand-500">
-          Sand color (text-sand-500)
-        </Typography>
-
-        <Typography variant="body" size="medium" className="text-neutral-content-subtle">
-          Neutral subtle color (text-neutral-content-subtle)
-        </Typography>
-
-        <Typography variant="body" size="medium" className="bg-neutral-surface p-2 text-neutral-content">
-          With background and custom text color
-        </Typography>
-      </div>
-
-      <Typography variant="label" size="small" className="text-neutral-content-subtler mt-4">
-        The component automatically detects text color classes and prevents the default text-neutral-content from
-        overriding them.
-      </Typography>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Demonstrates how the Typography component handles text color classes. When a text color class is provided in the className prop, the default text-neutral-content is not applied, allowing custom colors to work properly.",
       },
     },
   },

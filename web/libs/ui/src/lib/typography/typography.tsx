@@ -1,90 +1,72 @@
 import type React from "react";
-import { forwardRef, type PropsWithChildren } from "react";
+import { forwardRef } from "react";
 import { cnm } from "../../utils/utils";
 import styles from "./typography.module.scss";
 
-type VariantConfig<Sizes extends string> = {
-  tag: Record<Sizes, keyof JSX.IntrinsicElements>;
-  class: Record<Sizes, string>;
+// Size constants
+const SIZES = {
+  LARGE: "large",
+  MEDIUM: "medium",
+  SMALL: "small",
+  SMALLER: "smaller",
+  SMALLEST: "smallest",
+} as const;
+
+type Sizes = {
+  display: typeof SIZES.LARGE | typeof SIZES.MEDIUM | typeof SIZES.SMALL;
+  headline: typeof SIZES.LARGE | typeof SIZES.MEDIUM | typeof SIZES.SMALL;
+  title: typeof SIZES.LARGE | typeof SIZES.MEDIUM | typeof SIZES.SMALL;
+  label: typeof SIZES.MEDIUM | typeof SIZES.SMALL | typeof SIZES.SMALLER | typeof SIZES.SMALLEST;
+  body: typeof SIZES.MEDIUM | typeof SIZES.SMALL | typeof SIZES.SMALLER | typeof SIZES.SMALLEST;
 };
+
+type Variant = keyof Sizes;
 
 const config = {
   display: {
-    tag: { large: "h1", medium: "h1", small: "h1" },
-    class: {
-      large: "typography-display-large",
-      medium: "typography-display-medium",
-      small: "typography-display-small",
-    },
-  } as VariantConfig<"large" | "medium" | "small">,
-
+    tag: { [SIZES.LARGE]: "h1", [SIZES.MEDIUM]: "h1", [SIZES.SMALL]: "h1" },
+  },
   headline: {
-    tag: { large: "h2", medium: "h2", small: "h2" },
-    class: {
-      large: "typography-headline-large",
-      medium: "typography-headline-medium",
-      small: "typography-headline-small",
-    },
-  } as VariantConfig<"large" | "medium" | "small">,
-
+    tag: { [SIZES.LARGE]: "h2", [SIZES.MEDIUM]: "h2", [SIZES.SMALL]: "h2" },
+  },
   title: {
-    tag: { large: "h3", medium: "h4", small: "h5" },
-    class: {
-      large: "typography-title-large",
-      medium: "typography-title-medium",
-      small: "typography-title-small",
-    },
-  } as VariantConfig<"large" | "medium" | "small">,
-
+    tag: { [SIZES.LARGE]: "h3", [SIZES.MEDIUM]: "h4", [SIZES.SMALL]: "h5" },
+  },
   label: {
-    tag: { medium: "p", small: "p", smaller: "p", smallest: "p" },
-    class: {
-      medium: "typography-label-medium",
-      small: "typography-label-small",
-      smaller: "typography-label-smaller",
-      smallest: "typography-label-smallest",
-    },
-  } as VariantConfig<"medium" | "small" | "smaller" | "smallest">,
-
+    tag: { [SIZES.MEDIUM]: "p", [SIZES.SMALL]: "p", [SIZES.SMALLER]: "p", [SIZES.SMALLEST]: "p" },
+  },
   body: {
-    tag: { medium: "p", small: "p", smaller: "p", smallest: "p" },
-    class: {
-      medium: "typography-body-medium",
-      small: "typography-body-small",
-      smaller: "typography-body-smaller",
-      smallest: "typography-body-smallest",
-    },
-  } as VariantConfig<"medium" | "small" | "smaller" | "smallest">,
-} as const;
-
-type Config = typeof config;
-type Variant = keyof Config;
-type Size<V extends Variant> = keyof Config[V]["class"];
-type Style = "normal" | "italic";
-
-type BaseProps = {
-  className?: string;
-  children: React.ReactNode;
-  as?: keyof JSX.IntrinsicElements;
-  style?: Style;
+    tag: { [SIZES.MEDIUM]: "p", [SIZES.SMALL]: "p", [SIZES.SMALLER]: "p", [SIZES.SMALLEST]: "p" },
+  },
+} as const satisfies {
+  [V in Variant]: {
+    tag: Record<Sizes[V], keyof JSX.IntrinsicElements>;
+  };
 };
 
-type TypographyProps = {
-  [V in Variant]: {
-    variant: V;
-    size: Size<V>;
-  } & BaseProps;
-}[Variant];
+type TypographyProps<V extends Variant = Variant> = {
+  variant: V;
+  size: Sizes[V];
+  as?: keyof JSX.IntrinsicElements;
+  className?: string;
+  style?: "normal" | "italic";
+  children: React.ReactNode;
+};
 
-const Typography = forwardRef<HTMLElement, PropsWithChildren<TypographyProps>>(
-  ({ variant, size, className, children, as, style = "normal" }, ref) => {
+const DEFAULT_TAG = "p";
+const DEFAULT_CLASS = "typography-body-medium";
+
+const Typography = forwardRef<HTMLElement, TypographyProps>(
+  ({ variant = "body", size = SIZES.MEDIUM, as, className, children, style = "normal" }, ref) => {
     const variantConfig = config[variant];
-    const tagName = as || variantConfig.tag[size as keyof typeof variantConfig.tag];
-    const Tag = tagName as React.ElementType;
-    const baseClass = variantConfig.class[size as keyof typeof variantConfig.class];
+    const tagMap = variantConfig?.tag;
+    const tag = tagMap && size in tagMap ? tagMap[size as keyof typeof tagMap] : DEFAULT_TAG;
+    const isValid = variant in config && tagMap && size in tagMap;
+    const baseClass = isValid ? `typography-${variant}-${size}` : DEFAULT_CLASS;
+    const Tag = (as || tag) as React.ElementType;
 
     return (
-      <Tag ref={ref} className={cnm(styles[baseClass], style === "italic" ? "italic" : "", className)}>
+      <Tag ref={ref} className={cnm(styles[baseClass], style === "italic" && "italic", className)}>
         {children}
       </Tag>
     );
@@ -93,4 +75,4 @@ const Typography = forwardRef<HTMLElement, PropsWithChildren<TypographyProps>>(
 
 Typography.displayName = "Typography";
 
-export { Typography };
+export { Typography, SIZES };
