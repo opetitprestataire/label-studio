@@ -215,18 +215,13 @@ class TimeSeriesHelper {
       // macOS with "Natural scrolling" typically needs positive deltaY for zoom in
       // Windows/Linux and macOS without "Natural scrolling" need negative deltaY
       cy.window().then((win) => {
-        const isMac = win.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-        const deltaY = isMac ? 100 : -100;
-
-        cy.log(`Detected platform: ${isMac ? "macOS" : "Windows/Linux"}, using deltaY: ${deltaY}`);
-
         // Hold Ctrl/Cmd and scroll to zoom in multiple times
         cy.wrap($overlay).trigger("keydown", { key: "Control", ctrlKey: true });
 
         // Perform multiple zoom-in operations to reach maximum zoom
         for (let i = 0; i < 25; i++) {
           cy.wrap($overlay).trigger("wheel", {
-            deltaY: deltaY,
+            deltaY: 100,
             clientX: rect.left + centerX,
             clientY: rect.top + centerY,
             ctrlKey: true,
