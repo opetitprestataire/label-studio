@@ -62,7 +62,7 @@ async function safeJsonValue(arg) {
     if (error.message && error.message.includes("Target closed")) {
       return undefined;
     }
-    return "[Error reading console argument]";
+    return error.message;
   }
 }
 
