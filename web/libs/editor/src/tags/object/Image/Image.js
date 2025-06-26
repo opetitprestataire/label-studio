@@ -38,6 +38,7 @@ const IMAGE_PRELOAD_COUNT = 3;
 const ZOOM_INTENSITY = 0.009;
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 100;
+const MAX_ZOOM_CHANGE_PER_EVENT = 0.3; // Maximum zoom change per wheel event (30%)
 
 /**
  * The `Image` tag shows an image on the page. Use for all image annotation tasks to display an image on the labeling interface.
@@ -931,25 +932,25 @@ const Model = types
 
     /**
      * Handle zoom events from mouse wheel or trackpad pinch
+     * Unified smooth zoom behavior that works well for both input methods
      * @param {number} val - The delta value from the wheel event (positive = zoom in, negative = zoom out)
      * @param {Object} mouseRelativePos - The mouse position relative to the canvas
-     * @param {boolean} pinch - Whether this is a trackpad pinch event (true) or mouse wheel event (false)
      */
-    handleZoom(val, mouseRelativePos = { x: self.canvasSize.width / 2, y: self.canvasSize.height / 2 }, pinch = false) {
+    handleZoom(val, mouseRelativePos = { x: self.canvasSize.width / 2, y: self.canvasSize.height / 2 }) {
       if (val) {
-        let zoomScale = self.currentZoom;
-
-        if (pinch) {
-          // Smooth exponential zoom for trackpad pinch gestures
-          // This provides a more natural feel for pinch-to-zoom
-          const newZoom = clamp(self.currentZoom * Math.exp(-val * ZOOM_INTENSITY), MIN_ZOOM, MAX_ZOOM);
-          zoomScale = newZoom;
-        } else {
-          // Discrete zoom steps for mouse wheel
-          // Uses the zoomBy factor (default 1.1) for predictable zoom levels
-          zoomScale = val > 0 ? zoomScale * self.zoomBy : zoomScale / self.zoomBy;
-          zoomScale = clamp(zoomScale, MIN_ZOOM, MAX_ZOOM);
-        }
+        // Calculate the zoom change using exponential formula
+        const zoomChange = Math.exp(-val * ZOOM_INTENSITY);
+        
+        // Limit the maximum zoom change per event to prevent aggressive zooming
+        // This prevents users from accidentally zooming too far with a single wheel event
+        const limitedZoomChange = Math.max(
+          1 - MAX_ZOOM_CHANGE_PER_EVENT, 
+          Math.min(1 + MAX_ZOOM_CHANGE_PER_EVENT, zoomChange)
+        );
+        
+        // Apply the limited zoom change
+        const newZoom = clamp(self.currentZoom * limitedZoomChange, MIN_ZOOM, MAX_ZOOM);
+        const zoomScale = newZoom;
 
         // Handle negative zoom restrictions
         if (self.negativezoom !== true && zoomScale <= 1) {
