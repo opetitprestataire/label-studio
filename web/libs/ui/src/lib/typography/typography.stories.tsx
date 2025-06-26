@@ -27,6 +27,7 @@ A flexible typography component that provides consistent text styling across the
 - **Custom elements**: Override the default HTML element with the \`as\` prop
 - **Style options**: Normal and italic text styles
 - **Responsive**: Built with Tailwind CSS for responsive design
+- **Smart color handling**: Automatically detects text color classes and prevents default color override
 
 ## Usage
 \`\`\`tsx
@@ -51,7 +52,20 @@ import { Typography } from '@humansignal/ui';
 <Typography variant="label" size="small" style="italic">
   This is italic text
 </Typography>
+
+// Text color override - the default text-neutral-content won't override custom colors
+<Typography variant="body" size="medium" className="text-primary-content">
+  This will use primary color, not the default neutral color
+</Typography>
 \`\`\`
+
+## Text Color Override
+The component automatically detects text color classes in the \`className\` prop and prevents the default \`text-neutral-content\` from overriding them. Supported color patterns include:
+- \`text-neutral-*\` (content, content-subtle, etc.)
+- \`text-primary-*\` (content, icon, etc.)
+- \`text-negative-*\`, \`text-positive-*\`, \`text-warning-*\`
+- \`text-accent-{name}-{variant}\` (grape-dark, mango-base, etc.)
+- \`text-{color}-{number}\` (sand-500, grape-100, etc.)
         `,
       },
     },
@@ -480,6 +494,73 @@ export const Interactive: TypographyStory = {
     docs: {
       description: {
         story: "An interactive example showing how typography components work together in a real-world context.",
+      },
+    },
+  },
+};
+
+// Text color override example
+export const TextColorOverride: TypographyStory = {
+  args: {
+    variant: "body",
+    size: "medium",
+    children: "Text with custom color",
+  },
+  render: () => (
+    <div className="space-y-4 p-4 border rounded-lg">
+      <Typography variant="headline" size="medium" className="mb-4">
+        Text Color Override Examples
+      </Typography>
+
+      <div className="space-y-2">
+        <Typography variant="body" size="medium">
+          Default text color (text-neutral-content)
+        </Typography>
+
+        <Typography variant="body" size="medium" className="text-primary-content">
+          Primary content color (text-primary-content)
+        </Typography>
+
+        <Typography variant="body" size="medium" className="text-negative-content">
+          Negative content color (text-negative-content)
+        </Typography>
+
+        <Typography variant="body" size="medium" className="text-positive-content">
+          Positive content color (text-positive-content)
+        </Typography>
+
+        <Typography variant="body" size="medium" className="text-warning-content">
+          Warning content color (text-warning-content)
+        </Typography>
+
+        <Typography variant="body" size="medium" className="text-accent-grape-dark">
+          Accent grape dark color (text-accent-grape-dark)
+        </Typography>
+
+        <Typography variant="body" size="medium" className="text-sand-500">
+          Sand color (text-sand-500)
+        </Typography>
+
+        <Typography variant="body" size="medium" className="text-neutral-content-subtle">
+          Neutral subtle color (text-neutral-content-subtle)
+        </Typography>
+
+        <Typography variant="body" size="medium" className="bg-neutral-surface p-2 text-neutral-content">
+          With background and custom text color
+        </Typography>
+      </div>
+
+      <Typography variant="label" size="small" className="text-neutral-content-subtler mt-4">
+        The component automatically detects text color classes and prevents the default text-neutral-content from
+        overriding them.
+      </Typography>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Demonstrates how the Typography component handles text color classes. When a text color class is provided in the className prop, the default text-neutral-content is not applied, allowing custom colors to work properly.",
       },
     },
   },
