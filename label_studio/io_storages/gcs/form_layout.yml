@@ -78,7 +78,7 @@ ImportStorage:
       - fields:
         - type: counter
           name: presign_ttl
-          label: Set expiry for pre-signed URLs (minutes)
+          label: Expire pre-signed URLs (minutes)
           min: 1
           value: 15
           dependency: presign
