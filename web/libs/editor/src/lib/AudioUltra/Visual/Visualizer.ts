@@ -566,7 +566,7 @@ export class Visualizer extends Events<VisualizerEvents> {
       offscreen: true,
       zIndex: 101,
       compositeOperation: "source-over",
-      height: this.timelineHeight + this.waveformHeight + (isFF(FF_AUDIO_SPECTROGRAMS) ? this.waveformHeight : 0),
+      height: this.height,
     });
 
     this.initScrollBar();
