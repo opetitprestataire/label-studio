@@ -33,4 +33,4 @@ export class SVGPathUtils {
   }
 }
 
-export type { PathCoordinate }; 
+export type { PathCoordinate };

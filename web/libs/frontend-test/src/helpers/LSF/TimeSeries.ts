@@ -1,6 +1,6 @@
 import { SVGTransformUtils } from "../utils/SVGTransformUtils";
 import { SVGPathUtils } from "../utils/SVGPathUtils";
-import { BoundingBox, BoundingBoxUtils } from "../utils/BoundingBoxUtils";
+import { type BoundingBox, BoundingBoxUtils } from "../utils/BoundingBoxUtils";
 import { TWO_FRAMES_TIMEOUT } from "libs/editor/tests/integration/e2e/utils/constants";
 
 class TimeSeriesHelper {
@@ -205,7 +205,7 @@ class TimeSeriesHelper {
   // Zoom to maximum level using mouse wheel with platform detection
   zoomToMaximum() {
     cy.log("Zooming to maximum level using mouse wheel");
-    
+
     this.channelOverlay.should("be.visible").then(($overlay) => {
       const rect = $overlay[0].getBoundingClientRect();
       const centerX = rect.width / 2;
@@ -215,14 +215,14 @@ class TimeSeriesHelper {
       // macOS with "Natural scrolling" typically needs positive deltaY for zoom in
       // Windows/Linux and macOS without "Natural scrolling" need negative deltaY
       cy.window().then((win) => {
-        const isMac = win.navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        const isMac = win.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
         const deltaY = isMac ? 100 : -100;
-        
-        cy.log(`Detected platform: ${isMac ? 'macOS' : 'Windows/Linux'}, using deltaY: ${deltaY}`);
+
+        cy.log(`Detected platform: ${isMac ? "macOS" : "Windows/Linux"}, using deltaY: ${deltaY}`);
 
         // Hold Ctrl/Cmd and scroll to zoom in multiple times
         cy.wrap($overlay).trigger("keydown", { key: "Control", ctrlKey: true });
-        
+
         // Perform multiple zoom-in operations to reach maximum zoom
         for (let i = 0; i < 25; i++) {
           cy.wrap($overlay).trigger("wheel", {
@@ -232,9 +232,9 @@ class TimeSeriesHelper {
             ctrlKey: true,
           });
         }
-        
+
         cy.wrap($overlay).trigger("keyup", { key: "Control", ctrlKey: false });
-        cy.wait(TWO_FRAMES_TIMEOUT)
+        cy.wait(TWO_FRAMES_TIMEOUT);
       });
     });
 
@@ -245,30 +245,34 @@ class TimeSeriesHelper {
   // Only checks odd-indexed paths (1st, 3rd, 5th, etc.) in each clip-path container group
   verifyChartBoundingBoxAlignment() {
     cy.log("Verifying chart client bounding boxes align with clip-path containers (odd-indexed paths only)");
-    
+
     // Get all clip-path containers and check odd-indexed paths in each
-    this.channelSvg.find('[clip-path]').each(($clipContainer) => {
+    this.channelSvg.find("[clip-path]").each(($clipContainer) => {
       const clipPathParent = $clipContainer[0] as unknown as SVGElement;
-      
+
       // Find all path elements within this clip-path container
-      const paths = clipPathParent.querySelectorAll('path');
-      
+      const paths = clipPathParent.querySelectorAll("path");
+
       if (paths.length === 0) {
-        cy.log('No paths found in clip-path container, skipping');
+        cy.log("No paths found in clip-path container, skipping");
         return;
       }
-      
+
       // Check only odd-indexed paths (0-based: 0, 2, 4, etc. which are 1st, 3rd, 5th, etc.)
       for (let i = 0; i < paths.length; i += 2) {
         const pathElement = paths[i] as SVGPathElement;
-        
+
         // Get client bounding rectangles (rendered coordinates in viewport)
         const pathClientRect = pathElement.getBoundingClientRect() as BoundingBox;
         const clipParentClientRect = clipPathParent.getBoundingClientRect() as BoundingBox;
-        
-        cy.log(`Path ${i + 1} client rect: x=${pathClientRect.x.toFixed(2)}, y=${pathClientRect.y.toFixed(2)}, width=${pathClientRect.width.toFixed(2)}, height=${pathClientRect.height.toFixed(2)}`);
-        cy.log(`Clip parent client rect: x=${clipParentClientRect.x.toFixed(2)}, y=${clipParentClientRect.y.toFixed(2)}, width=${clipParentClientRect.width.toFixed(2)}, height=${clipParentClientRect.height.toFixed(2)}`);
-        
+
+        cy.log(
+          `Path ${i + 1} client rect: x=${pathClientRect.x.toFixed(2)}, y=${pathClientRect.y.toFixed(2)}, width=${pathClientRect.width.toFixed(2)}, height=${pathClientRect.height.toFixed(2)}`,
+        );
+        cy.log(
+          `Clip parent client rect: x=${clipParentClientRect.x.toFixed(2)}, y=${clipParentClientRect.y.toFixed(2)}, width=${clipParentClientRect.width.toFixed(2)}, height=${clipParentClientRect.height.toFixed(2)}`,
+        );
+
         // Check that client bounding boxes are equal (path should fill its clip-path container)
         const isAligned = BoundingBoxUtils.isEqual(pathClientRect, clipParentClientRect, 2);
         expect(isAligned, `Path ${i + 1} client bounding box should align with its clip-path container`).to.be.true;

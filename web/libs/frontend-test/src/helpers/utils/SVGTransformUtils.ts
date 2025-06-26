@@ -22,7 +22,7 @@ export class SVGTransformUtils {
         const transformOrigin = currentElement.getAttribute("transform-origin");
 
         if (transform) {
-          const elementMatrix = this.parseTransformString(transform, transformOrigin);
+          const elementMatrix = SVGTransformUtils.parseTransformString(transform, transformOrigin);
           if (elementMatrix) {
             // Multiply matrices (order matters: parent transforms are applied first)
             combinedMatrix = elementMatrix.multiply(combinedMatrix);
@@ -138,10 +138,8 @@ export class SVGTransformUtils {
    * Apply transform matrix to multiple coordinate points
    */
   static applyTransformToCoordinates(coords: TransformCoordinate[], matrix: DOMMatrix | null): TransformCoordinate[] {
-    return matrix ? coords.map((coord) => this.applyTransform(coord, matrix)) : coords;
+    return matrix ? coords.map((coord) => SVGTransformUtils.applyTransform(coord, matrix)) : coords;
   }
-
-
 }
 
-export type { TransformCoordinate }; 
+export type { TransformCoordinate };
