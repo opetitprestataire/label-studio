@@ -84,7 +84,7 @@ export const HomePage: Page = () => {
             <Typography variant="headline" size="small">
               Welcome 👋
             </Typography>
-            <Typography variant="body" size="small" className="text-neutral-content-subtler">
+            <Typography size="small" className="text-neutral-content-subtler">
               Let's get you started.
             </Typography>
           </div>
@@ -133,7 +133,7 @@ export const HomePage: Page = () => {
                 <Typography variant="headline" size="small">
                   Create your first project
                 </Typography>
-                <Typography variant="body" size="small" className="text-neutral-content-subtler">
+                <Typography size="small" className="text-neutral-content-subtler">
                   Import your data and set up the labeling interface to start annotating
                 </Typography>
                 <Button primary rawClassName="mt-4" onClick={() => setCreationDialogOpen(true)}>
