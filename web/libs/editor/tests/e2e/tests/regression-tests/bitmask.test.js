@@ -209,16 +209,10 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
     [20, 20],
   ]);
 
-  // Wait for the drawing to be complete
-  await I.wait(0.5);
-
   I.say("Verify mask content and dimensions");
   const result = await LabelStudio.serialize();
   assert.strictEqual(result.length, 1);
   assert.ok(result[0].value.imageDataURL);
-
-  // Wait for the region to be fully processed
-  await I.wait(0.5);
 
   // Get all data we need before making assertions
   const bbox = await I.executeScript(() => {
@@ -282,21 +276,14 @@ Scenario("Verify Bitmask canvas fit", async ({ I, LabelStudio, AtImageView, AtLa
     [10, 0], // Close the path
   ]);
 
-  // Wait for the drawing to be complete
-  await I.wait(0.5);
-
   I.say("Verify mask content and image scaling");
   const result = await LabelStudio.serialize();
   assert.strictEqual(result.length, 1);
   assert.ok(result[0].value.imageDataURL);
 
-  // Wait for the region to be fully processed
-  await I.wait(0.5);
-
   // Ensure the region is selected
   I.say("Ensure region is selected");
   AtImageView.clickAt(20, 50); // Click in the middle of our drawn region
-  await I.wait(0.2);
 
   // Get canvas dimensions and verify the underlying image scaling
   const canvasInfo = await I.executeScript(() => {

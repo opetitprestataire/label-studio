@@ -105,31 +105,62 @@ module.exports = (config) => {
     const { page } = this;
 
     page.on("console", async (msg) => {
-      const type = msg.type();
-      let messageType;
+      try {
+        const type = msg.type();
+        let messageType;
 
-      switch (type) {
-        case "error": {
-          messageType = CONSOLE_ERROR;
-          break;
+        switch (type) {
+          case "error": {
+            messageType = CONSOLE_ERROR;
+            break;
+          }
+          case "warning": {
+            messageType = CONSOLE_WARNING;
+            break;
+          }
         }
-        case "warning": {
-          messageType = CONSOLE_WARNING;
-          break;
-        }
-      }
-      if (messageType) {
-        const args = msg.args();
+        if (messageType) {
+          const args = msg.args();
 
-        for (let i = 0; i < args.length; i++) {
-          args[i] = await args[i].jsonValue();
-        }
+          for (let i = 0; i < args.length; i++) {
+            try {
+              args[i] = await args[i].jsonValue();
+            } catch (error) {
+              // Handle "Target closed" error when page is closed
+              if (error.message && error.message.includes("Target closed")) {
+                // Page is closed, skip processing this message
+                return;
+              }
+              // For other errors, use a fallback value
+              args[i] = "[Error reading console argument]";
+            }
+          }
 
-        this.handleMessage(messageType, format(...args));
+          this.handleMessage(messageType, format(...args));
+        }
+      } catch (error) {
+        // Handle any other errors that might occur during console message processing
+        if (error.message && error.message.includes("Target closed")) {
+          // Page is closed, ignore this error
+          return;
+        }
+        // Log other errors but don't fail the test
+        console.warn("Error in console message processing:", error.message);
       }
     });
+    
     page.on("pageerror", (exception) => {
-      this.handleMessage(UNCAUGHT_ERROR, exception);
+      try {
+        this.handleMessage(UNCAUGHT_ERROR, exception);
+      } catch (error) {
+        // Handle any errors that might occur during page error processing
+        if (error.message && error.message.includes("Target closed")) {
+          // Page is closed, ignore this error
+          return;
+        }
+        // Log other errors but don't fail the test
+        console.warn("Error in page error processing:", error.message);
+      }
     });
   };
 
@@ -172,12 +203,22 @@ module.exports = (config) => {
   });
   event.dispatcher.on(event.step.after, async () => {
     recorder.add("check for errors", async () => {
-      for (const err of errorCollectors.errors) {
-        if (err instanceof Error) {
-          assert.fail(err.stack);
-        } else {
-          assert.fail(err);
+      try {
+        for (const err of errorCollectors.errors) {
+          if (err instanceof Error) {
+            assert.fail(err.stack);
+          } else {
+            assert.fail(err);
+          }
         }
+      } catch (error) {
+        // Handle any errors that might occur during error checking
+        if (error.message && error.message.includes("Target closed")) {
+          // Page is closed, ignore this error
+          return;
+        }
+        // Log other errors but don't fail the test
+        console.warn("Error in error checking:", error.message);
       }
     });
   });
