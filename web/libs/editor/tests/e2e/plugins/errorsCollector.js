@@ -59,10 +59,9 @@ async function safeJsonValue(arg) {
   try {
     return await arg.jsonValue();
   } catch (error) {
-    if (error.message && error.message.includes("Target closed")) {
-      return undefined;
-    }
-    return error.message;
+    if (error.message && error.message.includes("Target closed")) return;
+
+    console.error(error);
   }
 }
 
