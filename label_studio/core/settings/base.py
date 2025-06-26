@@ -550,6 +550,8 @@ REACT_APP_ROOT = os.path.join(BASE_DIR, '../../web/dist/apps/labelstudio')
 
 # per project settings
 BATCH_SIZE = 1000
+MAX_TASK_BATCH_SIZE = int(get_env('MAX_TASK_BATCH_SIZE', 1000))
+TASK_DATA_PER_BATCH = int(get_env('TASK_DATA_PER_BATCH', 50 * 1024 * 1024))  # 50 MB in bytes
 PROJECT_TITLE_MIN_LEN = 3
 PROJECT_TITLE_MAX_LEN = 50
 LOGIN_REDIRECT_URL = '/'
