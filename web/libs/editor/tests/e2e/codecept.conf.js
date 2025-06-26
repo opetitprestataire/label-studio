@@ -87,10 +87,10 @@ module.exports.config = {
         "have*",
       ],
     },
-    // coverage: {
-    //   enabled: true,
-    //   coverageDir: 'output/coverage',
-    // },
+    coverage: {
+      enabled: enableCoverage,
+      coverageDir: 'output/coverage',
+    },
     disableDefaultInit: {
       require: "./plugins/disableDefaultInit.js",
       enabled: true,
