@@ -961,7 +961,7 @@ export default observer(
         const stage = item.stageRef;
 
         // Detect if this is a trackpad pinch or mouse wheel event
-        const isTrackpadPinch = this.detectTrackpadPinch(e.evt);
+        const isTrackpadPinch = ff.isActive(FF_BITMASK) && this.detectTrackpadPinch(e.evt);
 
         // For trackpad pinch, use smooth exponential zoom
         // For mouse wheel with Ctrl/Cmd, use discrete zoom steps
