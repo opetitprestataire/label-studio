@@ -8,13 +8,13 @@ from django.contrib import auth
 from users.models import User
 
 EMAIL_MAX_LENGTH = 256
-PASS_MAX_LENGTH = 64
-PASS_MIN_LENGTH = 8
+PASS_MAX_LENGTH = settings.PASSWORD_MAX_LENGTH
+PASS_MIN_LENGTH = settings.PASSWORD_MIN_LENGTH
 USERNAME_MAX_LENGTH = 30
 DISPLAY_NAME_LENGTH = 100
-USERNAME_LENGTH_ERR = 'Please enter a username 30 characters or fewer in length'
-DISPLAY_NAME_LENGTH_ERR = 'Please enter a display name 100 characters or fewer in length'
-PASS_LENGTH_ERR = 'Please enter a password 8-12 characters in length'
+USERNAME_LENGTH_ERR = f'Please enter a username {USERNAME_MAX_LENGTH} characters or fewer in length'
+DISPLAY_NAME_LENGTH_ERR = f'Please enter a display name {DISPLAY_NAME_LENGTH} characters or fewer in length'
+PASS_LENGTH_ERR = f'Please enter a password {PASS_MIN_LENGTH}-{PASS_MAX_LENGTH} characters in length'
 INVALID_USER_ERROR = "The email and password you entered don't match."
 
 FOUND_US_ELABORATE = 'Other'
@@ -28,7 +28,6 @@ FOUND_US_OPTIONS = (
 )
 
 logger = logging.getLogger(__name__)
-
 
 class LoginForm(forms.Form):
     """For logging in to the app and all - session based"""

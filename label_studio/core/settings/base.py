@@ -82,6 +82,10 @@ from label_studio.core.utils.params import get_bool_env, get_env
 logger = logging.getLogger(__name__)
 SILENCED_SYSTEM_CHECKS = []
 
+# Password validation constants
+AUTH_PASSWORD_MIN_LENGTH = 8
+AUTH_PASSWORD_MAX_LENGTH = 64
+
 # Hostname is used for proper path generation to the resources, pages, etc
 HOSTNAME = get_env('HOST', '')
 if HOSTNAME:
@@ -554,6 +558,11 @@ PROJECT_TITLE_MIN_LEN = 3
 PROJECT_TITLE_MAX_LEN = 50
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/user/login/'
+
+# Password validation settings
+AUTH_PASSWORD_MIN_LENGTH = 8
+AUTH_PASSWORD_MAX_LENGTH = 64
+
 MIN_GROUND_TRUTH = 10
 DATA_UNDEFINED_NAME = '$undefined$'
 LICENSE = {}
