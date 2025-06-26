@@ -14,7 +14,6 @@ const injector = inject(({ store }) => {
 
 const FieldsMenu = observer(({ columns, WrapperComponent, onClick, onReset, selected, resetTitle }) => {
   const MenuItem = (col, onClick) => {
-    console.log("col", col.disabled, col.title);
     return (
       <Menu.Item key={col.key} name={col.key} onClick={onClick} disabled={col.disabled}>
         {WrapperComponent && col.wra !== false ? (
