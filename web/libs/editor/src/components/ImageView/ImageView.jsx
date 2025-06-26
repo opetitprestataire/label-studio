@@ -882,7 +882,7 @@ export default observer(
      * Handle zoom and pan events from mouse wheel and trackpad
      * Supports:
      * - Ctrl/Cmd + mouse wheel: Smooth zoom in/out
-     * - Ctrl/Cmd + trackpad pinch: Smooth pinch-to-zoom  
+     * - Ctrl/Cmd + trackpad pinch: Smooth pinch-to-zoom
      * - Two-finger scroll: Pan the image when zoomed in
      */
     handleZoom = (e) => {
