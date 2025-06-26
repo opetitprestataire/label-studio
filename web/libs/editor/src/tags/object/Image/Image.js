@@ -940,14 +940,14 @@ const Model = types
       if (val) {
         // Calculate the zoom change using exponential formula
         const zoomChange = Math.exp(-val * ZOOM_INTENSITY);
-        
+
         // Limit the maximum zoom change per event to prevent aggressive zooming
         // This prevents users from accidentally zooming too far with a single wheel event
         const limitedZoomChange = Math.max(
-          1 - MAX_ZOOM_CHANGE_PER_EVENT, 
-          Math.min(1 + MAX_ZOOM_CHANGE_PER_EVENT, zoomChange)
+          1 - MAX_ZOOM_CHANGE_PER_EVENT,
+          Math.min(1 + MAX_ZOOM_CHANGE_PER_EVENT, zoomChange),
         );
-        
+
         // Apply the limited zoom change
         const newZoom = clamp(self.currentZoom * limitedZoomChange, MIN_ZOOM, MAX_ZOOM);
         const zoomScale = newZoom;
