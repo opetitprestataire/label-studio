@@ -51,6 +51,22 @@ const DISPLAY_ACTION = "display";
 const INTERRUPT_ACTION = "interrupt";
 
 /**
+ * Safely get the jsonValue of a JSHandle, handling "Target closed" and other errors.
+ * @param {any} arg - The JSHandle to get the value from
+ * @returns {Promise<any>} - The value, or undefined if target closed, or a fallback string on other errors
+ */
+async function safeJsonValue(arg) {
+  try {
+    return await arg.jsonValue();
+  } catch (error) {
+    if (error.message && error.message.includes("Target closed")) {
+      return undefined;
+    }
+    return "[Error reading console argument]";
+  }
+}
+
+/**
  * This plugin can monitor three types of errors inside the browser. They are console errors, console warnings and uncaught errors.
  * Depending on the configuration it could show the problems during the tests and throw exceptions at the scenario level to make the test fail  when it is necessary.
  * @param {errorsCollectorConfig} config
@@ -123,28 +139,16 @@ module.exports = (config) => {
           const args = msg.args();
 
           for (let i = 0; i < args.length; i++) {
-            try {
-              args[i] = await args[i].jsonValue();
-            } catch (error) {
-              // Handle "Target closed" error when page is closed
-              if (error.message && error.message.includes("Target closed")) {
-                // Page is closed, skip processing this message
-                return;
-              }
-              // For other errors, use a fallback value
-              args[i] = "[Error reading console argument]";
-            }
+            args[i] = await safeJsonValue(args[i]);
+            if (args[i] === undefined) return; // Target closed, skip processing
           }
 
           this.handleMessage(messageType, format(...args));
         }
       } catch (error) {
-        // Handle any other errors that might occur during console message processing
         if (error.message && error.message.includes("Target closed")) {
-          // Page is closed, ignore this error
-          return;
+          return; // Page is closed, ignore this error
         }
-        // Log other errors but don't fail the test
         console.warn("Error in console message processing:", error.message);
       }
     });
@@ -153,12 +157,9 @@ module.exports = (config) => {
       try {
         this.handleMessage(UNCAUGHT_ERROR, exception);
       } catch (error) {
-        // Handle any errors that might occur during page error processing
         if (error.message && error.message.includes("Target closed")) {
-          // Page is closed, ignore this error
-          return;
+          return; // Page is closed, ignore this error
         }
-        // Log other errors but don't fail the test
         console.warn("Error in page error processing:", error.message);
       }
     });
@@ -212,12 +213,9 @@ module.exports = (config) => {
           }
         }
       } catch (error) {
-        // Handle any errors that might occur during error checking
         if (error.message && error.message.includes("Target closed")) {
-          // Page is closed, ignore this error
-          return;
+          return; // Page is closed, ignore this error
         }
-        // Log other errors but don't fail the test
         console.warn("Error in error checking:", error.message);
       }
     });
