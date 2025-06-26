@@ -73,6 +73,16 @@ jobs:
         run: |
           yarn lsf:e2e:ci
 
+      - name: Upload coverage to Codecov
+        if: ${{ github.event.pull_request.head.repo.fork == false && github.event.pull_request.user.login != 'dependabot[bot]' }}
+        uses: codecov/codecov-action@v5
+        with:
+          name: lsf-e2e
+          directory: web/libs/editor/tests/e2e/output/coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+          fail_ci_if_error: true
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
