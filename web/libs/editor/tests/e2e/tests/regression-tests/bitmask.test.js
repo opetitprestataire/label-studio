@@ -215,12 +215,33 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
   assert.ok(result[0].value.imageDataURL);
 
   // Get all data we need before making assertions
-  const bbox = await I.executeScript(() => {
-    const region = Htx.annotationStore.selected.regions[0];
-    if (!region) throw new Error("Region not found");
-    if (!region.bboxCoordsCanvas) throw new Error("Bbox coordinates not available");
-    return region.bboxCoordsCanvas;
-  });
+  // Retry mechanism to wait for bbox coordinates to be calculated
+  let bbox = null;
+  let attempts = 0;
+  const maxAttempts = 10;
+  
+  while (!bbox && attempts < maxAttempts) {
+    try {
+      bbox = await I.executeScript(() => {
+        const region = Htx.annotationStore.selected.regions[0];
+        if (!region) return null;
+        if (!region.bboxCoordsCanvas) return null;
+        return region.bboxCoordsCanvas;
+      });
+      
+      if (!bbox) {
+        attempts++;
+        await I.wait(100); // Wait 100ms before retrying
+      }
+    } catch (error) {
+      attempts++;
+      await I.wait(100); // Wait 100ms before retrying
+    }
+  }
+
+  if (!bbox) {
+    throw new Error("Bbox coordinates not available after multiple attempts");
+  }
 
   // Define thresholds for assertions
   const THRESHOLD = 5;

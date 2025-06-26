@@ -121,47 +121,33 @@ module.exports = (config) => {
     const { page } = this;
 
     page.on("console", async (msg) => {
-      try {
-        const type = msg.type();
-        let messageType;
+      const type = msg.type();
+      let messageType;
 
-        switch (type) {
-          case "error": {
-            messageType = CONSOLE_ERROR;
-            break;
-          }
-          case "warning": {
-            messageType = CONSOLE_WARNING;
-            break;
-          }
+      switch (type) {
+        case "error": {
+          messageType = CONSOLE_ERROR;
+          break;
         }
-        if (messageType) {
-          const args = msg.args();
+        case "warning": {
+          messageType = CONSOLE_WARNING;
+          break;
+        }
+      }
+      if (messageType) {
+        const args = msg.args();
 
-          for (let i = 0; i < args.length; i++) {
-            args[i] = await safeJsonValue(args[i]);
-            if (args[i] === undefined) return; // Target closed, skip processing
-          }
+        for (let i = 0; i < args.length; i++) {
+          args[i] = await safeJsonValue(args[i]);
+          if (args[i] === undefined) return; // Target closed, skip processing
+        }
 
-          this.handleMessage(messageType, format(...args));
-        }
-      } catch (error) {
-        if (error.message && error.message.includes("Target closed")) {
-          return; // Page is closed, ignore this error
-        }
-        console.warn("Error in console message processing:", error.message);
+        this.handleMessage(messageType, format(...args));
       }
     });
     
     page.on("pageerror", (exception) => {
-      try {
-        this.handleMessage(UNCAUGHT_ERROR, exception);
-      } catch (error) {
-        if (error.message && error.message.includes("Target closed")) {
-          return; // Page is closed, ignore this error
-        }
-        console.warn("Error in page error processing:", error.message);
-      }
+      this.handleMessage(UNCAUGHT_ERROR, exception);
     });
   };
 
@@ -204,19 +190,12 @@ module.exports = (config) => {
   });
   event.dispatcher.on(event.step.after, async () => {
     recorder.add("check for errors", async () => {
-      try {
-        for (const err of errorCollectors.errors) {
-          if (err instanceof Error) {
-            assert.fail(err.stack);
-          } else {
-            assert.fail(err);
-          }
+      for (const err of errorCollectors.errors) {
+        if (err instanceof Error) {
+          assert.fail(err.stack);
+        } else {
+          assert.fail(err);
         }
-      } catch (error) {
-        if (error.message && error.message.includes("Target closed")) {
-          return; // Page is closed, ignore this error
-        }
-        console.warn("Error in error checking:", error.message);
       }
     });
   });
