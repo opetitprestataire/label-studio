@@ -283,7 +283,7 @@ class TimeSeriesHelper {
   }
 }
 
-const TimeSeries = new TimeSeriesHelper("&");
+const TimeSeries = new TimeSeriesHelper("&:eq(0)");
 const useTimeSeries = (rootSelector: string) => {
   return new TimeSeriesHelper(rootSelector);
 };
