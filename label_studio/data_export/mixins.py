@@ -207,7 +207,7 @@ class ExportMixin:
             base_export_serializer_option = self._get_export_serializer_option(serialization_options)
             i = 0
 
-            if flag_set('fflag_fix_back_plt_807_batch_size_26062025_short', user='auto'):
+            if flag_set('fflag_fix_back_plt_807_batch_size_26062025_short', self.project.organization.created_by):
                 BATCH_SIZE = self.project.get_task_batch_size()
             else:
                 BATCH_SIZE = settings.BATCH_SIZE
