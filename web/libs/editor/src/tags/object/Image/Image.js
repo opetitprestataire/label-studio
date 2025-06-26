@@ -931,12 +931,14 @@ const Model = types
     },
 
     getInertialZoom(val) {
+      const invert = getRoot(self).settings.invertedZoom ? 1 : -1;
+
       // Invert the delta value so that:
       // - Pinch out (positive deltaY) zooms in
       // - Pinch in (negative deltaY) zooms out
       // - Scroll up (positive deltaY) zooms in
       // - Scroll down (negative deltaY) zooms out
-      const invertedVal = -val;
+      const invertedVal = val * invert;
 
       // Calculate the zoom change using exponential formula
       // This provides smooth zooming for both mouse wheel and trackpad pinch
