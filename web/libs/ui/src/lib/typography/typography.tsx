@@ -45,8 +45,8 @@ const config = {
 };
 
 type TypographyProps<V extends Variant = Variant> = {
-  variant: V;
-  size: Sizes[V];
+  variant?: V;
+  size?: Sizes[V];
   as?: keyof JSX.IntrinsicElements;
   className?: string;
   style?: "normal" | "italic";
