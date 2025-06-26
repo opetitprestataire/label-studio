@@ -949,8 +949,7 @@ const Model = types
         );
 
         // Apply the limited zoom change
-        const newZoom = clamp(self.currentZoom * limitedZoomChange, MIN_ZOOM, MAX_ZOOM);
-        const zoomScale = newZoom;
+        const zoomScale = clamp(self.currentZoom * limitedZoomChange, MIN_ZOOM, MAX_ZOOM);
 
         // Handle negative zoom restrictions
         if (self.negativezoom !== true && zoomScale <= 1) {
