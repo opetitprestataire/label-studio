@@ -145,7 +145,7 @@ module.exports = (config) => {
         this.handleMessage(messageType, format(...args));
       }
     });
-    
+
     page.on("pageerror", (exception) => {
       this.handleMessage(UNCAUGHT_ERROR, exception);
     });

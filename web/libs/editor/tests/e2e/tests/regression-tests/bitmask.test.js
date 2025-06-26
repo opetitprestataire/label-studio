@@ -219,7 +219,7 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
   let bbox = null;
   let attempts = 0;
   const maxAttempts = 10;
-  
+
   while (!bbox && attempts < maxAttempts) {
     try {
       bbox = await I.executeScript(() => {
@@ -228,7 +228,7 @@ Scenario("Verify Bitmask pixel content", async ({ I, LabelStudio, AtImageView, A
         if (!region.bboxCoordsCanvas) return null;
         return region.bboxCoordsCanvas;
       });
-      
+
       if (!bbox) {
         attempts++;
         await I.wait(100); // Wait 100ms before retrying
