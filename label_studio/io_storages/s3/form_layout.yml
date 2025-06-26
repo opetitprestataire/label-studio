@@ -121,8 +121,8 @@ ImportStorage:
         fields:
         - type: toggle
           name: presign
-          label: "Use pre-signed URLs (On)\n Proxy through Label Studio (Off)"
-          description: "When pre-signed URLs are enabled, all data bypasses Label Studio and user browsers directly read data from storage"
+          label: "Use pre-signed URLs (On)\n Proxy through the platform (Off)"
+          description: "When pre-signed URLs are enabled, all data bypasses the platform and user browsers directly read data from storage"
           value: true
       - fields:
         - type: counter
