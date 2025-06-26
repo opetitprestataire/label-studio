@@ -8,8 +8,8 @@ from django.contrib import auth
 from users.models import User
 
 EMAIL_MAX_LENGTH = 256
-PASS_MAX_LENGTH = settings.PASSWORD_MAX_LENGTH
-PASS_MIN_LENGTH = settings.PASSWORD_MIN_LENGTH
+PASS_MAX_LENGTH = settings.AUTH_PASSWORD_MAX_LENGTH
+PASS_MIN_LENGTH = settings.AUTH_PASSWORD_MIN_LENGTH
 USERNAME_MAX_LENGTH = 30
 DISPLAY_NAME_LENGTH = 100
 USERNAME_LENGTH_ERR = f'Please enter a username {USERNAME_MAX_LENGTH} characters or fewer in length'
