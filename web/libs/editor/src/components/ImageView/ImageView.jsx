@@ -882,7 +882,7 @@ export default observer(
      * Handle zoom and pan events from mouse wheel and trackpad
      * Supports:
      * - Ctrl/Cmd + mouse wheel: Smooth zoom in/out
-     * - Ctrl/Cmd + trackpad pinch: Smooth pinch-to-zoom
+     * - Ctrl/Cmd + trackpad pinch: Smooth pinch-to-zoom  
      * - Two-finger scroll: Pan the image when zoomed in
      */
     handleZoom = (e) => {
@@ -893,7 +893,7 @@ export default observer(
         const stage = item.stageRef;
 
         // Unified smooth zoom behavior for both trackpad and mouse wheel
-        item.handleZoom(e.evt.deltaY, stage.getPointerPosition());
+        item.handleZoom(e.evt.deltaY, stage.getPointerPosition(), e.evt.ctrlKey);
       } else if (e.evt) {
         // Two fingers scroll (panning) - only when zoomed in
         const { item } = this.props;

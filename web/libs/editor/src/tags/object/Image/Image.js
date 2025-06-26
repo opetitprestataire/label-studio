@@ -930,26 +930,45 @@ const Model = types
       self.resetZoomPositionToCenter();
     },
 
+    getInertialZoom(val) {
+      // Invert the delta value so that:
+      // - Pinch out (positive deltaY) zooms in
+      // - Pinch in (negative deltaY) zooms out
+      // - Scroll up (positive deltaY) zooms in
+      // - Scroll down (negative deltaY) zooms out
+      const invertedVal = -val;
+
+      // Calculate the zoom change using exponential formula
+      // This provides smooth zooming for both mouse wheel and trackpad pinch
+      const zoomChange = Math.exp(invertedVal * ZOOM_INTENSITY);
+
+      // Limit the maximum zoom change per event to prevent aggressive zooming
+      // This prevents users from accidentally zooming too far with a single wheel event
+      const limitedZoomChange = Math.max(
+        1 - MAX_ZOOM_CHANGE_PER_EVENT,
+        Math.min(1 + MAX_ZOOM_CHANGE_PER_EVENT, zoomChange),
+      );
+
+      return clamp(self.currentZoom * limitedZoomChange, MIN_ZOOM, MAX_ZOOM);
+    },
+
     /**
      * Handle zoom events from mouse wheel or trackpad pinch
      * Unified smooth zoom behavior that works well for both input methods
-     * @param {number} val - The delta value from the wheel event (positive = zoom in, negative = zoom out)
+     * @param {number} val - The delta value from the wheel event
      * @param {Object} mouseRelativePos - The mouse position relative to the canvas
      */
-    handleZoom(val, mouseRelativePos = { x: self.canvasSize.width / 2, y: self.canvasSize.height / 2 }) {
+    handleZoom(
+      val,
+      mouseRelativePos = { x: self.canvasSize.width / 2, y: self.canvasSize.height / 2 },
+      isEvent = false,
+    ) {
       if (val) {
-        // Calculate the zoom change using exponential formula
-        const zoomChange = Math.exp(-val * ZOOM_INTENSITY);
-
-        // Limit the maximum zoom change per event to prevent aggressive zooming
-        // This prevents users from accidentally zooming too far with a single wheel event
-        const limitedZoomChange = Math.max(
-          1 - MAX_ZOOM_CHANGE_PER_EVENT,
-          Math.min(1 + MAX_ZOOM_CHANGE_PER_EVENT, zoomChange),
-        );
-
-        // Apply the limited zoom change
-        const zoomScale = clamp(self.currentZoom * limitedZoomChange, MIN_ZOOM, MAX_ZOOM);
+        const zoomScale = isEvent
+          ? self.getInertialZoom(val)
+          : val > 0
+            ? self.currentZoom * self.zoomBy
+            : self.currentZoom / self.zoomBy;
 
         // Handle negative zoom restrictions
         if (self.negativezoom !== true && zoomScale <= 1) {
