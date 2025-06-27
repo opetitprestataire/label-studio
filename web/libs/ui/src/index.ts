@@ -16,6 +16,7 @@ export * from "./lib/select/select";
 export * from "./lib/skeleton/skeleton";
 export * from "./lib/toast/toast";
 export * from "./lib/toggle/toggle";
+export * from "./lib/typography/typography";
 
 export * from "./assets/icons";
 export * from "./lib/simple-card";
