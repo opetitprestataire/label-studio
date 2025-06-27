@@ -79,7 +79,7 @@ export class Layer extends Events<LayerEvents> {
    * Float value of the layer opacity between 0 and 1.
    */
   private opacity = 1;
-  private pixelRatio = 1;
+  public pixelRatio = 1;
 
   name: string;
 
@@ -271,6 +271,10 @@ export class Layer extends Events<LayerEvents> {
 
   copyToBuffer() {
     this.createBufferCanvas();
+
+    // This needs to be updated to ensure it has the same pixel ratio as the canvas it is copying from/to
+    this._bufferCanvas.width = this.canvas.width;
+    this._bufferCanvas.height = this.canvas.height;
 
     // Copy the current canvas to the buffer
     this._bufferContext.imageSmoothingEnabled = false;
