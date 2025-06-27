@@ -58,6 +58,12 @@ export const captureException: typeof Sentry.captureException = (exception, capt
     console.error(exception, captureContext);
     return "";
   }
+
+  // Check for custom skip flag
+  if (captureContext && "extra" in captureContext && captureContext.extra?.sentry_skip) {
+    return "";
+  }
+
   return Sentry.captureException(exception, captureContext);
 };
 
