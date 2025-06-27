@@ -87,12 +87,12 @@ module.exports.config = {
         "have*",
       ],
     },
-    coverage: {
-      enabled: enableCoverage,
-      coverageDir: 'output/coverage',
-      include: ["**/*.{js,jsx,ts,tsx}"],
-      exclude: ["**/*.d.ts", "**/node_modules/**", "**/examples/**"],
-    },
+    // coverage: {
+    //   enabled: enableCoverage,
+    //   coverageDir: 'output/coverage',
+    //   include: ["**/*.{js,jsx,ts,tsx}"],
+    //   exclude: ["**/*.d.ts", "**/node_modules/**", "**/examples/**"],
+    // },
     disableDefaultInit: {
       require: "./plugins/disableDefaultInit.js",
       enabled: true,
