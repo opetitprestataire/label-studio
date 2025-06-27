@@ -177,6 +177,7 @@ export const ActionsButton = injector(
           look="outlined"
           disabled={!hasSelected}
           trailing={<Icon icon={IconChevronDown} />}
+          aria-label="Task Actions"
           {...rest}
         >
           {selectedCount > 0 ? `${selectedCount} ${recordTypeLabel}${selectedCount > 1 ? "s" : ""}` : "Actions"}
