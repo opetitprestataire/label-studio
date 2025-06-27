@@ -53,6 +53,7 @@ export const MenuItem = ({
   if (forceReload) {
     linkAttributes.onClick = () => (window.location.href = to ?? href);
   }
+  console.log(linkAttributes);
 
   return (
     <li>

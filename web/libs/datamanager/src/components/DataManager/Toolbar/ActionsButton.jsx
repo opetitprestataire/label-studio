@@ -111,6 +111,7 @@ const ActionButton = ({ action, parentRef, store, formRef }) => {
           }`}
           icon={isDeleteAction && <IconTrash />}
           title={action.disabled ? action.disabledReason : null}
+          aria-label={action.title}
         >
           {action.title}
         </Menu.Item>
@@ -178,7 +179,7 @@ export const ActionsButton = injector(
           look="outlined"
           disabled={!hasSelected}
           trailing={<Icon icon={IconChevronDown} />}
-          aria-label="Task Actions"
+          aria-label="Tasks Actions"
           {...rest}
         >
           {selectedCount > 0 ? `${selectedCount} ${recordTypeLabel}${selectedCount > 1 ? "s" : ""}` : "Actions"}
