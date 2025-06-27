@@ -6,15 +6,14 @@ from django import forms
 from django.conf import settings
 from django.contrib import auth
 from users.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 EMAIL_MAX_LENGTH = 256
-PASS_MAX_LENGTH = settings.AUTH_PASSWORD_MAX_LENGTH
-PASS_MIN_LENGTH = settings.AUTH_PASSWORD_MIN_LENGTH
 USERNAME_MAX_LENGTH = 30
 DISPLAY_NAME_LENGTH = 100
 USERNAME_LENGTH_ERR = f'Please enter a username {USERNAME_MAX_LENGTH} characters or fewer in length'
 DISPLAY_NAME_LENGTH_ERR = f'Please enter a display name {DISPLAY_NAME_LENGTH} characters or fewer in length'
-PASS_LENGTH_ERR = f'Please enter a password {PASS_MIN_LENGTH}-{PASS_MAX_LENGTH} characters in length'
 INVALID_USER_ERROR = "The email and password you entered don't match."
 
 FOUND_US_ELABORATE = 'Other'
@@ -61,19 +60,18 @@ class LoginForm(forms.Form):
 
 class UserSignupForm(forms.Form):
     email = forms.EmailField(label='Work Email', error_messages={'required': 'Invalid email'})
-    password = forms.CharField(
-        min_length=PASS_MIN_LENGTH,
-        max_length=PASS_MAX_LENGTH,
-        error_messages={
-            'required': PASS_LENGTH_ERR,
-            'min_length': PASS_LENGTH_ERR,
-            'max_length': PASS_LENGTH_ERR,
-        },
-        widget=forms.TextInput(attrs={'type': 'password'}),
-    )
+    password = forms.CharField(widget=forms.TextInput(attrs={'type': 'password'}))
     allow_newsletters = forms.BooleanField(required=False)
     how_find_us = forms.CharField(required=False)
     elaborate = forms.CharField(required=False)
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        try:
+            validate_password(password)
+        except DjangoValidationError as e:
+            raise forms.ValidationError(e.messages)
+        return password
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
