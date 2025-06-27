@@ -18,47 +18,7 @@ const meta: Meta<typeof Typography> = {
     layout: "padded",
     docs: {
       description: {
-        component: `
-A flexible typography component that provides consistent text styling across the application.
-
-## Features
-- **Multiple variants**: display, headline, title, label, body
-- **Size options**: Each variant has different size options (large, medium, small, etc.)
-- **Custom elements**: Override the default HTML element with the \`as\` prop
-- **Style options**: Normal and italic text styles
-- **Responsive**: Built with Tailwind CSS for responsive design
-- **Smart color handling**: Automatically detects text color classes and prevents default color override
-
-## Usage
-\`\`\`tsx
-import { Typography } from '@humansignal/ui';
-
-// Basic usage
-<Typography variant="headline" size="large">
-  This is a headline
-</Typography>
-
-// With custom color via className
-<Typography variant="body" size="medium" className="text-neutral-content-subtle">
-  This is subtle text
-</Typography>
-
-// With custom element
-<Typography variant="body" size="medium" as="span">
-  This renders as a span
-</Typography>
-
-// With italic style
-<Typography variant="label" size="small" style="italic">
-  This is italic text
-</Typography>
-
-// Text color override - the default text-neutral-content won't override custom colors
-<Typography variant="body" size="medium" className="text-primary-content">
-  This will use primary color, not the default neutral color
-</Typography>
-\`\`\`
-        `,
+        component: "A flexible typography component that provides consistent text styling across the application.",
       },
     },
   },
@@ -314,22 +274,22 @@ export const Colors: TypographyStory = {
   },
 };
 
-// Interactive example
-export const Interactive: TypographyStory = {
+// Composition example
+export const Composition: TypographyStory = {
   args: {
     variant: "headline",
     size: "medium",
-    children: "Interactive Typography Example",
+    children: "Composition Example",
   },
   render: () => (
     <div className="space-y-6">
       <div className="p-4 border rounded-lg">
         <Typography variant="headline" size="medium" className="mb-2">
-          Interactive Typography Example
+          Composition Example
         </Typography>
         <Typography variant="body" size="medium" className="mb-4">
-          This example shows how <strong>typography components</strong> can be used in interactive contexts. You can
-          customize the variant, size, and style using the controls below.
+          This example shows how <strong>typography components</strong> can be used together. You can customize the
+          variant, size, and style using the controls below.
         </Typography>
         <Typography variant="label" size="small" style="italic" className="text-neutral-content-subtle">
           Use the Storybook controls to experiment with different typography options.
@@ -340,7 +300,7 @@ export const Interactive: TypographyStory = {
   parameters: {
     docs: {
       description: {
-        story: "An interactive example showing how typography components work together in a real-world context.",
+        story: "A composition example showing how typography components work together in a real-world context.",
       },
     },
   },
