@@ -589,7 +589,7 @@ export const HotkeysManager = () => {
               </Menu>
             }
           >
-            <Button variant="neutral">Actions</Button>
+            <Button variant="primary">Actions</Button>
           </Dropdown.Trigger>
         </div>
 
