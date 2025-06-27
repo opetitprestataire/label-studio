@@ -6,26 +6,39 @@ import { Button } from "@humansignal/ui";
 import { Toggle as UiToggle } from "@humansignal/ui";
 import { KeyboardKey } from "./Key";
 
+// Type definitions
+interface Hotkey {
+  id: string;
+  section: string;
+  element: string;
+  label: string;
+  key: string;
+  mac?: string;
+  active: boolean;
+  subgroup?: string;
+  description?: string;
+}
+
+interface HotkeyItemProps {
+  hotkey: Hotkey;
+  onEdit: (id: string) => void;
+  isEditing: boolean;
+  onSave: (id: string, newKey: string) => void;
+  onCancel: (id: string) => void;
+  onToggle: (id: string) => void;
+}
+
 /**
  * HotkeyItem component for displaying and editing keyboard shortcuts
  *
- * @param {Object} hotkey - The hotkey configuration object
- * @param {string} hotkey.id - Unique identifier for the hotkey
- * @param {string} hotkey.label - Display name for the hotkey
- * @param {string} hotkey.description - Description of what the hotkey does
- * @param {string} hotkey.key - Current key combination (e.g., "ctrl+s")
- * @param {boolean} hotkey.active - Whether the hotkey is enabled
- * @param {Function} onEdit - Callback when edit mode is triggered
- * @param {boolean} isEditing - Whether this item is currently in edit mode
- * @param {Function} onSave - Callback when saving edited hotkey (id, newKey)
- * @param {Function} onCancel - Callback when canceling edit mode
- * @param {Function} onToggle - Callback when toggling hotkey active state
+ * @param {HotkeyItemProps} props - The component props
+ * @returns {React.ReactElement} The HotkeyItem component
  */
-export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onToggle }) => {
-  const [editedKey, setEditedKey] = useState(hotkey.key);
-  const [keyRecordingMode, setKeyRecordingMode] = useState(false);
-  const [error, setError] = useState("");
-  const keyRecordingRef = useRef(null);
+export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onToggle }: HotkeyItemProps) => {
+  const [editedKey, setEditedKey] = useState<string>(hotkey.key);
+  const [keyRecordingMode, setKeyRecordingMode] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const keyRecordingRef = useRef<HTMLButtonElement>(null);
 
   /**
    * Auto-start key recording when entering edit mode
@@ -49,7 +62,7 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
    * Handles key press events and builds key combination strings
    * Captures modifier keys (ctrl, shift, alt, meta) and main key
    */
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLButtonElement>): void => {
     if (!keyRecordingMode) return;
 
     e.preventDefault();
@@ -60,7 +73,7 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
     if (["Control", "Shift", "Alt", "Meta"].includes(key)) return;
 
     // Build key combination array
-    const keyCombo = [];
+    const keyCombo: string[] = [];
     if (ctrlKey) keyCombo.push("ctrl");
     if (shiftKey) keyCombo.push("shift");
     if (altKey) keyCombo.push("alt");
@@ -76,7 +89,7 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
   /**
    * Manually restart key recording (for when user wants to re-record)
    */
-  const startRecordingKeys = () => {
+  const startRecordingKeys = (): void => {
     setKeyRecordingMode(true);
     setEditedKey("");
     setError("");
@@ -88,8 +101,29 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
   /**
    * Save the edited key combination
    */
-  const handleSave = () => {
+  const handleSave = (): void => {
     onSave(hotkey.id, editedKey);
+  };
+
+  /**
+   * Handle cancel button click
+   */
+  const handleCancel = (): void => {
+    onCancel(hotkey.id);
+  };
+
+  /**
+   * Handle toggle change
+   */
+  const handleToggle = (): void => {
+    onToggle(hotkey.id);
+  };
+
+  /**
+   * Handle edit button click
+   */
+  const handleEdit = (): void => {
+    onEdit(hotkey.id);
   };
 
   // Render edit mode interface
@@ -122,10 +156,10 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
 
           {/* Action buttons */}
           <div className="flex flex-col gap-2">
-            <Button variant="default" size="sm" onClick={handleSave} disabled={!editedKey || !!error}>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={!editedKey || !!error}>
               Apply
             </Button>
-            <Button variant="neutral" size="sm" onClick={() => onCancel(hotkey.id)}>
+            <Button variant="neutral" size="sm" onClick={handleCancel}>
               Cancel
             </Button>
           </div>
@@ -144,7 +178,7 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
       <div className="flex-none mr-4">
         <UiToggle
           checked={hotkey.active}
-          onChange={() => onToggle(hotkey.id)}
+          onChange={handleToggle}
           aria-label={`${hotkey.active ? "Disable" : "Enable"} ${hotkey.label}`}
         />
       </div>
@@ -156,7 +190,7 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
       </div>
 
       {/* Current hotkey display (clickable to edit) */}
-      <div className="flex items-center gap-2 cursor-pointer hover:opacity-80" onClick={() => onEdit(hotkey.id)}>
+      <div className="flex items-center gap-2 cursor-pointer hover:opacity-80" onClick={handleEdit}>
         <KeyboardKey>{hotkey.key}</KeyboardKey>
       </div>
     </div>

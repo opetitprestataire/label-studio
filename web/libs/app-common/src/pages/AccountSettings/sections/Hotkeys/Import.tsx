@@ -11,6 +11,32 @@ import {
 } from "@humansignal/shad/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@humansignal/shad/components/ui/alert";
 
+// Type definitions
+interface Hotkey {
+  id: string;
+  section: string;
+  element: string;
+  label: string;
+  key: string;
+  mac?: string;
+  active: boolean;
+  subgroup?: string;
+  description?: string;
+}
+
+interface ImportData {
+  hotkeys?: Hotkey[];
+  settings?: {
+    autoTranslatePlatforms?: boolean;
+  };
+}
+
+interface ImportDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onImport: (data: ImportData | Hotkey[]) => void;
+}
+
 /**
  * ImportDialog - A dialog component for importing hotkey configurations
  *
@@ -20,20 +46,25 @@ import { Alert, AlertDescription, AlertTitle } from "@humansignal/shad/component
  * @param {ImportDialogProps} props - The component props
  * @returns {React.ReactElement} The ImportDialog component
  */
-export const ImportDialog = ({ open, onOpenChange, onImport }) => {
+export const ImportDialog = ({ open, onOpenChange, onImport }: ImportDialogProps) => {
   // State for the import text input
-  const [importText, setImportText] = useState("");
+  const [importText, setImportText] = useState<string>("");
   // State for validation errors
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
 
   /**
    * Validates a single hotkey object structure
-   * @param {Object} hotkey - The hotkey object to validate
+   * @param {unknown} hotkey - The hotkey object to validate
    * @throws {Error} If the hotkey is missing required fields
    */
-  const validateHotkey = (hotkey) => {
+  const validateHotkey = (hotkey: unknown): void => {
+    if (!hotkey || typeof hotkey !== 'object') {
+      throw new Error("Invalid hotkey object");
+    }
+
+    const hotkeyObj = hotkey as Record<string, unknown>;
     const requiredFields = ["id", "section", "element", "label", "key"];
-    const missingFields = requiredFields.filter((field) => !hotkey[field]);
+    const missingFields = requiredFields.filter((field) => !hotkeyObj[field]);
 
     if (missingFields.length > 0) {
       throw new Error(`Missing required fields: ${missingFields.join(", ")}`);
@@ -44,7 +75,7 @@ export const ImportDialog = ({ open, onOpenChange, onImport }) => {
    * Handles the import process
    * Parses JSON, validates structure, and calls the onImport callback
    */
-  const handleImport = () => {
+  const handleImport = (): void => {
     try {
       // Clear any previous errors
       setError("");
@@ -55,11 +86,23 @@ export const ImportDialog = ({ open, onOpenChange, onImport }) => {
       }
 
       // Parse the JSON
-      const hotkeys = JSON.parse(importText);
+      const parsedData: unknown = JSON.parse(importText);
 
-      // Validate it's an array
-      if (!Array.isArray(hotkeys)) {
-        throw new Error("Invalid format: expected an array of hotkeys");
+      // Handle both old format (array of hotkeys) and new format (object with hotkeys and settings)
+      let hotkeys: unknown[];
+      
+      if (Array.isArray(parsedData)) {
+        // Old format: direct array of hotkeys
+        hotkeys = parsedData;
+      } else if (parsedData && typeof parsedData === 'object' && 'hotkeys' in parsedData) {
+        // New format: object with hotkeys property
+        const dataObj = parsedData as { hotkeys?: unknown };
+        if (!Array.isArray(dataObj.hotkeys)) {
+          throw new Error("Invalid format: hotkeys property must be an array");
+        }
+        hotkeys = dataObj.hotkeys;
+      } else {
+        throw new Error("Invalid format: expected an array of hotkeys or an object with a hotkeys property");
       }
 
       // Validate it's not empty
@@ -68,29 +111,31 @@ export const ImportDialog = ({ open, onOpenChange, onImport }) => {
       }
 
       // Validate each hotkey object
-      hotkeys.forEach((hotkey, index) => {
+      hotkeys.forEach((hotkey: unknown, index: number) => {
         try {
           validateHotkey(hotkey);
-        } catch (validationError) {
-          throw new Error(`Hotkey at index ${index}: ${validationError.message}`);
+        } catch (validationError: unknown) {
+          const errorMessage = validationError instanceof Error ? validationError.message : "Unknown validation error";
+          throw new Error(`Hotkey at index ${index}: ${errorMessage}`);
         }
       });
 
       // If validation passes, proceed with import
-      onImport(hotkeys);
+      onImport(parsedData as ImportData | Hotkey[]);
 
       // Reset the dialog state
       resetDialogState();
-    } catch (err) {
+    } catch (err: unknown) {
       // Set error message for display
-      setError(err.message);
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+      setError(errorMessage);
     }
   };
 
   /**
    * Resets the dialog to its initial state
    */
-  const resetDialogState = () => {
+  const resetDialogState = (): void => {
     setImportText("");
     setError("");
     onOpenChange(false);
@@ -99,7 +144,7 @@ export const ImportDialog = ({ open, onOpenChange, onImport }) => {
   /**
    * Handles dialog cancellation
    */
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     resetDialogState();
   };
 
@@ -107,7 +152,7 @@ export const ImportDialog = ({ open, onOpenChange, onImport }) => {
    * Handles textarea input changes
    * @param {React.ChangeEvent<HTMLTextAreaElement>} e - The change event
    */
-  const handleTextareaChange = (e) => {
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
     setImportText(e.target.value);
     // Clear error when user starts typing
     if (error) {
@@ -146,7 +191,7 @@ export const ImportDialog = ({ open, onOpenChange, onImport }) => {
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={handleCancel}>
+          <Button variant="neutral" onClick={handleCancel}>
             Cancel
           </Button>
           <Button onClick={handleImport} disabled={!importText.trim()}>

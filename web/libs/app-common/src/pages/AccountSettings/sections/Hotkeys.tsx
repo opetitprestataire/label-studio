@@ -24,18 +24,91 @@ import { ImportDialog } from "./Hotkeys/Import";
 import { DEFAULT_HOTKEYS, HOTKEY_SECTIONS } from "./Hotkeys/defaults";
 import styles from "../AccountSettings.module.scss";
 
-window.DEFAULT_HOTKEYS = DEFAULT_HOTKEYS;
+// Type definitions
+interface Hotkey {
+  id: string;
+  section: string;
+  element: string;
+  label: string;
+  key: string;
+  mac?: string;
+  active: boolean;
+}
+
+interface Section {
+  id: string;
+  title: string;
+  description?: string;
+}
+
+interface DirtyState {
+  [sectionId: string]: boolean;
+}
+
+interface DuplicateConfirmDialog {
+  open: boolean;
+  hotkeyId: string | null;
+  newKey: string | null;
+  conflictingHotkeys: Hotkey[];
+}
+
+interface HotkeySettings {
+  autoTranslatePlatforms: boolean;
+}
+
+interface ExportData {
+  hotkeys: Hotkey[];
+  settings: HotkeySettings;
+  exportedAt: string;
+  version: string;
+}
+
+interface ImportData {
+  hotkeys?: Hotkey[];
+  settings?: HotkeySettings;
+}
+
+interface SaveResult {
+  ok: boolean;
+  error?: string;
+  data?: any;
+}
+
+interface ApiResponse {
+  custom_hotkeys?: Record<string, { key: string; active: boolean }>;
+  hotkey_settings?: HotkeySettings;
+  error?: string;
+}
+
+// Extend window type for global properties
+declare global {
+  interface Window {
+    DEFAULT_HOTKEYS: Hotkey[];
+    APP_SETTINGS?: {
+      user?: {
+        customHotkeys?: Record<string, { key: string; active: boolean }>;
+        hotkeySettings?: HotkeySettings;
+      };
+    };
+  }
+}
+
+// Type the imported defaults
+const typedDefaultHotkeys = DEFAULT_HOTKEYS as Hotkey[];
+const typedHotkeySections = HOTKEY_SECTIONS as Section[];
+
+window.DEFAULT_HOTKEYS = typedDefaultHotkeys;
 
 export const HotkeysManager = () => {
   const toast = useToast();
-  const [hotkeys, setHotkeys] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [editingHotkeyId, setEditingHotkeyId] = useState(null);
-  const [globalEnabled, setGlobalEnabled] = useState(true);
-  const [dirtyState, setDirtyState] = useState({});
-  const [importDialogOpen, setImportDialogOpen] = useState(false);
-  const [autoTranslatePlatforms, setAutoTranslatePlatforms] = useState(true);
-  const [duplicateConfirmDialog, setDuplicateConfirmDialog] = useState({
+  const [hotkeys, setHotkeys] = useState<Hotkey[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [editingHotkeyId, setEditingHotkeyId] = useState<string | null>(null);
+  const [globalEnabled, setGlobalEnabled] = useState<boolean>(true);
+  const [dirtyState, setDirtyState] = useState<DirtyState>({});
+  const [importDialogOpen, setImportDialogOpen] = useState<boolean>(false);
+  const [autoTranslatePlatforms, setAutoTranslatePlatforms] = useState<boolean>(true);
+  const [duplicateConfirmDialog, setDuplicateConfirmDialog] = useState<DuplicateConfirmDialog>({
     open: false,
     hotkeyId: null,
     newKey: null,
@@ -45,10 +118,10 @@ export const HotkeysManager = () => {
   const api = useAPI();
 
   // Function to identify which hotkeys were modified from defaults
-  const getModifiedHotkeys = (currentHotkeys) => {
+  const getModifiedHotkeys = (currentHotkeys: Hotkey[]): Hotkey[] => {
     // Create a map of default hotkeys for quick comparison
-    const defaultMap = {};
-    DEFAULT_HOTKEYS.forEach((hotkey) => {
+    const defaultMap: Record<string, { key: string; active: boolean }> = {};
+    typedDefaultHotkeys.forEach((hotkey: Hotkey) => {
       defaultMap[`${hotkey.section}:${hotkey.element}`] = {
         key: hotkey.key,
         active: hotkey.active,
@@ -56,7 +129,7 @@ export const HotkeysManager = () => {
     });
 
     // Find modified hotkeys
-    return currentHotkeys.filter((hotkey) => {
+    return currentHotkeys.filter((hotkey: Hotkey) => {
       const keyId = `${hotkey.section}:${hotkey.element}`;
       const defaultValue = defaultMap[keyId];
 
@@ -66,12 +139,12 @@ export const HotkeysManager = () => {
   };
 
   // Check if a hotkey conflicts with others globally
-  const getGlobalDuplicates = (hotkeyId, newKey) => {
-    return hotkeys.filter((h) => h.id !== hotkeyId && h.key === newKey);
+  const getGlobalDuplicates = (hotkeyId: string, newKey: string): Hotkey[] => {
+    return hotkeys.filter((h: Hotkey) => h.id !== hotkeyId && h.key === newKey);
   };
 
   // Save hotkeys to API function
-  const saveHotkeysToAPI = useCallback(async () => {
+  const saveHotkeysToAPI = useCallback(async (): Promise<SaveResult> => {
     // Get all modified hotkeys, not just from one section
     const modifiedHotkeys = getModifiedHotkeys(hotkeys);
 
@@ -85,10 +158,10 @@ export const HotkeysManager = () => {
     }
 
     // Convert our array format to the API's expected JSON object format
-    const customHotkeys = {};
+    const customHotkeys: Record<string, { key: string; active: boolean }> = {};
 
     // Process all modified hotkeys
-    modifiedHotkeys.forEach((hotkey) => {
+    modifiedHotkeys.forEach((hotkey: Hotkey) => {
       const keyId = `${hotkey.section}:${hotkey.element}`;
       customHotkeys[keyId] = {
         key: hotkey.key,
@@ -97,7 +170,10 @@ export const HotkeysManager = () => {
     });
 
     // Prepare request body
-    const requestBody = {
+    const requestBody: {
+      custom_hotkeys: Record<string, { key: string; active: boolean }>;
+      hotkey_settings?: HotkeySettings;
+    } = {
       custom_hotkeys: customHotkeys,
     };
 
@@ -110,12 +186,12 @@ export const HotkeysManager = () => {
 
     try {
       // Call the API to save all modified hotkeys and settings
-      const response = await api.callApi("updateHotkeys", {
+      const response = await api.callApi("updateHotkeys" as any, {
         body: requestBody,
       });
 
       // Check for API-level errors
-      if (response.error) {
+      if (response?.error) {
         return {
           ok: false,
           error: response.error,
@@ -125,24 +201,25 @@ export const HotkeysManager = () => {
 
       return {
         ok: true,
-        error: null,
+        error: undefined,
         data: response,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error saving hotkeys:", error);
       
       // Provide more specific error messages
       let errorMessage = "Failed to save hotkeys";
-      if (error.response) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const err = error as any;
         // Server responded with error status
-        if (error.response.status === 400) {
-          errorMessage = error.response.data?.error || "Invalid hotkeys configuration";
-        } else if (error.response.status === 401) {
+        if (err.response?.status === 400) {
+          errorMessage = err.response.data?.error || "Invalid hotkeys configuration";
+        } else if (err.response?.status === 401) {
           errorMessage = "Authentication required";
-        } else if (error.response.status >= 500) {
+        } else if (err.response?.status >= 500) {
           errorMessage = "Server error - please try again later";
         }
-      } else if (error.request) {
+      } else if (error && typeof error === 'object' && 'request' in error) {
         // Network error
         errorMessage = "Network error - please check your connection";
       }
@@ -152,10 +229,13 @@ export const HotkeysManager = () => {
         error: errorMessage,
       };
     }
-  });
+  }, [hotkeys, autoTranslatePlatforms, api]);
 
-  function updateHotkeysWithCustomSettings(defaultHotkeys, customHotkeys) {
-    return defaultHotkeys.map((hotkey) => {
+  function updateHotkeysWithCustomSettings(
+    defaultHotkeys: Hotkey[], 
+    customHotkeys: Record<string, { key: string; active: boolean }>
+  ): Hotkey[] {
+    return defaultHotkeys.map((hotkey: Hotkey) => {
       // Create the lookup key format used in the API response (section:element)
       const lookupKey = `${hotkey.section}:${hotkey.element}`;
 
@@ -179,16 +259,17 @@ export const HotkeysManager = () => {
       setIsLoading(true);
       
       // Try to load from API first
-      const response = await api.callApi("hotkeys");
+      const response = await api.callApi("hotkeys" as any);
       
-      if (response && response.custom_hotkeys) {
+      if (response && (response as ApiResponse).custom_hotkeys) {
         // Use API data
-        const updatedHotkeys = updateHotkeysWithCustomSettings(DEFAULT_HOTKEYS, response.custom_hotkeys);
+        const apiResponse = response as ApiResponse;
+        const updatedHotkeys = updateHotkeysWithCustomSettings(typedDefaultHotkeys, apiResponse.custom_hotkeys!);
         setHotkeys(updatedHotkeys);
       } else {
         // Fallback to window.APP_SETTINGS
         const customHotkeys = window.APP_SETTINGS?.user?.customHotkeys || {};
-        const updatedHotkeys = updateHotkeysWithCustomSettings(DEFAULT_HOTKEYS, customHotkeys);
+        const updatedHotkeys = updateHotkeysWithCustomSettings(typedDefaultHotkeys, customHotkeys);
         setHotkeys(updatedHotkeys);
       }
 
@@ -201,14 +282,16 @@ export const HotkeysManager = () => {
       
       // Fallback to window.APP_SETTINGS on error
       const customHotkeys = window.APP_SETTINGS?.user?.customHotkeys || {};
-      const updatedHotkeys = updateHotkeysWithCustomSettings(DEFAULT_HOTKEYS, customHotkeys);
+      const updatedHotkeys = updateHotkeysWithCustomSettings(typedDefaultHotkeys, customHotkeys);
       setHotkeys(updatedHotkeys);
       
       // Show non-blocking error notification
-      toast.show({
-        message: "Could not load custom hotkeys from server, using cached settings",
-        type: ToastType.warning,
-      });
+      if (toast) {
+        toast.show({
+          message: "Could not load custom hotkeys from server, using cached settings",
+          type: ToastType.Warning,
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -220,9 +303,9 @@ export const HotkeysManager = () => {
   }, [loadHotkeysFromAPI]);
 
   // Handle toggling a single hotkey
-  const handleToggleHotkey = (hotkeyId) => {
+  const handleToggleHotkey = (hotkeyId: string) => {
     // Update the hotkey
-    const updatedHotkeys = hotkeys.map((hotkey) => {
+    const updatedHotkeys = hotkeys.map((hotkey: Hotkey) => {
       if (hotkey.id === hotkeyId) {
         return { ...hotkey, active: !hotkey.active };
       }
@@ -232,7 +315,7 @@ export const HotkeysManager = () => {
     setHotkeys(updatedHotkeys);
 
     // Mark the section as having changes
-    const hotkey = hotkeys.find((h) => h.id === hotkeyId);
+    const hotkey = hotkeys.find((h: Hotkey) => h.id === hotkeyId);
     if (hotkey) {
       setDirtyState({
         ...dirtyState,
@@ -241,7 +324,7 @@ export const HotkeysManager = () => {
     }
 
     // Update global enabled state
-    const allEnabled = updatedHotkeys.every((hotkey) => hotkey.active);
+    const allEnabled = updatedHotkeys.every((hotkey: Hotkey) => hotkey.active);
     setGlobalEnabled(allEnabled);
   };
 
@@ -256,30 +339,32 @@ export const HotkeysManager = () => {
       return;
     }
 
-    setHotkeys([...DEFAULT_HOTKEYS]);
+    setHotkeys([...typedDefaultHotkeys]);
     setGlobalEnabled(true);
     setAutoTranslatePlatforms(true);
     setDirtyState({});
 
-    toast.show({
-      message: "All hotkeys and settings have been reset to defaults",
-      type: ToastType.success,
-    });
+    if (toast) {
+      toast.show({
+        message: "All hotkeys and settings have been reset to defaults",
+        type: ToastType.Success,
+      });
+    }
   };
 
   // Check if any section has unsaved changes
-  const hasUnsavedChanges = Object.keys(dirtyState).some((key) => key !== "settings");
+  const hasUnsavedChanges = Object.keys(dirtyState).some((key: string) => key !== "settings");
 
   // Helper function to get section title by ID
-  const getSectionTitle = (sectionId) => {
-    const section = HOTKEY_SECTIONS.find((s) => s.id === sectionId);
+  const getSectionTitle = (sectionId: string): string => {
+    const section = typedHotkeySections.find((s: Section) => s.id === sectionId);
     return section ? section.title : sectionId;
   };
 
   // Handle saving an edited hotkey
-  const handleSaveHotkey = (hotkeyId, newKey) => {
+  const handleSaveHotkey = (hotkeyId: string, newKey: string) => {
     // Find the hotkey to update
-    const hotkey = hotkeys.find((h) => h.id === hotkeyId);
+    const hotkey = hotkeys.find((h: Hotkey) => h.id === hotkeyId);
     if (!hotkey) return;
 
     // Check for global duplicates
@@ -301,13 +386,13 @@ export const HotkeysManager = () => {
   };
 
   // Function to actually update the hotkey key
-  const updateHotkeyKey = (hotkeyId, newKey) => {
+  const updateHotkeyKey = (hotkeyId: string, newKey: string) => {
     // Find the hotkey to update
-    const hotkey = hotkeys.find((h) => h.id === hotkeyId);
+    const hotkey = hotkeys.find((h: Hotkey) => h.id === hotkeyId);
     if (!hotkey) return;
 
     // Update the hotkey
-    const updatedHotkeys = hotkeys.map((h) => {
+    const updatedHotkeys = hotkeys.map((h: Hotkey) => {
       if (h.id === hotkeyId) {
         return { ...h, key: newKey, mac: newKey };
       }
@@ -339,7 +424,9 @@ export const HotkeysManager = () => {
     });
 
     // Proceed with the update
-    updateHotkeyKey(hotkeyId, newKey);
+    if (hotkeyId && newKey) {
+      updateHotkeyKey(hotkeyId, newKey);
+    }
   };
 
   // Handle canceling duplicate confirmation
@@ -358,7 +445,7 @@ export const HotkeysManager = () => {
   };
 
   // Handle saving a section's hotkeys
-  const handleSaveSection = async (sectionId) => {
+  const handleSaveSection = async (sectionId: string) => {
     setIsLoading(true);
 
     try {
@@ -372,23 +459,30 @@ export const HotkeysManager = () => {
         setDirtyState(newDirtyState);
 
         const sectionName =
-          sectionId === "settings" ? "Settings" : HOTKEY_SECTIONS.find((s) => s.id === sectionId)?.title;
+          sectionId === "settings" ? "Settings" : typedHotkeySections.find((s: Section) => s.id === sectionId)?.title;
 
-        toast.show({
-          message: `${sectionName} saved`,
-          type: ToastType.success,
-        });
+        if (toast) {
+          toast.show({
+            message: `${sectionName} saved`,
+            type: ToastType.Success,
+          });
+        }
       } else {
+        if (toast) {
+          toast.show({
+            message: `Failed to save: ${result.error || "Unknown error"}`,
+            type: ToastType.Error,
+          });
+        }
+      }
+    } catch (error: unknown) {
+      if (toast) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
         toast.show({
-          message: `Failed to save: ${result.error || "Unknown error"}`,
-          type: ToastType.error,
+          message: `Error saving: ${errorMessage}`,
+          type: ToastType.Error,
         });
       }
-    } catch (error) {
-      toast.show({
-        message: `Error saving: ${error.message}`,
-        type: ToastType.error,
-      });
     } finally {
       setIsLoading(false);
     }
@@ -397,7 +491,7 @@ export const HotkeysManager = () => {
   // Handle exporting hotkeys
   const handleExportHotkeys = () => {
     // Create export data including settings
-    const exportData = {
+    const exportData: ExportData = {
       hotkeys: hotkeys,
       settings: {
         autoTranslatePlatforms: autoTranslatePlatforms,
@@ -424,17 +518,19 @@ export const HotkeysManager = () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    toast.show({ message: "Hotkeys exported successfully", type: ToastType.success });
+    if (toast) {
+      toast.show({ message: "Hotkeys exported successfully", type: ToastType.Success });
+    }
   };
 
   // Handle importing hotkeys
-  const handleImportHotkeys = async (importedData) => {
+  const handleImportHotkeys = async (importedData: ImportData | Hotkey[]) => {
     try {
       setIsLoading(true);
 
       // Handle both old format (just hotkeys array) and new format (with settings)
-      const importedHotkeys = Array.isArray(importedData) ? importedData : importedData.hotkeys;
-      const importedSettings = importedData.settings || {};
+      const importedHotkeys = Array.isArray(importedData) ? importedData : importedData.hotkeys || [];
+      const importedSettings = Array.isArray(importedData) ? {} : importedData.settings || {};
 
       // Update local state
       setHotkeys(importedHotkeys);
@@ -445,7 +541,7 @@ export const HotkeysManager = () => {
       }
 
       // Check if any hotkey is disabled to determine global state
-      const allEnabled = importedHotkeys.every((hotkey) => hotkey.active);
+      const allEnabled = importedHotkeys.every((hotkey: Hotkey) => hotkey.active);
       setGlobalEnabled(allEnabled);
 
       // Save all imported data to API
@@ -461,17 +557,22 @@ export const HotkeysManager = () => {
       // Reset dirty state
       setDirtyState({});
 
-      toast.show({ message: "Hotkeys imported successfully", type: ToastType.success });
-    } catch (error) {
-      toast.show({ message: `Error importing hotkeys: ${error.message}`, type: ToastType.error });
+      if (toast) {
+        toast.show({ message: "Hotkeys imported successfully", type: ToastType.Success });
+      }
+    } catch (error: unknown) {
+      if (toast) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        toast.show({ message: `Error importing hotkeys: ${errorMessage}`, type: ToastType.Error });
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   // Group hotkeys by section
-  const getHotkeysBySection = (sectionId) => {
-    return hotkeys.filter((hotkey) => hotkey.section === sectionId);
+  const getHotkeysBySection = (sectionId: string): Hotkey[] => {
+    return hotkeys.filter((hotkey: Hotkey) => hotkey.section === sectionId);
   };
 
   return (
@@ -489,7 +590,7 @@ export const HotkeysManager = () => {
               </Menu>
             }
           >
-            <Button variant="secondary">Actions</Button>
+            <Button variant="neutral">Actions</Button>
           </Dropdown.Trigger>
         </div>
 
@@ -508,7 +609,7 @@ export const HotkeysManager = () => {
             </Card>
 
             {/* Hotkey sections skeleton */}
-            {HOTKEY_SECTIONS.map((section) => (
+            {typedHotkeySections.map((section: Section) => (
               <Card key={section.id}>
                 <CardHeader style={{ paddingBottom: "var(--spacing-tight)" }}>
                   <Skeleton style={{ height: "1.5rem", width: "250px" }} />
@@ -534,7 +635,7 @@ export const HotkeysManager = () => {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-wide)" }}>
             {/* Hotkey Sections */}
-            {HOTKEY_SECTIONS.map((section) => (
+            {typedHotkeySections.map((section: Section) => (
               <HotkeySection
                 key={section.id}
                 section={section}
@@ -544,7 +645,7 @@ export const HotkeysManager = () => {
                 onCancelEdit={handleCancelEdit}
                 onToggleHotkey={handleToggleHotkey}
                 onSaveSection={handleSaveSection}
-                hasChanges={dirtyState[section.id]}
+                hasChanges={dirtyState[section.id] || false}
                 onEditHotkey={setEditingHotkeyId}
               />
             ))}
@@ -573,7 +674,7 @@ export const HotkeysManager = () => {
             }}
           >
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-wide)" }}>
-              {duplicateConfirmDialog.conflictingHotkeys.map((conflictHotkey) => (
+              {duplicateConfirmDialog.conflictingHotkeys.map((conflictHotkey: Hotkey) => (
                 <div
                   key={conflictHotkey.id}
                   style={{
