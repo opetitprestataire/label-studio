@@ -110,20 +110,46 @@ export const HotkeysManager = () => {
 
     try {
       // Call the API to save all modified hotkeys and settings
-      const response = await api.callApi("hotkeys", {
+      const response = await api.callApi("updateHotkeys", {
         body: requestBody,
       });
 
+      // Check for API-level errors
+      if (response.error) {
+        return {
+          ok: false,
+          error: response.error,
+          data: response,
+        };
+      }
+
       return {
         ok: true,
-        error: response.error,
+        error: null,
         data: response,
       };
     } catch (error) {
       console.error("Error saving hotkeys:", error);
+      
+      // Provide more specific error messages
+      let errorMessage = "Failed to save hotkeys";
+      if (error.response) {
+        // Server responded with error status
+        if (error.response.status === 400) {
+          errorMessage = error.response.data?.error || "Invalid hotkeys configuration";
+        } else if (error.response.status === 401) {
+          errorMessage = "Authentication required";
+        } else if (error.response.status >= 500) {
+          errorMessage = "Server error - please try again later";
+        }
+      } else if (error.request) {
+        // Network error
+        errorMessage = "Network error - please check your connection";
+      }
+      
       return {
         ok: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   });
@@ -147,22 +173,51 @@ export const HotkeysManager = () => {
     });
   }
 
-  // Load hotkeys on component mount
-  useEffect(() => {
-    const loadHotkeys = () => {
-      const updatedHotkeys = updateHotkeysWithCustomSettings(DEFAULT_HOTKEYS, window.APP_SETTINGS.user.customHotkeys);
+  // Load hotkeys from API
+  const loadHotkeysFromAPI = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      
+      // Try to load from API first
+      const response = await api.callApi("hotkeys");
+      
+      if (response && response.custom_hotkeys) {
+        // Use API data
+        const updatedHotkeys = updateHotkeysWithCustomSettings(DEFAULT_HOTKEYS, response.custom_hotkeys);
+        setHotkeys(updatedHotkeys);
+      } else {
+        // Fallback to window.APP_SETTINGS
+        const customHotkeys = window.APP_SETTINGS?.user?.customHotkeys || {};
+        const updatedHotkeys = updateHotkeysWithCustomSettings(DEFAULT_HOTKEYS, customHotkeys);
+        setHotkeys(updatedHotkeys);
+      }
 
       // Load the platform translation setting
-      const platformSetting = window.APP_SETTINGS.user.hotkeySettings?.autoTranslatePlatforms;
+      const platformSetting = window.APP_SETTINGS?.user?.hotkeySettings?.autoTranslatePlatforms;
       setAutoTranslatePlatforms(platformSetting !== undefined ? platformSetting : true);
 
-      setIsLoading(true);
+    } catch (error) {
+      console.error("Error loading hotkeys from API:", error);
+      
+      // Fallback to window.APP_SETTINGS on error
+      const customHotkeys = window.APP_SETTINGS?.user?.customHotkeys || {};
+      const updatedHotkeys = updateHotkeysWithCustomSettings(DEFAULT_HOTKEYS, customHotkeys);
       setHotkeys(updatedHotkeys);
+      
+      // Show non-blocking error notification
+      toast.show({
+        message: "Could not load custom hotkeys from server, using cached settings",
+        type: ToastType.warning,
+      });
+    } finally {
       setIsLoading(false);
-    };
+    }
+  }, [api, toast]);
 
-    loadHotkeys();
-  }, []);
+  // Load hotkeys on component mount
+  useEffect(() => {
+    loadHotkeysFromAPI();
+  }, [loadHotkeysFromAPI]);
 
   // Handle toggling a single hotkey
   const handleToggleHotkey = (hotkeyId) => {
@@ -399,6 +454,9 @@ export const HotkeysManager = () => {
       if (!result.ok) {
         throw new Error(result.error || "Failed to save imported hotkeys");
       }
+
+      // Reload from API to ensure consistency
+      await loadHotkeysFromAPI();
 
       // Reset dirty state
       setDirtyState({});

@@ -33,16 +33,16 @@
     "key": "alt+right",
     "description": "Decrease region on the right"
   },
-  "ts:grow-left-largre": {
+  "ts:grow-left-large": {
     "key": "shift+left"
   },
-  "ts:grow-right-largre": {
+  "ts:grow-right-large": {
     "key": "shift+right"
   },
-  "ts:shrink-left-largre": {
+  "ts:shrink-left-large": {
     "key": "shift+alt+left"
   },
-  "ts:shrink-right-largre": {
+  "ts:shrink-right-large": {
     "key": "shift+alt+right"
   },
   "annotation:submit": {

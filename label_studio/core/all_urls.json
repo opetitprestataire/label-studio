@@ -522,7 +522,7 @@
         "decorators": ""
     },
     {
-        "url": "/api/current-user/hotkeys",
+        "url": "/api/current-user/hotkeys/",
         "module": "users.api.UserHotkeysAPI",
         "name": "current-user-hotkeys",
         "decorators": ""

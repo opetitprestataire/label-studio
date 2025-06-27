@@ -39,8 +39,8 @@ class UserHotkeysAPITestCase(TestCase):
 
     def test_update_hotkeys_authenticated(self):
         """Test updating hotkeys for authenticated user"""
-        response = self.client.post(self.url, data=json.dumps(self.valid_payload), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.patch(self.url, data=json.dumps(self.valid_payload), content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['custom_hotkeys'], self.valid_payload['custom_hotkeys'])
 
         # Verify user data was updated in database
@@ -52,22 +52,22 @@ class UserHotkeysAPITestCase(TestCase):
         # Logout/un-authenticate the client
         self.client.force_authenticate(user=None)
 
-        response = self.client.post(self.url, data=json.dumps(self.valid_payload), content_type='application/json')
+        response = self.client.patch(self.url, data=json.dumps(self.valid_payload), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_update_hotkeys_invalid_data(self):
         """Test updating hotkeys with invalid data"""
         invalid_payload = {'custom_hotkeys': {'editor:save': {'active': True}}}  # Missing 'key'
 
-        response = self.client.post(self.url, data=json.dumps(invalid_payload), content_type='application/json')
+        response = self.client.patch(self.url, data=json.dumps(invalid_payload), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_hotkeys_partial(self):
         """Test updating only some hotkeys preserves existing configuration"""
         partial_update = {'custom_hotkeys': {'editor:save': {'key': 'ctrl+alt+s', 'active': True}}}
 
-        response = self.client.post(self.url, data=json.dumps(partial_update), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.patch(self.url, data=json.dumps(partial_update), content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Should completely replace the user's hotkeys, not merge them
         user = User.objects.get(id=self.user.id)
@@ -78,8 +78,8 @@ class UserHotkeysAPITestCase(TestCase):
         """Test setting empty hotkeys dictionary"""
         empty_payload = {'custom_hotkeys': {}}
 
-        response = self.client.post(self.url, data=json.dumps(empty_payload), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.patch(self.url, data=json.dumps(empty_payload), content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # User should now have empty hotkeys
         user = User.objects.get(id=self.user.id)
@@ -89,5 +89,36 @@ class UserHotkeysAPITestCase(TestCase):
         """Test request with missing required field"""
         invalid_payload = {}  # Missing 'custom_hotkeys'
 
-        response = self.client.post(self.url, data=json.dumps(invalid_payload), content_type='application/json')
+        response = self.client.patch(self.url, data=json.dumps(invalid_payload), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_hotkeys_authenticated(self):
+        """Test retrieving hotkeys for authenticated user"""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('custom_hotkeys', response.data)
+        
+        # Should return the user's current hotkeys
+        expected_hotkeys = {
+            'editor:save': {'key': 'ctrl+s', 'active': True},
+            'editor:find': {'key': 'ctrl+f', 'active': True},
+        }
+        self.assertEqual(response.data['custom_hotkeys'], expected_hotkeys)
+
+    def test_get_hotkeys_unauthenticated(self):
+        """Test retrieving hotkeys fails for unauthenticated user"""
+        # Logout/un-authenticate the client
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_hotkeys_empty_config(self):
+        """Test retrieving hotkeys when user has empty configuration"""
+        # Clear the user's hotkeys
+        self.user.custom_hotkeys = {}
+        self.user.save()
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['custom_hotkeys'], {})

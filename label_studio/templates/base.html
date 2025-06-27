@@ -105,7 +105,7 @@
   var editorCustomHotkeys = {};
   var prefixRegex = /^(annotation|timeseries|audio|regions|video|image_gallery|tools):(.*)/;
 
-  for (var key in __customHotkeys) {
+  for (let key in __customHotkeys) {
       const match = key.match(prefixRegex);
       if (match) {
           const [, prefix, shortKey] = match;
