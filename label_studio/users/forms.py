@@ -29,6 +29,7 @@ FOUND_US_OPTIONS = (
 
 logger = logging.getLogger(__name__)
 
+
 class LoginForm(forms.Form):
     """For logging in to the app and all - session based"""
 
