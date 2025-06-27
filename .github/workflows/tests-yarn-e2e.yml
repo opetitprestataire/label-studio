@@ -79,7 +79,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           name: lsf-e2e
-          directory: web/libs/editor/tests/e2e/output/coverage
+          directory: web/libs/editor/tests/coverage
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
           fail_ci_if_error: true
@@ -88,7 +88,9 @@ jobs:
         if: always()
         with:
           name: e2e output
-          path: "web/libs/editor/tests/e2e/output"
+          path: |
+            web/libs/editor/tests/e2e/output
+            web/libs/editor/tests/coverage
 
       - name: Kill LSO server
         if: always()
