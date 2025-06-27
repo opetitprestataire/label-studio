@@ -52,7 +52,7 @@ jobs:
         timeout-minutes: 2
         working-directory: ${{ env.FRONTEND_MONOREPO_DIR }}
         env:
-          NODE_ENV: production
+          NODE_ENV: development
           BUILD_NO_MINIMIZATION: true
         run: |
           set -xeuo pipefail
@@ -70,6 +70,7 @@ jobs:
         working-directory: ${{ env.FRONTEND_MONOREPO_DIR }}
         env:
           HEADLESS: true
+          COVERAGE: true
         run: |
           yarn lsf:e2e:ci
 
