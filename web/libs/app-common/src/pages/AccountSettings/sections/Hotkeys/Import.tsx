@@ -58,7 +58,7 @@ export const ImportDialog = ({ open, onOpenChange, onImport }: ImportDialogProps
    * @throws {Error} If the hotkey is missing required fields
    */
   const validateHotkey = (hotkey: unknown): void => {
-    if (!hotkey || typeof hotkey !== 'object') {
+    if (!hotkey || typeof hotkey !== "object") {
       throw new Error("Invalid hotkey object");
     }
 
@@ -90,11 +90,11 @@ export const ImportDialog = ({ open, onOpenChange, onImport }: ImportDialogProps
 
       // Handle both old format (array of hotkeys) and new format (object with hotkeys and settings)
       let hotkeys: unknown[];
-      
+
       if (Array.isArray(parsedData)) {
         // Old format: direct array of hotkeys
         hotkeys = parsedData;
-      } else if (parsedData && typeof parsedData === 'object' && 'hotkeys' in parsedData) {
+      } else if (parsedData && typeof parsedData === "object" && "hotkeys" in parsedData) {
         // New format: object with hotkeys property
         const dataObj = parsedData as { hotkeys?: unknown };
         if (!Array.isArray(dataObj.hotkeys)) {

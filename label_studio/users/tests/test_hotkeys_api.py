@@ -97,7 +97,7 @@ class UserHotkeysAPITestCase(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('custom_hotkeys', response.data)
-        
+
         # Should return the user's current hotkeys
         expected_hotkeys = {
             'editor:save': {'key': 'ctrl+s', 'active': True},

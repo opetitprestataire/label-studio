@@ -331,7 +331,7 @@ class UserHotkeysAPI(APIView):
         try:
             user = request.user
             custom_hotkeys = user.custom_hotkeys or {}
-            
+
             serializer = HotkeysSerializer(data={'custom_hotkeys': custom_hotkeys})
             if serializer.is_valid():
                 return Response(serializer.validated_data, status=200)
@@ -339,45 +339,33 @@ class UserHotkeysAPI(APIView):
                 # If stored data is invalid, return empty config
                 logger.warning(f'Invalid hotkeys data for user {user.pk}: {serializer.errors}')
                 return Response({'custom_hotkeys': {}}, status=200)
-                
+
         except Exception as e:
             logger.error(f'Error retrieving hotkeys for user {request.user.pk}: {str(e)}')
-            return Response(
-                {'error': 'Failed to retrieve hotkeys configuration'},
-                status=500
-            )
+            return Response({'error': 'Failed to retrieve hotkeys configuration'}, status=500)
 
     def patch(self, request, *args, **kwargs):
         """Update the current user's hotkeys configuration"""
         try:
             serializer = HotkeysSerializer(data=request.data)
-            
+
             if not serializer.is_valid():
-                return Response(
-                    {'error': 'Invalid hotkeys configuration', 'details': serializer.errors},
-                    status=400
-                )
-            
+                return Response({'error': 'Invalid hotkeys configuration', 'details': serializer.errors}, status=400)
+
             user = request.user
-            
+
             # Security check: Ensure user can only update their own hotkeys
             if not user.is_authenticated:
-                return Response(
-                    {'error': 'Authentication required'},
-                    status=401
-                )
-            
+                return Response({'error': 'Authentication required'}, status=401)
+
             # Update user's hotkeys
             user.custom_hotkeys = serializer.validated_data['custom_hotkeys']
             user.save(update_fields=['custom_hotkeys'])
-            
+
             logger.info(f'Updated hotkeys for user {user.pk}')
-            
+
             return Response(serializer.validated_data, status=200)
-            
+
         except Exception as e:
             logger.error(f'Error updating hotkeys for user {request.user.pk}: {str(e)}')
-            return Response(
-                {'error': 'Failed to update hotkeys configuration'},
-                status=500
-            )
+            return Response({'error': 'Failed to update hotkeys configuration'}, status=500)

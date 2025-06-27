@@ -121,11 +121,19 @@ class HotkeysSerializer(serializers.Serializer):
 
     # Security: Define dangerous key combinations that should be blocked
     DANGEROUS_KEY_COMBINATIONS = [
-        'ctrl+alt+delete', 'cmd+alt+escape', 'alt+f4', 'ctrl+alt+esc',
-        'cmd+option+esc', 'ctrl+shift+esc', 'cmd+shift+q', 'alt+tab',
-        'cmd+tab', 'ctrl+alt+t', 'cmd+space'  # Common system shortcuts
+        'ctrl+alt+delete',
+        'cmd+alt+escape',
+        'alt+f4',
+        'ctrl+alt+esc',
+        'cmd+option+esc',
+        'ctrl+shift+esc',
+        'cmd+shift+q',
+        'alt+tab',
+        'cmd+tab',
+        'ctrl+alt+t',
+        'cmd+space',  # Common system shortcuts
     ]
-    
+
     # Limit maximum number of custom hotkeys to prevent abuse
     MAX_HOTKEYS = 200
 
@@ -156,10 +164,12 @@ class HotkeysSerializer(serializers.Serializer):
                 raise serializers.ValidationError(f"Action key '{action_key}' must be in 'section:action' format")
 
             section, action = action_key.split(':', 1)
-            
+
             # Validate section and action parts
             if not section.strip() or not action.strip():
-                raise serializers.ValidationError(f"Action key '{action_key}' must have non-empty section and action parts")
+                raise serializers.ValidationError(
+                    f"Action key '{action_key}' must have non-empty section and action parts"
+                )
 
             # Validate hotkey data format
             if not isinstance(hotkey_data, dict):
@@ -180,7 +190,9 @@ class HotkeysSerializer(serializers.Serializer):
 
             # Security: Limit key combination length
             if len(key_combo) > 50:
-                raise serializers.ValidationError(f"Key combination for '{action_key}' is too long (max 50 characters)")
+                raise serializers.ValidationError(
+                    f"Key combination for '{action_key}' is too long (max 50 characters)"
+                )
 
             # Security: Check for dangerous key combinations
             normalized_key = key_combo.lower().strip()
@@ -203,24 +215,22 @@ class HotkeysSerializer(serializers.Serializer):
         """
         # Allow only alphanumeric, common modifier keys, and basic symbols
         import re
-        
+
         # Allow letters, numbers, common modifiers, and basic symbols
         allowed_pattern = re.compile(r'^[a-zA-Z0-9\+\-\s\[\]\\;\'\".,/`~!@#$%^&*()_={}|:<>?]+$')
-        
+
         if not allowed_pattern.match(key_combo):
             raise serializers.ValidationError(
                 f"Key combination '{key_combo}' for '{action_key}' contains invalid characters"
             )
-        
+
         # Validate modifier key format (basic check)
         parts = [part.strip() for part in key_combo.split('+')]
         valid_modifiers = ['ctrl', 'cmd', 'command', 'alt', 'option', 'shift', 'meta']
-        
+
         for part in parts[:-1]:  # All parts except the last should be modifiers or valid keys
             if part.lower() not in valid_modifiers and len(part) > 20:
-                raise serializers.ValidationError(
-                    f"Invalid modifier or key '{part}' in key combination '{key_combo}'"
-                )
+                raise serializers.ValidationError(f"Invalid modifier or key '{part}' in key combination '{key_combo}'")
 
 
 UserSerializer = load_func(settings.USER_SERIALIZER)

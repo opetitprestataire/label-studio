@@ -206,10 +206,10 @@ export const HotkeysManager = () => {
       };
     } catch (error: unknown) {
       console.error("Error saving hotkeys:", error);
-      
+
       // Provide more specific error messages
       let errorMessage = "Failed to save hotkeys";
-      if (error && typeof error === 'object' && 'response' in error) {
+      if (error && typeof error === "object" && "response" in error) {
         const err = error as any;
         // Server responded with error status
         if (err.response?.status === 400) {
@@ -219,11 +219,11 @@ export const HotkeysManager = () => {
         } else if (err.response?.status >= 500) {
           errorMessage = "Server error - please try again later";
         }
-      } else if (error && typeof error === 'object' && 'request' in error) {
+      } else if (error && typeof error === "object" && "request" in error) {
         // Network error
         errorMessage = "Network error - please check your connection";
       }
-      
+
       return {
         ok: false,
         error: errorMessage,
@@ -232,8 +232,8 @@ export const HotkeysManager = () => {
   }, [hotkeys, autoTranslatePlatforms, api]);
 
   function updateHotkeysWithCustomSettings(
-    defaultHotkeys: Hotkey[], 
-    customHotkeys: Record<string, { key: string; active: boolean }>
+    defaultHotkeys: Hotkey[],
+    customHotkeys: Record<string, { key: string; active: boolean }>,
   ): Hotkey[] {
     return defaultHotkeys.map((hotkey: Hotkey) => {
       // Create the lookup key format used in the API response (section:element)
@@ -257,10 +257,10 @@ export const HotkeysManager = () => {
   const loadHotkeysFromAPI = useCallback(async () => {
     try {
       setIsLoading(true);
-      
+
       // Try to load from API first
       const response = await api.callApi("hotkeys" as any);
-      
+
       if (response && (response as ApiResponse).custom_hotkeys) {
         // Use API data
         const apiResponse = response as ApiResponse;
@@ -276,15 +276,14 @@ export const HotkeysManager = () => {
       // Load the platform translation setting
       const platformSetting = window.APP_SETTINGS?.user?.hotkeySettings?.autoTranslatePlatforms;
       setAutoTranslatePlatforms(platformSetting !== undefined ? platformSetting : true);
-
     } catch (error) {
       console.error("Error loading hotkeys from API:", error);
-      
+
       // Fallback to window.APP_SETTINGS on error
       const customHotkeys = window.APP_SETTINGS?.user?.customHotkeys || {};
       const updatedHotkeys = updateHotkeysWithCustomSettings(typedDefaultHotkeys, customHotkeys);
       setHotkeys(updatedHotkeys);
-      
+
       // Show non-blocking error notification
       if (toast) {
         toast.show({
