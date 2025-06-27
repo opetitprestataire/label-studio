@@ -76,7 +76,7 @@ export class Modal extends Component {
               <Modal.Header>
                 <Elem name="title">{this.state.title}</Elem>
                 {this.props.allowClose !== false && (
-                  <Button look="string" size="small">
+                  <Button look="string" size="small" onClick={() => this.hide()}>
                     <IconRemove />
                   </Button>
                 )}
