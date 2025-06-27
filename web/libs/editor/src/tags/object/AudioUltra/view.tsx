@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { type FC, useCallback, useEffect, useMemo, useRef } from "react";
+import { type FC, type ReactNode, useCallback, useEffect, useMemo, useRef } from "react";
 import { usePersistentJSONState } from "@humansignal/core/lib/hooks/usePersistentState";
 import { TimelineContextProvider } from "../../../components/Timeline/Context";
 import { ErrorMessage } from "../../../components/ErrorMessage/ErrorMessage";
@@ -11,17 +11,27 @@ import type { Region } from "../../../lib/AudioUltra/Regions/Region";
 import type { Segment } from "../../../lib/AudioUltra/Regions/Segment";
 import type { Regions } from "../../../lib/AudioUltra/Regions/Regions";
 import { Block } from "../../../utils/bem";
+import { useSpectrogramControls as useSpectrogramControlsHook } from "../../../lib/AudioUltra/hooks/useSpectrogramControls";
+import { getCurrentTheme } from "@humansignal/ui";
+import { FF_AUDIO_SPECTROGRAMS, isFF } from "../../../utils/feature-flags";
 
 import "./view.scss";
-import { getCurrentTheme } from "@humansignal/ui";
+
+// Define Defaults
+const NORMALIZED_STEP = 0.1;
+
+const isAudioSpectrograms = isFF(FF_AUDIO_SPECTROGRAMS);
+
+const useSpectrogramControls = isAudioSpectrograms ? useSpectrogramControlsHook : () => {};
 
 interface AudioUltraProps {
   item: any;
+  settings?: TimelineSettings;
+  changeSetting?: (key: string, value: any) => void;
+  children: ReactNode;
 }
 
-const NORMALIZED_STEP = 0.1;
-
-const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
+const AudioUltraView: FC<AudioUltraProps> = ({ item, children, settings = {}, changeSetting = () => {} }) => {
   const rootRef = useRef<HTMLElement | null>();
   const isDarkMode = getCurrentTheme() === "Dark";
 
@@ -42,10 +52,19 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
     volume: item.defaultvolume ? Number(item.defaultvolume) : 1,
     amp: item.defaultscale ? Number(item.defaultscale) : 1,
     zoom: item.defaultzoom ? Number(item.defaultzoom) : 1,
+
     showLabels: item.annotationStore.store.settings.showLabels,
     rate: item.defaultspeed ? Number(item.defaultspeed) : 1,
     muted: item.muted === "true",
-    onLoad: item.onLoad,
+    onLoad: (wf) => {
+      if (isAudioSpectrograms) {
+        const spectrogramLayer = wf.getLayer("spectrogram");
+        if (spectrogramLayer) {
+          spectrogramLayer.setVisibility(item.spectrogram);
+        }
+      }
+      item.onLoad(wf);
+    },
     onPlaying: item.onPlaying,
     onSeek: item.onSeek,
     onRateChange: item.onRateChange,
@@ -66,6 +85,8 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
       item.setWFFrame(frameState);
     },
   });
+
+  useSpectrogramControls(waveform);
 
   useEffect(() => {
     const hotkeys = Hotkey("Audio", "Audio Segmentation");
@@ -119,7 +140,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
         targetInWave.handleSelected(region.selected);
       }
 
-      // deselect all other segments if not changing multiselection
+      // deselect all other segments if not changing multi-selection
       if (!growSelection) {
         item._ws.regions.regions.forEach((obj: any) => {
           if (obj.id !== region.id) {
@@ -158,9 +179,7 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item }) => {
 
   return (
     <Block name="audio-tag">
-      {item.errors?.map((error: any, i: any) => (
-        <ErrorMessage key={`err-${i}`} error={error} />
-      ))}
+      {children}
       <div
         ref={(el) => {
           rootRef.current = el;
@@ -242,7 +261,11 @@ const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
 
   return (
     <TimelineContextProvider value={contextValue}>
-      <AudioUltraView item={item} />
+      <AudioUltraView item={item}>
+        {item.errors?.map((error: any, i: number) => (
+          <ErrorMessage key={`err-${i}`} error={error} />
+        ))}
+      </AudioUltraView>
     </TimelineContextProvider>
   );
 };

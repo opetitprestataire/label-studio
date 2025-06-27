@@ -114,6 +114,7 @@ const TagAttrs = types.model({
   splitchannels: types.optional(types.boolean, false),
   decoder: types.optional(types.enumeration(["ffmpeg", "webaudio"]), "webaudio"),
   player: types.optional(types.enumeration(["html5", "webaudio"]), "html5"),
+  spectrogram: types.optional(types.boolean, false),
 });
 
 export const AudioModel = types.compose(
@@ -167,6 +168,12 @@ export const AudioModel = types.compose(
         const state = self.activeState;
 
         return state?.selectedValues()?.[0];
+      },
+      get activeLabelKey() {
+        const labels = self.activeState?.selectedValues();
+
+        // use label to generate a unique key to ensure that adding/deleting can trigger changes
+        return labels ? labels.join(",") : "";
       },
     }))
     ////// Sync actions
@@ -270,7 +277,7 @@ export const AudioModel = types.compose(
         afterCreate() {
           dispose = observe(
             self,
-            "activeLabel",
+            "activeLabelKey",
             () => {
               const selectedRegions = self._ws?.regions?.selected;
 

@@ -28,7 +28,6 @@ from core.utils.params import get_env
 from data_import.models import FileUpload
 from data_manager.managers import PreparedTaskManager, TaskManager
 from django.conf import settings
-from django.contrib.postgres.indexes import BrinIndex
 from django.db import OperationalError, models, transaction
 from django.db.models import CheckConstraint, F, JSONField, Q
 from django.db.models.lookups import GreaterThanOrEqual
@@ -175,7 +174,6 @@ class Task(TaskMixin, models.Model):
             models.Index(fields=['id', 'overlap']),
             models.Index(fields=['overlap']),
             models.Index(fields=['project', 'id']),
-            BrinIndex(fields=['updated_at'], name='task_updated_at_brin_idx'),
         ]
 
     @property
@@ -1378,7 +1376,7 @@ def update_task_stats(task, stats=('is_labeled',), save=True):
         task.save()
 
 
-def bulk_update_stats_project_tasks(tasks, project=None):
+def deprecated_bulk_update_stats_project_tasks(tasks, project=None):
     """bulk Task update accuracy
        ex: after change settings
        apply several update queries size of batch
@@ -1397,7 +1395,6 @@ def bulk_update_stats_project_tasks(tasks, project=None):
 
     with transaction.atomic():
         use_overlap = project._can_use_overlap()
-        maximum_annotations = project.maximum_annotations
         # update filters if we can use overlap
         if use_overlap:
             # following definition of `completed_annotations` above, count cancelled annotations
@@ -1405,9 +1402,7 @@ def bulk_update_stats_project_tasks(tasks, project=None):
             completed_annotations_f_expr = F('total_annotations')
             if project.skip_queue == project.SkipQueue.IGNORE_SKIPPED:
                 completed_annotations_f_expr += F('cancelled_annotations')
-            finished_q = Q(GreaterThanOrEqual(completed_annotations_f_expr, maximum_annotations)) | Q(
-                GreaterThanOrEqual(completed_annotations_f_expr, 1), overlap=1
-            )
+            finished_q = Q(GreaterThanOrEqual(completed_annotations_f_expr, F('overlap')))
             finished_tasks = tasks.filter(finished_q)
             finished_tasks_ids = finished_tasks.values_list('id', flat=True)
             tasks.update(is_labeled=Q(id__in=finished_tasks_ids))
@@ -1429,6 +1424,27 @@ def bulk_update_stats_project_tasks(tasks, project=None):
                     update_fields=['is_labeled'],
                     batch_size=settings.BATCH_SIZE,
                 )
+
+
+def bulk_update_stats_project_tasks(tasks, project=None):
+    # Avoid circular import
+    from projects.functions.utils import get_unique_ids_list
+
+    bulk_update_is_labeled = load_func(settings.BULK_UPDATE_IS_LABELED)
+
+    if flag_set('fflag_fix_back_plt_802_update_is_labeled_20062025_short', user='auto'):
+        task_ids = get_unique_ids_list(tasks)
+
+        if not task_ids:
+            return
+
+        if project is None:
+            first_task = Task.objects.get(id=task_ids[0])
+            project = first_task.project
+
+        bulk_update_is_labeled(task_ids, project)
+    else:
+        return deprecated_bulk_update_stats_project_tasks(tasks, project)
 
 
 Q_finished_annotations = Q(was_cancelled=False) & Q(result__isnull=False)

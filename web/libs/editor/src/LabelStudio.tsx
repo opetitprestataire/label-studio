@@ -33,7 +33,7 @@ type LSFTask = any;
 
 // @todo type LSFOptions = SnapshotIn<typeof AppStore>;
 // because those options will go as initial values for AppStore
-// but it's not types yet, so here is some excerpt of its params
+// but it's not types yet, so here is some excerpt of its parameters
 type LSFOptions = Record<string, any> & {
   interfaces: string[];
   keymap?: any;
@@ -188,7 +188,7 @@ export class LabelStudio {
   }
 
   // To support React 18 properly, we need to use createRoot
-  // and render the app with it, and properly unmount it and cleanup all references.
+  // and render the app with it, and properly unmount it and cleanup all references
   async createAppV18() {
     const { store } = await configureStore(this.options, this.events);
     const rootElement = this.getRootElement(this.root);

@@ -1,20 +1,10 @@
 //// LEGACY FLAGS ////
 // Consider all pre-XFN flags legacy. Should be revised and removed.
-/**
- * Aync import for task data
- * @deprecated
- */
-export const FF_LSDV_4915 = "fflag_feat_all_lsdv_4915_async_task_import_13042023_short";
 
 /**
  * Fix displaying of created_at in the review mode
  */
 export const FF_DEV_1480 = "ff_front_dev_1480_created_on_in_review_180122_short";
-
-/**
- * Notifications
- */
-export const FF_DEV_1658 = "ff_front_dev_1658_notification_center_170222_short";
 
 /**
  * Model version selector per model backend
@@ -79,6 +69,28 @@ export const FF_JSON_PREVIEW = "fflag_feat_dia_1925_view_sample_raw_json_short";
 export const FF_ADJUSTABLE_SPANS = "fflag_feat_front_leap_1973_adjustable_spans_090425_short";
 
 /**
- * Enables the theme toggle in the UI
+ * Enables the theme toggle in the UI to enable the dark mode
  */
 export const FF_THEME_TOGGLE = "fflag_feat_front_optic_1217_theme_toggle_short";
+
+/**
+ * Enables the summary view for annotations
+ */
+export const FF_SUMMARY = "fflag_feat_front_leap_2036_annotations_summary";
+
+/**
+ * TimeSeries Multi-channel functionality
+ */
+export const FF_MULTICHANNEL_TS = "fflag_feat_front_bros58_timeseries_multichannel_short";
+
+/**
+ * Enables enterprise email notifications
+ */
+export const FF_ENTERPRISE_EMAIL_NOTIFICATIONS = "fflag_feat_front_fit_183_email_notifications_short";
+
+/**
+ * Bitmask is a new image segmentation tool for masking that allows pixel-perfect editing
+ *
+ * @link https://app.launchdarkly.com/projects/default/flags/fflag_front_feat_bros_87_pixel_wise_16062025_short
+ */
+export const FF_BITMASK = "fflag_front_feat_bros_87_pixel_wise_16062025_short";
