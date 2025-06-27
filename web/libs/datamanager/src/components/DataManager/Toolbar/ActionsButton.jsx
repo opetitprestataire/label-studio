@@ -63,6 +63,7 @@ const ActionButton = ({ action, parentRef, store, formRef }) => {
         disabled: action.disabled,
       }}
       name="actionButton"
+      aria-label={action.title}
     >
       <Elem name="titleContainer" {...(action.disabled ? { title: action.disabledReason } : {})}>
         <Elem name="title">{action.title}</Elem>
