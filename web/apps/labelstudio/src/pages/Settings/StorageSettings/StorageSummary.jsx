@@ -1,10 +1,11 @@
 import { format } from "date-fns/esm";
-import { Space, Tooltip } from "@humansignal/ui";
+import { CodeBlock, IconFileCopy, Space, Tooltip } from "@humansignal/ui";
 import { Button } from "../../../components";
 import { DescriptionList } from "../../../components/DescriptionList/DescriptionList";
 import { modal } from "../../../components/Modal/Modal";
 import { Oneof } from "../../../components/Oneof/Oneof";
 import { getLastTraceback } from "../../../utils/helpers";
+import { useCopyText } from "@humansignal/core/lib/hooks/useCopyText";
 
 export const StorageSummary = ({ target, storage, className, storageTypes = [] }) => {
   const storageStatus = storage.status.replace(/_/g, " ").replace(/(^\w)/, (match) => match.toUpperCase());
@@ -37,32 +38,44 @@ export const StorageSummary = ({ target, storage, className, storageTypes = [] }
       `storage ${storage.id} in project ${storage.project} and job ${storage.last_sync_job}:\n\n` +
       `${getLastTraceback(storage.traceback)}\n\n` +
       `meta = ${JSON.stringify(storage.meta)}\n`;
-    const targetType = target === "export" ? "Target" : "Source";
+
+    // Component to handle copy functionality within the modal
+    const CopyButton = () => {
+      const [copyText, copied] = useCopyText(msg);
+
+      return (
+        <Button
+          icon={<IconFileCopy />}
+          onClick={copyText}
+          disabled={copied}
+          style={{ minWidth: "100px", justifyContent: "center" }}
+        >
+          {copied ? "Copied!" : "Copy"}
+        </Button>
+      );
+    };
 
     modal({
-      title: "Storage error logs",
+      title: "Storage Sync Error Log",
       body: (
         <>
-          <pre className="bg-neutral-surface-inset text-neutral-content-subtler p-base mb-base rounded-md text-xs overflow-scroll">
-            {msg}
-          </pre>
-          <Space spread>
-            <Button
-              size="compact"
-              onClick={() => {
-                navigator.clipboard.writeText(msg);
-              }}
-            >
-              Copy
-            </Button>
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href={`https://labelstud.io/guide/storage.html#${targetType}-storage-permissions`}
-            >
-              Check {targetType} Storage documentation
-            </a>
+          <CodeBlock code={msg} variant="negative" className="mb-base max-h-[50vh] overflow-y-auto" />
+          <Space align="end">
+            <CopyButton />
           </Space>
+        </>
+      ),
+      footer: !window.APP_SETTINGS?.whitelabel_is_active && (
+        <>
+          <a
+            href="https://labelstud.io/guide/storage.html#Troubleshooting"
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label="Learn more about storage troubleshooting"
+          >
+            See troubleshooting tips
+          </a>{" "}
+          for cloud storage connections and sync issues.
         </>
       ),
       style: { width: "700px" },
@@ -97,8 +110,11 @@ export const StorageSummary = ({ target, storage, className, storageTypes = [] }
           ].join("\n")}
         >
           {storageStatus === "Failed" ? (
-            <span style={{ cursor: "pointer", borderBottom: "1px dashed gray" }} onClick={handleButtonClick}>
-              Failed
+            <span
+              className="cursor-pointer border-b border-dashed border-negative-border-subtle text-negative-content"
+              onClick={handleButtonClick}
+            >
+              Failed (View Logs)
             </span>
           ) : (
             storageStatus
