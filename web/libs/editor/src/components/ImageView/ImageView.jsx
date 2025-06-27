@@ -583,12 +583,14 @@ export default observer(
       // shape we can click on. Here we're relying on cursor position and non-transparent pixels
       // of the mask to detect cursor-region collision.
       if (ff.isActive(FF_BITMASK)) {
-        const selectedRegion = item.selectedRegions.find((r) => r.type === "bitmaskregion");
-        const currentTool = item.getToolsManager().findSelectedTool().toolName;
+        const hasSelected = item.selectedRegions.some((r) => r.type === "bitmaskregion");
+        const isBitmask = ["BitmaskTool", "BitmaskEraserTool"].includes(
+          item.getToolsManager().findSelectedTool().toolName,
+        );
 
         // We want to avoid weird behavior here with drawing while selecting another region
         // so we just do nothing when clicked outside AND we have a tool selected
-        if (selectedRegion && currentTool === "BitmaskTool") {
+        if (hasSelected && isBitmask) {
           return;
         }
 
@@ -827,6 +829,7 @@ export default observer(
       // for a full explanation.
       if (!e.evt.ctrlKey && !e.evt.shiftKey && ff.isActive(FF_BITMASK)) {
         if (item.regs.some((r) => r.isDrawing)) return;
+        if (!item.regs.some((r) => r.type === "bitmaskregion")) return;
         requestAnimationFrame(() => {
           for (const region of item.regs) {
             region.setHighlight(false);
@@ -876,18 +879,23 @@ export default observer(
     };
 
     /**
-     * Handle to zoom
+     * Handle zoom and pan events from mouse wheel and trackpad
+     * Supports:
+     * - Ctrl/Cmd + mouse wheel: Smooth zoom in/out
+     * - Ctrl/Cmd + trackpad pinch: Smooth pinch-to-zoom
+     * - Two-finger scroll: Pan the image when zoomed in
      */
     handleZoom = (e) => {
-      if (e.evt?.ctrlKey || e.evt?.metaKey || e.evt?.shiftKey) {
+      if (e.evt?.ctrlKey || e.evt?.metaKey) {
         e.evt.preventDefault();
 
         const { item } = this.props;
         const stage = item.stageRef;
 
-        item.handleZoom(e.evt.deltaY, stage.getPointerPosition(), e.evt.ctrlKey || e.evt.metaKey);
+        // Unified smooth zoom behavior for both trackpad and mouse wheel
+        item.handleZoom(e.evt.deltaY, stage.getPointerPosition(), e.evt.ctrlKey);
       } else if (e.evt) {
-        // Two fingers scroll
+        // Two fingers scroll (panning) - only when zoomed in
         const { item } = this.props;
 
         const maxScrollX = Math.round(item.stageWidth * item.zoomScale) - item.stageWidth;
