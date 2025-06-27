@@ -62,7 +62,7 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
             >
               Learn more
             </a>{" "}
-            about importing data and saving annotations to cloud storages.
+            about importing data and saving annotations to Cloud Storage.
           </>
         ),
       });
