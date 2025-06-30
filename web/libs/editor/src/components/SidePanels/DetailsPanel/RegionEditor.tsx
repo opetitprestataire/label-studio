@@ -20,6 +20,7 @@ import { TimeDurationControl } from "../../TimeDurationControl/TimeDurationContr
 import { TimelineRegionEditor } from "./TimelineRegionEditor";
 import "./RegionEditor.scss";
 import type { MSTRegion } from "../../../stores/types";
+import GPSRegionProperties from "./GPSRegionProperties";
 
 interface RegionEditorProps {
   region: MSTRegion;
@@ -53,13 +54,19 @@ const IconMapping = {
 };
 
 const RegionEditorComponent: FC<RegionEditorProps> = ({ region }) => {
-  const isAudioRegion = isFF(FF_DEV_2715) && region.type === "audioregion";
-  const isTimelineRegion = region.type === "timelineregion";
-  const Component = isTimelineRegion ? TimelineRegionEditor : isAudioRegion ? AudioRegionProperties : RegionProperties;
+  let Component: FC<{ region: any }> = RegionProperties; // Default
+  
+  if (region.type === "timelineregion") {
+    Component = TimelineRegionEditor;
+  } else if (region.type === "gpsregion") {
+    Component = GPSRegionProperties;
+  } else if (region.type === "audioregion" && isFF(FF_DEV_2715)) {
+    Component = AudioRegionProperties;
+  }
 
   return (
     <Block name="region-editor" mod={{ disabled: region.isReadOnly() }}>
-      <Component region={region} />
+      <Component region={region as any} />
     </Block>
   );
 };
@@ -154,7 +161,7 @@ const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) =>
   }, [propertyType, isPrimitive]);
 
   const onChangeHandler = useCallback(
-    (value) => {
+    (value: any) => {
       if (value !== region.getProperty(property)) {
         try {
           region.setProperty(property, value);
@@ -212,7 +219,7 @@ const RegionInput: FC<RegionInputProps> = ({ onChange: onChangeValue, type, valu
   const [currentValue, setValue] = useState(value);
 
   const updateValue = useCallback(
-    (value, safeValue = true) => {
+    (value: any, safeValue = true) => {
       const newValue = value;
 
       setValue(newValue);

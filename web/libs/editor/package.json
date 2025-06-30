@@ -41,7 +41,12 @@
     "wavesurfer.js": "^6.0.1",
     "xpath-range": "^1.1.1",
     "colormap": "^2.3.2",
-    "webfft": "^1.0.3"
+    "webfft": "^1.0.3",
+    "deck.gl": "^8.9.0",
+    "@deck.gl/react": "^8.9.0",
+    "@deck.gl/layers": "^8.9.0",
+    "@deck.gl/geo-layers": "^8.9.0",
+    "@deck.gl/aggregation-layers": "^8.9.0"
   },
   "main": "src/index.js"
 }

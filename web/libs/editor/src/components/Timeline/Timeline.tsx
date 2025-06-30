@@ -175,7 +175,9 @@ const TimelineComponent: FC<TimelineProps> = ({
     </Elem>
   );
 
-  regions.map((reg) => fixMobxObserve(reg.sequence));
+  useEffect(() => {
+    regions.map((reg) => fixMobxObserve(reg.sequence));
+  }, [regions]);
 
   const view = !viewCollapsed && !disableView && (
     <Elem name="view">

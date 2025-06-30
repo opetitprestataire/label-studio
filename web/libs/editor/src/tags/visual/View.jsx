@@ -125,6 +125,7 @@ const Model = types
       "video",
       "videorectangle",
       "timelinelabels",
+      "gpsmap",
     ]),
   })
   .views((self) => ({

@@ -16,6 +16,7 @@ import { TimeSeriesRegionModel } from "./TimeSeriesRegion";
 import { ParagraphsRegionModel } from "./ParagraphsRegion";
 import { VideoRectangleRegionModel } from "./VideoRectangleRegion";
 import { BitmaskRegionModel } from "./BitmaskRegion";
+import { GPSRegionModel } from "./GPSRegion";
 
 // general Area type for classification Results which doesn't belong to any real Area
 const ClassificationArea = types.compose(
@@ -89,6 +90,7 @@ const Area = types.union(
   BitmaskRegionModel,
   VideoRectangleRegionModel,
   ClassificationArea,
+  GPSRegionModel,
 );
 
 export default Area;
