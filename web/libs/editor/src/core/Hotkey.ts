@@ -282,9 +282,6 @@ export const Hotkey = (namespace = "global", description = "Hotkeys") => {
         if (hotkey.modifier) {
           this.addKey(`${hotkey.modifier}+${shortcut}`, func, hotkey.modifierDescription, scope);
         }
-
-        // if (name == "tool:move")
-        // 	debugger;
       } else {
         throw new Error(`Unknown named hotkey ${hotkey}`);
       }

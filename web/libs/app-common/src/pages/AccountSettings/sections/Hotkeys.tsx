@@ -75,7 +75,7 @@ interface SaveResult {
 }
 
 interface ApiResponse {
-  custom_hotkeys?: Record<string, { key: string; active: boolean }>;
+  custom_hotkeys?: Record<string, { key: string; active: boolean; description?: string }>;
   hotkey_settings?: HotkeySettings;
   error?: string;
 }
@@ -117,123 +117,102 @@ export const HotkeysManager = () => {
 
   const api = useAPI();
 
-  // Function to identify which hotkeys were modified from defaults
-  const getModifiedHotkeys = (currentHotkeys: Hotkey[]): Hotkey[] => {
-    // Create a map of default hotkeys for quick comparison
-    const defaultMap: Record<string, { key: string; active: boolean }> = {};
-    typedDefaultHotkeys.forEach((hotkey: Hotkey) => {
-      defaultMap[`${hotkey.section}:${hotkey.element}`] = {
-        key: hotkey.key,
-        active: hotkey.active,
-      };
-    });
-
-    // Find modified hotkeys
-    return currentHotkeys.filter((hotkey: Hotkey) => {
-      const keyId = `${hotkey.section}:${hotkey.element}`;
-      const defaultValue = defaultMap[keyId];
-
-      // If no default exists or key/active state differs, it's modified
-      return !defaultValue || defaultValue.key !== hotkey.key || defaultValue.active !== hotkey.active;
-    });
-  };
-
   // Check if a hotkey conflicts with others globally
   const getGlobalDuplicates = (hotkeyId: string, newKey: string): Hotkey[] => {
     return hotkeys.filter((h: Hotkey) => h.id !== hotkeyId && h.key === newKey);
   };
 
-  // Save hotkeys to API function
-  const saveHotkeysToAPI = useCallback(async (): Promise<SaveResult> => {
-    // Get all modified hotkeys, not just from one section
-    const modifiedHotkeys = getModifiedHotkeys(hotkeys);
-
-    // Check if settings changed from defaults
-    const defaultAutoTranslate = true; // Default value
-    const settingsChanged = autoTranslatePlatforms !== defaultAutoTranslate;
-
-    // If nothing was modified, return success without API call
-    if (modifiedHotkeys.length === 0 && !settingsChanged) {
-      return { ok: true, data: { message: "No changes to save" } };
-    }
-
-    // Convert our array format to the API's expected JSON object format
-    const customHotkeys: Record<string, { key: string; active: boolean }> = {};
-
-    // Process all modified hotkeys
-    modifiedHotkeys.forEach((hotkey: Hotkey) => {
-      const keyId = `${hotkey.section}:${hotkey.element}`;
-      customHotkeys[keyId] = {
-        key: hotkey.key,
-        active: hotkey.active,
+  // Save hotkeys to API function (handles both save and reset operations)
+  const saveHotkeysToAPI = useCallback(
+    async (isReset = false): Promise<SaveResult> => {
+      let requestBody: {
+        custom_hotkeys: Record<string, { key: string; active: boolean }> | {};
+        hotkey_settings: HotkeySettings;
       };
-    });
 
-    // Prepare request body
-    const requestBody: {
-      custom_hotkeys: Record<string, { key: string; active: boolean }>;
-      hotkey_settings?: HotkeySettings;
-    } = {
-      custom_hotkeys: customHotkeys,
-    };
+      if (isReset) {
+        // Reset: clear all customizations
+        requestBody = {
+          custom_hotkeys: {}, // This clears all customizations
+          hotkey_settings: {
+            autoTranslatePlatforms: true, // Reset to default
+          },
+        };
+      } else {
+        // Regular save: convert current hotkeys to API format
+        const customHotkeys: Record<string, { key: string; active: boolean }> = {};
 
-    // Only include settings if they changed from defaults
-    if (settingsChanged) {
-      requestBody.hotkey_settings = {
-        autoTranslatePlatforms: autoTranslatePlatforms,
-      };
-    }
+        // Process all current hotkeys (not just modified ones)
+        hotkeys.forEach((hotkey: Hotkey) => {
+          const keyId = `${hotkey.section}:${hotkey.element}`;
+          customHotkeys[keyId] = {
+            key: hotkey.key,
+            active: hotkey.active,
+            description: hotkey.label, // Add description field for addKey method
+          };
+        });
 
-    try {
-      // Call the API to save all modified hotkeys and settings
-      const response = await api.callApi("updateHotkeys" as any, {
-        body: requestBody,
-      });
-
-      // Check for API-level errors
-      if (response?.error) {
-        return {
-          ok: false,
-          error: response.error,
-          data: response,
+        requestBody = {
+          custom_hotkeys: customHotkeys,
+          hotkey_settings: {
+            autoTranslatePlatforms: autoTranslatePlatforms,
+          },
         };
       }
 
-      return {
-        ok: true,
-        error: undefined,
-        data: response,
-      };
-    } catch (error: unknown) {
-      console.error("Error saving hotkeys:", error);
+      try {
+        // Call the API to save/reset hotkeys and settings
+        const response = await api.callApi("updateHotkeys" as any, {
+          body: requestBody,
+        });
 
-      // Provide more specific error messages
-      let errorMessage = "Failed to save hotkeys";
-      if (error && typeof error === "object" && "response" in error) {
-        const err = error as any;
-        // Server responded with error status
-        if (err.response?.status === 400) {
-          errorMessage = err.response.data?.error || "Invalid hotkeys configuration";
-        } else if (err.response?.status === 401) {
-          errorMessage = "Authentication required";
-        } else if (err.response?.status >= 500) {
-          errorMessage = "Server error - please try again later";
+        // Check for API-level errors
+        if (response?.error) {
+          return {
+            ok: false,
+            error: response.error,
+            data: response,
+          };
         }
-      } else if (error && typeof error === "object" && "request" in error) {
-        // Network error
-        errorMessage = "Network error - please check your connection";
-      }
 
-      return {
-        ok: false,
-        error: errorMessage,
-      };
-    }
-  }, [hotkeys, autoTranslatePlatforms, api]);
+        return {
+          ok: true,
+          error: undefined,
+          data: response,
+        };
+      } catch (error: unknown) {
+        const operation = isReset ? "resetting" : "saving";
+        console.error(`Error ${operation} hotkeys:`, error);
+
+        // Provide more specific error messages
+        let errorMessage = `Failed to ${isReset ? "reset" : "save"} hotkeys`;
+        if (error && typeof error === "object" && "response" in error) {
+          const err = error as any;
+          // Server responded with error status
+          if (err.response?.status === 400) {
+            errorMessage = err.response.data?.error || `Invalid ${isReset ? "reset request" : "hotkeys configuration"}`;
+          } else if (err.response?.status === 401) {
+            errorMessage = "Authentication required";
+          } else if (err.response?.status >= 500) {
+            errorMessage = "Server error - please try again later";
+          }
+        } else if (error && typeof error === "object" && "request" in error) {
+          // Network error
+          errorMessage = "Network error - please check your connection";
+        }
+
+        return {
+          ok: false,
+          error: errorMessage,
+        };
+      }
+    },
+    [hotkeys, autoTranslatePlatforms, api],
+  );
 
   function updateHotkeysWithCustomSettings(
     defaultHotkeys: Hotkey[],
-    customHotkeys: Record<string, { key: string; active: boolean }>,
+    customHotkeys: Record<string, { key: string; active: boolean; description?: string }>,
   ): Hotkey[] {
     return defaultHotkeys.map((hotkey: Hotkey) => {
       // Create the lookup key format used in the API response (section:element)
@@ -241,10 +220,14 @@ export const HotkeysManager = () => {
 
       // Check if there's a custom setting for this hotkey
       if (customHotkeys[lookupKey]) {
+        const customSetting = customHotkeys[lookupKey];
         // Create a new object with the default properties and override with custom ones
         return {
           ...hotkey,
-          ...customHotkeys[lookupKey],
+          key: customSetting.key,
+          active: customSetting.active,
+          // If description is provided in custom settings, use it as label
+          ...(customSetting.description && { label: customSetting.description }),
         };
       }
 
@@ -288,7 +271,7 @@ export const HotkeysManager = () => {
       if (toast) {
         toast.show({
           message: "Could not load custom hotkeys from server, using cached settings",
-          type: ToastType.Warning,
+          type: ToastType.error,
         });
       }
     } finally {
@@ -328,7 +311,7 @@ export const HotkeysManager = () => {
   };
 
   // Handle resetting all hotkeys to defaults
-  const handleResetToDefaults = () => {
+  const handleResetToDefaults = async () => {
     const hasChanges = hasUnsavedChanges || dirtyState.settings;
     const confirmMessage = hasChanges
       ? "Are you sure you want to reset all hotkeys and settings to their default values? This will discard all unsaved changes and cannot be undone."
@@ -338,16 +321,43 @@ export const HotkeysManager = () => {
       return;
     }
 
-    setHotkeys([...typedDefaultHotkeys]);
-    setGlobalEnabled(true);
-    setAutoTranslatePlatforms(true);
-    setDirtyState({});
+    setIsLoading(true);
 
-    if (toast) {
-      toast.show({
-        message: "All hotkeys and settings have been reset to defaults",
-        type: ToastType.Success,
-      });
+    try {
+      // Update local state to defaults
+      setHotkeys([...typedDefaultHotkeys]);
+      setGlobalEnabled(true);
+      setAutoTranslatePlatforms(true);
+      setDirtyState({});
+
+      // Reset hotkeys to defaults in the backend API (sets custom_hotkeys to {})
+      const result = await saveHotkeysToAPI(true);
+
+      if (result.ok) {
+        if (toast) {
+          toast.show({
+            message: "All hotkeys and settings have been reset to defaults and saved",
+            type: ToastType.info,
+          });
+        }
+      } else {
+        if (toast) {
+          toast.show({
+            message: `Failed to save reset hotkeys: ${result.error || "Unknown error"}`,
+            type: ToastType.error,
+          });
+        }
+      }
+    } catch (error: unknown) {
+      if (toast) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        toast.show({
+          message: `Error resetting hotkeys: ${errorMessage}`,
+          type: ToastType.error,
+        });
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -462,15 +472,15 @@ export const HotkeysManager = () => {
 
         if (toast) {
           toast.show({
-            message: `${sectionName} saved`,
-            type: ToastType.Success,
+            message: `${sectionName} hotkeys saved successfully`,
+            type: ToastType.info,
           });
         }
       } else {
         if (toast) {
           toast.show({
             message: `Failed to save: ${result.error || "Unknown error"}`,
-            type: ToastType.Error,
+            type: ToastType.error,
           });
         }
       }
@@ -479,7 +489,7 @@ export const HotkeysManager = () => {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
         toast.show({
           message: `Error saving: ${errorMessage}`,
-          type: ToastType.Error,
+          type: ToastType.error,
         });
       }
     } finally {
@@ -518,7 +528,7 @@ export const HotkeysManager = () => {
     URL.revokeObjectURL(url);
 
     if (toast) {
-      toast.show({ message: "Hotkeys exported successfully", type: ToastType.Success });
+      toast.show({ message: "Hotkeys exported successfully", type: ToastType.info });
     }
   };
 
@@ -529,7 +539,7 @@ export const HotkeysManager = () => {
 
       // Handle both old format (just hotkeys array) and new format (with settings)
       const importedHotkeys = Array.isArray(importedData) ? importedData : importedData.hotkeys || [];
-      const importedSettings = Array.isArray(importedData) ? {} : importedData.settings || {};
+      const importedSettings = Array.isArray(importedData) ? ({} as HotkeySettings) : importedData.settings || {};
 
       // Update local state
       setHotkeys(importedHotkeys);
@@ -557,12 +567,12 @@ export const HotkeysManager = () => {
       setDirtyState({});
 
       if (toast) {
-        toast.show({ message: "Hotkeys imported successfully", type: ToastType.Success });
+        toast.show({ message: "Hotkeys imported successfully", type: ToastType.info });
       }
     } catch (error: unknown) {
       if (toast) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
-        toast.show({ message: `Error importing hotkeys: ${errorMessage}`, type: ToastType.Error });
+        toast.show({ message: `Error importing hotkeys: ${errorMessage}`, type: ToastType.error });
       }
     } finally {
       setIsLoading(false);
