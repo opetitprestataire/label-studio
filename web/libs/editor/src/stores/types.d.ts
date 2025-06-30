@@ -6,6 +6,7 @@ type RawResult = {
 };
 
 type MSTResult = {
+  toJSON(): unknown;
   id: string;
   area: MSTRegion;
   annotation: MSTAnnotation;
@@ -193,6 +194,9 @@ export type MSTStore = {
     selectedHistory: object | null;
     store: MSTStore;
     names: Map<string, MSTTag>;
+
+    selectAnnotation: (id: string | number) => void;
+    selectPrediction: (id: string | number) => void;
   };
   commentStore: MSTCommentStore;
 

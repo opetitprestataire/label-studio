@@ -131,6 +131,12 @@ const setFeatureFlagsDefaultValue = (value) => {
   return window.APP_SETTINGS.feature_flags_default_value;
 };
 
+/**
+ * IMPORTANT NOTE: if your flags change models this helper should be invoked before `I.amOnPage()`
+ * Sets given feature flags before LSF init
+ * @param {object} featureFlags map of feature flags to set with boolean values
+ * @returns {object}
+ */
 const setFeatureFlags = (featureFlags) => {
   if (!window.APP_SETTINGS) window.APP_SETTINGS = {};
   if (!window.APP_SETTINGS.feature_flags) window.APP_SETTINGS.feature_flags = {};
@@ -676,8 +682,10 @@ const getRegionAbsoultePosition = async (shapeId) => {
   };
 };
 
-const switchRegionTreeView = (viewName) => {
+const switchRegionTreeView = async (viewName) => {
   Htx.annotationStore.selected.regionStore.setGrouping(viewName);
+  // Wait a bit for the view to update
+  await new Promise((resolve) => setTimeout(resolve, 100));
 };
 
 const serialize = () => window.Htx.annotationStore.selected.serializeAnnotation();

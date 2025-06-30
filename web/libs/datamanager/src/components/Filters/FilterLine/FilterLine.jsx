@@ -49,6 +49,13 @@ export const FilterLine = observer(({ filter, availableFilters, index, view, sid
             width={80}
             dropdownWidth={120}
             dropdownClassName={dropdownClassName}
+            // Search on filter.title instead of filter.id
+            searchFilter={(option, query) => {
+              const original = option?.original ?? option;
+              const title = original?.field?.title ?? original?.title ?? "";
+              const parentTitle = original?.field?.parent?.title ?? "";
+              return `${title} ${parentTitle}`.toLowerCase().includes(query.toLowerCase());
+            }}
             onChange={(value) => filter.setFilterDelayed(value)}
             optionRender={({ item: { original: filter } }) => (
               <Elem name="selector">
@@ -60,11 +67,18 @@ export const FilterLine = observer(({ filter, availableFilters, index, view, sid
                 )}
               </Elem>
             )}
+            disabled={filter.field.disabled}
           />
         </Elem>
       </GroupWrapper>
       <GroupWrapper wrap={sidebar}>
-        <FilterOperation filter={filter} value={filter.currentValue} operator={filter.operator} field={filter.field} />
+        <FilterOperation
+          filter={filter}
+          value={filter.currentValue}
+          operator={filter.operator}
+          field={filter.field}
+          disabled={filter.field.disabled}
+        />
       </GroupWrapper>
       <Elem name="remove">
         <Button
@@ -75,6 +89,7 @@ export const FilterLine = observer(({ filter, availableFilters, index, view, sid
             e.stopPropagation();
             filter.delete();
           }}
+          disabled={filter.field.disabled}
           icon={<Icon icon={IconClose} size={12} />}
         />
       </Elem>

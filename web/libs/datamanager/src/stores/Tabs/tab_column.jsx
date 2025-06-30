@@ -75,13 +75,14 @@ export const TabColumn = types
     target: types.enumeration(["tasks", "annotations"]),
     orderable: types.optional(types.boolean, true),
     help: types.maybeNull(types.string),
+    disabled: types.optional(types.boolean, false),
   })
   .views((self) => ({
     get hidden() {
       if (self.children) {
         return all(self.children, (c) => c.hidden);
       }
-      return self.parentView?.hiddenColumns.hasColumn(self) ?? (self.parent.hidden || false);
+      return self.disabled || (self.parentView?.hiddenColumns.hasColumn(self) ?? (self.parent.hidden || false));
     },
 
     get parentView() {
@@ -143,7 +144,7 @@ export const TabColumn = types
         const childColumns = [].concat(...self.children.map((subColumn) => subColumn.asField));
 
         result.push(...childColumns);
-      } else {
+      } else if (!self.isAnnotationResultsFilterColumn) {
         result.push({
           ...self,
           id: self.key,
@@ -193,6 +194,11 @@ export const TabColumn = types
       const cellView = CellViews[self.type] ?? CellViews[normalizeCellAlias(self.alias)];
 
       return cellView?.filterable !== false;
+    },
+
+    get isAnnotationResultsFilterColumn() {
+      // these columns are not visible in the column selector, but are used for filtering
+      return self.id.includes("annotations_results_json.") || self.id.endsWith(":annotations_results_json");
     },
   }))
   .actions((self) => ({

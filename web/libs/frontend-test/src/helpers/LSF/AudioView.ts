@@ -2,6 +2,7 @@ import TriggerOptions = Cypress.TriggerOptions;
 import ObjectLike = Cypress.ObjectLike;
 import ClickOptions = Cypress.ClickOptions;
 import { LabelStudio } from "@humansignal/frontend-test/helpers/LSF/LabelStudio";
+import { TWO_FRAMES_TIMEOUT } from "../../../../editor/tests/integration/e2e/utils/constants";
 
 type MouseInteractionOptions = Partial<TriggerOptions & ObjectLike & MouseEvent>;
 
@@ -39,6 +40,44 @@ export const AudioView = {
   get loadingBar() {
     return this.root.get("loading-progress-bar", { timeout: 10000 });
   },
+  get audioElement() {
+    return cy.get('[data-testid="waveform-audio"]');
+  },
+  get volumeSlider() {
+    return this.root.find(".lsf-audio-slider__range");
+  },
+  get volumeInput() {
+    return this.root.find(".lsf-audio-slider__input");
+  },
+  get muteButton() {
+    return this.root.find(".lsf-audio-control__mute-button");
+  },
+  get playbackSpeedSlider() {
+    return cy.get(
+      ".lsf-audio-config__modal > .lsf-audio-config__scroll-content > .lsf-audio-slider:nth-child(2) .lsf-audio-slider__range",
+    );
+  },
+  get playbackSpeedInput() {
+    return cy.get(
+      ".lsf-audio-config__modal > .lsf-audio-config__scroll-content > .lsf-audio-slider:nth-child(2) .lsf-audio-slider__input",
+    );
+  },
+  get amplitudeSlider() {
+    return cy.get(
+      ".lsf-audio-config__modal > .lsf-audio-config__scroll-content > .lsf-audio-slider:nth-child(3) .lsf-audio-slider__range",
+    );
+  },
+  get amplitudeInput() {
+    return cy.get(
+      ".lsf-audio-config__modal > .lsf-audio-config__scroll-content > .lsf-audio-slider:nth-child(3) .lsf-audio-slider__input",
+    );
+  },
+  get hideTimelineButton() {
+    return cy.get(".lsf-audio-config__buttons > .lsf-audio-config__menu-button:nth-child(1)");
+  },
+  get hideWaveformButton() {
+    return cy.get(".lsf-audio-config__buttons > .lsf-audio-config__menu-button:nth-child(2)");
+  },
   isReady() {
     LabelStudio.waitForObjectsReady();
     this.loadingBar.should("not.exist");
@@ -47,13 +86,13 @@ export const AudioView = {
      * which for now we are going to compensate by waiting approximately 2 frames of render (16 * 2 = 32 milliseconds)
      * @todo: remove wait when `isReady` in audio become more precise
      */
-    cy.wait(32);
+    cy.wait(TWO_FRAMES_TIMEOUT);
   },
   get playButton() {
-    return cy.get(`[data-testid="playback-button:play"]`);
+    return cy.get(`.lsf-audio-tag [data-testid="playback-button:play"]`);
   },
   get pauseButton() {
-    return cy.get(`[data-testid="playback-button:pause"]`);
+    return cy.get(`.lsf-audio-tag [data-testid="playback-button:pause"]`);
   },
   seekCurrentTimebox(to: number) {
     let timeString = "";
@@ -73,6 +112,37 @@ export const AudioView = {
       cy.wait((to - (from || 0)) * 1000);
       this.pause();
     }
+  },
+  toggleControlsMenu() {
+    this.volumeButton.click();
+    cy.wait(100);
+  },
+  toggleSettingsMenu() {
+    this.configButton.click();
+    cy.wait(100);
+  },
+  setVolumeInput(value: number) {
+    this.toggleControlsMenu();
+    this.volumeInput.clear().type(value.toString());
+    this.volumeInput.should("have.value", value.toString());
+    this.toggleControlsMenu();
+  },
+  setPlaybackSpeedInput(value: number) {
+    this.toggleSettingsMenu();
+    this.playbackSpeedInput.dblclick().clear().type(value.toString());
+    this.playbackSpeedInput.should("have.value", value.toString());
+    this.toggleSettingsMenu();
+  },
+  setAmplitudeInput(value: number) {
+    this.toggleSettingsMenu();
+    this.amplitudeInput.clear().type(value.toString());
+    this.amplitudeInput.should("have.value", value.toString());
+    this.toggleSettingsMenu();
+  },
+  clickMuteButton() {
+    this.toggleControlsMenu();
+    this.muteButton.click();
+    this.toggleControlsMenu();
   },
   /**
    * Clicks at the coordinates on the drawing area
@@ -177,9 +247,9 @@ export const AudioView = {
       delete options.name;
     }
     if (name) {
-      el.wait(0).matchImageSnapshot(name, options);
+      el.wait(0).matchImageSnapshot(name);
     } else {
-      el.wait(0).matchImageSnapshot(options);
+      el.wait(0).matchImageSnapshot();
     }
   },
 
@@ -213,14 +283,21 @@ export const AudioView = {
   zoomIn({ times = 1, speed = 4 }) {
     cy.log(`Zoom in by ${times} times)`);
     for (let i = 0; i < times; i++) {
-      this.visualizer.trigger("wheel", "center", "center", { deltaY: -speed, ctrlKey: true, metaKey: true });
+      this.visualizer.trigger("wheel", "center", "center", {
+        deltaY: -speed,
+        ctrlKey: true,
+        metaKey: true,
+      });
     }
   },
 
   scroll({ times = 1, speed = 4, backward = false }) {
     cy.log(`Scroll by ${times} times)`);
     for (let i = 0; i < times; i++) {
-      this.visualizer.trigger("wheel", "center", "center", { deltaX: 0, deltaY: backward ? -speed : speed });
+      this.visualizer.trigger("wheel", "center", "center", {
+        deltaX: 0,
+        deltaY: backward ? -speed : speed,
+      });
     }
   },
 

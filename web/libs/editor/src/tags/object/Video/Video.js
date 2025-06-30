@@ -10,6 +10,7 @@ import { isDefined } from "../../../utils/utilities";
 import { FF_VIDEO_FRAME_SEEK_PRECISION, isFF } from "../../../utils/feature-flags";
 import { ff } from "@humansignal/core";
 import ObjectBase from "../Base";
+import { isDefined } from "../../../utils/utilities";
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 

@@ -19,6 +19,7 @@ import { FF_DEV_2715, isFF } from "../../../utils/feature-flags";
 import { TimeDurationControl } from "../../TimeDurationControl/TimeDurationControl";
 import { TimelineRegionEditor } from "./TimelineRegionEditor";
 import "./RegionEditor.scss";
+import type { MSTRegion } from "../../../stores/types";
 
 interface RegionEditorProps {
   region: MSTRegion;
@@ -83,7 +84,7 @@ const RegionProperties = ({ region }: RegionEditorProps) => {
   );
 };
 
-const AudioRegionProperties = ({ region }: { region: any }) => {
+const AudioRegionProperties = observer(({ region }: { region: any }) => {
   const changeStartTimeHandler = (value: number) => {
     region.setProperty("start", value);
   };
@@ -107,7 +108,7 @@ const AudioRegionProperties = ({ region }: { region: any }) => {
       />
     </Elem>
   );
-};
+});
 
 interface RegionPropertyProps {
   property: string;
@@ -192,7 +193,7 @@ const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) =>
         <Select
           value={value}
           onChange={(val) => onChangeHandler(val)}
-          className={block?.elem("select").toClassName()}
+          triggerClassName={block?.elem("select").toClassName()}
           options={options}
         />
       ) : null}
