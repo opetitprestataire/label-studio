@@ -24,6 +24,7 @@ export interface SyncDataFull {
   time: number;
   playing: boolean;
   speed: number;
+  buffering: boolean;
 }
 
 export type SyncData = Partial<SyncDataFull>;
@@ -35,6 +36,11 @@ export class SyncManager {
   syncTargets = new Map<string, Instance<typeof SyncableMixin>>();
   locked: string | null = null; // refers to the main tag, which locked this sync
   audioTags = 0; // number of audio tags in the group to control muted state
+  bufferingOrigins = new Set<string>(); // tracks which components are currently buffering
+
+  get isBuffering(): boolean {
+    return this.bufferingOrigins.size > 0;
+  }
 
   register(syncTarget: Instance<typeof SyncableMixin>) {
     this.syncTargets.set(syncTarget.name, syncTarget);
@@ -57,6 +63,15 @@ export class SyncManager {
    * @returns {boolean} false if event was suppressed, because it's inside other event sync window
    */
   sync(data: SyncData, event: SyncEvent, origin: string) {
+    // Buffering event logging
+    if (event === "buffering") {
+      if (data.buffering) {
+        this.bufferingOrigins.add(origin);
+      } else {
+        this.bufferingOrigins.delete(origin);
+      }
+    }
+
     // @todo remove
     if (!this.locked || this.locked === origin) console.log("SYNC", { event, locked: this.locked, data, origin });
 
@@ -124,6 +139,8 @@ const SyncableMixin = types
   .volatile<SyncableProps>(() => ({
     syncHandlers: new Map(),
     syncManager: null,
+    isBuffering: false,
+    wasPlayingBeforeBuffering: false,
   }))
   .actions(() => ({
     syncMuted(_muted: boolean) {

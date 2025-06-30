@@ -103,7 +103,6 @@ const Model = types
     ref: React.createRef(),
     frame: 1,
     length: 1,
-    buffering: false,
     drawingRegion: null,
   }))
   .views((self) => ({
@@ -171,52 +170,93 @@ const Model = types
       );
     },
 
-    triggerSyncPlay() {
+    triggerSyncPlay(isManual = false) {
+      if (isSyncedBuffering && self.isBuffering && !isManual) return;
+      self.wasPlayingBeforeBuffering = true;
       self.triggerSync("play", { playing: true });
     },
 
-    triggerSyncPause() {
+    triggerSyncPause(isManual = false) {
+      if (isSyncedBuffering && self.isBuffering && !isManual) return;
+      self.wasPlayingBeforeBuffering = false;
       self.triggerSync("pause", { playing: false });
+    },
+
+    triggerSyncBuffering(isBuffering) {
+      if (!self.ref.current) return;
+
+      const playing = self.wasPlayingBeforeBuffering;
+
+      self.triggerSync("buffering", {
+        buffering: isBuffering,
+        playing,
+      });
     },
 
     ////// Incoming
 
     registerSyncHandlers() {
-      const events = isSyncedBuffering ? ["play", "pause", "seek", "buffering"] : ["play", "pause", "seek"];
+      const events = ["play", "pause", "seek"];
 
       events.forEach((event) => {
         self.syncHandlers.set(event, self.handleSync);
       });
 
       self.syncHandlers.set("speed", self.handleSyncSpeed);
+      if (isSyncedBuffering) {
+        self.syncHandlers.set("buffering", self.handleSyncBuffering);
+      }
     },
 
-    handleSync(data) {
+    handleSyncBuffering({ playing, ...data }) {
+      self.isBuffering = self.syncManager?.isBuffering;
+      if (data.buffering) {
+        self.wasPlayingBeforeBuffering = playing;
+        if (self.ref.current?.playing) {
+          self.ref.current?.pause();
+        }
+      }
+      const isAnyBuffering = self.syncManager?.bufferingOrigins.size > 0;
+      if (!isAnyBuffering && !data.buffering) {
+        if (!self.ref.current?.playing && playing) {
+          self.ref.current?.play();
+        }
+      }
+      // process other data
+      self.handleSync(data);
+    },
+
+    handleSync(data, event) {
       if (!self.ref.current) return;
 
       const video = self.ref.current;
+      const isBuffering = self.syncManager?.bufferingOrigins.size > 0;
 
-      if (isSyncedBuffering && isDefined(data.isBuffering)) {
-        self.buffering = data.isBuffering;
+      if (!isSyncedBuffering || (!isBuffering && isDefined(data.playing))) {
+        if (data.playing) {
+          if (!video.playing) video.play();
+        } else {
+          if (video.playing) video.pause();
+        }
       }
-
-      if (data.playing) {
-        if (!video.playing) video.play();
-      } else {
-        if (video.playing) video.pause();
+      // during the buffering only these events has real `playing` values (in other cases it's paused all the time)
+      if (["play", "pause"].indexOf(event) > -1) {
+        self.wasPlayingBeforeBuffering = data.playing;
       }
 
       if (data.speed) {
         self.speed = data.speed;
       }
 
-      if (isDefined(data.time) && !self.buffering) {
+      if (isDefined(data.time)) {
         video.currentTime = data.time;
       }
     },
 
-    handleSyncSpeed({ speed }) {
-      self.speed = speed;
+    handleSyncSpeed(data) {
+      if (isDefined(data.speed)) {
+        self.speed = data.speed;
+      }
     },
 
     handleSeek() {
@@ -225,8 +265,29 @@ const Model = types
 
     handleBuffering(isBuffering) {
       if (!isSyncedBuffering) return;
-      self.buffering = isBuffering;
-      self.triggerSync("buffering", { isBuffering });
+      if (self.syncManager?.bufferingOrigins.has(self.name) === isBuffering) return;
+      const isAlreadyBuffering = self.syncManager?.bufferingOrigins.size > 0;
+      const isLastCauseOfBuffering =
+        self.syncManager?.bufferingOrigins.size === 1 && self.syncManager?.bufferingOrigins.has(self.name);
+      const willStartBuffering = !isAlreadyBuffering && isBuffering;
+      const willStopBuffering = isLastCauseOfBuffering && !isBuffering;
+
+      if (willStopBuffering) {
+        if (self.wasPlayingBeforeBuffering) {
+          self.ref.current?.play();
+        }
+      }
+
+      self.triggerSyncBuffering(isBuffering);
+
+      // The real value, relevant for all medias synced together we have only after triggering the buffering event
+      self.isBuffering = self.syncManager?.isBuffering;
+
+      if (willStartBuffering) {
+        if (self.ref.current?.playing) {
+          self.ref.current?.pause();
+        }
+      }
     },
 
     syncMuted(muted) {

@@ -1,4 +1,5 @@
 import { FF_LSDV_4711, isFF } from "../../../utils/feature-flags";
+import { patchPlayPauseMethods } from "../../../utils/patchPlayPauseMethods";
 import { Events } from "../Common/Events";
 import { audioDecoderPool } from "./AudioDecoderPool";
 import { type BaseAudioDecoder, DEFAULT_FREQUENCY_HZ } from "./BaseAudioDecoder";
@@ -149,7 +150,7 @@ export class WaveformAudio extends Events<WaveformAudioEvents> {
   private createMediaElement() {
     if (!this.src || this.el || this.playerType !== "html5") return;
 
-    this.el = document.createElement("audio");
+    this.el = patchPlayPauseMethods(document.createElement("audio"));
     this.el.preload = "auto";
     this.el.setAttribute("data-testid", "waveform-audio");
     this.el.style.display = "none";

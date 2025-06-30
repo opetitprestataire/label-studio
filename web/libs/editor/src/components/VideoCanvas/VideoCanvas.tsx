@@ -1,3 +1,5 @@
+import { useRefCallback } from "@humansignal/core/hooks/useRefCallback";
+import { useValueRef } from "@humansignal/core/hooks/useValueRef";
 import { forwardRef, memo, type MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Block, Elem } from "../../utils/bem";
 import { FF_LSDV_4711, FF_VIDEO_FRAME_SEEK_PRECISION, isFF } from "../../utils/feature-flags";
@@ -7,7 +9,6 @@ import { MAX_ZOOM, MIN_ZOOM } from "./VideoConstants";
 import { VirtualCanvas } from "./VirtualCanvas";
 import { VirtualVideo } from "./VirtualVideo";
 import { ff } from "@humansignal/core";
-import { useSyncedBuffering } from "../../hooks/useSyncedBuffering";
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
@@ -94,12 +95,6 @@ export interface VideoRef {
   adjustPan: (x: number, y: number) => PanOptions;
 }
 
-const useLocalBuffering = (props: VideoProps) => {
-  return useState(false);
-};
-
-const useBuffering = isSyncedBuffering ? useSyncedBuffering : useLocalBuffering;
-
 export const VideoCanvas = memo(
   forwardRef<VideoRef, VideoProps>((props, ref) => {
     const raf = useRef<number>();
@@ -118,7 +113,7 @@ export const VideoCanvas = memo(
     const [length, setLength] = useState(0);
     const [currentFrame, setCurrentFrame] = useState(props.position ?? 1);
     const [playing, setPlaying] = useState(false);
-    const [buffering, setBuffering] = useBuffering(props);
+    const setBuffering = useRefCallback(props.onBuffering || (() => {}));
     const [zoom, setZoom] = useState(props.zoom ?? 1);
     const [pan, setPan] = useState<PanOptions>(props.pan ?? { x: 0, y: 0 });
 
@@ -127,8 +122,7 @@ export const VideoCanvas = memo(
     const [contrast, setContrast] = useState(1);
     const [brightness, setBrightness] = useState(1);
     const [saturation, setSaturation] = useState(1);
-    const bufferingRef = useRef(buffering);
-    bufferingRef.current = buffering;
+    const bufferingRef = useValueRef(props.buffering);
 
     const filters = useMemo(() => {
       const result: string[] = [];
@@ -608,7 +602,9 @@ export const VideoCanvas = memo(
             width={canvasWidth}
             height={canvasHeight}
           />
-          {!loading && buffering && !isSyncedBuffering && <Elem name="buffering" aria-label="Buffering Media Source" />}
+          {!loading && bufferingRef.current && !isSyncedBuffering && (
+            <Elem name="buffering" aria-label="Buffering Media Source" />
+          )}
         </Elem>
 
         <VirtualVideo

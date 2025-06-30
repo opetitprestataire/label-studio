@@ -135,7 +135,6 @@ export const AudioModel = types.compose(
     })
     .volatile(() => ({
       errors: [],
-      buffering: false,
       stageRef: createRef(),
       _ws: null,
       _wfFrame: null,
@@ -201,14 +200,18 @@ export const AudioModel = types.compose(
         self.triggerSync("speed", { speed });
       },
 
-      triggerSyncPlay() {
+      triggerSyncPlay(isManual = false) {
+        if (isSyncedBuffering && self.isBuffering && !isManual) return;
+        self.wasPlayingBeforeBuffering = true;
         // @todo should not be handled like this
         self.handleSyncPlay();
         // trigger play only after it actually started to play
         self.triggerSync("play", { playing: true });
       },
 
-      triggerSyncPause() {
+      triggerSyncPause(isManual = false) {
+        if (isSyncedBuffering && self.isBuffering && !isManual) return;
+        self.wasPlayingBeforeBuffering = false;
         // @todo should not be handled like this
         self.handleSyncPause();
         self.triggerSync("pause", { playing: false });
@@ -218,33 +221,68 @@ export const AudioModel = types.compose(
         self.triggerSync("seek", { time });
       },
 
+      triggerSyncBuffering(isBuffering) {
+        if (!self._ws) return;
+
+        const playing = self.wasPlayingBeforeBuffering;
+
+        self.triggerSync("buffering", {
+          buffering: isBuffering,
+          playing,
+        });
+      },
+
       ////// Incoming
 
       registerSyncHandlers() {
-        const events = isSyncedBuffering ? ["play", "pause", "seek", "buffering"] : ["play", "pause", "seek"];
+        const events = ["play", "pause", "seek"];
 
         events.forEach((event) => {
           self.syncHandlers.set(event, self.handleSync);
         });
 
         self.syncHandlers.set("speed", self.handleSyncSpeed);
+        if (isSyncedBuffering) {
+          self.syncHandlers.set("buffering", self.handleSyncBuffering);
+        }
       },
 
-      handleSync(data) {
-        if (!self._ws?.loaded) return;
-
-        if (isSyncedBuffering && isDefined(data.isBuffering)) {
-          self.buffering = data.isBuffering;
+      handleSyncBuffering({ playing, ...data }) {
+        self.isBuffering = self.syncManager?.isBuffering;
+        if (data.buffering) {
+          self.wasPlayingBeforeBuffering = playing;
+          self._ws?.pause();
         }
+        const isAnyBuffering = self.syncManager?.bufferingOrigins.size > 0;
+        if (!isAnyBuffering && !data.buffering) {
+          if (playing) {
+            self._ws?.play();
+          }
+        }
+        // process other data
+        self.handleSync(data);
+      },
+
+      handleSync(data, event) {
+        if (!self._ws?.loaded) return;
 
         if (!isSyncedBuffering) {
           self.handleSyncSeek(data);
         }
 
-        if (data.playing) {
-          if (!self._ws.playing) self._ws?.play();
-        } else {
-          if (self._ws.playing) self._ws?.pause();
+        const isBuffering = self.syncManager?.bufferingOrigins.size > 0;
+
+        // Normal logic when no buffering
+        if (!isSyncedBuffering || (!isBuffering && isDefined(data.playing))) {
+          if (data.playing) {
+            if (!self._ws.playing) self._ws?.play();
+          } else {
+            if (self._ws.playing) self._ws?.pause();
+          }
+        }
+        // during the buffering only these events has real `playing` values (in other cases it's paused all the time)
+        if (["play", "pause"].indexOf(event) > -1) {
+          self.wasPlayingBeforeBuffering = data.playing;
         }
 
         if (isSyncedBuffering) {
@@ -279,12 +317,6 @@ export const AudioModel = types.compose(
       handleSyncSpeed({ speed }) {
         if (!self._ws) return;
         self._ws.rate = speed;
-      },
-
-      handleBuffering(isBuffering) {
-        if (!isSyncedBuffering) return;
-        self.buffering = isBuffering;
-        self.triggerSync("buffering", { isBuffering });
       },
 
       syncMuted(muted) {
@@ -543,6 +575,33 @@ export const AudioModel = types.compose(
           } else {
             // @todo self.pause();
             self.triggerSyncPause();
+          }
+        },
+
+        handleBuffering(isBuffering) {
+          if (!isSyncedBuffering) return;
+          if (self.syncManager?.bufferingOrigins.has(self.name) === isBuffering) return;
+          const isAlreadyBuffering = self.syncManager?.bufferingOrigins.size > 0;
+          const isLastCauseOfBuffering =
+            self.syncManager?.bufferingOrigins.size === 1 && self.syncManager?.bufferingOrigins.has(self.name);
+          const willStartBuffering = !isAlreadyBuffering && isBuffering;
+          const willStopBuffering = isLastCauseOfBuffering && !isBuffering;
+
+          if (willStopBuffering) {
+            if (self.wasPlayingBeforeBuffering) {
+              self._ws?.play();
+            }
+          }
+
+          self.triggerSyncBuffering(isBuffering);
+
+          // The real value, relevant for all medias synced together we have only after triggering the buffering event
+          self.isBuffering = self.syncManager?.isBuffering;
+
+          if (willStartBuffering) {
+            if (self._ws?.playing) {
+              self._ws?.pause();
+            }
           }
         },
 

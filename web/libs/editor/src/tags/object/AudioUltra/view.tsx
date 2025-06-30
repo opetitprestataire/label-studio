@@ -1,3 +1,4 @@
+import { ff } from "@humansignal/core";
 import { observer } from "mobx-react";
 import { type FC, type ReactNode, useCallback, useEffect, useMemo, useRef } from "react";
 import { usePersistentJSONState } from "@humansignal/core/lib/hooks/usePersistentState";
@@ -14,6 +15,8 @@ import { Block } from "../../../utils/bem";
 
 import "./view.scss";
 import { getCurrentTheme } from "@humansignal/ui";
+
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 interface AudioUltraProps {
   item: any;
@@ -46,7 +49,7 @@ const AudioUltraView: FC<AudioUltraProps> = observer(({ item, children }: AudioU
     showLabels: item.annotationStore.store.settings.showLabels,
     rate: item.defaultspeed ? Number(item.defaultspeed) : 1,
     muted: item.muted === "true",
-    buffering: item.buffering,
+    buffering: item.isBuffering,
     onBuffering: item.handleBuffering,
     onLoad: item.onLoad,
     onPlaying: item.onPlaying,
@@ -170,14 +173,26 @@ const AudioUltraView: FC<AudioUltraProps> = observer(({ item, children }: AudioU
       />
       <Controls
         position={controls.currentTime}
-        playing={controls.playing}
-        buffering={controls.buffering}
+        playing={isSyncedBuffering ? item.wasPlayingBeforeBuffering : controls.playing}
+        buffering={item.isBuffering}
         volume={controls.volume}
         speed={controls.rate}
         zoom={controls.zoom}
         duration={controls.duration}
-        onPlay={() => controls.setPlaying(true)}
-        onPause={() => controls.setPlaying(false)}
+        onPlay={() => {
+          if (isSyncedBuffering && item.isBuffering) {
+            item.triggerSyncPlay(true);
+          } else {
+            controls.setPlaying(true);
+          }
+        }}
+        onPause={() => {
+          if (isSyncedBuffering && item.isBuffering) {
+            item.triggerSyncPause(true);
+          } else {
+            controls.setPlaying(false);
+          }
+        }}
         allowFullscreen={false}
         onVolumeChange={(vol) => controls.setVolume(vol)}
         onStepBackward={() => {

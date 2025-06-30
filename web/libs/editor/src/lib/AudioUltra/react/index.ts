@@ -1,19 +1,13 @@
-import { type MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useRefCallback } from "@humansignal/core/hooks/useRefCallback";
+import { type MutableRefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { TimelineContext } from "../../../components/Timeline/Context";
 import { isTimeRelativelySimilar } from "../Common/Utils";
 import type { Layer } from "../Visual/Layer";
 import { Waveform, type WaveformFrameState, type WaveformOptions } from "../Waveform";
 import { ff } from "@humansignal/core";
-import { useSyncedBuffering, type SyncedBufferingProps } from "../../../hooks/useSyncedBuffering";
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
-
-const useNoopBuffering = (_props: SyncedBufferingProps) => {
-  return [false, () => {}] as const;
-};
-
-const useBuffering = isSyncedBuffering ? useSyncedBuffering : useNoopBuffering;
 
 export const useWaveform = (
   containter: MutableRefObject<HTMLElement | null | undefined>,
@@ -34,10 +28,10 @@ export const useWaveform = (
   const [zoom, setZoom] = useState(1);
   const [volume, setVolume] = useState(options?.volume ?? 1);
   const [playing, setPlaying] = useState(false);
-  const [buffering, setBuffering] = useBuffering({
-    buffering: options?.buffering,
-    onBuffering: options?.onBuffering,
-  });
+  const handleBuffering = useRefCallback(options?.onBuffering ?? (() => {}));
+  const setBuffering = useCallback((buffering: boolean) => {
+    handleBuffering(buffering);
+  }, []);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [amp, setAmp] = useState(options?.amp ?? 1);
@@ -54,8 +48,8 @@ export const useWaveform = (
 
   useEffect(() => {
     if (!waveform.current || !isSyncedBuffering) return;
-    waveform.current.buffering = buffering;
-  }, [buffering]);
+    waveform.current.buffering = options?.buffering || false;
+  }, [options?.buffering]);
 
   const onFrameChangedRef = useRef(options?.onFrameChanged);
   onFrameChangedRef.current = options?.onFrameChanged;
@@ -215,7 +209,6 @@ export const useWaveform = (
     volume,
     setVolume,
     playing,
-    buffering,
     setPlaying,
     duration,
     currentTime,

@@ -397,6 +397,22 @@ const HtxVideoView = ({ item, store }) => {
     });
   }, []);
 
+  const handlePlayClick = useCallback(() => {
+    if (isSyncedBuffering && item.isBuffering) {
+      item.triggerSyncPlay(true);
+    } else {
+      handlePlay();
+    }
+  }, []);
+
+  const handlePauseClick = useCallback(() => {
+    if (isSyncedBuffering && item.isBuffering) {
+      item.triggerSyncPause(true);
+    } else {
+      handlePause();
+    }
+  });
+
   const handleSelectRegion = useCallback(
     (_, id, select) => {
       const region = item.findRegion(id);
@@ -527,7 +543,7 @@ const HtxVideoView = ({ item, store }) => {
                   pan={pan}
                   speed={item.speed}
                   framerate={item.framerate}
-                  buffering={item.buffering}
+                  buffering={item.isBuffering}
                   allowInteractions={false}
                   allowPanOffscreen={!limitCanvasDrawingBoundaries}
                   onFrameChange={handleFrameChange}
@@ -549,8 +565,8 @@ const HtxVideoView = ({ item, store }) => {
           <Elem
             name="timeline"
             tag={Timeline}
-            playing={playing}
-            buffering={isSyncedBuffering ? item.buffering : false}
+            playing={isSyncedBuffering ? item.wasPlayingBeforeBuffering : playing}
+            buffering={isSyncedBuffering ? item.isBuffering : false}
             length={videoLength}
             position={position}
             regions={regions}
@@ -588,8 +604,8 @@ const HtxVideoView = ({ item, store }) => {
               },
             ]}
             onPositionChange={handleTimelinePositionChange}
-            onPlay={handlePlay}
-            onPause={handlePause}
+            onPlay={handlePlayClick}
+            onPause={handlePauseClick}
             onFullscreenToggle={handleFullscreenToggle}
             onSelectRegion={handleSelectRegion}
             onStartDrawing={item.startDrawing}
