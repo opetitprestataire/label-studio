@@ -2,7 +2,6 @@ import { observer } from "mobx-react";
 import { Fragment } from "react";
 import { BemWithSpecifiContext } from "../../../utils/bem";
 import { Button } from "@humansignal/ui";
-import { IconTrash } from "@humansignal/icons";
 import { Tag } from "../../Common/Tag/Tag";
 import { FilterDropdown } from "../FilterDropdown";
 import "./FilterLine.scss";
@@ -66,11 +65,18 @@ export const FilterLine = observer(({ filter, availableFilters, index, view, sid
                 )}
               </Elem>
             )}
+            disabled={filter.field.disabled}
           />
         </Elem>
       </GroupWrapper>
       <GroupWrapper wrap={sidebar}>
-        <FilterOperation filter={filter} value={filter.currentValue} operator={filter.operator} field={filter.field} />
+        <FilterOperation
+          filter={filter}
+          value={filter.currentValue}
+          operator={filter.operator}
+          field={filter.field}
+          disabled={filter.field.disabled}
+        />
       </GroupWrapper>
       <Elem name="remove">
         <Button
@@ -80,9 +86,9 @@ export const FilterLine = observer(({ filter, availableFilters, index, view, sid
             e.stopPropagation();
             filter.delete();
           }}
-        >
-          <IconTrash size={12} />
-        </Button>
+          disabled={filter.field.disabled}
+          icon={<Icon icon={IconClose} size={12} />}
+        />
       </Elem>
     </Block>
   );
