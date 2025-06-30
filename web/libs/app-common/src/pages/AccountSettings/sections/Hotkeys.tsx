@@ -124,41 +124,27 @@ export const HotkeysManager = () => {
 
   // Save hotkeys to API function (handles both save and reset operations)
   const saveHotkeysToAPI = useCallback(
-    async (isReset = false): Promise<SaveResult> => {
-      let requestBody: {
-        custom_hotkeys: Record<string, { key: string; active: boolean }> | {};
-        hotkey_settings: HotkeySettings;
+    async (currentHotkeys: Hotkey[], currentSettings: HotkeySettings): Promise<SaveResult> => {
+      // Convert current hotkeys to API format
+      const customHotkeys: Record<string, { key: string; active: boolean }> = {};
+
+      // Process all current hotkeys (if empty, this results in reset)
+      currentHotkeys.forEach((hotkey: Hotkey) => {
+        const keyId = `${hotkey.section}:${hotkey.element}`;
+        customHotkeys[keyId] = {
+          key: hotkey.key,
+          active: hotkey.active,
+          description: hotkey.label, // Add description field for addKey method
+        };
+      });
+
+      const requestBody = {
+        custom_hotkeys: customHotkeys,
+        hotkey_settings:
+          currentHotkeys.length === 0
+            ? { autoTranslatePlatforms: true } // Reset to default settings
+            : currentSettings,
       };
-
-      if (isReset) {
-        // Reset: clear all customizations
-        requestBody = {
-          custom_hotkeys: {}, // This clears all customizations
-          hotkey_settings: {
-            autoTranslatePlatforms: true, // Reset to default
-          },
-        };
-      } else {
-        // Regular save: convert current hotkeys to API format
-        const customHotkeys: Record<string, { key: string; active: boolean }> = {};
-
-        // Process all current hotkeys (not just modified ones)
-        hotkeys.forEach((hotkey: Hotkey) => {
-          const keyId = `${hotkey.section}:${hotkey.element}`;
-          customHotkeys[keyId] = {
-            key: hotkey.key,
-            active: hotkey.active,
-            description: hotkey.label, // Add description field for addKey method
-          };
-        });
-
-        requestBody = {
-          custom_hotkeys: customHotkeys,
-          hotkey_settings: {
-            autoTranslatePlatforms: autoTranslatePlatforms,
-          },
-        };
-      }
 
       try {
         // Call the API to save/reset hotkeys and settings
@@ -207,7 +193,7 @@ export const HotkeysManager = () => {
         };
       }
     },
-    [hotkeys, autoTranslatePlatforms, api],
+    [api],
   );
 
   function updateHotkeysWithCustomSettings(
@@ -331,7 +317,7 @@ export const HotkeysManager = () => {
       setDirtyState({});
 
       // Reset hotkeys to defaults in the backend API (sets custom_hotkeys to {})
-      const result = await saveHotkeysToAPI(true);
+      const result = await saveHotkeysToAPI([], { autoTranslatePlatforms });
 
       if (result.ok) {
         if (toast) {
@@ -459,7 +445,7 @@ export const HotkeysManager = () => {
 
     try {
       // Save ALL modified hotkeys and settings, not just this section
-      const result = await saveHotkeysToAPI();
+      const result = await saveHotkeysToAPI(hotkeys, { autoTranslatePlatforms });
 
       if (result.ok) {
         // Clear the dirty state for this section
@@ -554,7 +540,13 @@ export const HotkeysManager = () => {
       setGlobalEnabled(allEnabled);
 
       // Save all imported data to API
-      const result = await saveHotkeysToAPI();
+      const settingsToSave = {
+        autoTranslatePlatforms:
+          importedSettings.autoTranslatePlatforms !== undefined
+            ? importedSettings.autoTranslatePlatforms
+            : autoTranslatePlatforms,
+      };
+      const result = await saveHotkeysToAPI(importedHotkeys, settingsToSave);
 
       if (!result.ok) {
         throw new Error(result.error || "Failed to save imported hotkeys");
