@@ -1,4 +1,5 @@
 import { FF_DEV_3034, isFF } from "../utils/feature-flags";
+import { isAlive } from "mobx-state-tree";
 
 export class CommentsSdk {
   constructor(lsf, dm) {
@@ -72,6 +73,8 @@ export class CommentsSdk {
     });
 
     if (commentUsers.length) {
+      if (!isAlive(this.lsf.store)) return [];
+
       this.lsf.store.enrichUsers(commentUsers);
     }
 
