@@ -12,7 +12,7 @@ import { BitmaskModel } from "./Bitmask";
 /**
  * The `BitmaskLabels` tag for pixel-wise image segmentation tasks is used in the area where you want to apply a mask or use a brush to draw a region on the image.
  *
- * Bitmask operates on pixel level and outputs a Base64 encoded PNG data URL image with black pixels on transparent background.
+ * `BitmaskLabels` operates on pixel level and outputs a Base64 encoded PNG data URL image with black pixels on transparent background.
  *
  * Export data example: `data-url:image/png;[base64-encoded-string]`
  *
