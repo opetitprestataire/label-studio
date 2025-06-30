@@ -52,7 +52,20 @@ def get_item(dictionary, key):
 
 @register.filter
 def json_dumps_ensure_ascii(dictionary):
-    return json.dumps(dictionary, ensure_ascii=False)
+    def clean_surrogates(obj):
+        """Recursively clean surrogate characters from strings in nested data structures"""
+        if isinstance(obj, str):
+            # Replace surrogate characters with replacement character
+            return obj.encode('utf-8', errors='replace').decode('utf-8')
+        elif isinstance(obj, dict):
+            return {k: clean_surrogates(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [clean_surrogates(item) for item in obj]
+        else:
+            return obj
+
+    cleaned_dictionary = clean_surrogates(dictionary)
+    return json.dumps(cleaned_dictionary, ensure_ascii=False)
 
 
 @register.filter
