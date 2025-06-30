@@ -8,9 +8,9 @@ export function patchPlayPauseMethods<T extends HTMLMediaElement>(element: T): T
   if (!(element instanceof HTMLMediaElement)) {
     throw new TypeError("serializeMedia expects <audio> | <video>");
   }
-  
+
   const patchedElement = element as T & PatchedHTMLMediaElement;
-  
+
   if (patchedElement._playPausePatched) {
     return patchedElement;
   }
