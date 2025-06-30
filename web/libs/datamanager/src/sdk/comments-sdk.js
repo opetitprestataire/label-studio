@@ -1,5 +1,4 @@
 import { FF_DEV_3034, isFF } from "../utils/feature-flags";
-import { isAlive } from "mobx-state-tree";
 
 export class CommentsSdk {
   constructor(lsf, dm) {
@@ -72,10 +71,13 @@ export class CommentsSdk {
       return { ...comment, created_by: comment.created_by.id };
     });
 
-    if (commentUsers.length) {
-      if (!isAlive(this.lsf.store)) return [];
-
-      this.lsf.store.enrichUsers(commentUsers);
+    if (commentUsers.length && this.lsf?.store?.enrichUsers) {
+      try {
+        this.lsf.store.enrichUsers(commentUsers);
+      } catch (error) {
+        console.warn("Failed to enrich comment users:", error.message);
+        return [];
+      }
     }
 
     return comments;
