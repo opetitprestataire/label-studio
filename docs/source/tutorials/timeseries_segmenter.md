@@ -61,7 +61,7 @@ columns.
 
 You can use [the following data](https://raw.githubusercontent.com/HumanSignal/label-studio-ml-backend/refs/heads/master/label_studio_ml/examples/timeseries_segmenter/tests/test_from_video_tutorial.csv) for tests with this labeling configuration.
 
-## Annotation Types
+## Annotation types
 
 The backend supports two types of the time series segmentation:
 
@@ -81,7 +81,7 @@ The backend supports two types of the time series segmentation:
 
 Training starts automatically when annotations are created or updated. The model uses a PyTorch-based LSTM neural network with proper temporal modeling and **balanced learning** to handle imbalanced time series data effectively.
 
-### Training Process
+### Training process
 
 The model follows these steps during training:
 
@@ -99,34 +99,34 @@ The model follows these steps during training:
    - Background class support for realistic time series modeling
 4. **Model Persistence**: Saves trained model artifacts to `MODEL_DIR`
 
-### Training Configuration
+### Training configuration
 
 You can customize training behavior with these environment variables:
 
-**Basic Configuration:**
+**Basic configuration:**
 - `START_TRAINING_EACH_N_UPDATES`: How often to retrain (default: 1, trains on every annotation)
 - `TRAIN_EPOCHS`: Number of training epochs (default: 1000)
 - `SEQUENCE_SIZE`: Sliding window size for temporal context (default: 50)
 - `HIDDEN_SIZE`: LSTM hidden layer size (default: 64)
 
-**Balanced Learning (for Imbalanced Data):**
+**Balanced learning (for imbalanced data):**
 - `BALANCED_ACCURACY_THRESHOLD`: Stop training when balanced accuracy exceeds this (default: 0.85)
 - `MIN_CLASS_F1_THRESHOLD`: Stop training when minimum per-class F1 exceeds this (default: 0.70)
 - `USE_CLASS_WEIGHTS`: Enable class-weighted loss function (default: true)
 
 The balanced learning approach is **especially important when using instant labels** (created by double-clicking on the time series), as these often create highly imbalanced datasets where background periods vastly outnumber event instances.
 
-### Handling Imbalanced Data
+### Handling imbalanced data
 
 Time series data is often highly imbalanced, especially when using instant labels:
 
-**The Problem:**
+**The problem:**
 - Background periods typically constitute 90%+ of the data
 - Event instances (Run, Walk, etc.) are rare and brief
 - Standard training approaches achieve high accuracy by simply predicting "background" everywhere
 - Models fail to learn actual event patterns
 
-**Our Solution:**
+**Our solution:**
 ```
 Class Weights: Automatically calculated inverse frequency weights
 ├── Background (Class 0): Low weight (e.g., 0.1x)
@@ -145,7 +145,7 @@ Metrics: Focus on per-class performance
 
 This ensures the model learns to detect actual events rather than just predicting background.
 
-### Ground Truth Handling
+### Ground truth handling
 
 When multiple annotations exist for the same task, the model prioritizes ground truth annotations:
 - Non-ground truth annotations are processed first
@@ -156,7 +156,7 @@ When multiple annotations exist for the same task, the model prioritizes ground 
 
 The model processes new time series data by applying the trained LSTM classifier with sliding window temporal context. Only meaningful event segments are returned to Label Studio, filtering out background periods automatically.
 
-### Prediction Process
+### Prediction process
 
 For each task, the model performs these steps:
 
@@ -173,47 +173,47 @@ For each task, the model performs these steps:
    - **Score Calculation**: Averages prediction confidence per segment
 5. **Result Formatting**: Returns segments in Label Studio JSON format with proper instant field values
 
-### Prediction Quality
+### Prediction quality
 
 The model provides several quality indicators:
 
-- **Per-segment Confidence**: Average prediction probability for each returned segment
-- **Temporal Consistency**: Sliding window approach reduces prediction noise
-- **Background Suppression**: Only returns segments where the model is confident about specific events
+- **Per-segment confidence**: Average prediction probability for each returned segment
+- **Temporal consistency**: Sliding window approach reduces prediction noise
+- **Background suppression**: Only returns segments where the model is confident about specific events
 
 This approach ensures that predictions focus on actual events rather than forcing labels on every timestep.
 
-## Project-Specific Models
+## Project-specific models
 
 The backend automatically handles multiple Label Studio projects by maintaining separate trained models for each project. This ensures proper isolation and prevents cross-project interference.
 
-### How Project Isolation Works
+### How project isolation works
 
-**Model Storage:**
+**Model storage:**
 - Each project gets its own model file: `model_project_{project_id}.pt`
 - Example: Project 47 → `model_project_47.pt`, Project 123 → `model_project_123.pt`
 - Default fallback for backward compatibility: `model_project_0.pt`
 
-**Model Training:**
+**Model training:**
 - Training events automatically identify the source project ID
 - Models are trained and saved with project-specific names
 - Each project's model only learns from that project's annotations
 
-**Model Prediction:**
+**Model prediction:**
 - The backend automatically detects which project's model to use
 - Project ID is extracted from task context or prediction request
 - Falls back to default model (project_id=0) if no project information is available
 
-### Multi-Tenant Benefits
+### Multi-tenant benefits
 
 This architecture provides several key advantages:
 
-**Data Isolation:**
+**Data isolation:**
 - Project A's sensitive medical data never trains Project B's financial model
 - Each project can have completely different labeling configurations
 - Models can't accidentally predict wrong label types from other projects
 
-**Performance Independence:**
+**Performance independence:**
 - Training on one project doesn't affect prediction quality for other projects
 - Each project's model optimizes specifically for that project's data characteristics
 - Poor annotations in one project won't degrade other projects' models
@@ -235,7 +235,7 @@ This seamless multi-tenant support makes the backend suitable for enterprise Lab
 
 ## How it works
 
-### Training Pipeline
+### Training pipeline
 
 ```mermaid
 flowchart TD
@@ -255,7 +255,7 @@ flowchart TD
   M --> N[Cache in Memory]
 ```
 
-### Prediction Pipeline
+### Prediction pipeline
 
 ```mermaid
 flowchart TD
@@ -270,7 +270,7 @@ flowchart TD
   BB --> CC[Return Segments]
 ```
 
-### Key Technical Features
+### Key technical features
 
 - **PyTorch-based LSTM**: Modern deep learning framework with better performance and flexibility
 - **Temporal Modeling**: Sliding windows capture time dependencies (default 50 timesteps)
@@ -286,7 +286,7 @@ flowchart TD
 
 Edit `docker-compose.yml` to set environment variables for your specific use case:
 
-### Basic Configuration
+### Basic configuration
 ```yaml
 environment:
   - LABEL_STUDIO_HOST=http://localhost:8080
@@ -298,7 +298,7 @@ environment:
   - HIDDEN_SIZE=64
 ```
 
-### Balanced Learning (Recommended for Instant Labels)
+### Balanced learning (recommended for instant labels)
 ```yaml
 environment:
   # ... basic config above ...
@@ -307,7 +307,7 @@ environment:
   - USE_CLASS_WEIGHTS=true
 ```
 
-### Common Scenarios
+### Common scenarios
 
 **For instant labels (point events):**
 - Keep balanced learning enabled (`USE_CLASS_WEIGHTS=true`)
