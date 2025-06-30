@@ -25,6 +25,7 @@ from django.urls import path, re_path
 from django.views.generic.base import RedirectView
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 versions = collect_versions()
@@ -112,6 +113,10 @@ urlpatterns = [
     re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     re_path(r'^', include('jwt_auth.urls')),
     re_path(r'^', include('session_policy.urls')),
+    # drf-spectacular URLs for OpenAPI 3.0 schema
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 
 if settings.DEBUG:

@@ -206,6 +206,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'drf_yasg',
+    'drf_spectacular',
     'corsheaders',
     'django_extensions',
     'django_rq',
@@ -266,6 +267,7 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'core.utils.common.custom_exception_handler',
     'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',),
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'PAGE_SIZE': 100,
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination'
 }
@@ -388,6 +390,38 @@ SWAGGER_SETTINGS = {
     'OPERATIONS_SORTER': 'alpha',
     'DEFAULT_AUTO_SCHEMA_CLASS': 'core.utils.openapi_extensions.XVendorExtensionsAutoSchema',
     'DEFAULT_INFO': 'core.urls.open_api_info',
+}
+
+# drf-spectacular settings for OpenAPI 3.0 schema generation
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Label Studio API',
+    'DESCRIPTION': 'Label Studio API for data annotation and labeling',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': '/api/',
+    'SCHEMA_PATH_PREFIX_TRIM': True,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+    },
+    'SECURITY': [
+        {
+            'Token': [],
+        }
+    ],
+    'SECURITY_DEFINITIONS': {
+        'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'Token authentication. Example: "Token your-token-here"',
+        }
+    },
+    'EXTENSIONS': {
+        'x-fern': True,
+    },
 }
 
 SENTRY_DSN = get_env('SENTRY_DSN', None)
