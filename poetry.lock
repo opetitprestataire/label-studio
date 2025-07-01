@@ -1723,31 +1723,6 @@ http2 = ["h2 (>=3,<5)"]
 socks = ["socksio (==1.*)"]
 
 [[package]]
-name = "humansignal-drf-yasg"
-version = "1.21.10.post1"
-description = "Automated generation of real Swagger/OpenAPI 2.0 schemas from Django Rest Framework code."
-optional = false
-python-versions = ">=3.6"
-groups = ["main"]
-files = [
-    {file = "humansignal-drf-yasg-1.21.10.post1.tar.gz", hash = "sha256:ed3cd9c6b305578e8f92afb05e229b1de39aa2da5b3737faf61ec066a1e7cbb4"},
-    {file = "humansignal_drf_yasg-1.21.10.post1-py3-none-any.whl", hash = "sha256:aa6fdd504b727bcc6ef8c05540505b8c53922156058cf64da269cd90bdeed2d8"},
-]
-
-[package.dependencies]
-django = ">=2.2.16"
-djangorestframework = ">=3.10.3"
-inflection = ">=0.3.1"
-packaging = ">=21.0"
-pytz = ">=2021.1"
-pyyaml = ">=5.1"
-uritemplate = ">=3.0.0"
-
-[package.extras]
-coreapi = ["coreapi (>=2.3.3)", "coreschema (>=0.0.4)"]
-validation = ["swagger-spec-validator (>=2.1.0)"]
-
-[[package]]
 name = "id"
 version = "1.5.0"
 description = "A tool for generating OIDC identities"
@@ -5033,4 +5008,4 @@ uwsgi = ["pyuwsgi", "uwsgitop"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4"
-content-hash = "2645d5022b4e65c125dd0d32f58bb7ca20d9b0922b958227b47f3ca381d3826b"
+content-hash = "94139a62f1d00101cf5abd9dbbb124519043be3a744314b030b2725a87ab1724"
