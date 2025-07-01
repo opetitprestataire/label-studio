@@ -10,12 +10,9 @@ services:
       - app
     environment:
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
-    #   Optional: Configure nginx error logging
-    #   Available log levels: debug, info, notice, warn, error, crit, alert, emerg
-    #   Default: warn (reduces noisy "client closed keepalive connection" messages)  
+    #   Optional: Set nginx error log level (default: warn)
+    #   Use 'warn' or higher to reduce noisy "client closed keepalive connection" messages
     #      - NGINX_ERROR_LOG_LEVEL=warn
-    #   Optional: Enable JSON format for error logs (default: false)
-    #      - NGINX_ERROR_LOG_JSON=true
     #   Optional: Specify SSL termination certificate & key
     #   Just drop your cert.pem and cert.key into folder 'deploy/nginx/certs'
     #      - NGINX_SSL_CERT=/certs/cert.pem
