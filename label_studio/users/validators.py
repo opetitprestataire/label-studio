@@ -1,9 +1,10 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 
 class PasswordLengthValidator:
-    def __init__(self, min_length=8, max_length=64):
+    def __init__(self, min_length=settings.AUTH_PASSWORD_MIN_LENGTH, max_length=settings.AUTH_PASSWORD_MAX_LENGTH):
         self.min_length = min_length
         self.max_length = max_length
 
