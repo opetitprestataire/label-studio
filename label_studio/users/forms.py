@@ -5,9 +5,9 @@ import logging
 from django import forms
 from django.conf import settings
 from django.contrib import auth
-from users.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
+from users.models import User
 
 EMAIL_MAX_LENGTH = 256
 USERNAME_MAX_LENGTH = 30
