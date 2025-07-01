@@ -31,31 +31,34 @@ class PredictionQuerySerializer(serializers.Serializer):
     project = serializers.IntegerField(required=False, help_text='Project ID to filter predictions')
 
 
-@extend_schema_field({
-            'type': 'array',
-            'title': 'Prediction result list',
-            'description': 'List of prediction results for the task',
-            'items': {
-                'type': 'object',
-                'title': 'Prediction result items (regions)',
-                'description': 'List of predicted regions for the task',
-            },
-        }
-    )
+@extend_schema_field(
+    {
+        'type': 'array',
+        'title': 'Prediction result list',
+        'description': 'List of prediction results for the task',
+        'items': {
+            'type': 'object',
+            'title': 'Prediction result items (regions)',
+            'description': 'List of predicted regions for the task',
+        },
+    }
+)
 class PredictionResultField(serializers.JSONField):
     pass
 
-@extend_schema_field({
-            'type': 'array',
-            'title': 'Annotation result list',
-            'description': 'List of annotation results for the task',
-            'items': {
-                'type': 'object',
-                'title': 'Annotation result items (regions)',
-                'description': 'List of annotated regions for the task',
-            },
-        }
-    )
+
+@extend_schema_field(
+    {
+        'type': 'array',
+        'title': 'Annotation result list',
+        'description': 'List of annotation results for the task',
+        'items': {
+            'type': 'object',
+            'title': 'Annotation result items (regions)',
+            'description': 'List of annotated regions for the task',
+        },
+    }
+)
 class AnnotationResultField(serializers.JSONField):
     pass
 

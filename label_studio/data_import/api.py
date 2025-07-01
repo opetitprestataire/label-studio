@@ -82,7 +82,7 @@ task_create_response_scheme = {
         response={
             'type': 'string',
         },
-    )
+    ),
 }
 
 

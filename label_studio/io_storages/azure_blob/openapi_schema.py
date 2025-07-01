@@ -1,4 +1,3 @@
-
 _common_storage_schema_properties = {
     'title': 'string',
     'description': 'string',

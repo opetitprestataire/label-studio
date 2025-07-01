@@ -1,4 +1,3 @@
-
 _common_redis_storage_schema_properties = {
     'title': 'string',
     'description': 'string',

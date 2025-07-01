@@ -210,6 +210,7 @@ class ViewSerializer(serializers.ModelSerializer):
 
             return instance
 
+
 @extend_schema_field(
     {
         'type': 'array',
@@ -221,6 +222,7 @@ class ViewSerializer(serializers.ModelSerializer):
 class UpdatedByDMFieldSerializer(serializers.SerializerMethodField):
     # TODO: get_updated_by implementation is weird, but we need to adhere schema to it
     pass
+
 
 @extend_schema_field(
     {
@@ -234,104 +236,113 @@ class AnnotatorsDMFieldSerializer(serializers.SerializerMethodField):
     # TODO: get_updated_by implementation is weird, but we need to adhere schema to it
     pass
 
+
 @extend_schema_field(
-{
-    'type': 'object',
-    'title': 'User details',
-    'description': 'User details who completed this annotation.',
-})
+    {
+        'type': 'object',
+        'title': 'User details',
+        'description': 'User details who completed this annotation.',
+    }
+)
 class CompletedByDMSerializerWithGenericSchema(serializers.PrimaryKeyRelatedField):
     # TODO: likely we need to remove full user details from GET /api/tasks/{id} as it non-secure and currently controlled by the export toggle
     pass
 
+
 class AnnotationsDMFieldSerializer(AnnotationSerializer):
     completed_by = CompletedByDMSerializerWithGenericSchema(required=False, queryset=User.objects.all())
 
-@extend_schema_field({
-    'type': 'array',
-    'title': 'Annotation drafts',
-    'description': 'Drafts for this task',
-    'items': {
-        'type': 'object',
-        'title': 'Draft object',
-        'properties': {
-            'result': {
-                'type': 'array',
-                'title': 'Draft result',
-                'items': {
-                    'type': 'object',
-                    'title': 'Draft result item',
+
+@extend_schema_field(
+    {
+        'type': 'array',
+        'title': 'Annotation drafts',
+        'description': 'Drafts for this task',
+        'items': {
+            'type': 'object',
+            'title': 'Draft object',
+            'properties': {
+                'result': {
+                    'type': 'array',
+                    'title': 'Draft result',
+                    'items': {
+                        'type': 'object',
+                        'title': 'Draft result item',
+                    },
+                },
+                'created_at': {
+                    'type': 'string',
+                    'format': 'date-time',
+                    'title': 'Creation time',
+                },
+                'updated_at': {
+                    'type': 'string',
+                    'format': 'date-time',
+                    'title': 'Last update time',
                 },
             },
-            'created_at': {
-                'type': 'string',
-                'format': 'date-time',
-                'title': 'Creation time',
-            },
-            'updated_at': {
-                'type': 'string',
-                'format': 'date-time',
-                'title': 'Last update time',
-            },
         },
-    },
-})
+    }
+)
 class AnnotationDraftDMFieldSerializer(serializers.SerializerMethodField):
     pass
 
-@extend_schema_field({
-    'type': 'array',
-    'title': 'Predictions',
-    'description': 'Predictions for this task',
-    'items': {
-        'type': 'object',
-        'title': 'Prediction object',
-        'properties': {
-            'result': {
-                'type': 'array',
-                'title': 'Prediction result',
-                'items': {
+
+@extend_schema_field(
+    {
+        'type': 'array',
+        'title': 'Predictions',
+        'description': 'Predictions for this task',
+        'items': {
+            'type': 'object',
+            'title': 'Prediction object',
+            'properties': {
+                'result': {
+                    'type': 'array',
+                    'title': 'Prediction result',
+                    'items': {
+                        'type': 'object',
+                        'title': 'Prediction result item',
+                    },
+                },
+                'score': {
+                    'type': 'number',
+                    'title': 'Prediction score',
+                },
+                'model_version': {
+                    'type': 'string',
+                    'title': 'Model version',
+                },
+                'model': {
                     'type': 'object',
-                    'title': 'Prediction result item',
+                    'title': 'ML Backend instance',
+                },
+                'model_run': {
+                    'type': 'object',
+                    'title': 'Model Run instance',
+                },
+                'task': {
+                    'type': 'integer',
+                    'title': 'Task ID related to the prediction',
+                },
+                'project': {
+                    'type': 'integer',
+                    'title': 'Project ID related to the prediction',
+                },
+                'created_at': {
+                    'type': 'string',
+                    'format': 'date-time',
+                    'title': 'Creation time',
+                },
+                'updated_at': {
+                    'type': 'string',
+                    'format': 'date-time',
+                    'title': 'Last update time',
                 },
             },
-            'score': {
-                'type': 'number',
-                'title': 'Prediction score',
-            },
-            'model_version': {
-                'type': 'string',
-                'title': 'Model version',
-            },
-            'model': {
-                'type': 'object',
-                'title': 'ML Backend instance',
-            },
-            'model_run': {
-                'type': 'object',
-                'title': 'Model Run instance',
-            },
-            'task': {
-                'type': 'integer',
-                'title': 'Task ID related to the prediction',
-            },
-            'project': {
-                'type': 'integer',
-                'title': 'Project ID related to the prediction',
-            },
-            'created_at': {
-                'type': 'string',
-                'format': 'date-time',
-                'title': 'Creation time',
-            },
-            'updated_at': {
-                'type': 'string',
-                'format': 'date-time',
-                'title': 'Last update time',
-            },
         },
-    },
-})
+    }
+)
 class PredictionsDMFieldSerializer(serializers.SerializerMethodField):
     pass
 
