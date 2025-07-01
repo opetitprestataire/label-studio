@@ -22,6 +22,48 @@ nameservers=$(awk '$1=="nameserver" {
 }' /etc/resolv.conf)
 echo "resolver $nameservers;" > $OPT_DIR/nginx/resolv.conf
 
+# Configure nginx error logging
+echo >&3 "=> Configuring nginx error logging..."
+NGINX_ERROR_LOG_LEVEL=${NGINX_ERROR_LOG_LEVEL:-warn}
+NGINX_ERROR_LOG_JSON=${NGINX_ERROR_LOG_JSON:-false}
+
+# Validate log level
+case "$NGINX_ERROR_LOG_LEVEL" in
+  debug|info|notice|warn|error|crit|alert|emerg)
+    echo >&3 "=> Valid log level: $NGINX_ERROR_LOG_LEVEL"
+    ;;
+  *)
+    echo >&3 "=> Warning: Invalid log level '$NGINX_ERROR_LOG_LEVEL', using 'warn' as default"
+    NGINX_ERROR_LOG_LEVEL=warn
+    ;;
+esac
+
+# Configure error logging based on format preference
+if [ "${NGINX_ERROR_LOG_JSON}" = "true" ]; then
+  echo >&3 "=> Enabling JSON error logging with level: $NGINX_ERROR_LOG_LEVEL"
+  # Note: nginx doesn't support JSON format for error_log directive directly
+  # We'll use the standard error_log but document the limitation
+  sed -i "s|error_log /dev/stderr info;|error_log /dev/stderr $NGINX_ERROR_LOG_LEVEL;|g" $NGINX_CONFIG
+  echo >&3 "=> Note: JSON error logging requested, but nginx error_log doesn't support custom formats."
+  echo >&3 "=> Error logs will use standard format with level: $NGINX_ERROR_LOG_LEVEL"
+  echo >&3 "=> Access logs are already in JSON format (json_detailed)."
+else
+  echo >&3 "=> Setting error log level to: $NGINX_ERROR_LOG_LEVEL"
+  sed -i "s|error_log /dev/stderr info;|error_log /dev/stderr $NGINX_ERROR_LOG_LEVEL;|g" $NGINX_CONFIG
+fi
+
+# Provide information about noise reduction
+case "$NGINX_ERROR_LOG_LEVEL" in
+  debug)
+    echo >&3 "=> Note: Debug level includes all messages, including noisy 'client closed keepalive connection' messages"
+    ;;
+  info)
+    echo >&3 "=> Note: Info level includes 'client closed keepalive connection' messages (can be noisy)"
+    ;;
+  notice|warn|error|crit|alert|emerg)
+    echo >&3 "=> Note: Log level '$NGINX_ERROR_LOG_LEVEL' filters out noisy 'client closed keepalive connection' messages"
+    ;;
+esac
 
 if [ -n "${NGINX_SSL_CERT:-}" ]; then
   echo >&3 "=> Replacing nginx certs..."

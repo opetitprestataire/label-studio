@@ -1,0 +1,21 @@
+# Docker Compose override example for clean nginx logs
+# 
+# Usage:
+#   docker-compose -f docker-compose.yml -f docker-compose.clean-logs.yml up
+#
+# This configuration reduces noisy nginx error logs by setting the log level to 'warn'
+# which filters out the frequent "client closed keepalive connection" messages.
+
+version: '3.8'
+
+services:
+  nginx:
+    environment:
+      # Set nginx error log level to 'warn' to filter out noisy keepalive messages
+      - NGINX_ERROR_LOG_LEVEL=warn
+      
+      # Optional: Request JSON format for error logs (currently not supported by nginx)
+      # - NGINX_ERROR_LOG_JSON=false
+      
+      # Access logs are already in JSON format (json_detailed)
+      # Error logs will use standard nginx format with reduced verbosity
