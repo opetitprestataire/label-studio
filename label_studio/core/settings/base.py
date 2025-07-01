@@ -307,7 +307,7 @@ DISABLE_SIGNUP_WITHOUT_LINK = get_bool_env('DISABLE_SIGNUP_WITHOUT_LINK', False)
 
 # Password validation settings
 AUTH_PASSWORD_MIN_LENGTH = 8
-AUTH_PASSWORD_MAX_LENGTH = 64
+AUTH_PASSWORD_MAX_LENGTH = 128
 
 # Password validation:
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -317,8 +317,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'users.validators.PasswordLengthValidator',
         'OPTIONS': {
             'min_length': AUTH_PASSWORD_MIN_LENGTH,
-            'max_length': AUTH_PASSWORD_MAX_LENGTH
-        }
+            'max_length': AUTH_PASSWORD_MAX_LENGTH,
+        },
     },
 ]
 

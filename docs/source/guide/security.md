@@ -34,7 +34,7 @@ Restrict access to the server itself by opening only the [required ports](/guide
 
 Secure user access to Label Studio to protect data integrity and allow changes to be performed only by those with access to the system.
 
-Each user must create an account with a password between 8 and 64 characters, allowing you to track who has access to Label Studio and which actions they perform.
+Each user must create an account with a password between 8 and 128 characters, allowing you to track who has access to Label Studio and which actions they perform.
 
 <div class="opensource-only">
 
