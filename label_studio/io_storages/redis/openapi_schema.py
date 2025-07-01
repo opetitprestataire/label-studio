@@ -1,19 +1,18 @@
-from drf_spectacular.types import OpenApiTypes
 
 _common_redis_storage_schema_properties = {
-    'title': OpenApiTypes.STR,
-    'description': OpenApiTypes.STR,
-    'project': OpenApiTypes.INT,
-    'path': OpenApiTypes.STR,
-    'host': OpenApiTypes.STR,
-    'port': OpenApiTypes.STR,
-    'password': OpenApiTypes.STR,
+    'title': 'string',
+    'description': 'string',
+    'project': 'integer',
+    'path': 'string',
+    'host': 'string',
+    'port': 'string',
+    'password': 'string',
 }
 
 
 _redis_import_storage_properties = dict(
-    regex_filter=OpenApiTypes.STR,
-    use_blob_urls=OpenApiTypes.BOOL,
+    regex_filter='string',
+    use_blob_urls='boolean',
     **_common_redis_storage_schema_properties,
 )
 
@@ -26,7 +25,7 @@ _redis_import_storage_schema = {
 _redis_import_storage_schema_with_id = {
     'type': 'object',
     'properties': dict(
-        id=OpenApiTypes.INT,
+        id='integer',
         **_redis_import_storage_properties,
     ),
     'required': [],
@@ -34,8 +33,8 @@ _redis_import_storage_schema_with_id = {
 
 
 _redis_export_storage_properties = dict(
-    db=OpenApiTypes.INT,
-    can_delete_objects=OpenApiTypes.BOOL,
+    db='integer',
+    can_delete_objects='boolean',
     **_common_redis_storage_schema_properties,
 )
 
@@ -48,7 +47,7 @@ _redis_export_storage_schema = {
 _redis_export_storage_schema_with_id = {
     'type': 'object',
     'properties': dict(
-        id=OpenApiTypes.INT,
+        id='integer',
         **_redis_export_storage_properties,
     ),
     'required': [],

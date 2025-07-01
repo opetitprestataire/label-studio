@@ -22,16 +22,16 @@ logger = logging.getLogger(__name__)
 _ml_backend_schema = {
     'type': 'object',
     'properties': {
-        'url': OpenApiTypes.STR,
-        'project': OpenApiTypes.INT,
-        'is_interactive': OpenApiTypes.BOOL,
-        'title': OpenApiTypes.STR,
-        'description': OpenApiTypes.STR,
-        'auth_method': OpenApiTypes.STR,
-        'basic_auth_user': OpenApiTypes.STR,
-        'basic_auth_pass': OpenApiTypes.STR,
-        'extra_params': OpenApiTypes.OBJECT,
-        'timeout': OpenApiTypes.INT,
+        'url': {'type': 'string'},
+        'project': {'type': 'integer'},
+        'is_interactive': {'type': 'boolean'},
+        'title': {'type': 'string'},
+        'description': {'type': 'string'},
+        'auth_method': {'type': 'string'},
+        'basic_auth_user': {'type': 'string'},
+        'basic_auth_pass': {'type': 'string'},
+        'extra_params': {'type': 'object'},
+        'timeout': {'type': 'integer'},
     },
     'required': [],
 }
@@ -193,14 +193,14 @@ class MLBackendDetailAPI(generics.RetrieveUpdateDestroyAPIView):
         request={
             'type': 'object',
             'properties': {
-                'use_ground_truth': OpenApiTypes.BOOL,
+                'use_ground_truth': {'type': 'boolean'},
             },
         },
         responses={
             200: OpenApiResponse(description='Training has successfully started.'),
             500: OpenApiResponse(
                 description='Training error',
-                response=OpenApiTypes.STR,
+                response={'type': 'string'},
             ),
         },
     ),
@@ -237,7 +237,7 @@ class MLBackendTrainAPI(APIView):
             200: OpenApiResponse(description='Predicting has successfully started.'),
             500: OpenApiResponse(
                 description='Predicting error',
-                response=OpenApiTypes.STR,
+                response={'type': 'string'},
             ),
         },
     ),

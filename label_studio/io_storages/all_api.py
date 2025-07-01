@@ -5,7 +5,6 @@ import logging
 from core.permissions import all_permissions
 from django.conf import settings
 from django.utils.decorators import method_decorator
-from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
@@ -53,8 +52,8 @@ _common_storage_list = _get_common_storage_list()
                 'items': {
                     'type': 'object',
                     'properties': {
-                        'name': OpenApiTypes.STR,
-                        'title': OpenApiTypes.STR,
+                        'name': {'type': 'string'},
+                        'title': {'type': 'string'},
                     },
                 },
             }
@@ -80,8 +79,8 @@ class AllImportStorageTypesAPI(APIView):
                 'items': {
                     'type': 'object',
                     'properties': {
-                        'name': OpenApiTypes.STR,
-                        'title': OpenApiTypes.STR,
+                        'name': {'type': 'string'},
+                        'title': {'type': 'string'},
                     },
                 },
             }

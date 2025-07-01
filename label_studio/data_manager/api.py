@@ -39,8 +39,8 @@ logger = logging.getLogger(__name__)
 _view_request_body = {
     'type': 'object',
     'properties': {
-        'data': OpenApiTypes.OBJECT,
-        'project': OpenApiTypes.INT,
+        'data': {'type': 'object'},
+        'project': {'type': 'integer'},
     },
 }
 

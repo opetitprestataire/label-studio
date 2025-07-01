@@ -1,20 +1,18 @@
-from drf_spectacular.types import OpenApiTypes
-
 _common_gcs_storage_schema_properties = {
-    'title': OpenApiTypes.STR,
-    'description': OpenApiTypes.STR,
-    'project': OpenApiTypes.INT,
-    'bucket': OpenApiTypes.STR,
-    'prefix': OpenApiTypes.STR,
-    'google_application_credentials': OpenApiTypes.STR,
-    'google_project_id': OpenApiTypes.STR,
+    'title': 'string',
+    'description': 'string',
+    'project': 'integer',
+    'bucket': 'string',
+    'prefix': 'string',
+    'google_application_credentials': 'string',
+    'google_project_id': 'string',
 }
 
 _gcs_import_storage_properties = dict(
-    regex_filter=OpenApiTypes.STR,
-    use_blob_urls=OpenApiTypes.BOOL,
-    presign=OpenApiTypes.BOOL,
-    presign_ttl=OpenApiTypes.INT,
+    regex_filter='string',
+    use_blob_urls='boolean',
+    presign='boolean',
+    presign_ttl='integer',
     **_common_gcs_storage_schema_properties,
 )
 
@@ -27,14 +25,14 @@ _gcs_import_storage_schema = {
 _gcs_import_storage_schema_with_id = {
     'type': 'object',
     'properties': dict(
-        id=OpenApiTypes.INT,
+        id='integer',
         **_gcs_import_storage_properties,
     ),
     'required': [],
 }
 
 _gcs_export_storage_properties = dict(
-    can_delete_objects=OpenApiTypes.BOOL,
+    can_delete_objects='boolean',
     **_common_gcs_storage_schema_properties,
 )
 
@@ -47,7 +45,7 @@ _gcs_export_storage_schema = {
 _gcs_export_storage_schema_with_id = {
     'type': 'object',
     'properties': dict(
-        id=OpenApiTypes.INT,
+        id='integer',
         **_gcs_export_storage_properties,
     ),
     'required': [],

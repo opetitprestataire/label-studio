@@ -131,11 +131,11 @@ logger = logging.getLogger(__name__)
                     'properties': {
                         'tasks': {
                             'type': 'array',
-                            'items': OpenApiTypes.OBJECT,
+                            'items': {'type': 'object'},
                         },
-                        'total': OpenApiTypes.INT,
-                        'total_annotations': OpenApiTypes.INT,
-                        'total_predictions': OpenApiTypes.INT,
+                        'total': {'type': 'integer'},
+                        'total_annotations': {'type': 'integer'},
+                        'total_predictions': {'type': 'integer'},
                     },
                 },
             )

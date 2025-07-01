@@ -57,27 +57,32 @@ task_create_response_scheme = {
         response={
             'type': 'object',
             'properties': {
-                'task_count': OpenApiTypes.INT,
-                'annotation_count': OpenApiTypes.INT,
-                'predictions_count': OpenApiTypes.INT,
-                'duration': OpenApiTypes.NUMBER,
+                'task_count': {'type': 'integer'},
+                'annotation_count': {'type': 'integer'},
+                'predictions_count': {'type': 'integer'},
+                'duration': {'type': 'number'},
                 'file_upload_ids': {
                     'type': 'array',
-                    'items': OpenApiTypes.INT,
+                    'items': {'type': 'integer'},
                 },
-                'could_be_tasks_list': OpenApiTypes.BOOL,
+                'could_be_tasks_list': {'type': 'boolean'},
                 'found_formats': {
                     'type': 'array',
-                    'items': OpenApiTypes.STR,
+                    'items': {'type': 'string'},
                 },
                 'data_columns': {
                     'type': 'array',
-                    'items': OpenApiTypes.STR,
+                    'items': {'type': 'string'},
                 },
             },
         },
     ),
-    400: OpenApiTypes.STR,
+    400: OpenApiResponse(
+        description='Bad Request',
+        response={
+            'type': 'string',
+        },
+    )
 }
 
 
@@ -178,7 +183,7 @@ task_create_response_scheme = {
         ),
         request={
             'type': 'array',
-            'items': OpenApiTypes.OBJECT,
+            'items': {'type': 'object'},
             # TODO: this example doesn't work - perhaps we need to migrate to drf-spectacular for "anyOf" support
             # also fern will change to at least provide a list of examples FER-1969
             # right now we can only rely on documenation examples

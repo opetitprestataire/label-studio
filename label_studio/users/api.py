@@ -23,15 +23,15 @@ logger = logging.getLogger(__name__)
 _user_schema = {
     'type': 'object',
     'properties': {
-        'id': OpenApiTypes.INT,
-        'first_name': OpenApiTypes.STR,
-        'last_name': OpenApiTypes.STR,
-        'username': OpenApiTypes.STR,
-        'email': OpenApiTypes.STR,
-        'avatar': OpenApiTypes.STR,
-        'initials': OpenApiTypes.STR,
-        'phone': OpenApiTypes.STR,
-        'allow_newsletters': OpenApiTypes.BOOL,
+        'id': {'type': 'integer'},
+        'first_name': {'type': 'string'},
+        'last_name': {'type': 'string'},
+        'username': {'type': 'string'},
+        'email': {'type': 'string'},
+        'avatar': {'type': 'string'},
+        'initials': {'type': 'string'},
+        'phone': {'type': 'string'},
+        'allow_newsletters': {'type': 'boolean'},
     },
 }
 
@@ -198,7 +198,7 @@ class UserAPI(viewsets.ModelViewSet):
                 description='User token response',
                 response={
                     'type': 'object',
-                    'properties': {'token': OpenApiTypes.STR},
+                    'properties': {'token': {'type': 'string'}},
                 },
             )
         },
@@ -228,7 +228,7 @@ class UserResetTokenAPI(APIView):
                 description='User token response',
                 response={
                     'type': 'object',
-                    'properties': {'detail': OpenApiTypes.STR},
+                    'properties': {'detail': {'type': 'string'}},
                 },
             )
         },

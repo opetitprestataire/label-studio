@@ -1,5 +1,3 @@
-from drf_spectacular.types import OpenApiTypes
-
 result_example = [
     {
         'original_width': 1920,
@@ -90,8 +88,8 @@ prediction_response_example = {'id': 1, 'task': 1, 'result': result_example, 'sc
 task_request_schema = {
     'type': 'object',
     'properties': {
-        'data': OpenApiTypes.OBJECT,
-        'project': OpenApiTypes.INT,
+        'data': {'type': 'object'},
+        'project': {'type': 'integer'},
     },
     'example': {
         'data': {'image': 'https://example.com/image.jpg', 'text': 'Hello, world!'},
@@ -104,15 +102,15 @@ annotation_request_schema = {
     'properties': {
         'result': {
             'type': 'array',
-            'items': OpenApiTypes.OBJECT,
+            'items': {'type': 'object'},
         },
-        'task': OpenApiTypes.INT,
-        'project': OpenApiTypes.INT,
-        'completed_by': OpenApiTypes.INT,
-        'updated_by': OpenApiTypes.INT,
-        'was_cancelled': OpenApiTypes.BOOL,
-        'ground_truth': OpenApiTypes.BOOL,
-        'lead_time': OpenApiTypes.NUMBER,
+        'task': {'type': 'integer'},
+        'project': {'type': 'integer'},
+        'completed_by': {'type': 'integer'},
+        'updated_by': {'type': 'integer'},
+        'was_cancelled': {'type': 'boolean'},
+        'ground_truth': {'type': 'boolean'},
+        'lead_time': {'type': 'number'},
     },
     'required': [],
     'example': {
@@ -125,13 +123,13 @@ annotation_request_schema = {
 prediction_request_schema = {
     'type': 'object',
     'properties': {
-        'task': OpenApiTypes.INT,
+        'task': {'type': 'integer'},
         'result': {
             'type': 'array',
-            'items': OpenApiTypes.OBJECT,
+            'items': {'type': 'object'},
         },
-        'score': OpenApiTypes.NUMBER,
-        'model_version': OpenApiTypes.STR,
+        'score': {'type': 'number'},
+        'model_version': {'type': 'string'},
     },
     'example': {'result': result_example, 'score': 0.95, 'model_version': 'yolo-v8'},
 }

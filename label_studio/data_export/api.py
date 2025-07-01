@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
                 description='Export formats',
                 response={
                     'type': 'array',
-                    'items': OpenApiTypes.STR,
+                    'items': {'type': 'string'},
                 },
             )
         },
@@ -143,7 +143,9 @@ class ExportFormatsListAPI(generics.RetrieveAPIView):
         responses={
             200: OpenApiResponse(
                 description='Exported data',
-                response=OpenApiTypes.BINARY,
+                response={
+                    'type': 'binary',
+                },
             )
         },
     ),
