@@ -16,37 +16,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from core import views
-from core.utils.common import collect_versions
 from core.utils.static_serve import serve
 from django.conf import settings
 from django.conf.urls import include
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 from django.urls import path, re_path
 from django.views.generic.base import RedirectView
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-
-versions = collect_versions()
-open_api_info = openapi.Info(
-    title='Label Studio API',
-    default_version='v' + versions['release'],
-    contact=openapi.Contact(url='https://labelstud.io'),
-    x_logo={'url': '../../static/icons/logo-black.svg'},
-)
-
-private_schema_view = get_schema_view(
-    open_api_info,
-    public=True,
-    permission_classes=[IsAuthenticated],
-)
-
-public_schema_view = get_schema_view(
-    open_api_info,
-    public=True,
-    permission_classes=[AllowAny],
-)
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
     re_path(r'^$', views.main, name='main'),
@@ -95,11 +72,14 @@ urlpatterns = [
     re_path(r'trigger500/', views.TriggerAPIError.as_view(), name='metrics'),
     re_path(r'samples/time-series.csv', views.samples_time_series, name='static_time_series'),
     re_path(r'samples/paragraphs.json', views.samples_paragraphs, name='samples_paragraphs'),
+    # Legacy swagger URLs redirect to new drf-spectacular URLs
     re_path(
-        r'^swagger(?P<format>\.json|\.yaml)$', private_schema_view.without_ui(cache_timeout=0), name='schema-json'
+        r'^swagger(?P<format>\.json|\.yaml)$',
+        lambda request, format: HttpResponseRedirect('/api/schema/' + ('?format=openapi' + format if format else '')),
+        name='schema-json',
     ),
-    re_path(r'^swagger/$', private_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('docs/api/', public_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    re_path(r'^swagger/$', lambda request: HttpResponseRedirect('/api/schema/swagger-ui/'), name='schema-swagger-ui'),
+    path('docs/api/', lambda request: HttpResponseRedirect('/api/schema/redoc/'), name='schema-redoc'),
     path(
         'docs/',
         RedirectView.as_view(url='/static/docs/public/guide/introduction.html', permanent=False),

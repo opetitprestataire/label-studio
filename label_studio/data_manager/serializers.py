@@ -6,7 +6,7 @@ import ujson as json
 from data_manager.models import Filter, FilterGroup, View
 from django.conf import settings
 from django.db import transaction
-from drf_yasg import openapi
+from drf_spectacular.types import OpenApiTypes
 from projects.models import Project
 from rest_framework import serializers
 from tasks.models import Task
@@ -215,10 +215,10 @@ class UpdatedByDMFieldSerializer(serializers.SerializerMethodField):
     # TODO: get_updated_by implementation is weird, but we need to adhere schema to it
     class Meta:
         swagger_schema_fields = {
-            'type': openapi.TYPE_ARRAY,
+            'type': 'array',
             'title': 'User IDs',
             'description': 'User IDs who updated this task',
-            'items': {'type': openapi.TYPE_OBJECT, 'title': 'User IDs'},
+            'items': {'type': OpenApiTypes.OBJECT, 'title': 'User IDs'},
         }
 
 
@@ -226,10 +226,10 @@ class AnnotatorsDMFieldSerializer(serializers.SerializerMethodField):
     # TODO: get_updated_by implementation is weird, but we need to adhere schema to it
     class Meta:
         swagger_schema_fields = {
-            'type': openapi.TYPE_ARRAY,
+            'type': 'array',
             'title': 'Annotators IDs',
             'description': 'Annotators IDs who annotated this task',
-            'items': {'type': openapi.TYPE_INTEGER, 'title': 'User IDs'},
+            'items': {'type': OpenApiTypes.INT, 'title': 'User IDs'},
         }
 
 
@@ -237,7 +237,7 @@ class CompletedByDMSerializerWithGenericSchema(serializers.PrimaryKeyRelatedFiel
     # TODO: likely we need to remove full user details from GET /api/tasks/{id} as it non-secure and currently controlled by the export toggle
     class Meta:
         swagger_schema_fields = {
-            'type': openapi.TYPE_OBJECT,
+            'type': OpenApiTypes.OBJECT,
             'title': 'User details',
             'description': 'User details who completed this annotation.',
         }
@@ -250,28 +250,28 @@ class AnnotationsDMFieldSerializer(AnnotationSerializer):
 class AnnotationDraftDMFieldSerializer(serializers.SerializerMethodField):
     class Meta:
         swagger_schema_fields = {
-            'type': openapi.TYPE_ARRAY,
+            'type': 'array',
             'title': 'Annotation drafts',
             'description': 'Drafts for this task',
             'items': {
-                'type': openapi.TYPE_OBJECT,
+                'type': OpenApiTypes.OBJECT,
                 'title': 'Draft object',
                 'properties': {
                     'result': {
-                        'type': openapi.TYPE_ARRAY,
+                        'type': 'array',
                         'title': 'Draft result',
                         'items': {
-                            'type': openapi.TYPE_OBJECT,
+                            'type': OpenApiTypes.OBJECT,
                             'title': 'Draft result item',
                         },
                     },
                     'created_at': {
-                        'type': openapi.TYPE_STRING,
+                        'type': OpenApiTypes.STR,
                         'format': 'date-time',
                         'title': 'Creation time',
                     },
                     'updated_at': {
-                        'type': openapi.TYPE_STRING,
+                        'type': OpenApiTypes.STR,
                         'format': 'date-time',
                         'title': 'Last update time',
                     },
@@ -283,52 +283,52 @@ class AnnotationDraftDMFieldSerializer(serializers.SerializerMethodField):
 class PredictionsDMFieldSerializer(serializers.SerializerMethodField):
     class Meta:
         swagger_schema_fields = {
-            'type': openapi.TYPE_ARRAY,
+            'type': 'array',
             'title': 'Predictions',
             'description': 'Predictions for this task',
             'items': {
-                'type': openapi.TYPE_OBJECT,
+                'type': OpenApiTypes.OBJECT,
                 'title': 'Prediction object',
                 'properties': {
                     'result': {
-                        'type': openapi.TYPE_ARRAY,
+                        'type': 'array',
                         'title': 'Prediction result',
                         'items': {
-                            'type': openapi.TYPE_OBJECT,
+                            'type': OpenApiTypes.OBJECT,
                             'title': 'Prediction result item',
                         },
                     },
                     'score': {
-                        'type': openapi.TYPE_NUMBER,
+                        'type': OpenApiTypes.NUMBER,
                         'title': 'Prediction score',
                     },
                     'model_version': {
-                        'type': openapi.TYPE_STRING,
+                        'type': OpenApiTypes.STR,
                         'title': 'Model version',
                     },
                     'model': {
-                        'type': openapi.TYPE_OBJECT,
+                        'type': OpenApiTypes.OBJECT,
                         'title': 'ML Backend instance',
                     },
                     'model_run': {
-                        'type': openapi.TYPE_OBJECT,
+                        'type': OpenApiTypes.OBJECT,
                         'title': 'Model Run instance',
                     },
                     'task': {
-                        'type': openapi.TYPE_INTEGER,
+                        'type': OpenApiTypes.INT,
                         'title': 'Task ID related to the prediction',
                     },
                     'project': {
-                        'type': openapi.TYPE_NUMBER,
+                        'type': OpenApiTypes.NUMBER,
                         'title': 'Project ID related to the prediction',
                     },
                     'created_at': {
-                        'type': openapi.TYPE_STRING,
+                        'type': OpenApiTypes.STR,
                         'format': 'date-time',
                         'title': 'Creation time',
                     },
                     'updated_at': {
-                        'type': openapi.TYPE_STRING,
+                        'type': OpenApiTypes.STR,
                         'format': 'date-time',
                         'title': 'Last update time',
                     },

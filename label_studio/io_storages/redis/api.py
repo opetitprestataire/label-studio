@@ -1,8 +1,8 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
 from django.utils.decorators import method_decorator
-from drf_yasg import openapi as openapi
-from drf_yasg.utils import no_body, swagger_auto_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from io_storages.api import (
     ExportStorageDetailAPI,
     ExportStorageFormLayoutAPI,
@@ -27,34 +27,28 @@ from .openapi_schema import (
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['import_storage', 'redis'],
-        x_fern_sdk_method_name='list',
-        x_fern_audiences=['public'],
-        operation_summary='Get all import storage',
-        operation_description='Get a list of all Redis import storage connections.',
-        manual_parameters=[
-            openapi.Parameter(
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Get all import storage',
+        description='Get a list of all Redis import storage connections.',
+        parameters=[
+            OpenApiParameter(
                 name='project',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.INT,
+                location='query',
                 description='Project ID',
             ),
         ],
-        request_body=no_body,
+        request=None,
     ),
 )
 @method_decorator(
     name='post',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['import_storage', 'redis'],
-        x_fern_sdk_method_name='create',
-        x_fern_audiences=['public'],
-        operation_summary='Create import storage',
-        operation_description='Create a new Redis import storage connection.',
-        request_body=_redis_import_storage_schema,
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Create import storage',
+        description='Create a new Redis import storage connection.',
+        request=_redis_import_storage_schema,
     ),
 )
 class RedisImportStorageListAPI(ImportStorageListAPI):
@@ -64,38 +58,29 @@ class RedisImportStorageListAPI(ImportStorageListAPI):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['import_storage', 'redis'],
-        x_fern_sdk_method_name='get',
-        x_fern_audiences=['public'],
-        operation_summary='Get import storage',
-        operation_description='Get a specific Redis import storage connection.',
-        request_body=no_body,
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Get import storage',
+        description='Get a specific Redis import storage connection.',
+        request=None,
     ),
 )
 @method_decorator(
     name='patch',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['import_storage', 'redis'],
-        x_fern_sdk_method_name='update',
-        x_fern_audiences=['public'],
-        operation_summary='Update import storage',
-        operation_description='Update a specific Redis import storage connection.',
-        request_body=_redis_import_storage_schema,
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Update import storage',
+        description='Update a specific Redis import storage connection.',
+        request=_redis_import_storage_schema,
     ),
 )
 @method_decorator(
     name='delete',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['import_storage', 'redis'],
-        x_fern_sdk_method_name='delete',
-        x_fern_audiences=['public'],
-        operation_summary='Delete import storage',
-        operation_description='Delete a specific Redis import storage connection.',
-        request_body=no_body,
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Delete import storage',
+        description='Delete a specific Redis import storage connection.',
+        request=None,
     ),
 )
 class RedisImportStorageDetailAPI(ImportStorageDetailAPI):
@@ -105,22 +90,19 @@ class RedisImportStorageDetailAPI(ImportStorageDetailAPI):
 
 @method_decorator(
     name='post',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['import_storage', 'redis'],
-        x_fern_sdk_method_name='sync',
-        x_fern_audiences=['public'],
-        operation_summary='Sync import storage',
-        operation_description='Sync tasks from a specific Redis import storage connection.',
-        manual_parameters=[
-            openapi.Parameter(
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Sync import storage',
+        description='Sync tasks from a specific Redis import storage connection.',
+        parameters=[
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='Storage ID',
             ),
         ],
-        request_body=no_body,
+        request=None,
     ),
 )
 class RedisImportStorageSyncAPI(ExportStorageSyncAPI):
@@ -129,14 +111,11 @@ class RedisImportStorageSyncAPI(ExportStorageSyncAPI):
 
 @method_decorator(
     name='post',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['export_storage', 'redis'],
-        x_fern_sdk_method_name='sync',
-        x_fern_audiences=['public'],
-        operation_summary='Sync export storage',
-        operation_description='Sync tasks from a specific Redis export storage connection.',
-        request_body=no_body,
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Sync export storage',
+        description='Sync tasks from a specific Redis export storage connection.',
+        request=None,
     ),
 )
 class RedisExportStorageSyncAPI(ExportStorageSyncAPI):
@@ -145,15 +124,12 @@ class RedisExportStorageSyncAPI(ExportStorageSyncAPI):
 
 @method_decorator(
     name='post',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['import_storage', 'redis'],
-        x_fern_sdk_method_name='validate',
-        x_fern_audiences=['public'],
-        operation_summary='Validate import storage',
-        operation_description='Validate a specific Redis import storage connection.',
-        request_body=_redis_import_storage_schema_with_id,
-        responses={200: openapi.Response(description='Validation successful')},
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Validate import storage',
+        description='Validate a specific Redis import storage connection.',
+        request=_redis_import_storage_schema_with_id,
+        responses={200: OpenApiResponse(description='Validation successful')},
     ),
 )
 class RedisImportStorageValidateAPI(ImportStorageValidateAPI):
@@ -162,15 +138,12 @@ class RedisImportStorageValidateAPI(ImportStorageValidateAPI):
 
 @method_decorator(
     name='post',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['export_storage', 'redis'],
-        x_fern_sdk_method_name='validate',
-        x_fern_audiences=['public'],
-        operation_summary='Validate export storage',
-        operation_description='Validate a specific Redis export storage connection.',
-        request_body=_redis_export_storage_schema_with_id,
-        responses={200: openapi.Response(description='Validation successful')},
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Validate export storage',
+        description='Validate a specific Redis export storage connection.',
+        request=_redis_export_storage_schema_with_id,
+        responses={200: OpenApiResponse(description='Validation successful')},
     ),
 )
 class RedisExportStorageValidateAPI(ExportStorageValidateAPI):
@@ -179,34 +152,28 @@ class RedisExportStorageValidateAPI(ExportStorageValidateAPI):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['export_storage', 'redis'],
-        x_fern_sdk_method_name='list',
-        x_fern_audiences=['public'],
-        operation_summary='Get all export storage',
-        operation_description='Get a list of all Redis export storage connections.',
-        manual_parameters=[
-            openapi.Parameter(
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Get all export storage',
+        description='Get a list of all Redis export storage connections.',
+        parameters=[
+            OpenApiParameter(
                 name='project',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.INT,
+                location='query',
                 description='Project ID',
             ),
         ],
-        request_body=no_body,
+        request=None,
     ),
 )
 @method_decorator(
     name='post',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['export_storage', 'redis'],
-        x_fern_sdk_method_name='create',
-        x_fern_audiences=['public'],
-        operation_summary='Create export storage',
-        operation_description='Create a new Redis export storage connection to store annotations.',
-        request_body=_redis_export_storage_schema,
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Create export storage',
+        description='Create a new Redis export storage connection to store annotations.',
+        request=_redis_export_storage_schema,
     ),
 )
 class RedisExportStorageListAPI(ExportStorageListAPI):
@@ -216,38 +183,29 @@ class RedisExportStorageListAPI(ExportStorageListAPI):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['export_storage', 'redis'],
-        x_fern_sdk_method_name='get',
-        x_fern_audiences=['public'],
-        operation_summary='Get export storage',
-        operation_description='Get a specific Redis export storage connection.',
-        request_body=no_body,
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Get export storage',
+        description='Get a specific Redis export storage connection.',
+        request=None,
     ),
 )
 @method_decorator(
     name='patch',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['export_storage', 'redis'],
-        x_fern_sdk_method_name='update',
-        x_fern_audiences=['public'],
-        operation_summary='Update export storage',
-        operation_description='Update a specific Redis export storage connection.',
-        request_body=_redis_export_storage_schema,
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Update export storage',
+        description='Update a specific Redis export storage connection.',
+        request=_redis_export_storage_schema,
     ),
 )
 @method_decorator(
     name='delete',
-    decorator=swagger_auto_schema(
-        tags=['Storage: Redis'],
-        x_fern_sdk_group_name=['export_storage', 'redis'],
-        x_fern_sdk_method_name='delete',
-        x_fern_audiences=['public'],
-        operation_summary='Delete export storage',
-        operation_description='Delete a specific Redis export storage connection.',
-        request_body=no_body,
+    decorator=extend_schema(
+        tags=['Storage: Redis', 'redis'],
+        summary='Delete export storage',
+        description='Delete a specific Redis export storage connection.',
+        request=None,
     ),
 )
 class RedisExportStorageDetailAPI(ExportStorageDetailAPI):

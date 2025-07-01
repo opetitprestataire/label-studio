@@ -16,8 +16,8 @@ from django.core.files.storage import FileSystemStorage
 from django.db import transaction
 from django.http import FileResponse, HttpResponse
 from django.utils.decorators import method_decorator
-from drf_yasg import openapi as openapi
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from projects.models import Project
 from ranged_fileresponse import RangedFileResponse
 from rest_framework import generics, status
@@ -40,30 +40,25 @@ logger = logging.getLogger(__name__)
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Export'],
-        operation_summary='Get export formats',
-        x_fern_sdk_group_name=['projects', 'exports'],
-        x_fern_sdk_method_name='list_formats',
-        x_fern_audiences=['public'],
-        operation_description='Retrieve the available export formats for the current project by ID.',
-        manual_parameters=[
-            openapi.Parameter(
+        summary='Get export formats',
+        description='Retrieve the available export formats for the current project by ID.',
+        parameters=[
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='A unique integer value identifying this project.',
             ),
         ],
         responses={
-            200: openapi.Response(
+            200: OpenApiResponse(
                 description='Export formats',
-                schema=openapi.Schema(
-                    title='Format list',
-                    description='List of available formats',
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Schema(title='Export format', type=openapi.TYPE_STRING),
-                ),
+                response={
+                    'type': 'array',
+                    'items': OpenApiTypes.STR,
+                },
             )
         },
     ),
@@ -82,52 +77,48 @@ class ExportFormatsListAPI(generics.RetrieveAPIView):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
-        x_fern_sdk_group_name='projects',
-        x_fern_sdk_method_name='create_export',
-        x_fern_audiences=['public'],
-        manual_parameters=[
-            openapi.Parameter(
+    decorator=extend_schema(
+        parameters=[
+            OpenApiParameter(
                 name='export_type',
-                type=openapi.TYPE_STRING,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.STR,
+                location='query',
                 description='Selected export format (JSON by default)',
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='download_all_tasks',
-                type=openapi.TYPE_STRING,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.STR,
+                location='query',
                 description="""
                           If true, download all tasks regardless of status. If false, download only annotated tasks.
                           """,
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='download_resources',
-                type=openapi.TYPE_BOOLEAN,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.BOOL,
+                location='query',
                 description="""
                           If true, download all resource files such as images, audio, and others relevant to the tasks.
                           """,
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='ids',
-                type=openapi.TYPE_ARRAY,
-                items=openapi.Schema(title='Task ID', description='Individual task ID', type=openapi.TYPE_INTEGER),
-                in_=openapi.IN_QUERY,
+                many=True,
+                location='query',
                 description="""
                           Specify a list of task IDs to retrieve only the details for those tasks.
                           """,
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='A unique integer value identifying this project.',
             ),
         ],
         tags=['Export'],
-        operation_summary='Easy export of tasks and annotations',
-        operation_description="""
+        summary='Easy export of tasks and annotations',
+        description="""
         <i>Note: if you have a large project it's recommended to use
         export snapshots, this easy export endpoint might have timeouts.</i><br/><br>
         Export annotated tasks as a file in a specific format.
@@ -150,11 +141,9 @@ class ExportFormatsListAPI(generics.RetrieveAPIView):
             settings.HOSTNAME or 'https://localhost:8080',
         ),
         responses={
-            200: openapi.Response(
+            200: OpenApiResponse(
                 description='Exported data',
-                schema=openapi.Schema(
-                    title='Export file', description='Export file with results', type=openapi.TYPE_FILE
-                ),
+                response=OpenApiTypes.BINARY,
             )
         },
     ),
@@ -214,10 +203,10 @@ class ExportAPI(generics.RetrieveAPIView):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Export'],
-        operation_summary='List exported files',
-        operation_description="""
+        summary='List exported files',
+        description="""
         Retrieve a list of files exported from the Label Studio UI using the Export button on the Data Manager page.
         To retrieve the files themselves, see [Download export file](/api#operation/api_projects_exports_download_read).
         """,
@@ -268,20 +257,17 @@ class ProjectExportFilesAuthCheck(APIView):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Export'],
-        x_fern_sdk_group_name=['projects', 'exports'],
-        x_fern_sdk_method_name='list',
-        x_fern_audiences=['public'],
-        operation_summary='List all export snapshots',
-        operation_description="""
+        summary='List all export snapshots',
+        description="""
         Returns a list of exported files for a specific project by ID.
         """,
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='A unique integer value identifying this project.',
             )
         ],
@@ -289,20 +275,17 @@ class ProjectExportFilesAuthCheck(APIView):
 )
 @method_decorator(
     name='post',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Export'],
-        operation_summary='Create new export snapshot',
-        x_fern_sdk_group_name=['projects', 'exports'],
-        x_fern_sdk_method_name='create',
-        x_fern_audiences=['public'],
-        operation_description="""
+        summary='Create new export snapshot',
+        description="""
         Create a new export request to start a background task and generate an export file for a specific project by ID.
         """,
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='A unique integer value identifying this project.',
             )
         ],
@@ -361,26 +344,23 @@ class ExportListAPI(generics.ListCreateAPIView):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Export'],
-        x_fern_sdk_group_name=['projects', 'exports'],
-        x_fern_sdk_method_name='get',
-        x_fern_audiences=['public'],
-        operation_summary='Get export snapshot by ID',
-        operation_description="""
+        summary='Get export snapshot by ID',
+        description="""
         Retrieve information about an export file by export ID for a specific project.
         """,
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='A unique integer value identifying this project.',
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='export_pk',
-                type=openapi.TYPE_STRING,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.STR,
+                location='path',
                 description='Primary key identifying the export file.',
             ),
         ],
@@ -388,26 +368,23 @@ class ExportListAPI(generics.ListCreateAPIView):
 )
 @method_decorator(
     name='delete',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Export'],
-        x_fern_sdk_group_name=['projects', 'exports'],
-        x_fern_sdk_method_name='delete',
-        x_fern_audiences=['public'],
-        operation_summary='Delete export snapshot',
-        operation_description="""
+        summary='Delete export snapshot',
+        description="""
         Delete an export file by specified export ID.
         """,
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='A unique integer value identifying this project.',
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='export_pk',
-                type=openapi.TYPE_STRING,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.STR,
+                location='path',
                 description='Primary key identifying the export file.',
             ),
         ],
@@ -455,13 +432,10 @@ class ExportDetailAPI(generics.RetrieveDestroyAPIView):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Export'],
-        x_fern_sdk_group_name=['projects', 'exports'],
-        x_fern_sdk_method_name='download',
-        x_fern_audiences=['public'],
-        operation_summary='Download export snapshot as file in specified format',
-        operation_description="""
+        summary='Download export snapshot as file in specified format',
+        description="""
         Download an export file in the specified format for a specific project. Specify the project ID with the `id`
         parameter in the path and the ID of the export file you want to download using the `export_pk` parameter
         in the path.
@@ -469,23 +443,23 @@ class ExportDetailAPI(generics.RetrieveDestroyAPIView):
         Get the `export_pk` from the response of the request to [Create new export](/api#operation/api_projects_exports_create)
         or after [listing export files](/api#operation/api_projects_exports_list).
         """,
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 name='exportType',
-                type=openapi.TYPE_STRING,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.STR,
+                location='query',
                 description='Selected export format',
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='A unique integer value identifying this project.',
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='export_pk',
-                type=openapi.TYPE_STRING,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.STR,
+                location='path',
                 description='Primary key identifying the export file.',
             ),
         ],
@@ -608,30 +582,27 @@ def set_convert_background_failure(job, connection, type, value, traceback_obj):
     ConvertedFormat.objects.filter(id=convert_id).update(status=Export.Status.FAILED, traceback=trace)
 
 
-@method_decorator(name='get', decorator=swagger_auto_schema(auto_schema=None))
+@method_decorator(name='get', decorator=extend_schema(exclude=True))
 @method_decorator(
     name='post',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Export'],
-        x_fern_sdk_group_name=['projects', 'exports'],
-        x_fern_sdk_method_name='convert',
-        x_fern_audiences=['public'],
-        operation_summary='Export conversion',
-        operation_description="""
+        summary='Export conversion',
+        description="""
         Convert export snapshot to selected format
         """,
-        request_body=ExportConvertSerializer,
-        manual_parameters=[
-            openapi.Parameter(
+        request=ExportConvertSerializer,
+        parameters=[
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='A unique integer value identifying this project.',
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='export_pk',
-                type=openapi.TYPE_STRING,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.STR,
+                location='path',
                 description='Primary key identifying the export file.',
             ),
         ],

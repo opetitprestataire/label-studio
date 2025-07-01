@@ -6,7 +6,6 @@ import mimetypes
 import time
 from urllib.parse import unquote, urlparse
 
-import drf_yasg.openapi as openapi
 from core.decorators import override_report_only_csp
 from core.feature_flags import flag_set
 from core.permissions import ViewClassPermission, all_permissions
@@ -18,7 +17,8 @@ from django.conf import settings
 from django.db import transaction
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from projects.models import Project, ProjectImport, ProjectReimport
 from ranged_fileresponse import RangedFileResponse
 from rest_framework import generics, status
@@ -52,93 +52,67 @@ logger = logging.getLogger(__name__)
 ProjectImportPermission = load_func(settings.PROJECT_IMPORT_PERMISSION)
 
 task_create_response_scheme = {
-    201: openapi.Response(
+    201: OpenApiResponse(
         description='Tasks successfully imported',
-        schema=openapi.Schema(
-            title='Task creation response',
-            description='Task creation response',
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'task_count': openapi.Schema(
-                    title='task_count', description='Number of tasks added', type=openapi.TYPE_INTEGER
-                ),
-                'annotation_count': openapi.Schema(
-                    title='annotation_count', description='Number of annotations added', type=openapi.TYPE_INTEGER
-                ),
-                'predictions_count': openapi.Schema(
-                    title='predictions_count', description='Number of predictions added', type=openapi.TYPE_INTEGER
-                ),
-                'duration': openapi.Schema(
-                    title='duration', description='Time in seconds to create', type=openapi.TYPE_NUMBER
-                ),
-                'file_upload_ids': openapi.Schema(
-                    title='file_upload_ids',
-                    description='Database IDs of uploaded files',
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Schema(title='File Upload IDs', type=openapi.TYPE_INTEGER),
-                ),
-                'could_be_tasks_list': openapi.Schema(
-                    title='could_be_tasks_list',
-                    description='Whether uploaded files can contain lists of tasks, like CSV/TSV files',
-                    type=openapi.TYPE_BOOLEAN,
-                ),
-                'found_formats': openapi.Schema(
-                    title='found_formats',
-                    description='The list of found file formats',
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Schema(title='File format', type=openapi.TYPE_STRING),
-                ),
-                'data_columns': openapi.Schema(
-                    title='data_columns',
-                    description='The list of found data columns',
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Schema(title='Data column name', type=openapi.TYPE_STRING),
-                ),
+        response={
+            'type': 'object',
+            'properties': {
+                'task_count': OpenApiTypes.INT,
+                'annotation_count': OpenApiTypes.INT,
+                'predictions_count': OpenApiTypes.INT,
+                'duration': OpenApiTypes.NUMBER,
+                'file_upload_ids': {
+                    'type': 'array',
+                    'items': OpenApiTypes.INT,
+                },
+                'could_be_tasks_list': OpenApiTypes.BOOL,
+                'found_formats': {
+                    'type': 'array',
+                    'items': OpenApiTypes.STR,
+                },
+                'data_columns': {
+                    'type': 'array',
+                    'items': OpenApiTypes.STR,
+                },
             },
-        ),
+        },
     ),
-    400: openapi.Schema(
-        title='Incorrect task data', description='String with error description', type=openapi.TYPE_STRING
-    ),
+    400: OpenApiTypes.STR,
 }
 
 
 @method_decorator(
     name='post',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Import'],
-        x_fern_sdk_group_name='projects',
-        x_fern_sdk_method_name='import_tasks',
-        x_fern_audiences=['public'],
         responses=task_create_response_scheme,
-        manual_parameters=[
-            openapi.Parameter(
+        parameters=[
+            OpenApiParameter(
                 name='id',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_PATH,
+                type=OpenApiTypes.INT,
+                location='path',
                 description='A unique integer value identifying this project.',
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='commit_to_project',
-                type=openapi.TYPE_BOOLEAN,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.BOOL,
+                location='query',
                 description='Set to "true" to immediately commit tasks to the project.',
                 default=True,
                 required=False,
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='return_task_ids',
-                type=openapi.TYPE_BOOLEAN,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.BOOL,
+                location='query',
                 description='Set to "true" to return task IDs in the response.',
                 default=False,
                 required=False,
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='preannotated_from_fields',
-                type=openapi.TYPE_ARRAY,
-                items=openapi.Schema(type=openapi.TYPE_STRING),
-                in_=openapi.IN_QUERY,
+                many=True,
+                location='query',
                 description='List of fields to preannotate from the task data. For example, if you provide a list of'
                 ' `{"text": "text", "prediction": "label"}` items in the request, the system will create '
                 'a task with the `text` field and a prediction with the `label` field when '
@@ -147,8 +121,8 @@ task_create_response_scheme = {
                 required=False,
             ),
         ],
-        operation_summary='Import tasks',
-        operation_description="""
+        summary='Import tasks',
+        description="""
             Import data as labeling tasks in bulk using this API endpoint. You can use this API endpoint to import multiple tasks.
             One POST request is limited at 250K tasks and 200 MB.
 
@@ -202,35 +176,29 @@ task_create_response_scheme = {
         """.format(
             host=(settings.HOSTNAME or 'https://localhost:8080')
         ),
-        request_body=openapi.Schema(
-            title='tasks',
-            description='List of tasks to import',
-            type=openapi.TYPE_ARRAY,
-            items=openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                # TODO: this example doesn't work - perhaps we need to migrate to drf-spectacular for "anyOf" support
-                # also fern will change to at least provide a list of examples FER-1969
-                # right now we can only rely on documenation examples
-                # properties={
-                #     'data': openapi.Schema(type=openapi.TYPE_OBJECT, description='Data of the task'),
-                #     'annotations': openapi.Schema(
-                #         type=openapi.TYPE_ARRAY,
-                #         items=annotation_request_schema,
-                #         description='Annotations for this task',
-                #     ),
-                #     'predictions': openapi.Schema(
-                #         type=openapi.TYPE_ARRAY,
-                #         items=prediction_request_schema,
-                #         description='Predictions for this task',
-                #     )
-                # },
-                # example={
-                #     'data': {'image': 'http://example.com/image.jpg'},
-                #     'annotations': [annotation_response_example],
-                #     'predictions': [prediction_response_example]
-                # }
-            ),
-        ),
+        request={
+            'type': 'array',
+            'items': OpenApiTypes.OBJECT,
+            # TODO: this example doesn't work - perhaps we need to migrate to drf-spectacular for "anyOf" support
+            # also fern will change to at least provide a list of examples FER-1969
+            # right now we can only rely on documenation examples
+            # properties={
+            #     'data': openapi.Schema(type=OpenApiTypes.OBJECT, description='Data of the task'),
+            #     'annotations': openapi.Schema(
+            #         many=True,
+            #         description='Annotations for this task',
+            #     ),
+            #     'predictions': openapi.Schema(
+            #         many=True,
+            #         description='Predictions for this task',
+            #     )
+            # },
+            # example={
+            #     'data': {'image': 'http://example.com/image.jpg'},
+            #     'annotations': [annotation_response_example],
+            #     'predictions': [prediction_response_example]
+            # }
+        },
     ),
 )
 # Import
@@ -530,10 +498,10 @@ class ReImportAPI(ImportAPI):
         else:
             return self.sync_reimport(project, file_upload_ids, files_as_tasks_list)
 
-    @swagger_auto_schema(
-        auto_schema=None,
-        operation_summary='Re-import tasks',
-        operation_description="""
+    @extend_schema(
+        exclude=True,
+        summary='Re-import tasks',
+        description="""
         Re-import tasks using the specified file upload IDs for a specific project.
         """,
     )
@@ -543,41 +511,34 @@ class ReImportAPI(ImportAPI):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Import'],
-        x_fern_sdk_group_name=['files'],
-        x_fern_sdk_method_name='list',
-        x_fern_audiences=['public'],
-        operation_summary='Get files list',
-        manual_parameters=[
-            openapi.Parameter(
+        summary='Get files list',
+        parameters=[
+            OpenApiParameter(
                 name='all',
-                type=openapi.TYPE_BOOLEAN,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.BOOL,
+                location='query',
                 description='Set to "true" if you want to retrieve all file uploads',
             ),
-            openapi.Parameter(
+            OpenApiParameter(
                 name='ids',
-                type=openapi.TYPE_ARRAY,
-                in_=openapi.IN_QUERY,
-                items=openapi.Schema(title='File upload ID', type=openapi.TYPE_INTEGER),
+                many=True,
+                location='query',
                 description='Specify the list of file upload IDs to retrieve, e.g. ids=[1,2,3]',
             ),
         ],
-        operation_description="""
+        description="""
         Retrieve the list of uploaded files used to create labeling tasks for a specific project.
         """,
     ),
 )
 @method_decorator(
     name='delete',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Import'],
-        x_fern_sdk_group_name=['files'],
-        x_fern_sdk_method_name='delete_many',
-        x_fern_audiences=['public'],
-        operation_summary='Delete files',
-        operation_description="""
+        summary='Delete files',
+        description="""
         Delete uploaded files for a specific project.
         """,
     ),
@@ -620,36 +581,27 @@ class FileUploadListAPI(generics.mixins.ListModelMixin, generics.mixins.DestroyM
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Import'],
-        x_fern_sdk_group_name=['files'],
-        x_fern_sdk_method_name='get',
-        x_fern_audiences=['public'],
-        operation_summary='Get file upload',
-        operation_description='Retrieve details about a specific uploaded file.',
+        summary='Get file upload',
+        description='Retrieve details about a specific uploaded file.',
     ),
 )
 @method_decorator(
     name='patch',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Import'],
-        x_fern_sdk_group_name=['files'],
-        x_fern_sdk_method_name='update',
-        x_fern_audiences=['public'],
-        operation_summary='Update file upload',
-        operation_description='Update a specific uploaded file.',
-        request_body=FileUploadSerializer,
+        summary='Update file upload',
+        description='Update a specific uploaded file.',
+        request=FileUploadSerializer,
     ),
 )
 @method_decorator(
     name='delete',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Import'],
-        x_fern_sdk_group_name=['files'],
-        x_fern_sdk_method_name='delete',
-        x_fern_audiences=['public'],
-        operation_summary='Delete file upload',
-        operation_description='Delete a specific uploaded file.',
+        summary='Delete file upload',
+        description='Delete a specific uploaded file.',
     ),
 )
 class FileUploadAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -667,7 +619,7 @@ class FileUploadAPI(generics.RetrieveUpdateDestroyAPIView):
     def delete(self, *args, **kwargs):
         return super(FileUploadAPI, self).delete(*args, **kwargs)
 
-    @swagger_auto_schema(auto_schema=None)
+    @extend_schema(exclude=True)
     def put(self, *args, **kwargs):
         return super(FileUploadAPI, self).put(*args, **kwargs)
 
@@ -679,13 +631,10 @@ class UploadedFileResponse(generics.RetrieveAPIView):
 
     @override_report_only_csp
     @csp(SANDBOX=[])
-    @swagger_auto_schema(
+    @extend_schema(
         tags=['Import'],
-        x_fern_sdk_group_name=['files'],
-        x_fern_sdk_method_name='download',
-        x_fern_audiences=['public'],
-        operation_summary='Download file',
-        operation_description='Download a specific uploaded file.',
+        summary='Download file',
+        description='Download a specific uploaded file.',
     )
     def get(self, *args, **kwargs):
         request = self.request

@@ -205,7 +205,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'drf_yasg',
     'drf_spectacular',
     'corsheaders',
     'django_extensions',
@@ -266,7 +265,7 @@ REST_FRAMEWORK = {
     ],
     'EXCEPTION_HANDLER': 'core.utils.common.custom_exception_handler',
     'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',),
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    # 'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'PAGE_SIZE': 100,
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination'
@@ -365,38 +364,19 @@ RQ_QUEUES = {
 }
 
 # specify the list of the extensions that are allowed to be presented in auto generated OpenAPI schema
-# for example, by specifying in swagger_auto_schema(..., x_fern_sdk_group_name='projects') we can group endpoints
+# for example, by specifying in extend_schema(...) we can group endpoints
 # /api/projects/:
 #   get:
 #     x-fern-sdk-group-name: projects
 X_VENDOR_OPENAPI_EXTENSIONS = ['x-fern']
 
-# Swagger: automatic API documentation
-SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Token': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-            'description': 'The token (or API key) must be passed as a request header. '
-            'You can find your user token on the User Account page in Label Studio. Example: '
-            '<br><pre><code class="language-bash">'
-            'curl https://label-studio-host/api/projects -H "Authorization: Token [your-token]"'
-            '</code></pre>',
-        }
-    },
-    'APIS_SORTER': 'alpha',
-    'SUPPORTED_SUBMIT_METHODS': ['get', 'post', 'put', 'delete', 'patch'],
-    'OPERATIONS_SORTER': 'alpha',
-    'DEFAULT_AUTO_SCHEMA_CLASS': 'core.utils.openapi_extensions.XVendorExtensionsAutoSchema',
-    'DEFAULT_INFO': 'core.urls.open_api_info',
-}
+# Legacy SWAGGER_SETTINGS removed - using drf-spectacular instead
 
 # drf-spectacular settings for OpenAPI 3.0 schema generation
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Label Studio API',
     'DESCRIPTION': 'Label Studio API for data annotation and labeling',
-    'VERSION': '1.0.0',
+    'VERSION': '',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
     'SCHEMA_PATH_PREFIX': '/api/',
@@ -416,12 +396,19 @@ SPECTACULAR_SETTINGS = {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header',
-            'description': 'Token authentication. Example: "Token your-token-here"',
+            'description': 'The token (or API key) must be passed as a request header. '
+            'You can find your user token on the User Account page in Label Studio. Example: '
+            '<br><pre><code class="language-bash">'
+            'curl https://label-studio-host/api/projects -H "Authorization: Token [your-token]"'
+            '</code></pre>',
         }
     },
-    'EXTENSIONS': {
+    'EXTENSIONS_INFO': {
         'x-fern': True,
     },
+    # 'PREPROCESSING_HOOKS': [
+    #     'label_studio.core.utils.openapi_extensions.custom_preprocessing_hook',
+    # ],
 }
 
 SENTRY_DSN = get_env('SENTRY_DSN', None)

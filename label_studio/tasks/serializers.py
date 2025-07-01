@@ -9,7 +9,7 @@ from core.utils.common import load_func, retry_database_locked
 from core.utils.db import fast_first
 from django.conf import settings
 from django.db import IntegrityError, transaction
-from drf_yasg import openapi
+from drf_spectacular.types import OpenApiTypes
 from projects.models import Project
 from rest_flex_fields import FlexFieldsModelSerializer
 from rest_framework import generics, serializers
@@ -34,11 +34,11 @@ class PredictionQuerySerializer(serializers.Serializer):
 class PredictionResultField(serializers.JSONField):
     class Meta:
         swagger_schema_fields = {
-            'type': openapi.TYPE_ARRAY,
+            'type': 'array',
             'title': 'Prediction result list',
             'description': 'List of prediction results for the task',
             'items': {
-                'type': openapi.TYPE_OBJECT,
+                'type': OpenApiTypes.OBJECT,
                 'title': 'Prediction result items (regions)',
                 'description': 'List of predicted regions for the task',
             },
@@ -48,11 +48,11 @@ class PredictionResultField(serializers.JSONField):
 class AnnotationResultField(serializers.JSONField):
     class Meta:
         swagger_schema_fields = {
-            'type': openapi.TYPE_ARRAY,
+            'type': 'array',
             'title': 'Annotation result list',
             'description': 'List of annotation results for the task',
             'items': {
-                'type': openapi.TYPE_OBJECT,
+                'type': OpenApiTypes.OBJECT,
                 'title': 'Annotation result items (regions)',
                 'description': 'List of annotated regions for the task',
             },
@@ -120,7 +120,7 @@ class AnnotationSerializer(FlexFieldsModelSerializer):
 
         return data
 
-    def get_created_username(self, annotation):
+    def get_created_username(self, annotation) -> str:
         user = annotation.completed_by
         if not user:
             return ''

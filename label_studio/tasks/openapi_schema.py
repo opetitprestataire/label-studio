@@ -1,4 +1,4 @@
-import drf_yasg.openapi as openapi
+from drf_spectacular.types import OpenApiTypes
 
 result_example = [
     {
@@ -87,86 +87,51 @@ annotation_response_example = {
 
 prediction_response_example = {'id': 1, 'task': 1, 'result': result_example, 'score': 0.95, 'model_version': 'yolo-v8'}
 
-task_request_schema = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties={
-        'data': openapi.Schema(
-            title='Task data',
-            description='Task data dictionary with arbitrary keys and values',
-            type=openapi.TYPE_OBJECT,
-            example={'image': 'https://example.com/image.jpg', 'text': 'Hello, world!'},
-        ),
-        'project': openapi.Schema(
-            type=openapi.TYPE_INTEGER,
-            description='Project ID',
-        ),
+task_request_schema = {
+    'type': 'object',
+    'properties': {
+        'data': OpenApiTypes.OBJECT,
+        'project': OpenApiTypes.INT,
     },
-    example={
+    'example': {
         'data': {'image': 'https://example.com/image.jpg', 'text': 'Hello, world!'},
         'project': 1,
     },
-)
+}
 
-annotation_request_schema = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties={
-        'result': openapi.Schema(
-            type=openapi.TYPE_ARRAY,
-            items=openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-            ),
-            description='Labeling result in JSON format. Read more about the format in [the Label Studio documentation.](https://labelstud.io/guide/task_format)',
-            example=result_example,
-        ),
-        'task': openapi.Schema(type=openapi.TYPE_INTEGER, description='Corresponding task for this annotation'),
-        'project': openapi.Schema(type=openapi.TYPE_INTEGER, description='Project ID for this annotation'),
-        'completed_by': openapi.Schema(
-            type=openapi.TYPE_INTEGER, description='User ID of the person who created this annotation'
-        ),
-        'updated_by': openapi.Schema(type=openapi.TYPE_INTEGER, description='Last user who updated this annotation'),
-        'was_cancelled': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='User skipped the task'),
-        'ground_truth': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='This annotation is a Ground Truth'),
-        'lead_time': openapi.Schema(
-            type=openapi.TYPE_NUMBER,
-            description='How much time it took to annotate the task (in seconds)',
-            example=100.5,
-        ),
+annotation_request_schema = {
+    'type': 'object',
+    'properties': {
+        'result': {
+            'type': 'array',
+            'items': OpenApiTypes.OBJECT,
+        },
+        'task': OpenApiTypes.INT,
+        'project': OpenApiTypes.INT,
+        'completed_by': OpenApiTypes.INT,
+        'updated_by': OpenApiTypes.INT,
+        'was_cancelled': OpenApiTypes.BOOL,
+        'ground_truth': OpenApiTypes.BOOL,
+        'lead_time': OpenApiTypes.NUMBER,
     },
-    required=[],
-    example={
+    'required': [],
+    'example': {
         'result': result_example,
         'was_cancelled': False,
         'ground_truth': True,
     },
-)
+}
 
-prediction_request_schema = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties={
-        'task': openapi.Schema(
-            type=openapi.TYPE_INTEGER,
-            description='Task ID for which the prediction is created',
-        ),
-        'result': openapi.Schema(
-            type=openapi.TYPE_ARRAY,
-            items=openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-            ),
-            description='Prediction result in JSON format. Read more about the format in [the Label Studio documentation.](https://labelstud.io/guide/predictions)',
-            example=result_example,
-        ),
-        'score': openapi.Schema(
-            type=openapi.TYPE_NUMBER,
-            description='Prediction score. Can be used in Data Manager to sort task by model confidence. '
-            'Task with the lowest score will be shown first.',
-            example=0.95,
-        ),
-        'model_version': openapi.Schema(
-            type=openapi.TYPE_STRING,
-            description='Model version - tag for predictions that can be used to filter tasks in Data Manager, as well as '
-            'select specific model version for showing preannotations in the labeling interface',
-            example='yolo-v8',
-        ),
+prediction_request_schema = {
+    'type': 'object',
+    'properties': {
+        'task': OpenApiTypes.INT,
+        'result': {
+            'type': 'array',
+            'items': OpenApiTypes.OBJECT,
+        },
+        'score': OpenApiTypes.NUMBER,
+        'model_version': OpenApiTypes.STR,
     },
-    example={'result': result_example, 'score': 0.95, 'model_version': 'yolo-v8'},
-)
+    'example': {'result': result_example, 'score': 0.95, 'model_version': 'yolo-v8'},
+}

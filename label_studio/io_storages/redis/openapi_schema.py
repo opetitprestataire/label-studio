@@ -1,65 +1,55 @@
-from drf_yasg import openapi
+from drf_spectacular.types import OpenApiTypes
 
 _common_redis_storage_schema_properties = {
-    'title': openapi.Schema(type=openapi.TYPE_STRING, description='Storage title'),
-    'description': openapi.Schema(type=openapi.TYPE_STRING, description='Storage description'),
-    'project': openapi.Schema(type=openapi.TYPE_INTEGER, description='Project ID'),
-    'path': openapi.Schema(type=openapi.TYPE_STRING, description='Storage prefix (optional)'),
-    'host': openapi.Schema(type=openapi.TYPE_STRING, description='Server Host IP (optional)'),
-    'port': openapi.Schema(type=openapi.TYPE_STRING, description='Server Port (optional)'),
-    'password': openapi.Schema(type=openapi.TYPE_STRING, description='Server Password (optional)'),
+    'title': OpenApiTypes.STR,
+    'description': OpenApiTypes.STR,
+    'project': OpenApiTypes.INT,
+    'path': OpenApiTypes.STR,
+    'host': OpenApiTypes.STR,
+    'port': OpenApiTypes.STR,
+    'password': OpenApiTypes.STR,
 }
 
 
-_redis_import_storage_schema = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties=dict(
-        regex_filter=openapi.Schema(
-            type=openapi.TYPE_STRING,
-            description='Cloud storage regex for filtering objects. '
-            'You must specify it otherwise no objects will be imported.',
-        ),
-        use_blob_urls=openapi.Schema(
-            type=openapi.TYPE_BOOLEAN,
-            description='Interpret objects as BLOBs and generate URLs. For example, if your bucket contains images, '
-            'you can use this option to generate URLs for these images. '
-            'If set to False, it will read the content of the file and load it into Label Studio.',
-            default=False,
-        ),
-        **_common_redis_storage_schema_properties,
-    ),
-    required=[],
+_redis_import_storage_properties = dict(
+    regex_filter=OpenApiTypes.STR,
+    use_blob_urls=OpenApiTypes.BOOL,
+    **_common_redis_storage_schema_properties,
 )
 
-_redis_import_storage_schema_with_id = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties=dict(
-        id=openapi.Schema(
-            type=openapi.TYPE_INTEGER, description='Storage ID. If set, storage with specified ID will be updated'
-        ),
-        **_redis_import_storage_schema.properties,
+_redis_import_storage_schema = {
+    'type': 'object',
+    'properties': _redis_import_storage_properties,
+    'required': [],
+}
+
+_redis_import_storage_schema_with_id = {
+    'type': 'object',
+    'properties': dict(
+        id=OpenApiTypes.INT,
+        **_redis_import_storage_properties,
     ),
-    required=[],
-)
+    'required': [],
+}
 
 
-_redis_export_storage_schema = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties=dict(
-        db=openapi.Schema(type=openapi.TYPE_INTEGER, description='Database ID of database to use'),
-        can_delete_objects=openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Deletion from storage enabled.'),
-        **_common_redis_storage_schema_properties,
-    ),
-    required=[],
+_redis_export_storage_properties = dict(
+    db=OpenApiTypes.INT,
+    can_delete_objects=OpenApiTypes.BOOL,
+    **_common_redis_storage_schema_properties,
 )
 
-_redis_export_storage_schema_with_id = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties=dict(
-        id=openapi.Schema(
-            type=openapi.TYPE_INTEGER, description='Storage ID. If set, storage with specified ID will be updated'
-        ),
-        **_redis_export_storage_schema.properties,
+_redis_export_storage_schema = {
+    'type': 'object',
+    'properties': _redis_export_storage_properties,
+    'required': [],
+}
+
+_redis_export_storage_schema_with_id = {
+    'type': 'object',
+    'properties': dict(
+        id=OpenApiTypes.INT,
+        **_redis_export_storage_properties,
     ),
-    required=[],
-)
+    'required': [],
+}
