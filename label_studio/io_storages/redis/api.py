@@ -40,6 +40,11 @@ from .openapi_schema import (
             ),
         ],
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 'redis'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -49,6 +54,11 @@ from .openapi_schema import (
         summary='Create import storage',
         description='Create a new Redis import storage connection.',
         request=_redis_import_storage_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 'redis'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class RedisImportStorageListAPI(ImportStorageListAPI):
@@ -63,6 +73,11 @@ class RedisImportStorageListAPI(ImportStorageListAPI):
         summary='Get import storage',
         description='Get a specific Redis import storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 'redis'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -72,6 +87,11 @@ class RedisImportStorageListAPI(ImportStorageListAPI):
         summary='Update import storage',
         description='Update a specific Redis import storage connection.',
         request=_redis_import_storage_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 'redis'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -81,6 +101,11 @@ class RedisImportStorageListAPI(ImportStorageListAPI):
         summary='Delete import storage',
         description='Delete a specific Redis import storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 'redis'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class RedisImportStorageDetailAPI(ImportStorageDetailAPI):
@@ -93,7 +118,7 @@ class RedisImportStorageDetailAPI(ImportStorageDetailAPI):
     decorator=extend_schema(
         tags=['Storage: Redis'],
         summary='Sync import storage',
-        description='Sync tasks from a specific Redis import storage connection.',
+        description='Sync tasks from a Redis import storage connection.',
         parameters=[
             OpenApiParameter(
                 name='id',
@@ -103,6 +128,11 @@ class RedisImportStorageDetailAPI(ImportStorageDetailAPI):
             ),
         ],
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 'redis'],
+            'x-fern-sdk-method-name': 'sync',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class RedisImportStorageSyncAPI(ExportStorageSyncAPI):
@@ -114,8 +144,13 @@ class RedisImportStorageSyncAPI(ExportStorageSyncAPI):
     decorator=extend_schema(
         tags=['Storage: Redis'],
         summary='Sync export storage',
-        description='Sync tasks from a specific Redis export storage connection.',
+        description='Sync tasks from a Redis export storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 'redis'],
+            'x-fern-sdk-method-name': 'sync',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class RedisExportStorageSyncAPI(ExportStorageSyncAPI):
@@ -130,6 +165,11 @@ class RedisExportStorageSyncAPI(ExportStorageSyncAPI):
         description='Validate a specific Redis import storage connection.',
         request=_redis_import_storage_schema_with_id,
         responses={200: OpenApiResponse(description='Validation successful')},
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 'redis'],
+            'x-fern-sdk-method-name': 'validate',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class RedisImportStorageValidateAPI(ImportStorageValidateAPI):
@@ -144,6 +184,11 @@ class RedisImportStorageValidateAPI(ImportStorageValidateAPI):
         description='Validate a specific Redis export storage connection.',
         request=_redis_export_storage_schema_with_id,
         responses={200: OpenApiResponse(description='Validation successful')},
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 'redis'],
+            'x-fern-sdk-method-name': 'validate',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class RedisExportStorageValidateAPI(ExportStorageValidateAPI):
@@ -164,7 +209,11 @@ class RedisExportStorageValidateAPI(ExportStorageValidateAPI):
                 description='Project ID',
             ),
         ],
-        request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 'redis'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -174,6 +223,11 @@ class RedisExportStorageValidateAPI(ExportStorageValidateAPI):
         summary='Create export storage',
         description='Create a new Redis export storage connection to store annotations.',
         request=_redis_export_storage_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 'redis'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class RedisExportStorageListAPI(ExportStorageListAPI):
@@ -188,6 +242,11 @@ class RedisExportStorageListAPI(ExportStorageListAPI):
         summary='Get export storage',
         description='Get a specific Redis export storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 'redis'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -197,6 +256,11 @@ class RedisExportStorageListAPI(ExportStorageListAPI):
         summary='Update export storage',
         description='Update a specific Redis export storage connection.',
         request=_redis_export_storage_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 'redis'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -206,6 +270,11 @@ class RedisExportStorageListAPI(ExportStorageListAPI):
         summary='Delete export storage',
         description='Delete a specific Redis export storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 'redis'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class RedisExportStorageDetailAPI(ExportStorageDetailAPI):

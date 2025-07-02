@@ -29,6 +29,11 @@ logger = logging.getLogger(__name__)
         tags=['Labels'],
         summary='Create labels',
         description='Add labels to your project without updating the labeling configuration.',
+        extensions={
+            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(
@@ -37,6 +42,11 @@ logger = logging.getLogger(__name__)
         tags=['Labels'],
         summary='Remove labels',
         description='Remove labels from your project without updating the labeling configuration.',
+        extensions={
+            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(
@@ -45,6 +55,11 @@ logger = logging.getLogger(__name__)
         tags=['Labels'],
         summary='Update labels',
         description='Update labels used for your project without updating the labeling configuration.',
+        extensions={
+            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(
@@ -55,6 +70,11 @@ logger = logging.getLogger(__name__)
         description="""
         Retrieve a specific custom label used for your project by its ID.
         """,
+        extensions={
+            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(
@@ -63,6 +83,11 @@ logger = logging.getLogger(__name__)
         tags=['Labels'],
         summary='List labels',
         description='List all custom labels added to your project separately from the labeling configuration.',
+        extensions={
+            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(name='update', decorator=extend_schema(exclude=True))
@@ -98,47 +123,72 @@ class LabelAPI(viewsets.ModelViewSet):
 @method_decorator(
     name='create',
     decorator=extend_schema(
-        tags=['Labels', 'labels'],
+        tags=['Labels'],
         summary='Create label links',
         description='Create label links to link new custom labels to your project labeling configuration.',
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'labels'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(
     name='destroy',
     decorator=extend_schema(
-        tags=['Labels', 'labels'],
+        tags=['Labels'],
         summary='Remove label link',
         description="""
         Remove a label link that links custom labels to your project labeling configuration. If you remove a label link,
         the label stops being available for the project it was linked to. You can add a new label link at any time. 
         """,
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'labels'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(
     name='partial_update',
     decorator=extend_schema(
-        tags=['Labels', 'labels'],
+        tags=['Labels'],
         summary='Update label link',
         description="""
         Update a label link that links custom labels to a project labeling configuration, for example if the fromName,  
         toName, or name parameters for a tag in the labeling configuration change. 
         """,
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'labels'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(
     name='retrieve',
     decorator=extend_schema(
-        tags=['Labels', 'labels'],
+        tags=['Labels'],
         summary='Get label link',
         description='Get label links for a specific project configuration. ',
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'labels'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(
     name='list',
     decorator=extend_schema(
-        tags=['Labels', 'labels'],
+        tags=['Labels'],
         summary='List label links',
         description='List label links for a specific label and project.',
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'labels'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 @method_decorator(name='update', decorator=extend_schema(exclude=True))
@@ -180,11 +230,16 @@ class LabelLinkAPI(viewsets.ModelViewSet):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Labels', 'labels'],
+        tags=['Labels'],
         summary='Bulk update labels',
         description="""
         If you want to update the labels in saved annotations, use this endpoint.
         """,
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'labels'],
+            'x-fern-sdk-method-name': 'update_many',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 class LabelBulkUpdateAPI(views.APIView):

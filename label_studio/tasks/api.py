@@ -66,6 +66,11 @@ logger = logging.getLogger(__name__)
                 examples=[OpenApiExample(name='response', value=task_response_example, media_type='application/json')],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -140,6 +145,11 @@ logger = logging.getLogger(__name__)
                 },
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class TaskListAPI(DMTaskListAPI):
@@ -192,6 +202,11 @@ class TaskListAPI(DMTaskListAPI):
                 ],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -211,6 +226,11 @@ class TaskListAPI(DMTaskListAPI):
                 examples=[OpenApiExample(name='response', value=task_response_example, media_type='application/json')],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -223,6 +243,11 @@ class TaskListAPI(DMTaskListAPI):
             OpenApiParameter(name='id', type=OpenApiTypes.STR, location='path', description='Task ID'),
         ],
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -337,6 +362,11 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
                 ],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['annotations'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -355,6 +385,11 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
                 ],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['annotations'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -364,6 +399,11 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
         summary='Delete annotation',
         description="Delete an annotation. This action can't be undone!",
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['annotations'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class AnnotationAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -435,6 +475,11 @@ class AnnotationAPI(generics.RetrieveUpdateDestroyAPIView):
                 ],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['tasks', 'annotations'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -470,6 +515,11 @@ class AnnotationAPI(generics.RetrieveUpdateDestroyAPIView):
                     OpenApiExample(name='response', value=annotation_response_example, media_type='application/json')
                 ],
             )
+        },
+        extensions={
+            'x-fern-sdk-group-name': ['tasks', 'annotations'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
         },
     ),
 )
@@ -635,6 +685,11 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
                 ],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -652,6 +707,11 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
                     OpenApiExample(name='response', value=prediction_response_example, media_type='application/json')
                 ],
             )
+        },
+        extensions={
+            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
         },
     ),
 )
@@ -674,6 +734,11 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
                 ],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -694,6 +759,9 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
                     OpenApiExample(name='response', value=prediction_response_example, media_type='application/json')
                 ],
             )
+        },
+        extensions={
+            'x-fern-audiences': ['internal'],
         },
     ),
 )
@@ -716,6 +784,11 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
                 ],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -728,6 +801,11 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
             OpenApiParameter(name='id', type=OpenApiTypes.INT, location='path', description='Prediction ID'),
         ],
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class PredictionAPI(viewsets.ModelViewSet):
@@ -747,6 +825,9 @@ class PredictionAPI(viewsets.ModelViewSet):
         tags=['Annotations'],
         summary='Convert annotation to draft',
         description='Convert annotation to draft',
+        extensions={
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 class AnnotationConvertAPI(generics.RetrieveAPIView):

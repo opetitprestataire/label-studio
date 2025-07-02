@@ -48,6 +48,11 @@ _user_schema = {
             OpenApiParameter(name='id', type=OpenApiTypes.INT, location='path', description='User ID'),
         ],
         request=UserSerializer,
+        extensions={
+            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -56,6 +61,11 @@ _user_schema = {
         tags=['Users'],
         summary='List users',
         description='List the users that exist on the Label Studio server.',
+        extensions={
+            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -66,6 +76,11 @@ _user_schema = {
         description='Create a user in Label Studio.',
         request=_user_schema,
         responses={201: UserSerializer},
+        extensions={
+            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -79,6 +94,11 @@ _user_schema = {
         ],
         request=None,
         responses={200: UserSerializer},
+        extensions={
+            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -94,6 +114,11 @@ _user_schema = {
         ],
         request=_user_schema,
         responses={200: UserSerializer},
+        extensions={
+            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -106,6 +131,11 @@ _user_schema = {
             OpenApiParameter(name='id', type=OpenApiTypes.INT, location='path', description='User ID'),
         ],
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class UserAPI(viewsets.ModelViewSet):
@@ -202,6 +232,11 @@ class UserAPI(viewsets.ModelViewSet):
                 },
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-method-name': 'reset_token',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class UserResetTokenAPI(APIView):
@@ -232,6 +267,11 @@ class UserResetTokenAPI(APIView):
                 },
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-method-name': 'get_token',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class UserGetTokenAPI(APIView):
@@ -252,6 +292,11 @@ class UserGetTokenAPI(APIView):
         description='Retrieve details of the account that you are using to access the API.',
         request=None,
         responses={200: UserSerializer},
+        extensions={
+            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-method-name': 'whoami',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class UserWhoAmIAPI(generics.RetrieveAPIView):

@@ -35,6 +35,11 @@ class WebhookFilterSet(django_filters.FilterSet):
                 description='Project ID',
             ),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -43,6 +48,11 @@ class WebhookFilterSet(django_filters.FilterSet):
         tags=['Webhooks'],
         summary='Create a webhook',
         description='Create a webhook for your organization.',
+        extensions={
+            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class WebhookListAPI(generics.ListCreateAPIView):
@@ -71,6 +81,11 @@ class WebhookListAPI(generics.ListCreateAPIView):
     decorator=extend_schema(
         tags=['Webhooks'],
         summary='Get webhook info',
+        extensions={
+            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -79,6 +94,11 @@ class WebhookListAPI(generics.ListCreateAPIView):
         tags=['Webhooks'],
         summary='Save webhook info',
         request=WebhookSerializerForUpdate,
+        extensions={
+            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-method-name': 'replace',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -87,6 +107,11 @@ class WebhookListAPI(generics.ListCreateAPIView):
         tags=['Webhooks'],
         summary='Update webhook info',
         request=WebhookSerializerForUpdate,
+        extensions={
+            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -94,6 +119,11 @@ class WebhookListAPI(generics.ListCreateAPIView):
     decorator=extend_schema(
         tags=['Webhooks'],
         summary='Delete webhook info',
+        extensions={
+            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class WebhookAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -125,6 +155,11 @@ class WebhookAPI(generics.RetrieveUpdateDestroyAPIView):
                 type=OpenApiTypes.BOOL,
             )
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-method-name': 'get_info',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class WebhookInfoAPI(APIView):

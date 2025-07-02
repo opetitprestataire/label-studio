@@ -131,6 +131,11 @@ class ProjectFilterSet(FilterSet):
     """.format(
             settings.HOSTNAME or 'https://localhost:8080'
         ),
+        extensions={
+            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -149,6 +154,11 @@ class ProjectFilterSet(FilterSet):
             settings.HOSTNAME or 'https://localhost:8080'
         ),
         request=_project_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ProjectListAPI(generics.ListCreateAPIView):
@@ -203,6 +213,11 @@ class ProjectListAPI(generics.ListCreateAPIView):
         tags=['Projects'],
         summary="List project's counts",
         description='Returns a list of projects with their counts. For example, task_number which is the total task number in project',
+        extensions={
+            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-method-name': 'list_counts',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ProjectCountsListAPI(generics.ListAPIView):
@@ -288,6 +303,11 @@ class ProjectCountsListAPI(generics.ListAPIView):
                 ],
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -296,6 +316,11 @@ class ProjectCountsListAPI(generics.ListAPIView):
         tags=['Projects'],
         summary='Delete project',
         description='Delete a project by specified project ID.',
+        extensions={
+            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -305,6 +330,11 @@ class ProjectCountsListAPI(generics.ListAPIView):
         summary='Update project',
         description='Update the project settings for a specific project.',
         request=_project_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ProjectAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -423,6 +453,11 @@ class LabelStreamHistoryAPI(generics.RetrieveAPIView):
         description='Validate an arbitrary labeling configuration.',
         responses={204: 'Validation success'},
         request=ProjectLabelConfigSerializer,
+        extensions={
+            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-method-name': 'validate_config',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class LabelConfigValidateAPI(generics.CreateAPIView):
@@ -592,6 +627,11 @@ class ProjectReimportAPI(generics.RetrieveAPIView):
             ),
         ],
         responses={204: 'Tasks deleted'},
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'tasks'],
+            'x-fern-sdk-method-name': 'delete_all',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -616,6 +656,11 @@ class ProjectReimportAPI(generics.RetrieveAPIView):
             ),
         ]
         + paginator_help('tasks', 'Projects')['parameters'],
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'tasks'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ProjectTaskListAPI(GetParentObjectMixin, generics.ListCreateAPIView, generics.DestroyAPIView):

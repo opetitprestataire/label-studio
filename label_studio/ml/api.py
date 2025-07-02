@@ -52,6 +52,11 @@ _ml_backend_schema = {
             host=(settings.HOSTNAME or 'https://localhost:8080')
         ),
         request=_ml_backend_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -70,6 +75,11 @@ _ml_backend_schema = {
         parameters=[
             OpenApiParameter(name='project', type=OpenApiTypes.INT, location='query', description='Project ID'),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class MLBackendListAPI(generics.ListCreateAPIView):
@@ -120,6 +130,11 @@ class MLBackendListAPI(generics.ListCreateAPIView):
             host=(settings.HOSTNAME or 'https://localhost:8080')
         ),
         request=_ml_backend_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -136,6 +151,11 @@ class MLBackendListAPI(generics.ListCreateAPIView):
             host=(settings.HOSTNAME or 'https://localhost:8080')
         ),
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -152,6 +172,11 @@ class MLBackendListAPI(generics.ListCreateAPIView):
             host=(settings.HOSTNAME or 'https://localhost:8080')
         ),
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(name='put', decorator=extend_schema(exclude=True))
@@ -203,6 +228,11 @@ class MLBackendDetailAPI(generics.RetrieveUpdateDestroyAPIView):
                 response={'type': 'string'},
             ),
         },
+        extensions={
+            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-method-name': 'train',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class MLBackendTrainAPI(APIView):
@@ -239,6 +269,11 @@ class MLBackendTrainAPI(APIView):
                 description='Predicting error',
                 response={'type': 'string'},
             ),
+        },
+        extensions={
+            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-method-name': 'test_predict',
+            'x-fern-audiences': ['internal'],
         },
     ),
 )
@@ -300,6 +335,11 @@ class MLBackendPredictTestAPI(APIView):
         responses={
             200: OpenApiResponse(description='Interactive annotation has succeeded.'),
         },
+        extensions={
+            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-method-name': 'interactive_annotate',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class MLBackendInteractiveAnnotating(APIView):
@@ -353,6 +393,11 @@ class MLBackendInteractiveAnnotating(APIView):
         summary='Get model versions',
         description='Get available versions of the model.',
         responses={'200': 'List of available versions.'},
+        extensions={
+            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-method-name': 'get_versions',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class MLBackendVersionsAPI(generics.RetrieveAPIView):

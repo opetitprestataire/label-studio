@@ -204,6 +204,11 @@ task_create_response_scheme = {
             #     'predictions': [prediction_response_example]
             # }
         },
+        extensions={
+            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-method-name': 'import_tasks',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 # Import
@@ -536,6 +541,11 @@ class ReImportAPI(ImportAPI):
         description="""
         Retrieve the list of uploaded files used to create labeling tasks for a specific project.
         """,
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'file_uploads'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -546,42 +556,42 @@ class ReImportAPI(ImportAPI):
         description="""
         Delete uploaded files for a specific project.
         """,
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'file_uploads'],
+            'x-fern-sdk-method-name': 'delete_many',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class FileUploadListAPI(generics.mixins.ListModelMixin, generics.mixins.DestroyModelMixin, generics.GenericAPIView):
     parser_classes = (JSONParser, MultiPartParser, FormParser)
+    permission_required = all_permissions.projects_change
     serializer_class = FileUploadSerializer
-    permission_required = ViewClassPermission(
-        GET=all_permissions.projects_view,
-        DELETE=all_permissions.projects_change,
-    )
-    queryset = FileUpload.objects.all()
 
     def get_queryset(self):
-        project = generics.get_object_or_404(Project.objects.for_user(self.request.user), pk=self.kwargs.get('pk', 0))
-        if project.is_draft or bool_from_request(self.request.query_params, 'all', False):
-            # If project is in draft state, we return all uploaded files, ignoring queried ids
-            logger.debug(f'Return all uploaded files for draft project {project}')
-            return FileUpload.objects.filter(project_id=project.id, user=self.request.user)
-
-        # If requested in regular import, only queried IDs are returned to avoid showing previously imported
-        ids = json.loads(self.request.query_params.get('ids', '[]'))
-        logger.debug(f'File Upload IDs found: {ids}')
-        return FileUpload.objects.filter(project_id=project.id, id__in=ids, user=self.request.user)
+        project = generics.get_object_or_404(Project.objects.for_user(self.request.user), pk=self.kwargs['pk'])
+        file_upload_ids = self.request.query_params.getlist('ids', [])
+        all_flag = bool_from_request(self.request.query_params, 'all', False)
+        if all_flag:
+            return FileUpload.objects.filter(project_id=project.id)
+        else:
+            return FileUpload.objects.filter(project_id=project.id, id__in=file_upload_ids)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
         project = generics.get_object_or_404(Project.objects.for_user(self.request.user), pk=self.kwargs['pk'])
-        ids = self.request.data.get('file_upload_ids')
-        if ids is None:
-            deleted, _ = FileUpload.objects.filter(project=project).delete()
-        elif isinstance(ids, list):
-            deleted, _ = FileUpload.objects.filter(project=project, id__in=ids).delete()
-        else:
-            raise ValueError('"file_upload_ids" parameter must be a list of integers')
-        return Response({'deleted': deleted}, status=status.HTTP_200_OK)
+
+        # delete all tasks where file_upload_id in list
+        deleted_tasks = 0
+        for file_upload in queryset:
+            deleted_tasks += project.remove_tasks_by_file_uploads([file_upload.id])
+
+        # delete file uploads
+        queryset.delete()
+        return Response({'deleted_tasks': deleted_tasks}, status=status.HTTP_204_NO_CONTENT)
 
 
 @method_decorator(
@@ -590,6 +600,11 @@ class FileUploadListAPI(generics.mixins.ListModelMixin, generics.mixins.DestroyM
         tags=['Import'],
         summary='Get file upload',
         description='Retrieve details about a specific uploaded file.',
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'file_uploads'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -599,6 +614,11 @@ class FileUploadListAPI(generics.mixins.ListModelMixin, generics.mixins.DestroyM
         summary='Update file upload',
         description='Update a specific uploaded file.',
         request=FileUploadSerializer,
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'file_uploads'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -607,6 +627,11 @@ class FileUploadListAPI(generics.mixins.ListModelMixin, generics.mixins.DestroyM
         tags=['Import'],
         summary='Delete file upload',
         description='Delete a specific uploaded file.',
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'file_uploads'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class FileUploadAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -640,6 +665,11 @@ class UploadedFileResponse(generics.RetrieveAPIView):
         tags=['Import'],
         summary='Download file',
         description='Download a specific uploaded file.',
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'file_uploads'],
+            'x-fern-sdk-method-name': 'download',
+            'x-fern-audiences': ['public'],
+        },
     )
     def get(self, *args, **kwargs):
         request = self.request

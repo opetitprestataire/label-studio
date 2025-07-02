@@ -48,6 +48,11 @@ HasObjectPermission = load_func(settings.MEMBER_PERM)
         description="""
         Return a list of the organizations you've created or that you have access to.
         """,
+        extensions={
+            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class OrganizationListAPI(generics.ListCreateAPIView):
@@ -92,9 +97,14 @@ class OrganizationMemberListPagination(PageNumberPagination):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Organizations', 'members'],
+        tags=['Organizations'],
         summary='Get organization members list',
         description='Retrieve a list of the organization members and their IDs.',
+        extensions={
+            'x-fern-sdk-group-name': ['organizations', 'members'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class OrganizationMemberListAPI(generics.ListAPIView):
@@ -183,7 +193,7 @@ class OrganizationMemberListAPI(generics.ListAPIView):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Organizations', 'members'],
+        tags=['Organizations'],
         summary='Get organization member details',
         description='Get organization member details by user ID.',
         parameters=[
@@ -195,12 +205,17 @@ class OrganizationMemberListAPI(generics.ListAPIView):
             ),
         ],
         responses={200: OrganizationMemberSerializer()},
+        extensions={
+            'x-fern-sdk-group-name': ['organizations', 'members'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
     name='delete',
     decorator=extend_schema(
-        tags=['Organizations', 'members'],
+        tags=['Organizations'],
         summary='Soft delete an organization member',
         description='Soft delete a member from the organization.',
         parameters=[
@@ -215,6 +230,11 @@ class OrganizationMemberListAPI(generics.ListAPIView):
             204: 'Member deleted successfully.',
             405: 'User cannot soft delete self.',
             404: 'Member not found',
+        },
+        extensions={
+            'x-fern-sdk-group-name': ['organizations', 'members'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
         },
     ),
 )
@@ -272,8 +292,13 @@ class OrganizationMemberDetailAPI(GetParentObjectMixin, generics.RetrieveDestroy
     name='get',
     decorator=extend_schema(
         tags=['Organizations'],
-        summary=' Get organization settings',
+        summary='Get organization settings',
         description='Retrieve the settings for a specific organization by ID.',
+        extensions={
+            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -282,6 +307,11 @@ class OrganizationMemberDetailAPI(GetParentObjectMixin, generics.RetrieveDestroy
         tags=['Organizations'],
         summary='Update organization settings',
         description='Update the settings for a specific organization by ID.',
+        extensions={
+            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class OrganizationAPI(generics.RetrieveUpdateAPIView):
@@ -312,6 +342,11 @@ class OrganizationAPI(generics.RetrieveUpdateAPIView):
         summary='Get organization invite link',
         description='Get a link to use to invite a new member to an organization in Label Studio Enterprise.',
         responses={200: OrganizationInviteSerializer()},
+        extensions={
+            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-method-name': 'get_invite',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class OrganizationInviteAPI(generics.RetrieveAPIView):
@@ -336,6 +371,11 @@ class OrganizationInviteAPI(generics.RetrieveAPIView):
         summary='Reset organization token',
         description='Reset the token used in the invitation link to invite someone to an organization.',
         responses={200: OrganizationInviteSerializer()},
+        extensions={
+            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-method-name': 'reset_token',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class OrganizationResetTokenAPI(APIView):

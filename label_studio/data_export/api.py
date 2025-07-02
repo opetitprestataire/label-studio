@@ -61,6 +61,11 @@ logger = logging.getLogger(__name__)
                 },
             )
         },
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'exports'],
+            'x-fern-sdk-method-name': 'list_formats',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ExportFormatsListAPI(generics.RetrieveAPIView):
@@ -147,6 +152,11 @@ class ExportFormatsListAPI(generics.RetrieveAPIView):
                     'type': 'binary',
                 },
             )
+        },
+        extensions={
+            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-method-name': 'export',
+            'x-fern-audiences': ['public'],
         },
     ),
 )
@@ -273,6 +283,11 @@ class ProjectExportFilesAuthCheck(APIView):
                 description='A unique integer value identifying this project.',
             )
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'exports'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -291,6 +306,11 @@ class ProjectExportFilesAuthCheck(APIView):
                 description='A unique integer value identifying this project.',
             )
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'exports'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ExportListAPI(generics.ListCreateAPIView):
@@ -366,6 +386,11 @@ class ExportListAPI(generics.ListCreateAPIView):
                 description='Primary key identifying the export file.',
             ),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'exports'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -390,6 +415,11 @@ class ExportListAPI(generics.ListCreateAPIView):
                 description='Primary key identifying the export file.',
             ),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'exports'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ExportDetailAPI(generics.RetrieveDestroyAPIView):
@@ -465,6 +495,11 @@ class ExportDetailAPI(generics.RetrieveDestroyAPIView):
                 description='Primary key identifying the export file.',
             ),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'exports'],
+            'x-fern-sdk-method-name': 'download',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ExportDownloadAPI(generics.RetrieveAPIView):
@@ -608,6 +643,11 @@ def set_convert_background_failure(job, connection, type, value, traceback_obj):
                 description='Primary key identifying the export file.',
             ),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['projects', 'exports'],
+            'x-fern-sdk-method-name': 'convert',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ExportConvertAPI(generics.RetrieveAPIView):

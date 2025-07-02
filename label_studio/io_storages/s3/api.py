@@ -40,6 +40,11 @@ from .openapi_schema import (
                 description='Project ID',
             ),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 's3'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -49,6 +54,11 @@ from .openapi_schema import (
         summary='Create new S3 storage',
         description='Create new S3 import storage',
         request=_s3_import_storage_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 's3'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class S3ImportStorageListAPI(ImportStorageListAPI):
@@ -63,6 +73,11 @@ class S3ImportStorageListAPI(ImportStorageListAPI):
         summary='Get import storage',
         description='Get a specific S3 import storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 's3'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -72,6 +87,11 @@ class S3ImportStorageListAPI(ImportStorageListAPI):
         summary='Update import storage',
         description='Update a specific S3 import storage connection.',
         request=_s3_import_storage_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 's3'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -81,6 +101,11 @@ class S3ImportStorageListAPI(ImportStorageListAPI):
         summary='Delete import storage',
         description='Delete a specific S3 import storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 's3'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class S3ImportStorageDetailAPI(ImportStorageDetailAPI):
@@ -103,6 +128,11 @@ class S3ImportStorageDetailAPI(ImportStorageDetailAPI):
             ),
         ],
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 's3'],
+            'x-fern-sdk-method-name': 'sync',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class S3ImportStorageSyncAPI(ImportStorageSyncAPI):
@@ -117,6 +147,11 @@ class S3ImportStorageSyncAPI(ImportStorageSyncAPI):
         description='Validate a specific S3 import storage connection.',
         request=_s3_import_storage_schema_with_id,
         responses={200: OpenApiResponse(description='Validation successful')},
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage', 's3'],
+            'x-fern-sdk-method-name': 'validate',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class S3ImportStorageValidateAPI(ImportStorageValidateAPI):
@@ -131,6 +166,11 @@ class S3ImportStorageValidateAPI(ImportStorageValidateAPI):
         description='Validate a specific S3 export storage connection.',
         request=_s3_export_storage_schema_with_id,
         responses={200: OpenApiResponse(description='Validation successful')},
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 's3'],
+            'x-fern-sdk-method-name': 'validate',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class S3ExportStorageValidateAPI(ExportStorageValidateAPI):
@@ -151,6 +191,11 @@ class S3ExportStorageValidateAPI(ExportStorageValidateAPI):
                 description='Project ID',
             ),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 's3'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -160,6 +205,11 @@ class S3ExportStorageValidateAPI(ExportStorageValidateAPI):
         summary='Create export storage',
         description='Create a new S3 export storage connection to store annotations.',
         request=_s3_export_storage_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 's3'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class S3ExportStorageListAPI(ExportStorageListAPI):
@@ -174,6 +224,11 @@ class S3ExportStorageListAPI(ExportStorageListAPI):
         summary='Get export storage',
         description='Get a specific S3 export storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 's3'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -183,6 +238,11 @@ class S3ExportStorageListAPI(ExportStorageListAPI):
         summary='Update export storage',
         description='Update a specific S3 export storage connection.',
         request=_s3_export_storage_schema,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 's3'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -192,6 +252,11 @@ class S3ExportStorageListAPI(ExportStorageListAPI):
         summary='Delete export storage',
         description='Delete a specific S3 export storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 's3'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class S3ExportStorageDetailAPI(ExportStorageDetailAPI):
@@ -206,6 +271,11 @@ class S3ExportStorageDetailAPI(ExportStorageDetailAPI):
         summary='Sync export storage',
         description='Sync tasks from an S3 export storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 's3'],
+            'x-fern-sdk-method-name': 'sync',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class S3ExportStorageSyncAPI(ExportStorageSyncAPI):
