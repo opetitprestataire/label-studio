@@ -41,6 +41,8 @@ jobs:
         id: run-server
         timeout-minutes: 2
         working-directory: ${{ env.FRONTEND_MONOREPO_DIR }}
+        env:
+          NODE_ENV: development
         run: |
           set -xeuo pipefail
           
@@ -56,7 +58,7 @@ jobs:
       - name: Run tests
         working-directory: ${{ env.FRONTEND_MONOREPO_DIR }}
         run: |
-          yarn test:integration
+          COLLECT_COVERAGE=1 yarn test:integration
 
       - name: Kill server
         if: always()
