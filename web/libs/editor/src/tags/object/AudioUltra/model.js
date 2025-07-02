@@ -281,7 +281,7 @@ export const AudioModel = types.compose(
             if (self._ws.playing) self._ws?.pause();
           }
         }
-        // during the buffering only these events has real `playing` values (in other cases it's paused all the time)
+        // during the buffering only these events have real `playing` values (in other cases it's paused all the time)
         if (["play", "pause"].indexOf(event) > -1) {
           self.wasPlayingBeforeBuffering = data.playing;
         }

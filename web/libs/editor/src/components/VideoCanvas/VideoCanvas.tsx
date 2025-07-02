@@ -196,7 +196,12 @@ export const VideoCanvas = memo(
       [framerate, currentFrame, drawVideo, props.onFrameChange, length],
     );
 
+    const updateBufferingTimeoutIdRef = useRef(null as ReturnType<typeof setTimeout> | null);
     const updateBuffering = useCallback(() => {
+      if (updateBufferingTimeoutIdRef.current) {
+        clearTimeout(updateBufferingTimeoutIdRef.current);
+        updateBufferingTimeoutIdRef.current = null;
+      }
       if (!videoRef.current) return;
       if (!contextRef.current) return;
 
@@ -206,6 +211,9 @@ export const VideoCanvas = memo(
         setBuffering(false);
       } else {
         setBuffering(true);
+        updateBufferingTimeoutIdRef.current = setTimeout(() => {
+          updateBuffering();
+        }, 16);
       }
     }, []);
 

@@ -565,7 +565,7 @@ const HtxVideoView = ({ item, store }) => {
           <Elem
             name="timeline"
             tag={Timeline}
-            playing={isSyncedBuffering ? item.wasPlayingBeforeBuffering : playing}
+            playing={isSyncedBuffering && item.isBuffering ? item.wasPlayingBeforeBuffering : playing}
             buffering={isSyncedBuffering ? item.isBuffering : false}
             length={videoLength}
             position={position}

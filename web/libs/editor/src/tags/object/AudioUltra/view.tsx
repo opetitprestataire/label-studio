@@ -194,7 +194,7 @@ const AudioUltraView: FC<AudioUltraProps> = observer(
         />
         <Controls
           position={controls.currentTime}
-          playing={isSyncedBuffering ? item.wasPlayingBeforeBuffering : controls.playing}
+          playing={isSyncedBuffering && item.isBuffering ? item.wasPlayingBeforeBuffering : controls.playing}
           buffering={item.isBuffering}
           volume={controls.volume}
           speed={controls.rate}

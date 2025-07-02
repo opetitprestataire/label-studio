@@ -190,12 +190,11 @@ export abstract class Player extends Destructable {
   };
 
   protected handleCanPlay = () => {
-    this.bufferResolve?.();
-    this.setBuffering(false);
+    this.updateBuffering();
   };
 
   protected handleWaiting = () => {
-    this.setBuffering(true);
+    this.updateBuffering();
   };
 
   private playEnded() {
@@ -230,11 +229,32 @@ export abstract class Player extends Destructable {
     super.destroy();
   }
 
-  setBuffering(buffering: boolean) {
-    if (this._buffering === buffering) return;
+  updateBufferingTimeoutId: number | null = null;
+  updateBuffering() {
+    if (this.updateBufferingTimeoutId) {
+      clearTimeout(this.updateBufferingTimeoutId);
+      this.updateBufferingTimeoutId = null;
+    }
 
-    this._buffering = buffering;
-    this.wf.invoke("buffering", [this.buffering]);
+    const audioEl = this.audio.el;
+    if (!audioEl) return;
+
+    const isRealBuffering = audioEl.networkState === audioEl.NETWORK_LOADING;
+
+    if (this._buffering !== isRealBuffering) {
+      this._buffering = isRealBuffering;
+      this.wf.invoke("buffering", [isRealBuffering]);
+    }
+
+    if (isRealBuffering) {
+      this.updateBufferingTimeoutId = setTimeout(() => {
+        this.updateBuffering();
+      }, 16);
+    }
+
+    if (!isRealBuffering) {
+      this.bufferResolve?.();
+    }
   }
 
   protected updatePlayback() {

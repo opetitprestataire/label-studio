@@ -2,6 +2,7 @@ import { type Instance, types } from "mobx-state-tree";
 import { ff } from "@humansignal/core";
 import { FF_DEV_3391 } from "../utils/feature-flags";
 
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 /**
  * Supress all additional events during this window in ms.
  * 100ms is too short to notice, but covers enough frames (~6) for back and forth events.
@@ -55,6 +56,22 @@ export class SyncManager {
     // @todo remove manager on empty set
   }
 
+  isLockable(event: SyncEvent) {
+    if (!isSyncedBuffering) return true;
+
+    // buffering does not cause loops at all, so it should not lock the sync
+    if (event === "buffering") {
+      return false;
+    }
+
+    // play/pause events during buffering should not cause loops and should be processed anyhow, so we should avoid locking for them
+    if (this.isBuffering && ["play", "pause"].includes(event)) {
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Sync `origin` state (in `data`) to connected tags.
    * No back-sync to origin of the event.
@@ -74,15 +91,21 @@ export class SyncManager {
       }
     }
 
-    // @todo remove
-    if (!this.locked || this.locked === origin) console.log("SYNC", { event, locked: this.locked, data, origin });
+    const shouldSkipLocking = !this.isLockable(event);
 
-    ///// locking mechanism
-    // also send events came from original tag even when sync window is locked,
-    // this allows to correct state in case of coupled events like play + seek.
-    if (this.locked && this.locked !== origin) return false;
-    if (!this.locked) setTimeout(() => (this.locked = null), SYNC_WINDOW);
-    this.locked = origin;
+    // @todo remove
+    if (shouldSkipLocking || !this.locked || this.locked === origin)
+      console.log("SYNC", { event, locked: this.locked, data, origin });
+
+    if (!shouldSkipLocking) {
+      if (this.locked && this.locked !== origin)
+        ///// locking mechanism
+        // also send events came from original tag even when sync window is locked,
+        // this allows to correct state in case of coupled events like play + seek.
+        return false;
+      if (!this.locked) setTimeout(() => (this.locked = null), SYNC_WINDOW);
+      this.locked = origin;
+    }
 
     for (const target of this.syncTargets.values()) {
       if (origin !== target.name) {
