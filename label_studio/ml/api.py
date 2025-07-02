@@ -395,7 +395,7 @@ class MLBackendInteractiveAnnotating(APIView):
         responses={'200': 'List of available versions.'},
         extensions={
             'x-fern-sdk-group-name': ['ml'],
-            'x-fern-sdk-method-name': 'get_versions',
+            'x-fern-sdk-method-name': 'list_model_versions',
             'x-fern-audiences': ['public'],
         },
     ),
