@@ -140,7 +140,6 @@ const Annotation = observer(({ item, store }) => {
   const btnsView = () => {
     const confirm = () => {
       // ev.preventDefault();
-      // debugger;
       item.list.deleteAnnotation(item);
     };
 
