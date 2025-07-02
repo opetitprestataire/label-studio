@@ -154,7 +154,7 @@ export class Visualizer extends Events<VisualizerEvents> {
       backgroundLayer,
       config: {
         renderId: this.renderId,
-        waveHeight: this.waveHeight,
+        waveHeight: this.waveformHeight,
         padding: this.padding,
         reservedSpace: this.reservedSpace,
         waveColor: this.waveColor,
@@ -211,6 +211,12 @@ export class Visualizer extends Events<VisualizerEvents> {
     // This triggers the resize observer when loading in differing heights
     // as a result of multichannel or differently configured waveHeight
     this.setContainerHeight();
+
+    // Update regions layer height to match the current visualizer height
+    const regionsLayer = this.getLayer("regions");
+    if (regionsLayer) {
+      regionsLayer.height = this.height;
+    }
 
     // Set renderers array
     this.renderers = [this.waveformRenderer];
@@ -956,6 +962,7 @@ export class Visualizer extends Events<VisualizerEvents> {
     // Update layer dimensions
     const mainLayer = this.getLayer("main");
     if (mainLayer) {
+      mainLayer.pixelRatio = this.pixelRatio;
       mainLayer.width = this.width;
       mainLayer.height = this.height;
     }
@@ -963,10 +970,15 @@ export class Visualizer extends Events<VisualizerEvents> {
     // Update other layers
     this.layers.forEach((layer) => {
       if (layer.name !== "main") {
+        layer.pixelRatio = this.pixelRatio;
         layer.width = this.width;
         // Only update height for layers that should match the waveform height
         if (layer.name === "waveform" || layer.name === "spectrogram" || layer.name === "spectrogram-grid") {
           layer.height = this.waveformHeight;
+        }
+        // Update regions layer height to match the full visualizer height
+        if (layer.name === "regions") {
+          layer.height = this.height;
         }
       }
     });
@@ -1092,14 +1104,13 @@ export class Visualizer extends Events<VisualizerEvents> {
     if (!spectrogramLayer?.isVisible) return 0;
 
     const channelCount = this.audio?.channelCount ?? 1;
-    const totalAvailableHeight = this.waveHeight;
 
     if (this.splitChannels) {
       // Each channel gets an equal split of the spectrogram area
-      return totalAvailableHeight / channelCount;
+      return this.waveHeight / channelCount;
     }
     // Spectrogram uses the full height when not split
-    return totalAvailableHeight;
+    return this.waveHeight;
   }
 
   setAmp(amp: number) {

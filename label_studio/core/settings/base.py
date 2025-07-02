@@ -305,13 +305,21 @@ USE_USERNAME_FOR_LOGIN = False
 
 DISABLE_SIGNUP_WITHOUT_LINK = get_bool_env('DISABLE_SIGNUP_WITHOUT_LINK', False)
 
+# Password validation settings
+AUTH_PASSWORD_MIN_LENGTH = 8
+AUTH_PASSWORD_MAX_LENGTH = 128
+
 # Password validation:
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        'NAME': 'users.validators.PasswordLengthValidator',
+        'OPTIONS': {
+            'min_length': AUTH_PASSWORD_MIN_LENGTH,
+            'max_length': AUTH_PASSWORD_MAX_LENGTH,
+        },
+    },
 ]
 
 # Django templates
@@ -550,10 +558,16 @@ REACT_APP_ROOT = os.path.join(BASE_DIR, '../../web/dist/apps/labelstudio')
 
 # per project settings
 BATCH_SIZE = 1000
+# Maximum number of tasks to process in a single batch during export operations
+MAX_TASK_BATCH_SIZE = int(get_env('MAX_TASK_BATCH_SIZE', 1000))
+# Total size of task data (in bytes) to process per batch - used to calculate dynamic batch sizes
+# For example: if task data is 10MB, batch will be ~5 tasks to stay under 50MB limit
+TASK_DATA_PER_BATCH = int(get_env('TASK_DATA_PER_BATCH', 50 * 1024 * 1024))  # 50 MB in bytes
 PROJECT_TITLE_MIN_LEN = 3
 PROJECT_TITLE_MAX_LEN = 50
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/user/login/'
+
 MIN_GROUND_TRUTH = 10
 DATA_UNDEFINED_NAME = '$undefined$'
 LICENSE = {}
@@ -563,6 +577,7 @@ LATEST_VERSION_CHECK = True
 VERSIONS_CHECK_TIME = 0
 ALLOW_ORGANIZATION_WEBHOOKS = get_bool_env('ALLOW_ORGANIZATION_WEBHOOKS', False)
 CONVERTER_DOWNLOAD_RESOURCES = get_bool_env('CONVERTER_DOWNLOAD_RESOURCES', True)
+SHOW_TRACEBACK_FOR_EXPORT_CONVERTER = get_bool_env('SHOW_TRACEBACK_FOR_EXPORT_CONVERTER', True)
 EXPERIMENTAL_FEATURES = get_bool_env('EXPERIMENTAL_FEATURES', False)
 USE_ENFORCE_CSRF_CHECKS = get_bool_env('USE_ENFORCE_CSRF_CHECKS', True)  # False is for tests
 CLOUD_FILE_STORAGE_ENABLED = False
@@ -587,6 +602,7 @@ DATA_MANAGER_ANNOTATIONS_MAP = {}
 DATA_MANAGER_ACTIONS = {}
 DATA_MANAGER_CUSTOM_FILTER_EXPRESSIONS = 'data_manager.functions.custom_filter_expressions'
 DATA_MANAGER_PREPROCESS_FILTER = 'data_manager.functions.preprocess_filter'
+BULK_UPDATE_IS_LABELED = 'tasks.functions.bulk_update_is_labeled_by_overlap'
 USER_LOGIN_FORM = 'users.forms.LoginForm'
 PROJECT_MIXIN = 'projects.mixins.ProjectMixin'
 TASK_MIXIN = 'tasks.mixins.TaskMixin'
