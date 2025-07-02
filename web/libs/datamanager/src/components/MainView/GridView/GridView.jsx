@@ -151,8 +151,8 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
   const renderItem = useCallback(
     ({ style, rowIndex, columnIndex }) => {
       const index = getCellIndex(rowIndex, columnIndex);
-      if (!data || !(index in data)) return null;
       const row = data[index];
+      if (!row) return null;
 
       const props = {
         style: {
@@ -187,17 +187,19 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
       });
     };
 
-  const itemCount = Math.ceil(data.length / columnCount);
+  const itemCount = Math.floor(data.length / columnCount);
 
   const isItemLoaded = useCallback(
     (index) => {
       const rowIndex = index * columnCount;
       const rowFullfilled = data.slice(rowIndex, columnCount).length === columnCount;
+      console.log(rowIndex, rowFullfilled);
 
-      return !view.dataStore.hasNextPage || rowFullfilled;
+      return rowFullfilled;
     },
     [columnCount, data, view.dataStore.hasNextPage],
   );
+  console.log({ itemCount });
 
   return (
     <GridViewProvider data={data} view={view} fields={fieldsData}>
@@ -205,7 +207,7 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
         <Elem tag={AutoSizer} name="resize">
           {({ width, height }) => (
             <InfiniteLoader
-              itemCount={itemCount}
+              itemCount={data.length}
               isItemLoaded={isItemLoaded}
               loadMoreItems={loadMore}
               threshold={Math.floor(view.dataStore.pageSize / 2)}
@@ -221,8 +223,8 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
                   rowHeight={finalRowHeight}
                   overscanRowCount={view.dataStore.pageSize}
                   columnCount={columnCount}
-                  columnWidth={width / columnCount - 9.5}
                   rowCount={itemCount}
+                  columnWidth={width / columnCount - 9.5}
                   onItemsRendered={onItemsRenderedWrap(onItemsRendered)}
                   style={{ overflowX: "hidden" }}
                 >
