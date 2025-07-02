@@ -147,6 +147,11 @@ class GCSImportStorageSyncAPI(ImportStorageSyncAPI):
         summary='Sync export storage',
         description='Sync tasks from an GCS export storage connection.',
         request=None,
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage', 'gcs'],
+            'x-fern-sdk-method-name': 'sync',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class GCSExportStorageSyncAPI(ExportStorageSyncAPI):

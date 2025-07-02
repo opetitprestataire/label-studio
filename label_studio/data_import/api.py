@@ -1,6 +1,5 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
-import json
 import logging
 import mimetypes
 import time
@@ -8,7 +7,7 @@ from urllib.parse import unquote, urlparse
 
 from core.decorators import override_report_only_csp
 from core.feature_flags import flag_set
-from core.permissions import ViewClassPermission, all_permissions
+from core.permissions import all_permissions
 from core.redis import start_job_async_or_sync
 from core.utils.common import retry_database_locked, timeit
 from core.utils.params import bool_from_request, list_of_strings_from_request

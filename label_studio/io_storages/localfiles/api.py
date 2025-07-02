@@ -42,7 +42,7 @@ from .openapi_schema import (
         ],
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['import_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['import_storage', 'local'],
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
         },
@@ -56,7 +56,7 @@ from .openapi_schema import (
         description='Create a new local file import storage connection.',
         request=_local_files_import_storage_schema,
         extensions={
-            'x-fern-sdk-group-name': ['import_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['import_storage', 'local'],
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
@@ -75,7 +75,7 @@ class LocalFilesImportStorageListAPI(ImportStorageListAPI):
         description='Get a specific local file import storage connection.',
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['import_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['import_storage', 'local'],
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -89,7 +89,7 @@ class LocalFilesImportStorageListAPI(ImportStorageListAPI):
         description='Update a specific local file import storage connection.',
         request=_local_files_import_storage_schema,
         extensions={
-            'x-fern-sdk-group-name': ['import_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['import_storage', 'local'],
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -103,7 +103,7 @@ class LocalFilesImportStorageListAPI(ImportStorageListAPI):
         description='Delete a specific local file import storage connection.',
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['import_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['import_storage', 'local'],
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['public'],
         },
@@ -130,7 +130,7 @@ class LocalFilesImportStorageDetailAPI(ImportStorageDetailAPI):
         ],
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['import_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['import_storage', 'local'],
             'x-fern-sdk-method-name': 'sync',
             'x-fern-audiences': ['public'],
         },
@@ -148,7 +148,7 @@ class LocalFilesImportStorageSyncAPI(ImportStorageSyncAPI):
         description='Sync tasks from a local file export storage connection.',
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['export_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['export_storage', 'local'],
             'x-fern-sdk-method-name': 'sync',
             'x-fern-audiences': ['public'],
         },
@@ -167,7 +167,7 @@ class LocalFilesExportStorageSyncAPI(ExportStorageSyncAPI):
         request=_local_files_import_storage_schema_with_id,
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
-            'x-fern-sdk-group-name': ['import_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['import_storage', 'local'],
             'x-fern-sdk-method-name': 'validate',
             'x-fern-audiences': ['public'],
         },
@@ -186,7 +186,7 @@ class LocalFilesImportStorageValidateAPI(ImportStorageValidateAPI):
         request=_local_files_export_storage_schema_with_id,
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
-            'x-fern-sdk-group-name': ['export_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['export_storage', 'local'],
             'x-fern-sdk-method-name': 'validate',
             'x-fern-audiences': ['public'],
         },
@@ -211,7 +211,7 @@ class LocalFilesExportStorageValidateAPI(ExportStorageValidateAPI):
             ),
         ],
         extensions={
-            'x-fern-sdk-group-name': ['export_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['export_storage', 'local'],
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
         },
@@ -225,7 +225,7 @@ class LocalFilesExportStorageValidateAPI(ExportStorageValidateAPI):
         description='Create a new local file export storage connection to store annotations.',
         request=_local_files_export_storage_schema,
         extensions={
-            'x-fern-sdk-group-name': ['export_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['export_storage', 'local'],
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
@@ -244,7 +244,7 @@ class LocalFilesExportStorageListAPI(ExportStorageListAPI):
         description='Get a specific local file export storage connection.',
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['export_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['export_storage', 'local'],
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -258,7 +258,7 @@ class LocalFilesExportStorageListAPI(ExportStorageListAPI):
         description='Update a specific local file export storage connection.',
         request=_local_files_export_storage_schema,
         extensions={
-            'x-fern-sdk-group-name': ['export_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['export_storage', 'local'],
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -272,7 +272,7 @@ class LocalFilesExportStorageListAPI(ExportStorageListAPI):
         description='Delete a specific local file export storage connection.',
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['export_storage', 'localfiles'],
+            'x-fern-sdk-group-name': ['export_storage', 'local'],
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['public'],
         },
