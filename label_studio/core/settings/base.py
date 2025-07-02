@@ -386,10 +386,8 @@ SPECTACULAR_SETTINGS = {
         'persistAuthorization': True,
         'displayOperationId': True,
     },
-    'SECURITY': [
-        {
-            'Token': [],
-        }
+    'AUTHENTICATION_WHITELIST': [
+        'jwt_auth.auth.TokenAuthenticationPhaseout',
     ],
     'SECURITY_DEFINITIONS': {
         'Token': {
@@ -402,9 +400,6 @@ SPECTACULAR_SETTINGS = {
             'curl https://label-studio-host/api/projects -H "Authorization: Token [your-token]"'
             '</code></pre>',
         }
-    },
-    'EXTENSIONS_INFO': {
-        'x-fern': True,
     },
     # 'PREPROCESSING_HOOKS': [
     #     'label_studio.core.utils.openapi_extensions.custom_preprocessing_hook',
