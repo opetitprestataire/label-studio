@@ -337,7 +337,7 @@ class MLBackendPredictTestAPI(APIView):
         },
         extensions={
             'x-fern-sdk-group-name': ['ml'],
-            'x-fern-sdk-method-name': 'interactive_annotate',
+            'x-fern-sdk-method-name': 'predict_interactive',
             'x-fern-audiences': ['public'],
         },
     ),
