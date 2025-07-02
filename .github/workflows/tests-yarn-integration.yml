@@ -60,6 +60,13 @@ jobs:
         run: |
           COLLECT_COVERAGE=1 yarn test:integration
 
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress coverage
+          path: web/libs/editor/tests/coverage
+
       - name: Kill server
         if: always()
         continue-on-error: true
