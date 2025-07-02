@@ -60,6 +60,16 @@ jobs:
         run: |
           COLLECT_COVERAGE=1 yarn test:integration
 
+      - name: Upload coverage to Codecov
+        if: ${{ always() && github.event.pull_request.head.repo.fork == false && github.event.pull_request.user.login != 'dependabot[bot]' }}
+        uses: codecov/codecov-action@v5
+        with:
+          name: lsf-integration
+          directory: web/libs/editor/coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+          fail_ci_if_error: true
+
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         if: always()
