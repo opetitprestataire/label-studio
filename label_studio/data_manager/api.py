@@ -556,6 +556,29 @@ class ProjectActionsAPI(APIView):
         return Response(result, status=code)
 
 
+@method_decorator(
+    name='get',
+    decorator=swagger_auto_schema(
+        tags=['Data Manager'],
+        operation_summary='Get action form',
+        operation_description='Get the form configuration for a specific action.',
+        manual_parameters=[
+            openapi.Parameter(
+                name='project',
+                type=openapi.TYPE_INTEGER,
+                in_=openapi.IN_QUERY,
+                description='Project ID',
+                required=True,
+            )
+        ],
+        responses={
+            200: openapi.Response(
+                description='Action form configuration returned successfully',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT, description='Form configuration object'),
+            )
+        },
+    ),
+)
 class ProjectActionsFormAPI(APIView):
     permission_required = ViewClassPermission(
         GET=all_permissions.projects_view,
@@ -567,5 +590,4 @@ class ProjectActionsFormAPI(APIView):
         self.check_object_permissions(request, project)
 
         form = get_action_form(action_id, project, request.user)
-        print('form', form)
         return Response(form)
