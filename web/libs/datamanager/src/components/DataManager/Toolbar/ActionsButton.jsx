@@ -155,17 +155,6 @@ export const ActionsButton = injector(
   observer(({ store, size, hasSelected, ...rest }) => {
     const formRef = useRef();
     const selectedCount = store.currentView.selectedCount;
-    const [isOpen, setIsOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-      if (isOpen) {
-        setIsLoading(true);
-        store.fetchActions().finally(() => {
-          setIsLoading(false);
-        });
-      }
-    }, [isOpen]);
 
     const actions = store.availableActions.filter((a) => !a.hidden).sort((a, b) => a.order - b.order);
     const actionButtons = actions.map((action) => (
@@ -175,12 +164,9 @@ export const ActionsButton = injector(
 
     return (
       <Dropdown.Trigger
-        content={
-          <Menu size="compact">{isLoading ? <Menu.Item disabled>Loading actions...</Menu.Item> : actionButtons}</Menu>
-        }
+        content={<Menu size="compact">{actionButtons}</Menu>}
         openUpwardForShortViewport={false}
         disabled={!hasSelected}
-        onToggle={setIsOpen}
       >
         <Button size={size} disabled={!hasSelected} {...rest}>
           {selectedCount > 0 ? `${selectedCount} ${recordTypeLabel}${selectedCount > 1 ? "s" : ""}` : "Actions"}
