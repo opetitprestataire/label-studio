@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, useCallback } from "react";
 import { inject, observer } from "mobx-react";
 
 import ObjectTag from "../../../components/Tags/Object";
 import { FF_DEV_2669, FF_DEV_2918, FF_LSDV_4711, FF_LSDV_E_278, isFF } from "../../../utils/feature-flags";
 import { findNodeAt, matchesSelector, splitBoundaries } from "../../../utils/html";
+import { patchPlayPauseMethods } from "../../../utils/patchPlayPauseMethods";
 import { isSelectionContainsSpan } from "../../../utils/selection-tools";
 import styles from "./Paragraphs.module.scss";
 import { AuthorFilter } from "./AuthorFilter";
@@ -20,7 +21,26 @@ const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 if (isFF(FF_LSDV_4711)) audioDefaultProps.crossOrigin = "anonymous";
 
 const ParagraphAudio = observer(({ item }) => {
-  const isBuffering = isSyncedBuffering && item.buffering;
+  const isBuffering = isSyncedBuffering && item.isBuffering;
+
+  const handleCanPlay = useCallback(() => {
+    item.handleBuffering(false);
+  }, [item]);
+  const handleWaiting = useCallback(() => {
+    item.handleBuffering(true);
+  }, [item]);
+
+  const attachRef = useCallback(
+    (audio) => {
+      if (audio) audio = patchPlayPauseMethods(audio);
+      if (item.audioRef instanceof Function) {
+        item.audioRef(audio);
+      } else if (item.audioRef) {
+        item.audioRef.current = audio;
+      }
+    },
+    [item],
+  );
 
   return (
     <>
@@ -30,10 +50,16 @@ const ParagraphAudio = observer(({ item }) => {
         controls={item.showplayer && !item.syncedAudio}
         className={styles.audio}
         src={item.audio}
-        ref={item.audioRef}
+        ref={attachRef}
         onLoadedMetadata={item.handleAudioLoaded}
         onEnded={item.reset}
         onError={item.handleError}
+        {...(isSyncedBuffering
+          ? {
+              onCanPlay: handleCanPlay,
+              onWaiting: handleWaiting,
+            }
+          : {})}
       />
     </>
   );
