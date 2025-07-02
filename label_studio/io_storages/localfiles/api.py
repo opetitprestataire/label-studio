@@ -29,7 +29,7 @@ from .openapi_schema import (
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Get all import storage',
         description='Get a list of all local file import storage connections.',
         parameters=[
@@ -46,7 +46,7 @@ from .openapi_schema import (
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Create import storage',
         description='Create a new local file import storage connection.',
         request=_local_files_import_storage_schema,
@@ -60,7 +60,7 @@ class LocalFilesImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Get import storage',
         description='Get a specific local file import storage connection.',
         request=None,
@@ -69,7 +69,7 @@ class LocalFilesImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='patch',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Update import storage',
         description='Update a specific local file import storage connection.',
         request=_local_files_import_storage_schema,
@@ -78,7 +78,7 @@ class LocalFilesImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='delete',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Delete import storage',
         description='Delete a specific local import storage connection.',
         request=None,
@@ -92,7 +92,7 @@ class LocalFilesImportStorageDetailAPI(ImportStorageDetailAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Sync import storage',
         description='Sync tasks from a local file import storage connection.',
         parameters=[
@@ -113,7 +113,7 @@ class LocalFilesImportStorageSyncAPI(ImportStorageSyncAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Sync export storage',
         description='Sync tasks from a local file export storage connection.',
         request=None,
@@ -126,7 +126,7 @@ class LocalFilesExportStorageSyncAPI(ExportStorageSyncAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Validate import storage',
         description='Validate a specific local file import storage connection.',
         request=_local_files_import_storage_schema_with_id,
@@ -140,7 +140,7 @@ class LocalFilesImportStorageValidateAPI(ImportStorageValidateAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Validate export storage',
         description='Validate a specific local file export storage connection.',
         request=_local_files_export_storage_schema_with_id,
@@ -154,7 +154,7 @@ class LocalFilesExportStorageValidateAPI(ExportStorageValidateAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Get all export storage',
         description='Get a list of all Local export storage connections.',
         parameters=[
@@ -171,7 +171,7 @@ class LocalFilesExportStorageValidateAPI(ExportStorageValidateAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Create export storage',
         description='Create a new local file export storage connection to store annotations.',
         request=_local_files_export_storage_schema,
@@ -185,7 +185,7 @@ class LocalFilesExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Get export storage',
         description='Get a specific local file export storage connection.',
         request=None,
@@ -194,7 +194,7 @@ class LocalFilesExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='patch',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Update export storage',
         description='Update a specific local file export storage connection.',
         request=_local_files_export_storage_schema,
@@ -203,7 +203,7 @@ class LocalFilesExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='delete',
     decorator=extend_schema(
-        tags=['Storage: Local', 'local'],
+        tags=['Storage: Local'],
         summary='Delete export storage',
         description='Delete a specific local file export storage connection.',
         request=None,

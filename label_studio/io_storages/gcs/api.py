@@ -29,7 +29,7 @@ from .openapi_schema import (
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Get all import storage',
         description='Get a list of all GCS import storage connections.',
         parameters=[
@@ -46,7 +46,7 @@ from .openapi_schema import (
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Create import storage',
         description='Create a new GCS import storage connection.',
         request=_gcs_import_storage_schema,
@@ -60,7 +60,7 @@ class GCSImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Get import storage',
         description='Get a specific GCS import storage connection.',
         request=None,
@@ -69,7 +69,7 @@ class GCSImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='patch',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Update import storage',
         description='Update a specific GCS import storage connection.',
         request=_gcs_import_storage_schema,
@@ -78,7 +78,7 @@ class GCSImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='delete',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Delete import storage',
         description='Delete a specific GCS import storage connection.',
         request=None,
@@ -92,7 +92,7 @@ class GCSImportStorageDetailAPI(ImportStorageDetailAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Sync import storage',
         description='Sync tasks from an GCS import storage connection.',
         parameters=[
@@ -113,7 +113,7 @@ class GCSImportStorageSyncAPI(ImportStorageSyncAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Sync export storage',
         description='Sync tasks from an GCS export storage connection.',
         request=None,
@@ -126,7 +126,7 @@ class GCSExportStorageSyncAPI(ExportStorageSyncAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Validate import storage',
         description='Validate a specific GCS import storage connection.',
         request=_gcs_import_storage_schema_with_id,
@@ -141,7 +141,7 @@ class GCSImportStorageValidateAPI(ImportStorageValidateAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Validate export storage',
         description='Validate a specific GCS export storage connection.',
         request=_gcs_export_storage_schema_with_id,
@@ -156,7 +156,7 @@ class GCSExportStorageValidateAPI(ExportStorageValidateAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Get all export storage',
         description='Get a list of all GCS export storage connections.',
         parameters=[
@@ -173,7 +173,7 @@ class GCSExportStorageValidateAPI(ExportStorageValidateAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Create export storage',
         description='Create a new GCS export storage connection to store annotations.',
         request=_gcs_export_storage_schema,
@@ -187,7 +187,7 @@ class GCSExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Get export storage',
         description='Get a specific GCS export storage connection.',
         request=None,
@@ -196,7 +196,7 @@ class GCSExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='patch',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Update export storage',
         description='Update a specific GCS export storage connection.',
         request=_gcs_export_storage_schema,
@@ -205,7 +205,7 @@ class GCSExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='delete',
     decorator=extend_schema(
-        tags=['Storage: GCS', 'gcs'],
+        tags=['Storage: GCS'],
         summary='Delete export storage',
         description='Delete a specific GCS export storage connection.',
         request=None,

@@ -28,7 +28,7 @@ from .openapi_schema import (
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Get all import storage',
         description='Get a list of all Redis import storage connections.',
         parameters=[
@@ -45,7 +45,7 @@ from .openapi_schema import (
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Create import storage',
         description='Create a new Redis import storage connection.',
         request=_redis_import_storage_schema,
@@ -59,7 +59,7 @@ class RedisImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Get import storage',
         description='Get a specific Redis import storage connection.',
         request=None,
@@ -68,7 +68,7 @@ class RedisImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='patch',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Update import storage',
         description='Update a specific Redis import storage connection.',
         request=_redis_import_storage_schema,
@@ -77,7 +77,7 @@ class RedisImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='delete',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Delete import storage',
         description='Delete a specific Redis import storage connection.',
         request=None,
@@ -91,7 +91,7 @@ class RedisImportStorageDetailAPI(ImportStorageDetailAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Sync import storage',
         description='Sync tasks from a specific Redis import storage connection.',
         parameters=[
@@ -112,7 +112,7 @@ class RedisImportStorageSyncAPI(ExportStorageSyncAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Sync export storage',
         description='Sync tasks from a specific Redis export storage connection.',
         request=None,
@@ -125,7 +125,7 @@ class RedisExportStorageSyncAPI(ExportStorageSyncAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Validate import storage',
         description='Validate a specific Redis import storage connection.',
         request=_redis_import_storage_schema_with_id,
@@ -139,7 +139,7 @@ class RedisImportStorageValidateAPI(ImportStorageValidateAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Validate export storage',
         description='Validate a specific Redis export storage connection.',
         request=_redis_export_storage_schema_with_id,
@@ -153,7 +153,7 @@ class RedisExportStorageValidateAPI(ExportStorageValidateAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Get all export storage',
         description='Get a list of all Redis export storage connections.',
         parameters=[
@@ -170,7 +170,7 @@ class RedisExportStorageValidateAPI(ExportStorageValidateAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Create export storage',
         description='Create a new Redis export storage connection to store annotations.',
         request=_redis_export_storage_schema,
@@ -184,7 +184,7 @@ class RedisExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Get export storage',
         description='Get a specific Redis export storage connection.',
         request=None,
@@ -193,7 +193,7 @@ class RedisExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='patch',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Update export storage',
         description='Update a specific Redis export storage connection.',
         request=_redis_export_storage_schema,
@@ -202,7 +202,7 @@ class RedisExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='delete',
     decorator=extend_schema(
-        tags=['Storage: Redis', 'redis'],
+        tags=['Storage: Redis'],
         summary='Delete export storage',
         description='Delete a specific Redis export storage connection.',
         request=None,
