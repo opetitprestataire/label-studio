@@ -7,7 +7,7 @@ import {
 } from "../../data/control_tags/textarea";
 import { FF_LEAD_TIME } from "../../../../src/utils/feature-flags";
 
-describe.only("Control Tags - TextArea - Lead Time", () => {
+describe("Control Tags - TextArea - Lead Time", () => {
   beforeEach(() => {
     LabelStudio.addFeatureFlagsOnPageLoad({
       [FF_LEAD_TIME]: true,

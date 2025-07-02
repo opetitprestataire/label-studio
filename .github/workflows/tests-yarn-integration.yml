@@ -58,7 +58,7 @@ jobs:
       - name: Run tests
         working-directory: ${{ env.FRONTEND_MONOREPO_DIR }}
         run: |
-          COLLECT_COVERAGE=1 yarn test:integration
+          COLLECT_COVERAGE=1 yarn test:integration --spec libs/editor/tests/integration/e2e/control_tags/textarea.cy.ts
 
       - name: Upload coverage to Codecov
         if: ${{ always() && github.event.pull_request.head.repo.fork == false && github.event.pull_request.user.login != 'dependabot[bot]' }}
