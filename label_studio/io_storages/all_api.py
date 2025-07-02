@@ -58,6 +58,11 @@ _common_storage_list = _get_common_storage_list()
                 },
             }
         },
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage'],
+            'x-fern-sdk-method-name': 'list_types',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class AllImportStorageTypesAPI(APIView):
@@ -85,6 +90,11 @@ class AllImportStorageTypesAPI(APIView):
                 },
             }
         },
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage'],
+            'x-fern-sdk-method-name': 'list_types',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class AllExportStorageTypesAPI(APIView):
@@ -101,6 +111,11 @@ class AllExportStorageTypesAPI(APIView):
         summary='List all import storages from the project',
         description='Retrieve a list of the import storages of all types with their IDs.',
         responses={200: 'List of ImportStorageSerializer'},
+        extensions={
+            'x-fern-sdk-group-name': ['import_storage'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 class AllImportStorageListAPI(generics.ListAPIView):
@@ -133,6 +148,11 @@ class AllImportStorageListAPI(generics.ListAPIView):
         summary='List all export storages from the project',
         description='Retrieve a list of the export storages of all types with their IDs.',
         responses={200: 'List of ExportStorageSerializer'},
+        extensions={
+            'x-fern-sdk-group-name': ['export_storage'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 class AllExportStorageListAPI(generics.ListAPIView):
