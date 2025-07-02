@@ -363,15 +363,6 @@ RQ_QUEUES = {
     },
 }
 
-# specify the list of the extensions that are allowed to be presented in auto generated OpenAPI schema
-# for example, by specifying in extend_schema(...) we can group endpoints
-# /api/projects/:
-#   get:
-#     x-fern-sdk-group-name: projects
-X_VENDOR_OPENAPI_EXTENSIONS = ['x-fern']
-
-# Legacy SWAGGER_SETTINGS removed - using drf-spectacular instead
-
 # drf-spectacular settings for OpenAPI 3.0 schema generation
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Label Studio API',
@@ -401,9 +392,6 @@ SPECTACULAR_SETTINGS = {
             '</code></pre>',
         }
     },
-    # 'PREPROCESSING_HOOKS': [
-    #     'label_studio.core.utils.openapi_extensions.custom_preprocessing_hook',
-    # ],
 }
 
 SENTRY_DSN = get_env('SENTRY_DSN', None)
