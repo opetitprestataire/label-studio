@@ -54,6 +54,11 @@ _view_request_body = {
         parameters=[
             OpenApiParameter(name='project', type=OpenApiTypes.INT, location='query', description='Project ID'),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['views'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -64,6 +69,11 @@ _view_request_body = {
         description='Create a view for a specific project.',
         request=_view_request_body,
         responses={201: ViewSerializer},
+        extensions={
+            'x-fern-sdk-group-name': ['views'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -75,6 +85,11 @@ _view_request_body = {
         parameters=[
             OpenApiParameter(name='id', type=OpenApiTypes.STR, location='path', description='View ID'),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['views'],
+            'x-fern-sdk-method-name': 'get',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -87,6 +102,11 @@ _view_request_body = {
         parameters=[
             OpenApiParameter(name='id', type=OpenApiTypes.STR, location='path', description='View ID'),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['views'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -100,6 +120,11 @@ _view_request_body = {
         ],
         request=_view_request_body,
         responses={200: ViewSerializer},
+        extensions={
+            'x-fern-sdk-group-name': ['views'],
+            'x-fern-sdk-method-name': 'update',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -111,6 +136,11 @@ _view_request_body = {
         parameters=[
             OpenApiParameter(name='id', type=OpenApiTypes.STR, location='path', description='View ID'),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['views'],
+            'x-fern-sdk-method-name': 'delete',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ViewAPI(viewsets.ModelViewSet):
@@ -133,6 +163,11 @@ class ViewAPI(viewsets.ModelViewSet):
         summary='Delete all project views',
         description='Delete all views for a specific project',
         request=ViewResetSerializer,
+        extensions={
+            'x-fern-sdk-group-name': ['views'],
+            'x-fern-sdk-method-name': 'delete_all',
+            'x-fern-audiences': ['public'],
+        },
     )
     @action(detail=False, methods=['delete'])
     def reset(self, request):
@@ -150,6 +185,11 @@ class ViewAPI(viewsets.ModelViewSet):
         summary='Update order of views',
         description='Update the order field of views based on the provided list of view IDs',
         request=ViewOrderSerializer,
+        extensions={
+            'x-fern-sdk-group-name': ['views'],
+            'x-fern-sdk-method-name': 'update_order',
+            'x-fern-audiences': ['public'],
+        },
     )
     @action(detail=False, methods=['post'], url_path='order')
     def update_order(self, request):
@@ -388,6 +428,9 @@ class TaskListAPI(generics.ListCreateAPIView):
             400: OpenApiResponse(description='Invalid project ID supplied'),
             404: OpenApiResponse(description='Project not found'),
         },
+        extensions={
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 class ProjectColumnsAPI(APIView):
@@ -408,6 +451,9 @@ class ProjectColumnsAPI(APIView):
         tags=['Data Manager'],
         summary='Get project state',
         description='Retrieve the project state for the data manager.',
+        extensions={
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 class ProjectStateAPI(APIView):
@@ -440,6 +486,11 @@ class ProjectStateAPI(APIView):
         tags=['Data Manager'],
         summary='Get actions',
         description='Retrieve all the registered actions with descriptions that data manager can use.',
+        extensions={
+            'x-fern-sdk-group-name': ['actions'],
+            'x-fern-sdk-method-name': 'list',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
@@ -490,6 +541,11 @@ class ProjectStateAPI(APIView):
             ),
         ],
         responses={200: OpenApiResponse(description='Action performed successfully')},
+        extensions={
+            'x-fern-sdk-group-name': ['actions'],
+            'x-fern-sdk-method-name': 'create',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ProjectActionsAPI(APIView):
