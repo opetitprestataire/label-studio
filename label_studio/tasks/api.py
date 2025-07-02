@@ -148,6 +148,10 @@ logger = logging.getLogger(__name__)
         extensions={
             'x-fern-sdk-group-name': ['tasks'],
             'x-fern-sdk-method-name': 'list',
+            'x-fern-pagination': {
+                'offset': '$request.page',
+                'results': '$response.tasks',
+            },
             'x-fern-audiences': ['public'],
         },
     ),
@@ -476,7 +480,7 @@ class AnnotationAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['tasks', 'annotations'],
+            'x-fern-sdk-group-name': ['annotations'],
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
         },
@@ -517,7 +521,7 @@ class AnnotationAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['tasks', 'annotations'],
+            'x-fern-sdk-group-name': ['annotations'],
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
