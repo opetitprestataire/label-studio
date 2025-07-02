@@ -65,7 +65,7 @@ jobs:
         if: always()
         with:
           name: cypress coverage
-          path: web/libs/editor/tests/coverage
+          path: web/libs/editor/coverage
 
       - name: Kill server
         if: always()
