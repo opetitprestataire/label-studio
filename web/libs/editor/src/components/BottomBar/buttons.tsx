@@ -49,6 +49,8 @@ type AcceptButtonProps = {
 
 export const AcceptButton = memo(
   observer(({ disabled, history, store }: AcceptButtonProps) => {
+    const annotation = store.annotationStore.selected;
+
     return (
       <ButtonTooltip key="accept" title="Accept annotation: [ Ctrl+Enter ]">
         <Button
@@ -56,14 +58,12 @@ export const AcceptButton = memo(
           disabled={disabled}
           look="primary"
           onClick={async () => {
-            const selected = store.annotationStore?.selected;
-
-            selected?.submissionInProgress();
+            annotation.submissionInProgress();
             await store.commentStore.commentFormSubmit();
             store.acceptAnnotation();
           }}
         >
-          {history.canUndo ? "Fix + Accept" : "Accept"}
+          {history.canUndo || annotation.versions.draft ? "Fix + Accept" : "Accept"}
         </Button>
       </ButtonTooltip>
     );
