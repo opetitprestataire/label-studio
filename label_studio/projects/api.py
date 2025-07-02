@@ -133,8 +133,12 @@ class ProjectFilterSet(FilterSet):
         ),
         extensions={
             'x-fern-sdk-group-name': ['projects'],
-            'x-fern-sdk-method-name': 'list',
+            'x-fern-sdk-method-name': 'counts',
             'x-fern-audiences': ['public'],
+            'x-fern-pagination': {
+                'offset': '$request.page',
+                'results': '$response.results',
+            },
         },
     ),
 )
@@ -454,9 +458,7 @@ class LabelStreamHistoryAPI(generics.RetrieveAPIView):
         responses={204: 'Validation success'},
         request=ProjectLabelConfigSerializer,
         extensions={
-            'x-fern-sdk-group-name': ['projects'],
-            'x-fern-sdk-method-name': 'validate_config',
-            'x-fern-audiences': ['public'],
+            'x-fern-audiences': ['internal'],
         },
     ),
 )
@@ -576,6 +578,11 @@ class ProjectSummaryResetAPI(GetParentObjectMixin, generics.CreateAPIView):
                 description='A unique integer value identifying this project import.',
             ),
         ],
+        extensions={
+            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-method-name': 'create_many_status',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class ProjectImportAPI(generics.RetrieveAPIView):
@@ -601,6 +608,9 @@ class ProjectImportAPI(generics.RetrieveAPIView):
                 description='A unique integer value identifying this project reimport.',
             ),
         ],
+        extensions={
+            'x-fern-audiences': ['internal'],
+        },
     ),
 )
 class ProjectReimportAPI(generics.RetrieveAPIView):
@@ -628,8 +638,8 @@ class ProjectReimportAPI(generics.RetrieveAPIView):
         ],
         responses={204: 'Tasks deleted'},
         extensions={
-            'x-fern-sdk-group-name': ['projects', 'tasks'],
-            'x-fern-sdk-method-name': 'delete_all',
+            'x-fern-sdk-group-name': 'projects',
+            'x-fern-sdk-method-name': 'delete_all_tasks',
             'x-fern-audiences': ['public'],
         },
     ),
@@ -657,9 +667,7 @@ class ProjectReimportAPI(generics.RetrieveAPIView):
         ]
         + paginator_help('tasks', 'Projects')['parameters'],
         extensions={
-            'x-fern-sdk-group-name': ['projects', 'tasks'],
-            'x-fern-sdk-method-name': 'list',
-            'x-fern-audiences': ['public'],
+            'x-fern-audiences': ['internal'],  # TODO: deprecate this endpoint in favor of tasks:tasks-list
         },
     ),
 )

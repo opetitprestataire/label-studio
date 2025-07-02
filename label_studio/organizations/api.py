@@ -104,6 +104,10 @@ class OrganizationMemberListPagination(PageNumberPagination):
             'x-fern-sdk-group-name': ['organizations', 'members'],
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
+            'x-fern-pagination': {
+                'offset': '$request.page',
+                'results': '$response.results',
+            },
         },
     ),
 )
