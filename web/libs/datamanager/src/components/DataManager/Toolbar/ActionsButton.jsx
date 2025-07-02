@@ -17,38 +17,18 @@ const injector = inject(({ store }) => ({
   hasSelected: store.currentView?.selected?.hasSelected ?? false,
 }));
 
-// const buildDialogContent = async (text, form, formRef, store) => {
-//   const formData = await store.fetchActionForm(actionId);
-
-//   return (
-//     <Block name="dialog-content">
-//       <Elem name="text">{text}</Elem>
-//       {formData && (
-//         <Elem name="form" style={{ paddingTop: 16 }}>
-//           <Form.Builder ref={formRef} fields={formData.toJSON()} autosubmit={false} withActions={false} />
-//         </Elem>
-//       )}
-//     </Block>
-//   );
-// };
-
 const DialogContent = ({ text, form, formRef, store, action }) => {
   const [formData, setFormData] = useState(form);
+
   useEffect(() => {
     if (!formData) {
       store.fetchActionForm(action.id).then((form) => {
-        console.log("form response", form);
         setFormData(form);
       });
     }
   }, [formData]);
 
-  console.log("formData", formData);
-  console.log("formData.toJSON", formData && formData.toJSON);
-  console.log("form", form);
-
   const fields = formData && formData.toJSON ? formData.toJSON() : formData;
-  console.log("fields", fields);
 
   return (
     <Block name="dialog-content">

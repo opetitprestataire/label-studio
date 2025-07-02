@@ -50,11 +50,11 @@ def get_all_actions(user, project):
     ):
         actions = [action for action in actions if not action.get('experimental', False)]
 
-    # generate form if function is passed
     for action in actions:
+        # remove form if generator is defined
+        # will be loaded on demand in /api/actions/<action_id>/form
         form_generator = action.get('dialog', {}).get('form')
         if callable(form_generator):
-            print('form_generator', form_generator(user, project))
             action['dialog']['form'] = None
 
         disabled_generator = action.get('disabled')
