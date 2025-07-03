@@ -175,6 +175,9 @@ export const AudioModel = types.compose(
         // use label to generate a unique key to ensure that adding/deleting can trigger changes
         return labels ? labels.join(",") : "";
       },
+      get readonly() {
+        return self.annotation.isReadOnly();
+      },
     }))
     ////// Sync actions
     .actions((self) => ({
