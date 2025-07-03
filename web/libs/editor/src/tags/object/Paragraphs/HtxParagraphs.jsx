@@ -6,6 +6,7 @@ import { FF_DEV_2669, FF_DEV_2918, FF_LSDV_4711, FF_LSDV_E_278, isFF } from "../
 import { findNodeAt, matchesSelector, splitBoundaries } from "../../../utils/html";
 import { patchPlayPauseMethods } from "../../../utils/patchPlayPauseMethods";
 import { isSelectionContainsSpan } from "../../../utils/selection-tools";
+import { useUpdateBuffering } from "../../../hooks/useUpdateBuffering";
 import styles from "./Paragraphs.module.scss";
 import { AuthorFilter } from "./AuthorFilter";
 import { Phrases } from "./Phrases";
@@ -23,12 +24,10 @@ if (isFF(FF_LSDV_4711)) audioDefaultProps.crossOrigin = "anonymous";
 const ParagraphAudio = observer(({ item }) => {
   const isBuffering = isSyncedBuffering && item.isBuffering;
 
-  const handleCanPlay = useCallback(() => {
-    item.handleBuffering(false);
-  }, [item]);
-  const handleWaiting = useCallback(() => {
-    item.handleBuffering(true);
-  }, [item]);
+  const updateBuffering = useUpdateBuffering(
+    item.audioRef,
+    item.handleBuffering
+  );
 
   const attachRef = useCallback(
     (audio) => {
@@ -56,8 +55,8 @@ const ParagraphAudio = observer(({ item }) => {
         onError={item.handleError}
         {...(isSyncedBuffering
           ? {
-              onCanPlay: handleCanPlay,
-              onWaiting: handleWaiting,
+              onCanPlay: updateBuffering,
+              onWaiting: updateBuffering,
             }
           : {})}
       />

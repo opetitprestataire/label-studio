@@ -4,6 +4,7 @@ import { forwardRef, memo, type MutableRefObject, useCallback, useEffect, useMem
 import { Block, Elem } from "../../utils/bem";
 import { FF_LSDV_4711, FF_VIDEO_FRAME_SEEK_PRECISION, isFF } from "../../utils/feature-flags";
 import { clamp, isDefined } from "../../utils/utilities";
+import { useUpdateBuffering } from "../../hooks/useUpdateBuffering";
 import "./VideoCanvas.scss";
 import { MAX_ZOOM, MIN_ZOOM } from "./VideoConstants";
 import { VirtualCanvas } from "./VirtualCanvas";
@@ -196,26 +197,17 @@ export const VideoCanvas = memo(
       [framerate, currentFrame, drawVideo, props.onFrameChange, length],
     );
 
-    const updateBufferingTimeoutIdRef = useRef(null as ReturnType<typeof setTimeout> | null);
-    const updateBuffering = useCallback(() => {
-      if (updateBufferingTimeoutIdRef.current) {
-        clearTimeout(updateBufferingTimeoutIdRef.current);
-        updateBufferingTimeoutIdRef.current = null;
-      }
-      if (!videoRef.current) return;
+    const handleVideoBuffering = useCallback((isBuffering: boolean) => {
       if (!contextRef.current) return;
-
-      const video = videoRef.current;
-      if (video.networkState === video.NETWORK_IDLE) {
+      
+      if (!isBuffering) {
         hasLoadedRef.current = true;
-        setBuffering(false);
-      } else {
-        setBuffering(true);
-        updateBufferingTimeoutIdRef.current = setTimeout(() => {
-          updateBuffering();
-        }, 16);
       }
-    }, []);
+      
+      setBuffering(isBuffering);
+    }, [setBuffering]);
+
+    const updateBuffering = useUpdateBuffering(videoRef, handleVideoBuffering);
 
     const delayedUpdate = useCallback(() => {
       if (!videoRef.current) return;
