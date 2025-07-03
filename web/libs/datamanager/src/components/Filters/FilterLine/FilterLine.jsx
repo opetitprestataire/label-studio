@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import { Fragment } from "react";
 import { BemWithSpecifiContext } from "../../../utils/bem";
 import { Button } from "@humansignal/ui";
+import { IconClose } from "@humansignal/icons";
 import { Tag } from "../../Common/Tag/Tag";
 import { FilterDropdown } from "../FilterDropdown";
 import "./FilterLine.scss";
