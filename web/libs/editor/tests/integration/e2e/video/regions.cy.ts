@@ -44,7 +44,7 @@ describe("Video segmentation", () => {
       LabelStudio.params().config(simpleVideoConfig).data(simpleVideoData).withResult(simpleVideoResult).init();
       LabelStudio.waitForObjectsReady();
       // Wait for video and regions to be fully loaded
-      cy.wait(TWO_FRAMES_TIMEOUT);
+      cy.wait(1000);
 
       Sidebar.hasRegions(1);
 
@@ -64,7 +64,7 @@ describe("Video segmentation", () => {
       LabelStudio.params().config(simpleVideoConfig).data(simpleVideoData).withResult(simpleVideoResult).init();
       LabelStudio.waitForObjectsReady();
       // Wait for frame change to be fully processed
-      cy.wait(TWO_FRAMES_TIMEOUT);
+      cy.wait(1000);
       Sidebar.hasRegions(1);
 
       cy.log("Remember an empty canvas state");
@@ -73,14 +73,14 @@ describe("Video segmentation", () => {
       VideoView.captureCanvas("canvas");
 
       VideoView.clickAtFrame(3);
-      cy.wait(TWO_FRAMES_TIMEOUT);
+      cy.wait(1000);
       cy.log("Select region");
       VideoView.clickAtRelative(0.5, 0.5);
-      cy.wait(TWO_FRAMES_TIMEOUT);
+      cy.wait(1000);
       Sidebar.hasSelectedRegions(1);
-      cy.wait(TWO_FRAMES_TIMEOUT);
+      cy.wait(1000);
       VideoView.clickAtFrame(4);
-      cy.wait(TWO_FRAMES_TIMEOUT);
+      cy.wait(1000);
       Sidebar.hasSelectedRegions(1);
 
       cy.wait(1000);

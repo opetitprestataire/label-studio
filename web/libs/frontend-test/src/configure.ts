@@ -27,7 +27,6 @@ export default function (
     fixturesFolder: localPath("./fixtures"),
     trashAssetsBeforeRuns: false, // Kills ability to run in parallel, must be off
     numTestsKeptInMemory: 1,
-    video: true,
     env: {
       coverage: COLLECT_COVERAGE,
     },
