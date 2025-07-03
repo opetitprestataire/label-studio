@@ -177,7 +177,7 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
         />
       );
     },
-    [data, columnCount, fieldsData, view.selected, view, view.selected.list, view.selected.all, getCellIndex, onChange],
+    [data, columnCount, fieldsData, view, onChange, getCellIndex],
   );
 
   const onItemsRenderedWrap = useCallback(
