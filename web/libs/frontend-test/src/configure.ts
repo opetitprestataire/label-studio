@@ -32,6 +32,10 @@ export default function (
     },
     e2e: {
       ...nxE2EPreset(__filename, { cypressDir: "tests/integration" }),
+      retries: {
+        runMode: 2,
+        openMode: 0,
+      },
       baseUrl: "http://localhost:3000",
       injectDocumentDomain: true,
       viewportWidth: 1600,
