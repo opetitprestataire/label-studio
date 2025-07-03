@@ -210,10 +210,13 @@ class ChannelD3 extends React.Component {
       const x = d3.mouse(d3.event.sourceEvent.target)[0];
       const newRegion = this.newRegion;
 
+      // double click handler to create instant region
       // when 2nd click happens during 300ms after 1st click and in the same place
       if (newRegion && Math.abs(newRegion.x - x) < 4) {
         clearTimeout(this.newRegionTimer);
-        parent?.regionChanged(newRegion.range, ranges.length, newRegion.states);
+        if (!readonly) {
+          parent?.regionChanged(newRegion.range, ranges.length, newRegion.states);
+        }
         this.newRegion = null;
         this.newRegionTimer = null;
       } else if (statesSelected) {
