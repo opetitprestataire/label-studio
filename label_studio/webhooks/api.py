@@ -95,9 +95,7 @@ class WebhookListAPI(generics.ListCreateAPIView):
         summary='Save webhook info',
         request=WebhookSerializerForUpdate,
         extensions={
-            'x-fern-sdk-group-name': ['webhooks'],
-            'x-fern-sdk-method-name': 'replace',
-            'x-fern-audiences': ['public'],
+            'x-fern-audiences': ['internal'],
         },
     ),
 )
@@ -157,7 +155,7 @@ class WebhookAPI(generics.RetrieveUpdateDestroyAPIView):
         ],
         extensions={
             'x-fern-sdk-group-name': ['webhooks'],
-            'x-fern-sdk-method-name': 'get_info',
+            'x-fern-sdk-method-name': 'info',
             'x-fern-audiences': ['public'],
         },
     ),

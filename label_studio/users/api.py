@@ -49,9 +49,7 @@ _user_schema = {
         ],
         request=UserSerializer,
         extensions={
-            'x-fern-sdk-group-name': ['users'],
-            'x-fern-sdk-method-name': 'update',
-            'x-fern-audiences': ['public'],
+            'x-fern-audiences': ['internal'],
         },
     ),
 )
