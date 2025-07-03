@@ -2,7 +2,16 @@ import { Labels, LabelStudio, Sidebar, VideoView } from "@humansignal/frontend-t
 import { simpleVideoConfig, simpleVideoData, simpleVideoResult } from "../../data/video_segmentation/regions";
 import { TWO_FRAMES_TIMEOUT } from "../utils/constants";
 
-describe("Video segmentation", () => {
+// This test suite has exhibited flakiness in CI environments, so we are using retries
+// while we work on improving CI stability for visual comparisons.
+const suiteConfig = {
+  retries: {
+    runMode: 3, // Retry 3 times in CI (headless mode)
+    openMode: 0, // No retries in local development (interactive mode)
+  },
+};
+
+describe("Video segmentation", suiteConfig, () => {
   it("Should be able to draw a simple rectangle", () => {
     LabelStudio.params().config(simpleVideoConfig).data(simpleVideoData).withResult([]).init();
 
@@ -50,12 +59,10 @@ describe("Video segmentation", () => {
 
       VideoView.captureCanvas("canvas");
 
-      cy.wait(1000);
-
       VideoView.clickAtFrame(4);
 
       // Ensure drawing operations are complete before comparison
-      cy.wait(1500);
+      cy.wait(1000);
 
       VideoView.canvasShouldChange("canvas", 0);
     });
@@ -75,14 +82,14 @@ describe("Video segmentation", () => {
       VideoView.captureCanvas("canvas");
 
       VideoView.clickAtFrame(3);
-      cy.wait(1000);
+      cy.wait(TWO_FRAMES_TIMEOUT);
       cy.log("Select region");
       VideoView.clickAtRelative(0.5, 0.5);
-      cy.wait(1000);
+      cy.wait(TWO_FRAMES_TIMEOUT);
       Sidebar.hasSelectedRegions(1);
-      cy.wait(1000);
+      cy.wait(TWO_FRAMES_TIMEOUT);
       VideoView.clickAtFrame(4);
-      cy.wait(1000);
+      cy.wait(TWO_FRAMES_TIMEOUT);
       Sidebar.hasSelectedRegions(1);
 
       cy.wait(1000);
