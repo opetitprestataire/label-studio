@@ -396,34 +396,6 @@ export const AudioModel = types.compose(
           self.playBackRate = val;
         },
 
-        createRegion(wsRegion, states) {
-          let bgColor = self.selectedregionbg;
-          const st = states.find((s) => s.type === "labels");
-
-          if (st) bgColor = Utils.Colors.convertToRGBA(st.getSelectedColor(), 0.3);
-
-          const r = AudioRegionModel.create({
-            id: wsRegion.id ? wsRegion.id : guidGenerator(),
-            pid: wsRegion.pid ? wsRegion.pid : guidGenerator(),
-            parentID: wsRegion.parent_id === null ? "" : wsRegion.parent_id,
-            start: wsRegion.start,
-            end: wsRegion.end,
-            score: wsRegion.score,
-            readonly: wsRegion.readonly,
-            regionbg: self.regionbg,
-            selectedregionbg: bgColor,
-            normalization: wsRegion.normalization,
-            states,
-          });
-
-          r.setWSRegion(wsRegion);
-
-          self.regions.push(r);
-          self.annotation.addRegion(r);
-
-          return r;
-        },
-
         addRegion(wsRegion) {
           // area id is assigned to WS region during deserealization
           const find_r = self.annotation.areas.get(wsRegion.id);

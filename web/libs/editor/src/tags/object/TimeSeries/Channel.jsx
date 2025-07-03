@@ -199,7 +199,7 @@ class ChannelD3 extends React.Component {
     } = this.props;
 
     const activeStates = parent?.activeStates();
-    const statesSelected = activeStates && activeStates.length;
+    const statesSelected = activeStates?.length;
     const readonly = parent?.annotation?.isReadOnly();
 
     // skip if event fired by .move() - prevent recursion and bugs
@@ -367,7 +367,7 @@ class ChannelD3 extends React.Component {
     const block = this.gCreator;
     const getRegion = this.getRegion;
     const x = this.x;
-    const brush = (this.brushCreator = d3
+    const brush = d3
       .brushX()
       .extent([
         [0, 0],
@@ -384,7 +384,9 @@ class ChannelD3 extends React.Component {
       // replacing default filter to allow ctrl-click action
       .filter(() => {
         return !d3.event.button;
-      }));
+      });
+
+    this.brushCreator = brush;
 
     this.gCreator.call(this.brushCreator);
   }
