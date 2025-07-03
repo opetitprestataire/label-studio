@@ -1,5 +1,5 @@
 import { inject, observer } from "mobx-react";
-import { useCallback, useRef, useEffect, useState } from "react";
+import { useCallback, useRef, useEffect, useState, useMemo } from "react";
 import { IconChevronRight, IconChevronDown, IconTrash } from "@humansignal/icons";
 import { Block, Elem } from "../../../utils/bem";
 import { FF_LOPS_E_3, isFF } from "../../../utils/feature-flags";
@@ -155,8 +155,22 @@ export const ActionsButton = injector(
   observer(({ store, size, hasSelected, ...rest }) => {
     const formRef = useRef();
     const selectedCount = store.currentView.selectedCount;
+    const [isOpen, setIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const actions = store.availableActions.filter((a) => !a.hidden).sort((a, b) => a.order - b.order);
+    const actions = useMemo(() => {
+      return store.availableActions.filter((a) => !a.hidden).sort((a, b) => a.order - b.order);
+    }, [store.availableActions]);
+
+    useEffect(() => {
+      if (isOpen && actions.length === 0) {
+        setIsLoading(true);
+        store.fetchActions().finally(() => {
+          setIsLoading(false);
+        });
+      }
+    }, [isOpen, actions]);
+
     const actionButtons = actions.map((action) => (
       <ActionButton key={action.id} action={action} parentRef={formRef} store={store} formRef={formRef} />
     ));
@@ -164,9 +178,12 @@ export const ActionsButton = injector(
 
     return (
       <Dropdown.Trigger
-        content={<Menu size="compact">{actionButtons}</Menu>}
+        content={
+          <Menu size="compact">{isLoading ? <Menu.Item disabled>Loading actions...</Menu.Item> : actionButtons}</Menu>
+        }
         openUpwardForShortViewport={false}
         disabled={!hasSelected}
+        onToggle={setIsOpen}
       >
         <Button size={size} disabled={!hasSelected} {...rest}>
           {selectedCount > 0 ? `${selectedCount} ${recordTypeLabel}${selectedCount > 1 ? "s" : ""}` : "Actions"}
