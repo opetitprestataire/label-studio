@@ -50,6 +50,8 @@ describe("Video segmentation", () => {
 
       VideoView.captureCanvas("canvas");
 
+      cy.wait(1000);
+
       VideoView.clickAtFrame(4);
 
       // Ensure drawing operations are complete before comparison
