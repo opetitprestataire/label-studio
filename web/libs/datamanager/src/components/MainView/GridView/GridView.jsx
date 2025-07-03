@@ -129,7 +129,7 @@ export const GridCell = observer(({ view, selected, row, fields, onClick, column
 export const GridView = observer(({ data, view, loadMore, fields, onChange, hiddenFields }) => {
   const columnCount = view.gridWidth ?? 4;
 
-  const getCellIndex = (row, column) => columnCount * row + column;
+  const getCellIndex = useCallback((row, column) => columnCount * row + column, [columnCount]);
 
   const fieldsData = useMemo(() => {
     return prepareColumns(fields, hiddenFields);
@@ -147,6 +147,10 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
     : NO_IMAGE_CELL_HEIGHT;
   const finalRowHeight =
     CELL_HEADER_HEIGHT + rowHeight * (hasImage ? Math.max(1, (IMAGE_SIZE_COEFFICIENT - columnCount) * 0.5) : 1);
+
+  // Calculate the total number of rows needed to display all items
+  const itemCount = view.dataStore.total || data.length;
+  const totalRows = Math.ceil(itemCount / columnCount);
 
   const renderItem = useCallback(
     ({ style, rowIndex, columnIndex }) => {
@@ -173,33 +177,85 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
         />
       );
     },
-    [data, columnCount, fieldsData, view.selected, view, view.selected.list, view.selected.all, getCellIndex],
+    [data, columnCount, fieldsData, view.selected, view, view.selected.list, view.selected.all, getCellIndex, onChange],
   );
 
-  const onItemsRenderedWrap =
+  const onItemsRenderedWrap = useCallback(
     (cb) =>
     ({ visibleRowStartIndex, visibleRowStopIndex, overscanRowStopIndex, overscanRowStartIndex }) => {
+      // Check if we're near the end and need to load more
+      const visibleItemStartIndex = getCellIndex(visibleRowStartIndex, 0);
+      const visibleItemStopIndex = getCellIndex(visibleRowStopIndex, columnCount - 1);
+      
+      // If we're showing items near the end of our loaded data, trigger loading
+      if (visibleItemStopIndex >= data.length - (columnCount * 2) && view.dataStore.hasNextPage && !view.dataStore.loading) {
+        console.log('GridView: Near end of loaded data, triggering load', {
+          visibleItemStopIndex,
+          dataLength: data.length,
+          columnCount,
+          hasNextPage: view.dataStore.hasNextPage,
+          loading: view.dataStore.loading
+        });
+        loadMore?.();
+      }
+      
       cb({
         overscanStartIndex: overscanRowStartIndex,
         overscanStopIndex: overscanRowStopIndex,
         visibleStartIndex: visibleRowStartIndex,
         visibleStopIndex: visibleRowStopIndex,
       });
-    };
+    },
+    [data.length, columnCount, view.dataStore.hasNextPage, view.dataStore.loading, loadMore, getCellIndex],
+  );
 
-  const itemCount = Math.floor(data.length / columnCount);
-
+  // Check if a specific item index is loaded
   const isItemLoaded = useCallback(
     (index) => {
-      const rowIndex = index * columnCount;
-      const rowFullfilled = data.slice(rowIndex, columnCount).length === columnCount;
-      console.log(rowIndex, rowFullfilled);
-
-      return rowFullfilled;
+      const rowExists = index < data.length && !!data[index];
+      const hasNextPage = view.dataStore.hasNextPage;
+      const result = !hasNextPage || rowExists;
+      
+      // Only log when we're near the end of loaded data
+      if (index >= data.length - 5) {
+        console.log("GridView: isItemLoaded check", {
+          index,
+          dataLength: data.length,
+          rowExists,
+          hasNextPage,
+          result,
+          total: view.dataStore.total,
+        });
+      }
+      
+      return result;
     },
-    [columnCount, data, view.dataStore.hasNextPage],
+    [data.length, view.dataStore.hasNextPage, view.dataStore.total],
   );
-  console.log({ itemCount });
+
+  // Wrap loadMore to ensure it handles the grid's item indexing correctly
+  const loadMoreWrapper = useCallback(
+    async (startIndex, stopIndex) => {
+      const threshold = Math.max(1, Math.floor(view.dataStore.pageSize / 4));
+      const batchSize = Math.max(1, Math.floor(view.dataStore.pageSize / 2));
+      
+      console.log("GridView: Loading more items", {
+        startIndex,
+        stopIndex,
+        currentDataLength: data.length,
+        total: view.dataStore.total,
+        threshold,
+        batchSize,
+        hasNextPage: view.dataStore.hasNextPage,
+        pageSize: view.dataStore.pageSize,
+      });
+      
+      if (loadMore) {
+        await loadMore();
+      }
+    },
+    [loadMore, data.length, view.dataStore.pageSize, view.dataStore.total, view.dataStore.hasNextPage],
+  );
 
   return (
     <GridViewProvider data={data} view={view} fields={fieldsData}>
@@ -207,11 +263,11 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
         <Elem tag={AutoSizer} name="resize">
           {({ width, height }) => (
             <InfiniteLoader
-              itemCount={data.length}
+              itemCount={itemCount}
               isItemLoaded={isItemLoaded}
-              loadMoreItems={loadMore}
-              threshold={Math.floor(view.dataStore.pageSize / 2)}
-              minimumBatchSize={view.dataStore.pageSize}
+              loadMoreItems={loadMoreWrapper}
+              threshold={Math.max(1, Math.floor(view.dataStore.pageSize / 4))}
+              minimumBatchSize={Math.max(1, Math.floor(view.dataStore.pageSize / 2))}
             >
               {({ onItemsRendered, ref }) => (
                 <Elem
@@ -221,9 +277,9 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
                   height={height}
                   name="list"
                   rowHeight={finalRowHeight}
-                  overscanRowCount={view.dataStore.pageSize}
+                  overscanRowCount={Math.max(2, Math.floor(view.dataStore.pageSize / 2))}
                   columnCount={columnCount}
-                  rowCount={itemCount}
+                  rowCount={totalRows}
                   columnWidth={width / columnCount - 9.5}
                   onItemsRendered={onItemsRenderedWrap(onItemsRendered)}
                   style={{ overflowX: "hidden" }}
