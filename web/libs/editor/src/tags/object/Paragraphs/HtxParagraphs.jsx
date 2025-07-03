@@ -24,10 +24,7 @@ if (isFF(FF_LSDV_4711)) audioDefaultProps.crossOrigin = "anonymous";
 const ParagraphAudio = observer(({ item }) => {
   const isBuffering = isSyncedBuffering && item.isBuffering;
 
-  const updateBuffering = useUpdateBuffering(
-    item.audioRef,
-    item.handleBuffering
-  );
+  const updateBuffering = useUpdateBuffering(item.audioRef, item.handleBuffering);
 
   const attachRef = useCallback(
     (audio) => {

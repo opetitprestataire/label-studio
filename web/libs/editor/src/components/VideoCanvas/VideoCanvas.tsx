@@ -197,15 +197,18 @@ export const VideoCanvas = memo(
       [framerate, currentFrame, drawVideo, props.onFrameChange, length],
     );
 
-    const handleVideoBuffering = useCallback((isBuffering: boolean) => {
-      if (!contextRef.current) return;
-      
-      if (!isBuffering) {
-        hasLoadedRef.current = true;
-      }
-      
-      setBuffering(isBuffering);
-    }, [setBuffering]);
+    const handleVideoBuffering = useCallback(
+      (isBuffering: boolean) => {
+        if (!contextRef.current) return;
+
+        if (!isBuffering) {
+          hasLoadedRef.current = true;
+        }
+
+        setBuffering(isBuffering);
+      },
+      [setBuffering],
+    );
 
     const updateBuffering = useUpdateBuffering(videoRef, handleVideoBuffering);
 
