@@ -1,5 +1,6 @@
 import { Labels, LabelStudio, Sidebar, VideoView } from "@humansignal/frontend-test/helpers/LSF/index";
 import { simpleVideoConfig, simpleVideoData, simpleVideoResult } from "../../data/video_segmentation/regions";
+import { TWO_FRAMES_TIMEOUT } from "../utils/constants";
 
 describe("Video segmentation", () => {
   it("Should be able to draw a simple rectangle", () => {
@@ -21,7 +22,7 @@ describe("Video segmentation", () => {
     Sidebar.hasNoRegions();
 
     // Wait for video to be fully loaded and stable
-    cy.wait(1000);
+    cy.wait(TWO_FRAMES_TIMEOUT);
     VideoView.captureCanvas("canvas");
 
     Labels.select("Label 2");
@@ -29,7 +30,7 @@ describe("Video segmentation", () => {
     Sidebar.hasRegions(1);
 
     // Ensure drawing operations are complete before comparison
-    cy.wait(1000);
+    cy.wait(TWO_FRAMES_TIMEOUT);
     VideoView.canvasShouldChange("canvas", 0);
   });
 
@@ -37,15 +38,15 @@ describe("Video segmentation", () => {
     it("Should be invisible out of the lifespan", () => {
       LabelStudio.params().config(simpleVideoConfig).data(simpleVideoData).withResult(simpleVideoResult).init();
       LabelStudio.waitForObjectsReady();
+      // Wait for video and regions to be fully loaded
+      cy.wait(TWO_FRAMES_TIMEOUT);
       Sidebar.hasRegions(1);
 
-      // Wait for video and regions to be fully loaded
-      cy.wait(1000);
       VideoView.captureCanvas("canvas");
 
       VideoView.clickAtFrame(4);
       // Wait for frame change to be fully rendered
-      cy.wait(1000);
+      cy.wait(TWO_FRAMES_TIMEOUT);
       VideoView.canvasShouldChange("canvas", 0);
     });
   });
@@ -54,12 +55,12 @@ describe("Video segmentation", () => {
     it("Should be invisible out of the lifespan", () => {
       LabelStudio.params().config(simpleVideoConfig).data(simpleVideoData).withResult(simpleVideoResult).init();
       LabelStudio.waitForObjectsReady();
+      // Wait for frame change to be fully processed
+      cy.wait(TWO_FRAMES_TIMEOUT);
       Sidebar.hasRegions(1);
 
       cy.log("Remember an empty canvas state");
       VideoView.clickAtFrame(4);
-      // Wait for frame change to be fully processed
-      cy.wait(1000);
       VideoView.captureCanvas("canvas");
 
       VideoView.clickAtFrame(3);
@@ -79,8 +80,7 @@ describe("Video segmentation", () => {
       VideoView.clickAtFrame(4);
       Sidebar.hasSelectedRegions(1);
 
-      // Wait longer for transformer state changes in CI
-      cy.wait(1500);
+      cy.wait(TWO_FRAMES_TIMEOUT);
       VideoView.canvasShouldNotChange("canvas", 0);
     });
   });

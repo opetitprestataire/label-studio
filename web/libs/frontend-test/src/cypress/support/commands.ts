@@ -50,6 +50,10 @@ Cypress.Commands.add(
     for (const hiddenSelector of withHidden) {
       cy.get(hiddenSelector).invoke("css", "visibility", "hidden");
     }
+
+    // Add a small delay before taking capture screenshot
+    cy.wait(100);
+
     obj.screenshot(
       `${screenshotName}-orig`,
       Object.assign({ log: false }, screenshotOptions, {
@@ -105,7 +109,7 @@ Cypress.Commands.add(
     }
 
     // Add a small delay before taking comparison screenshot
-    cy.wait(200);
+    cy.wait(100);
 
     obj.screenshot(
       `${screenshotName}-comp`,

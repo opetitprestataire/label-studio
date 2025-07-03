@@ -1,5 +1,6 @@
 import { AudioView, Labels, LabelStudio, Relations } from "@humansignal/frontend-test/helpers/LSF";
 import { audioOneRegionResult, audioWithLabelsConfig, audioWithLabelsData } from "../../data/audio/audio_regions";
+import { TWO_FRAMES_TIMEOUT } from "../utils/constants";
 
 // This test suite has exhibited flakiness in the past, so we are going to run it with retries
 // while we investigate the root cause.
@@ -48,13 +49,13 @@ describe("Audio regions", suiteConfig, () => {
     AudioView.isReady();
 
     // Wait for audio visualization to stabilize before capturing baseline
-    cy.wait(1500);
+    cy.wait(TWO_FRAMES_TIMEOUT);
     const baseRegionColor = AudioView.getPixelColorRelative(0.36, 0.9);
 
     // moving the cursor
     AudioView.seekCurrentTimebox(38);
     // Allow time for active state rendering to complete
-    cy.wait(1000);
+    cy.wait(TWO_FRAMES_TIMEOUT);
     const activeRegionColor = AudioView.getPixelColorRelative(0.36, 0.9);
 
     activeRegionColor.then((color) => {
@@ -64,7 +65,7 @@ describe("Audio regions", suiteConfig, () => {
     // deactivating
     AudioView.seekCurrentTimebox(0);
     // Wait for inactive state to be fully rendered
-    cy.wait(1000);
+    cy.wait(TWO_FRAMES_TIMEOUT);
     const inactiveRegionColor = AudioView.getPixelColorRelative(0.36, 0.9);
 
     inactiveRegionColor.then((color) => {
