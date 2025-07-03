@@ -182,30 +182,26 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
 
   const onItemsRenderedWrap = useCallback(
     (cb) =>
-    ({ visibleRowStartIndex, visibleRowStopIndex, overscanRowStopIndex, overscanRowStartIndex }) => {
-      // Check if we're near the end and need to load more
-      const visibleItemStartIndex = getCellIndex(visibleRowStartIndex, 0);
-      const visibleItemStopIndex = getCellIndex(visibleRowStopIndex, columnCount - 1);
-      
-      // If we're showing items near the end of our loaded data, trigger loading
-      if (visibleItemStopIndex >= data.length - (columnCount * 2) && view.dataStore.hasNextPage && !view.dataStore.loading) {
-        console.log('GridView: Near end of loaded data, triggering load', {
-          visibleItemStopIndex,
-          dataLength: data.length,
-          columnCount,
-          hasNextPage: view.dataStore.hasNextPage,
-          loading: view.dataStore.loading
+      ({ visibleRowStartIndex, visibleRowStopIndex, overscanRowStopIndex, overscanRowStartIndex }) => {
+        // Check if we're near the end and need to load more
+        const visibleItemStopIndex = getCellIndex(visibleRowStopIndex, columnCount - 1);
+
+        // If we're showing items near the end of our loaded data, trigger loading
+        if (
+          visibleItemStopIndex >= data.length - columnCount * 2 &&
+          view.dataStore.hasNextPage &&
+          !view.dataStore.loading
+        ) {
+          loadMore?.();
+        }
+
+        cb({
+          overscanStartIndex: overscanRowStartIndex,
+          overscanStopIndex: overscanRowStopIndex,
+          visibleStartIndex: visibleRowStartIndex,
+          visibleStopIndex: visibleRowStopIndex,
         });
-        loadMore?.();
-      }
-      
-      cb({
-        overscanStartIndex: overscanRowStartIndex,
-        overscanStopIndex: overscanRowStopIndex,
-        visibleStartIndex: visibleRowStartIndex,
-        visibleStopIndex: visibleRowStopIndex,
-      });
-    },
+      },
     [data.length, columnCount, view.dataStore.hasNextPage, view.dataStore.loading, loadMore, getCellIndex],
   );
 
@@ -214,47 +210,9 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
     (index) => {
       const rowExists = index < data.length && !!data[index];
       const hasNextPage = view.dataStore.hasNextPage;
-      const result = !hasNextPage || rowExists;
-      
-      // Only log when we're near the end of loaded data
-      if (index >= data.length - 5) {
-        console.log("GridView: isItemLoaded check", {
-          index,
-          dataLength: data.length,
-          rowExists,
-          hasNextPage,
-          result,
-          total: view.dataStore.total,
-        });
-      }
-      
-      return result;
+      return !hasNextPage || rowExists;
     },
-    [data.length, view.dataStore.hasNextPage, view.dataStore.total],
-  );
-
-  // Wrap loadMore to ensure it handles the grid's item indexing correctly
-  const loadMoreWrapper = useCallback(
-    async (startIndex, stopIndex) => {
-      const threshold = Math.max(1, Math.floor(view.dataStore.pageSize / 4));
-      const batchSize = Math.max(1, Math.floor(view.dataStore.pageSize / 2));
-      
-      console.log("GridView: Loading more items", {
-        startIndex,
-        stopIndex,
-        currentDataLength: data.length,
-        total: view.dataStore.total,
-        threshold,
-        batchSize,
-        hasNextPage: view.dataStore.hasNextPage,
-        pageSize: view.dataStore.pageSize,
-      });
-      
-      if (loadMore) {
-        await loadMore();
-      }
-    },
-    [loadMore, data.length, view.dataStore.pageSize, view.dataStore.total, view.dataStore.hasNextPage],
+    [data.length, view.dataStore.hasNextPage],
   );
 
   return (
@@ -265,7 +223,7 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
             <InfiniteLoader
               itemCount={itemCount}
               isItemLoaded={isItemLoaded}
-              loadMoreItems={loadMoreWrapper}
+              loadMoreItems={loadMore}
               threshold={Math.max(1, Math.floor(view.dataStore.pageSize / 4))}
               minimumBatchSize={Math.max(1, Math.floor(view.dataStore.pageSize / 2))}
             >
