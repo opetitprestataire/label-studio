@@ -6,6 +6,7 @@ import { Tag } from "../../Common/Tag/Tag";
 import { FilterDropdown } from "../FilterDropdown";
 import "./FilterLine.scss";
 import { FilterOperation } from "./FilterOperation";
+import { Icon } from "../../Common/Icon/Icon";
 
 const { Block, Elem } = BemWithSpecifiContext();
 
