@@ -19,18 +19,23 @@ describe("Video segmentation", () => {
   it("Should have changes in canvas", () => {
     LabelStudio.params().config(simpleVideoConfig).data(simpleVideoData).withResult([]).init();
     LabelStudio.waitForObjectsReady();
+
+    // Wait for video and regions to be fully loaded
+    cy.wait(TWO_FRAMES_TIMEOUT);
+
     Sidebar.hasNoRegions();
 
     // Wait for video to be fully loaded and stable
-    cy.wait(TWO_FRAMES_TIMEOUT);
     VideoView.captureCanvas("canvas");
 
     Labels.select("Label 2");
     VideoView.drawRectRelative(0.2, 0.2, 0.6, 0.6);
-    Sidebar.hasRegions(1);
 
     // Ensure drawing operations are complete before comparison
-    cy.wait(TWO_FRAMES_TIMEOUT);
+    cy.wait(1000);
+
+    Sidebar.hasRegions(1);
+
     VideoView.canvasShouldChange("canvas", 0);
   });
 
@@ -40,13 +45,16 @@ describe("Video segmentation", () => {
       LabelStudio.waitForObjectsReady();
       // Wait for video and regions to be fully loaded
       cy.wait(TWO_FRAMES_TIMEOUT);
+
       Sidebar.hasRegions(1);
 
       VideoView.captureCanvas("canvas");
 
       VideoView.clickAtFrame(4);
-      // Wait for frame change to be fully rendered
-      cy.wait(TWO_FRAMES_TIMEOUT);
+
+      // Ensure drawing operations are complete before comparison
+      cy.wait(1000);
+
       VideoView.canvasShouldChange("canvas", 0);
     });
   });
@@ -61,26 +69,22 @@ describe("Video segmentation", () => {
 
       cy.log("Remember an empty canvas state");
       VideoView.clickAtFrame(4);
+      cy.wait(1000);
       VideoView.captureCanvas("canvas");
 
       VideoView.clickAtFrame(3);
+      cy.wait(TWO_FRAMES_TIMEOUT);
       cy.log("Select region");
       VideoView.clickAtRelative(0.5, 0.5);
-
-      // Add retry logic for element selection in CI
-      cy.get("body").then(($body) => {
-        // Retry selection if not found initially
-        if ($body.find(".lsf-tree-node-selected").length === 0) {
-          cy.wait(500);
-          VideoView.clickAtRelative(0.5, 0.5);
-        }
-      });
-
-      Sidebar.hasSelectedRegions(1);
-      VideoView.clickAtFrame(4);
-      Sidebar.hasSelectedRegions(1);
-
       cy.wait(TWO_FRAMES_TIMEOUT);
+      Sidebar.hasSelectedRegions(1);
+      cy.wait(TWO_FRAMES_TIMEOUT);
+      VideoView.clickAtFrame(4);
+      cy.wait(TWO_FRAMES_TIMEOUT);
+      Sidebar.hasSelectedRegions(1);
+
+      cy.wait(1000);
+
       VideoView.canvasShouldNotChange("canvas", 0);
     });
   });
