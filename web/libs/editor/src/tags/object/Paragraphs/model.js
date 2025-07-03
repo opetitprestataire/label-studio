@@ -267,7 +267,7 @@ const PlayableAndSyncable = types
     },
 
     registerSyncHandlers() {
-      self.syncHandlers.set("pause", self.stopNow);
+      self.syncHandlers.set("pause", self.handleSyncPause);
       self.syncHandlers.set("play", self.handleSyncPlay);
       self.syncHandlers.set("seek", self.handleSyncPlay);
       self.syncHandlers.set("speed", self.handleSyncSpeed);
@@ -321,6 +321,18 @@ const PlayableAndSyncable = types
       }
     },
 
+    handleSyncPause({ playing }, event) {
+      if (event === "pause") {
+        self.wasPlayingBeforeBuffering = false;
+      }
+
+      const isBuffering = self.syncManager?.bufferingOrigins.size > 0;
+
+      if (!isSyncedBuffering || (!isBuffering && isDefined(playing))) {
+        self.stopNow();
+      }
+    },
+
     handleSyncSpeed({ speed }) {
       const audio = self.audioRef.current;
 
@@ -349,11 +361,8 @@ const PlayableAndSyncable = types
       }
     },
 
-    stopNow(data, event) {
+    stopNow() {
       const audio = self.audioRef.current;
-      if (event === "pause") {
-        self.wasPlayingBeforeBuffering = false;
-      }
 
       if (!audio) return;
       if (audio.paused) return;
@@ -418,7 +427,7 @@ const PlayableAndSyncable = types
 
       if (isPaused) {
         audio.play();
-        self.triggerSync("play");
+        self.triggerSync("play", { playing: true });
       }
 
       self.playing = true;
@@ -453,7 +462,7 @@ const PlayableAndSyncable = types
       audio.play();
       self.playing = true;
       self.playingId = idx;
-      self.triggerSync("play");
+      self.triggerSync("play", { playing: true });
       self.trackPlayingId();
     },
     handleBuffering(isBuffering) {
@@ -468,7 +477,7 @@ const PlayableAndSyncable = types
 
       if (willStopBuffering) {
         if (self.wasPlayingBeforeBuffering) {
-          audio?.play();
+          self.play();
         }
       }
 
@@ -481,6 +490,10 @@ const PlayableAndSyncable = types
         if (audio.playing) {
           audio?.pause();
         }
+      }
+
+      if (willStopBuffering && self.wasPlayingBeforeBuffering) {
+        self.trackPlayingId();
       }
     },
   }))
