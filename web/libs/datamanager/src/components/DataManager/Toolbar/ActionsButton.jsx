@@ -9,7 +9,7 @@ import Form from "../../Common/Form/Form";
 import { Menu } from "../../Common/Menu/Menu";
 import { Modal } from "../../Common/Modal/ModalPopup";
 import "./ActionsButton.scss";
-import { Tooltip } from "@humansignal/ui";
+import { Spinner, Tooltip } from "@humansignal/ui";
 
 const isFFLOPSE3 = isFF(FF_LOPS_E_3);
 const injector = inject(({ store }) => ({
@@ -19,12 +19,19 @@ const injector = inject(({ store }) => ({
 
 const DialogContent = ({ text, form, formRef, store, action }) => {
   const [formData, setFormData] = useState(form);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!formData) {
-      store.fetchActionForm(action.id).then((form) => {
-        setFormData(form);
-      });
+      setIsLoading(true);
+      store
+        .fetchActionForm(action.id)
+        .then((form) => {
+          setFormData(form);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }, [formData]);
 
@@ -33,6 +40,11 @@ const DialogContent = ({ text, form, formRef, store, action }) => {
   return (
     <Block name="dialog-content">
       <Elem name="text">{text}</Elem>
+      {isLoading && (
+        <Elem name="loading" style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+          <Spinner />
+        </Elem>
+      )}
       {formData && (
         <Elem name="form" style={{ paddingTop: 16 }}>
           <Form.Builder ref={formRef} fields={fields} autosubmit={false} withActions={false} />
