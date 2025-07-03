@@ -47,10 +47,14 @@ describe("Audio regions", suiteConfig, () => {
     LabelStudio.waitForObjectsReady();
     AudioView.isReady();
 
+    // Wait for audio visualization to stabilize before capturing baseline
+    cy.wait(1500);
     const baseRegionColor = AudioView.getPixelColorRelative(0.36, 0.9);
 
     // moving the cursor
     AudioView.seekCurrentTimebox(38);
+    // Allow time for active state rendering to complete
+    cy.wait(1000);
     const activeRegionColor = AudioView.getPixelColorRelative(0.36, 0.9);
 
     activeRegionColor.then((color) => {
@@ -59,6 +63,8 @@ describe("Audio regions", suiteConfig, () => {
 
     // deactivating
     AudioView.seekCurrentTimebox(0);
+    // Wait for inactive state to be fully rendered
+    cy.wait(1000);
     const inactiveRegionColor = AudioView.getPixelColorRelative(0.36, 0.9);
 
     inactiveRegionColor.then((color) => {

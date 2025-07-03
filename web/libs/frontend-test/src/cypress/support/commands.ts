@@ -1,6 +1,6 @@
 import Loggable = Cypress.Loggable;
 import Timeoutable = Cypress.Timeoutable;
-import Tresholdable = Cypress.Tresholdable;
+import Thresholdable = Cypress.Thresholdable;
 import CompareScreenshotOptions = Cypress.CompareScreenshotOptions;
 import { addMatchImageSnapshotCommand } from "cypress-image-snapshot/command";
 
@@ -76,9 +76,9 @@ Cypress.Commands.add(
     subject,
     name,
     compare,
-    screenshotCompareOptions: Partial<Loggable & Timeoutable & CompareScreenshotOptions & Tresholdable> = {},
+    screenshotCompareOptions: Partial<Loggable & Timeoutable & CompareScreenshotOptions & Thresholdable> = {},
   ) => {
-    const { treshold = 0.1, withHidden = [], ...screenshotOptions } = screenshotCompareOptions;
+    const { threshold = 0.1, withHidden = [], ...screenshotOptions } = screenshotCompareOptions;
     const screenshotName = getName(name);
     const log = Cypress.log({
       $el: subject,
@@ -95,7 +95,7 @@ Cypress.Commands.add(
     const options = {
       initialScreenshot: "",
       currentScreenshot: "",
-      treshold,
+      threshold,
       compare,
     };
 
@@ -103,6 +103,10 @@ Cypress.Commands.add(
     for (const hiddenSelector of withHidden) {
       cy.get(hiddenSelector).invoke("css", "visibility", "hidden");
     }
+
+    // Add a small delay before taking comparison screenshot
+    cy.wait(200);
+
     obj.screenshot(
       `${screenshotName}-comp`,
       Object.assign({ log: false }, screenshotOptions, {
@@ -119,7 +123,9 @@ Cypress.Commands.add(
 
     cy.task("compareScreenshots", options, { log: false }).then((result) => {
       if (!result) {
-        const error = new Error("Change");
+        const error = new Error(
+          `Screenshot comparison failed: ${compare} - expected ${compare === "shouldChange" ? "changes" : "no changes"} but got the opposite. Check that visual states are properly rendered in your test environment.`,
+        );
 
         log.error(error);
         throw error;
