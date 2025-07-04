@@ -15,6 +15,7 @@ module.exports = {
     letterSpacing: tokens.typography.letterSpacing,
     fontWeight: tokens.typography.fontWeight,
     fontFamily: tokens.typography.fontFamily,
+    lineHeight: tokens.typography.lineHeight,
     extend: {
       colors: {
         // DO NOT USE THESE COLORS
@@ -63,10 +64,6 @@ module.exports = {
       fontSize: {
         // Add all font sizes from tokens
         ...tokens.typography.fontSize,
-      },
-      lineHeight: {
-        // Add all line heights from tokens
-        ...tokens.typography.lineHeight,
       },
       spacing: {
         4.5: "1.125rem",

@@ -1,7 +1,6 @@
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import LinkTo from "@storybook/addon-links/react";
-
 import type { Meta } from "@storybook/react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
@@ -135,7 +134,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
         <div className="mb-3 h-16 flex items-center justify-center overflow-hidden">
           {token.includes("--font-size-") && (
             <div
-              className="whitespace-nowrap leading-tight"
+              className="whitespace-nowrap leading-title-small"
               style={{
                 fontSize: token,
               }}
@@ -288,7 +287,7 @@ const TokenCatalog = () => {
     return matchesSearch && matchesCategory && matchesColorSubcategory;
   });
 
-  // Group filtered tokens by their top-level category
+  // Group filtered tokens by their top-level category and subcategory for typography
   const groupedTokens: Record<string, Array<[string, string]>> = filteredTokens.reduce(
     (acc, [name, value]) => {
       const topCategory = name.split(".")[0];
@@ -302,6 +301,25 @@ const TokenCatalog = () => {
     },
     {} as Record<string, Array<[string, string]>>,
   );
+
+  // For typography, group by subcategory
+  const getGroupedTypographyTokens = () => {
+    const typographyTokens = groupedTokens.typography || [];
+    const subcategories: Record<string, Array<[string, string]>> = {};
+
+    typographyTokens.forEach(([name, value]) => {
+      const parts = name.split(".");
+      const subcategory = parts[1] || "other";
+
+      if (!subcategories[subcategory]) {
+        subcategories[subcategory] = [];
+      }
+
+      subcategories[subcategory].push([name, value]);
+    });
+
+    return subcategories;
+  };
 
   return (
     <div className="token-catalog p-8">
@@ -387,22 +405,57 @@ const TokenCatalog = () => {
       {Object.keys(groupedTokens).length === 0 ? (
         <div className="text-center my-10 text-neutral-content-subtler">No tokens found matching "{searchTerm}"</div>
       ) : (
-        Object.entries(groupedTokens).map(([category, tokens]) => (
-          <div key={category} className="category-section mb-10">
-            <h2 className="text-lg m-0 mb-2 pb-2 border-b border-neutral-border">
-              {category} ({tokens.length})
-            </h2>
-            <p className="text-sm m-0 mb-4 text-neutral-content-subtler">
-              {categoryDescriptions[category] || "Design tokens in this category"}
-            </p>
+        Object.entries(groupedTokens).map(([category, tokens]) => {
+          // Special handling for typography tokens
+          if (category === "typography") {
+            const typographySubcategories = getGroupedTypographyTokens();
 
-            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
-              {tokens.map(([name, value]) => (
-                <TokenValue key={name} token={value} tokenName={name} />
-              ))}
+            return (
+              <div key={category} className="category-section mb-10">
+                <h2 className="text-lg m-0 mb-2 pb-2 border-b border-neutral-border">
+                  {category} ({tokens.length})
+                </h2>
+                <p className="text-sm m-0 mb-4 text-neutral-content-subtler">
+                  {categoryDescriptions[category] || "Design tokens in this category"}
+                </p>
+
+                {Object.entries(typographySubcategories).map(([subcategory, subcategoryTokens]) => (
+                  <div key={subcategory} className="subcategory-section mb-8">
+                    <h3 className="text-base m-0 mb-3 pb-1 border-b border-neutral-border-subtle">
+                      {subcategory} ({subcategoryTokens.length})
+                    </h3>
+                    <div
+                      className="grid gap-4"
+                      style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+                    >
+                      {subcategoryTokens.map(([name, value]) => (
+                        <TokenValue key={name} token={value} tokenName={name} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          }
+
+          // Default handling for other categories
+          return (
+            <div key={category} className="category-section mb-10">
+              <h2 className="text-lg m-0 mb-2 pb-2 border-b border-neutral-border">
+                {category} ({tokens.length})
+              </h2>
+              <p className="text-sm m-0 mb-4 text-neutral-content-subtler">
+                {categoryDescriptions[category] || "Design tokens in this category"}
+              </p>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+                {tokens.map(([name, value]) => (
+                  <TokenValue key={name} token={value} tokenName={name} />
+                ))}
+              </div>
             </div>
-          </div>
-        ))
+          );
+        })
       )}
     </div>
   );
@@ -446,10 +499,8 @@ const TokenCategorized = () => {
         </div>
         <div className="flex flex-wrap gap-4">
           {Object.entries(colorSubcategoryDescriptions).map(([subCategory, subDescription]) => (
-            <LinkTo
+            <div
               key={subCategory}
-              kind="design-tokens"
-              story="tokens-catalog"
               className="flex-1 basis-[300px] border border-neutral-border rounded-lg p-4 cursor-pointer relative overflow-hidden hover:shadow-md transition-all duration-200"
               onClick={() => {
                 setSearchTerm("");
@@ -586,7 +637,7 @@ const TokenCategorized = () => {
 
               <h3 className="text-base mb-2">{subCategory}</h3>
               <p className="text-sm text-neutral-content-subtler relative z-10">{subDescription}</p>
-            </LinkTo>
+            </div>
           ))}
         </div>
       </div>
@@ -742,17 +793,17 @@ const TokenCategorized = () => {
             )}
 
             {category !== "colors" && (
-              <LinkTo
-                kind="design-tokens"
-                story="tokens-catalog"
+              <div
                 className="block border border-neutral-border rounded-lg p-4 cursor-pointer mt-6 hover:shadow-md transition-all duration-200"
                 onClick={() => {
                   setSearchTerm("");
                   setActiveCategory(category);
                 }}
               >
-                <p className="text-sm">View all {category} tokens &rarr;</p>
-              </LinkTo>
+                <LinkTo kind="design-tokens" story="tokens-catalog">
+                  <p className="text-sm">View all {category} tokens &rarr;</p>
+                </LinkTo>
+              </div>
             )}
           </div>
         ))}

@@ -110,7 +110,7 @@ module.exports = {
 </div>
 
 <!-- Typography -->
-<h1 class="font-body text-24 leading-32 font-bold">
+<h1 class="font-body text-24 leading-headline-small font-bold">
   Styled with typography tokens
 </h1>
 
