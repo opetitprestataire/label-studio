@@ -140,7 +140,7 @@ const Model = types
       // normalize framerate — should be string with number of frames per second
       const framerate = Number(parseValue(self.framerate, self.store.task?.dataObj));
 
-      if (!framerate || isNaN(framerate)) self.framerate = "24";
+      if (!framerate || Number.isNaN(framerate)) self.framerate = "24";
       else if (framerate < 1) self.framerate = String(1 / framerate);
       else self.framerate = String(framerate);
     },
@@ -178,9 +178,9 @@ const Model = types
     ////// Incoming
 
     registerSyncHandlers() {
-      ["play", "pause", "seek"].forEach((event) => {
+      for (const event of ["play", "pause", "seek"]) {
         self.syncHandlers.set(event, self.handleSync);
-      });
+      }
       self.syncHandlers.set("speed", self.handleSyncSpeed);
     },
 
@@ -260,9 +260,9 @@ const Model = types
         const area = self.annotation.createResult({ sequence }, {}, control, self);
 
         // add labels
-        self.activeStates().forEach((tag) => {
+        for (const tag of self.activeStates()) {
           area.setValue(tag);
-        });
+        }
 
         return area;
       },
