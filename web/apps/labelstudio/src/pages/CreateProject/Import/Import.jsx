@@ -406,7 +406,7 @@ export const ImportPage = ({
                     </dl>
                     <div className="tips">
                       <b>Important:</b>
-                      <ul className="mt-2 ml-4 list-disc font-normal">
+                      <ul className="mt-2 ml-4 list-disc font-regular">
                         <li>
                           We recommend{" "}
                           <a

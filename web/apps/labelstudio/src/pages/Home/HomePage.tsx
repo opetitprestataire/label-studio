@@ -108,7 +108,7 @@ export const HomePage: Page = () => {
               data && data?.count > 0 ? (
                 <>
                   Recent Projects{" "}
-                  <a href="/projects" className="text-lg font-normal hover:underline">
+                  <a href="/projects" className="text-lg font-regular hover:underline">
                     View All
                   </a>
                 </>

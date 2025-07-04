@@ -13,6 +13,7 @@ module.exports = {
   ],
   theme: {
     letterSpacing: tokens.typography.letterSpacing,
+    fontWeight: tokens.typography.fontWeight,
     extend: {
       colors: {
         // DO NOT USE THESE COLORS
@@ -69,10 +70,6 @@ module.exports = {
       fontFamily: {
         // Add all font families from tokens
         ...tokens.typography.fontFamily,
-      },
-      fontWeight: {
-        // Add all font weights from tokens
-        ...tokens.typography.fontWeight,
       },
       spacing: {
         4.5: "1.125rem",
