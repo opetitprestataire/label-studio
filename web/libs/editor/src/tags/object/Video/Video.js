@@ -304,6 +304,9 @@ const Model = types
        * @returns {Object} created region
        */
       startDrawing({ frame, region: id }) {
+        // don't create or edit regions in read-only mode
+        if (self.annotation.isReadOnly()) return null;
+
         if (id) {
           const region = self.annotation.regions.find((r) => r.cleanId === id);
           const range = region?.ranges?.[0];
