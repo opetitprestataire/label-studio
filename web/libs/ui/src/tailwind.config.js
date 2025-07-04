@@ -12,6 +12,7 @@ module.exports = {
     "./libs/storybook/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
+    letterSpacing: tokens.typography.letterSpacing,
     extend: {
       colors: {
         // DO NOT USE THESE COLORS
@@ -64,10 +65,6 @@ module.exports = {
       lineHeight: {
         // Add all line heights from tokens
         ...tokens.typography.lineHeight,
-      },
-      letterSpacing: {
-        // Add all letter spacings from tokens
-        ...tokens.typography.letterSpacing,
       },
       fontFamily: {
         // Add all font families from tokens
