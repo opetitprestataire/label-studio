@@ -11,6 +11,11 @@ addMatchImageSnapshotCommand({
 
 const Screenshots = new Map<string, string>();
 
+// Clear Screenshots Map before each test to prevent conflicts between tests
+beforeEach(() => {
+  Screenshots.clear();
+});
+
 const getName = (suffix: string) => {
   const spec = Cypress.spec.name;
 
@@ -46,6 +51,7 @@ Cypress.Commands.add(
       cy.get(hiddenSelector).invoke("css", "visibility", "hidden");
     }
 
+    // Add a small delay before taking capture screenshot
     cy.wait(100);
 
     obj.screenshot(
@@ -57,13 +63,9 @@ Cypress.Commands.add(
         },
       }),
     );
-
     for (const hiddenSelector of withHidden) {
       cy.get(hiddenSelector).invoke("css", "visibility", "");
     }
-
-    cy.wait(100);
-
     log.end();
     return obj;
   },
@@ -106,6 +108,7 @@ Cypress.Commands.add(
       cy.get(hiddenSelector).invoke("css", "visibility", "hidden");
     }
 
+    // Add a small delay before taking comparison screenshot
     cy.wait(100);
 
     obj.screenshot(
@@ -122,8 +125,6 @@ Cypress.Commands.add(
       cy.get(hiddenSelector).invoke("css", "visibility", "");
     }
 
-    cy.wait(100);
-
     cy.task("compareScreenshots", options, { log: false }).then((result) => {
       if (!result) {
         const error = new Error(
@@ -135,8 +136,6 @@ Cypress.Commands.add(
       }
       Screenshots.delete(screenshotName);
     });
-
-    cy.wait(1000);
 
     log.end();
     return obj;
