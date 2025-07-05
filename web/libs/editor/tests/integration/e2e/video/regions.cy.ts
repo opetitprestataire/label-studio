@@ -53,7 +53,7 @@ describe("Video segmentation", suiteConfig, () => {
       LabelStudio.params().config(simpleVideoConfig).data(simpleVideoData).withResult(simpleVideoResult).init();
       LabelStudio.waitForObjectsReady();
       // Wait for video and regions to be fully loaded
-      cy.wait(1000);
+      cy.wait(3000);
 
       Sidebar.hasRegions(1);
 
