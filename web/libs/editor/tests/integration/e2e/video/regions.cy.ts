@@ -57,7 +57,7 @@ describe("Video segmentation", suiteConfig, () => {
 
       Sidebar.hasRegions(1);
 
-      VideoView.captureCanvas("canvas");
+      VideoView.captureCanvas("rect-canvas");
 
       cy.wait(1000);
 
@@ -66,7 +66,7 @@ describe("Video segmentation", suiteConfig, () => {
       // Ensure drawing operations are complete before comparison
       cy.wait(2000);
 
-      VideoView.canvasShouldChange("canvas", 0);
+      VideoView.canvasShouldChange("rect-canvas", 0);
     });
   });
 
