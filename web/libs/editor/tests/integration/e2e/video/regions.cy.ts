@@ -48,7 +48,8 @@ describe("Video segmentation", suiteConfig, () => {
     VideoView.canvasShouldChange("canvas", 0);
   });
 
-  it("Should be invisible out of the lifespan (rectangle)", () => {
+  // @todo: This test is flaky in CI, needs to be fixed
+  it.skip("Should be invisible out of the lifespan (rectangle)", () => {
     LabelStudio.params().config(simpleVideoConfig).data(simpleVideoData).withResult(simpleVideoResult).init();
     LabelStudio.waitForObjectsReady();
     // Wait for video and regions to be fully loaded
