@@ -413,7 +413,7 @@ const PlayableAndSyncable = types
         return currentTime >= start && currentTime < end;
       });
 
-      if (!audio.paused && !self.isBuffering) {
+      if (self.playing && !self.isBuffering) {
         self.audioFrameHandler = requestAnimationFrame(self.trackPlayingId);
       }
     },
