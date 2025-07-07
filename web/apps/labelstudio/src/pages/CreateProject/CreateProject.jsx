@@ -1,4 +1,4 @@
-import { EnterpriseBadge, Select } from "@humansignal/ui";
+import { EnterpriseBadge, Select, Typography } from "@humansignal/ui";
 import React from "react";
 import { useHistory } from "react-router";
 import { ToggleItems } from "../../components";
@@ -14,7 +14,6 @@ import { ImportPage } from "./Import/Import";
 import { useImportPage } from "./Import/useImportPage";
 import { useDraftProject } from "./utils/useDraftProject";
 import { Input, TextArea } from "../../components/Form";
-import { Caption } from "../../components/Caption/Caption";
 import { FF_LSDV_E_297, isFF } from "../../utils/feature-flags";
 import { createURL } from "../../components/HeidiTips/utils";
 
@@ -63,7 +62,7 @@ const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, 
             <EnterpriseBadge className="ml-2" />
           </label>
           <Select placeholder="Select an option" disabled options={[]} triggerClassName="!flex-1" />
-          <Caption>
+          <Typography size="small" className="mt-tight mb-wider">
             Simplify project management by organizing projects into workspaces.{" "}
             <a
               href={createURL(
@@ -75,10 +74,11 @@ const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, 
               )}
               target="_blank"
               rel="noreferrer"
+              className="underline hover:no-underline"
             >
               Learn more
             </a>
-          </Caption>
+          </Typography>
           <HeidiTips collection="projectCreation" />
         </div>
       )}

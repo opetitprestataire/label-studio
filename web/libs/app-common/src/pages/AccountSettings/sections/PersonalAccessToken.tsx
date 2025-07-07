@@ -1,4 +1,4 @@
-import { IconLaunch, IconFileCopy, Label } from "@humansignal/ui";
+import { IconLaunch, IconFileCopy, Label, Typography } from "@humansignal/ui";
 import styles from "./PersonalAccessToken.module.scss";
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { atom, useAtomValue } from "jotai";
@@ -92,7 +92,7 @@ export const PersonalAccessToken = () => {
 
 export function PersonalAccessTokenDescription() {
   return (
-    <p className="m-0">
+    <Typography>
       Authenticate with our API using your personal access token.
       {!window.APP_SETTINGS?.whitelabel_is_active && (
         <>
@@ -106,6 +106,6 @@ export function PersonalAccessTokenDescription() {
           </a>
         </>
       )}
-    </p>
+    </Typography>
   );
 }

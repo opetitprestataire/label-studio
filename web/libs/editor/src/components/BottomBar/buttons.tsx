@@ -8,6 +8,7 @@ import { inject, observer } from "mobx-react";
 import type React from "react";
 import { memo, type ReactElement } from "react";
 import { Tooltip, Button } from "@humansignal/ui";
+import type { MSTStore } from "../../stores/types";
 
 type MixedInParams = {
   store: MSTStore;
@@ -48,21 +49,23 @@ type AcceptButtonProps = {
 
 export const AcceptButton = memo(
   observer(({ disabled, history, store }: AcceptButtonProps) => {
+    const annotation = store.annotationStore.selected;
+    // changes in current sessions or saved draft
+    const hasChanges = history.canUndo || annotation.versions.draft;
+
     return (
       <Button
         key="accept"
-        aria-label="accept-annotation"
         tooltip="Accept annotation: [ Ctrl+Enter ]"
+        aria-label="accept-annotation"
         disabled={disabled}
         onClick={async () => {
-          const selected = store.annotationStore?.selected;
-
-          selected?.submissionInProgress();
+          annotation.submissionInProgress();
           await store.commentStore.commentFormSubmit();
           store.acceptAnnotation();
         }}
       >
-        {history.canUndo ? "Fix + Accept" : "Accept"}
+        {hasChanges ? "Fix + Accept" : "Accept"}
       </Button>
     );
   }),

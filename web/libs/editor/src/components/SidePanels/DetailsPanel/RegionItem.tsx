@@ -144,8 +144,8 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
           hovered={true}
           locked={region?.locked}
           onClick={() => region.setLocked(!region.locked)}
-          hotkey="region:lock"
-          aria-label={`${region.locked ? "Unlock" : "Lock"} selected region`}
+          displayedHotkey="region:lock"
+          look="string"
           style={{ width: 36, height: 32 }}
         />
         <RegionActionButton

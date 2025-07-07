@@ -19,13 +19,9 @@ import { type FC, memo, type MouseEvent, useCallback, useContext, useEffect, use
 import { WithHotkey } from "../../common/Hotkey/WithHotkey";
 import { Hotkey, type HotkeyList } from "../../core/Hotkey";
 import { Block, Elem } from "../../utils/bem";
-import { FF_DEV_2715, isFF } from "../../utils/feature-flags";
 import { isDefined } from "../../utils/utilities";
-import { TimeDurationControl } from "../TimeDurationControl/TimeDurationControl";
 import { TimelineContext } from "./Context";
 import "./Controls.scss";
-import { AudioControl } from "./Controls/AudioControl";
-import { ConfigControl } from "./Controls/ConfigControl";
 import * as SideControls from "./SideControls";
 import type {
   TimelineControlsFormatterOptions,
@@ -35,6 +31,9 @@ import type {
   TimelineProps,
   TimelineStepFunction,
 } from "./Types";
+import { AudioControl } from "./Controls/AudioControl";
+import { ConfigControl } from "./Controls/ConfigControl";
+import { TimeDurationControl } from "../TimeDurationControl/TimeDurationControl";
 
 const positionFromTime = ({ time, fps }: TimelineControlsFormatterOptions) => {
   const roundedFps = Math.round(fps).toString();
@@ -175,7 +174,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
 
     return (
       <Block name="timeline-controls" tag={Space} spread style={{ gridAutoColumns: "auto" }}>
-        {isFF(FF_DEV_2715) && mediaType === "audio" ? (
+        {mediaType === "audio" ? (
           renderControls()
         ) : (
           <Space size="small">
@@ -321,7 +320,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
         </Space>
 
         <Elem name="group" tag={Space} size="small">
-          {isFF(FF_DEV_2715) && mediaType === "audio" ? (
+          {mediaType === "audio" ? (
             <>
               {customControls?.right}
               <TimeDurationControl
