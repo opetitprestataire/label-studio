@@ -7,10 +7,6 @@ STALE_FEATURE_FLAGS = {
     'fflag_fix_front_lsdv_4620_memory_leaks_100723_short': False,
     'fflag_fix_all_lsdv_4971_async_reimport_09052023_short': True,
     # Jan 16
-    'fflag_feat_front_optic_767_annotator_project_multiselect_short': True,
-    'fflag_fix_optic_214_extra_blank_dashboard_charts_short': True,
-    'fflag_fix_optic_391_tasks_outside_low_agreement_project_counts_short': True,
-    'fflag_feat_all_optic_520_annotator_report_short': True,
     'feat_all_optic_71_dashboard_multiple_labeling_group_support_v1_01092023_short': True,
     'fflag_feat_front_prod_281_project_list_search_19072023_short': True,
     'fflag_feat_all_lsdv_e_295_project_level_roles_via_saml_scim_ldap_short': True,
@@ -20,7 +16,6 @@ STALE_FEATURE_FLAGS = {
     'fflag_fix_front_leap_32_zoom_perf_190923_short': True,
     'fflag_feat_front_lsdv_5452_taxonomy_labeling_110823_short': True,
     'fflag_fix_front_dev_3793_relative_coords_short': True,
-    'ff_front_dev_2715_audio_3_280722_short': True,
     # Feb 5
     'fflag_feature_all_optic_1421_cold_start_v2': False,
     'fflag_fix_back_optic_1407_optimize_tasks_api_pagination_counts': True,
