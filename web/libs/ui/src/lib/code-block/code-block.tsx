@@ -17,9 +17,9 @@ export function CodeBlock({
 
   return (
     <div
-      className={`whitespace-pre-wrap font-mono mt-2 p-3 rounded-md border  scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent ${variantStyles[variant]} ${className || ""}`}
+      className={`p-3 rounded-small border scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent ${variantStyles[variant]} ${className || ""}`}
     >
-      {code.trim()}
+      <pre className="whitespace-pre-wrap">{code.trim()}</pre>
     </div>
   );
 }
