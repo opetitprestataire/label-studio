@@ -22,11 +22,11 @@ if (!Object.groupBy) {
 }
 
 // Mock global APP_SETTINGS for user context
-Object.defineProperty(window, 'APP_SETTINGS', {
+Object.defineProperty(window, "APP_SETTINGS", {
   value: {
     user: {
       id: 1,
-      displayName: 'Test User',
+      displayName: "Test User",
     },
   },
   writable: true,
@@ -114,48 +114,48 @@ describe("TaskSummary", () => {
     },
   ];
 
-        interface MockStoreOverrides {
-     task?: {
-       dataObj?: Record<string, unknown>;
-       agreement?: number;
-     };
-     project?: {
-       review_settings?: {
-         show_agreement_to_reviewers?: boolean;
-       };
-     } | null;
-     store?: Record<string, unknown>;
-     names?: Array<[string, MockControlTag | MockObjectTag]>;
-   }
+  interface MockStoreOverrides {
+    task?: {
+      dataObj?: Record<string, unknown>;
+      agreement?: number;
+    };
+    project?: {
+      review_settings?: {
+        show_agreement_to_reviewers?: boolean;
+      };
+    } | null;
+    store?: Record<string, unknown>;
+    names?: Array<[string, MockControlTag | MockObjectTag]>;
+  }
 
-   const createMockStore = (overrides: MockStoreOverrides = {}): MSTStore["annotationStore"] => {
-     const defaultNames = [createMockControlTag("label"), createMockObjectTag("text")];
-     const allNames = [...defaultNames, ...(overrides.names || [])];
+  const createMockStore = (overrides: MockStoreOverrides = {}): MSTStore["annotationStore"] => {
+    const defaultNames = [createMockControlTag("label"), createMockObjectTag("text")];
+    const allNames = [...defaultNames, ...(overrides.names || [])];
 
-     const mockStore = {
-       store: {
-         task: {
-           dataObj: { text: "Sample text", id: 1 },
-           agreement: 85.5,
-           ...overrides.task,
-         },
-         project: {
-           review_settings: {
-             show_agreement_to_reviewers: true,
-           },
-           ...overrides.project,
-         },
-         hasInterface: (interfaceName: string) => false,
-         ...overrides.store,
-       },
-       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-       names: new Map(allNames as Array<[string, any]>),
-       selectAnnotation: jest.fn(),
-       selectPrediction: jest.fn(),
-     };
+    const mockStore = {
+      store: {
+        task: {
+          dataObj: { text: "Sample text", id: 1 },
+          agreement: 85.5,
+          ...overrides.task,
+        },
+        project: {
+          review_settings: {
+            show_agreement_to_reviewers: true,
+          },
+          ...overrides.project,
+        },
+        hasInterface: (interfaceName: string) => false,
+        ...overrides.store,
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      names: new Map(allNames as Array<[string, any]>),
+      selectAnnotation: jest.fn(),
+      selectPrediction: jest.fn(),
+    };
 
-     return mockStore as unknown as MSTStore["annotationStore"];
-   };
+    return mockStore as unknown as MSTStore["annotationStore"];
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
