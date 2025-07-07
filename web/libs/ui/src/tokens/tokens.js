@@ -436,6 +436,13 @@ const designTokens = {
     widest: "var(--spacing-widest)",
   },
   typography: {
+    fontFamily: {
+      body: "var(--font-family-body)",
+      headings: "var(--font-family-headings)",
+      monospace: "var(--font-family-monospace)",
+      base: "var(--font-family-base)",
+      mono: "var(--font-family-mono)",
+    },
     fontSize: {
       "body-tinier": "var(--font-size-body-tinier)",
       "body-tiny": "var(--font-size-body-tiny)",
@@ -458,6 +465,18 @@ const designTokens = {
       "display-small": "var(--font-size-display-small)",
       "display-medium": "var(--font-size-display-medium)",
       "display-large": "var(--font-size-display-large)",
+    },
+    fontWeight: {
+      light: "var(--font-weight-light)",
+      "light-italic": "var(--font-weight-light-italic)",
+      regular: "var(--font-weight-regular)",
+      "regular-italic": "var(--font-weight-regular-italic)",
+      medium: "var(--font-weight-medium)",
+      "medium-italic": "var(--font-weight-medium-italic)",
+      semibold: "var(--font-weight-semibold)",
+      "semibold-italic": "var(--font-weight-semibold-italic)",
+      bold: "var(--font-weight-bold)",
+      "bold-italic": "var(--font-weight-bold-italic)",
     },
     lineHeight: {
       auto: "var(--line-height-auto)",
@@ -487,25 +506,6 @@ const designTokens = {
       wide: "var(--letter-spacing-wide)",
       wider: "var(--letter-spacing-wider)",
       widest: "var(--letter-spacing-widest)",
-    },
-    fontFamily: {
-      body: "var(--font-family-body)",
-      headings: "var(--font-family-headings)",
-      monospace: "var(--font-family-monospace)",
-      base: "var(--font-family-base)",
-      mono: "var(--font-family-mono)",
-    },
-    fontWeight: {
-      light: "var(--font-weight-light)",
-      "light-italic": "var(--font-weight-light-italic)",
-      regular: "var(--font-weight-regular)",
-      "regular-italic": "var(--font-weight-regular-italic)",
-      medium: "var(--font-weight-medium)",
-      "medium-italic": "var(--font-weight-medium-italic)",
-      semibold: "var(--font-weight-semibold)",
-      "semibold-italic": "var(--font-weight-semibold-italic)",
-      bold: "var(--font-weight-bold)",
-      "bold-italic": "var(--font-weight-bold-italic)",
     },
   },
   cornerRadius: {

@@ -48,17 +48,19 @@ const designTokens = require('./libs/ui/src/tokens/tokens.js');
 module.exports = {
   // ...
   theme: {
+    // fully override
+    fontSize: designTokens.typography.fontSize,
+    lineHeight: designTokens.typography.lineHeight,
+    letterSpacing: designTokens.typography.letterSpacing,
+    fontFamily: designTokens.typography.fontFamily,
+    fontWeight: designTokens.typography.fontWeight,
     extend: {
+      // or extend
       colors: {
         // ...your existing colors
         ...designTokens.colors,
       },
       spacing: designTokens.spacing,
-      fontSize: designTokens.typography.fontSize,
-      lineHeight: designTokens.typography.lineHeight,
-      letterSpacing: designTokens.typography.letterSpacing,
-      fontFamily: designTokens.typography.fontFamily,
-      fontWeight: designTokens.typography.fontWeight,
       borderRadius: designTokens.cornerRadius,
     },
   },
