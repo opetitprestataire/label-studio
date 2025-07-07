@@ -27,14 +27,14 @@ const useSpectrogramControls = isAudioSpectrograms ? useSpectrogramControlsHook 
 
 const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
-interface AudioUltraProps {
+interface AudioProps {
   item: any;
   settings?: TimelineSettings;
   changeSetting?: (key: string, value: any) => void;
   children: ReactNode;
 }
 
-const AudioUltraView: FC<AudioUltraProps> = observer(
+const AudioView: FC<AudioProps> = observer(
   ({ item, children, settings = {}, changeSetting = () => {} }: AudioUltraProps) => {
     const rootRef = useRef<HTMLElement | null>();
     const isDarkMode = getCurrentTheme() === "Dark";
@@ -249,7 +249,7 @@ const AudioUltraView: FC<AudioUltraProps> = observer(
   },
 );
 
-const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
+const AudioWithSettings: FC<AudioProps> = ({ item }) => {
   const [settings, setSettings] = usePersistentJSONState<TimelineSettings>("ls:audio-tag:settings", {
     // @todo this hotkey should be moved from these settings for a more appropriate place;
     // @todo we are planning to have a central hotkeys management, that would be a better option.
@@ -281,13 +281,13 @@ const AudioUltraWithSettings: FC<AudioUltraProps> = ({ item }) => {
 
   return (
     <TimelineContextProvider value={contextValue}>
-      <AudioUltraView item={item}>
+      <AudioView item={item}>
         {item.errors?.map((error: any, i: number) => (
           <ErrorMessage key={`err-${i}`} error={error} />
         ))}
-      </AudioUltraView>
+      </AudioView>
     </TimelineContextProvider>
   );
 };
 
-export const AudioUltra = observer(AudioUltraWithSettings);
+export const Audio = observer(AudioWithSettings);
