@@ -57,7 +57,9 @@ logger = logging.getLogger(__name__)
                 description='Export formats',
                 response={
                     'type': 'array',
-                    'items': {'type': 'string'},
+                    'items': {'type': 'string', 'title': 'Export format'},
+                    'description': 'List of available formats',
+                    'title': 'Format list',
                 },
             )
         },
