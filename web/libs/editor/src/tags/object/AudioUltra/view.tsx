@@ -71,8 +71,6 @@ const AudioUltraView: FC<AudioUltraProps> = ({ item, children, settings = {}, ch
     onError: item.onError,
     regions: {
       createable: !item.readonly,
-      updateable: !item.readonly,
-      deleteable: !item.readonly,
     },
     timeline: {
       backgroundColor: isDarkMode ? "rgb(38, 37, 34)" : "rgba(255,255,255,0.8)",
