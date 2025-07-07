@@ -60,7 +60,7 @@ export const StorageCard = ({ rootClass, target, storage, onEditStorage, onDelet
         storageTypes={storageTypes}
       />
       <div className={rootClass.elem("sync")}>
-        <div>
+        <div className="mt-3">
           <Button waiting={syncing} onClick={startSync} disabled={notSyncedYet}>
             Sync Storage
           </Button>
