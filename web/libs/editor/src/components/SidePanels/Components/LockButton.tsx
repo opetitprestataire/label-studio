@@ -29,7 +29,6 @@ export const LockButton: FC<{
 
     return (
       <RegionControlButton
-        ref={ref}
         disabled={isRegionReadonly}
         onClick={onClick}
         hotkey={hotkey as HotkeyList}

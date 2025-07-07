@@ -203,7 +203,7 @@ export const ActionsButton = injector(
           variant="neutral"
           look="outlined"
           disabled={!hasSelected}
-          trailing={<Icon icon={IconChevronDown} />}
+          trailing={<IconChevronDown />}
           aria-label="Tasks Actions"
           {...rest}
         >
