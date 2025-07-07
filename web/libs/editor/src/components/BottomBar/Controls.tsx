@@ -240,7 +240,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
             <Elem name="tooltip-wrapper">
               <ButtonGroup>
                 <Button
-                  aria-label="submit"
+                  aria-label="Submit current annotation"
                   name="submit"
                   className="w-[150px]"
                   disabled={isDisabled}
