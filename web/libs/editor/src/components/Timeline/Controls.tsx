@@ -355,7 +355,7 @@ export const Controls: FC<TimelineControlsProps> = memo(
 export const ControlButton: FC<ButtonProps & { disabled?: boolean; hotkey?: string }> = ({ children, ...props }) => {
   return (
     <WithHotkey binging={props.hotkey as HotkeyList}>
-      <Button {...props} look="string" size="small" variant="neutral" aria-label="Audio settings">
+      <Button {...props} look="string" size="small" variant="neutral">
         {children}
       </Button>
     </WithHotkey>
