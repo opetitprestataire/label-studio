@@ -42,7 +42,7 @@ export class SyncManager {
   bufferingOrigins = new Set<string>(); // tracks which components are currently buffering
 
   get isBuffering(): boolean {
-    return this.bufferingOrigins.size > 0;
+    return isSyncedBuffering ? this.bufferingOrigins.size > 0 : false;
   }
 
   isBufferingOrigin(name: string) {
