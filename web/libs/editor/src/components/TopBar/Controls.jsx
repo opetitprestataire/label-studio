@@ -192,7 +192,7 @@ export const Controls = controlsInjector(
         const button = (
           <ButtonTooltip key="update" title="Update this task: [ Alt+Enter ]">
             <Button
-              aria-label="Update current annotation"
+              aria-label="Submit current annotation"
               disabled={disabled || submitDisabled}
               look="primary"
               onClick={async () => {

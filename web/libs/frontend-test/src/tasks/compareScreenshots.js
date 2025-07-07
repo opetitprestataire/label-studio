@@ -50,5 +50,8 @@ const runComparison = async (options) => {
 };
 
 export const compareScreenshots = (options) => {
-  return runComparison(options);
+  return runComparison(options).catch((error) => {
+    console.error('Screenshot comparison error:', error);
+    return false;
+  });
 };
