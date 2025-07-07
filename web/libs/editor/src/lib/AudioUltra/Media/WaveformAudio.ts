@@ -1,8 +1,11 @@
+import { ff } from "@humansignal/core";
 import { FF_LSDV_4711, isFF } from "../../../utils/feature-flags";
 import { patchPlayPauseMethods } from "../../../utils/patchPlayPauseMethods";
 import { Events } from "../Common/Events";
 import { audioDecoderPool } from "./AudioDecoderPool";
 import { type BaseAudioDecoder, DEFAULT_FREQUENCY_HZ } from "./BaseAudioDecoder";
+
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 export interface WaveformAudioOptions {
   src?: string;
@@ -166,7 +169,9 @@ export class WaveformAudio extends Events<WaveformAudioEvents> {
 
     this.el.addEventListener("canplaythrough", this.mediaReady);
     this.el.addEventListener("error", this.mediaError);
-    this.el.addEventListener("waiting", this.mediaWaiting);
+    if (isSyncedBuffering) {
+      this.el.addEventListener("waiting", this.mediaWaiting);
+    }
     this.loadMedia();
   }
 

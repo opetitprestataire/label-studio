@@ -2,7 +2,8 @@ interface PatchedHTMLMediaElement extends HTMLMediaElement {
   _playPausePatched?: boolean;
 }
 
-type PatchableMethods = "play" | "pause";
+type PatchableMethod = "play" | "pause";
+const PATCHABLE_METHODS: PatchableMethod[] = ["play", "pause"];
 
 /*
  * This patch prevents unhandled promise rejections in development mode
@@ -21,19 +22,18 @@ export function patchPlayPauseMethods<T extends HTMLMediaElement>(element: T): T
     return patchedElement;
   }
 
-  const wrapMethod = (methodName: PatchableMethods) => {
+  const wrapMethod = <M extends PatchableMethod>(methodName: M) => {
     const originalMethod = patchedElement[methodName].bind(patchedElement);
-    patchedElement[methodName] = (...args) => {
-      let res = originalMethod(...args);
+    patchedElement[methodName] = (() => {
+      let res = originalMethod();
       if (res instanceof Promise) {
         res = res.catch(() => {}); // catch any errors to avoid unhandled promise rejections
       }
-      return res as ReturnType<(typeof patchedElement)[methodName]>;
-    };
+      return res as ReturnType<(typeof patchedElement)[M]>;
+    }) as unknown as (typeof patchedElement)[M];
   };
 
-  wrapMethod("play");
-  wrapMethod("pause");
+  PATCHABLE_METHODS.forEach(wrapMethod);
   patchedElement._playPausePatched = true;
 
   return patchedElement;

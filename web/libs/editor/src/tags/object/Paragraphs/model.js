@@ -267,7 +267,7 @@ const PlayableAndSyncable = types
     },
 
     registerSyncHandlers() {
-      self.syncHandlers.set("pause", self.handleSyncPause);
+      self.syncHandlers.set("pause", isSyncedBuffering ? self.handleSyncPause : self.stopNow);
       self.syncHandlers.set("play", self.handleSyncPlay);
       self.syncHandlers.set("seek", self.handleSyncPlay);
       self.syncHandlers.set("speed", self.handleSyncSpeed);
@@ -285,8 +285,7 @@ const PlayableAndSyncable = types
         self.wasPlayingBeforeBuffering = playing;
         audio?.pause();
       }
-      const isAnyBuffering = self.syncManager?.bufferingOrigins.size > 0;
-      if (!isAnyBuffering && !data.buffering) {
+      if (!self.isBuffering && !data.buffering) {
         if (playing) {
           audio?.play();
         }
@@ -300,7 +299,7 @@ const PlayableAndSyncable = types
 
       if (!audio) return;
 
-      const isBuffering = self.syncManager?.bufferingOrigins.size > 0;
+      const isBuffering = self.syncManager?.isBuffering;
 
       // Normal logic when no buffering
       if (!isSyncedBuffering || (!isBuffering && isDefined(playing))) {
@@ -308,7 +307,7 @@ const PlayableAndSyncable = types
         audio.currentTime = time;
         if (audio.paused && playing) {
           self.play();
-        } else if (!audio.paused && !playing) {
+        } else if (isSyncedBuffering && !audio.paused && !playing) {
           // some times video can trigger `seek` event with `playing=false` and we need to pause at this case
           self.stopNow();
         } else {
@@ -326,7 +325,7 @@ const PlayableAndSyncable = types
         self.wasPlayingBeforeBuffering = false;
       }
 
-      const isBuffering = self.syncManager?.bufferingOrigins.size > 0;
+      const isBuffering = self.syncManager?.isBuffering;
 
       if (!isSyncedBuffering || (!isBuffering && isDefined(playing))) {
         self.stopNow();
@@ -369,7 +368,7 @@ const PlayableAndSyncable = types
 
       audio.pause();
       self.playing = false;
-      self.triggerSync("pause", { playing: false });
+      self.triggerSync("pause", isSyncedBuffering ? { playing: false } : undefined);
     },
 
     /**
@@ -413,7 +412,8 @@ const PlayableAndSyncable = types
         return currentTime >= start && currentTime < end;
       });
 
-      if (self.playing && !self.isBuffering) {
+      const isPlaying = isSyncedBuffering ? self.playing && !self.isBuffering : !audio.paused;
+      if (isPlaying) {
         self.audioFrameHandler = requestAnimationFrame(self.trackPlayingId);
       }
     },
@@ -427,7 +427,7 @@ const PlayableAndSyncable = types
 
       if (isPaused) {
         audio.play();
-        self.triggerSync("play", { playing: true });
+        self.triggerSync("play", isSyncedBuffering ? { playing: true } : undefined);
       }
 
       self.playing = true;
@@ -462,15 +462,15 @@ const PlayableAndSyncable = types
       audio.play();
       self.playing = true;
       self.playingId = idx;
-      self.triggerSync("play", { playing: true });
+      self.triggerSync("play", isSyncedBuffering ? { playing: true } : undefined);
       self.trackPlayingId();
     },
     handleBuffering(isBuffering) {
       if (!isSyncedBuffering) return;
-      if (self.syncManager?.bufferingOrigins.has(self.name) === isBuffering) return;
-      const isAlreadyBuffering = self.syncManager?.bufferingOrigins.size > 0;
+      if (self.syncManager?.isBufferingOrigin(self.name) === isBuffering) return;
+      const isAlreadyBuffering = self.syncManager?.isBuffering;
       const isLastCauseOfBuffering =
-        self.syncManager?.bufferingOrigins.size === 1 && self.syncManager?.bufferingOrigins.has(self.name);
+        self.syncManager?.bufferingOrigins.size === 1 && self.syncManager?.isBufferingOrigin(self.name);
       const willStartBuffering = !isAlreadyBuffering && isBuffering;
       const willStopBuffering = isLastCauseOfBuffering && !isBuffering;
       const audio = self.audioRef?.current;

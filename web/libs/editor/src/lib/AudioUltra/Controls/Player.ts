@@ -1,9 +1,10 @@
+import { ff } from "@humansignal/core";
 import { Destructable } from "../Common/Destructable";
 import type { WaveformAudio } from "../Media/WaveformAudio";
 import { clamp } from "../Common/Utils";
 import type { Waveform } from "../Waveform";
 
-const BUFFERING_DEBOUNCE_TIME = 200;
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 export abstract class Player extends Destructable {
   protected audio?: WaveformAudio;
@@ -190,11 +191,17 @@ export abstract class Player extends Destructable {
   };
 
   protected handleCanPlay = () => {
-    this.updateBuffering();
+    if (isSyncedBuffering) {
+      this.updateBuffering();
+    } else {
+      this.bufferResolve?.();
+    }
   };
 
   protected handleWaiting = () => {
-    this.updateBuffering();
+    if (isSyncedBuffering) {
+      this.updateBuffering();
+    }
   };
 
   private playEnded() {
@@ -239,20 +246,20 @@ export abstract class Player extends Destructable {
     const audioEl = this.audio.el;
     if (!audioEl) return;
 
-    const isRealBuffering = audioEl.networkState === audioEl.NETWORK_LOADING;
+    const isBuffering = audioEl.networkState === audioEl.NETWORK_LOADING;
 
-    if (this._buffering !== isRealBuffering) {
-      this._buffering = isRealBuffering;
-      this.wf.invoke("buffering", [isRealBuffering]);
+    if (this._buffering !== isBuffering) {
+      this._buffering = isBuffering;
+      this.wf.invoke("buffering", [isBuffering]);
     }
 
-    if (isRealBuffering) {
+    if (isBuffering) {
       this.updateBufferingTimeoutId = setTimeout(() => {
         this.updateBuffering();
       }, 16);
     }
 
-    if (!isRealBuffering) {
+    if (!isBuffering) {
       this.bufferResolve?.();
     }
   }
@@ -356,7 +363,7 @@ export abstract class Player extends Destructable {
   protected watch = () => {
     if (!this.playing) return;
 
-    if (!this.buffering) {
+    if (isSyncedBuffering && !this.buffering) {
       this.updateCurrentTime();
       this.updateLoop(this.time);
     }

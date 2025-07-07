@@ -236,12 +236,9 @@ export const AudioModel = types.compose(
       ////// Incoming
 
       registerSyncHandlers() {
-        const events = ["play", "pause", "seek"];
-
-        events.forEach((event) => {
+        ["play", "pause", "seek"].forEach((event) => {
           self.syncHandlers.set(event, self.handleSync);
         });
-
         self.syncHandlers.set("speed", self.handleSyncSpeed);
         if (isSyncedBuffering) {
           self.syncHandlers.set("buffering", self.handleSyncBuffering);
@@ -254,8 +251,7 @@ export const AudioModel = types.compose(
           self.wasPlayingBeforeBuffering = playing;
           self._ws?.pause();
         }
-        const isAnyBuffering = self.syncManager?.bufferingOrigins.size > 0;
-        if (!isAnyBuffering && !data.buffering) {
+        if (!self.isBuffering && !data.buffering) {
           if (playing) {
             self._ws?.play();
           }
@@ -271,7 +267,7 @@ export const AudioModel = types.compose(
           self.handleSyncSeek(data);
         }
 
-        const isBuffering = self.syncManager?.bufferingOrigins.size > 0;
+        const isBuffering = self.syncManager?.isBuffering;
 
         // Normal logic when no buffering
         if (!isSyncedBuffering || (!isBuffering && isDefined(data.playing))) {
@@ -581,10 +577,10 @@ export const AudioModel = types.compose(
 
         handleBuffering(isBuffering) {
           if (!isSyncedBuffering) return;
-          if (self.syncManager?.bufferingOrigins.has(self.name) === isBuffering) return;
-          const isAlreadyBuffering = self.syncManager?.bufferingOrigins.size > 0;
+          if (self.syncManager?.isBufferingOrigin(self.name) === isBuffering) return;
+          const isAlreadyBuffering = self.syncManager?.isBuffering;
           const isLastCauseOfBuffering =
-            self.syncManager?.bufferingOrigins.size === 1 && self.syncManager?.bufferingOrigins.has(self.name);
+            self.syncManager?.bufferingOrigins.size === 1 && self.syncManager?.isBufferingOrigin(self.name);
           const willStartBuffering = !isAlreadyBuffering && isBuffering;
           const willStopBuffering = isLastCauseOfBuffering && !isBuffering;
 

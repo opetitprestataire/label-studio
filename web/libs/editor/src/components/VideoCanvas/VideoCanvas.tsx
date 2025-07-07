@@ -96,6 +96,15 @@ export interface VideoRef {
   adjustPan: (x: number, y: number) => PanOptions;
 }
 
+const useBufferingWrapper = (props: VideoProps): [boolean, (isBuffering: boolean) => void] => {
+  if (isSyncedBuffering) {
+    const setBuffering = useRefCallback(props.onBuffering ?? (() => {}));
+    return [false, setBuffering];
+  }
+  const [buffering, setBuffering] = useState(false);
+  return [buffering, setBuffering];
+};
+
 export const VideoCanvas = memo(
   forwardRef<VideoRef, VideoProps>((props, ref) => {
     const raf = useRef<number>();
@@ -114,7 +123,7 @@ export const VideoCanvas = memo(
     const [length, setLength] = useState(0);
     const [currentFrame, setCurrentFrame] = useState(props.position ?? 1);
     const [playing, setPlaying] = useState(false);
-    const setBuffering = useRefCallback(props.onBuffering || (() => {}));
+    const [buffering, setBuffering] = useBufferingWrapper(props);
     const [zoom, setZoom] = useState(props.zoom ?? 1);
     const [pan, setPan] = useState<PanOptions>(props.pan ?? { x: 0, y: 0 });
 
@@ -179,7 +188,6 @@ export const VideoCanvas = memo(
     const updateFrame = useCallback(
       (force = false) => {
         if (!contextRef.current) return;
-        if (isSyncedBuffering && bufferingRef.current) return;
 
         const currentTime = videoRef.current?.currentTime ?? 0;
         const frameNumber = isFF(FF_VIDEO_FRAME_SEEK_PRECISION)
@@ -221,7 +229,16 @@ export const VideoCanvas = memo(
       if (video) {
         if (!playing) updateFrame(true);
 
-        updateBuffering();
+        if (isSyncedBuffering) {
+          updateBuffering();
+        } else {
+          if (video.networkState === video.NETWORK_IDLE) {
+            hasLoadedRef.current = true;
+            setBuffering(false);
+          } else {
+            setBuffering(true);
+          }
+        }
       }
     }, [playing, updateFrame]);
 
@@ -605,9 +622,7 @@ export const VideoCanvas = memo(
             width={canvasWidth}
             height={canvasHeight}
           />
-          {!loading && bufferingRef.current && !isSyncedBuffering && (
-            <Elem name="buffering" aria-label="Buffering Media Source" />
-          )}
+          {!isSyncedBuffering && !loading && buffering && <Elem name="buffering" aria-label="Buffering Media Source" />}
         </Elem>
 
         <VirtualVideo

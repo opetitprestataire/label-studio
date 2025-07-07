@@ -45,6 +45,10 @@ export class SyncManager {
     return this.bufferingOrigins.size > 0;
   }
 
+  isBufferingOrigin(name: string) {
+    return this.bufferingOrigins.has(name);
+  }
+
   register(syncTarget: Instance<typeof SyncableMixin>) {
     this.syncTargets.set(syncTarget.name, syncTarget);
     if (syncTarget.type === "audio") this.audioTags += 1;

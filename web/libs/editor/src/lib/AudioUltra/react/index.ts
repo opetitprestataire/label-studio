@@ -1,5 +1,5 @@
 import { useRefCallback } from "@humansignal/core/hooks/useRefCallback";
-import { type MutableRefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { type MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { TimelineContext } from "../../../components/Timeline/Context";
 import { isTimeRelativelySimilar } from "../Common/Utils";
@@ -28,10 +28,7 @@ export const useWaveform = (
   const [zoom, setZoom] = useState(1);
   const [volume, setVolume] = useState(options?.volume ?? 1);
   const [playing, setPlaying] = useState(false);
-  const handleBuffering = useRefCallback(options?.onBuffering ?? (() => {}));
-  const setBuffering = useCallback((buffering: boolean) => {
-    handleBuffering(buffering);
-  }, []);
+  const setBuffering = useRefCallback(options?.onBuffering ?? (() => {}));
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [amp, setAmp] = useState(options?.amp ?? 1);
@@ -46,10 +43,12 @@ export const useWaveform = (
     waveform.current.settings = settings;
   }, [settings, waveform.current]);
 
-  useEffect(() => {
-    if (!waveform.current || !isSyncedBuffering) return;
-    waveform.current.buffering = options?.buffering || false;
-  }, [options?.buffering]);
+  if (isSyncedBuffering) {
+    useEffect(() => {
+      if (!waveform.current) return;
+      waveform.current.buffering = options?.buffering || false;
+    }, [options?.buffering]);
+  }
 
   const onFrameChangedRef = useRef(options?.onFrameChanged);
   onFrameChangedRef.current = options?.onFrameChanged;

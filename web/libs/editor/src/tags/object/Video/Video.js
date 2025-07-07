@@ -196,12 +196,9 @@ const Model = types
     ////// Incoming
 
     registerSyncHandlers() {
-      const events = ["play", "pause", "seek"];
-
-      events.forEach((event) => {
+      ["play", "pause", "seek"].forEach((event) => {
         self.syncHandlers.set(event, self.handleSync);
       });
-
       self.syncHandlers.set("speed", self.handleSyncSpeed);
       if (isSyncedBuffering) {
         self.syncHandlers.set("buffering", self.handleSyncBuffering);
@@ -216,8 +213,7 @@ const Model = types
           self.ref.current?.pause();
         }
       }
-      const isAnyBuffering = self.syncManager?.bufferingOrigins.size > 0;
-      if (!isAnyBuffering && !data.buffering) {
+      if (!self.isBuffering && !data.buffering) {
         if (!self.ref.current?.playing && playing) {
           self.ref.current?.play();
         }
@@ -230,7 +226,7 @@ const Model = types
       if (!self.ref.current) return;
 
       const video = self.ref.current;
-      const isBuffering = self.syncManager?.bufferingOrigins.size > 0;
+      const isBuffering = self.syncManager?.isBuffering;
 
       if (!isSyncedBuffering || (!isBuffering && isDefined(data.playing))) {
         if (data.playing) {
@@ -265,10 +261,10 @@ const Model = types
 
     handleBuffering(isBuffering) {
       if (!isSyncedBuffering) return;
-      if (self.syncManager?.bufferingOrigins.has(self.name) === isBuffering) return;
-      const isAlreadyBuffering = self.syncManager?.bufferingOrigins.size > 0;
+      if (self.syncManager?.isBufferingOrigin(self.name) === isBuffering) return;
+      const isAlreadyBuffering = self.syncManager?.isBuffering;
       const isLastCauseOfBuffering =
-        self.syncManager?.bufferingOrigins.size === 1 && self.syncManager?.bufferingOrigins.has(self.name);
+        self.syncManager?.bufferingOrigins.size === 1 && self.syncManager?.isBufferingOrigin(self.name);
       const willStartBuffering = !isAlreadyBuffering && isBuffering;
       const willStopBuffering = isLastCauseOfBuffering && !isBuffering;
 
