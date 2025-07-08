@@ -7,6 +7,22 @@ import { Oneof } from "../../../components/Oneof/Oneof";
 import { getLastTraceback } from "../../../utils/helpers";
 import { useCopyText } from "@humansignal/core/lib/hooks/useCopyText";
 
+// Component to handle copy functionality within the modal
+const CopyButton = ({ msg }) => {
+  const [copyText, copied] = useCopyText(msg);
+
+  return (
+    <Button
+      icon={<IconFileCopy />}
+      onClick={copyText}
+      disabled={copied}
+      style={{ minWidth: "100px", justifyContent: "center" }}
+    >
+      {copied ? "Copied!" : "Copy"}
+    </Button>
+  );
+};
+
 export const StorageSummary = ({ target, storage, className, storageTypes = [] }) => {
   const storageStatus = storage.status.replace(/_/g, " ").replace(/(^\w)/, (match) => match.toUpperCase());
   const last_sync_count = storage.last_sync_count ? storage.last_sync_count : 0;
@@ -39,29 +55,13 @@ export const StorageSummary = ({ target, storage, className, storageTypes = [] }
       `${getLastTraceback(storage.traceback)}\n\n` +
       `meta = ${JSON.stringify(storage.meta)}\n`;
 
-    // Component to handle copy functionality within the modal
-    const CopyButton = () => {
-      const [copyText, copied] = useCopyText(msg);
-
-      return (
-        <Button
-          icon={<IconFileCopy />}
-          onClick={copyText}
-          disabled={copied}
-          style={{ minWidth: "100px", justifyContent: "center" }}
-        >
-          {copied ? "Copied!" : "Copy"}
-        </Button>
-      );
-    };
-
     modal({
       title: "Storage Sync Error Log",
       body: (
         <>
           <CodeBlock code={msg} variant="negative" className="mb-base max-h-[50vh] overflow-y-auto" />
           <Space align="end">
-            <CopyButton />
+            <CopyButton msg={msg} />
           </Space>
         </>
       ),
