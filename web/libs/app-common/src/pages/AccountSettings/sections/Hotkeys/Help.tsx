@@ -148,7 +148,10 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
   };
 
   return (
-    <div onClick={handleBackdropClick} className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+    <div
+      onClick={handleBackdropClick}
+      className="fixed inset-none z-[9999] flex items-center justify-center bg-black/50"
+    >
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-3xl max-h-[80vh] overflow-hidden w-full mx-4">
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">

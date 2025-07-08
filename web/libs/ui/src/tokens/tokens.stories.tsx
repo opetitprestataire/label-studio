@@ -511,13 +511,13 @@ const TokenCategorized = () => {
               {/* Color preview for each subcategory */}
               {!["primitives", "neutral", "accent"].includes(subCategory) && (
                 <div
-                  className="absolute top-0 right-0 w-15 h-15 opacity-30 rounded-bl-full border-l border-b border-neutral-border"
+                  className="absolute top-none right-none w-15 h-15 opacity-30 rounded-bl-full border-l border-b border-neutral-border"
                   style={{ backgroundColor: `var(--color-${subCategory}-surface)` }}
                 />
               )}
 
               {["primitives", "neutral", "accent"].includes(subCategory) && (
-                <div className="absolute top-0 right-0 w-15 h-15 opacity-30 overflow-hidden border-l border-b border-neutral-border">
+                <div className="absolute top-none right-none w-15 h-15 opacity-30 overflow-hidden border-l border-b border-neutral-border">
                   <div className="flex">
                     <div
                       className="w-5 h-5"

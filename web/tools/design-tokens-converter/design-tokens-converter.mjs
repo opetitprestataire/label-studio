@@ -129,7 +129,7 @@ function processDesignVariables(variables) {
 
   // Process primitive spacing
   if (variables["@primitives"] && variables["@primitives"].$spacing) {
-    processPrimitiveSpacing(variables["@primitives"].$spacing, result, { exportPrimitives: true });
+    processPrimitiveSpacing(variables["@primitives"].$spacing, result, { exportPrimitives: false });
   }
 
   // Process primitive typography

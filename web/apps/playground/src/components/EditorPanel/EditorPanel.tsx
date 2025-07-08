@@ -76,9 +76,9 @@ export const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
   }, [bottomPanelHeight, isCollapsed]);
 
   return (
-    <div ref={containerRef} className="flex flex-col min-w-0 h-full" style={{ width: `${editorWidth}%` }}>
+    <div ref={containerRef} className="flex flex-col min-w-none h-full" style={{ width: `${editorWidth}%` }}>
       {/* CodeEditor (top) */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-none">
         <CodeEditor
           ref={editorRef}
           value={config}

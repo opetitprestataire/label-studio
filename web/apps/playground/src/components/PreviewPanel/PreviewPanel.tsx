@@ -120,7 +120,7 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(
     }, [config, loading, error, interfaces, onAnnotationUpdate]);
 
     return (
-      <div className="h-full flex flex-col min-h-0">
+      <div className="h-full flex flex-col min-h-none">
         {error ? (
           <div className="text-danger-foreground text-body-medium flex-1 flex items-center justify-center">{error}</div>
         ) : loading ? (
@@ -128,7 +128,7 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(
             Loading config...
           </div>
         ) : showPreview ? (
-          <div ref={rootRef} className="w-full h-full flex-1 min-h-0 flex flex-col" />
+          <div ref={rootRef} className="w-full h-full flex-1 min-h-none flex flex-col" />
         ) : null}
       </div>
     );

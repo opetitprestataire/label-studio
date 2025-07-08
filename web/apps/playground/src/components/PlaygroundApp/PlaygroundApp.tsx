@@ -121,7 +121,7 @@ export const PlaygroundApp = () => {
         {/* Minimal top bar */}
         {!displayMode.startsWith("preview") && <TopBar />}
         {/* Editor/Preview split */}
-        <div className="flex flex-1 min-h-0 min-w-0 relative">
+        <div className="flex flex-1 min-h-none min-w-none relative">
           {/* Editor Panel */}
           {!displayMode.startsWith("preview") && <EditorPanel editorWidth={editorWidth} />}
           {/* Resizable Divider */}
@@ -142,12 +142,12 @@ export const PlaygroundApp = () => {
 
           {/* Preview Panel */}
           <div
-            className={cnm("flex flex-col min-w-0 h-full", {
+            className={cnm("flex flex-col min-w-none h-full", {
               "flex-row flex-1 w-full": displayMode !== "all",
             })}
             style={previewPanelStyle}
           >
-            <div className="flex-1 min-h-0 min-w-0">
+            <div className="flex-1 min-h-none min-w-none">
               <PreviewPanel />
             </div>
           </div>

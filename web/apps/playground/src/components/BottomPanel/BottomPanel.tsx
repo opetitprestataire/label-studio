@@ -22,7 +22,7 @@ export const BottomPanel = forwardRef<BottomPanelRef, BottomPanelProps>(({ isCol
 
   return (
     <div
-      className={cnm("flex flex-col transition-all duration-200 min-h-0 min-w-0 h-full", {
+      className={cnm("flex flex-col transition-all duration-200 min-h-none min-w-none h-full", {
         "border-t border-neutral-border": isCollapsed,
       })}
     >
@@ -49,7 +49,7 @@ export const BottomPanel = forwardRef<BottomPanelRef, BottomPanelProps>(({ isCol
       </div>
       {/* Panel content (only when not collapsed) */}
       {!isCollapsed && (
-        <div className="flex flex-1 min-h-0">
+        <div className="flex flex-1 min-h-none">
           {/* Sample Data Panel */}
           <div className="flex-1 border-r border-neutral-border p-4 overflow-auto">
             <pre className="text-body-small whitespace-pre-wrap">{JSON.stringify(sampleTask.data, null, 2)}</pre>

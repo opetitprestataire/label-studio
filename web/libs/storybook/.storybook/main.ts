@@ -20,6 +20,12 @@ const config: StorybookConfig = {
     }
     return {
       ...config,
+      resolve: {
+        ...(config.resolve ?? {}),
+        alias: {
+          ...(config.resolve?.alias ?? {}),
+        },
+      },
       module: {
         ...(config.module ?? {}),
         rules: [

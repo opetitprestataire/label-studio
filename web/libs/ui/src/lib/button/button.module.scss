@@ -212,19 +212,19 @@
 /// SIZES
 
 .size-medium {
-  @apply p-tight text-label-medium h-1000;
+  @apply p-tight text-label-medium h-widest;
 
   & > span {
     @apply px-tight gap-tight;
   }
 
   & > em {
-    @apply gap-tight h-600 min-w-600;
+    @apply gap-tight h-wide min-w-wide;
   }
 }
 
 .size-small {
-  @apply p-tighter text-label-small h-800;
+  @apply p-tighter text-label-small h-wider;
 
 
   & > span {
@@ -232,19 +232,19 @@
   }
 
   & > em {
-    @apply gap-tighter h-400 min-w-400;
+    @apply gap-tighter h-base min-w-base;
   }
 }
 
 .size-smaller {
-  @apply p-tightest text-label-smaller h-600;
+  @apply p-tightest text-label-smaller h-wide;
 
   & > span {
     @apply px-tightest gap-tightest;
   }
 
   & > em {
-    @apply gap-tighter h-400 min-w-400;
+    @apply gap-tighter h-base min-w-base;
   }
 }
 
@@ -315,7 +315,7 @@
   @apply flex gap-tight;
 
   &.button-group-collapsed {
-    @apply gap-0;
+    @apply gap-none;
 
   button:not(:first-child) {
     border-left: none;

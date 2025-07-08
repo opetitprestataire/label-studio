@@ -266,7 +266,7 @@ export const Sparkles: React.FC<SparklesProps> = ({
         <svg
           width={buttonSize}
           height={buttonSize}
-          className="absolute top-0 left-0 z-[2] pointer-events-none sparkles-area-overlay"
+          className={clsx("absolute top-none left-none z-[2] pointer-events-none", styles["sparkles-area-overlay"])}
         >
           <title>Sparkles area overlay</title>
           <defs>
