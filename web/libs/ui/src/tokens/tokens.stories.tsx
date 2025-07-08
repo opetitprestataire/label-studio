@@ -121,7 +121,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
       {isSpacing && (
         <div className="mb-3 h-16 flex items-center justify-center px-4">
           <div
-            className="h-2 rounded min-w-1 relative"
+            className="h-2 rounded min-w-tighter relative"
             style={{
               width: token,
               background: "linear-gradient(90deg, #6366F1 0%, #A855F7 100%)",
