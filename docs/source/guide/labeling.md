@@ -86,6 +86,21 @@ After labeling a task, you can delete the annotation by clicking the trash can b
 
 You can also delete all annotations on a task from the project page. See [Delete tasks or annotations](manage_data.html#Delete_tasks_or_annotations).
 
+### Add relations between annotations
+You can create relations between two results with both directions and labels. To add labels to directions, you must set up a labeling config with the relations tag. See more about [relations with labels](/tags/relations.html) in the Tags documentation.
+
+1. Select the region for the annotation that you want to relate to another annotation. If you're creating a direction-based relation, select the first one first. 
+2. In the **Regions** section of the **Results** sidebar, click the **Create Relation** button that looks like a hyperlink icon.
+3. Select the second region for the annotation to complete the relation.
+
+<br>
+<img src="../images/relation.png" class="gif-border">
+<i>Figure 1: Add relations between annotations </i>
+
+After you relate two annotation regions, you can modify the relation in the **Relations** section of the **Results** sidebar. 
+- To change the direction of the relation, click the direction button between the two related regions.
+- To add labels to the direction arrow indicating the relation between two annotations, click the vertical ellipsis button next to the two related regions to add your predefined labels. You must have a [label configuration that includes relations](/tags/relations.html) to do this.
+
 ### Skipping a task
 When annotators skip a task, the task no longer appears in the labeling queue for that annotator. Other annotators still see the task in their labeling queue. 
 
