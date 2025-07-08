@@ -48,17 +48,23 @@
   }
 
   &__hotkeys-button {
-      .button-ls {
-        --icon-size: 20px;
-
+      button {
         max-width: 40px;
         width: 40px;
         max-height: 32px;
         padding: 0 4px;
-      }
-      
-      &:hover {
-          background-color: var(--color-primary-emphasis-subtle);
+        
+        svg {
+          width: 20px;
+          height: 20px;
+          color: var(--color-neutral-content-subtler);
+        }
+
+        &:hover {
+          svg {
+            color: var(--color-neutral-icon);
+          }
+        }
       }
   }
 

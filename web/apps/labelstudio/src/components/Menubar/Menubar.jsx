@@ -14,14 +14,13 @@ import {
   IconSlack,
 } from "@humansignal/icons";
 import { LSLogo } from "../../assets/images";
-import { Userpic, ThemeToggle } from "@humansignal/ui";
+import { Userpic, ThemeToggle, Button } from "@humansignal/ui";
 import { useConfig } from "../../providers/ConfigProvider";
 import { useContextComponent, useFixedLocation } from "../../providers/RoutesProvider";
 import { useCurrentUser } from "../../providers/CurrentUser";
 import { cn } from "../../utils/bem";
 import { absoluteURL, isDefined } from "../../utils/helpers";
 import { Breadcrumbs } from "../Breadcrumbs/Breadcrumbs";
-import { Button } from "../Button/Button";
 import { Dropdown } from "../Dropdown/Dropdown";
 import { Hamburger } from "../Hamburger/Hamburger";
 import { Menu } from "../Menu/Menu";
@@ -34,7 +33,6 @@ import { pages } from "@humansignal/app-common";
 import { isFF } from "../../utils/feature-flags";
 import { ff } from "@humansignal/core";
 import { openHotkeyHelp } from "@humansignal/app-common/pages/AccountSettings/sections/Hotkeys/Help";
-import { Tooltip } from "@humansignal/ui";
 
 export const MenubarContext = createContext();
 
@@ -153,25 +151,25 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
 
           <div className={menubarClass.elem("hotkeys")}>
             <div className={menubarClass.elem("hotkeys-button")}>
-              <Tooltip content="Keyboard Shortcuts" alignment="bottom">
-                <Button
-                  variant="primary"
-                  look="string"
-                  onClick={() => {
-                    openHotkeyHelp([
-                      "annotation",
-                      "data_manager",
-                      "regions",
-                      "tools",
-                      "audio",
-                      "video",
-                      "timeseries",
-                      "image_gallery",
-                    ]);
-                  }}
-                  icon={<IconHotkeys />}
-                />
-              </Tooltip>
+              <Button
+                variant="neutral"
+                look="outlined"
+                tooltip="Keyboard Shortcuts"
+                data-testid="hotkeys-button"
+                onClick={() => {
+                  openHotkeyHelp([
+                    "annotation",
+                    "data_manager",
+                    "regions",
+                    "tools",
+                    "audio",
+                    "video",
+                    "timeseries",
+                    "image_gallery",
+                  ]);
+                }}
+                icon={<IconHotkeys />}
+              />
             </div>
           </div>
 
