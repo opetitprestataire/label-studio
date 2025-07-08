@@ -1,3 +1,5 @@
+import { cnm } from "@humansignal/ui";
+
 export function CodeBlock({
   code,
   className,
@@ -17,7 +19,11 @@ export function CodeBlock({
 
   return (
     <div
-      className={`p-3 rounded-small border scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent ${variantStyles[variant]} ${className || ""}`}
+      className={cnm(
+        "p-3 rounded-small border scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent",
+        variantStyles[variant],
+        className,
+      )}
     >
       <pre className="whitespace-pre-wrap">{code.trim()}</pre>
     </div>
