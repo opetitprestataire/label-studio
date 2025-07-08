@@ -623,6 +623,7 @@ class AnnotationsListAPI(GetParentObjectMixin, generics.ListCreateAPIView):
         return annotation
 
 
+@extend_schema(exclude=True)
 class AnnotationDraftListAPI(generics.ListCreateAPIView):
     parser_classes = (JSONParser, MultiPartParser, FormParser)
     serializer_class = AnnotationDraftSerializer
@@ -631,7 +632,6 @@ class AnnotationDraftListAPI(generics.ListCreateAPIView):
         POST=all_permissions.annotations_create,
     )
     queryset = AnnotationDraft.objects.all()
-    swagger_schema = None
 
     def filter_queryset(self, queryset):
         task_id = self.kwargs['pk']
@@ -645,6 +645,7 @@ class AnnotationDraftListAPI(generics.ListCreateAPIView):
         serializer.save(task_id=self.kwargs['pk'], annotation_id=annotation_id, user=self.request.user)
 
 
+@extend_schema(exclude=True)
 class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
     parser_classes = (JSONParser, MultiPartParser, FormParser)
     serializer_class = AnnotationDraftSerializer
@@ -655,7 +656,6 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
         PATCH=all_permissions.annotations_change,
         DELETE=all_permissions.annotations_delete,
     )
-    swagger_schema = None
 
 
 @method_decorator(

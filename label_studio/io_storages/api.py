@@ -175,11 +175,11 @@ class StorageValidateAPI(generics.CreateAPIView):
         return Response()
 
 
+@extend_schema(exclude=True)
 class StorageFormLayoutAPI(generics.RetrieveAPIView):
 
     permission_required = all_permissions.projects_change
     parser_classes = (JSONParser, FormParser, MultiPartParser)
-    swagger_schema = None
     storage_type = None
 
     @extend_schema(exclude=True)

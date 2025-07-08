@@ -365,12 +365,12 @@ class ImportAPI(generics.CreateAPIView):
 
 
 # Import
+@extend_schema(exclude=True)
 class ImportPredictionsAPI(generics.CreateAPIView):
     permission_required = all_permissions.projects_change
     parser_classes = (JSONParser, MultiPartParser, FormParser)
     serializer_class = PredictionSerializer
     queryset = Project.objects.all()
-    swagger_schema = None  # TODO: create API schema
 
     def create(self, request, *args, **kwargs):
         # check project permissions
@@ -402,9 +402,10 @@ class ImportPredictionsAPI(generics.CreateAPIView):
         return Response({'created': len(predictions_obj)}, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(exclude=True)
 class TasksBulkCreateAPI(ImportAPI):
     # just for compatibility - can be safely removed
-    swagger_schema = None
+    pass
 
 
 class ReImportAPI(ImportAPI):
@@ -690,6 +691,7 @@ class UploadedFileResponse(generics.RetrieveAPIView):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
+@extend_schema(exclude=True)
 class DownloadStorageData(APIView):
     """
     Secure file download API for persistent storage (S3, GCS, Azure, etc.)
@@ -720,7 +722,6 @@ class DownloadStorageData(APIView):
     - **Inline**: PDFs, audio, video files - because media files are directly displayed in the browser
     """
 
-    swagger_schema = None
     http_method_names = ['get']
     permission_classes = (IsAuthenticated,)
 

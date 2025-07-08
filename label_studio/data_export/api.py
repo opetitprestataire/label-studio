@@ -215,20 +215,20 @@ class ExportAPI(generics.RetrieveAPIView):
         return r
 
 
-@method_decorator(
-    name='get',
-    decorator=extend_schema(
-        tags=['Export'],
-        summary='List exported files',
-        description="""
-        Retrieve a list of files exported from the Label Studio UI using the Export button on the Data Manager page.
-        To retrieve the files themselves, see [Download export file](/api#operation/api_projects_exports_download_read).
-        """,
-    ),
-)
+# @method_decorator(
+#     name='get',
+#     decorator=extend_schema(
+#         tags=['Export'],
+#         summary='List exported files',
+#         description="""
+#         Retrieve a list of files exported from the Label Studio UI using the Export button on the Data Manager page.
+#         To retrieve the files themselves, see [Download export file](/api#operation/api_projects_exports_download_read).
+#         """,
+#     ),
+# ) just in case we put it back in swagger API docs
+@extend_schema(exclude=True)
 class ProjectExportFiles(generics.RetrieveAPIView):
     permission_required = all_permissions.projects_change
-    swagger_schema = None  # hide export files endpoint from openapi3
 
     def get_queryset(self):
         return Project.objects.filter(organization=self.request.user.active_organization)
@@ -248,10 +248,10 @@ class ProjectExportFiles(generics.RetrieveAPIView):
         return Response({'export_files': items}, status=status.HTTP_200_OK)
 
 
+@extend_schema(exclude=True)
 class ProjectExportFilesAuthCheck(APIView):
     """Check auth for nginx auth_request (/api/auth/export/)"""
 
-    swagger_schema = None
     http_method_names = ['get']
     permission_required = all_permissions.projects_change
 

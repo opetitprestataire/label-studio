@@ -394,25 +394,26 @@ class ProjectAPI(generics.RetrieveUpdateDestroyAPIView):
         return super(ProjectAPI, self).put(request, *args, **kwargs)
 
 
-@method_decorator(
-    name='get',
-    decorator=extend_schema(
-        tags=['Projects'],
-        summary='Get next task to label',
-        description="""
-    Get the next task for labeling. If you enable Machine Learning in
-    your project, the response might include a "predictions"
-    field. It contains a machine learning prediction result for
-    this task.
-    """,
-        responses={200: TaskWithAnnotationsAndPredictionsAndDraftsSerializer()},
-    ),
-)  # leaving this method decorator info in case we put it back in swagger API docs
+# @method_decorator(
+#     name='get',
+#     decorator=extend_schema(
+#         tags=['Projects'],
+#         summary='Get next task to label',
+#         description="""
+#     Get the next task for labeling. If you enable Machine Learning in
+#     your project, the response might include a "predictions"
+#     field. It contains a machine learning prediction result for
+#     this task.
+#     """,
+#         responses={200: TaskWithAnnotationsAndPredictionsAndDraftsSerializer()},
+#     ),
+# )
+# leaving this method decorator info in case we put it back in swagger API docs
+@extend_schema(exclude=True)
 class ProjectNextTaskAPI(generics.RetrieveAPIView):
     permission_required = all_permissions.tasks_view
     serializer_class = TaskWithAnnotationsAndPredictionsAndDraftsSerializer
     queryset = Project.objects.all()
-    swagger_schema = None  # this endpoint doesn't need to be in swagger API docs
 
     def get(self, request, *args, **kwargs):
         project = self.get_object()
@@ -436,10 +437,10 @@ class ProjectNextTaskAPI(generics.RetrieveAPIView):
         return Response(response)
 
 
+@extend_schema(exclude=True)
 class LabelStreamHistoryAPI(generics.RetrieveAPIView):
     permission_required = all_permissions.tasks_view
     queryset = Project.objects.all()
-    swagger_schema = None  # this endpoint doesn't need to be in swagger API docs
 
     def get(self, request, *args, **kwargs):
         project = self.get_object()
@@ -749,10 +750,10 @@ def read_templates_and_groups():
     return {'templates': configs, 'groups': groups}
 
 
+@extend_schema(exclude=True)
 class TemplateListAPI(generics.ListAPIView):
     parser_classes = (JSONParser, FormParser, MultiPartParser)
     permission_required = all_permissions.projects_view
-    swagger_schema = None
     # load this once in memory for performance
     templates_and_groups = read_templates_and_groups()
 
@@ -760,12 +761,12 @@ class TemplateListAPI(generics.ListAPIView):
         return Response(self.templates_and_groups)
 
 
+@extend_schema(exclude=True)
 class ProjectSampleTask(generics.RetrieveAPIView):
     parser_classes = (JSONParser,)
     queryset = Project.objects.all()
     permission_required = all_permissions.projects_view
     serializer_class = ProjectSerializer
-    swagger_schema = None
 
     def post(self, request, *args, **kwargs):
         label_config = self.request.data.get('label_config')
@@ -796,9 +797,9 @@ class ProjectSampleTask(generics.RetrieveAPIView):
             return Response({'sample_task': project.get_sample_task(label_config)}, status=200)
 
 
+@extend_schema(exclude=True)
 class ProjectModelVersions(generics.RetrieveAPIView):
     parser_classes = (JSONParser,)
-    swagger_schema = None
     permission_required = all_permissions.projects_view
     queryset = Project.objects.all()
 
