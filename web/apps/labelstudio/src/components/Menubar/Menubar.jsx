@@ -34,6 +34,7 @@ import { pages } from "@humansignal/app-common";
 import { isFF } from "../../utils/feature-flags";
 import { ff } from "@humansignal/core";
 import { openHotkeyHelp } from "@humansignal/app-common/pages/AccountSettings/sections/Hotkeys/Help";
+import { Tooltip } from "@humansignal/ui";
 
 export const MenubarContext = createContext();
 
@@ -150,31 +151,31 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
             <RightContextMenu className={contextItem.mod({ right: true })} />
           </div>
 
-          <div className={menubarClass.elem("spacer").toString()} />
-
-          {ff.isActive(ff.FF_THEME_TOGGLE) && <ThemeToggle />}
-
           <div className={menubarClass.elem("hotkeys")}>
             <div className={menubarClass.elem("hotkeys-button")}>
-              <Button
-                variant="neutral"
-                look="string"
-                onClick={() => {
-                  openHotkeyHelp([
-                    "annotation",
-                    "data_manager",
-                    "regions",
-                    "tools",
-                    "audio",
-                    "video",
-                    "timeseries",
-                    "image_gallery",
-                  ]);
-                }}
-                icon={<IconHotkeys />}
-              />
+              <Tooltip content="Keyboard Shortcuts" alignment="bottom">
+                <Button
+                  variant="primary"
+                  look="string"
+                  onClick={() => {
+                    openHotkeyHelp([
+                      "annotation",
+                      "data_manager",
+                      "regions",
+                      "tools",
+                      "audio",
+                      "video",
+                      "timeseries",
+                      "image_gallery",
+                    ]);
+                  }}
+                  icon={<IconHotkeys />}
+                />
+              </Tooltip>
             </div>
           </div>
+
+          {ff.isActive(ff.FF_THEME_TOGGLE) && <ThemeToggle />}
 
           <Dropdown.Trigger
             ref={useMenuRef}
