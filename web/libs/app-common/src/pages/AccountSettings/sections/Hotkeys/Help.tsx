@@ -150,15 +150,15 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
 
   return (
     <div onClick={handleBackdropClick} className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
-      <div className="bg-neutral-background rounded-lg shadow-lg max-w-3xl max-h-[90vh] h-full overflow-hidden w-full mx-4">
+      <div className="bg-neutral-background rounded-lg shadow-lg max-w-3xl max-h-[90vh] h-full overflow-hidden w-full mx-4 flex flex-col">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-neutral-border">
+        <div className="px-wide py-base border-b border-neutral-border">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">Keyboard Shortcuts</h2>
             <Button onClick={onClose} aria-label="Close modal" variant="primary" look="string" icon={<IconClose />} />
           </div>
           <p className="text-sm text-neutral-content-subtler mt-1">
-            Keyboard shortcuts for this page.&nbsp;
+            View all available keyboard shortcuts.&nbsp;
             <a
               href="/user/account/hotkeys"
               onClick={(e) => {
@@ -173,8 +173,8 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
         </div>
 
         {/* Modal Content */}
-        <div className="px-6 py-4 overflow-y-auto h-full scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent">
-          <div className="space-y-4">{sectionsToShow.map(renderSection)}</div>
+        <div className="px-wide py-wide overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent">
+          <div className="space-y-wide">{sectionsToShow.map(renderSection)}</div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { ToastType, useToast } from "@humansignal/ui";
+import { IconWarning, ToastType, useToast } from "@humansignal/ui";
 
 // Shadcn UI components
 import { Button } from "@humansignal/ui";
@@ -657,7 +657,7 @@ export const HotkeysManager = () => {
       <Dialog open={duplicateConfirmDialog.open} onOpenChange={handleCancelDuplicate}>
         <DialogContent className="bg-neutral-surface">
           <DialogHeader>
-            <DialogTitle>Duplicate Hotkey Detected</DialogTitle>
+            <DialogTitle>Warning: Duplicate Hotkey Detected</DialogTitle>
             <DialogDescription>
               The hotkey combination "<strong>{duplicateConfirmDialog.newKey}</strong>" is already being used by:
             </DialogDescription>
@@ -665,7 +665,6 @@ export const HotkeysManager = () => {
 
           <div
             style={{
-              padding: "var(--spacing-wide) 0",
               maxHeight: "15rem",
               overflowY: "auto",
             }}
@@ -678,9 +677,10 @@ export const HotkeysManager = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "var(--spacing-wide)",
+                    padding: "var(--spacing-base)",
                     backgroundColor: "var(--bg-neutral-surface)",
-                    borderRadius: "var(--border-radius)",
+                    borderRadius: "var(--corner-radius-small)",
+                    border: "1px solid var(--color-warning-border)",
                   }}
                 >
                   <div style={{ flex: "1", minWidth: "0" }}>
@@ -705,12 +705,20 @@ export const HotkeysManager = () => {
             style={{
               color: "var(--color-warning-text)",
               backgroundColor: "var(--color-warning-background)",
-              padding: "var(--spacing-wide)",
-              borderRadius: "var(--border-radius)",
+              padding: "var(--spacing-base)",
+              borderRadius: "var(--corner-radius-small)",
               border: "1px solid var(--color-warning-border)",
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "var(--spacing-tight)",
             }}
           >
-            ⚠️ Having duplicate hotkeys may cause conflicts and unexpected behavior. Are you sure you want to proceed?
+            <div style={{ marginTop: "2px" }}>
+              <IconWarning className="text-warning-icon" />
+            </div>
+            <div>
+              Having duplicate hotkeys may cause conflicts and unexpected behavior. Are you sure you want to proceed?
+            </div>
           </DialogDescription>
 
           <DialogFooter>
