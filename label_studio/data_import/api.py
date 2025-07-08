@@ -204,7 +204,7 @@ task_create_response_scheme = {
             # }
         },
         extensions={
-            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'import_tasks',
             'x-fern-audiences': ['public'],
         },

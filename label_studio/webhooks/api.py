@@ -36,7 +36,7 @@ class WebhookFilterSet(django_filters.FilterSet):
             ),
         ],
         extensions={
-            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-group-name': 'webhooks',
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
         },
@@ -49,7 +49,7 @@ class WebhookFilterSet(django_filters.FilterSet):
         summary='Create a webhook',
         description='Create a webhook for your organization.',
         extensions={
-            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-group-name': 'webhooks',
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
@@ -82,7 +82,7 @@ class WebhookListAPI(generics.ListCreateAPIView):
         tags=['Webhooks'],
         summary='Get webhook info',
         extensions={
-            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-group-name': 'webhooks',
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -106,7 +106,7 @@ class WebhookListAPI(generics.ListCreateAPIView):
         summary='Update webhook info',
         request=WebhookSerializerForUpdate,
         extensions={
-            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-group-name': 'webhooks',
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -118,7 +118,7 @@ class WebhookListAPI(generics.ListCreateAPIView):
         tags=['Webhooks'],
         summary='Delete webhook info',
         extensions={
-            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-group-name': 'webhooks',
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['public'],
         },
@@ -154,7 +154,7 @@ class WebhookAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         ],
         extensions={
-            'x-fern-sdk-group-name': ['webhooks'],
+            'x-fern-sdk-group-name': 'webhooks',
             'x-fern-sdk-method-name': 'info',
             'x-fern-audiences': ['public'],
         },

@@ -156,7 +156,7 @@ class ExportFormatsListAPI(generics.RetrieveAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'export',
             'x-fern-audiences': ['public'],
         },

@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
         summary='Create labels',
         description='Add labels to your project without updating the labeling configuration.',
         extensions={
-            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-group-name': 'labels',
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['internal'],
         },
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
         summary='Remove labels',
         description='Remove labels from your project without updating the labeling configuration.',
         extensions={
-            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-group-name': 'labels',
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['internal'],
         },
@@ -56,7 +56,7 @@ logger = logging.getLogger(__name__)
         summary='Update labels',
         description='Update labels used for your project without updating the labeling configuration.',
         extensions={
-            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-group-name': 'labels',
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['internal'],
         },
@@ -71,7 +71,7 @@ logger = logging.getLogger(__name__)
         Retrieve a specific custom label used for your project by its ID.
         """,
         extensions={
-            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-group-name': 'labels',
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['internal'],
         },
@@ -84,7 +84,7 @@ logger = logging.getLogger(__name__)
         summary='List labels',
         description='List all custom labels added to your project separately from the labeling configuration.',
         extensions={
-            'x-fern-sdk-group-name': ['labels'],
+            'x-fern-sdk-group-name': 'labels',
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['internal'],
         },

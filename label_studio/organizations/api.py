@@ -49,7 +49,7 @@ HasObjectPermission = load_func(settings.MEMBER_PERM)
         Return a list of the organizations you've created or that you have access to.
         """,
         extensions={
-            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-group-name': 'organizations',
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
         },
@@ -299,7 +299,7 @@ class OrganizationMemberDetailAPI(GetParentObjectMixin, generics.RetrieveDestroy
         summary='Get organization settings',
         description='Retrieve the settings for a specific organization by ID.',
         extensions={
-            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-group-name': 'organizations',
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -312,7 +312,7 @@ class OrganizationMemberDetailAPI(GetParentObjectMixin, generics.RetrieveDestroy
         summary='Update organization settings',
         description='Update the settings for a specific organization by ID.',
         extensions={
-            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-group-name': 'organizations',
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -347,7 +347,7 @@ class OrganizationAPI(generics.RetrieveUpdateAPIView):
         description='Get a link to use to invite a new member to an organization in Label Studio Enterprise.',
         responses={200: OrganizationInviteSerializer()},
         extensions={
-            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-group-name': 'organizations',
             'x-fern-sdk-method-name': 'get_invite',
             'x-fern-audiences': ['public'],
         },
@@ -376,7 +376,7 @@ class OrganizationInviteAPI(generics.RetrieveAPIView):
         description='Reset the token used in the invitation link to invite someone to an organization.',
         responses={200: OrganizationInviteSerializer()},
         extensions={
-            'x-fern-sdk-group-name': ['organizations'],
+            'x-fern-sdk-group-name': 'organizations',
             'x-fern-sdk-method-name': 'reset_token',
             'x-fern-audiences': ['public'],
         },

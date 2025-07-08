@@ -60,7 +60,7 @@ _user_schema = {
         summary='List users',
         description='List the users that exist on the Label Studio server.',
         extensions={
-            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-group-name': 'users',
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
         },
@@ -75,7 +75,7 @@ _user_schema = {
         request=_user_schema,
         responses={201: UserSerializer},
         extensions={
-            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-group-name': 'users',
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
@@ -93,7 +93,7 @@ _user_schema = {
         request=None,
         responses={200: UserSerializer},
         extensions={
-            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-group-name': 'users',
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -113,7 +113,7 @@ _user_schema = {
         request=_user_schema,
         responses={200: UserSerializer},
         extensions={
-            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-group-name': 'users',
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -130,7 +130,7 @@ _user_schema = {
         ],
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-group-name': 'users',
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['public'],
         },
@@ -231,7 +231,7 @@ class UserAPI(viewsets.ModelViewSet):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-group-name': 'users',
             'x-fern-sdk-method-name': 'reset_token',
             'x-fern-audiences': ['public'],
         },
@@ -266,7 +266,7 @@ class UserResetTokenAPI(APIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-group-name': 'users',
             'x-fern-sdk-method-name': 'get_token',
             'x-fern-audiences': ['public'],
         },
@@ -291,7 +291,7 @@ class UserGetTokenAPI(APIView):
         request=None,
         responses={200: UserSerializer},
         extensions={
-            'x-fern-sdk-group-name': ['users'],
+            'x-fern-sdk-group-name': 'users',
             'x-fern-sdk-method-name': 'whoami',
             'x-fern-audiences': ['public'],
         },

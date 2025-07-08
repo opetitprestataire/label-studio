@@ -132,7 +132,7 @@ class ProjectFilterSet(FilterSet):
             settings.HOSTNAME or 'https://localhost:8080'
         ),
         extensions={
-            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'counts',
             'x-fern-audiences': ['public'],
             'x-fern-pagination': {
@@ -159,7 +159,7 @@ class ProjectFilterSet(FilterSet):
         ),
         request=_project_schema,
         extensions={
-            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
@@ -218,7 +218,7 @@ class ProjectListAPI(generics.ListCreateAPIView):
         summary="List project's counts",
         description='Returns a list of projects with their counts. For example, task_number which is the total task number in project',
         extensions={
-            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'list_counts',
             'x-fern-audiences': ['public'],
         },
@@ -308,7 +308,7 @@ class ProjectCountsListAPI(generics.ListAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -321,7 +321,7 @@ class ProjectCountsListAPI(generics.ListAPIView):
         summary='Delete project',
         description='Delete a project by specified project ID.',
         extensions={
-            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['public'],
         },
@@ -335,7 +335,7 @@ class ProjectCountsListAPI(generics.ListAPIView):
         description='Update the project settings for a specific project.',
         request=_project_schema,
         extensions={
-            'x-fern-sdk-group-name': ['projects'],
+            'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -579,7 +579,7 @@ class ProjectSummaryResetAPI(GetParentObjectMixin, generics.CreateAPIView):
             ),
         ],
         extensions={
-            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-group-name': 'tasks',
             'x-fern-sdk-method-name': 'create_many_status',
             'x-fern-audiences': ['public'],
         },

@@ -53,7 +53,7 @@ _ml_backend_schema = {
         ),
         request=_ml_backend_schema,
         extensions={
-            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
@@ -76,7 +76,7 @@ _ml_backend_schema = {
             OpenApiParameter(name='project', type=OpenApiTypes.INT, location='query', description='Project ID'),
         ],
         extensions={
-            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
         },
@@ -131,7 +131,7 @@ class MLBackendListAPI(generics.ListCreateAPIView):
         ),
         request=_ml_backend_schema,
         extensions={
-            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -152,7 +152,7 @@ class MLBackendListAPI(generics.ListCreateAPIView):
         ),
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -173,7 +173,7 @@ class MLBackendListAPI(generics.ListCreateAPIView):
         ),
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['public'],
         },
@@ -229,7 +229,7 @@ class MLBackendDetailAPI(generics.RetrieveUpdateDestroyAPIView):
             ),
         },
         extensions={
-            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'train',
             'x-fern-audiences': ['public'],
         },
@@ -271,7 +271,7 @@ class MLBackendTrainAPI(APIView):
             ),
         },
         extensions={
-            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'test_predict',
             'x-fern-audiences': ['internal'],
         },
@@ -336,7 +336,7 @@ class MLBackendPredictTestAPI(APIView):
             200: OpenApiResponse(description='Interactive annotation has succeeded.'),
         },
         extensions={
-            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'predict_interactive',
             'x-fern-audiences': ['public'],
         },
@@ -394,7 +394,7 @@ class MLBackendInteractiveAnnotating(APIView):
         description='Get available versions of the model.',
         responses={'200': 'List of available versions.'},
         extensions={
-            'x-fern-sdk-group-name': ['ml'],
+            'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'list_model_versions',
             'x-fern-audiences': ['public'],
         },

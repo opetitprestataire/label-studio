@@ -67,7 +67,7 @@ logger = logging.getLogger(__name__)
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-group-name': 'tasks',
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
@@ -146,7 +146,7 @@ logger = logging.getLogger(__name__)
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-group-name': 'tasks',
             'x-fern-sdk-method-name': 'list',
             'x-fern-pagination': {
                 'offset': '$request.page',
@@ -207,7 +207,7 @@ class TaskListAPI(DMTaskListAPI):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-group-name': 'tasks',
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -231,7 +231,7 @@ class TaskListAPI(DMTaskListAPI):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-group-name': 'tasks',
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -248,7 +248,7 @@ class TaskListAPI(DMTaskListAPI):
         ],
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['tasks'],
+            'x-fern-sdk-group-name': 'tasks',
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['public'],
         },
@@ -367,7 +367,7 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['annotations'],
+            'x-fern-sdk-group-name': 'annotations',
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -390,7 +390,7 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['annotations'],
+            'x-fern-sdk-group-name': 'annotations',
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -404,7 +404,7 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
         description="Delete an annotation. This action can't be undone!",
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['annotations'],
+            'x-fern-sdk-group-name': 'annotations',
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['public'],
         },
@@ -480,7 +480,7 @@ class AnnotationAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['annotations'],
+            'x-fern-sdk-group-name': 'annotations',
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
         },
@@ -521,7 +521,7 @@ class AnnotationAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['annotations'],
+            'x-fern-sdk-group-name': 'annotations',
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
@@ -690,7 +690,7 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-group-name': 'predictions',
             'x-fern-sdk-method-name': 'list',
             'x-fern-audiences': ['public'],
         },
@@ -713,7 +713,7 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-group-name': 'predictions',
             'x-fern-sdk-method-name': 'create',
             'x-fern-audiences': ['public'],
         },
@@ -739,7 +739,7 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-group-name': 'predictions',
             'x-fern-sdk-method-name': 'get',
             'x-fern-audiences': ['public'],
         },
@@ -789,7 +789,7 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
             )
         },
         extensions={
-            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-group-name': 'predictions',
             'x-fern-sdk-method-name': 'update',
             'x-fern-audiences': ['public'],
         },
@@ -806,7 +806,7 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
         ],
         request=None,
         extensions={
-            'x-fern-sdk-group-name': ['predictions'],
+            'x-fern-sdk-group-name': 'predictions',
             'x-fern-sdk-method-name': 'delete',
             'x-fern-audiences': ['public'],
         },
