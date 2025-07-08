@@ -48,9 +48,12 @@
   }
 
   &__hotkeys-button {
-      padding: 0.5rem;
-      border-radius: 4px;
-      transition: background-color 0.2s ease;
+      .button-ls {
+        max-width: 40px;
+        width: 40px;
+        max-height: 32px;
+        padding: 0 4px;
+      }
       
       &:hover {
           background-color: var(--color-primary-emphasis-subtle);

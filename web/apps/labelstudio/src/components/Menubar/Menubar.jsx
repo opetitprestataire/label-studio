@@ -157,7 +157,8 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
           <div className={menubarClass.elem("hotkeys")}>
             <div className={menubarClass.elem("hotkeys-button")}>
               <Button
-                type="text"
+                variant="neutral"
+                look="string"
                 onClick={() => {
                   openHotkeyHelp([
                     "annotation",
@@ -170,9 +171,8 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
                     "image_gallery",
                   ]);
                 }}
-              >
-                <IconHotkeys />
-              </Button>
+                icon={<IconHotkeys />}
+              />
             </div>
           </div>
 

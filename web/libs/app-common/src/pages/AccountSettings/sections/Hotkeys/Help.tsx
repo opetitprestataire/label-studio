@@ -150,11 +150,11 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
 
   return (
     <div onClick={handleBackdropClick} className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
-      <div className="bg-neutral-background rounded-lg shadow-lg max-w-3xl max-h-[80vh] overflow-hidden w-full mx-4">
+      <div className="bg-neutral-background rounded-lg shadow-lg max-w-3xl max-h-[90vh] h-full overflow-hidden w-full mx-4">
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-neutral-border">
           <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold">Available Keyboard Shortcuts</h2>
+            <h2 className="text-lg font-semibold">Keyboard Shortcuts</h2>
             <Button onClick={onClose} aria-label="Close modal" variant="primary" look="string" icon={<IconClose />} />
           </div>
           <p className="text-sm text-neutral-content-subtler mt-1">
@@ -173,15 +173,8 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
         </div>
 
         {/* Modal Content */}
-        <div className="px-6 py-4 overflow-y-auto max-h-[60vh] scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent">
+        <div className="px-6 py-4 overflow-y-auto h-full scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent">
           <div className="space-y-4">{sectionsToShow.map(renderSection)}</div>
-        </div>
-
-        {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-neutral-border">
-          <div className="flex justify-end">
-            <Button onClick={handleCustomizeClick}>Customize Hotkeys</Button>
-          </div>
         </div>
       </div>
     </div>
