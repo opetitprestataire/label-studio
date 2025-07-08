@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 
 // UI components
-import { Button } from "@humansignal/ui";
+import { Button, Tooltip } from "@humansignal/ui";
 import { Toggle as UiToggle } from "@humansignal/ui";
 import { KeyboardKey } from "./Key";
 import { IconClose } from "@humansignal/ui";
@@ -189,9 +189,14 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
       </div>
 
       {/* Current hotkey display (clickable to edit) */}
-      <div className="flex items-center gap-2 cursor-pointer hover:opacity-80" onClick={handleEdit}>
-        <KeyboardKey>{hotkey.key}</KeyboardKey>
-      </div>
+      <Tooltip title="Click to edit hotkey">
+        <div
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80 hover:bg-primary-emphasis-subtle px-base py-base rounded-small"
+          onClick={handleEdit}
+        >
+          <KeyboardKey>{hotkey.key}</KeyboardKey>
+        </div>
+      </Tooltip>
     </div>
   );
 };
