@@ -1,6 +1,7 @@
 import { defineConfig } from "cypress";
 import path from "path";
 import installLogsPrinter from "cypress-terminal-report/src/installLogsPrinter";
+import * as tasks from "./tasks";
 import { disableChromeGPU } from "./plugins/disable_gpu";
 import { coverageParallel } from "./plugins/coverage_parallel.js";
 import { addMatchImageSnapshotPlugin } from "cypress-image-snapshot/plugin";
@@ -49,7 +50,7 @@ export default function (
 
         // Allows collecting coverage
         coverageParallel(on, config);
-        // on("task", { ...tasks });
+        on("task", { ...tasks });
         // Gives a step-by-step output for failed tests in headless mode
         installLogsPrinter(on, {
           outputVerbose: false,
