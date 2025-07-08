@@ -14,9 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@humansignal/shad/components/ui/dialog";
-
-import { Dropdown } from "apps/labelstudio/src/components/Dropdown/Dropdown";
-import { Menu } from "apps/labelstudio/src/components/Menu/Menu";
 import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
 
 import { HotkeySection } from "./Hotkeys/Section";
@@ -579,20 +576,19 @@ export const HotkeysManager = () => {
   return (
     <div id="hotkeys-manager">
       <div className={styles.sectionContent}>
-        <div className={styles.flexRow} style={{ justifyContent: "flex-end", marginBottom: "var(--spacing-wide)" }}>
-          <Dropdown.Trigger
-            align="right"
-            content={
-              <Menu>
-                <Menu.Item label="Export Hotkeys" onClick={handleExportHotkeys} />
-                <Menu.Item label="Import Hotkeys" onClick={() => setImportDialogOpen(true)} />
-                <Menu.Divider />
-                <Menu.Item label="Reset to Defaults" onClick={handleResetToDefaults} />
-              </Menu>
-            }
-          >
-            <Button variant="primary">Actions</Button>
-          </Dropdown.Trigger>
+        <div
+          className={styles.flexRow}
+          style={{ justifyContent: "flex-end", marginBottom: "var(--spacing-wide)", gap: "var(--spacing-tight)" }}
+        >
+          <Button variant="neutral" look="outlined" onClick={() => setImportDialogOpen(true)}>
+            Import
+          </Button>
+          <Button variant="neutral" look="outlined" onClick={handleExportHotkeys}>
+            Export
+          </Button>
+          <Button variant="negative" look="outlined" onClick={handleResetToDefaults}>
+            Reset to Defaults
+          </Button>
         </div>
 
         {isLoading && hotkeys.length === 0 ? (
