@@ -29,7 +29,7 @@ from .openapi_schema import (
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='List S3 import storage',
         description='Get a list of all S3 import storage connections.',
         parameters=[
@@ -50,7 +50,7 @@ from .openapi_schema import (
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Create new S3 storage',
         description='Create new S3 import storage',
         request=_s3_import_storage_schema,
@@ -69,7 +69,7 @@ class S3ImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Get import storage',
         description='Get a specific S3 import storage connection.',
         request=None,
@@ -83,7 +83,7 @@ class S3ImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='patch',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Update import storage',
         description='Update a specific S3 import storage connection.',
         request=_s3_import_storage_schema,
@@ -97,7 +97,7 @@ class S3ImportStorageListAPI(ImportStorageListAPI):
 @method_decorator(
     name='delete',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Delete import storage',
         description='Delete a specific S3 import storage connection.',
         request=None,
@@ -116,7 +116,7 @@ class S3ImportStorageDetailAPI(ImportStorageDetailAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Sync import storage',
         description='Sync tasks from an S3 import storage connection.',
         parameters=[
@@ -142,7 +142,7 @@ class S3ImportStorageSyncAPI(ImportStorageSyncAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Validate import storage',
         description='Validate a specific S3 import storage connection.',
         request=_s3_import_storage_schema_with_id,
@@ -161,7 +161,7 @@ class S3ImportStorageValidateAPI(ImportStorageValidateAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Validate export storage',
         description='Validate a specific S3 export storage connection.',
         request=_s3_export_storage_schema_with_id,
@@ -180,7 +180,7 @@ class S3ExportStorageValidateAPI(ExportStorageValidateAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Get all export storage',
         description='Get a list of all S3 export storage connections.',
         parameters=[
@@ -201,7 +201,7 @@ class S3ExportStorageValidateAPI(ExportStorageValidateAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Create export storage',
         description='Create a new S3 export storage connection to store annotations.',
         request=_s3_export_storage_schema,
@@ -220,7 +220,7 @@ class S3ExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='get',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Get export storage',
         description='Get a specific S3 export storage connection.',
         request=None,
@@ -234,7 +234,7 @@ class S3ExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='patch',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Update export storage',
         description='Update a specific S3 export storage connection.',
         request=_s3_export_storage_schema,
@@ -248,7 +248,7 @@ class S3ExportStorageListAPI(ExportStorageListAPI):
 @method_decorator(
     name='delete',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Delete export storage',
         description='Delete a specific S3 export storage connection.',
         request=None,
@@ -267,7 +267,7 @@ class S3ExportStorageDetailAPI(ExportStorageDetailAPI):
 @method_decorator(
     name='post',
     decorator=extend_schema(
-        tags=['Storage:S3'],
+        tags=['Storage: S3'],
         summary='Sync export storage',
         description='Sync tasks from an S3 export storage connection.',
         request=None,
