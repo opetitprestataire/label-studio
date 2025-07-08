@@ -410,7 +410,7 @@ class ProjectAPI(generics.RetrieveUpdateDestroyAPIView):
 )  # leaving this method decorator info in case we put it back in swagger API docs
 class ProjectNextTaskAPI(generics.RetrieveAPIView):
     permission_required = all_permissions.tasks_view
-    serializer_class = TaskWithAnnotationsAndPredictionsAndDraftsSerializer  # using it for swagger API docs
+    serializer_class = TaskWithAnnotationsAndPredictionsAndDraftsSerializer
     queryset = Project.objects.all()
     swagger_schema = None  # this endpoint doesn't need to be in swagger API docs
 

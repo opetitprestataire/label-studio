@@ -583,23 +583,26 @@ class ProjectActionsAPI(APIView):
 
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Data Manager'],
-        operation_summary='Get action form',
-        operation_description='Get the form configuration for a specific action.',
-        manual_parameters=[
-            openapi.Parameter(
+        summary='Get action form',
+        description='Get the form configuration for a specific action.',
+        parameters=[
+            OpenApiParameter(
                 name='project',
-                type=openapi.TYPE_INTEGER,
-                in_=openapi.IN_QUERY,
+                type=OpenApiTypes.INT,
+                location='query',
                 description='Project ID',
                 required=True,
             )
         ],
         responses={
-            200: openapi.Response(
+            200: OpenApiResponse(
                 description='Action form configuration returned successfully',
-                schema=openapi.Schema(type=openapi.TYPE_OBJECT, description='Form configuration object'),
+                response={
+                    'type': 'object',
+                    'description': 'Form configuration object',
+                },
             )
         },
     ),

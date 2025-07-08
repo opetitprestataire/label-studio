@@ -228,7 +228,7 @@ class ExportAPI(generics.RetrieveAPIView):
 )
 class ProjectExportFiles(generics.RetrieveAPIView):
     permission_required = all_permissions.projects_change
-    swagger_schema = None  # hide export files endpoint from swagger
+    swagger_schema = None  # hide export files endpoint from openapi3
 
     def get_queryset(self):
         return Project.objects.filter(organization=self.request.user.active_organization)

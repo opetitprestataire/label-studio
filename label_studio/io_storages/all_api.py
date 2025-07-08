@@ -5,7 +5,7 @@ import logging
 from core.permissions import all_permissions
 from django.conf import settings
 from django.utils.decorators import method_decorator
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import generics
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
@@ -47,16 +47,19 @@ _common_storage_list = _get_common_storage_list()
         summary='List all import storages types',
         description='Retrieve a list of the import storages types.',
         responses={
-            200: OpenApiResponse(response={
-                'type': 'array',
-                'items': {
-                    'type': 'object',
-                    'properties': {
-                        'name': {'type': 'string'},
-                        'title': {'type': 'string'},
+            200: OpenApiResponse(
+                response={
+                    'type': 'array',
+                    'items': {
+                        'type': 'object',
+                        'properties': {
+                            'name': {'type': 'string'},
+                            'title': {'type': 'string'},
+                        },
                     },
                 },
-            }, description='List of import storage types'),
+                description='List of import storage types',
+            ),
         },
         extensions={
             'x-fern-sdk-group-name': ['import_storage'],
@@ -79,16 +82,19 @@ class AllImportStorageTypesAPI(APIView):
         summary='List all export storages types',
         description='Retrieve a list of the export storages types.',
         responses={
-            200: OpenApiResponse(response={
-                'type': 'array',
-                'items': {
-                    'type': 'object',
-                    'properties': {
-                        'name': {'type': 'string'},
-                        'title': {'type': 'string'},
+            200: OpenApiResponse(
+                response={
+                    'type': 'array',
+                    'items': {
+                        'type': 'object',
+                        'properties': {
+                            'name': {'type': 'string'},
+                            'title': {'type': 'string'},
+                        },
                     },
                 },
-            }, description='List of export storage types'),
+                description='List of export storage types',
+            ),
         },
         extensions={
             'x-fern-sdk-group-name': ['export_storage'],

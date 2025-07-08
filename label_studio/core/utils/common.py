@@ -197,7 +197,7 @@ def paginator(objects, request, default_page=1, default_size=50):
 
 
 def paginator_help(objects_name, tag):
-    """API help for paginator, use it with swagger_auto_schema
+    """API help for paginator, use it with drf_spectacular
 
     :return: dict
     """

@@ -312,28 +312,32 @@ class UserWhoAmIAPI(generics.RetrieveAPIView):
 
 @method_decorator(
     name='patch',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Users'],
-        x_fern_sdk_group_name='users',
-        x_fern_sdk_method_name='update_hotkeys',
-        x_fern_audiences=['public'],
-        operation_summary='Update user hotkeys',
-        operation_description='Update the custom hotkeys configuration for the current user.',
-        request_body=HotkeysSerializer,
+        summary='Update user hotkeys',
+        description='Update the custom hotkeys configuration for the current user.',
+        request=HotkeysSerializer,
         responses={200: HotkeysSerializer},
+        extensions={
+            'x-fern-sdk-group-name': 'users',
+            'x-fern-sdk-method-name': 'update_hotkeys',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 @method_decorator(
     name='get',
-    decorator=swagger_auto_schema(
+    decorator=extend_schema(
         tags=['Users'],
-        x_fern_sdk_group_name='users',
-        x_fern_sdk_method_name='get_hotkeys',
-        x_fern_audiences=['public'],
-        operation_summary='Get user hotkeys',
-        operation_description='Retrieve the custom hotkeys configuration for the current user.',
-        request_body=no_body,
+        summary='Get user hotkeys',
+        description='Retrieve the custom hotkeys configuration for the current user.',
+        request=None,
         responses={200: HotkeysSerializer},
+        extensions={
+            'x-fern-sdk-group-name': 'users',
+            'x-fern-sdk-method-name': 'get_hotkeys',
+            'x-fern-audiences': ['public'],
+        },
     ),
 )
 class UserHotkeysAPI(APIView):

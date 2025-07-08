@@ -462,7 +462,7 @@ class DataManagerTaskSerializer(TaskSerializer):
 
     def get_drafts(self, task):
         """Return drafts only for the current user"""
-        # it's for swagger documentation
+        # it's for openapi3 documentation
         if not isinstance(task, Task) or not self.context.get('drafts'):
             return []
 
