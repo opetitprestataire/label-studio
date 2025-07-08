@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom";
 import clsx from "clsx";
 import { Button } from "@humansignal/ui";
+import { IconClose } from "@humansignal/icons";
 import { KeyboardKey } from "./Key";
 import { DEFAULT_HOTKEYS, HOTKEY_SECTIONS, URL_TO_SECTION_MAPPING } from "./defaults";
 
@@ -96,11 +97,11 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
     });
 
     return (
-      <div key={sectionId} className="border border-gray-200 dark:border-gray-700 rounded-lg">
+      <div key={sectionId} className="border border-neutral-border rounded-lg">
         {/* Section Header */}
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+        <div className="px-4 py-3 border-b border-neutral-border">
           <h3 className="font-medium">{section.title}</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{section.description}</p>
+          <p className="text-sm text-neutral-content-subtler">{section.description}</p>
         </div>
 
         {/* Section Content */}
@@ -120,7 +121,7 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
                       {sections.find((s: Section) => s.id === subgroup)?.title || subgroup}
                     </div>
                     {sections.find((s: Section) => s.id === subgroup)?.description && (
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-xs text-neutral-content-subtler">
                         {sections.find((s: Section) => s.id === subgroup)?.description}
                       </div>
                     )}
@@ -131,9 +132,9 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
                 {groupedHotkeys[subgroup].map((hotkey: Hotkey) => (
                   <div key={`${section.id}-${hotkey.element}`} className="flex items-center justify-between py-2">
                     <div>
-                      <div className="font-medium">{hotkey.label}</div>
+                      <div className="font-medium text-neutral-content">{hotkey.label}</div>
                       {hotkey.description && (
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{hotkey.description}</div>
+                        <div className="text-sm text-neutral-content-subtler">{hotkey.description}</div>
                       )}
                     </div>
                     <KeyboardKey>{hotkey.key}</KeyboardKey>
@@ -149,21 +150,14 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
 
   return (
     <div onClick={handleBackdropClick} className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-3xl max-h-[80vh] overflow-hidden w-full mx-4">
+      <div className="bg-neutral-background rounded-lg shadow-lg max-w-3xl max-h-[80vh] overflow-hidden w-full mx-4">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="px-6 py-4 border-b border-neutral-border">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">Available Keyboard Shortcuts</h2>
-            <Button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none"
-              aria-label="Close modal"
-              variant="neutral"
-            >
-              ×
-            </Button>
+            <Button onClick={onClose} aria-label="Close modal" variant="primary" look="string" icon={<IconClose />} />
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm text-neutral-content-subtler mt-1">
             Keyboard shortcuts for this page.&nbsp;
             <a
               href="/user/account/hotkeys"
@@ -171,7 +165,7 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
                 e.preventDefault();
                 handleCustomizeClick();
               }}
-              className="text-blue-600 hover:underline"
+              className="text-primary-content hover:underline hover:text-primary-content-hover"
             >
               Customize
             </a>
@@ -179,12 +173,12 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
         </div>
 
         {/* Modal Content */}
-        <div className="px-6 py-4 overflow-y-auto max-h-[60vh]">
+        <div className="px-6 py-4 overflow-y-auto max-h-[60vh] scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent">
           <div className="space-y-4">{sectionsToShow.map(renderSection)}</div>
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="px-6 py-4 border-t border-neutral-border">
           <div className="flex justify-end">
             <Button onClick={handleCustomizeClick}>Customize Hotkeys</Button>
           </div>
