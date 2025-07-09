@@ -53,9 +53,8 @@ class AudioViewHelper extends withMedia(
     }
 
     get configButton() {
-      return this.timelineControls.find(".lsf-audio-config > .lsf-button");
+      return this.timelineControls.find(".lsf-audio-config > [aria-label='Audio settings']");
     }
-
     get volumeButton() {
       return this.timelineControls.find(".lsf-audio-control > .lsf-button");
     }
