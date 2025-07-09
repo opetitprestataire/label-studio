@@ -37,7 +37,7 @@ const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, 
           onBlur={onSaveName}
           className="project-title w-full"
         />
-        {error && <span className="-mt-1 text-negative-content">{error}</span>}
+        {error && <span className="-mt-tighter text-negative-content">{error}</span>}
       </div>
       <div className="w-full flex flex-col gap-tight">
         <label className="w-full" htmlFor="project_description">
