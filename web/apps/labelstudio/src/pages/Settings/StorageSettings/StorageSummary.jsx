@@ -11,13 +11,7 @@ const CopyButton = ({ msg }) => {
   const [copyText, copied] = useCopyText(msg);
 
   return (
-    <Button
-      variant="neutral"
-      icon={<IconFileCopy />}
-      onClick={copyText}
-      disabled={copied}
-      style={{ minWidth: "100px", justifyContent: "center" }}
-    >
+    <Button variant="neutral" icon={<IconFileCopy />} onClick={copyText} disabled={copied} className="w-[7rem]">
       {copied ? "Copied!" : "Copy"}
     </Button>
   );
@@ -55,28 +49,33 @@ export const StorageSummary = ({ target, storage, className, storageTypes = [] }
       `${getLastTraceback(storage.traceback)}\n\n` +
       `meta = ${JSON.stringify(storage.meta)}\n`;
 
-    modal({
+    const currentModal = modal({
       title: "Storage Sync Error Log",
-      body: (
-        <>
-          <CodeBlock code={msg} variant="negative" className="mb-base max-h-[50vh] overflow-y-auto" />
-          <Space align="end">
+      body: <CodeBlock code={msg} variant="negative" className="max-h-[50vh] overflow-y-auto" />,
+      footer: (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {!window.APP_SETTINGS?.whitelabel_is_active && (
+            <div>
+              <>
+                <a
+                  href="https://labelstud.io/guide/storage.html#Troubleshooting"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label="Learn more about cloud storage troubleshooting"
+                >
+                  See docs
+                </a>{" "}
+                for troubleshooting tips on cloud storage connections.
+              </>
+            </div>
+          )}
+          <Space>
             <CopyButton msg={msg} />
+            <Button variant="primary" className="w-[7rem]" onClick={() => currentModal.close()}>
+              Close
+            </Button>
           </Space>
-        </>
-      ),
-      footer: !window.APP_SETTINGS?.whitelabel_is_active && (
-        <>
-          <a
-            href="https://labelstud.io/guide/storage.html#Troubleshooting"
-            target="_blank"
-            rel="noreferrer noopener"
-            aria-label="Learn more about storage troubleshooting"
-          >
-            See troubleshooting tips
-          </a>{" "}
-          for cloud storage connections and sync issues.
-        </>
+        </div>
       ),
       style: { width: "700px" },
       optimize: false,
