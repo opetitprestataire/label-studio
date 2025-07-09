@@ -322,7 +322,7 @@ export const ImportPage = ({
       {highlightCsvHandling && <div className={importClass.elem("csv-splash")} />}
       <input id="file-input" type="file" name="file" multiple onChange={onUpload} style={{ display: "none" }} />
 
-      <header className="flex gap-4">
+      <header className="flex gap-base">
         <form className={`${importClass.elem("url-form")} inline-flex`} method="POST" onSubmit={onLoadURL}>
           <Input placeholder="Dataset URL" name="url" ref={urlRef} style={{ height: 40 }} />
           <Button type="submit" look="primary">
@@ -361,9 +361,9 @@ export const ImportPage = ({
 
       <main>
         <Upload sendFiles={sendFiles} project={project}>
-          <div className={scn("flex gap-4 w-full min-h-full", { "justify-center": !showList })}>
+          <div className={scn("flex gap-base w-full min-h-full", { "justify-center": !showList })}>
             {!showList && (
-              <div className="flex gap-4 justify-center items-start w-full h-full">
+              <div className="flex gap-base justify-center items-start w-full h-full">
                 <label htmlFor="file-input" className="w-full h-full">
                   <div className={`${dropzoneClass.elem("content")} w-full`}>
                     <IconFileUpload height="64" className={dropzoneClass.elem("icon")} />
@@ -379,7 +379,7 @@ export const ImportPage = ({
                       <dt>Audio</dt>
                       <dd>{supportedExtensions.audio.join(", ")}</dd>
                       <dt>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-tighter">
                           Video
                           <Tooltip title="Video format support depends on your browser. Click to learn more.">
                             <a
@@ -389,7 +389,7 @@ export const ImportPage = ({
                               className="inline-flex items-center"
                               aria-label="Learn more about video format support (opens in a new tab)"
                             >
-                              <IconInfoOutline className="w-4 h-4 text-primary-content hover:text-primary-content-hover" />
+                              <IconInfoOutline className="w-base h-base text-primary-content hover:text-primary-content-hover" />
                             </a>
                           </Tooltip>
                         </div>
@@ -406,7 +406,7 @@ export const ImportPage = ({
                     </dl>
                     <div className="tips">
                       <b>Important:</b>
-                      <ul className="mt-2 ml-4 list-disc font-regular">
+                      <ul className="mt-tight ml-base list-disc font-regular">
                         <li>
                           We recommend{" "}
                           <a
@@ -462,9 +462,9 @@ export const ImportPage = ({
                       {sample && (
                         <tr key={sample.url}>
                           <td>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-tight">
                               {sample.title}
-                              <Badge variant="info" className="h-5 text-body-smaller rounded-sm">
+                              <Badge variant="info" className="h-wide text-body-smaller rounded-sm">
                                 Sample
                               </Badge>
                             </div>
@@ -474,10 +474,10 @@ export const ImportPage = ({
                             <Button
                               size="icon"
                               look="destructive"
-                              rawClassName="h-6 w-6 p-0"
+                              rawClassName="h-wide w-wide p-none"
                               onClick={() => onSampleDatasetSelect(undefined)}
                             >
-                              <IconTrash className="w-3 h-3" />
+                              <IconTrash className="w-base h-base" />
                             </Button>
                           </td>
                         </tr>
@@ -523,11 +523,11 @@ export const ImportPage = ({
                         />
                       </div>
                     ) : sampleConfig.isLoading ? (
-                      <div className="w-full flex justify-center py-12">
-                        <Spinner className="h-6 w-6" />
+                      <div className="w-full flex justify-center py-[3rem]">
+                        <Spinner className="h-wide w-wide" />
                       </div>
                     ) : sampleConfig.isError ? (
-                      <div className="w-[calc(100%-24px)] text-title-medium text-negative-content bg-negative-background border m-3 rounded-md border-negative-border-subtle p-4">
+                      <div className="w-[calc(100%-24px)] text-title-medium text-negative-content bg-negative-background border m-base rounded-md border-negative-border-subtle p-base">
                         Something went wrong, the sample data could not be loaded.
                       </div>
                     ) : null}
@@ -536,7 +536,7 @@ export const ImportPage = ({
                   <SimpleCard className="w-full h-full flex flex-col items-center justify-center text-center p-wide">
                     <div className="flex flex-col items-center gap-tight">
                       <div className="bg-primary-background rounded-largest p-tight flex items-center justify-center">
-                        <IconCode className="w-6 h-6 text-primary-icon" />
+                        <IconCode className="w-wide h-wide text-primary-icon" />
                       </div>
                       <div className="flex flex-col items-center gap-tighter">
                         <div className="text-label-small text-neutral-content font-medium">View JSON input format</div>
@@ -545,7 +545,7 @@ export const ImportPage = ({
                           <button
                             type="button"
                             onClick={openConfig}
-                            className="border-none bg-none p-0 m-0 text-primary-content underline hover:text-primary-content-hover transition-colors"
+                            className="border-none bg-none p-none m-none text-primary-content underline hover:text-primary-content-hover transition-colors"
                           >
                             labeling configuration
                           </button>{" "}

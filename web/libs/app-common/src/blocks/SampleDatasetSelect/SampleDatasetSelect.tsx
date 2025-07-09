@@ -36,7 +36,7 @@ export function SampleDatasetSelect({
       label: (
         <div className="flex flex-col">
           <div className="font-bold">{sample.title}</div>
-          <div className="mt-2">{sample.description}</div>
+          <div className="mt-tight">{sample.description}</div>
         </div>
       ),
     }));
@@ -55,7 +55,7 @@ export function SampleDatasetSelect({
   );
 
   return (
-    <div className="flex gap-3 items-center">
+    <div className="flex gap-base items-center">
       <span className="text-neutral-content-subtler">or use a sample dataset</span>
       <Select
         value={sample?.url ?? undefined}

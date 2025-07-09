@@ -22,14 +22,14 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
   return (
     <div
       data-slot="command-input-wrapper"
-      className="flex items-center gap-2 h-8 px-2 m-1 focus-within:border-neutral-border-bold border outline-none border-neutral-border rounded-smaller hover:border-neutral-border-bold shadow-inner box-border"
+      className="flex items-center gap-tight h-wider px-tight m-tighter focus-within:border-neutral-border-bold border outline-none border-neutral-border rounded-smaller hover:border-neutral-border-bold shadow-inner box-border"
       ref={ref}
     >
-      <IconSearch className="text-neutral-content-subtlest w-6 h-6 flex-none" />
+      <IconSearch className="text-neutral-content-subtlest w-wide h-wide flex-none" />
       <CommandPrimitive.Input
         data-slot="command-input"
         className={cn(
-          "placeholder:text-neutral-content-subtler flex h-8 w-full rounded-md bg-transparent py-3 outline-hidden disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none border-0",
+          "placeholder:text-neutral-content-subtler flex h-wider w-full rounded-md bg-transparent py-tight outline-hidden disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none border-0",
           className,
         )}
         {...props}
@@ -49,7 +49,9 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
 }
 
 function CommandEmpty({ ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
-  return <CommandPrimitive.Empty data-slot="command-empty" className="py-6 text-center text-body-small" {...props} />;
+  return (
+    <CommandPrimitive.Empty data-slot="command-empty" className="py-wide text-center text-body-small" {...props} />
+  );
 }
 
 function CommandGroup({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) {
@@ -60,7 +62,7 @@ function CommandSeparator({ className, ...props }: React.ComponentProps<typeof C
   return (
     <CommandPrimitive.Separator
       data-slot="command-separator"
-      className={cn("bg-border -mx-1 h-px", className)}
+      className={cn("bg-border -mx-tighter h-px", className)}
       {...props}
     />
   );

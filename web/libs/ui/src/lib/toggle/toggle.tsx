@@ -81,7 +81,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
         required={required}
         text={label}
         description={description}
-        className="gap-2"
+        className="gap-tight"
         {...(labelProps ?? {})}
       >
         {formField}

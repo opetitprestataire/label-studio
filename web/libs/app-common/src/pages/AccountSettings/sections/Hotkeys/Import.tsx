@@ -171,11 +171,11 @@ export const ImportDialog = ({ open, onOpenChange, onImport }: ImportDialogProps
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-base py-base">
           <Label htmlFor="import-json">Hotkeys JSON</Label>
           <textarea
             id="import-json"
-            className="flex min-h-[150px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+            className="flex min-h-[150px] w-full rounded-md border border-input bg-transparent px-base py-tight text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
             placeholder='[{"id": 1, "section": "annotation-actions", "element": "button", "label": "Save", "key": "Ctrl+S"}]'
             value={importText}
             onChange={handleTextareaChange}

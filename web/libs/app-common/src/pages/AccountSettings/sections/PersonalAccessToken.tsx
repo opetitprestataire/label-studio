@@ -51,10 +51,10 @@ export const PersonalAccessToken = () => {
 
   return (
     <div id="personal-access-token">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-wide">
         <div>
           <Label text="Access Token" className={styles.label} />
-          <div className="flex gap-2 w-full justify-between">
+          <div className="flex gap-tight w-full justify-between">
             <Input name="token" className={styles.input} readOnly value={token} />
             <Button icon={<IconFileCopy />} onClick={copyToken} disabled={tokenCopied}>
               {tokenCopied ? "Copied!" : "Copy"}
@@ -66,7 +66,7 @@ export const PersonalAccessToken = () => {
         </div>
         <div>
           <Label text="Example CURL Request" className={styles.label} />
-          <div className="flex gap-2 w-full justify-between">
+          <div className="flex gap-tight w-full justify-between">
             <TextArea
               name="example-curl"
               readOnly
@@ -92,10 +92,15 @@ export function PersonalAccessTokenDescription() {
         <>
           {" "}
           See{" "}
-          <a href="https://labelstud.io/guide/api.html" target="_blank" rel="noreferrer" className="inline-flex gap-1">
+          <a
+            href="https://labelstud.io/guide/api.html"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex gap-tighter"
+          >
             Docs{" "}
             <span>
-              <IconLaunch className="h-6 w-6" />
+              <IconLaunch className="h-wide w-wide" />
             </span>
           </a>
         </>

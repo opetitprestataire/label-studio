@@ -120,7 +120,7 @@ export const LabelingSummary = ({ hideInfo, annotations: all, controls, onSelect
             <div
               key={headerGroup.id}
               className={cnm(
-                "flex [&>*]:flex-shrink-0 [&>*]:px-4 [&>*]:py-2 bg-neutral-surface",
+                "flex [&>*]:flex-shrink-0 [&>*]:px-base [&>*]:py-tight bg-neutral-surface",
                 "[&>*]:text-left [&>*]:whitespace-nowrap",
               )}
             >
@@ -146,7 +146,7 @@ export const LabelingSummary = ({ hideInfo, annotations: all, controls, onSelect
             <div
               key={row.id}
               className={cnm(
-                "flex [&>*]:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top [&>*]:px-4 [&>*]:py-2",
+                "flex [&>*]:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top [&>*]:px-base [&>*]:py-tight",
                 "[&>*]:overflow-hidden [&>*]:text-ellipsis",
               )}
             >

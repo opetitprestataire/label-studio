@@ -96,7 +96,7 @@ export const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
       {/* Divider for resizing (only when not collapsed) */}
       {!isCollapsed && (
         <div
-          className="h-2 cursor-row-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
+          className="h-tight cursor-row-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
           onMouseDown={handleMouseDown}
           onDoubleClick={handleDividerDoubleClick}
           role="separator"

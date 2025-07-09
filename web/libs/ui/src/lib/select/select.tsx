@@ -245,15 +245,15 @@ export const Select = forwardRef(
             {...triggerProps}
           >
             <span
-              className="flex flex-1 text-left gap-2 max-w-full w-[calc(100%-1rem-0.5rem)]"
+              className="flex flex-1 text-left gap-tight max-w-full w-[calc(100%-1rem-0.5rem)]"
               data-testid="select-display-value"
             >
               {renderSelected ? renderSelected?.(selectedOptions, props?.placeholder) : displayValue}
             </span>
             {isOpen ? (
-              <IconChevron className="h-4 w-4 shrink-0 opacity-50 pointer-events-none" />
+              <IconChevron className="h-base w-base shrink-0 opacity-50 pointer-events-none" />
             ) : (
-              <IconChevronDown className="h-4 w-4 shrink-0 opacity-50 pointer-events-none" />
+              <IconChevronDown className="h-base w-base shrink-0 opacity-50 pointer-events-none" />
             )}
           </button>
         </PopoverTrigger>
@@ -306,9 +306,9 @@ export const Select = forwardRef(
                               }}
                             />
                           ) : (
-                            <div className="pl-3 font-bold text-neutral-content-subtler pt-2">{label}</div>
+                            <div className="pl-base font-bold text-neutral-content-subtler pt-tight">{label}</div>
                           )}
-                          <div className="pl-2">
+                          <div className="pl-tight">
                             {children.map((item, i) => {
                               const val = item?.value ?? item;
                               const lab = item?.label ?? val;
@@ -432,7 +432,7 @@ const Option = ({
           "rounded-4",
           "text-neutral-content-subtle",
           "overflow-hidden",
-          "p-1",
+          "p-tighter",
           "outline-none",
           "group",
           "duration-150 ease-out",
@@ -448,10 +448,10 @@ const Option = ({
         className={clsx(
           [
             "flex",
-            "gap-2",
+            "gap-tight",
             "w-full",
-            multiple ? "pl-2 pr-4" : "px-4",
-            "py-1",
+            multiple ? "pl-tight pr-base" : "px-base",
+            "py-tighter",
             "hover:bg-primary-emphasis-subtle",
             "hover:cursor-pointer",
             "group-focus-within:bg-primary-emphasis-subtle",

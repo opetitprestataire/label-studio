@@ -68,10 +68,10 @@ export const AllVariants: TypographyStory = {
     children: "Display Large",
   },
   render: () => (
-    <div className="space-y-8">
+    <div className="space-y-wider">
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Display Variants</h3>
-        <div className="space-y-2">
+        <h3 className="text-title-medium font-semibold mb-base !text-neutral-content-subtle">Display Variants</h3>
+        <div className="space-y-tight">
           <Typography variant="display" size="large">
             Display Large
           </Typography>
@@ -85,8 +85,8 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Headline Variants</h3>
-        <div className="space-y-2">
+        <h3 className="text-title-medium font-semibold mb-base !text-neutral-content-subtle">Headline Variants</h3>
+        <div className="space-y-tight">
           <Typography variant="headline" size="large">
             Headline Large
           </Typography>
@@ -100,8 +100,8 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Title Variants</h3>
-        <div className="space-y-2">
+        <h3 className="text-title-medium font-semibold mb-base !text-neutral-content-subtle">Title Variants</h3>
+        <div className="space-y-tight">
           <Typography variant="title" size="large">
             Title Large
           </Typography>
@@ -115,8 +115,8 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Label Variants</h3>
-        <div className="space-y-2">
+        <h3 className="text-title-medium font-semibold mb-base !text-neutral-content-subtle">Label Variants</h3>
+        <div className="space-y-tight">
           <Typography variant="label" size="medium">
             Label Medium
           </Typography>
@@ -133,8 +133,8 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Body Variants</h3>
-        <div className="space-y-2">
+        <h3 className="text-title-medium font-semibold mb-base !text-neutral-content-subtle">Body Variants</h3>
+        <div className="space-y-tight">
           <Typography variant="body" size="medium">
             Body Medium
           </Typography>
@@ -169,7 +169,7 @@ export const Styles: TypographyStory = {
     children: "Normal Style - The quick brown fox jumps over the lazy dog",
   },
   render: () => (
-    <div className="space-y-4">
+    <div className="space-y-base">
       <Typography variant="headline" size="large" style="normal">
         Normal Style - The quick brown fox jumps over the lazy dog
       </Typography>
@@ -202,7 +202,7 @@ export const CustomElements: TypographyStory = {
     children: "This renders as an H1 element",
   },
   render: () => (
-    <div className="space-y-4">
+    <div className="space-y-base">
       <Typography variant="headline" size="large" as="h1">
         This renders as an H1 element
       </Typography>
@@ -237,7 +237,7 @@ export const Colors: TypographyStory = {
     children: "This text demonstrates different neutral content colors",
   },
   render: () => (
-    <div className="space-y-4">
+    <div className="space-y-base">
       <Typography variant="headline" size="medium" className="text-neutral-content">
         Default Color - Primary content with full contrast
       </Typography>
@@ -282,12 +282,12 @@ export const Composition: TypographyStory = {
     children: "Composition Example",
   },
   render: () => (
-    <div className="space-y-6">
-      <div className="p-4 border rounded-lg">
-        <Typography variant="headline" size="medium" className="mb-2">
+    <div className="space-y-wide">
+      <div className="p-base border rounded-lg">
+        <Typography variant="headline" size="medium" className="mb-tight">
           Composition Example
         </Typography>
-        <Typography variant="body" size="medium" className="mb-4">
+        <Typography variant="body" size="medium" className="mb-base">
           This example shows how <strong>typography components</strong> can be used together. You can customize the
           variant, size, and style using the controls below.
         </Typography>

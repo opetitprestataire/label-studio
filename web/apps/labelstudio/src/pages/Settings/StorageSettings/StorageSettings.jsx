@@ -17,7 +17,7 @@ export const StorageSettings = () => {
         Use cloud or database storage as the source for your labeling tasks or the target of your completed annotations.
       </Typography>
 
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-2 gap-wider">
         <StorageSet title="Source Cloud Storage" buttonLabel="Add Source Storage" rootClass={rootClass} />
 
         <StorageSet

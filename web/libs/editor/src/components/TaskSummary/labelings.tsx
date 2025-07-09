@@ -15,7 +15,7 @@ const LabelingChip = ({ children }: { children: string | number }) => {
   return (
     <span
       className={cnm(
-        "inline-block whitespace-nowrap rounded-4 px-2",
+        "inline-block whitespace-nowrap rounded-4 px-tight",
         "bg-primary-background border border-primary-emphasis text-accent-grape-dark",
       )}
     >
@@ -32,14 +32,14 @@ const LabelsRenderer: RendererType = (results, control) => {
   const labelCounts = getLabelCounts(labels, control.label_attrs);
 
   return (
-    <span className="flex gap-2 flex-wrap">
+    <span className="flex gap-tight flex-wrap">
       {Object.entries(labelCounts)
         .filter(([_, data]) => data.count > 0)
         .map(([label, data]) => {
           return (
             <span
               key={label}
-              className="inline-block px-2 whitespace-nowrap rounded-4"
+              className="inline-block px-tight whitespace-nowrap rounded-4"
               style={{
                 borderLeft: `4px solid ${data.border}`,
                 color: data.color,
@@ -85,7 +85,7 @@ export const renderers: Record<string, RendererType> = {
     if (!choices.length) return null;
 
     return (
-      <span className="flex gap-2 flex-wrap">
+      <span className="flex gap-tight flex-wrap">
         {unique.map((choice) => (
           <LabelingChip key={choice}>{choice}</LabelingChip>
         ))}
@@ -100,7 +100,7 @@ export const renderers: Record<string, RendererType> = {
     const values: string[] = resultValue(results[0]).map((item: string[]) => item.join(" / "));
 
     return (
-      <span className="flex gap-2 flex-wrap">
+      <span className="flex gap-tight flex-wrap">
         {values.map((value) => (
           <LabelingChip key={value}>{value}</LabelingChip>
         ))}
@@ -133,7 +133,7 @@ export const renderers: Record<string, RendererType> = {
       return (
         <p key={bucket}>
           <b>{bucket}</b>:{" "}
-          <span className="inline-flex gap-2 flex-wrap">
+          <span className="inline-flex gap-tight flex-wrap">
             {items.map((item) => (
               <LabelingChip key={item}>{item}</LabelingChip>
             ))}

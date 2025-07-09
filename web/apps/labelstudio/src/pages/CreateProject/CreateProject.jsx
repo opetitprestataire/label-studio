@@ -25,7 +25,7 @@ const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, 
         onSubmit();
       }}
     >
-      <div className="w-full flex flex-col gap-2">
+      <div className="w-full flex flex-col gap-tight">
         <label className="w-full" htmlFor="project_name">
           Project Name
         </label>
@@ -39,7 +39,7 @@ const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, 
         />
         {error && <span className="-mt-1 text-negative-content">{error}</span>}
       </div>
-      <div className="w-full flex flex-col gap-2">
+      <div className="w-full flex flex-col gap-tight">
         <label className="w-full" htmlFor="project_description">
           Description
         </label>
@@ -55,10 +55,10 @@ const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, 
         />
       </div>
       {isFF(FF_LSDV_E_297) && (
-        <div className="w-full flex flex-col gap-2">
+        <div className="w-full flex flex-col gap-tight">
           <label>
             Workspace
-            <EnterpriseBadge className="ml-2" />
+            <EnterpriseBadge className="ml-tight" />
           </label>
           <Select placeholder="Select an option" disabled options={[]} triggerClassName="!flex-1" />
           <Typography size="small" className="mt-tight mb-wider">

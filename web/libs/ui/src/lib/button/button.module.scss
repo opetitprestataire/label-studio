@@ -16,7 +16,7 @@
   --emboss-shadow-active: inset 0 -1px 0 rgb(var(--white-raw) / 5%), inset 0 1px 0 rgb(var(--black-raw) / 10%);
 
   & > span:not(:has(text)):has(svg:only-child) {
-    @apply h-full w-full p-0 aspect-square;
+    @apply h-full w-full p-none aspect-square;
   }
 
   & > em {

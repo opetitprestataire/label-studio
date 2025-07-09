@@ -16,7 +16,7 @@ type Story = StoryObj<typeof Popover>;
 export const Default: Story = {
   args: {
     trigger: <Button>Click me</Button>,
-    children: <div className="p-4">Popover content</div>,
+    children: <div className="p-base">Popover content</div>,
   },
 };
 
@@ -24,16 +24,24 @@ export const WithForm: Story = {
   args: {
     trigger: <Button>Open Form</Button>,
     children: (
-      <div className="p-4 w-80">
-        <h4 className="mb-4 font-medium">Settings</h4>
-        <div className="space-y-4">
+      <div className="p-base w-[20rem]">
+        <h4 className="mb-base font-medium">Settings</h4>
+        <div className="space-y-base">
           <div>
             <label className="text-body-small font-medium">Name</label>
-            <input type="text" className="w-full mt-1 px-3 py-2 border rounded-md" placeholder="Enter your name" />
+            <input
+              type="text"
+              className="w-full mt-tighter px-base py-tight border rounded-md"
+              placeholder="Enter your name"
+            />
           </div>
           <div>
             <label className="text-body-small font-medium">Email</label>
-            <input type="email" className="w-full mt-1 px-3 py-2 border rounded-md" placeholder="Enter your email" />
+            <input
+              type="email"
+              className="w-full mt-tighter px-base py-tight border rounded-md"
+              placeholder="Enter your email"
+            />
           </div>
           <Button className="w-full">Save</Button>
         </div>
@@ -46,20 +54,20 @@ export const WithList: Story = {
   args: {
     trigger: <Button>View Options</Button>,
     children: (
-      <div className="p-2 w-48">
-        <ul className="space-y-1">
+      <div className="p-tight w-[12rem]">
+        <ul className="space-y-tighter">
           <li>
-            <span className="block w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm cursor-pointer">
+            <span className="block w-full px-tight py-tighter text-left hover:bg-accent rounded-sm cursor-pointer">
               Option 1
             </span>
           </li>
           <li>
-            <span className="block w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm cursor-pointer">
+            <span className="block w-full px-tight py-tighter text-left hover:bg-accent rounded-sm cursor-pointer">
               Option 2
             </span>
           </li>
           <li>
-            <span className="block w-full px-2 py-1.5 text-left hover:bg-accent rounded-sm cursor-pointer">
+            <span className="block w-full px-tight py-tighter text-left hover:bg-accent rounded-sm cursor-pointer">
               Option 3
             </span>
           </li>
@@ -75,7 +83,7 @@ export const WithCustomAlignment: Story = {
     align: "start",
     sideOffset: 8,
     children: (
-      <div className="p-4">
+      <div className="p-base">
         <p>This popover is aligned to the start and has a larger offset.</p>
       </div>
     ),

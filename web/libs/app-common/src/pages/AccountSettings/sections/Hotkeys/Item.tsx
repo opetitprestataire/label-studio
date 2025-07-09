@@ -129,15 +129,15 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
   // Render edit mode interface
   if (isEditing) {
     return (
-      <div className="py-3 space-y-3 border-b border-border last:border-0">
+      <div className="py-base space-y-base border-b border-border last:border-0">
         <div className="font-medium">{hotkey.label}</div>
-        <div className="flex gap-3">
+        <div className="flex gap-base">
           {/* Key recording input area */}
           <Button
             ref={keyRecordingRef}
             variant="neutral"
             className={clsx(
-              "flex-1 flex items-center justify-center min-h-[40px] px-4 py-2 border rounded-md cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+              "flex-1 flex items-center justify-center min-h-[40px] px-base py-tight border rounded-md cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
               keyRecordingMode ? "border-primary" : "border-input bg-background",
               error ? "border-destructive" : "",
             )}
@@ -155,7 +155,7 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
           </Button>
 
           {/* Action buttons */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-tight">
             <Button variant="primary" size="small" onClick={handleSave} disabled={!editedKey || !!error}>
               Apply
             </Button>
@@ -164,7 +164,7 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
             </Button>
           </div>
         </div>
-        {error && <div className="text-sm text-destructive mt-1">{error}</div>}
+        {error && <div className="text-sm text-destructive mt-tighter">{error}</div>}
       </div>
     );
   }
@@ -172,10 +172,13 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
   // Render normal view: toggle switch, label/description, hotkey display
   return (
     <div
-      className={clsx("flex items-center py-3 border-b border-border/10 last:border-0", !hotkey.active && "opacity-60")}
+      className={clsx(
+        "flex items-center py-base border-b border-border/10 last:border-0",
+        !hotkey.active && "opacity-60",
+      )}
     >
       {/* Toggle switch */}
-      <div className="flex-none mr-4">
+      <div className="flex-none mr-base">
         <UiToggle
           checked={hotkey.active}
           onChange={handleToggle}
@@ -184,13 +187,13 @@ export const HotkeyItem = ({ hotkey, onEdit, isEditing, onSave, onCancel, onTogg
       </div>
 
       {/* Label and description */}
-      <div className="flex-1 mr-4">
+      <div className="flex-1 mr-base">
         <div className="font-medium">{hotkey.label}</div>
         <div className="text-sm text-muted-foreground">{hotkey.description}</div>
       </div>
 
       {/* Current hotkey display (clickable to edit) */}
-      <div className="flex items-center gap-2 cursor-pointer hover:opacity-80" onClick={handleEdit}>
+      <div className="flex items-center gap-tight cursor-pointer hover:opacity-80" onClick={handleEdit}>
         <KeyboardKey>{hotkey.key}</KeyboardKey>
       </div>
     </div>

@@ -55,14 +55,14 @@ export const GridWidthButton = injector(({ view, isGrid, gridWidth, fitImagesToW
               <Button
                 onClick={() => setGridWidth(width - 1)}
                 disabled={width === 1}
-                rawClassName="aspect-square h-6 !p-0"
+                rawClassName="aspect-square h-wide !p-none"
               >
                 <IconMinus />
               </Button>
               <Button
                 onClick={() => setGridWidth(width + 1)}
                 disabled={width === 10}
-                rawClassName="aspect-square h-6 !p-0"
+                rawClassName="aspect-square h-wide !p-none"
               >
                 <IconPlus />
               </Button>

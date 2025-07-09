@@ -385,7 +385,7 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
     <Block ref={panelRef} name="tabs-panel" mod={mods} style={{ ...style, ...coordinates }}>
       {isBottomPanel && collapsibleBottomPanel && !bottomCollapsed && (
         <div
-          className="w-full h-2 absolute -top-2 left-none cursor-row-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 select-none z-10"
+          className="w-full h-tight absolute -top-2 left-none cursor-row-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 select-none z-10"
           onMouseDown={handleMouseDown}
           onDoubleClick={handleDividerDoubleClick}
           role="separator"

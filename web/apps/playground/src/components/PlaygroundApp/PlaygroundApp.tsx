@@ -127,7 +127,7 @@ export const PlaygroundApp = () => {
           {/* Resizable Divider */}
           {!displayMode.startsWith("preview") && (
             <div
-              className="w-2 cursor-col-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
+              className="w-tight cursor-col-resize bg-neutral-emphasis hover:bg-primary-border active:bg-primary-border transition-colors duration-100 z-10"
               onMouseDown={(e: MouseEvent) => {
                 if (e.button !== 0) return;
                 e.preventDefault();

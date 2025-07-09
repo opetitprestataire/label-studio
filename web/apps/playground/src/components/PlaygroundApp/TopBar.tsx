@@ -22,7 +22,7 @@ const ShareUrlButton = () => {
     <Tooltip title="Share labeling config URL">
       <button
         type="button"
-        className="flex items-center justify-center h-8 w-8 gap-2 border border-neutral-border rounded-md"
+        className="flex items-center justify-center h-wider w-wider gap-tight border border-neutral-border rounded-md"
         aria-label="Share labeling config URL"
         onClick={handleCopy}
       >
@@ -47,7 +47,7 @@ const CopyButton = () => {
     <Tooltip title="Copy labeling config">
       <button
         type="button"
-        className="flex items-center justify-center h-8 w-8 gap-2 border border-neutral-border rounded-md"
+        className="flex items-center justify-center h-wider w-wider gap-tight border border-neutral-border rounded-md"
         aria-label="Copy labeling config"
         onClick={handleCopy}
       >
@@ -59,7 +59,7 @@ const CopyButton = () => {
 
 const ShareButtons = () => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-tight">
       <CopyButton />
       <ShareUrlButton />
     </div>
@@ -69,13 +69,13 @@ const ShareButtons = () => {
 export const TopBar = memo(
   () => {
     return (
-      <div className="flex items-center h-10 px-tight text-heading-medium justify-between select-none border-b border-neutral-border">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center h-widest px-tight text-heading-medium justify-between select-none border-b border-neutral-border">
+        <div className="flex items-center gap-tight">
           <span className="font-semibold tracking-dense text-body-medium">
             Label Studio <span className="text-accent-persimmon-base">Playground</span>
           </span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-base">
           <ShareButtons />
           <ThemeToggle />
         </div>

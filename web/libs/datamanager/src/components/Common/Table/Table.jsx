@@ -133,7 +133,7 @@ export const Table = observer(
           <Tooltip title="Show task source">
             <Button
               look="string"
-              className="w-6 h-6 p-0 text-primary-content hover:text-primary-content-hover"
+              className="w-wide h-wide p-none text-primary-content hover:text-primary-content-hover"
               onClick={() => {
                 modal({
                   title: `Source for task ${out?.id}`,
@@ -475,7 +475,7 @@ const TaskSourceView = ({ content, onTaskLoad, sdkType }) => {
             leading={<Icon icon={IconCopyOutline} style={{ color: "var(--color-neutral-content-subtle)" }} />}
           />
         </Tooltip>
-        <pre className="m-0 whitespace-pre-wrap break-words max-w-full" style={{ marginRight: "40px" }}>
+        <pre className="m-none whitespace-pre-wrap break-words max-w-full" style={{ marginRight: "40px" }}>
           {jsonString}
         </pre>
       </div>

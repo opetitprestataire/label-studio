@@ -24,10 +24,10 @@ export function SimpleCard({
 >) {
   const className = cn("bg-transparent", cls);
   const hasHeaderContent = Boolean(title || description);
-  const headerClass = cn(flushHeader ? "p-0" : "p-4 pb-2", headerClassName);
+  const headerClass = cn(flushHeader ? "p-none" : "p-base pb-tight", headerClassName);
   const contentClass = cn(
-    flushContent ? "p-0" : "p-4",
-    { "pt-0": hasHeaderContent && !flushContent },
+    flushContent ? "p-none" : "p-base",
+    { "pt-none": hasHeaderContent && !flushContent },
     contentClassName,
   );
   return (

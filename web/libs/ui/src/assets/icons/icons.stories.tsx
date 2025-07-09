@@ -217,19 +217,19 @@ const IconItem = ({ name, Icon }: { name: string; Icon: React.ComponentType<Reac
 
   return (
     <div
-      className="icon-item cursor-pointer flex flex-col items-center p-4 border border-neutral-border rounded-small transition-all duration-200"
+      className="icon-item cursor-pointer flex flex-col items-center p-base border border-neutral-border rounded-small transition-all duration-200"
       onClick={() => {
         navigator.clipboard.writeText(name);
       }}
       title={`Click to copy: ${name}`}
     >
-      <div className="icon-preview flex items-center justify-center h-10 w-10 mb-2">
+      <div className="icon-preview flex items-center justify-center h-widest w-widest mb-tight">
         {React.createElement(Icon, {
           width: 24,
           height: 24,
         })}
       </div>
-      <div className="icon-name text-body-smaller font-bold text-center text-neutral-content-subtle break-word mb-1">
+      <div className="icon-name text-body-smaller font-bold text-center text-neutral-content-subtle break-word mb-tighter">
         {name}
       </div>
       <div className="icon-file-name text-body-smallest text-neutral-content-subtle break-word text-center">
@@ -255,18 +255,18 @@ const IconCatalog = () => {
   });
 
   return (
-    <div className="icon-catalog p-8 flex flex-col gap-4">
+    <div className="icon-catalog p-wider flex flex-col gap-base">
       <div className="search-container">
         <input
           type="text"
           placeholder="Search icons by name or file name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 rounded border border-neutral-border bg-neutral-background text-neutral-content focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-focus-outline w-full text-body-small mb-4"
+          className="p-tight rounded border border-neutral-border bg-neutral-background text-neutral-content focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-focus-outline w-full text-body-small mb-base"
         />
       </div>
 
-      <div className="icons-grid grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-5">
+      <div className="icons-grid grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-base">
         {filteredIcons.map(([name, Icon]) => {
           // Don't render exports that aren't components
           if (typeof Icon !== "function" && typeof Icon !== "object") return null;
@@ -275,7 +275,7 @@ const IconCatalog = () => {
         })}
       </div>
       {filteredIcons.length === 0 && (
-        <div className="text-center my-10 text-neutral-content-subtle">No icons found matching "{searchTerm}"</div>
+        <div className="text-center my-widest text-neutral-content-subtle">No icons found matching "{searchTerm}"</div>
       )}
     </div>
   );
@@ -326,27 +326,27 @@ const IconCatalogByCategory = () => {
     .filter(({ icons }) => icons.length > 0);
 
   return (
-    <div className="icon-catalog-by-category p-8 flex flex-col gap-4">
-      <div className="search-container mb-5">
+    <div className="icon-catalog-by-category p-wider flex flex-col gap-base">
+      <div className="search-container mb-wide">
         <input
           type="text"
           placeholder="Search icons by name, file name, or category..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 rounded border border-neutral-border bg-neutral-background text-neutral-content focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-focus-outline w-full text-body-small mb-4"
+          className="p-tight rounded border border-neutral-border bg-neutral-background text-neutral-content focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-focus-outline w-full text-body-small mb-base"
         />
       </div>
 
       {filteredCategories.map(({ category, icons }) => (
-        <div key={category} className="category-section mb-10">
-          <h2 className="text-title-medium font-bold mb-2 pb-2 border-b border-neutral-border">
+        <div key={category} className="category-section mb-widest">
+          <h2 className="text-title-medium font-bold mb-tight pb-tight border-b border-neutral-border">
             {category} ({icons.length})
           </h2>
-          <p className="text-body-small mb-4 text-neutral-content-subtle">
+          <p className="text-body-small mb-base text-neutral-content-subtle">
             {categoryDescriptions[category] || "Icons in this category"}
           </p>
 
-          <div className="icons-grid grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-5">
+          <div className="icons-grid grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-base">
             {icons.map(([name, Icon]) => (
               <IconItem key={name} name={name} Icon={Icon as React.ComponentType<React.SVGProps<SVGSVGElement>>} />
             ))}
@@ -355,7 +355,7 @@ const IconCatalogByCategory = () => {
       ))}
 
       {filteredCategories.length === 0 && (
-        <div className="text-center my-10 text-neutral-content-subtle">No icons found matching "{searchTerm}"</div>
+        <div className="text-center my-widest text-neutral-content-subtle">No icons found matching "{searchTerm}"</div>
       )}
     </div>
   );

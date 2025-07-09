@@ -98,25 +98,26 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
     return (
       <div key={sectionId} className="border border-gray-200 dark:border-gray-700 rounded-lg">
         {/* Section Header */}
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-base border-b border-gray-200 dark:border-gray-700">
           <h3 className="font-medium">{section.title}</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">{section.description}</p>
         </div>
 
         {/* Section Content */}
-        <div className="p-4">
-          <div className="space-y-2">
+        <div className="p-base">
+          <div className="space-y-tight">
             {subgroups.map((subgroup) => (
               <div
                 key={subgroup}
                 className={clsx(
-                  subgroup !== "default" && "mt-4 pt-2 border rounded-md border-gray-200 dark:border-gray-700 p-3",
+                  subgroup !== "default" &&
+                    "mt-base pt-tight border rounded-md border-gray-200 dark:border-gray-700 p-base",
                 )}
               >
                 {/* Subgroup Header */}
                 {subgroup !== "default" && (
-                  <div className="mb-3">
-                    <div className="text-sm font-medium mb-1 capitalize">
+                  <div className="mb-base">
+                    <div className="text-sm font-medium mb-tighter capitalize">
                       {sections.find((s: Section) => s.id === subgroup)?.title || subgroup}
                     </div>
                     {sections.find((s: Section) => s.id === subgroup)?.description && (
@@ -129,7 +130,7 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
 
                 {/* Hotkey Items */}
                 {groupedHotkeys[subgroup].map((hotkey: Hotkey) => (
-                  <div key={`${section.id}-${hotkey.element}`} className="flex items-center justify-between py-2">
+                  <div key={`${section.id}-${hotkey.element}`} className="flex items-center justify-between py-tight">
                     <div>
                       <div className="font-medium">{hotkey.label}</div>
                       {hotkey.description && (
@@ -152,9 +153,9 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
       onClick={handleBackdropClick}
       className="fixed inset-none z-[9999] flex items-center justify-center bg-black/50"
     >
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-3xl max-h-[80vh] overflow-hidden w-full mx-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-3xl max-h-[80vh] overflow-hidden w-full mx-base">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="px-wide py-base border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">Available Keyboard Shortcuts</h2>
             <Button
@@ -166,7 +167,7 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
               ×
             </Button>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-tighter">
             Keyboard shortcuts for this page.&nbsp;
             <a
               href="/user/account/hotkeys"
@@ -182,12 +183,12 @@ const HotkeyHelpModal = ({ sectionsToShow, onClose }: HotkeyHelpModalProps) => {
         </div>
 
         {/* Modal Content */}
-        <div className="px-6 py-4 overflow-y-auto max-h-[60vh]">
-          <div className="space-y-4">{sectionsToShow.map(renderSection)}</div>
+        <div className="px-wide py-base overflow-y-auto max-h-[60vh]">
+          <div className="space-y-base">{sectionsToShow.map(renderSection)}</div>
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="px-wide py-base border-t border-gray-200 dark:border-gray-700">
           <div className="flex justify-end">
             <Button onClick={handleCustomizeClick}>Customize Hotkeys</Button>
           </div>

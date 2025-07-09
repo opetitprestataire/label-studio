@@ -77,10 +77,10 @@ export const HomePage: Page = () => {
   };
 
   return (
-    <main className="p-6">
-      <div className="grid grid-cols-[minmax(0,1fr)_450px] gap-6">
-        <section className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
+    <main className="p-wide">
+      <div className="grid grid-cols-[minmax(0,1fr)_450px] gap-wide">
+        <section className="flex flex-col gap-wide">
+          <div className="flex flex-col gap-tighter">
             <Typography variant="headline" size="small">
               Welcome 👋
             </Typography>
@@ -88,12 +88,12 @@ export const HomePage: Page = () => {
               Let's get you started.
             </Typography>
           </div>
-          <div className="flex justify-start gap-4">
+          <div className="flex justify-start gap-base">
             {actions.map((action) => {
               return (
                 <Button
                   key={action.title}
-                  rawClassName="flex-grow-0 text-16/24 gap-2 text-primary-content text-left min-w-[250px] [&_svg]:w-6 [&_svg]:h-6 pl-2"
+                  rawClassName="flex-grow-0 text-16/24 gap-tight text-primary-content text-left min-w-[250px] [&_svg]:w-wide [&_svg]:h-wide pl-tight"
                   onClick={handleActions(action.type)}
                 >
                   <action.icon className="text-primary-icon" />
@@ -116,16 +116,16 @@ export const HomePage: Page = () => {
             }
           >
             {isFetching ? (
-              <div className="h-64 flex justify-center items-center">
+              <div className="h-[16rem] flex justify-center items-center">
                 <Spinner />
               </div>
             ) : isError ? (
-              <div className="h-64 flex justify-center items-center">can't load projects</div>
+              <div className="h-[16rem] flex justify-center items-center">can't load projects</div>
             ) : isSuccess && data.results.length === 0 ? (
-              <div className="flex flex-col justify-center items-center border border-primary-border-subtle bg-primary-emphasis-subtle rounded-lg h-64">
+              <div className="flex flex-col justify-center items-center border border-primary-border-subtle bg-primary-emphasis-subtle rounded-lg h-[16rem]">
                 <div
                   className={
-                    "rounded-full w-12 h-12 flex justify-center items-center bg-accent-grape-subtle text-primary-icon"
+                    "rounded-full w-[3rem] h-[3rem] flex justify-center items-center bg-accent-grape-subtle text-primary-icon"
                   }
                 >
                   <IconFolderOpen />
@@ -136,12 +136,12 @@ export const HomePage: Page = () => {
                 <Typography size="small" className="text-neutral-content-subtler">
                   Import your data and set up the labeling interface to start annotating
                 </Typography>
-                <Button primary rawClassName="mt-4" onClick={() => setCreationDialogOpen(true)}>
+                <Button primary rawClassName="mt-base" onClick={() => setCreationDialogOpen(true)}>
                   Create Project
                 </Button>
               </div>
             ) : isSuccess && data.results.length > 0 ? (
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-tighter">
                 {data.results.map((project) => {
                   return <ProjectSimpleCard key={project.id} project={project} />;
                 })}
@@ -149,7 +149,7 @@ export const HomePage: Page = () => {
             ) : null}
           </SimpleCard>
         </section>
-        <section className="flex flex-col gap-6">
+        <section className="flex flex-col gap-wide">
           <HeidiTips collection="projectSettings" />
           <SimpleCard title="Resources" description="Learn, explore and get help" data-testid="resources-card">
             <ul>
@@ -158,7 +158,7 @@ export const HomePage: Page = () => {
                   <li key={link.title}>
                     <a
                       href={link.url}
-                      className="py-2 px-1 flex justify-between items-center text-neutral-content"
+                      className="py-tight px-tighter flex justify-between items-center text-neutral-content"
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -170,7 +170,7 @@ export const HomePage: Page = () => {
               })}
             </ul>
           </SimpleCard>
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-tight items-center">
             <IconHumanSignal />
             <span className="text-neutral-content-subtle">Label Studio Version: Community</span>
           </div>
@@ -204,16 +204,16 @@ function ProjectSimpleCard({
       data-external
     >
       <div
-        className="grid grid-cols-[minmax(0,1fr)_150px] p-2 py-3 items-center border-l-[3px]"
+        className="grid grid-cols-[minmax(0,1fr)_150px] p-tight py-base items-center border-l-[3px]"
         style={{ borderLeftColor: color }}
       >
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-tighter">
           <span className="text-neutral-content">{project.title}</span>
           <div className="text-neutral-content-subtler text-body-small">
             {finished} of {total} Tasks ({total > 0 ? Math.round((finished / total) * 100) : 0}%)
           </div>
         </div>
-        <div className="bg-neutral-surface rounded-full overflow-hidden w-full h-2 shadow-neutral-border-subtle shadow-border-1">
+        <div className="bg-neutral-surface rounded-full overflow-hidden w-full h-tight shadow-neutral-border-subtle shadow-border-1">
           <div className="bg-positive-surface-hover h-full" style={{ maxWidth: `${progress}%` }} />
         </div>
       </div>

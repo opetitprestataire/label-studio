@@ -105,7 +105,7 @@ const ConfigureControl = ({ control, template }) => {
           rows="5"
           ref={refLabels}
           onKeyPress={onKeyPress}
-          className="lsf-textarea-ls p-2 px-3"
+          className="lsf-textarea-ls p-tight px-base"
         />
         <Button type="button" size="compact" onClick={onAddLabels}>
           Add

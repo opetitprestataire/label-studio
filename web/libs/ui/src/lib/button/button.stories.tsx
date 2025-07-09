@@ -44,16 +44,16 @@ export const WithAlignment: Story = {
   render: ({ children, ...props }) => {
     return (
       <div className="flex items-center gap-tight">
-        <Button {...props} className="w-48" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} className="w-[12rem]" leading={<IconAnnotationGroundTruth />}>
           Default
         </Button>
-        <Button {...props} className="w-48" align="left" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} className="w-[12rem]" align="left" leading={<IconAnnotationGroundTruth />}>
           Left
         </Button>
-        <Button {...props} className="w-48" align="center" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} className="w-[12rem]" align="center" leading={<IconAnnotationGroundTruth />}>
           Center
         </Button>
-        <Button {...props} className="w-48" align="right" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} className="w-[12rem]" align="right" leading={<IconAnnotationGroundTruth />}>
           Right
         </Button>
       </div>
@@ -65,13 +65,13 @@ export const WithSize: Story = {
   render: ({ children, ...props }) => {
     return (
       <div className="flex items-center gap-tight">
-        <Button {...props} size="medium" className="w-48" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} size="medium" className="w-[12rem]" leading={<IconAnnotationGroundTruth />}>
           Medium
         </Button>
-        <Button {...props} size="small" className="w-48" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} size="small" className="w-[12rem]" leading={<IconAnnotationGroundTruth />}>
           Small
         </Button>
-        <Button {...props} size="smaller" className="w-48" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} size="smaller" className="w-[12rem]" leading={<IconAnnotationGroundTruth />}>
           Smaller
         </Button>
       </div>
@@ -83,15 +83,15 @@ export const WithIcon: Story = {
   render: ({ children, ...props }) => {
     return (
       <div className="flex gap-tight">
-        <Button {...props} className="w-48" leading={<IconAnnotationGroundTruth />}>
+        <Button {...props} className="w-[12rem]" leading={<IconAnnotationGroundTruth />}>
           Leading
         </Button>
-        <Button {...props} className="w-48" trailing={<IconAnnotationGroundTruth />}>
+        <Button {...props} className="w-[12rem]" trailing={<IconAnnotationGroundTruth />}>
           Trailing
         </Button>
         <Button
           {...props}
-          className="w-48"
+          className="w-[12rem]"
           leading={<IconAnnotationGroundTruth />}
           trailing={<IconAnnotationGroundTruth />}
         >
@@ -130,7 +130,7 @@ export const WithComplexChildren: Story = {
     return (
       <Button {...props} leading={<IconAnnotationGroundTruth />} trailing={<IconAnnotationGroundTruth />}>
         {children}
-        <span className="max-h-6 px-tight rounded-4 bg-primary-surface-hover">badge</span>
+        <span className="max-h-wide px-tight rounded-4 bg-primary-surface-hover">badge</span>
       </Button>
     );
   },
@@ -147,7 +147,7 @@ export const WithExtra: Story = {
         {...props}
         trailing={
           <>
-            <span className="max-h-6 px-tight rounded-4 bg-primary-surface-hover">extra badge</span>
+            <span className="max-h-wide px-tight rounded-4 bg-primary-surface-hover">extra badge</span>
             <IconAnnotationGroundTruth />
           </>
         }
@@ -161,7 +161,7 @@ export const WithExtra: Story = {
 export const IconButton: Story = {
   render: ({ children: _, ...props }) => {
     return (
-      <div className="flex gap-4">
+      <div className="flex gap-base">
         <Button {...props}>
           <IconAnnotationGroundTruth />
         </Button>

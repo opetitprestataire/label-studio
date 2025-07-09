@@ -3,14 +3,14 @@
 }
 
 .textarea {
-  @apply flex-1 w-full h-25 overflow-hidden resize-none;
+  @apply flex-1 w-full h-[6.25rem] overflow-hidden resize-none;
 }
 
 .label {
   @apply mb-[8px];
 
   span {
-    @apply p-0;
+    @apply p-none;
   }
 }
 

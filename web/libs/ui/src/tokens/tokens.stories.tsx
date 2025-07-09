@@ -104,24 +104,24 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
   return (
     <div
       ref={elementRef}
-      className="flex flex-col p-4 border border-neutral-border rounded-lg mb-2 cursor-pointer relative overflow-hidden transition-all duration-200 hover:shadow-md"
+      className="flex flex-col p-base border border-neutral-border rounded-lg mb-tight cursor-pointer relative overflow-hidden transition-all duration-200 hover:shadow-md"
       onClick={handleCopy}
       title={`Click to copy: ${tokenName}`}
     >
       {/* Visual preview for different token types */}
       {isColor && (
-        <div className="flex flex-col gap-2 mb-3">
+        <div className="flex flex-col gap-tight mb-base">
           <div
-            className="w-full h-16 bg-neutral-surface rounded border border-neutral-border shadow-inner"
+            className="w-full h-[4rem] bg-neutral-surface rounded border border-neutral-border shadow-inner"
             style={{ backgroundColor: token }}
           />
         </div>
       )}
 
       {isSpacing && (
-        <div className="mb-3 h-16 flex items-center justify-center px-4">
+        <div className="mb-base h-[4rem] flex items-center justify-center px-base">
           <div
-            className="h-2 rounded min-w-tighter relative"
+            className="h-tight rounded min-w-tighter relative"
             style={{
               width: token,
               background: "linear-gradient(90deg, #6366F1 0%, #A855F7 100%)",
@@ -131,7 +131,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
       )}
 
       {isTypography && (
-        <div className="mb-3 h-16 flex items-center justify-center overflow-hidden">
+        <div className="mb-base h-[5rem] flex items-center justify-center overflow-hidden">
           {token.includes("--font-size-") && (
             <div
               className="whitespace-nowrap leading-title-small"
@@ -144,7 +144,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
           )}
 
           {token.includes("--line-height-") && (
-            <div className="relative w-3/5 h-10">
+            <div className="relative w-3/5 h-[5rem] flex items-center justify-center">
               <div
                 className="w-full flex items-center justify-center text-body-smaller text-primary-content relative"
                 style={{
@@ -159,7 +159,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
 
           {token.includes("--letter-spacing-") && (
             <div
-              className="text-body-small relative px-4"
+              className="text-body-small relative px-base"
               style={{
                 letterSpacing: token,
               }}
@@ -170,7 +170,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
 
           {token.includes("--font-family-") && (
             <div
-              className="text-body-small relative px-4"
+              className="text-body-small relative px-base"
               style={{
                 fontFamily: token,
               }}
@@ -181,7 +181,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
 
           {token.includes("--font-weight-") && (
             <div
-              className="text-body-small relative px-4"
+              className="text-body-small relative px-base"
               style={{
                 fontWeight: token,
               }}
@@ -193,9 +193,9 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
       )}
 
       {isCornerRadius && (
-        <div className="mb-3 h-16 flex items-center justify-center relative">
+        <div className="mb-base h-[4rem] flex items-center justify-center relative">
           <div
-            className="w-3/5 h-10 bg-primary-surface-content-subtle text-primary-surface-content-boldest border border-dashed border-primary-border"
+            className="w-3/5 h-widest bg-primary-surface-content-subtle text-primary-surface-content-boldest border border-dashed border-primary-border"
             style={{
               borderRadius: token,
             }}
@@ -205,24 +205,24 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
 
       {/* Token information */}
       <div className="flex justify-between">
-        <div className="flex-1 flex flex-col gap-1">
+        <div className="flex-1 flex flex-col gap-tighter">
           <div className="flex justify-between items-center">
             <div className="flex flex-col">
               <div className="text-neutral-content text-body-small font-bold break-words">{tokenValueName}</div>
-              <div className="text-body-smallest text-neutral-content-subtlest -mt-1">{tokens.join(".")}</div>
+              <div className="text-body-smallest text-neutral-content-subtlest -mt-tighter">{tokens.join(".")}</div>
             </div>
 
             <span className="text-body-smaller text-neutral-content text-right">{computedValue || "..."}</span>
           </div>
 
-          <div className="text-body-smaller font-bold text-neutral-content-subtler text-center break-all flex-shrink-0 bg-neutral-surface p-0.5 rounded">
+          <div className="text-body-smaller font-bold text-neutral-content-subtler text-center break-all flex-shrink-0 bg-neutral-surface p-tighter rounded">
             {token.replace("var(", "").replace(")", "")}
           </div>
         </div>
       </div>
 
       {/* Copy indicator */}
-      <div className="copy-indicator absolute -bottom-7 right-2 bg-neutral-inverted-surface text-neutral-inverted-content px-2 py-1 rounded text-body-smaller opacity-0 transition-all duration-300 z-10">
+      <div className="copy-indicator absolute -bottom-7 right-2 bg-neutral-inverted-surface text-neutral-inverted-content px-base py-tight rounded text-body-smaller opacity-0 transition-all duration-300 z-10">
         Copied!
       </div>
     </div>
@@ -322,24 +322,24 @@ const TokenCatalog = () => {
   };
 
   return (
-    <div className="token-catalog p-8">
-      <div className="mb-6">
+    <div className="token-catalog p-wider">
+      <div className="mb-wide">
         <input
           type="text"
           placeholder="Search tokens by name or value..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 rounded border border-neutral-border bg-neutral-background text-neutral-content focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-focus-outline w-full text-body-small mb-4"
+          className="p-tight rounded border border-neutral-border bg-neutral-background text-neutral-content focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-focus-outline w-full text-body-small mb-base"
         />
 
-        <div className="flex gap-2 mb-4 flex-wrap">
+        <div className="flex gap-tight mb-base flex-wrap">
           <button
             type="button"
             onClick={() => {
               setActiveCategory("all");
               setActiveColorSubcategory("all");
             }}
-            className={`py-1.5 px-3 rounded border text-body-small cursor-pointer ${
+            className={`py-tight px-base rounded border text-body-small cursor-pointer ${
               activeCategory === "all"
                 ? "bg-primary-surface border-primary-border text-primary-surface-content"
                 : "bg-neutral-surface border-neutral-border"
@@ -357,7 +357,7 @@ const TokenCatalog = () => {
                   setActiveColorSubcategory("all");
                 }
               }}
-              className={`py-1.5 px-3 rounded border text-body-small cursor-pointer ${
+              className={`py-tight px-base rounded border text-body-small cursor-pointer ${
                 activeCategory === category
                   ? "bg-primary-surface border-primary-border text-primary-surface-content"
                   : "bg-neutral-surface border-neutral-border"
@@ -369,11 +369,11 @@ const TokenCatalog = () => {
         </div>
 
         {activeCategory === "colors" && (
-          <div className="flex gap-2 mb-4 flex-wrap">
+          <div className="flex gap-tight mb-base flex-wrap">
             <button
               type="button"
               onClick={() => setActiveColorSubcategory("all")}
-              className={`py-1.5 px-3 rounded border text-body-small cursor-pointer ${
+              className={`py-tight px-base rounded border text-body-small cursor-pointer ${
                 activeColorSubcategory === "all"
                   ? "bg-primary-surface border-primary-border text-primary-surface-content"
                   : "bg-neutral-surface border-neutral-border"
@@ -388,7 +388,7 @@ const TokenCatalog = () => {
                 onClick={() => {
                   setActiveColorSubcategory(subcategory);
                 }}
-                className={`py-1.5 px-3 rounded border text-body-small cursor-pointer ${
+                className={`py-tight px-base rounded border text-body-small cursor-pointer ${
                   activeColorSubcategory === subcategory
                     ? "bg-primary-surface border-primary-border text-primary-surface-content"
                     : "bg-neutral-surface border-neutral-border"
@@ -403,7 +403,9 @@ const TokenCatalog = () => {
 
       {/* Display the tokens */}
       {Object.keys(groupedTokens).length === 0 ? (
-        <div className="text-center my-10 text-neutral-content-subtler">No tokens found matching "{searchTerm}"</div>
+        <div className="text-center my-widest text-neutral-content-subtler">
+          No tokens found matching "{searchTerm}"
+        </div>
       ) : (
         Object.entries(groupedTokens).map(([category, tokens]) => {
           // Special handling for typography tokens
@@ -411,21 +413,21 @@ const TokenCatalog = () => {
             const typographySubcategories = getGroupedTypographyTokens();
 
             return (
-              <div key={category} className="category-section mb-10">
-                <h2 className="text-title-medium m-0 mb-2 pb-2 border-b border-neutral-border">
+              <div key={category} className="category-section mb-widest">
+                <h2 className="text-title-medium m-none mb-tight pb-tight border-b border-neutral-border">
                   {category} ({tokens.length})
                 </h2>
-                <p className="text-body-small m-0 mb-4 text-neutral-content-subtler">
+                <p className="text-body-small m-none mb-base text-neutral-content-subtler">
                   {categoryDescriptions[category] || "Design tokens in this category"}
                 </p>
 
                 {Object.entries(typographySubcategories).map(([subcategory, subcategoryTokens]) => (
-                  <div key={subcategory} className="subcategory-section mb-8">
-                    <h3 className="text-body-medium m-0 mb-3 pb-1 border-b border-neutral-border-subtle">
+                  <div key={subcategory} className="subcategory-section mb-wider">
+                    <h3 className="text-body-medium m-none mb-base pb-tighter border-b border-neutral-border-subtle">
                       {subcategory} ({subcategoryTokens.length})
                     </h3>
                     <div
-                      className="grid gap-4"
+                      className="grid gap-base"
                       style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
                     >
                       {subcategoryTokens.map(([name, value]) => (
@@ -440,15 +442,15 @@ const TokenCatalog = () => {
 
           // Default handling for other categories
           return (
-            <div key={category} className="category-section mb-10">
-              <h2 className="text-title-medium m-0 mb-2 pb-2 border-b border-neutral-border">
+            <div key={category} className="category-section mb-widest">
+              <h2 className="text-title-medium m-none mb-tight pb-tight border-b border-neutral-border">
                 {category} ({tokens.length})
               </h2>
-              <p className="text-body-small m-0 mb-4 text-neutral-content-subtler">
+              <p className="text-body-small m-none mb-base text-neutral-content-subtler">
                 {categoryDescriptions[category] || "Design tokens in this category"}
               </p>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+              <div className="grid gap-base" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
                 {tokens.map(([name, value]) => (
                   <TokenValue key={name} token={value} tokenName={name} />
                 ))}
@@ -470,13 +472,13 @@ const TokenCategorized = () => {
   // Helper function to generate a color palette for the colors category
   const generateColorPalette = () => {
     return (
-      <div className="flex flex-col gap-4">
-        <div className="flex gap-16">
-          <div className="flex gap-3 items-center">
+      <div className="flex flex-col gap-base">
+        <div className="flex gap-[4rem]">
+          <div className="flex gap-base items-center">
             {["primary", "positive", "warning", "negative", "neutral"].map((color) => (
-              <div key={color} className="flex flex-col items-center w-13">
+              <div key={color} className="flex flex-col items-center w-[3rem]">
                 <div
-                  className="w-12 h-12 rounded border border-neutral-border"
+                  className="w-[3rem] h-[3rem] rounded border border-neutral-border"
                   style={{ backgroundColor: `var(--color-${color}-surface)` }}
                   title={`${color}`}
                 />
@@ -484,11 +486,11 @@ const TokenCategorized = () => {
               </div>
             ))}
           </div>
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-base items-center">
             {["grape", "blueberry", "kale", "kiwi", "mango", "persimmon"].map((color) => (
-              <div key={color} className="flex flex-col items-center w-13">
+              <div key={color} className="flex flex-col items-center w-[3rem]">
                 <div
-                  className="w-12 h-12 rounded border border-neutral-border"
+                  className="w-[3rem] h-[3rem] rounded border border-neutral-border"
                   style={{ backgroundColor: `var(--color-${color}-500)` }}
                   title={`${color}`}
                 />
@@ -497,11 +499,11 @@ const TokenCategorized = () => {
             ))}
           </div>
         </div>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-base">
           {Object.entries(colorSubcategoryDescriptions).map(([subCategory, subDescription]) => (
             <div
               key={subCategory}
-              className="flex-1 basis-[300px] border border-neutral-border rounded-lg p-4 cursor-pointer relative overflow-hidden hover:shadow-md transition-all duration-200"
+              className="flex-1 basis-[300px] border border-neutral-border rounded-lg p-base cursor-pointer relative overflow-hidden hover:shadow-md transition-all duration-200"
               onClick={() => {
                 setSearchTerm("");
                 setActiveCategory("colors");
@@ -511,16 +513,16 @@ const TokenCategorized = () => {
               {/* Color preview for each subcategory */}
               {!["primitives", "neutral", "accent"].includes(subCategory) && (
                 <div
-                  className="absolute top-none right-none w-15 h-15 opacity-30 rounded-bl-full border-l border-b border-neutral-border"
+                  className="absolute top-none right-none w-[4rem] h-[4rem] opacity-30 rounded-bl-full border-l border-b border-neutral-border"
                   style={{ backgroundColor: `var(--color-${subCategory}-surface)` }}
                 />
               )}
 
               {["primitives", "neutral", "accent"].includes(subCategory) && (
-                <div className="absolute top-none right-none w-15 h-15 opacity-30 overflow-hidden border-l border-b border-neutral-border">
+                <div className="absolute top-none right-none w-[4rem] h-[4rem] opacity-30 overflow-hidden border-l border-b border-neutral-border">
                   <div className="flex">
                     <div
-                      className="w-5 h-5"
+                      className="w-wide h-wide"
                       style={{
                         backgroundColor: `var(--color-${
                           subCategory === "primitives"
@@ -532,7 +534,7 @@ const TokenCategorized = () => {
                       }}
                     />
                     <div
-                      className="w-5 h-5"
+                      className="w-wide h-wide"
                       style={{
                         backgroundColor: `var(--color-${
                           subCategory === "primitives"
@@ -544,7 +546,7 @@ const TokenCategorized = () => {
                       }}
                     />
                     <div
-                      className="w-5 h-5"
+                      className="w-wide h-wide"
                       style={{
                         backgroundColor: `var(--color-${
                           subCategory === "primitives"
@@ -558,7 +560,7 @@ const TokenCategorized = () => {
                   </div>
                   <div className="flex">
                     <div
-                      className="w-5 h-5"
+                      className="w-wide h-wide"
                       style={{
                         backgroundColor: `var(--color-${
                           subCategory === "primitives"
@@ -570,7 +572,7 @@ const TokenCategorized = () => {
                       }}
                     />
                     <div
-                      className="w-5 h-5"
+                      className="w-wide h-wide"
                       style={{
                         backgroundColor: `var(--color-${
                           subCategory === "primitives"
@@ -582,7 +584,7 @@ const TokenCategorized = () => {
                       }}
                     />
                     <div
-                      className="w-5 h-5"
+                      className="w-wide h-wide"
                       style={{
                         backgroundColor: `var(--color-${
                           subCategory === "primitives"
@@ -596,7 +598,7 @@ const TokenCategorized = () => {
                   </div>
                   <div className="flex">
                     <div
-                      className="w-5 h-5"
+                      className="w-wide h-wide"
                       style={{
                         backgroundColor: `var(--color-${
                           subCategory === "primitives"
@@ -608,7 +610,7 @@ const TokenCategorized = () => {
                       }}
                     />
                     <div
-                      className="w-5 h-5"
+                      className="w-wide h-wide"
                       style={{
                         backgroundColor: `var(--color-${
                           subCategory === "primitives"
@@ -620,7 +622,7 @@ const TokenCategorized = () => {
                       }}
                     />
                     <div
-                      className="w-5 h-5"
+                      className="w-wide h-wide"
                       style={{
                         backgroundColor: `var(--color-${
                           subCategory === "primitives"
@@ -635,7 +637,7 @@ const TokenCategorized = () => {
                 </div>
               )}
 
-              <h3 className="text-body-medium mb-2">{subCategory}</h3>
+              <h3 className="text-body-medium mb-tight">{subCategory}</h3>
               <p className="text-body-small text-neutral-content-subtler relative z-10">{subDescription}</p>
             </div>
           ))}
@@ -646,41 +648,41 @@ const TokenCategorized = () => {
 
   const RawColorsPalette = () => {
     return (
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-base">
+        <div className="flex flex-col gap-tighter">
           <h3 className="text-body-medium">Raw Color Values</h3>
           <p className="text-body-small text-neutral-content-subtler">
             These color tokens have raw RGB values available for creating translucent colors with custom opacity. The
             same code will automatically adapt to dark mode.
           </p>
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-wide">
           {/* Primitive color demonstration */}
-          <div className="mt-2">
-            <h4 className="text-body-small font-semibold mb-2">Primary Color with Different Opacities</h4>
-            <div className="flex gap-4">
+          <div className="mt-tight">
+            <h4 className="text-body-small font-semibold mb-tight">Primary Color with Different Opacities</h4>
+            <div className="flex gap-base">
               {[10, 25, 50, 75, 100].map((opacity) => (
                 <div key={opacity} className="flex flex-col items-center">
                   <div
-                    className="w-12 h-12 rounded bg-neutral-surface border border-neutral-border mb-1"
+                    className="w-[3rem] h-[3rem] rounded bg-neutral-surface border border-neutral-border mb-tighter"
                     style={{ backgroundColor: `rgb(var(--color-primary-surface-raw) / ${opacity}%)` }}
                   />
                   <span className="text-body-smaller">{opacity}%</span>
                 </div>
               ))}
             </div>
-            <div className="mt-3 bg-neutral-surface p-2 rounded text-body-smaller font-mono">
+            <div className="mt-base bg-neutral-surface p-tight rounded text-body-smaller font-mono">
               background-color: rgb(var(--color-primary-surface-raw) / 50%);
             </div>
           </div>
 
           {/* Shadow/outline example */}
           <div>
-            <h4 className="text-body-small font-semibold mb-2">Shadow Example</h4>
-            <div className="flex gap-4">
+            <h4 className="text-body-small font-semibold mb-tight">Shadow Example</h4>
+            <div className="flex gap-base">
               <div className="flex flex-col items-center">
                 <div
-                  className="w-16 h-16 rounded bg-neutral-surface flex items-center justify-center"
+                  className="w-[4rem] h-[4rem] rounded bg-neutral-surface flex items-center justify-center"
                   style={{
                     boxShadow: "0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%)",
                   }}
@@ -689,7 +691,7 @@ const TokenCategorized = () => {
                 </div>
               </div>
             </div>
-            <div className="mt-3 bg-neutral-surface p-2 rounded text-body-smaller font-mono">
+            <div className="mt-base bg-neutral-surface p-tight rounded text-body-smaller font-mono">
               box-shadow: 0 4px 8px rgb(var(--color-neutral-shadow-raw) / 15%);
             </div>
           </div>
@@ -701,11 +703,11 @@ const TokenCategorized = () => {
   // Helper function to generate a spacing visualization
   const generateSpacingPreview = () => {
     return (
-      <div className="flex flex-col gap-2 mt-4 items-start">
+      <div className="flex flex-col gap-tight mt-base items-start">
         {["100", "200", "400", "800"].map((size) => (
           <div key={size} className="flex flex-col">
             <div
-              className="h-5 bg-primary-surface text-primary-content rounded relative"
+              className="h-wide bg-primary-surface text-primary-content rounded relative"
               style={{ width: `var(--spacing-${size})` }}
               title={`spacing-${size}`}
             />
@@ -719,7 +721,7 @@ const TokenCategorized = () => {
   // Helper function to generate a typography preview
   const generateTypographyPreview = () => {
     return (
-      <div className="flex flex-col gap-2 mt-4">
+      <div className="flex flex-col gap-tight mt-base">
         <div style={{ fontSize: "var(--font-size-12)", lineHeight: "var(--line-height-16)" }}>
           Font Size 12: {pxToRem(12)}
         </div>
@@ -736,11 +738,11 @@ const TokenCategorized = () => {
   // Helper function to generate a corner radius preview
   const generateCornerRadiusPreview = () => {
     return (
-      <div className="flex gap-4 mt-4">
+      <div className="flex gap-base mt-base">
         {["small", "medium", "large"].map((size) => (
           <div
             key={size}
-            className="w-15 h-10 bg-primary-surface-content-subtle text-primary-surface-content-boldest border border-dashed border-primary-border flex items-center justify-center text-body-smaller"
+            className="w-[4rem] h-widest bg-primary-surface-content-subtle text-primary-surface-content-boldest border border-dashed border-primary-border flex items-center justify-center text-body-smaller"
             style={{ borderRadius: `var(--corner-radius-${size})` }}
             title={`corner-radius-${size}`}
           >
@@ -768,16 +770,16 @@ const TokenCategorized = () => {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-headline-small mb-6">Design Tokens</h1>
-      <p className="mb-6">
+    <div className="p-wider">
+      <h1 className="text-headline-small mb-wide">Design Tokens</h1>
+      <p className="mb-wide">
         Browse through our design tokens organized by category. These tokens are the foundation of our design system.
       </p>
 
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-[3rem]">
         {Object.entries(categoryDescriptions).map(([category, description]) => (
-          <div key={category} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
+          <div key={category} className="flex flex-col gap-base">
+            <div className="flex flex-col gap-tight">
               <h2 className="text-title-large">
                 {category.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
               </h2>
@@ -789,14 +791,14 @@ const TokenCategorized = () => {
 
             {/* Add raw colors palette for the colors category */}
             {category === "colors" && (
-              <div className="mt-4">
+              <div className="mt-base">
                 <RawColorsPalette />
               </div>
             )}
 
             {category !== "colors" && (
               <div
-                className="block border border-neutral-border rounded-lg p-4 cursor-pointer mt-6 hover:shadow-md transition-all duration-200"
+                className="block border border-neutral-border rounded-lg p-base cursor-pointer mt-wide hover:shadow-md transition-all duration-200"
                 onClick={() => {
                   setSearchTerm("");
                   setActiveCategory(category);

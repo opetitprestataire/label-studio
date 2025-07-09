@@ -116,8 +116,8 @@ export const HotkeySection = ({
   };
 
   return (
-    <Card className="mb-6">
-      <CardHeader className="pb-2">
+    <Card className="mb-wide">
+      <CardHeader className="pb-tight">
         <CardTitle>{section.title}</CardTitle>
         <CardDescription>{section.description}</CardDescription>
       </CardHeader>
@@ -127,7 +127,7 @@ export const HotkeySection = ({
           {subgroups.map((subgroup: string) => (
             <div
               key={subgroup}
-              className={clsx(subgroup !== "default" && "mt-4 pt-2 border rounded-md border-border p-3")}
+              className={clsx(subgroup !== "default" && "mt-base pt-tight border rounded-md border-border p-base")}
             >
               {groupedHotkeys[subgroup].map((hotkey: Hotkey) => (
                 <HotkeyItem
@@ -144,7 +144,7 @@ export const HotkeySection = ({
           ))}
 
           {hotkeys.length === 0 && (
-            <div className="py-8 text-center text-muted-foreground italic">No hotkeys in this section</div>
+            <div className="py-wider text-center text-muted-foreground italic">No hotkeys in this section</div>
           )}
         </div>
       </CardContent>

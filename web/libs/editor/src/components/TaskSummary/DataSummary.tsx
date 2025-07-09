@@ -82,7 +82,7 @@ export const DataSummary = ({ data_types }: { data_types: ObjectTypes }) => {
             <div
               key={headerGroup.id}
               className={cnm(
-                "flex [&>*]:flex-shrink-0 [&>*]:px-4 [&>*]:py-2 bg-neutral-surface",
+                "flex [&>*]:flex-shrink-0 [&>*]:px-base [&>*]:py-tight bg-neutral-surface",
                 "[&>*]:overflow-hidden [&>*]:text-ellipsis [&>*]:text-left [&>*]:whitespace-nowrap",
               )}
             >
@@ -106,7 +106,7 @@ export const DataSummary = ({ data_types }: { data_types: ObjectTypes }) => {
             <div
               key={row.id}
               className={cnm(
-                "flex [&>*]:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top [&>*]:px-4 [&>*]:py-2",
+                "flex [&>*]:flex-shrink-0 even:bg-neutral-surface [&_td]:align-top [&>*]:px-base [&>*]:py-tight",
                 "[&>*]:overflow-hidden [&>*]:text-ellipsis",
               )}
             >

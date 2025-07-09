@@ -8,7 +8,7 @@ export function CodeBlock({
   className?: string;
 }) {
   return (
-    <div className={`whitespace-pre-wrap font-mono mt-2 p-3 bg-neutral-surface rounded-md ${className || ""}`}>
+    <div className={`whitespace-pre-wrap font-mono mt-tight p-base bg-neutral-surface rounded-md ${className || ""}`}>
       {code.trim()}
     </div>
   );
