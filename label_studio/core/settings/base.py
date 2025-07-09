@@ -265,10 +265,8 @@ REST_FRAMEWORK = {
     ],
     'EXCEPTION_HANDLER': 'core.utils.common.custom_exception_handler',
     'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',),
-    # 'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'PAGE_SIZE': 100,
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination'
 }
 SILENCED_SYSTEM_CHECKS += ['rest_framework.W001']
 
@@ -388,18 +386,8 @@ SPECTACULAR_SETTINGS = {
     'AUTHENTICATION_WHITELIST': [
         'jwt_auth.auth.TokenAuthenticationPhaseout',
     ],
-    'SECURITY_DEFINITIONS': {
-        'Token': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-            'description': 'The token (or API key) must be passed as a request header. '
-            'You can find your user token on the User Account page in Label Studio. Example: '
-            '<br><pre><code class="language-bash">'
-            'curl https://label-studio-host/api/projects -H "Authorization: Token [your-token]"'
-            '</code></pre>',
-        }
-    },
+    'CONTACT': {'url': 'https://labelstud.io'},
+    'X_LOGO': {'url': '../../static/icons/logo-black.svg'},
 }
 
 SENTRY_DSN = get_env('SENTRY_DSN', None)

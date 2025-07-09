@@ -45,7 +45,6 @@ from django.utils.crypto import get_random_string
 from django.utils.module_loading import import_string
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse
-
 from label_studio_sdk._extensions.label_studio_tools.core.utils.exceptions import (
     LabelStudioXMLSyntaxErrorSentryIgnored,
 )
