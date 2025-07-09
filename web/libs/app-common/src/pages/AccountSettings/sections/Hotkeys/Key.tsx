@@ -28,12 +28,7 @@ export const KeyboardKey = ({ children }: KeyboardKeyProps) => {
     .filter((key) => key.trim().length > 0) // Remove empty strings
     .map((key) => key.trim()); // Trim whitespace
 
-  // If only one key, render it directly
-  if (keys.length === 1) {
-    return <IndividualKey>{keys[0]}</IndividualKey>;
-  }
-
-  // Render multiple keys
+  // Render all keys consistently
   return (
     <div className={styles.keyGroup}>
       {keys.map((key, index) => (
