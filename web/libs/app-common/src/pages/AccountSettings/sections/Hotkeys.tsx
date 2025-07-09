@@ -4,7 +4,6 @@ import { IconWarning, ToastType, useToast } from "@humansignal/ui";
 // Shadcn UI components
 import { Button } from "@humansignal/ui";
 import { Card, CardContent, CardHeader } from "@humansignal/shad/components/ui/card";
-import { Badge } from "@humansignal/shad/components/ui/badge";
 import { Skeleton } from "@humansignal/shad/components/ui/skeleton";
 import {
   Dialog,
@@ -18,6 +17,7 @@ import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
 
 import { HotkeySection } from "./Hotkeys/Section";
 import { ImportDialog } from "./Hotkeys/Import";
+import { KeyboardKey } from "./Hotkeys/Key";
 import { DEFAULT_HOTKEYS, HOTKEY_SECTIONS } from "./Hotkeys/defaults";
 import styles from "../AccountSettings.module.scss";
 
@@ -655,11 +655,11 @@ export const HotkeysManager = () => {
           </DialogHeader>
 
           <div className="max-h-60 overflow-y-auto">
-            <div className="flex flex-col gap-wide">
+            <div className="flex flex-col gap-base">
               {duplicateConfirmDialog.conflictingHotkeys.map((conflictHotkey: Hotkey) => (
                 <div
                   key={conflictHotkey.id}
-                  className="flex items-center justify-between p-base bg-neutral-surface rounded-small border border-warning-border"
+                  className="flex items-center justify-between p-base bg-neutral-surface rounded-small border border-warning-border-subtle"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="font-medium overflow-hidden text-ellipsis whitespace-nowrap">
@@ -669,15 +669,15 @@ export const HotkeysManager = () => {
                       {getSectionTitle(conflictHotkey.section)}
                     </div>
                   </div>
-                  <Badge variant="secondary" className="ml-tight flex-shrink-0">
-                    {conflictHotkey.key}
-                  </Badge>
+                  <div className="ml-tight flex-shrink-0">
+                    <KeyboardKey>{conflictHotkey.key}</KeyboardKey>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <DialogDescription className="text-warning-text bg-warning-background p-base rounded-small border border-warning-border flex items-start gap-tight">
+          <DialogDescription className="text-warning-text bg-warning-background p-base rounded-small border border-warning-border-subtle flex items-start gap-tight">
             <div>
               <IconWarning className="text-warning-icon" />
             </div>
