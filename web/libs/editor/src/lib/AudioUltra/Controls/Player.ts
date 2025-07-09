@@ -363,7 +363,7 @@ export abstract class Player extends Destructable {
   protected watch = () => {
     if (!this.playing) return;
 
-    if (isSyncedBuffering && !this.buffering) {
+    if (!isSyncedBuffering || !this.buffering) {
       this.updateCurrentTime();
       this.updateLoop(this.time);
     }
