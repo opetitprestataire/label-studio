@@ -14,7 +14,7 @@ import {
   IconSlack,
 } from "@humansignal/icons";
 import { LSLogo } from "../../assets/images";
-import { Userpic, ThemeToggle, Button } from "@humansignal/ui";
+import { Button, Userpic, ThemeToggle } from "@humansignal/ui";
 import { useConfig } from "../../providers/ConfigProvider";
 import { useContextComponent, useFixedLocation } from "../../providers/RoutesProvider";
 import { useCurrentUser } from "../../providers/CurrentUser";
@@ -156,6 +156,7 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
                 look="outlined"
                 tooltip="Keyboard Shortcuts"
                 data-testid="hotkeys-button"
+                size="small"
                 onClick={() => {
                   openHotkeyHelp([
                     "annotation",
