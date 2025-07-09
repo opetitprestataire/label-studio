@@ -53,7 +53,9 @@ from .openapi_schema import (
         tags=['Storage: Redis'],
         summary='Create import storage',
         description='Create a new Redis import storage connection.',
-        request=_redis_import_storage_schema,
+        request={
+            'application/json': _redis_import_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'redis'],
             'x-fern-sdk-method-name': 'create',
@@ -86,7 +88,9 @@ class RedisImportStorageListAPI(ImportStorageListAPI):
         tags=['Storage: Redis'],
         summary='Update import storage',
         description='Update a specific Redis import storage connection.',
-        request=_redis_import_storage_schema,
+        request={
+            'application/json': _redis_import_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'redis'],
             'x-fern-sdk-method-name': 'update',
@@ -163,7 +167,9 @@ class RedisExportStorageSyncAPI(ExportStorageSyncAPI):
         tags=['Storage: Redis'],
         summary='Validate import storage',
         description='Validate a specific Redis import storage connection.',
-        request=_redis_import_storage_schema_with_id,
+        request={
+            'application/json': _redis_import_storage_schema_with_id,
+        },
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'redis'],
@@ -182,7 +188,9 @@ class RedisImportStorageValidateAPI(ImportStorageValidateAPI):
         tags=['Storage: Redis'],
         summary='Validate export storage',
         description='Validate a specific Redis export storage connection.',
-        request=_redis_export_storage_schema_with_id,
+        request={
+            'application/json': _redis_export_storage_schema_with_id,
+        },
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'redis'],
@@ -222,7 +230,9 @@ class RedisExportStorageValidateAPI(ExportStorageValidateAPI):
         tags=['Storage: Redis'],
         summary='Create export storage',
         description='Create a new Redis export storage connection to store annotations.',
-        request=_redis_export_storage_schema,
+        request={
+            'application/json': _redis_export_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'redis'],
             'x-fern-sdk-method-name': 'create',
@@ -255,7 +265,9 @@ class RedisExportStorageListAPI(ExportStorageListAPI):
         tags=['Storage: Redis'],
         summary='Update export storage',
         description='Update a specific Redis export storage connection.',
-        request=_redis_export_storage_schema,
+        request={
+            'application/json': _redis_export_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'redis'],
             'x-fern-sdk-method-name': 'update',

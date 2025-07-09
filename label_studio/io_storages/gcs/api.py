@@ -54,7 +54,9 @@ from .openapi_schema import (
         tags=['Storage: GCS'],
         summary='Create import storage',
         description='Create a new GCS import storage connection.',
-        request=_gcs_import_storage_schema,
+        request={
+            'application/json': _gcs_import_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'gcs'],
             'x-fern-sdk-method-name': 'create',
@@ -87,7 +89,9 @@ class GCSImportStorageListAPI(ImportStorageListAPI):
         tags=['Storage: GCS'],
         summary='Update import storage',
         description='Update a specific GCS import storage connection.',
-        request=_gcs_import_storage_schema,
+        request={
+            'application/json': _gcs_import_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'gcs'],
             'x-fern-sdk-method-name': 'update',
@@ -164,7 +168,9 @@ class GCSExportStorageSyncAPI(ExportStorageSyncAPI):
         tags=['Storage: GCS'],
         summary='Validate import storage',
         description='Validate a specific GCS import storage connection.',
-        request=_gcs_import_storage_schema_with_id,
+        request={
+            'application/json': _gcs_import_storage_schema_with_id,
+        },
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'gcs'],
@@ -183,7 +189,9 @@ class GCSImportStorageValidateAPI(ImportStorageValidateAPI):
         tags=['Storage: GCS'],
         summary='Validate export storage',
         description='Validate a specific GCS export storage connection.',
-        request=_gcs_export_storage_schema_with_id,
+        request={
+            'application/json': _gcs_export_storage_schema_with_id,
+        },
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'gcs'],
@@ -223,7 +231,9 @@ class GCSExportStorageValidateAPI(ExportStorageValidateAPI):
         tags=['Storage: GCS'],
         summary='Create export storage',
         description='Create a new GCS export storage connection to store annotations.',
-        request=_gcs_export_storage_schema,
+        request={
+            'application/json': _gcs_export_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'gcs'],
             'x-fern-sdk-method-name': 'create',
@@ -256,7 +266,9 @@ class GCSExportStorageListAPI(ExportStorageListAPI):
         tags=['Storage: GCS'],
         summary='Update export storage',
         description='Update a specific GCS export storage connection.',
-        request=_gcs_export_storage_schema,
+        request={
+            'application/json': _gcs_export_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'gcs'],
             'x-fern-sdk-method-name': 'update',

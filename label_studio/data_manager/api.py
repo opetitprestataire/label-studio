@@ -11,7 +11,7 @@ from data_manager.actions import get_action_form, get_all_actions, perform_actio
 from data_manager.functions import evaluate_predictions, get_prepare_params, get_prepared_queryset
 from data_manager.managers import get_fields_for_evaluation
 from data_manager.models import View
-from data_manager.prepare_params import prepare_params_schema
+from data_manager.prepare_params import filters_schema, ordering_schema, prepare_params_schema
 from data_manager.serializers import (
     DataManagerTaskSerializer,
     ViewOrderSerializer,
@@ -37,10 +37,16 @@ from tasks.models import Annotation, Prediction, Task
 logger = logging.getLogger(__name__)
 
 _view_request_body = {
-    'type': 'object',
-    'properties': {
-        'data': {'type': 'object'},
-        'project': {'type': 'integer'},
+    'application/json': {
+        'type': 'object',
+        'properties': {
+            'data': {
+                'type': 'object',
+                'description': 'Custom view data',
+                'properties': {'filters': filters_schema, 'ordering': ordering_schema},
+            },
+            'project': {'type': 'integer', 'description': 'Project ID'},
+        },
     },
 }
 
@@ -161,8 +167,9 @@ class ViewAPI(viewsets.ModelViewSet):
     @extend_schema(
         tags=['Data Manager'],
         summary='Delete all project views',
-        description='Delete all views for a specific project',
-        request=ViewResetSerializer,
+        description='Delete all views for a specific project. Request body example: `{"project": 1}`.',
+        # Note: OpenAPI3 does not support request body for DELETE requests
+        # see https://github.com/tfranzel/drf-spectacular/issues/431#issuecomment-862738643
         extensions={
             'x-fern-sdk-group-name': 'views',
             'x-fern-sdk-method-name': 'delete_all',
@@ -504,7 +511,9 @@ class ProjectStateAPI(APIView):
             'Call `GET api/actions?project=<id>` to explore them. <br>'
             'Example: `GET api/actions?id=delete_tasks&project=1`'
         ),
-        request=prepare_params_schema,
+        request={
+            'application/json': prepare_params_schema,
+        },
         parameters=[
             OpenApiParameter(
                 name='id',

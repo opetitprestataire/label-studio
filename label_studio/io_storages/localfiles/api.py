@@ -54,7 +54,9 @@ from .openapi_schema import (
         tags=['Storage: Local'],
         summary='Create import storage',
         description='Create a new local file import storage connection.',
-        request=_local_files_import_storage_schema,
+        request={
+            'application/json': _local_files_import_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'local'],
             'x-fern-sdk-method-name': 'create',
@@ -87,7 +89,9 @@ class LocalFilesImportStorageListAPI(ImportStorageListAPI):
         tags=['Storage: Local'],
         summary='Update import storage',
         description='Update a specific local file import storage connection.',
-        request=_local_files_import_storage_schema,
+        request={
+            'application/json': _local_files_import_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'local'],
             'x-fern-sdk-method-name': 'update',
@@ -164,7 +168,9 @@ class LocalFilesExportStorageSyncAPI(ExportStorageSyncAPI):
         tags=['Storage: Local'],
         summary='Validate import storage',
         description='Validate a specific local file import storage connection.',
-        request=_local_files_import_storage_schema_with_id,
+        request={
+            'application/json': _local_files_import_storage_schema_with_id,
+        },
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'local'],
@@ -183,7 +189,9 @@ class LocalFilesImportStorageValidateAPI(ImportStorageValidateAPI):
         tags=['Storage: Local'],
         summary='Validate export storage',
         description='Validate a specific local file export storage connection.',
-        request=_local_files_export_storage_schema_with_id,
+        request={
+            'application/json': _local_files_export_storage_schema_with_id,
+        },
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'local'],
@@ -223,7 +231,9 @@ class LocalFilesExportStorageValidateAPI(ExportStorageValidateAPI):
         tags=['Storage: Local'],
         summary='Create export storage',
         description='Create a new local file export storage connection to store annotations.',
-        request=_local_files_export_storage_schema,
+        request={
+            'application/json': _local_files_export_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'local'],
             'x-fern-sdk-method-name': 'create',
@@ -256,7 +266,9 @@ class LocalFilesExportStorageListAPI(ExportStorageListAPI):
         tags=['Storage: Local'],
         summary='Update export storage',
         description='Update a specific local file export storage connection.',
-        request=_local_files_export_storage_schema,
+        request={
+            'application/json': _local_files_export_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'local'],
             'x-fern-sdk-method-name': 'update',

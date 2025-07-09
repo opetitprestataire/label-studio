@@ -378,8 +378,8 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
-    'SCHEMA_PATH_PREFIX': '/api/',
-    'SCHEMA_PATH_PREFIX_TRIM': True,
+    'SCHEMA_PATH_PREFIX': None,
+    'SCHEMA_PATH_PREFIX_TRIM': False,
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
         'persistAuthorization': True,

@@ -54,7 +54,9 @@ from .openapi_schema import (
         tags=['Storage: Azure'],
         summary='Create new storage',
         description='Create new Azure import storage',
-        request=_azure_blob_import_storage_schema,
+        request={
+            'application/json': _azure_blob_import_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'azure'],
             'x-fern-sdk-method-name': 'create',
@@ -87,7 +89,9 @@ class AzureBlobImportStorageListAPI(ImportStorageListAPI):
         tags=['Storage: Azure'],
         summary='Update import storage',
         description='Update a specific Azure import storage connection.',
-        request=_azure_blob_import_storage_schema,
+        request={
+            'application/json': _azure_blob_import_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'azure'],
             'x-fern-sdk-method-name': 'update',
@@ -164,7 +168,9 @@ class AzureBlobExportStorageSyncAPI(ExportStorageSyncAPI):
         tags=['Storage: Azure'],
         summary='Validate import storage',
         description='Validate a specific Azure import storage connection.',
-        request=_azure_blob_import_storage_schema_with_id,
+        request={
+            'application/json': _azure_blob_import_storage_schema_with_id,
+        },
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
             'x-fern-sdk-group-name': ['import_storage', 'azure'],
@@ -183,7 +189,9 @@ class AzureBlobImportStorageValidateAPI(ImportStorageValidateAPI):
         tags=['Storage: Azure'],
         summary='Validate export storage',
         description='Validate a specific Azure export storage connection.',
-        request=_azure_blob_export_storage_schema_with_id,
+        request={
+            'application/json': _azure_blob_export_storage_schema_with_id,
+        },
         responses={200: OpenApiResponse(description='Validation successful')},
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'azure'],
@@ -223,7 +231,9 @@ class AzureBlobExportStorageValidateAPI(ExportStorageValidateAPI):
         tags=['Storage: Azure'],
         summary='Create export storage',
         description='Create a new Azure export storage connection to store annotations.',
-        request=_azure_blob_export_storage_schema,
+        request={
+            'application/json': _azure_blob_export_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'azure'],
             'x-fern-sdk-method-name': 'create',
@@ -256,7 +266,9 @@ class AzureBlobExportStorageListAPI(ExportStorageListAPI):
         tags=['Storage: Azure'],
         summary='Update export storage',
         description='Update a specific Azure export storage connection.',
-        request=_azure_blob_export_storage_schema,
+        request={
+            'application/json': _azure_blob_export_storage_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': ['export_storage', 'azure'],
             'x-fern-sdk-method-name': 'update',
