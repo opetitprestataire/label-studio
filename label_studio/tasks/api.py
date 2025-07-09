@@ -58,7 +58,9 @@ logger = logging.getLogger(__name__)
         tags=['Tasks'],
         summary='Create task',
         description='Create a new labeling task in Label Studio.',
-        request=task_request_schema,
+        request={
+            'application/json': task_request_schema,
+        },
         responses={
             '201': OpenApiResponse(
                 description='Created task',
@@ -222,7 +224,9 @@ class TaskListAPI(DMTaskListAPI):
         parameters=[
             OpenApiParameter(name='id', type=OpenApiTypes.STR, location='path', description='Task ID'),
         ],
-        request=task_request_schema,
+        request={
+            'application/json': task_request_schema,
+        },
         responses={
             '200': OpenApiResponse(
                 description='Updated task',
@@ -379,7 +383,9 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
         tags=['Annotations'],
         summary='Update annotation',
         description='Update existing attributes on an annotation.',
-        request=annotation_request_schema,
+        request={
+            'application/json': annotation_request_schema,
+        },
         responses={
             '200': OpenApiResponse(
                 description='Updated annotation',
@@ -510,7 +516,9 @@ class AnnotationAPI(generics.RetrieveUpdateDestroyAPIView):
         parameters=[
             OpenApiParameter(name='id', type=OpenApiTypes.INT, location='path', description='Task ID'),
         ],
-        request=annotation_request_schema,
+        request={
+            'application/json': annotation_request_schema,
+        },
         responses={
             '201': OpenApiResponse(
                 description='Created annotation',
@@ -702,7 +710,9 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
         tags=['Predictions'],
         summary='Create prediction',
         description='Create a prediction for a specific task.',
-        request=prediction_request_schema,
+        request={
+            'application/json': prediction_request_schema,
+        },
         responses={
             '201': OpenApiResponse(
                 description='Created prediction',
@@ -754,7 +764,9 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
         parameters=[
             OpenApiParameter(name='id', type=OpenApiTypes.INT, location='path', description='Prediction ID'),
         ],
-        request=prediction_request_schema,
+        request={
+            'application/json': prediction_request_schema,
+        },
         responses={
             '200': OpenApiResponse(
                 description='Updated prediction',
@@ -778,7 +790,9 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
         parameters=[
             OpenApiParameter(name='id', type=OpenApiTypes.INT, location='path', description='Prediction ID'),
         ],
-        request=prediction_request_schema,
+        request={
+            'application/json': prediction_request_schema,
+        },
         responses={
             '200': OpenApiResponse(
                 description='Updated prediction',
