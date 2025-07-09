@@ -190,36 +190,25 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
 
         // Calculate how many items are visible in the current view
         const visibleItemsCount = (visibleRowStopIndex - visibleRowStartIndex + 1) * columnCount;
-        
+
         // If we're showing items near the end of our loaded data, trigger loading
         // Use a threshold of 2 rows worth of items to trigger loading
         const threshold = Math.max(columnCount * 2, 8); // At least 8 items or 2 rows
-        
+
         // Check if we need to load more items
-        const shouldLoadMore = 
-          visibleItemStopIndex >= data.length - threshold &&
-          view.dataStore.hasNextPage;
+        const shouldLoadMore = visibleItemStopIndex >= data.length - threshold && view.dataStore.hasNextPage;
 
         // Also check if we don't have enough items to fill the visible area
         const hasEnoughItemsForVisibleArea = visibleItemStopIndex < data.length;
         const needsMoreItemsForDisplay = !hasEnoughItemsForVisibleArea && view.dataStore.hasNextPage;
-        
+
         // More aggressive check: if we have fewer items than columns, always load more
         const hasInsufficientItems = data.length < columnCount && view.dataStore.hasNextPage;
-        
+
         // Special case: if we have very few items compared to columns, be extra aggressive
         const hasVeryFewItems = data.length < columnCount * 0.5 && view.dataStore.hasNextPage;
-        
+
         if (shouldLoadMore || needsMoreItemsForDisplay || hasInsufficientItems || hasVeryFewItems) {
-          console.log('onItemsRenderedWrap triggering loadMore:', { 
-            shouldLoadMore, 
-            needsMoreItemsForDisplay, 
-            hasInsufficientItems,
-            hasVeryFewItems,
-            visibleItemStopIndex,
-            dataLength: data.length,
-            columnCount
-          });
           loadMore?.();
         }
 
@@ -247,42 +236,30 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
   useEffect(() => {
     const prevColumnCount = prevColumnCountRef.current;
     const currentColumnCount = columnCount;
-    
+
     // If column count changed and we have more columns now (showing fewer rows)
     if (prevColumnCount !== currentColumnCount) {
-      console.log('Column count changed:', { prevColumnCount, currentColumnCount, dataLength: data.length });
       prevColumnCountRef.current = currentColumnCount;
-      
+
       // Calculate how many items we can display with the new column count
       const estimatedVisibleRows = Math.ceil(window.innerHeight / finalRowHeight);
       const estimatedVisibleItems = estimatedVisibleRows * currentColumnCount;
-      
-      console.log('Loading calculation:', { 
-        estimatedVisibleRows, 
-        estimatedVisibleItems, 
-        dataLength: data.length,
-        hasNextPage: view.dataStore.hasNextPage,
-        isLoading: view.dataStore.loading
-      });
-      
+
       // If we don't have enough items to fill the visible area, load more
       // Note: We don't check !view.dataStore.loading here because we want to trigger loading
       // even if something is already loading, to ensure we get enough items
       if (data.length < estimatedVisibleItems && view.dataStore.hasNextPage) {
-        console.log('Triggering loadMore due to column count change');
         loadMore?.();
       }
-      
+
       // Fallback: if we have significantly fewer items than columns, always load more
       if (data.length < currentColumnCount * 2 && view.dataStore.hasNextPage) {
-        console.log('Triggering loadMore due to insufficient items');
         loadMore?.();
       }
-      
+
       // Special case: if we have fewer items than the column count itself, definitely load more
       // This handles the case where there aren't enough items to even fill one row
       if (data.length < currentColumnCount && view.dataStore.hasNextPage) {
-        console.log('Triggering loadMore due to insufficient items for even one row');
         loadMore?.();
       }
     }
@@ -293,11 +270,10 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
     // Calculate if we have enough content to fill the screen
     const estimatedVisibleRows = Math.ceil(window.innerHeight / finalRowHeight);
     const estimatedVisibleItems = estimatedVisibleRows * columnCount;
-    
+
     // If we have significantly fewer items than needed to fill the screen, load more
     // This handles the case where there's a gap and no scroll events are firing
     if (data.length < estimatedVisibleItems * 0.8 && view.dataStore.hasNextPage) {
-      console.log('Triggering loadMore due to insufficient content to fill screen');
       loadMore?.();
     }
   }, [data.length, columnCount, view.dataStore.hasNextPage, loadMore, finalRowHeight]);
@@ -305,7 +281,6 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
   // Custom loadMore function that bypasses InfiniteLoader when needed
   const customLoadMore = useCallback(() => {
     if (view.dataStore.hasNextPage && !view.dataStore.loading) {
-      console.log('Custom loadMore triggered');
       loadMore?.();
     }
   }, [view.dataStore.hasNextPage, view.dataStore.loading, loadMore]);
@@ -314,10 +289,9 @@ export const GridView = observer(({ data, view, loadMore, fields, onChange, hidd
   useEffect(() => {
     const estimatedVisibleRows = Math.ceil(window.innerHeight / finalRowHeight);
     const estimatedVisibleItems = estimatedVisibleRows * columnCount;
-    
+
     // If we don't have enough items to fill the screen, start loading immediately
     if (data.length < estimatedVisibleItems && view.dataStore.hasNextPage && !view.dataStore.loading) {
-      console.log('Aggressive initial loading triggered');
       loadMore?.();
     }
   }, [data.length, columnCount, view.dataStore.hasNextPage, view.dataStore.loading, loadMore, finalRowHeight]);
