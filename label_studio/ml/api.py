@@ -265,7 +265,11 @@ class MLBackendDetailAPI(generics.RetrieveUpdateDestroyAPIView):
             200: OpenApiResponse(description='Training has successfully started.'),
             500: OpenApiResponse(
                 description='Training error',
-                response={'type': 'string'},
+                response={
+                    'description': 'Error message',
+                    'type': 'string',
+                    'example': 'Server responded with an error.',
+                },
             ),
         },
         extensions={
@@ -307,7 +311,11 @@ class MLBackendTrainAPI(APIView):
             200: OpenApiResponse(description='Predicting has successfully started.'),
             500: OpenApiResponse(
                 description='Predicting error',
-                response={'type': 'string'},
+                response={
+                    'description': 'Error message',
+                    'type': 'string',
+                    'example': 'Server responded with an error.',
+                },
             ),
         },
         extensions={

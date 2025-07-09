@@ -135,12 +135,25 @@ logger = logging.getLogger(__name__)
                     'type': 'object',
                     'properties': {
                         'tasks': {
+                            'description': 'List of tasks',
                             'type': 'array',
-                            'items': {'type': 'object'},
+                            'items': {
+                                'description': 'Task object',
+                                'type': 'object',
+                            },
                         },
-                        'total': {'type': 'integer'},
-                        'total_annotations': {'type': 'integer'},
-                        'total_predictions': {'type': 'integer'},
+                        'total': {
+                            'description': 'Total number of tasks',
+                            'type': 'integer',
+                        },
+                        'total_annotations': {
+                            'description': 'Total number of annotations',
+                            'type': 'integer',
+                        },
+                        'total_predictions': {
+                            'description': 'Total number of predictions',
+                            'type': 'integer',
+                        },
                     },
                 },
             )
