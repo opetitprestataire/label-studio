@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { IconZoomIn } from "@humansignal/icons";
-import { Button } from "../../../common/Button/Button";
+import { Button } from "@humansignal/ui";
 import { Dropdown } from "../../../common/Dropdown/Dropdown";
 import { Menu } from "../../../common/Menu/Menu";
 import { ErrorMessage } from "../../../components/ErrorMessage/ErrorMessage";
@@ -531,6 +531,7 @@ const HtxVideoView = ({ item, store }) => {
             disableView={!supportsTimelineRegions && !supportsRegions}
             framerate={item.framerate}
             controls={{ FramesControl: true }}
+            readonly={item.annotation?.isReadOnly()}
             customControls={[
               {
                 position: "left",
@@ -548,7 +549,7 @@ const HtxVideoView = ({ item, store }) => {
                         </Menu>
                       }
                     >
-                      <Button size="small" nopadding>
+                      <Button size="small" variant="neutral" look="string">
                         <IconZoomIn />
                       </Button>
                     </Dropdown.Trigger>
