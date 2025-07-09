@@ -593,12 +593,12 @@ export const HotkeysManager = () => {
             {/* Platform settings skeleton */}
             <Card>
               <CardHeader className="pb-tight">
-                <Skeleton className="h-6 w-64" />
-                <Skeleton className="h-4 w-72" />
+                <Skeleton className="h-wide w-[16rem]" />
+                <Skeleton className="h-base w-[18rem]" />
               </CardHeader>
               <CardContent>
                 <Skeleton className="h-5 w-44 mb-tight" />
-                <Skeleton className="h-4 w-64" />
+                <Skeleton className="h-base w-[16rem]" />
               </CardContent>
             </Card>
 
@@ -606,14 +606,14 @@ export const HotkeysManager = () => {
             {typedHotkeySections.map((section: Section) => (
               <Card key={section.id}>
                 <CardHeader className="pb-tight">
-                  <Skeleton className="h-6 w-64" />
-                  <Skeleton className="h-4 w-72" />
+                  <Skeleton className="h-wide w-[16rem]" />
+                  <Skeleton className="h-base w-[18rem]" />
                 </CardHeader>
                 <CardContent>
                   {[1, 2, 3].map((i) => (
                     <div key={i} className={`py-wide ${i < 3 ? "border-b border-border" : ""}`}>
                       <Skeleton className="h-5 w-44 mb-tight" />
-                      <Skeleton className="h-4 w-64" />
+                      <Skeleton className="h-base w-[16rem]" />
                     </div>
                   ))}
                 </CardContent>
