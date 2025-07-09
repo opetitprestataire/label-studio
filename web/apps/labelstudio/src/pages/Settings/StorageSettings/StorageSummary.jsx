@@ -1,6 +1,5 @@
+import { Button, Space, Tooltip } from "@humansignal/ui";
 import { format } from "date-fns/esm";
-import { Space, Tooltip } from "@humansignal/ui";
-import { Button } from "../../../components";
 import { DescriptionList } from "../../../components/DescriptionList/DescriptionList";
 import { modal } from "../../../components/Modal/Modal";
 import { Oneof } from "../../../components/Oneof/Oneof";
@@ -43,12 +42,13 @@ export const StorageSummary = ({ target, storage, className, storageTypes = [] }
       title: "Storage error logs",
       body: (
         <>
-          <pre className="bg-neutral-surface-inset text-neutral-content-subtler p-base mb-base rounded-md text-xs overflow-scroll">
+          <pre className="bg-neutral-surface-inset text-neutral-content-subtler p-base mb-base rounded-md text-body-smaller overflow-scroll">
             {msg}
           </pre>
           <Space spread>
             <Button
-              size="compact"
+              size="small"
+              look="outlined"
               onClick={() => {
                 navigator.clipboard.writeText(msg);
               }}

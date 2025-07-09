@@ -1,14 +1,13 @@
-import type { Page } from "../types/Page";
-import { SimpleCard, Spinner, Typography } from "@humansignal/ui";
 import { IconExternal, IconFolderAdd, IconHumanSignal, IconUserAdd, IconFolderOpen } from "@humansignal/icons";
-import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
+import { Button, SimpleCard, Spinner, Typography } from "@humansignal/ui";
 import { useQuery } from "@tanstack/react-query";
-import { useAPI } from "../../providers/ApiProvider";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
+import { useAPI } from "../../providers/ApiProvider";
 import { CreateProject } from "../CreateProject/CreateProject";
 import { InviteLink } from "../Organization/PeoplePage/InviteLink";
-import { Link } from "react-router-dom";
-import { Button } from "../../components";
+import type { Page } from "../types/Page";
 
 const PROJECTS_TO_SHOW = 10;
 
@@ -93,10 +92,12 @@ export const HomePage: Page = () => {
               return (
                 <Button
                   key={action.title}
-                  rawClassName="flex-grow-0 text-16/24 gap-2 text-primary-content text-left min-w-[250px] [&_svg]:w-6 [&_svg]:h-6 pl-2"
+                  look="outlined"
+                  align="center"
+                  className="flex-grow-0 text-16/24 gap-2 text-primary-content text-left min-w-[250px] [&_svg]:w-6 [&_svg]:h-6 pl-2"
                   onClick={handleActions(action.type)}
+                  leading={<action.icon />}
                 >
-                  <action.icon className="text-primary-icon" />
                   {action.title}
                 </Button>
               );
@@ -108,7 +109,7 @@ export const HomePage: Page = () => {
               data && data?.count > 0 ? (
                 <>
                   Recent Projects{" "}
-                  <a href="/projects" className="text-lg font-normal hover:underline">
+                  <a href="/projects" className="text-title-medium font-regular hover:underline">
                     View All
                   </a>
                 </>
@@ -121,7 +122,7 @@ export const HomePage: Page = () => {
               </div>
             ) : isError ? (
               <div className="h-64 flex justify-center items-center">can't load projects</div>
-            ) : isSuccess && data.results.length === 0 ? (
+            ) : isSuccess && data && data.results.length === 0 ? (
               <div className="flex flex-col justify-center items-center border border-primary-border-subtle bg-primary-emphasis-subtle rounded-lg h-64">
                 <div
                   className={
@@ -136,11 +137,11 @@ export const HomePage: Page = () => {
                 <Typography size="small" className="text-neutral-content-subtler">
                   Import your data and set up the labeling interface to start annotating
                 </Typography>
-                <Button primary rawClassName="mt-4" onClick={() => setCreationDialogOpen(true)}>
+                <Button className="mt-4" onClick={() => setCreationDialogOpen(true)} aria-label="Create new project">
                   Create Project
                 </Button>
               </div>
-            ) : isSuccess && data.results.length > 0 ? (
+            ) : isSuccess && data && data.results.length > 0 ? (
               <div className="flex flex-col gap-1">
                 {data.results.map((project) => {
                   return <ProjectSimpleCard key={project.id} project={project} />;
@@ -209,7 +210,7 @@ function ProjectSimpleCard({
       >
         <div className="flex flex-col gap-1">
           <span className="text-neutral-content">{project.title}</span>
-          <div className="text-neutral-content-subtler text-sm">
+          <div className="text-neutral-content-subtler text-body-small">
             {finished} of {total} Tasks ({total > 0 ? Math.round((finished / total) * 100) : 0}%)
           </div>
         </div>
