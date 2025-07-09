@@ -23,7 +23,13 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.urls import path, re_path
 from django.views.generic.base import RedirectView
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularJSONAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+    SpectacularYAMLAPIView,
+)
 
 urlpatterns = [
     re_path(r'^$', views.main, name='main'),
@@ -73,13 +79,17 @@ urlpatterns = [
     re_path(r'samples/time-series.csv', views.samples_time_series, name='static_time_series'),
     re_path(r'samples/paragraphs.json', views.samples_paragraphs, name='samples_paragraphs'),
     # Legacy swagger URLs redirect to new drf-spectacular URLs
-    re_path(
-        r'^swagger(?P<format>\.json|\.yaml)$',
-        lambda request, format: HttpResponseRedirect('/api/schema/' + ('?format=openapi' + format if format else '')),
-        name='schema-json',
-    ),
+    re_path(r'^swagger\.json$', lambda request: HttpResponseRedirect('/api/schema/json/'), name='schema-json'),
+    re_path(r'^swagger\.yaml$', lambda request: HttpResponseRedirect('/api/schema/yaml/'), name='schema-yaml'),
     re_path(r'^swagger/$', lambda request: HttpResponseRedirect('/api/schema/swagger-ui/'), name='schema-swagger-ui'),
-    path('docs/api/', lambda request: HttpResponseRedirect('/api/schema/redoc/'), name='schema-redoc'),
+    # Again for legacy reasons, docs/api?format=openapi redirects to api/schema/json/
+    path(
+        'docs/api/',
+        lambda request: HttpResponseRedirect('/api/schema/json/')
+        if request.GET.get('format') == 'openapi'
+        else HttpResponseRedirect('/api/schema/redoc/'),
+        name='docs-api',
+    ),
     path(
         'docs/',
         RedirectView.as_view(url='/static/docs/public/guide/introduction.html', permanent=False),
@@ -96,6 +106,8 @@ urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('api/schema/json/', SpectacularJSONAPIView.as_view(), name='schema-json'),
+    path('api/schema/yaml/', SpectacularYAMLAPIView.as_view(), name='schema-yaml'),
 ]
 
 if settings.DEBUG:
