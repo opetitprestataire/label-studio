@@ -1,6 +1,5 @@
 import { format } from "date-fns/esm";
-import { CodeBlock, IconFileCopy, Space, Tooltip } from "@humansignal/ui";
-import { Button } from "../../../components";
+import { Button, CodeBlock, IconFileCopy, Space, Tooltip } from "@humansignal/ui";
 import { DescriptionList } from "../../../components/DescriptionList/DescriptionList";
 import { modal } from "../../../components/Modal/Modal";
 import { Oneof } from "../../../components/Oneof/Oneof";
@@ -13,6 +12,7 @@ const CopyButton = ({ msg }) => {
 
   return (
     <Button
+      variant="neutral"
       icon={<IconFileCopy />}
       onClick={copyText}
       disabled={copied}
