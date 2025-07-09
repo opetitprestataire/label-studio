@@ -23,15 +23,42 @@ logger = logging.getLogger(__name__)
 _user_schema = {
     'type': 'object',
     'properties': {
-        'id': {'type': 'integer'},
-        'first_name': {'type': 'string'},
-        'last_name': {'type': 'string'},
-        'username': {'type': 'string'},
-        'email': {'type': 'string'},
-        'avatar': {'type': 'string'},
-        'initials': {'type': 'string'},
-        'phone': {'type': 'string'},
-        'allow_newsletters': {'type': 'boolean'},
+        'id': {
+            'type': 'integer',
+            'description': 'User ID',
+        },
+        'first_name': {
+            'type': 'string',
+            'description': 'First name of the user',
+        },
+        'last_name': {
+            'type': 'string',
+            'description': 'Last name of the user',
+        },
+        'username': {
+            'type': 'string',
+            'description': 'Username of the user',
+        },
+        'email': {
+            'type': 'string',
+            'description': 'Email of the user',
+        },
+        'avatar': {
+            'type': 'string',
+            'description': 'Avatar URL of the user',
+        },
+        'initials': {
+            'type': 'string',
+            'description': 'Initials of the user',
+        },
+        'phone': {
+            'type': 'string',
+            'description': 'Phone number of the user',
+        },
+        'allow_newsletters': {
+            'type': 'boolean',
+            'description': 'Whether the user allows newsletters',
+        },
     },
 }
 
@@ -72,7 +99,9 @@ _user_schema = {
         tags=['Users'],
         summary='Create new user',
         description='Create a user in Label Studio.',
-        request=_user_schema,
+        request={
+            'application/json': _user_schema,
+        },
         responses={201: UserSerializer},
         extensions={
             'x-fern-sdk-group-name': 'users',
@@ -110,7 +139,9 @@ _user_schema = {
         parameters=[
             OpenApiParameter(name='id', type=OpenApiTypes.INT, location='path', description='User ID'),
         ],
-        request=_user_schema,
+        request={
+            'application/json': _user_schema,
+        },
         responses={200: UserSerializer},
         extensions={
             'x-fern-sdk-group-name': 'users',
