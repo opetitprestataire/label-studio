@@ -54,24 +54,61 @@ task_create_response_scheme = {
     201: OpenApiResponse(
         description='Tasks successfully imported',
         response={
+            'title': 'Task creation response',
+            'description': 'Task creation response',
             'type': 'object',
             'properties': {
-                'task_count': {'type': 'integer'},
-                'annotation_count': {'type': 'integer'},
-                'predictions_count': {'type': 'integer'},
-                'duration': {'type': 'number'},
-                'file_upload_ids': {
-                    'type': 'array',
-                    'items': {'type': 'integer'},
+                'task_count': {
+                    'title': 'task_count',
+                    'description': 'Number of tasks added',
+                    'type': 'integer',
                 },
-                'could_be_tasks_list': {'type': 'boolean'},
-                'found_formats': {
+                'annotation_count': {
+                    'title': 'annotation_count',
+                    'description': 'Number of annotations added',
+                    'type': 'integer',
+                },
+                'predictions_count': {
+                    'title': 'predictions_count',
+                    'description': 'Number of predictions added',
+                    'type': 'integer',
+                },
+                'duration': {
+                    'title': 'duration',
+                    'description': 'Time in seconds to create',
+                    'type': 'number',
+                },
+                'file_upload_ids': {
+                    'title': 'file_upload_ids',
+                    'description': 'Database IDs of uploaded files',
                     'type': 'array',
-                    'items': {'type': 'string'},
+                    'items': {
+                        'title': 'File Upload IDs',
+                        'type': 'integer',
+                    },
+                },
+                'could_be_tasks_list': {
+                    'title': 'could_be_tasks_list',
+                    'description': 'Whether uploaded files can contain lists of tasks, like CSV/TSV files',
+                    'type': 'boolean',
+                },
+                'found_formats': {
+                    'title': 'found_formats',
+                    'description': 'The list of found file formats',
+                    'type': 'array',
+                    'items': {
+                        'title': 'File format',
+                        'type': 'string',
+                    },
                 },
                 'data_columns': {
+                    'title': 'data_columns',
+                    'description': 'The list of found data columns',
                     'type': 'array',
-                    'items': {'type': 'string'},
+                    'items': {
+                        'title': 'Data column name',
+                        'type': 'string',
+                    },
                 },
             },
         },
@@ -79,6 +116,8 @@ task_create_response_scheme = {
     400: OpenApiResponse(
         description='Bad Request',
         response={
+            'title': 'Incorrect task data',
+            'description': 'String with error description',
             'type': 'string',
         },
     ),

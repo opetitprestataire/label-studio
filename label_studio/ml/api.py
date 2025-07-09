@@ -22,16 +22,47 @@ logger = logging.getLogger(__name__)
 _ml_backend_schema = {
     'type': 'object',
     'properties': {
-        'url': {'type': 'string'},
-        'project': {'type': 'integer'},
-        'is_interactive': {'type': 'boolean'},
-        'title': {'type': 'string'},
-        'description': {'type': 'string'},
-        'auth_method': {'type': 'string'},
-        'basic_auth_user': {'type': 'string'},
-        'basic_auth_pass': {'type': 'string'},
-        'extra_params': {'type': 'object'},
-        'timeout': {'type': 'integer'},
+        'url': {
+            'type': 'string',
+            'description': 'ML backend URL',
+        },
+        'project': {
+            'type': 'integer',
+            'description': 'Project ID',
+        },
+        'is_interactive': {
+            'type': 'boolean',
+            'description': 'Is interactive',
+        },
+        'title': {
+            'type': 'string',
+            'description': 'Title',
+        },
+        'description': {
+            'type': 'string',
+            'description': 'Description',
+        },
+        'auth_method': {
+            'type': 'string',
+            'description': 'Auth method',
+            'enum': ['NONE', 'BASIC_AUTH'],
+        },
+        'basic_auth_user': {
+            'type': 'string',
+            'description': 'Basic auth user',
+        },
+        'basic_auth_pass': {
+            'type': 'string',
+            'description': 'Basic auth password',
+        },
+        'extra_params': {
+            'type': 'object',
+            'description': 'Extra parameters',
+        },
+        'timeout': {
+            'type': 'integer',
+            'description': 'Response model timeout',
+        },
     },
     'required': [],
 }
@@ -51,7 +82,9 @@ _ml_backend_schema = {
     """.format(
             host=(settings.HOSTNAME or 'https://localhost:8080')
         ),
-        request=_ml_backend_schema,
+        request={
+            'application/json': _ml_backend_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'create',
@@ -129,7 +162,9 @@ class MLBackendListAPI(generics.ListCreateAPIView):
     """.format(
             host=(settings.HOSTNAME or 'https://localhost:8080')
         ),
-        request=_ml_backend_schema,
+        request={
+            'application/json': _ml_backend_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': 'ml',
             'x-fern-sdk-method-name': 'update',
@@ -216,9 +251,14 @@ class MLBackendDetailAPI(generics.RetrieveUpdateDestroyAPIView):
             ),
         ],
         request={
-            'type': 'object',
-            'properties': {
-                'use_ground_truth': {'type': 'boolean'},
+            'application/json': {
+                'type': 'object',
+                'properties': {
+                    'use_ground_truth': {
+                        'type': 'boolean',
+                        'description': 'Whether to include ground truth annotations in training',
+                    },
+                },
             },
         },
         responses={
