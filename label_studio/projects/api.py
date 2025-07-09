@@ -68,9 +68,18 @@ _result_schema = {
     'description': 'Labeling result (choices, labels, bounding boxes, etc.)',
     'type': 'object',
     'properties': {
-        'from_name': {'type': 'string'},
-        'to_name': {'type': 'string'},
-        'value': {'type': 'object'},
+        'from_name': {
+            'type': 'string',
+            'description': 'The name of the labeling tag from the project config',
+        },
+        'to_name': {
+            'type': 'string',
+            'description': 'The name of the labeling tag from the project config',
+        },
+        'value': {
+            'type': 'object',
+            'description': 'Labeling result value. Format depends on chosen ML backend',
+        },
     },
     'example': {'from_name': 'image_class', 'to_name': 'image', 'value': {'labels': ['Cat']}},
 }
@@ -87,19 +96,70 @@ _project_schema = {
     'description': 'Project',
     'type': 'object',
     'properties': {
-        'title': {'type': 'string'},
-        'description': {'type': 'string'},
-        'label_config': {'type': 'string'},
-        'expert_instruction': {'type': 'string'},
-        'show_instruction': {'type': 'boolean'},
-        'show_skip_button': {'type': 'boolean'},
-        'enable_empty_annotation': {'type': 'boolean'},
-        'show_annotation_history': {'type': 'boolean'},
-        'reveal_preannotations_interactively': {'type': 'boolean'},
-        'show_collab_predictions': {'type': 'boolean'},
-        'maximum_annotations': {'type': 'integer'},
-        'color': {'type': 'string'},
-        'control_weights': {'type': 'object'},
+        'title': {
+            'type': 'string',
+            'description': 'Project title',
+            'example': 'My project',
+        },
+        'description': {
+            'type': 'string',
+            'description': 'Project description',
+            'example': 'My first project',
+        },
+        'label_config': {
+            'type': 'string',
+            'description': 'Label config in XML format',
+            'example': '<View>[...]</View>',
+        },
+        'expert_instruction': {
+            'type': 'string',
+            'description': 'Labeling instructions to show to the user',
+            'example': 'Label all cats',
+        },
+        'show_instruction': {
+            'type': 'boolean',
+            'description': 'Show labeling instructions',
+        },
+        'show_skip_button': {
+            'type': 'boolean',
+            'description': 'Show skip button',
+        },
+        'enable_empty_annotation': {
+            'type': 'boolean',
+            'description': 'Allow empty annotations',
+        },
+        'show_annotation_history': {
+            'type': 'boolean',
+            'description': 'Show annotation history',
+        },
+        'reveal_preannotations_interactively': {
+            'type': 'boolean',
+            'description': 'Reveal preannotations interactively. If set to True, predictions will be shown to the user only after selecting the area of interest',
+        },
+        'show_collab_predictions': {
+            'type': 'boolean',
+            'description': 'Show predictions to annotators',
+        },
+        'maximum_annotations': {
+            'type': 'integer',
+            'description': 'Maximum annotations per task',
+        },
+        'color': {
+            'type': 'string',
+            'description': 'Project color in HEX format',
+            'default': '#FFFFFF',
+        },
+        'control_weights': {
+            'type': 'object',
+            'description': 'Dict of weights for each control tag in metric calculation. Each control tag (e.g. label or choice) will '
+            'have its own key in control weight dict with weight for each label and overall weight. '
+            'For example, if a bounding box annotation with a control tag named my_bbox should be included with 0.33 weight in agreement calculation, '
+            'and the first label Car should be twice as important as Airplane, then you need to specify: '
+            "{'my_bbox': {'type': 'RectangleLabels', 'labels': {'Car': 1.0, 'Airplane': 0.5}, 'overall': 0.33}",
+            'example': {
+                'my_bbox': {'type': 'RectangleLabels', 'labels': {'Car': 1.0, 'Airplaine': 0.5}, 'overall': 0.33}
+            },
+        },
     },
 }
 
@@ -157,7 +217,9 @@ class ProjectFilterSet(FilterSet):
     """.format(
             settings.HOSTNAME or 'https://localhost:8080'
         ),
-        request=_project_schema,
+        request={
+            'application/json': _project_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'create',
@@ -333,7 +395,9 @@ class ProjectCountsListAPI(generics.ListAPIView):
         tags=['Projects'],
         summary='Update project',
         description='Update the project settings for a specific project.',
-        request=_project_schema,
+        request={
+            'application/json': _project_schema,
+        },
         extensions={
             'x-fern-sdk-group-name': 'projects',
             'x-fern-sdk-method-name': 'update',
