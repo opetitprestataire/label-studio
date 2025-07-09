@@ -33,6 +33,7 @@ const TimelineComponent: FC<TimelineProps> = ({
   speed,
   className,
   formatPosition,
+  readonly = false,
   ...props
 }) => {
   const View = Views[mode];
@@ -107,8 +108,9 @@ const TimelineComponent: FC<TimelineProps> = ({
       seekOffset,
       settings: View.settings,
       visibleWidth: seekVisibleWidth,
+      readonly,
     }),
-    [position, seekOffset, seekVisibleWidth, length, regions, step, playing, View.settings, data],
+    [position, seekOffset, seekVisibleWidth, length, regions, step, playing, View.settings, data, readonly],
   );
 
   useEffect(() => {

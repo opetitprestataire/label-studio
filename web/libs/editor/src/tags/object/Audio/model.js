@@ -2,13 +2,11 @@ import { observe } from "mobx";
 import { getEnv, getRoot, getType, types } from "mobx-state-tree";
 import { createRef } from "react";
 import { customTypes } from "../../../core/CustomTypes";
-import { guidGenerator } from "../../../core/Helpers.ts";
 import { AnnotationMixin } from "../../../mixins/AnnotationMixin";
 import IsReadyMixin from "../../../mixins/IsReadyMixin";
 import ProcessAttrsMixin from "../../../mixins/ProcessAttrs";
 import { SyncableMixin } from "../../../mixins/Syncable";
 import { AudioRegionModel } from "../../../regions/AudioRegion";
-import Utils from "../../../utils";
 import { FF_LSDV_E_278, isFF } from "../../../utils/feature-flags";
 import { isDefined } from "../../../utils/utilities";
 import ObjectBase from "../Base";
@@ -159,13 +157,13 @@ export const AudioModel = types.compose(
       activeStates() {
         const states = self.states();
 
-        return states && states.filter((s) => getType(s).name === "LabelsModel" && s.isSelected);
+        return states?.filter((s) => getType(s).name === "LabelsModel" && s.isSelected);
       },
 
       get activeState() {
         const states = self.states();
 
-        return states && states.filter((s) => getType(s).name === "LabelsModel" && s.isSelected)[0];
+        return states?.filter((s) => getType(s).name === "LabelsModel" && s.isSelected)[0];
       },
 
       get activeLabel() {
@@ -178,6 +176,9 @@ export const AudioModel = types.compose(
 
         // use label to generate a unique key to ensure that adding/deleting can trigger changes
         return labels ? labels.join(",") : "";
+      },
+      get readonly() {
+        return self.annotation.isReadOnly();
       },
     }))
     ////// Sync actions
@@ -237,9 +238,9 @@ export const AudioModel = types.compose(
       ////// Incoming
 
       registerSyncHandlers() {
-        ["play", "pause", "seek"].forEach((event) => {
+        for (const event of ["play", "pause", "seek"]) {
           self.syncHandlers.set(event, self.handleSync);
-        });
+        }
         self.syncHandlers.set("speed", self.handleSyncSpeed);
         if (isSyncedBuffering) {
           self.syncHandlers.set("buffering", self.handleSyncBuffering);
@@ -340,13 +341,13 @@ export const AudioModel = types.compose(
               const selectedColor = activeState?.selectedColor;
               const labels = activeState?.selectedValues();
 
-              selectedRegions.forEach((r) => {
+              for (const r of selectedRegions) {
                 r.update({ color: selectedColor, labels: labels ?? [] });
 
                 const region = r.isRegion ? self.updateRegion(r) : self.addRegion(r);
 
                 self.annotation.selectArea(region);
-              });
+              }
 
               if (selectedRegions.length) {
                 self.requestWSUpdate();
@@ -393,7 +394,7 @@ export const AudioModel = types.compose(
             (target) => target.type === "paragraphs" && target.contextscroll,
           );
 
-          syncedParagraphs.forEach((paragraph) => {
+          for (const paragraph of syncedParagraphs) {
             const segments = Object.values(paragraph.regionsStartEnd).map(({ start, end }) => ({
               start,
               end,
@@ -403,7 +404,7 @@ export const AudioModel = types.compose(
             }));
 
             self._ws.addRegions(segments);
-          });
+          }
         },
 
         handleNewRegions() {
@@ -433,7 +434,7 @@ export const AudioModel = types.compose(
         },
 
         onHotKey(e) {
-          e && e.preventDefault();
+          e?.preventDefault();
           self._ws.togglePlay();
           return false;
         },
@@ -444,34 +445,6 @@ export const AudioModel = types.compose(
 
         setPlaybackRate(val) {
           self.playBackRate = val;
-        },
-
-        createRegion(wsRegion, states) {
-          let bgColor = self.selectedregionbg;
-          const st = states.find((s) => s.type === "labels");
-
-          if (st) bgColor = Utils.Colors.convertToRGBA(st.getSelectedColor(), 0.3);
-
-          const r = AudioRegionModel.create({
-            id: wsRegion.id ? wsRegion.id : guidGenerator(),
-            pid: wsRegion.pid ? wsRegion.pid : guidGenerator(),
-            parentID: wsRegion.parent_id === null ? "" : wsRegion.parent_id,
-            start: wsRegion.start,
-            end: wsRegion.end,
-            score: wsRegion.score,
-            readonly: wsRegion.readonly,
-            regionbg: self.regionbg,
-            selectedregionbg: bgColor,
-            normalization: wsRegion.normalization,
-            states,
-          });
-
-          r.setWSRegion(wsRegion);
-
-          self.regions.push(r);
-          self.annotation.addRegion(r);
-
-          return r;
         },
 
         addRegion(wsRegion) {
@@ -537,9 +510,9 @@ export const AudioModel = types.compose(
         },
 
         clearRegionMappings() {
-          self.regs.forEach((r) => {
+          for (const r of self.regs) {
             r.setWSRegion(null);
-          });
+          }
         },
 
         onLoad(ws) {

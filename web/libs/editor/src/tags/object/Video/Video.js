@@ -143,7 +143,7 @@ const Model = types
       // normalize framerate — should be string with number of frames per second
       const framerate = Number(parseValue(self.framerate, self.store.task?.dataObj));
 
-      if (!framerate || isNaN(framerate)) self.framerate = "24";
+      if (!framerate || Number.isNaN(framerate)) self.framerate = "24";
       else if (framerate < 1) self.framerate = String(1 / framerate);
       else self.framerate = String(framerate);
     },
@@ -196,9 +196,9 @@ const Model = types
     ////// Incoming
 
     registerSyncHandlers() {
-      ["play", "pause", "seek"].forEach((event) => {
+      for (const event of ["play", "pause", "seek"]) {
         self.syncHandlers.set(event, self.handleSync);
-      });
+      }
       self.syncHandlers.set("speed", self.handleSyncSpeed);
       if (isSyncedBuffering) {
         self.syncHandlers.set("buffering", self.handleSyncBuffering);
@@ -334,9 +334,9 @@ const Model = types
         const area = self.annotation.createResult({ sequence }, {}, control, self);
 
         // add labels
-        self.activeStates().forEach((tag) => {
+        for (const tag of self.activeStates()) {
           area.setValue(tag);
-        });
+        }
 
         return area;
       },
@@ -378,6 +378,9 @@ const Model = types
        * @returns {Object} created region
        */
       startDrawing({ frame, region: id }) {
+        // don't create or edit regions in read-only mode
+        if (self.annotation.isReadOnly()) return null;
+
         if (id) {
           const region = self.annotation.regions.find((r) => r.cleanId === id);
           const range = region?.ranges?.[0];
