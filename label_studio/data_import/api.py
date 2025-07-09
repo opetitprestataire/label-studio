@@ -173,7 +173,7 @@ task_create_response_scheme = {
             -X POST '{host}/api/projects/1/import' --data '[{{"text": "Some text 1"}}, {{"text": "Some text 2"}}]'
             ```
 
-            ### 2\. **POST with files**
+            ### 2. **POST with files**
             Send tasks as files. You can attach multiple files with different names.
 
             - **JSON**: text files in JavaScript object notation format
@@ -189,7 +189,7 @@ task_create_response_scheme = {
             -X POST '{host}/api/projects/1/import' -F 'file=@path/to/my_file.csv'
             ```
 
-            ### 3\. **POST with URL**
+            ### 3. **POST with URL**
             You can also provide a URL to a file with labeling tasks. Supported file formats are the same as in option 2.
 
             ```bash
