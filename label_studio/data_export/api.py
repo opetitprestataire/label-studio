@@ -96,25 +96,19 @@ class ExportFormatsListAPI(generics.RetrieveAPIView):
                 name='download_all_tasks',
                 type=OpenApiTypes.STR,
                 location='query',
-                description="""
-                          If true, download all tasks regardless of status. If false, download only annotated tasks.
-                          """,
+                description='If true, download all tasks regardless of status. If false, download only annotated tasks.',
             ),
             OpenApiParameter(
                 name='download_resources',
                 type=OpenApiTypes.BOOL,
                 location='query',
-                description="""
-                          If true, download all resource files such as images, audio, and others relevant to the tasks.
-                          """,
+                description='If true, download all resource files such as images, audio, and others relevant to the tasks.',
             ),
             OpenApiParameter(
                 name='ids',
                 many=True,
                 location='query',
-                description="""
-                          Specify a list of task IDs to retrieve only the details for those tasks.
-                          """,
+                description='Specify a list of task IDs to retrieve only the details for those tasks.',
             ),
             OpenApiParameter(
                 name='id',
@@ -151,7 +145,10 @@ class ExportFormatsListAPI(generics.RetrieveAPIView):
             200: OpenApiResponse(
                 description='Exported data',
                 response={
-                    'type': 'binary',
+                    'title': 'Export file',
+                    'description': 'Export file with results',
+                    'type': 'string',
+                    'format': 'binary',
                 },
             )
         },
@@ -274,9 +271,7 @@ class ProjectExportFilesAuthCheck(APIView):
     decorator=extend_schema(
         tags=['Export'],
         summary='List all export snapshots',
-        description="""
-        Returns a list of exported files for a specific project by ID.
-        """,
+        description='Returns a list of exported files for a specific project by ID.',
         parameters=[
             OpenApiParameter(
                 name='id',
@@ -297,9 +292,7 @@ class ProjectExportFilesAuthCheck(APIView):
     decorator=extend_schema(
         tags=['Export'],
         summary='Create new export snapshot',
-        description="""
-        Create a new export request to start a background task and generate an export file for a specific project by ID.
-        """,
+        description='Create a new export request to start a background task and generate an export file for a specific project by ID.',
         parameters=[
             OpenApiParameter(
                 name='id',
@@ -371,9 +364,7 @@ class ExportListAPI(generics.ListCreateAPIView):
     decorator=extend_schema(
         tags=['Export'],
         summary='Get export snapshot by ID',
-        description="""
-        Retrieve information about an export file by export ID for a specific project.
-        """,
+        description='Retrieve information about an export file by export ID for a specific project.',
         parameters=[
             OpenApiParameter(
                 name='id',
@@ -400,9 +391,7 @@ class ExportListAPI(generics.ListCreateAPIView):
     decorator=extend_schema(
         tags=['Export'],
         summary='Delete export snapshot',
-        description="""
-        Delete an export file by specified export ID.
-        """,
+        description='Delete an export file by specified export ID.',
         parameters=[
             OpenApiParameter(
                 name='id',
@@ -627,9 +616,7 @@ def set_convert_background_failure(job, connection, type, value, traceback_obj):
     decorator=extend_schema(
         tags=['Export'],
         summary='Export conversion',
-        description="""
-        Convert export snapshot to selected format
-        """,
+        description='Convert export snapshot to selected format',
         request=ExportConvertSerializer,
         parameters=[
             OpenApiParameter(
