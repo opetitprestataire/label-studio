@@ -271,7 +271,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
         );
       }
 
-      if ((userGenerate && sentUserGenerate) || (!userGenerate && store.hasInterface("update"))) {
+      else if ((userGenerate && sentUserGenerate) || (!userGenerate && store.hasInterface("update"))) {
         const isUpdate = Boolean(isFF(FF_REVIEWER_FLOW) || sentUserGenerate || versions.result);
         // no changes were made over previously submitted version — no drafts, no pending changes
         const noChanges = isFF(FF_REVIEWER_FLOW) && !history.canUndo && !annotation.draftId;
