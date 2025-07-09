@@ -4,8 +4,6 @@ import logging
 
 from core.mixins import GetParentObjectMixin
 from core.permissions import ViewClassPermission, all_permissions
-
-# from core.utils.common import DjangoFilterDescriptionInspector
 from core.utils.params import bool_from_request
 from data_manager.api import TaskListAPI as DMTaskListAPI
 from data_manager.functions import evaluate_predictions
@@ -671,7 +669,6 @@ class AnnotationDraftAPI(generics.RetrieveUpdateDestroyAPIView):
     decorator=extend_schema(
         tags=['Predictions'],
         summary='List predictions',
-        # filter_inspectors=[DjangoFilterDescriptionInspector],
         description='List all predictions and their IDs.',
         parameters=[
             OpenApiParameter(

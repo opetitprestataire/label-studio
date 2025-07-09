@@ -609,22 +609,6 @@ class temporary_disconnect_all_signals(object):
         del self.stashed_signals[signal]
 
 
-# class DjangoFilterDescriptionInspector(CoreAPICompatInspector):
-#     def get_filter_parameters(self, filter_backend):
-#         if isinstance(filter_backend, DjangoFilterBackend):
-#             result = super(DjangoFilterDescriptionInspector, self).get_filter_parameters(filter_backend)
-#             if not isinstance(result, Iterable):
-#                 return result
-
-#             for param in result:
-#                 if not param.get('description', ''):
-#                     param.description = 'Filter the returned list by {field_name}'.format(field_name=param.name)
-
-#             return result
-
-#         return NotHandled
-
-
 def batch(iterable, n=1):
     l = len(iterable)  # noqa: E741
     for ndx in range(0, l, n):
