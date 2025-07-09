@@ -678,7 +678,7 @@ export const HotkeysManager = () => {
           </div>
 
           <DialogDescription className="text-warning-text bg-warning-background p-base rounded-small border border-warning-border flex items-start gap-tight">
-            <div className="mt-0.5">
+            <div>
               <IconWarning className="text-warning-icon" />
             </div>
             <div>
