@@ -163,7 +163,7 @@ logger = logging.getLogger(__name__)
             'x-fern-sdk-method-name': 'list',
             'x-fern-pagination': {
                 'offset': '$request.page',
-                'results': '$response.tasks',
+                'results': '$response.results',
             },
             'x-fern-audiences': ['public'],
         },

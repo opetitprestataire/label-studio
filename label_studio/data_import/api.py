@@ -699,14 +699,9 @@ class FileUploadAPI(generics.RetrieveUpdateDestroyAPIView):
         return super(FileUploadAPI, self).put(*args, **kwargs)
 
 
-class UploadedFileResponse(generics.RetrieveAPIView):
-    """Serve uploaded files from local drive"""
-
-    permission_classes = (IsAuthenticated,)
-
-    @override_report_only_csp
-    @csp(SANDBOX=[])
-    @extend_schema(
+@method_decorator(
+    name='get',
+    decorator=extend_schema(
         tags=['Import'],
         summary='Download file',
         description='Download a specific uploaded file.',
@@ -715,7 +710,18 @@ class UploadedFileResponse(generics.RetrieveAPIView):
             'x-fern-sdk-method-name': 'download',
             'x-fern-audiences': ['public'],
         },
-    )
+        responses={
+            200: OpenApiResponse(description='File downloaded successfully'),
+        },
+    ),
+)
+class UploadedFileResponse(generics.RetrieveAPIView):
+    """Serve uploaded files from local drive"""
+
+    permission_classes = (IsAuthenticated,)
+
+    @override_report_only_csp
+    @csp(SANDBOX=[])
     def get(self, *args, **kwargs):
         request = self.request
         filename = kwargs['filename']

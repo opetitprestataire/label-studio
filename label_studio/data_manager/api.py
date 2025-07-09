@@ -109,9 +109,7 @@ _view_request_body = {
             OpenApiParameter(name='id', type=OpenApiTypes.STR, location='path', description='View ID'),
         ],
         extensions={
-            'x-fern-sdk-group-name': 'views',
-            'x-fern-sdk-method-name': 'update',
-            'x-fern-audiences': ['public'],
+            'x-fern-audiences': ['internal'],
         },
     ),
 )
