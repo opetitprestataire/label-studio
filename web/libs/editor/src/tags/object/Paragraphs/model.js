@@ -301,10 +301,11 @@ const PlayableAndSyncable = types
 
       const isBuffering = self.syncManager?.isBuffering;
 
+      audio.currentTime = time;
+
       // Normal logic when no buffering
       if (!isSyncedBuffering || (!isBuffering && isDefined(playing))) {
         // so we are changing time inside current region only
-        audio.currentTime = time;
         if (audio.paused && playing) {
           self.play();
         } else if (isSyncedBuffering && !audio.paused && !playing) {
@@ -477,7 +478,7 @@ const PlayableAndSyncable = types
 
       if (willStopBuffering) {
         if (self.wasPlayingBeforeBuffering) {
-          self.play();
+          audio?.play();
         }
       }
 
@@ -487,9 +488,7 @@ const PlayableAndSyncable = types
       self.isBuffering = self.syncManager?.isBuffering;
 
       if (willStartBuffering) {
-        if (audio.playing) {
-          audio?.pause();
-        }
+        audio?.pause();
       }
 
       if (willStopBuffering && self.wasPlayingBeforeBuffering) {

@@ -28,7 +28,9 @@ const ParagraphAudio = observer(({ item }) => {
 
   const attachRef = useCallback(
     (audio) => {
-      if (audio) audio = patchPlayPauseMethods(audio);
+      if (audio) {
+        audio = patchPlayPauseMethods(audio);
+      }
       if (item.audioRef instanceof Function) {
         item.audioRef(audio);
       } else if (item.audioRef) {
