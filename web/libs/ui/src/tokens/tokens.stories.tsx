@@ -222,7 +222,7 @@ const TokenValue = ({ token, tokenName }: { token: string; tokenName: string }) 
       </div>
 
       {/* Copy indicator */}
-      <div className="copy-indicator absolute -bottom-7 right-2 bg-neutral-inverted-surface text-neutral-inverted-content px-base py-tight rounded text-body-smaller opacity-0 transition-all duration-300 z-10">
+      <div className="copy-indicator absolute -bottom-wider right-tight bg-neutral-inverted-surface text-neutral-inverted-content px-base py-tight rounded text-body-smaller opacity-0 transition-all duration-300 z-10">
         Copied!
       </div>
     </div>
