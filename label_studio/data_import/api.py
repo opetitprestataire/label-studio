@@ -163,7 +163,7 @@ task_create_response_scheme = {
 
             There are three possible ways to import tasks with this endpoint:
 
-            ### 1\. **POST with data**
+            ### 1. **POST with data**
             Send JSON tasks as POST data. Only JSON is supported for POSTing files directly.
             Update this example to specify your authorization token and Label Studio instance host, then run the following from
             the command line.
