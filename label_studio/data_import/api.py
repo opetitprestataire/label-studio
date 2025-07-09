@@ -1,5 +1,6 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
+import json
 import logging
 import mimetypes
 import time
@@ -7,7 +8,7 @@ from urllib.parse import unquote, urlparse
 
 from core.decorators import override_report_only_csp
 from core.feature_flags import flag_set
-from core.permissions import all_permissions
+from core.permissions import ViewClassPermission, all_permissions
 from core.redis import start_job_async_or_sync
 from core.utils.common import retry_database_locked, timeit
 from core.utils.params import bool_from_request, list_of_strings_from_request
@@ -604,33 +605,38 @@ class ReImportAPI(ImportAPI):
 )
 class FileUploadListAPI(generics.mixins.ListModelMixin, generics.mixins.DestroyModelMixin, generics.GenericAPIView):
     parser_classes = (JSONParser, MultiPartParser, FormParser)
-    permission_required = all_permissions.projects_change
     serializer_class = FileUploadSerializer
+    permission_required = ViewClassPermission(
+        GET=all_permissions.projects_view,
+        DELETE=all_permissions.projects_change,
+    )
+    queryset = FileUpload.objects.all()
 
     def get_queryset(self):
-        project = generics.get_object_or_404(Project.objects.for_user(self.request.user), pk=self.kwargs['pk'])
-        file_upload_ids = self.request.query_params.getlist('ids', [])
-        all_flag = bool_from_request(self.request.query_params, 'all', False)
-        if all_flag:
-            return FileUpload.objects.filter(project_id=project.id)
-        else:
-            return FileUpload.objects.filter(project_id=project.id, id__in=file_upload_ids)
+        project = generics.get_object_or_404(Project.objects.for_user(self.request.user), pk=self.kwargs.get('pk', 0))
+        if project.is_draft or bool_from_request(self.request.query_params, 'all', False):
+            # If project is in draft state, we return all uploaded files, ignoring queried ids
+            logger.debug(f'Return all uploaded files for draft project {project}')
+            return FileUpload.objects.filter(project_id=project.id, user=self.request.user)
+
+        # If requested in regular import, only queried IDs are returned to avoid showing previously imported
+        ids = json.loads(self.request.query_params.get('ids', '[]'))
+        logger.debug(f'File Upload IDs found: {ids}')
+        return FileUpload.objects.filter(project_id=project.id, id__in=ids, user=self.request.user)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
         project = generics.get_object_or_404(Project.objects.for_user(self.request.user), pk=self.kwargs['pk'])
-
-        # delete all tasks where file_upload_id in list
-        deleted_tasks = 0
-        for file_upload in queryset:
-            deleted_tasks += project.remove_tasks_by_file_uploads([file_upload.id])
-
-        # delete file uploads
-        queryset.delete()
-        return Response({'deleted_tasks': deleted_tasks}, status=status.HTTP_204_NO_CONTENT)
+        ids = self.request.data.get('file_upload_ids')
+        if ids is None:
+            deleted, _ = FileUpload.objects.filter(project=project).delete()
+        elif isinstance(ids, list):
+            deleted, _ = FileUpload.objects.filter(project=project, id__in=ids).delete()
+        else:
+            raise ValueError('"file_upload_ids" parameter must be a list of integers')
+        return Response({'deleted': deleted}, status=status.HTTP_200_OK)
 
 
 @method_decorator(
