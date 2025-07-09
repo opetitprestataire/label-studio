@@ -576,10 +576,7 @@ export const HotkeysManager = () => {
   return (
     <div id="hotkeys-manager">
       <div className={styles.sectionContent}>
-        <div
-          className={styles.flexRow}
-          style={{ justifyContent: "flex-end", marginBottom: "var(--spacing-wide)", gap: "var(--spacing-tight)" }}
-        >
+        <div className={`${styles.flexRow} justify-end mb-wide gap-tight`}>
           <Button variant="neutral" look="outlined" onClick={() => setImportDialogOpen(true)}>
             Import
           </Button>
@@ -592,37 +589,31 @@ export const HotkeysManager = () => {
         </div>
 
         {isLoading && hotkeys.length === 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-wide)" }}>
+          <div className="flex flex-col gap-wide">
             {/* Platform settings skeleton */}
             <Card>
-              <CardHeader style={{ paddingBottom: "var(--spacing-tight)" }}>
-                <Skeleton style={{ height: "1.5rem", width: "250px" }} />
-                <Skeleton style={{ height: "1rem", width: "300px" }} />
+              <CardHeader className="pb-tight">
+                <Skeleton className="h-6 w-64" />
+                <Skeleton className="h-4 w-72" />
               </CardHeader>
               <CardContent>
-                <Skeleton style={{ height: "1.25rem", width: "180px", marginBottom: "var(--spacing-tight)" }} />
-                <Skeleton style={{ height: "1rem", width: "250px" }} />
+                <Skeleton className="h-5 w-44 mb-tight" />
+                <Skeleton className="h-4 w-64" />
               </CardContent>
             </Card>
 
             {/* Hotkey sections skeleton */}
             {typedHotkeySections.map((section: Section) => (
               <Card key={section.id}>
-                <CardHeader style={{ paddingBottom: "var(--spacing-tight)" }}>
-                  <Skeleton style={{ height: "1.5rem", width: "250px" }} />
-                  <Skeleton style={{ height: "1rem", width: "300px" }} />
+                <CardHeader className="pb-tight">
+                  <Skeleton className="h-6 w-64" />
+                  <Skeleton className="h-4 w-72" />
                 </CardHeader>
                 <CardContent>
                   {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      style={{
-                        padding: "var(--spacing-wide) 0",
-                        borderBottom: i < 3 ? "1px solid var(--border-color)" : "none",
-                      }}
-                    >
-                      <Skeleton style={{ height: "1.25rem", width: "180px", marginBottom: "var(--spacing-tight)" }} />
-                      <Skeleton style={{ height: "1rem", width: "250px" }} />
+                    <div key={i} className={`py-wide ${i < 3 ? "border-b border-border" : ""}`}>
+                      <Skeleton className="h-5 w-44 mb-tight" />
+                      <Skeleton className="h-4 w-64" />
                     </div>
                   ))}
                 </CardContent>
@@ -630,7 +621,7 @@ export const HotkeysManager = () => {
             ))}
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-wide)" }}>
+          <div className="flex flex-col gap-wide">
             {/* Hotkey Sections */}
             {typedHotkeySections.map((section: Section) => (
               <HotkeySection
@@ -663,37 +654,22 @@ export const HotkeysManager = () => {
             </DialogDescription>
           </DialogHeader>
 
-          <div
-            style={{
-              maxHeight: "15rem",
-              overflowY: "auto",
-            }}
-          >
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-wide)" }}>
+          <div className="max-h-60 overflow-y-auto">
+            <div className="flex flex-col gap-wide">
               {duplicateConfirmDialog.conflictingHotkeys.map((conflictHotkey: Hotkey) => (
                 <div
                   key={conflictHotkey.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "var(--spacing-base)",
-                    backgroundColor: "var(--bg-neutral-surface)",
-                    borderRadius: "var(--corner-radius-small)",
-                    border: "1px solid var(--color-warning-border)",
-                  }}
+                  className="flex items-center justify-between p-base bg-neutral-surface rounded-small border border-warning-border"
                 >
-                  <div style={{ flex: "1", minWidth: "0" }}>
-                    <div
-                      style={{ fontWeight: "500", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-                    >
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium overflow-hidden text-ellipsis whitespace-nowrap">
                       {conflictHotkey.label}
                     </div>
-                    <div style={{ fontSize: "var(--font-size-small)", color: "var(--text-muted)" }}>
+                    <div className="text-small text-neutral-content-subtler">
                       {getSectionTitle(conflictHotkey.section)}
                     </div>
                   </div>
-                  <Badge variant="secondary" style={{ marginLeft: "var(--spacing-tight)", flexShrink: "0" }}>
+                  <Badge variant="secondary" className="ml-tight flex-shrink-0">
                     {conflictHotkey.key}
                   </Badge>
                 </div>
@@ -701,19 +677,8 @@ export const HotkeysManager = () => {
             </div>
           </div>
 
-          <DialogDescription
-            style={{
-              color: "var(--color-warning-text)",
-              backgroundColor: "var(--color-warning-background)",
-              padding: "var(--spacing-base)",
-              borderRadius: "var(--corner-radius-small)",
-              border: "1px solid var(--color-warning-border)",
-              display: "flex",
-              alignItems: "flex-start",
-              gap: "var(--spacing-tight)",
-            }}
-          >
-            <div style={{ marginTop: "2px" }}>
+          <DialogDescription className="text-warning-text bg-warning-background p-base rounded-small border border-warning-border flex items-start gap-tight">
+            <div className="mt-0.5">
               <IconWarning className="text-warning-icon" />
             </div>
             <div>
