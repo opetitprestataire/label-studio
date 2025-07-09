@@ -118,9 +118,7 @@ export class Network {
         req.responseTimeout = 0; // Disable automatic timeout
         req.reply(async (res) => {
           try {
-            console.log(`!> Delaying request for ${alias}`);
             await requestPromise;
-            console.log(`!>  Request for ${alias} delayed`);
             res.send();
           } catch (error) {
             res.send({ statusCode: 500, body: "Network error simulated" });
