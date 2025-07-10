@@ -50,9 +50,7 @@ interface DuplicateConfirmDialog {
   conflictingHotkeys: Hotkey[];
 }
 
-interface HotkeySettings {
-  autoTranslatePlatforms?: boolean;
-}
+type HotkeySettings = {};
 
 interface ExportData {
   hotkeys: Hotkey[];
@@ -102,7 +100,6 @@ export const HotkeysHeaderButtons = () => {
   const [hotkeys, setHotkeys] = useState<Hotkey[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [importDialogOpen, setImportDialogOpen] = useState<boolean>(false);
-  const [autoTranslatePlatforms, setAutoTranslatePlatforms] = useState<boolean>(true);
 
   const api = useAPI();
 
@@ -151,10 +148,6 @@ export const HotkeysHeaderButtons = () => {
         const updatedHotkeys = updateHotkeysWithCustomSettings(typedDefaultHotkeys, customHotkeys);
         setHotkeys(updatedHotkeys);
       }
-
-      // Load the platform translation setting
-      const platformSetting = window.APP_SETTINGS?.user?.hotkeySettings?.autoTranslatePlatforms;
-      setAutoTranslatePlatforms(platformSetting !== undefined ? platformSetting : true);
     } catch (error) {
       console.error("Error loading hotkeys from API:", error);
 
@@ -189,10 +182,7 @@ export const HotkeysHeaderButtons = () => {
 
       const requestBody = {
         custom_hotkeys: customHotkeys,
-        hotkey_settings:
-          currentHotkeys.length === 0
-            ? { autoTranslatePlatforms: true } // Reset to default settings
-            : currentSettings,
+        hotkey_settings: currentSettings,
       };
 
       try {
@@ -258,7 +248,7 @@ export const HotkeysHeaderButtons = () => {
 
         try {
           // Reset hotkeys to defaults in the backend API (sets custom_hotkeys to {})
-          const result = await saveHotkeysToAPI([], { autoTranslatePlatforms: true });
+          const result = await saveHotkeysToAPI([], {});
 
           if (result.ok) {
             if (toast) {
@@ -269,7 +259,6 @@ export const HotkeysHeaderButtons = () => {
             }
             // Update local state to reflect the reset
             setHotkeys([...typedDefaultHotkeys]);
-            setAutoTranslatePlatforms(true);
           } else {
             if (toast) {
               toast.show({
@@ -298,9 +287,7 @@ export const HotkeysHeaderButtons = () => {
     // Create export data including settings
     const exportData: ExportData = {
       hotkeys: hotkeys,
-      settings: {
-        autoTranslatePlatforms: autoTranslatePlatforms,
-      },
+      settings: {},
       exportedAt: new Date().toISOString(),
       version: "1.0",
     };
@@ -335,16 +322,9 @@ export const HotkeysHeaderButtons = () => {
 
       // Handle both old format (just hotkeys array) and new format (with settings)
       const importedHotkeys = Array.isArray(importedData) ? importedData : importedData.hotkeys || [];
-      const importedSettings = Array.isArray(importedData) ? ({} as HotkeySettings) : importedData.settings || {};
 
       // Save all imported data to API
-      const settingsToSave = {
-        autoTranslatePlatforms:
-          (importedSettings as HotkeySettings).autoTranslatePlatforms !== undefined
-            ? (importedSettings as HotkeySettings).autoTranslatePlatforms
-            : autoTranslatePlatforms,
-      };
-      const result = await saveHotkeysToAPI(importedHotkeys, settingsToSave);
+      const result = await saveHotkeysToAPI(importedHotkeys, {});
 
       if (!result.ok) {
         throw new Error(result.error || "Failed to save imported hotkeys");
@@ -394,7 +374,6 @@ export const HotkeysManager = () => {
   const [globalEnabled, setGlobalEnabled] = useState<boolean>(true);
   const [dirtyState, setDirtyState] = useState<DirtyState>({});
   const [importDialogOpen, setImportDialogOpen] = useState<boolean>(false);
-  const [autoTranslatePlatforms, setAutoTranslatePlatforms] = useState<boolean>(true);
   const [duplicateConfirmDialog, setDuplicateConfirmDialog] = useState<DuplicateConfirmDialog>({
     open: false,
     hotkeyId: null,
@@ -421,16 +400,12 @@ export const HotkeysManager = () => {
         customHotkeys[keyId] = {
           key: hotkey.key,
           active: hotkey.active,
-          description: hotkey.label, // Add description field for addKey method
         };
       });
 
       const requestBody = {
         custom_hotkeys: customHotkeys,
-        hotkey_settings:
-          currentHotkeys.length === 0
-            ? { autoTranslatePlatforms: true } // Reset to default settings
-            : currentSettings,
+        hotkey_settings: currentSettings,
       };
 
       try {
@@ -529,10 +504,6 @@ export const HotkeysManager = () => {
         const updatedHotkeys = updateHotkeysWithCustomSettings(typedDefaultHotkeys, customHotkeys);
         setHotkeys(updatedHotkeys);
       }
-
-      // Load the platform translation setting
-      const platformSetting = window.APP_SETTINGS?.user?.hotkeySettings?.autoTranslatePlatforms;
-      setAutoTranslatePlatforms(platformSetting !== undefined ? platformSetting : true);
     } catch (error) {
       console.error("Error loading hotkeys from API:", error);
 
@@ -601,11 +572,10 @@ export const HotkeysManager = () => {
       // Update local state to defaults
       setHotkeys([...typedDefaultHotkeys]);
       setGlobalEnabled(true);
-      setAutoTranslatePlatforms(true);
       setDirtyState({});
 
       // Reset hotkeys to defaults in the backend API (sets custom_hotkeys to {})
-      const result = await saveHotkeysToAPI([], { autoTranslatePlatforms });
+      const result = await saveHotkeysToAPI([], {});
 
       if (result.ok) {
         if (toast) {
@@ -733,7 +703,7 @@ export const HotkeysManager = () => {
 
     try {
       // Save ALL modified hotkeys and settings, not just this section
-      const result = await saveHotkeysToAPI(hotkeys, { autoTranslatePlatforms });
+      const result = await saveHotkeysToAPI(hotkeys, {});
 
       if (result.ok) {
         // Clear the dirty state for this section
@@ -776,9 +746,7 @@ export const HotkeysManager = () => {
     // Create export data including settings
     const exportData: ExportData = {
       hotkeys: hotkeys,
-      settings: {
-        autoTranslatePlatforms: autoTranslatePlatforms,
-      },
+      settings: {},
       exportedAt: new Date().toISOString(),
       version: "1.0",
     };
@@ -813,30 +781,16 @@ export const HotkeysManager = () => {
 
       // Handle both old format (just hotkeys array) and new format (with settings)
       const importedHotkeys = Array.isArray(importedData) ? importedData : importedData.hotkeys || [];
-      const importedSettings = Array.isArray(importedData)
-        ? ({} as HotkeySettings)
-        : ((importedData.settings || {}) as HotkeySettings);
 
       // Update local state
       setHotkeys(importedHotkeys);
-
-      // Update settings if provided
-      if (importedSettings.autoTranslatePlatforms !== undefined) {
-        setAutoTranslatePlatforms(importedSettings.autoTranslatePlatforms);
-      }
 
       // Check if any hotkey is disabled to determine global state
       const allEnabled = importedHotkeys.every((hotkey: Hotkey) => hotkey.active);
       setGlobalEnabled(allEnabled);
 
       // Save all imported data to API
-      const settingsToSave = {
-        autoTranslatePlatforms:
-          importedSettings.autoTranslatePlatforms !== undefined
-            ? importedSettings.autoTranslatePlatforms
-            : autoTranslatePlatforms,
-      };
-      const result = await saveHotkeysToAPI(importedHotkeys, settingsToSave);
+      const result = await saveHotkeysToAPI(importedHotkeys, {});
 
       if (!result.ok) {
         throw new Error(result.error || "Failed to save imported hotkeys");
