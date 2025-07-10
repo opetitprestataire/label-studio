@@ -13,8 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@humansignal/shad/components/ui/dialog";
-// @ts-ignore
-import { confirm } from "apps/labelstudio/src/components/Modal/Modal";
 
 import { HotkeySection } from "./Hotkeys/Section";
 import { ImportDialog } from "./Hotkeys/Import";
