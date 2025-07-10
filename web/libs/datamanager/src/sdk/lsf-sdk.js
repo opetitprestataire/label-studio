@@ -1,18 +1,3 @@
-/** @typedef {import("../stores/Tasks").TaskModel} Task */
-/** @typedef {import("label-studio").LabelStudio} LabelStudio */
-/** @typedef {import("./dm-sdk").DataManager} DataManager */
-
-/** @typedef {{
- * user: Dict
- * config: string,
- * interfaces: string[],
- * task: Task
- * labelStream: boolean,
- * interfacesModifier: function,
- * messages: Dict<string|Function>
- * }} LSFOptions */
-
-import React from "react";
 import {
   FF_DEV_1752,
   FF_DEV_2186,
@@ -53,7 +38,6 @@ const resolveLabelStudio = () => {
     return (LabelStudioDM = window.LabelStudio);
   }
 };
-
 
 // Support portal URL constants used to construct error reporting links
 // These are used in showOperationToast() to create support links with request IDs
@@ -610,7 +594,7 @@ export class LSFWrapper {
       const requestId = result?.$meta?.headers?.get("x-ls-request-id");
       const supportUrl = requestId ? `${SUPPORT_URL}?${SUPPORT_URL_REQUEST_ID_PARAM}=${requestId}` : SUPPORT_URL;
 
-      this.datamanager.invoke("toast", { 
+      this.datamanager.invoke("toast", {
         message: (
           <span>
             {errorAction}, please try again or{" "}
@@ -622,11 +606,11 @@ export class LSFWrapper {
               onClick={(e) => e.stopPropagation()}
             >
               contact our team
-            </a>
-            {" "}if it doesn't help.
+            </a>{" "}
+            if it doesn't help.
           </span>
-        ), 
-        type: "error" 
+        ),
+        type: "error",
       });
     }
   }
@@ -652,7 +636,7 @@ export class LSFWrapper {
     const status = result?.$meta?.status;
 
     this.showOperationToast(status, "Annotation saved successfully", "Annotation is not saved", result);
-    
+
     if (exitStream) return this.exitStream();
   };
 
@@ -677,7 +661,7 @@ export class LSFWrapper {
           body: serializedAnnotation,
         },
         // errors are displayed by "toast" event - we don't want to show blocking modal
-        { errorHandler: () => true }
+        { errorHandler: () => true },
       );
     });
     const status = result?.$meta?.status;
@@ -827,7 +811,7 @@ export class LSFWrapper {
           id === undefined ? "submitAnnotation" : "updateAnnotation",
           params,
           options,
-          { errorHandler: () => true }
+          { errorHandler: () => true },
         );
       },
       true,
@@ -984,7 +968,7 @@ export class LSFWrapper {
     if (!loadNext || this.datamanager.isExplorer) {
       await this.loadTask(taskID, currentAnnotation.pk, true);
     } else {
-        await this.loadTask();
+      await this.loadTask();
     }
 
     return result;
