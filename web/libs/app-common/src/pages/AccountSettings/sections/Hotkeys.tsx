@@ -112,7 +112,7 @@ export const HotkeysHeaderButtons = () => {
       </div>
 
       {/* Import Dialog */}
-      <ImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} onImport={handleImportHotkeys as any} />
+      <ImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} onImport={handleImportHotkeys} />
     </>
   );
 };
