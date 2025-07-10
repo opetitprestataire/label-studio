@@ -193,7 +193,7 @@ def heidi_tips(request):
     return HttpResponse(response.content, content_type='application/json')
 
 
-@extend_schema(methods=['GET'], exclude=True)
+@extend_schema(exclude=True)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def localfiles_data(request):

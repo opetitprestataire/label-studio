@@ -181,7 +181,7 @@ class UserAPI(viewsets.ModelViewSet):
     def get_queryset(self):
         return User.objects.filter(organizations=self.request.user.active_organization)
 
-    @extend_schema(methods=['delete', 'post'], exclude=True)
+    @extend_schema(exclude=True)
     @action(detail=True, methods=['delete', 'post'], permission_required=all_permissions.avatar_any)
     def avatar(self, request, pk):
         if request.method == 'POST':
