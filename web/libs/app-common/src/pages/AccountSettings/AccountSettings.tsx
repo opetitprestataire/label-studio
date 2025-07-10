@@ -41,7 +41,7 @@ const AccountSettingsSection = () => {
       <div className={contentClassName}>
         <Card key={currentSection.id}>
           <CardHeader>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-tight">
               <div className="flex justify-between items-center">
                 <CardTitle>{currentSection.title}</CardTitle>
                 {currentSection.id === "hotkeys" && (
