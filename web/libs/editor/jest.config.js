@@ -4,13 +4,13 @@ const tsconfig = require("../../tsconfig.base.json");
 module.exports = {
   bail: true,
   roots: ["<rootDir>/src"],
-  preset: "ts-jest",
+  preset: "../../jest.preset.js",
   setupFilesAfterEnv: ["./jest.setup.js"],
   testEnvironment: "jsdom",
   verbose: false,
   collectCoverageFrom: ["**/*.{js,jsx,ts,tsx}", "!**/*.d.ts", "!**/node_modules/**", "!**/examples/**"],
-  coverageDirectory: "coverage",
-  coverageReporters: ["json"],
+  coverageDirectory: "../../coverage/libs/editor",
+  // coverageReporters: ["json"],
   coverageThreshold: {
     global: {
       branches: 1,
@@ -62,6 +62,6 @@ module.exports = {
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: "<rootDir>/../../" }),
   },
   testPathIgnorePatterns: ["/node_modules/", "/e2e/"],
-  testRegex: "__tests__/.*.test.[tj]sx?",
+  // testRegex: "__tests__/.*.test.[tj]sx?",
   transformIgnorePatterns: ["node_modules/?!(nanoid|konva)"],
 };
