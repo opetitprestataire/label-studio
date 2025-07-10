@@ -139,7 +139,6 @@ export const useHotkeys = () => {
         customHotkeys[keyId] = {
           key: hotkey.key,
           active: hotkey.active,
-          // Include description to prevent data loss - matches original implementation
           ...(hotkey.description && { description: hotkey.description }),
         };
       });
