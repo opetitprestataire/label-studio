@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ToastType, useToast } from "@humansignal/ui";
 import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
+// @ts-ignore
 import { confirm } from "apps/labelstudio/src/components/Modal/Modal";
 import { DEFAULT_HOTKEYS } from "../sections/Hotkeys/defaults";
 
@@ -13,6 +14,7 @@ interface Hotkey {
   key: string;
   mac?: string;
   active: boolean;
+  description?: string; // Add description to maintain API compatibility
 }
 
 type HotkeySettings = {};
@@ -72,7 +74,10 @@ export const useHotkeys = () => {
             key: customSetting.key,
             active: customSetting.active,
             // If description is provided in custom settings, use it as label
-            ...(customSetting.description && { label: customSetting.description }),
+            ...(customSetting.description && {
+              label: customSetting.description,
+              description: customSetting.description,
+            }),
           };
         }
 
@@ -88,7 +93,7 @@ export const useHotkeys = () => {
     try {
       setIsLoading(true);
 
-      // Try to load from API first
+      // Use proper API endpoint name from the config
       const response = await api.callApi("hotkeys" as any);
 
       if (response && (response as ApiResponse).custom_hotkeys) {
@@ -125,8 +130,8 @@ export const useHotkeys = () => {
   // Save hotkeys to API function (handles both save and reset operations)
   const saveHotkeysToAPI = useCallback(
     async (currentHotkeys: Hotkey[], currentSettings: HotkeySettings): Promise<SaveResult> => {
-      // Convert current hotkeys to API format
-      const customHotkeys: Record<string, { key: string; active: boolean }> = {};
+      // Convert current hotkeys to API format - INCLUDE description to maintain API compatibility
+      const customHotkeys: Record<string, { key: string; active: boolean; description?: string }> = {};
 
       // Process all current hotkeys (if empty, this results in reset)
       currentHotkeys.forEach((hotkey: Hotkey) => {
@@ -134,6 +139,8 @@ export const useHotkeys = () => {
         customHotkeys[keyId] = {
           key: hotkey.key,
           active: hotkey.active,
+          // Include description to prevent data loss - matches original implementation
+          ...(hotkey.description && { description: hotkey.description }),
         };
       });
 
@@ -143,7 +150,7 @@ export const useHotkeys = () => {
       };
 
       try {
-        // Call the API to save/reset hotkeys and settings
+        // Use proper API endpoint name from the config
         const response = await api.callApi("updateHotkeys" as any, {
           body: requestBody,
         });
