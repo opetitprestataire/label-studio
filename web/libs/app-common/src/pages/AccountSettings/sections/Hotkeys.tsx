@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IconWarning, ToastType, useToast } from "@humansignal/ui";
 
 // Shadcn UI components
@@ -17,79 +17,13 @@ import {
 import { HotkeySection } from "./Hotkeys/Section";
 import { ImportDialog } from "./Hotkeys/Import";
 import { KeyboardKey } from "./Hotkeys/Key";
-import { DEFAULT_HOTKEYS, HOTKEY_SECTIONS } from "./Hotkeys/defaults";
+import type { Hotkey, Section, DirtyState, DuplicateConfirmDialog, ImportData } from "./Hotkeys/utils";
+import { HOTKEY_SECTIONS } from "./Hotkeys/defaults";
 import styles from "../AccountSettings.module.scss";
 import { useHotkeys } from "../hooks/useHotkeys";
 
-// Type definitions
-interface Hotkey {
-  id: string;
-  section: string;
-  element: string;
-  label: string;
-  key: string;
-  mac?: string;
-  active: boolean;
-}
-
-interface Section {
-  id: string;
-  title: string;
-  description?: string;
-}
-
-interface DirtyState {
-  [sectionId: string]: boolean;
-}
-
-interface DuplicateConfirmDialog {
-  open: boolean;
-  hotkeyId: string | null;
-  newKey: string | null;
-  conflictingHotkeys: Hotkey[];
-}
-
-type HotkeySettings = {};
-
-interface ExportData {
-  hotkeys: Hotkey[];
-  settings: HotkeySettings;
-  exportedAt: string;
-  version: string;
-}
-
-interface ImportData {
-  hotkeys?: Hotkey[];
-  settings?: HotkeySettings;
-}
-
-interface SaveResult {
-  ok: boolean;
-  error?: string;
-  data?: any;
-}
-
-interface ApiResponse {
-  custom_hotkeys?: Record<string, { key: string; active: boolean; description?: string }>;
-  hotkey_settings?: HotkeySettings;
-  error?: string;
-}
-
-// Extend window type for global properties
-declare global {
-  interface Window {
-    DEFAULT_HOTKEYS: Hotkey[];
-  }
-}
-
 // Type the imported defaults
-const typedDefaultHotkeys: Hotkey[] = DEFAULT_HOTKEYS.map((hotkey: any) => ({
-  ...hotkey,
-  id: String(hotkey.id), // Convert numeric id to string
-}));
 const typedHotkeySections = HOTKEY_SECTIONS as Section[];
-
-window.DEFAULT_HOTKEYS = typedDefaultHotkeys;
 
 export const HotkeysHeaderButtons = () => {
   const [importDialogOpen, setImportDialogOpen] = useState<boolean>(false);
@@ -118,9 +52,7 @@ export const HotkeysHeaderButtons = () => {
 export const HotkeysManager = () => {
   const toast = useToast();
   const [editingHotkeyId, setEditingHotkeyId] = useState<string | null>(null);
-  const [globalEnabled, setGlobalEnabled] = useState<boolean>(true);
   const [dirtyState, setDirtyState] = useState<DirtyState>({});
-  const [importDialogOpen, setImportDialogOpen] = useState<boolean>(false);
   const [duplicateConfirmDialog, setDuplicateConfirmDialog] = useState<DuplicateConfirmDialog>({
     open: false,
     hotkeyId: null,
@@ -135,12 +67,6 @@ export const HotkeysManager = () => {
   const getGlobalDuplicates = (hotkeyId: string, newKey: string): Hotkey[] => {
     return hotkeys.filter((h: Hotkey) => h.id !== hotkeyId && h.key === newKey);
   };
-
-  // Update globalEnabled state when hotkeys change
-  useEffect(() => {
-    const allEnabled = hotkeys.every((hotkey: Hotkey) => hotkey.active);
-    setGlobalEnabled(allEnabled);
-  }, [hotkeys]);
 
   // Handle toggling a single hotkey
   const handleToggleHotkey = (hotkeyId: string) => {
@@ -162,64 +88,7 @@ export const HotkeysManager = () => {
         [hotkey.section]: true,
       });
     }
-
-    // Update global enabled state
-    const allEnabled = updatedHotkeys.every((hotkey: Hotkey) => hotkey.active);
-    setGlobalEnabled(allEnabled);
   };
-
-  // Handle resetting all hotkeys to defaults (enhanced version with dirty state management)
-  const handleResetToDefaults = async () => {
-    const hasChanges = hasUnsavedChanges || dirtyState.settings;
-    const confirmMessage = hasChanges
-      ? "Are you sure you want to reset all hotkeys and settings to their default values? This will discard all unsaved changes and cannot be undone."
-      : "Are you sure you want to reset all hotkeys and settings to their default values? This cannot be undone.";
-
-    if (!confirm(confirmMessage)) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      // Update local state to defaults
-      setHotkeys([...typedDefaultHotkeys]);
-      setGlobalEnabled(true);
-      setDirtyState({});
-
-      // Reset hotkeys to defaults in the backend API (sets custom_hotkeys to {})
-      const result = await saveHotkeysToAPI([], {});
-
-      if (result.ok) {
-        if (toast) {
-          toast.show({
-            message: "All hotkeys and settings have been reset to defaults and saved",
-            type: ToastType.info,
-          });
-        }
-      } else {
-        if (toast) {
-          toast.show({
-            message: `Failed to save reset hotkeys: ${result.error || "Unknown error"}`,
-            type: ToastType.error,
-          });
-        }
-      }
-    } catch (error: unknown) {
-      if (toast) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
-        toast.show({
-          message: `Error resetting hotkeys: ${errorMessage}`,
-          type: ToastType.error,
-        });
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Check if any section has unsaved changes
-  const hasUnsavedChanges = Object.keys(dirtyState).some((key: string) => key !== "settings");
 
   // Helper function to get section title by ID
   const getSectionTitle = (sectionId: string): string => {
@@ -365,10 +234,6 @@ export const HotkeysManager = () => {
       // Update local state
       setHotkeys(importedHotkeys);
 
-      // Check if any hotkey is disabled to determine global state
-      const allEnabled = importedHotkeys.every((hotkey: Hotkey) => hotkey.active);
-      setGlobalEnabled(allEnabled);
-
       // Save all imported data to API
       const result = await saveHotkeysToAPI(importedHotkeys, {});
 
@@ -452,9 +317,6 @@ export const HotkeysManager = () => {
           </div>
         )}
       </div>
-
-      {/* Import Dialog */}
-      <ImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} onImport={handleImportHotkeys} />
 
       {/* Duplicate Confirmation Dialog */}
       <Dialog open={duplicateConfirmDialog.open} onOpenChange={handleCancelDuplicate}>

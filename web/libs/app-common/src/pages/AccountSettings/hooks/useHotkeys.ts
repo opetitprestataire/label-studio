@@ -3,51 +3,18 @@ import { ToastType, useToast } from "@humansignal/ui";
 import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
 // @ts-ignore
 import { confirm } from "apps/labelstudio/src/components/Modal/Modal";
-import { DEFAULT_HOTKEYS } from "../sections/Hotkeys/defaults";
-
-// Types
-interface Hotkey {
-  id: string;
-  section: string;
-  element: string;
-  label: string;
-  key: string;
-  mac?: string;
-  active: boolean;
-  description?: string; // Add description to maintain API compatibility
-}
-
-type HotkeySettings = {};
-
-interface ExportData {
-  hotkeys: Hotkey[];
-  settings: HotkeySettings;
-  exportedAt: string;
-  version: string;
-}
-
-interface ImportData {
-  hotkeys?: Hotkey[];
-  settings?: HotkeySettings;
-}
-
-interface SaveResult {
-  ok: boolean;
-  error?: string;
-  data?: any;
-}
-
-interface ApiResponse {
-  custom_hotkeys?: Record<string, { key: string; active: boolean; description?: string }>;
-  hotkey_settings?: HotkeySettings;
-  error?: string;
-}
+import {
+  getTypedDefaultHotkeys,
+  type Hotkey,
+  type HotkeySettings,
+  type ExportData,
+  type ImportData,
+  type SaveResult,
+  type ApiResponse,
+} from "../sections/Hotkeys/utils";
 
 // Type the imported defaults and convert numeric ids to strings
-const typedDefaultHotkeys: Hotkey[] = DEFAULT_HOTKEYS.map((hotkey: any) => ({
-  ...hotkey,
-  id: String(hotkey.id), // Convert numeric id to string
-}));
+const typedDefaultHotkeys: Hotkey[] = getTypedDefaultHotkeys();
 
 export const useHotkeys = () => {
   const toast = useToast();
@@ -73,9 +40,8 @@ export const useHotkeys = () => {
             ...hotkey,
             key: customSetting.key,
             active: customSetting.active,
-            // If description is provided in custom settings, use it as label
+            // Preserve the original label, only update description if provided
             ...(customSetting.description && {
-              label: customSetting.description,
               description: customSetting.description,
             }),
           };
