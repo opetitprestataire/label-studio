@@ -54,6 +54,13 @@ const resolveLabelStudio = () => {
   }
 };
 
+
+// Support portal URL constants used to construct error reporting links
+// These are used in showOperationToast() to create support links with request IDs
+// for better error tracking and customer support
+const SUPPORT_URL = "https://support.humansignal.com/hc/en-us/requests/new";
+const SUPPORT_URL_REQUEST_ID_PARAM = "tf_37934448633869"; // request_id field ID in ZD
+
 export class LSFWrapper {
   /** @type {HTMLElement} */
   root = null;
@@ -601,19 +608,23 @@ export class LSFWrapper {
       this.datamanager.invoke("toast", { message: successMessage, type: "info" });
     } else if (status !== undefined) {
       const requestId = result?.$meta?.headers?.get("x-ls-request-id");
-      const supportUrl = requestId ? "https://support.humansignal.com/hc/en-us/requests/new?tf_37934448633869=" + requestId : "https://support.humansignal.com/hc/en-us/requests/new";
+      const supportUrl = requestId ? `${SUPPORT_URL}?${SUPPORT_URL_REQUEST_ID_PARAM}=${requestId}` : SUPPORT_URL;
 
       this.datamanager.invoke("toast", { 
-        message: React.createElement("span", null,
-          `${errorAction}, please try again or `,
-          React.createElement("a", {
-            href: supportUrl,
-            target: "_blank",
-            rel: "noopener noreferrer",
-            style: { color: "inherit", textDecoration: "underline" },
-            onClick: (e) => e.stopPropagation()
-          }, "contact our team"),
-          " if it doesn't help."
+        message: (
+          <span>
+            {errorAction}, please try again or{" "}
+            <a
+              href={supportUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "inherit", textDecoration: "underline" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              contact our team
+            </a>
+            {" "}if it doesn't help.
+          </span>
         ), 
         type: "error" 
       });
@@ -677,7 +688,7 @@ export class LSFWrapper {
 
     if (exitStream) return this.exitStream();
 
-    if (status >= 400 && status < 600) {
+    if (status >= 400) {
       return;
     }
 
@@ -965,7 +976,7 @@ export class LSFWrapper {
     }
 
     this.setLoading(false);
-    if (result?.$meta?.status >= 400 && result?.$meta?.status < 600) {
+    if (result?.$meta?.status >= 400) {
       // don't reload the task on error to avoid losing the user's changes
       return result;
     }
