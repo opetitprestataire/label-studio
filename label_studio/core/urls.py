@@ -81,7 +81,9 @@ urlpatterns = [
     # Legacy swagger URLs redirect to new drf-spectacular URLs
     re_path(r'^swagger\.json$', lambda request: HttpResponseRedirect('/docs/api/schema/json/'), name='schema-json'),
     re_path(r'^swagger\.yaml$', lambda request: HttpResponseRedirect('/docs/api/schema/yaml/'), name='schema-yaml'),
-    re_path(r'^swagger/$', lambda request: HttpResponseRedirect('/docs/api/schema/swagger-ui/'), name='schema-swagger-ui'),
+    re_path(
+        r'^swagger/$', lambda request: HttpResponseRedirect('/docs/api/schema/swagger-ui/'), name='schema-swagger-ui'
+    ),
     # Again for legacy reasons, docs/api?format=openapi redirects to docs/api/schema/json/
     path(
         'docs/api/',
