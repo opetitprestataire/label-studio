@@ -230,12 +230,13 @@ export const HotkeysManager = () => {
 
       // Handle both old format (just hotkeys array) and new format (with settings)
       const importedHotkeys = Array.isArray(importedData) ? importedData : importedData.hotkeys || [];
+      const importedSettings = Array.isArray(importedData) ? {} : importedData.settings || {};
 
       // Update local state
       setHotkeys(importedHotkeys);
 
-      // Save all imported data to API
-      const result = await saveHotkeysToAPI(importedHotkeys, {});
+      // Save all imported data to API (including settings)
+      const result = await saveHotkeysToAPI(importedHotkeys, importedSettings);
 
       if (!result.ok) {
         throw new Error(result.error || "Failed to save imported hotkeys");
