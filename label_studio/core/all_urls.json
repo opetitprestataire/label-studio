@@ -2004,31 +2004,31 @@
         "decorators": ""
     },
     {
-        "url": "/api/schema/",
+        "url": "/docs/api/schema/",
         "module": "drf_spectacular.views.SpectacularAPIView",
         "name": "schema",
         "decorators": ""
     },
     {
-        "url": "/api/schema/swagger-ui/",
+        "url": "/docs/api/schema/swagger-ui/",
         "module": "drf_spectacular.views.SpectacularSwaggerView",
         "name": "swagger-ui",
         "decorators": ""
     },
     {
-        "url": "/api/schema/redoc/",
+        "url": "/docs/api/schema/redoc/",
         "module": "drf_spectacular.views.SpectacularRedocView",
         "name": "redoc",
         "decorators": ""
     },
     {
-        "url": "/api/schema/json/",
+        "url": "/docs/api/schema/json/",
         "module": "drf_spectacular.views.SpectacularJSONAPIView",
         "name": "schema-json",
         "decorators": ""
     },
     {
-        "url": "/api/schema/yaml/",
+        "url": "/docs/api/schema/yaml/",
         "module": "drf_spectacular.views.SpectacularYAMLAPIView",
         "name": "schema-yaml",
         "decorators": ""
