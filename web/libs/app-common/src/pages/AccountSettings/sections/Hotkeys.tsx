@@ -51,7 +51,7 @@ interface DuplicateConfirmDialog {
 }
 
 interface HotkeySettings {
-  autoTranslatePlatforms: boolean;
+  autoTranslatePlatforms?: boolean;
 }
 
 interface ExportData {
@@ -267,8 +267,9 @@ export const HotkeysHeaderButtons = () => {
                 type: ToastType.info,
               });
             }
-            // Reload the page to reflect changes
-            window.location.reload();
+            // Update local state to reflect the reset
+            setHotkeys([...typedDefaultHotkeys]);
+            setAutoTranslatePlatforms(true);
           } else {
             if (toast) {
               toast.show({
@@ -453,6 +454,7 @@ export const HotkeysManager = () => {
           data: response,
         };
       } catch (error: unknown) {
+        const isReset = currentHotkeys.length === 0;
         const operation = isReset ? "resetting" : "saving";
         console.error(`Error ${operation} hotkeys:`, error);
 
@@ -811,7 +813,9 @@ export const HotkeysManager = () => {
 
       // Handle both old format (just hotkeys array) and new format (with settings)
       const importedHotkeys = Array.isArray(importedData) ? importedData : importedData.hotkeys || [];
-      const importedSettings = Array.isArray(importedData) ? ({} as HotkeySettings) : importedData.settings || {};
+      const importedSettings = Array.isArray(importedData)
+        ? ({} as HotkeySettings)
+        : ((importedData.settings || {}) as HotkeySettings);
 
       // Update local state
       setHotkeys(importedHotkeys);
