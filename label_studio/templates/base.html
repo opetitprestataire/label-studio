@@ -208,6 +208,7 @@
 
 {% block bottomjs %}
   <script src="{{settings.HOSTNAME}}{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'custom_dropdown/index.js' %}"></script>
   <script nonce="{{request.csp_nonce}}">
 
     // CSRF
