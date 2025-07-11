@@ -8,7 +8,16 @@ module.exports = {
   setupFilesAfterEnv: ["./jest.setup.js"],
   testEnvironment: "jsdom",
   verbose: false,
-  collectCoverageFrom: ["**/*.{js,jsx,ts,tsx}", "!**/*.d.ts", "!**/node_modules/**", "!**/examples/**", "!**/SplitChannel.ts"],
+  collectCoverageFrom: [
+    "src/**/*.{js,jsx,ts,tsx}",
+    // @todo they actually don't work, so we had to add `istanbul ignore` directive to some files
+    "!**/__mocks__/**",
+    "!**/*.d.ts",
+    "!**/node_modules/**",
+    "!**/examples/**",
+    // it breaks internal coverage counters because of dynamic imports
+    "!src/**/SplitChannel.ts",
+  ],
   coverageDirectory: "../../coverage",
   coverageReporters: ["json", "lcov", "text"],
   coverageThreshold: {
