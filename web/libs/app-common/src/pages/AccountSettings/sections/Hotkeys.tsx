@@ -18,6 +18,7 @@ import { HotkeySection } from "./Hotkeys/Section";
 import { ImportDialog } from "./Hotkeys/Import";
 import { KeyboardKey } from "./Hotkeys/Key";
 import type { Hotkey, Section, DirtyState, DuplicateConfirmDialog, ImportData } from "./Hotkeys/utils";
+// @ts-ignore
 import { HOTKEY_SECTIONS } from "./Hotkeys/defaults";
 import styles from "../AccountSettings.module.scss";
 import { useHotkeys } from "../hooks/useHotkeys";

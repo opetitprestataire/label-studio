@@ -10,6 +10,7 @@ export interface Hotkey {
   mac?: string;
   active: boolean;
   description?: string;
+  subgroup?: string;
 }
 
 export interface Section {
