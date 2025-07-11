@@ -23,7 +23,7 @@ from core.utils.common import (
     string_is_url,
     temporary_disconnect_list_signal,
 )
-from core.utils.db import fast_first, batch_delete
+from core.utils.db import batch_delete, fast_first
 from core.utils.params import get_env
 from data_import.models import FileUpload
 from data_manager.managers import PreparedTaskManager, TaskManager

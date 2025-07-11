@@ -1,10 +1,10 @@
+import itertools
 import logging
 import time
 from typing import Optional, TypeVar
 
 from django.db import OperationalError, models, transaction
 from django.db.models import Model, QuerySet, Subquery
-import itertools
 
 logger = logging.getLogger(__name__)
 
@@ -88,12 +88,20 @@ def batch_delete(queryset, batch_size=500):
     total_deleted = 0
     # Use iterator() to avoid loading all objects into memory at once
     pks_to_delete = queryset.values_list('pk', flat=True).iterator(chunk_size=batch_size)
-    
+
     # Delete in batches
-    while batch := list(itertools.islice(pks_to_delete, batch_size)):
+    while True:
+        # Get the next batch of primary keys
+        batch_iterator = itertools.islice(pks_to_delete, batch_size)
+        batch = list(batch_iterator)
+
+        # If no more items to process, we're done
+        if not batch:
+            break
+
         # Delete the batch in a transaction
         with transaction.atomic():
             deleted = queryset.model.objects.filter(pk__in=batch).delete()[0]
             total_deleted += deleted
-            
+
     return total_deleted
