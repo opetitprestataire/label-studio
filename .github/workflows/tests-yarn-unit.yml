@@ -41,7 +41,6 @@ jobs:
         working-directory: ${{ env.FRONTEND_MONOREPO_DIR }}
         env:
           NODE_ENV: "development"
-          COLLECT_COVERAGE: "1"
         run: |
           yarn test:unit:coverage
 
