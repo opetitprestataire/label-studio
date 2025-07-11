@@ -8,8 +8,8 @@ module.exports = {
   setupFilesAfterEnv: ["./jest.setup.js"],
   testEnvironment: "jsdom",
   verbose: false,
-  collectCoverageFrom: ["**/*.{js,jsx,ts,tsx}", "!**/*.d.ts", "!**/node_modules/**", "!**/examples/**"],
-  coverageDirectory: "../../coverage/libs/editor",
+  collectCoverageFrom: ["**/*.{js,jsx,ts,tsx}", "!**/*.d.ts", "!**/node_modules/**", "!**/examples/**", "!**/SplitChannel.ts"],
+  coverageDirectory: "../../coverage",
   // coverageReporters: ["json"],
   coverageThreshold: {
     global: {

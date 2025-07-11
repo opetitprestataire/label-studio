@@ -43,11 +43,11 @@ jobs:
           NODE_ENV: "development"
           COLLECT_COVERAGE: "1"
         run: |
-          yarn test:unit
+          yarn test:unit:coverage
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: unit coverage
-          path: web
+          path: web/coverage
