@@ -4,6 +4,7 @@ from typing import Optional, TypeVar
 
 from django.db import OperationalError, models, transaction
 from django.db.models import Model, QuerySet, Subquery
+import itertools
 
 logger = logging.getLogger(__name__)
 
@@ -71,3 +72,28 @@ def batch_update_with_retry(queryset, batch_size=500, max_retries=3, **update_fi
         else:
             logger.error(f'Failed to update batch after {max_retries} retries. ' f'Batch: {i}-{i+len(batch_ids)}')
             raise last_error
+
+
+def batch_delete(queryset, batch_size=500):
+    """
+    Delete objects in batches to minimize memory usage and transaction size.
+
+    Args:
+        queryset: The queryset to delete
+        batch_size: Number of objects to delete in each batch
+
+    Returns:
+        int: Total number of deleted objects
+    """
+    total_deleted = 0
+    # Use iterator() to avoid loading all objects into memory at once
+    pks_to_delete = queryset.values_list('pk', flat=True).iterator(chunk_size=batch_size)
+    
+    # Delete in batches
+    while batch := list(itertools.islice(pks_to_delete, batch_size)):
+        # Delete the batch in a transaction
+        with transaction.atomic():
+            deleted = queryset.model.objects.filter(pk__in=batch).delete()[0]
+            total_deleted += deleted
+            
+    return total_deleted
