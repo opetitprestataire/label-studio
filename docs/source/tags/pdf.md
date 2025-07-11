@@ -29,7 +29,7 @@ You can use the following control tags:
 - [TextArea](textarea)
 
 !!! error Enterprise
-    You can also use the PDF tag with [Prompts](https://docs.humansignal.com/guide/prompts_overview) to perform auto-labeling work such as PDF summarization and classification. 
+    You can also use the PDF tag with [Prompts](https://docs.humansignal.com/guide/prompts_overview) to perform auto-labeling work such as PDF summarization, classification, information extraction, and document intelligence. 
 
 ### Example
 
