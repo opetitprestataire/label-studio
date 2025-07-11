@@ -10,7 +10,7 @@ module.exports = {
   verbose: false,
   collectCoverageFrom: ["**/*.{js,jsx,ts,tsx}", "!**/*.d.ts", "!**/node_modules/**", "!**/examples/**", "!**/SplitChannel.ts"],
   coverageDirectory: "../../coverage",
-  // coverageReporters: ["json"],
+  coverageReporters: ["json", "lcov", "text"],
   coverageThreshold: {
     global: {
       branches: 1,
