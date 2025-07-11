@@ -171,7 +171,7 @@ const HotkeyHelpModal = ({ sectionsToShow }: HotkeyHelpModalProps) => {
         </div>
 
         <div className="px-wide py-wide overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-border-bold scrollbar-track-transparent">
-          <div className="space-y-wide">{sectionsToShow.map(renderSection)}</div>
+          <div className="space-y-wide">{sectionsToShow.map((sectionId) => renderSection(sectionId))}</div>
         </div>
       </div>
     ),

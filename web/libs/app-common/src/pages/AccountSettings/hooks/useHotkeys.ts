@@ -19,6 +19,7 @@ const typedDefaultHotkeys: Hotkey[] = getTypedDefaultHotkeys();
 export const useHotkeys = () => {
   const toast = useToast();
   const [hotkeys, setHotkeys] = useState<Hotkey[]>([]);
+  const [hotkeySettings, setHotkeySettings] = useState<HotkeySettings>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const api = useAPI();
 
@@ -67,11 +68,15 @@ export const useHotkeys = () => {
         const apiResponse = response as ApiResponse;
         const updatedHotkeys = updateHotkeysWithCustomSettings(typedDefaultHotkeys, apiResponse.custom_hotkeys!);
         setHotkeys(updatedHotkeys);
+        // Store current settings from API response
+        setHotkeySettings(apiResponse.hotkey_settings || {});
       } else {
         // Fallback to window.APP_SETTINGS
         const customHotkeys = window.APP_SETTINGS?.user?.customHotkeys || {};
         const updatedHotkeys = updateHotkeysWithCustomSettings(typedDefaultHotkeys, customHotkeys);
         setHotkeys(updatedHotkeys);
+        // No settings available in fallback
+        setHotkeySettings({});
       }
     } catch (error) {
       console.error("Error loading hotkeys from API:", error);
@@ -80,6 +85,8 @@ export const useHotkeys = () => {
       const customHotkeys = window.APP_SETTINGS?.user?.customHotkeys || {};
       const updatedHotkeys = updateHotkeysWithCustomSettings(typedDefaultHotkeys, customHotkeys);
       setHotkeys(updatedHotkeys);
+      // No settings available in fallback
+      setHotkeySettings({});
 
       // Show non-blocking error notification
       if (toast) {
@@ -214,10 +221,10 @@ export const useHotkeys = () => {
 
   // Handle exporting hotkeys
   const handleExportHotkeys = useCallback(() => {
-    // Create export data including settings
+    // Create export data including current settings
     const exportData: ExportData = {
       hotkeys: hotkeys,
-      settings: {},
+      settings: hotkeySettings,
       exportedAt: new Date().toISOString(),
       version: "1.0",
     };
@@ -243,7 +250,7 @@ export const useHotkeys = () => {
     if (toast) {
       toast.show({ message: "Hotkeys exported successfully", type: ToastType.info });
     }
-  }, [hotkeys, toast]);
+  }, [hotkeys, hotkeySettings, toast]);
 
   // Handle importing hotkeys
   const handleImportHotkeys = useCallback(
@@ -253,9 +260,10 @@ export const useHotkeys = () => {
 
         // Handle both old format (just hotkeys array) and new format (with settings)
         const importedHotkeys = Array.isArray(importedData) ? importedData : importedData.hotkeys || [];
+        const importedSettings: HotkeySettings = Array.isArray(importedData) ? {} : importedData.settings || {};
 
         // Save all imported data to API
-        const result = await saveHotkeysToAPI(importedHotkeys, {});
+        const result = await saveHotkeysToAPI(importedHotkeys, importedSettings);
 
         if (!result.ok) {
           throw new Error(result.error || "Failed to save imported hotkeys");
@@ -290,6 +298,8 @@ export const useHotkeys = () => {
   return {
     hotkeys,
     setHotkeys,
+    hotkeySettings,
+    setHotkeySettings,
     isLoading,
     setIsLoading,
     loadHotkeysFromAPI,
