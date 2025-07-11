@@ -50,4 +50,4 @@ jobs:
         if: always()
         with:
           name: unit coverage
-          path: web/libs/editor/coverage
+          path: web
