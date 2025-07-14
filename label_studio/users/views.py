@@ -91,8 +91,9 @@ def user_signup(request):
                     "audience": f"https://{auth0_domain}/api/v2/",
                 },
             )
+            # In case of API failure, render the page with error msg
             if res.status_code != 200:
-                user_form.add_error(None, "Something Went Wrong")
+                user_form.add_error(None, "Unable to process your data")
                 return render(
                     request,
                     "users/new-ui/user_signup.html",
@@ -117,20 +118,22 @@ def user_signup(request):
                 headers={"Content-Type": "application/json", "Authorization": f"Bearer {access_token}"},
                 json={"email": user_data.get("email"), "password": user_data.get("password"), "connection": auth0_db},
             )
+            
+            # In case of API failure, render the page with error msg
             if res.status_code != 201:
                 user_form.add_error(None, "Something Went Wrong")
                 return render(
-        request,
-        "users/new-ui/user_signup.html",
-        {
-            "user_form": user_form,
-            "organization_form": organization_form,
-            "next": quote(next_page),
-            "token": token,
-            "found_us_options": forms.FOUND_US_OPTIONS,
-            "elaborate": forms.FOUND_US_ELABORATE,
-        },
-    )
+                    request,
+                    "users/new-ui/user_signup.html",
+                    {
+                        "user_form": user_form,
+                        "organization_form": organization_form,
+                        "next": quote(next_page),
+                        "token": token,
+                        "found_us_options": forms.FOUND_US_OPTIONS,
+                        "elaborate": forms.FOUND_US_ELABORATE,
+                    },
+                )
 
             redirect_response = proceed_registration(request, user_form, organization_form, next_page)
             if redirect_response:
