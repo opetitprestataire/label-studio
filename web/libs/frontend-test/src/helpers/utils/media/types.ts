@@ -11,6 +11,7 @@ export interface ViewWithMedia {
 }
 
 export interface MediaView {
+  _bufferingIndicatorSelector: string;
   bufferingIndicator: Cypress.Chainable<JQuery<HTMLElement>>;
   hasBuffering(): void;
   hasNoBuffering(): void;

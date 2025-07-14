@@ -87,3 +87,63 @@ export const videoAudioParagraphsAnnotations = [
     origin: "manual",
   },
 ];
+
+export const fullOpossumSnowData = {
+  url: "/public/files/opossum_snow.mp4",
+  text: [
+    {
+      start: 5.528639507357505,
+      end: 6.70534554273317,
+      text: "Mahna Mahna",
+      author: "Mahna Mahna",
+    },
+    {
+      start: 8.202614379084968,
+      end: 9.281045751633988,
+      text: "Mahna Mahna",
+      author: "Mahna Mahna",
+    },
+    {
+      start: 10.898692810457517,
+      end: 11.998910675381264,
+      text: "Mahna Mahna",
+      author: "Mahna Mahna",
+    },
+    {
+      start: 17.467320261437912,
+      end: 18.567538126361658,
+      text: "Mahna Mahna",
+      author: "Mahna Mahna",
+    },
+    {
+      start: 20.21786492374728,
+      end: 21.045751633986928,
+      text: "Mahna Mahna",
+      author: "Mahna Mahna",
+    },
+    {
+      start: 22.875816993464056,
+      end: 23.69281045751634,
+      text: "Mahna Mahna",
+      author: "Mahna Mahna",
+    },
+    {
+      start: 34.869281045751634,
+      end: 35.55555555555556,
+      text: "Mahna Mahna",
+      author: "Mahna Mahna",
+    },
+    {
+      start: 37.48793583224401,
+      end: 38.413861758169936,
+      text: "Mahna Mahna",
+      author: "Mahna Mahna",
+    },
+    {
+      start: 40.12410140958606,
+      end: 41.2569990130719,
+      text: "Mahna Mahna",
+      author: "Mahna Mahna",
+    },
+  ],
+};

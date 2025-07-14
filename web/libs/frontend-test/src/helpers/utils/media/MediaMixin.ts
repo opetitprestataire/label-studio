@@ -4,8 +4,9 @@ export function withMedia<T extends new (...args: any[]) => ViewWithMedia>(
   Base: T,
 ): T & (new (...args: any[]) => MediaView) {
   return class extends Base implements MediaView {
+    _bufferingIndicatorSelector = ".lsf-timeline-controls__buffering";
     get bufferingIndicator() {
-      return this.root.get(".lsf-timeline-controls__buffering");
+      return this.root.get(this._bufferingIndicatorSelector);
     }
     /**
      * Check if Tag is in buffering state

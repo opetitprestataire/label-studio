@@ -1,9 +1,14 @@
+type RequestControls = {
+  releaseRequest: () => void;
+  rejectRequest: () => void;
+};
+
 /**
  * Network throttling utility for testing buffering scenarios
  */
 export class Network {
   private static activeThrottles = new Map<string, () => void>();
-  private static controlledDelays = new Map<string, { resolveRequest: () => void; rejectRequest: () => void }>();
+  private static controlledDelays = new Map<string, RequestControls>();
 
   /**
    * Disable browser cache (equivalent to DevTools "Disable Cache" checkbox)
@@ -46,8 +51,8 @@ export class Network {
         middleware: true,
       },
       (req) => {
-        req.reply({
-          throttleKbps: throttleKbps,
+        req.on("response", (res) => {
+          res.setThrottle(throttleKbps);
         });
       },
     ).as(alias);
@@ -75,8 +80,9 @@ export class Network {
         middleware: true,
       },
       (req) => {
-        req.reply({
-          delay: delayMs,
+        req.on("response", (res) => {
+          // Wait for delay in milliseconds before sending the response to the client.
+          res.setDelay(delayMs);
         });
       },
     ).as(alias);
@@ -127,7 +133,7 @@ export class Network {
       },
     ).as(alias);
 
-    const controls = {
+    const controls: RequestControls = {
       releaseRequest: () => cy.wait(0).then(() => resolveRequest()),
       rejectRequest: () => cy.wait(0).then(() => rejectRequest()),
     };

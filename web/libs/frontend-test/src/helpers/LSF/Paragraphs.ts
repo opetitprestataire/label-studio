@@ -20,6 +20,19 @@ class ParagraphsHelper extends withMedia(
     get mediaElement() {
       return this.root.get("audio[controls]");
     }
+
+    hasPhrasePlaying(idx: number) {
+      this.root
+        .find(`[data-testid="phrase:${idx}"]`)
+        .find("button[aria-label]")
+        .should("have.attr", "aria-label", "pause");
+    }
+    hasNoPhrasePlaying(idx: number) {
+      this.root
+        .find(`[data-testid="phrase:${idx}"]`)
+        .find("button[aria-label]")
+        .should("have.attr", "aria-label", "play");
+    }
   },
 ) {}
 

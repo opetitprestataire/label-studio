@@ -126,12 +126,14 @@ class AudioViewHelper extends withMedia(
       cy.wait(TWO_FRAMES_TIMEOUT);
     }
 
+    _playButtonSelector = '[data-testid="playback-button:play"]';
     get playButton() {
-      return this.root.find(`[data-testid="playback-button:play"]`);
+      return this.root.find(this._playButtonSelector);
     }
 
+    _pauseButtonSelector = '[data-testid="playback-button:pause"]';
     get pauseButton() {
-      return this.root.find(`[data-testid="playback-button:pause"]`);
+      return this.root.find(this._pauseButtonSelector);
     }
 
     seekCurrentTimebox(to: number) {

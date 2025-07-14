@@ -40,6 +40,10 @@ class VideoViewHelper extends withMedia(
       return this.root.get(".lsf-video-canvas");
     }
 
+    get framesControl() {
+      return this.root.find(".lsf-frames-control");
+    }
+
     get timelineContainer() {
       return this.root.get(".lsf-video-segmentation__timeline");
     }
@@ -221,6 +225,20 @@ class VideoViewHelper extends withMedia(
         withHidden: [".konvajs-content"],
         threshold,
       });
+    }
+
+    getCurrentFrame() {
+      return this.framesControl.invoke("text").then((text) => {
+        const match = text.match(/(\d+) of/);
+        if (match) {
+          return Number.parseInt(match[1], 10);
+        }
+        throw new Error("Current frame number not found in frames control text");
+      });
+    }
+
+    hasCurrentFrame(frameNumber: number) {
+      this.framesControl.should("have.string", `${frameNumber.toString()} of `);
     }
   },
 ) {}
