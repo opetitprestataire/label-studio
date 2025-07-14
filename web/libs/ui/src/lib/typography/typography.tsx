@@ -52,13 +52,13 @@ type TypographyProps<V extends Variant = Variant> = {
   fontStyle?: "normal" | "italic";
   style?: React.CSSProperties;
   children: React.ReactNode;
-};
+} & Omit<React.HTMLAttributes<HTMLElement>, "style" | "className" | "children">;
 
 const DEFAULT_TAG = "p";
 const DEFAULT_CLASS = "typography-body-medium";
 
 const Typography = forwardRef<HTMLElement, TypographyProps>(
-  ({ variant = "body", size = SIZES.MEDIUM, as, className, children, fontStyle = "normal", style }, ref) => {
+  ({ variant = "body", size = SIZES.MEDIUM, as, className, children, fontStyle = "normal", style, ...rest }, ref) => {
     const variantConfig = config[variant];
     const tagMap = variantConfig?.tag;
     const tag = tagMap && size in tagMap ? tagMap[size as keyof typeof tagMap] : DEFAULT_TAG;
@@ -67,7 +67,12 @@ const Typography = forwardRef<HTMLElement, TypographyProps>(
     const Tag = (as || tag) as React.ElementType;
 
     return (
-      <Tag ref={ref} className={cnm(styles[baseClass], fontStyle === "italic" && "italic", className)} style={style}>
+      <Tag
+        ref={ref}
+        className={cnm(styles[baseClass], fontStyle === "italic" && "italic", className)}
+        style={style}
+        {...rest}
+      >
         {children}
       </Tag>
     );

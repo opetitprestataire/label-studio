@@ -7,25 +7,28 @@ import { Typography } from "@humansignal/ui";
 
 const TextResult: FC<{ mainValue: string[] }> = observer(({ mainValue }) => {
   return (
-    <span className="text-color-neutral-content bg-primary-background px-tighter py-tightest rounded-sm">
-      <Typography as="span" size="small">
-        {mainValue.map((value: string, i: number) => (
-          <span key={`${value}-${i}`} data-counter={i + 1}>
+    <div className="flex flex-col items-start gap-tighter">
+      {mainValue.map((value: string, i: number) => (
+        <mark
+          key={`${value}-${i}`}
+          className="bg-primary-background px-tighter py-tightest rounded-sm text-neutral-content"
+        >
+          <Typography data-counter={i + 1} size="small" className="!m-0">
             {value}
-          </span>
-        ))}
-      </Typography>
-    </span>
+          </Typography>
+        </mark>
+      ))}
+    </div>
   );
 });
 
 const ChoicesResult: FC<{ mainValue: string[] }> = observer(({ mainValue }) => {
   return (
-    <span className="text-color-neutral-content bg-primary-background px-tighter py-tightest rounded-sm">
-      <Typography as="span" size="small">
+    <mark className="bg-primary-background px-tighter py-tightest rounded-sm">
+      <Typography as="span" size="small" className="text-neutral-content">
         {mainValue.join(", ")}
       </Typography>
-    </span>
+    </mark>
   );
 });
 
