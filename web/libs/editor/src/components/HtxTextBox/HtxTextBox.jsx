@@ -1,6 +1,6 @@
 import React from "react";
 import { IconEdit, IconTrashAlt, IconCheck } from "@humansignal/icons";
-import { Button, Tooltip, Typography } from "@humansignal/ui";
+import { Button, Tooltip } from "@humansignal/ui";
 import throttle from "lodash.throttle";
 
 // used for correct auto-height calculation
@@ -96,7 +96,6 @@ export class HtxTextBox extends React.Component {
 
   renderEdit() {
     const {
-      className = "",
       rows = 1,
       onlyEdit,
       name,
@@ -179,23 +178,17 @@ export class HtxTextBox extends React.Component {
       // don't pass non-DOM props to Paragraph
       ignoreShortcuts: _,
       onlyEdit: __,
+      ...props
     } = this.props;
+    const inputClassName = `${this.inputClassName} pointer-events-none`;
 
     return (
       <>
-        <div className={this.inputClassName}>
-          <Typography ref={this.textRef} size="small">
-            {text.split("\n").map((line, index, array) => {
-              const isLastLine = index === array.length - 1;
-              return (
-                <React.Fragment key={index}>
-                  {line}
-                  {!isLastLine && <br />}
-                </React.Fragment>
-              );
-            })}
-          </Typography>
-        </div>
+        {props.rows > 1 ? (
+          <textarea className={inputClassName} value={text} readOnly rows={props.rows} />
+        ) : (
+          <input type="text" className={inputClassName} value={text} readOnly />
+        )}
         <div className="flex gap-tight pr-tight">
           {isEditable && onChange && (
             <Button
