@@ -447,12 +447,12 @@ class ImportStorage(Storage):
             # Skip non-JSON files if use_blob_urls is False
             if check_file_extension and not self.use_blob_urls:
                 _, ext = os.path.splitext(key.lower())
-                # Only process files with JSON/JSONL extensions
-                json_extensions = {'.json', '.jsonl'}
+                # Only process files with JSON/JSONL/PARQUET extensions
+                json_extensions = {'.json', '.jsonl', '.parquet'}
 
                 if ext and ext not in json_extensions:
                     raise ValueError(
-                        f'File "{key}" is not a JSON file. Only .json and .jsonl files can be processed.\n'
+                        f'File "{key}" is not a JSON/JSONL/Parquet file. Only .json, .jsonl, and .parquet files can be processed.\n'
                         f"If you're trying to import non-JSON data (images, audio, text, etc.), "
                         f'edit storage settings and enable "Treat every bucket object as a source file"'
                     )
