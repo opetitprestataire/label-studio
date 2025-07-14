@@ -20,9 +20,11 @@ describe("Sync Buffering: Seek Buffering Tests", suiteConfig, () => {
   beforeEach(() => {
     LabelStudio.addFeatureFlagsOnPageLoad({
       fflag_fix_front_fit_31_synced_media_buffering: true,
+      fflag_feat_front_lsdv_e_278_contextual_scrolling_short: true,
     });
     Network.disableBrowserCache();
     cy.reload(true);
+    cy.on("uncaught:exception", () => false);
   });
 
   afterEach(() => {

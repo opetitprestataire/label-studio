@@ -138,6 +138,7 @@ export const AudioModel = types.compose(
       stageRef: createRef(),
       _ws: null,
       _wfFrame: null,
+      _skip_seek_event: false,
     }))
     .views((self) => ({
       get hasStates() {
@@ -221,7 +222,7 @@ export const AudioModel = types.compose(
       },
 
       triggerSyncSeek(time) {
-        self.triggerSync("seek", { time });
+        self.triggerSync("seek", { time, ...(isSyncedBuffering ? { playing: self.wasPlayingBeforeBuffering } : {}) });
       },
 
       triggerSyncBuffering(isBuffering) {
@@ -251,11 +252,15 @@ export const AudioModel = types.compose(
         self.isBuffering = self.syncManager?.isBuffering;
         if (data.buffering) {
           self.wasPlayingBeforeBuffering = playing;
+          self._skip_seek_event = true;
           self._ws?.pause();
+          self._skip_seek_event = false;
         }
         if (!self.isBuffering && !data.buffering) {
           if (playing) {
+            self._skip_seek_event = true;
             self._ws?.play();
+            self._skip_seek_event = false;
           }
         }
         // process other data
@@ -536,6 +541,7 @@ export const AudioModel = types.compose(
         },
 
         onSeek(time) {
+          if (isSyncedBuffering && self._skip_seek_event) return;
           self.triggerSyncSeek(time);
         },
 

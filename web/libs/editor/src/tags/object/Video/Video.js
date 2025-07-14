@@ -256,7 +256,7 @@ const Model = types
     },
 
     handleSeek() {
-      self.triggerSync("seek");
+      self.triggerSync("seek", isSyncedBuffering ? { playing: self.wasPlayingBeforeBuffering } : {});
     },
 
     handleBuffering(isBuffering) {

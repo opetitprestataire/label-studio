@@ -306,9 +306,10 @@ const PlayableAndSyncable = types
       // Normal logic when no buffering
       if (!isSyncedBuffering || (!isBuffering && isDefined(playing))) {
         // so we are changing time inside current region only
-        if (audio.paused && playing) {
+        const isPaused = isSyncedBuffering ? !self.wasPlayingBeforeBuffering : audio.paused;
+        if (isPaused && playing) {
           self.play();
-        } else if (isSyncedBuffering && !audio.paused && !playing) {
+        } else if (isSyncedBuffering && !isPaused && !playing) {
           // some times video can trigger `seek` event with `playing=false` and we need to pause at this case
           self.stopNow();
         } else {
