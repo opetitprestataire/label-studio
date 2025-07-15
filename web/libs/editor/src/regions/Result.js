@@ -232,9 +232,10 @@ const Result = types
       }
 
       // We need to check if there is any node up in the tree with visibility restrictions so we can determine
-      // if the element is selected considering its own visibility
-      if (!control.perregion && findParentWithVisibleWhen(control, "choice-selected")) {
-        return control.isVisible === false ? false : isChoiceSelected();
+      // if the element is selected considering its own visibility or its parent
+      const parent = findParentWithVisibleWhen(control, "choice-selected");
+      if (!control.perregion && parent) {
+        return control.isVisible === false || parent.isVisible === false ? false : isChoiceSelected();
       }
 
       return true;
