@@ -12,13 +12,13 @@ describe("Label Studio UI info panels", () => {
     LabelStudio.init({
       config: configSimple,
       task: {
-        annotations: [{ id: 1, result: [resultSimple], }],
+        annotations: [{ id: 1, result: [resultSimple] }],
         predictions: [],
         id: 1,
         data: dataSimple,
       },
     });
-    
+
     // Info panel is active and it has empty state
     cy.get("[class$=tab-container_active]").find("#Info-draggable").should("exist");
     cy.contains("View region details").should("be.visible");

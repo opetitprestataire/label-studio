@@ -49,7 +49,10 @@ describe("Label Studio UI init", () => {
       },
       config: "<View></View>",
       task: {
-        annotations: [{ id: 1, result: [] }, { id: 2, result: [] }],
+        annotations: [
+          { id: 1, result: [] },
+          { id: 2, result: [] },
+        ],
         predictions: [],
         id: 1,
         data: {
@@ -69,7 +72,7 @@ describe("Label Studio UI init", () => {
     cy.contains("Submit").should("be.visible");
 
     // submit by hotkey
-    cy.get("body").type(Cypress.platform === 'darwin' ? '{cmd}{enter}' : '{ctrl}{enter}');
+    cy.get("body").type(Cypress.platform === "darwin" ? "{cmd}{enter}" : "{ctrl}{enter}");
 
     // we should have called the API once
     cy.get("@callApi").should("have.been.calledOnce");
