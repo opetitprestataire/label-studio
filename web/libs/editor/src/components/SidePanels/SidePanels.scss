@@ -29,6 +29,7 @@
     @include styled-scrollbars;
 
     & .main-content {
+      @include styled-scrollbars;
       overflow: auto;
       padding-bottom: calc(var(--bottombar-height) + 8px);
     }
