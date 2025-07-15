@@ -27,9 +27,11 @@ from core.utils.common import (
 )
 from core.utils.db import batch_update_with_retry, fast_first
 from django.conf import settings
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import connection, models, transaction
-from django.db.models import Avg, BooleanField, Case, Count, JSONField, Max, Q, Sum, Value, When
+from django.db.models import Avg, BooleanField, Case, Count, GeneratedField, JSONField, Max, Q, Sum, Value, When
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from label_studio_sdk._extensions.label_studio_tools.core.label_config import parse_config
@@ -1144,11 +1146,22 @@ class Project(ProjectMixin, models.Model):
     def __str__(self):
         return f'{self.title} (id={self.id})' or _('Business number %d') % self.pk
 
+    if connection.vendor == 'postgresql':
+        search_vector = GeneratedField(
+            expression=SearchVector('id', weight='A')
+            + SearchVector('title', weight='B')
+            + SearchVector('description', weight='C'),
+            output_field=SearchVectorField(),
+            db_persist=True,
+        )
+
     class Meta:
         db_table = 'project'
         indexes = [
             models.Index(fields=['pinned_at', 'created_at']),
         ]
+        if connection.vendor == 'postgresql':
+            indexes.append(GinIndex(fields=['search_vector'], name='project_search_vector_idx'))
 
 
 class ProjectOnboardingSteps(models.Model):
