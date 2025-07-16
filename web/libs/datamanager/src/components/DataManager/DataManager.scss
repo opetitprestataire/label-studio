@@ -99,6 +99,10 @@
   transition: all 150ms ease-out;
 }
 
+:global(.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list) {
+  height: 235px;
+}
+
 :global(.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item:hover) {
   background-color: var(--color-primary-emphasis-subtle) !important;
   color: var(--color-neutral-content) !important;
