@@ -292,8 +292,6 @@ const Model = types
 
         self.height = self.parent.canvasToInternalY(canvasHeight);
       }
-
-      // Use setPosition which handles snap logic internally
       self.setPosition(self.x, self.y, self.width, self.height, self.rotation);
 
       const areaBBoxCoords = self?.bboxCoords;
@@ -515,7 +513,6 @@ const HtxRectangleView = ({ item, setShapeRef }) => {
       const t = e.target;
 
       item.setPosition(t.getAttr("x"), t.getAttr("y"), t.getAttr("width"), t.getAttr("height"), t.getAttr("rotation"));
-
       item.setScale(t.getAttr("scaleX"), t.getAttr("scaleY"));
       item.annotation.history.unfreeze(item.id);
 
