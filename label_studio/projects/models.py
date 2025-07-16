@@ -27,7 +27,6 @@ from core.utils.common import (
 )
 from core.utils.db import batch_update_with_retry, fast_first
 from django.conf import settings
-from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import connection, models, transaction
