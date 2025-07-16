@@ -293,28 +293,14 @@ const Model = types
         self.height = self.parent.canvasToInternalY(canvasHeight);
       }
 
-      // Apply snap to pixel if enabled during drawing
-      if (self.control?.snap === "pixel") {
-        // Snap top-left corner
-        const topLeftPoint = self.control.getSnappedPoint({
-          x: self.x,
-          y: self.y,
-        });
-
-        // Snap bottom-right corner
-        const bottomRightPoint = self.control.getSnappedPoint({
-          x: self.x + self.width,
-          y: self.y + self.height,
-        });
-
-        // Calculate snapped dimensions
-        const snappedWidth = bottomRightPoint.x - topLeftPoint.x;
-        const snappedHeight = bottomRightPoint.y - topLeftPoint.y;
-
-        self.setPositionInternal(topLeftPoint.x, topLeftPoint.y, snappedWidth, snappedHeight, self.rotation);
-      } else {
-        self.setPositionInternal(self.x, self.y, self.width, self.height, self.rotation);
-      }
+      // Use setPosition which handles snap logic internally
+      self.setPosition(
+        self.parent.internalToCanvasX(self.x),
+        self.parent.internalToCanvasY(self.y),
+        self.parent.internalToCanvasX(self.width),
+        self.parent.internalToCanvasY(self.height),
+        self.rotation,
+      );
 
       const areaBBoxCoords = self?.bboxCoords;
 
@@ -381,21 +367,9 @@ const Model = types
         const snappedWidth = bottomRightPoint.x - topLeftPoint.x;
         const snappedHeight = bottomRightPoint.y - topLeftPoint.y;
 
-        self.setPositionInternal(
-          topLeftPoint.x,
-          topLeftPoint.y,
-          snappedWidth,
-          snappedHeight,
-          rotation,
-        );
+        self.setPositionInternal(topLeftPoint.x, topLeftPoint.y, snappedWidth, snappedHeight, rotation);
       } else {
-        self.setPositionInternal(
-          internalX,
-          internalY,
-          internalWidth,
-          internalHeight,
-          rotation,
-        );
+        self.setPositionInternal(internalX, internalY, internalWidth, internalHeight, rotation);
       }
     },
 
@@ -527,39 +501,8 @@ const HtxRectangleView = ({ item, setShapeRef }) => {
       const height = t.getAttr("height") * t.getAttr("scaleY");
       const rotation = t.getAttr("rotation");
 
-      // Apply snap to pixel if enabled
-      if (item.control?.snap === "pixel") {
-        const internalX = item.parent.canvasToInternalX(x);
-        const internalY = item.parent.canvasToInternalY(y);
-        const internalWidth = item.parent.canvasToInternalX(width);
-        const internalHeight = item.parent.canvasToInternalY(height);
-
-        // Snap top-left corner
-        const topLeftPoint = item.control.getSnappedPoint({
-          x: internalX,
-          y: internalY,
-        });
-
-        // Snap bottom-right corner
-        const bottomRightPoint = item.control.getSnappedPoint({
-          x: internalX + internalWidth,
-          y: internalY + internalHeight,
-        });
-
-        // Calculate snapped dimensions
-        const snappedWidth = bottomRightPoint.x - topLeftPoint.x;
-        const snappedHeight = bottomRightPoint.y - topLeftPoint.y;
-
-        item.setPositionInternal(
-          topLeftPoint.x,
-          topLeftPoint.y,
-          snappedWidth,
-          snappedHeight,
-          rotation,
-        );
-      } else {
-        item.setPosition(x, y, width, height, rotation);
-      }
+      // Use setPosition which handles snap logic internally
+      item.setPosition(x, y, width, height, rotation);
 
       t.setAttr("scaleX", 1);
       t.setAttr("scaleY", 1);
@@ -584,40 +527,9 @@ const HtxRectangleView = ({ item, setShapeRef }) => {
       const height = t.getAttr("height");
       const rotation = t.getAttr("rotation");
 
-      // Apply snap to pixel if enabled
-      if (item.control?.snap === "pixel") {
-        const internalX = item.parent.canvasToInternalX(x);
-        const internalY = item.parent.canvasToInternalY(y);
-        const internalWidth = item.parent.canvasToInternalX(width);
-        const internalHeight = item.parent.canvasToInternalY(height);
+      // Use setPosition which handles snap logic internally
+      item.setPosition(x, y, width, height, rotation);
 
-        // Snap top-left corner
-        const topLeftPoint = item.control.getSnappedPoint({
-          x: internalX,
-          y: internalY,
-        });
-
-        // Snap bottom-right corner
-        const bottomRightPoint = item.control.getSnappedPoint({
-          x: internalX + internalWidth,
-          y: internalY + internalHeight,
-        });
-
-        // Calculate snapped dimensions
-        const snappedWidth = bottomRightPoint.x - topLeftPoint.x;
-        const snappedHeight = bottomRightPoint.y - topLeftPoint.y;
-
-        item.setPositionInternal(
-          topLeftPoint.x,
-          topLeftPoint.y,
-          snappedWidth,
-          snappedHeight,
-          rotation,
-        );
-      } else {
-        item.setPosition(x, y, width, height, rotation);
-      }
-      
       item.setScale(t.getAttr("scaleX"), t.getAttr("scaleY"));
       item.annotation.history.unfreeze(item.id);
 
