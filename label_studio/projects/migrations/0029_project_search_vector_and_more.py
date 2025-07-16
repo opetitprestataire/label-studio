@@ -21,20 +21,10 @@ class Migration(migrations.Migration):
                 name="search_vector",
                 field=models.GeneratedField(
                     db_persist=True,
-                    expression=django.contrib.postgres.search.CombinedSearchVector(
-                        django.contrib.postgres.search.CombinedSearchVector(
-                            django.contrib.postgres.search.SearchVector("id", weight="A"),
-                            "||",
-                            django.contrib.postgres.search.SearchVector(
-                                "title", weight="B"
-                            ),
-                            None,
-                        ),
-                        "||",
-                        django.contrib.postgres.search.SearchVector(
-                            "description", weight="C"
-                        ),
-                        None,
+                    expression=django.db.models.expressions.RawSQL(
+                        "setweight(to_tsvector('english', COALESCE(CAST(id AS TEXT), '')), 'A') || setweight(to_tsvector('english', COALESCE(title, '')), 'B') || setweight(to_tsvector('english', COALESCE(description, '')), 'C')",
+                        output_field=django.contrib.postgres.search.SearchVectorField(),
+                        params=[],
                     ),
                     output_field=django.contrib.postgres.search.SearchVectorField(),
                 ),
