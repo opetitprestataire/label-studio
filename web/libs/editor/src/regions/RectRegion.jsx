@@ -294,13 +294,7 @@ const Model = types
       }
 
       // Use setPosition which handles snap logic internally
-      self.setPosition(
-        self.parent.internalToCanvasX(self.x),
-        self.parent.internalToCanvasY(self.y),
-        self.parent.internalToCanvasX(self.width),
-        self.parent.internalToCanvasY(self.height),
-        self.rotation,
-      );
+      self.setPosition(self.x, self.y, self.width, self.height, self.rotation);
 
       const areaBBoxCoords = self?.bboxCoords;
 
@@ -495,14 +489,13 @@ const HtxRectangleView = ({ item, setShapeRef }) => {
     eventHandlers.onTransformEnd = (e) => {
       const t = e.target;
 
-      const x = t.getAttr("x");
-      const y = t.getAttr("y");
-      const width = t.getAttr("width") * t.getAttr("scaleX");
-      const height = t.getAttr("height") * t.getAttr("scaleY");
-      const rotation = t.getAttr("rotation");
-
-      // Use setPosition which handles snap logic internally
-      item.setPosition(x, y, width, height, rotation);
+      item.setPosition(
+        t.getAttr("x"),
+        t.getAttr("y"),
+        t.getAttr("width") * t.getAttr("scaleX"),
+        t.getAttr("height") * t.getAttr("scaleY"),
+        t.getAttr("rotation"),
+      );
 
       t.setAttr("scaleX", 1);
       t.setAttr("scaleY", 1);
@@ -521,14 +514,7 @@ const HtxRectangleView = ({ item, setShapeRef }) => {
     eventHandlers.onDragEnd = (e) => {
       const t = e.target;
 
-      const x = t.getAttr("x");
-      const y = t.getAttr("y");
-      const width = t.getAttr("width");
-      const height = t.getAttr("height");
-      const rotation = t.getAttr("rotation");
-
-      // Use setPosition which handles snap logic internally
-      item.setPosition(x, y, width, height, rotation);
+      item.setPosition(t.getAttr("x"), t.getAttr("y"), t.getAttr("width"), t.getAttr("height"), t.getAttr("rotation"));
 
       item.setScale(t.getAttr("scaleX"), t.getAttr("scaleY"));
       item.annotation.history.unfreeze(item.id);
