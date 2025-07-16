@@ -1154,6 +1154,8 @@ class Project(ProjectMixin, models.Model):
             output_field=SearchVectorField(),
             db_persist=True,
         )
+    else:
+        search_vector = models.TextField(null=True, blank=True)
 
     class Meta:
         db_table = 'project'
