@@ -90,6 +90,9 @@ export const EmailPreferences = () => {
       {isEnterpriseEmailNotificationsEnabled && (
         <>
           {Object.entries(emailNotificationSettings).map(([id, { value, label }]: [string, any]) => {
+            if (id === "project_completed") {
+              return null;
+            }
             const notificationToggleHandler = (
               e: React.ChangeEvent<HTMLInputElement>,
               id: string,
