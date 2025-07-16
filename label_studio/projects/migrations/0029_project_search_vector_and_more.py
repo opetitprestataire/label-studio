@@ -28,13 +28,7 @@ class Migration(migrations.Migration):
                     ),
                     output_field=django.contrib.postgres.search.SearchVectorField(),
                 ),
-            ),
-            migrations.AddIndex(
-                model_name="project",
-                index=django.contrib.postgres.indexes.GinIndex(
-                    fields=["search_vector"], name="project_search_vector_idx"
-                ),
-            ),
+            )
         ]
     else:
         operations = [

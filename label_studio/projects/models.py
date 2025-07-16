@@ -1179,8 +1179,8 @@ class Project(ProjectMixin, models.Model):
         indexes = [
             models.Index(fields=['pinned_at', 'created_at']),
         ]
-        if connection.vendor == 'postgresql':
-            indexes.append(GinIndex(fields=['search_vector'], name='project_search_vector_idx'))
+        # if connection.vendor == 'postgresql':
+        #     indexes.append(GinIndex(fields=['search_vector'], name='project_search_vector_idx'))
 
 
 class ProjectOnboardingSteps(models.Model):
