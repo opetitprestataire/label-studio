@@ -64,7 +64,7 @@
 
 
 :global(.react-datepicker__day--today) {
-  background-color: none;
+  background-color: transparent;
   color: var(--color-neutral-content);
   position: relative;
 }
