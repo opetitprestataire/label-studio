@@ -17,55 +17,55 @@
 }
 
 :global(.react-datepicker) {
-  background-color: var(--color-neutral-background);
-  border-color: var(--color-neutral-border);
+  background-color: var(--color-neutral-background) !important;
+  border-color: var(--color-neutral-border) !important;
 }
 
 :global(.react-datepicker__navigation--previous) {
-  border-right-color: var(--color-neutral-icon);
+  border-right-color: var(--color-neutral-icon) !important;
 }
 
 :global(.react-datepicker__navigation--next) {
-  border-left-color: var(--color-neutral-icon);
+  border-left-color: var(--color-neutral-icon) !important;
 }
 
 :global(.react-datepicker__header) {
-  background-color: var(--color-neutral-background);
-  border-bottom-color: var(--color-neutral-border);
+  background-color: var(--color-neutral-background) !important;
+  border-bottom-color: var(--color-neutral-border) !important;
 }
 
 :global(.react-datepicker__current-month) {
-  color: var(--color-neutral-content);
+  color: var(--color-neutral-content) !important;
 }
 
 :global(.react-datepicker__day-name) {
-  color: var(--color-neutral-content-subtler);
+  color: var(--color-neutral-content-subtler) !important;
 }
 
 :global(.react-datepicker__day) {
-  color: var(--color-neutral-content-subtler);
+  color: var(--color-neutral-content-subtler) !important;
 }
 
 :global(.react-datepicker__day:hover) {
-  background-color: var(--color-primary-emphasis-subtle);
-  color: var(--color-neutral-content);
+  background-color: var(--color-primary-emphasis-subtle) !important;
+  color: var(--color-neutral-content) !important;
 }
 
 :global(.react-datepicker__day--keyboard-selected) {
-  color: var(--color-neutral-content);
-  background: var(--color-primary-emphasis-subtle);
+  color: var(--color-neutral-content) !important;
+  background: var(--color-primary-emphasis-subtle) !important;
 }
 
 :global(.react-datepicker__day--selected),
 :global(.react-datepicker__day--in-range) {
-  background-color: var(--color-primary-emphasis);
-  color: var(--color-neutral-content);
+  background-color: var(--color-primary-emphasis) !important;
+  color: var(--color-neutral-content) !important;
 }
 
 
 :global(.react-datepicker__day--today) {
-  background-color: transparent;
-  color: var(--color-neutral-content);
+  background-color: transparent !important;
+  color: var(--color-neutral-content) !important;
   position: relative;
 }
 
@@ -74,7 +74,7 @@
   display: block;
   width: 4px;
   height: 4px;
-  background-color: var(--color-primary-surface);
+  background-color: var(--color-primary-surface) !important;
   bottom: 2px;
   left: calc(50% - 2px);
   position: absolute;
@@ -82,30 +82,30 @@
 }
 
 :global(.react-datepicker__time-container) {
-  border-left-color: var(--color-neutral-border);
+  border-left-color: var(--color-neutral-border) !important;
 }
 
 :global(.react-datepicker__time-container .react-datepicker__time) {
-  background: none;
+  background: transparent !important;
 }
 
 :global(.react-datepicker-time__header) {
-  color: var(--color-neutral-content);
+  color: var(--color-neutral-content) !important;
 }
 
 :global(.react-datepicker__time-list-item) {
-  background-color: none;
-  color: var(--color-neutral-content-subtler);
+  background-color: transparent !important;
+  color: var(--color-neutral-content-subtler) !important;
   transition: all 150ms ease-out;
 }
 
 :global(.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item:hover) {
-  background-color: var(--color-primary-emphasis-subtle);
-  color: var(--color-neutral-content);
+  background-color: var(--color-primary-emphasis-subtle) !important;
+  color: var(--color-neutral-content) !important;
 }
 
 :global(.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--selected) {
-  background-color: var(--color-primary-emphasis);
-  color: var(--color-neutral-content);
+  background-color: var(--color-primary-emphasis) !important;
+  color: var(--color-neutral-content) !important;
 }
 
