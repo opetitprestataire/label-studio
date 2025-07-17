@@ -24,7 +24,7 @@ const { Panel } = Collapse;
  * @name Collapse
  * @param {boolean} [accordion=true]  - Works as an accordion
  * @param {string} [bordered=false]   - Shows border
- * @param {boolean} [open=true]      - Sets default collapsed state
+ * @param {boolean} [open=false]      - Sets default collapsed state
  */
 const PanelModel = types
   .model({
@@ -125,22 +125,18 @@ const CollapseModel = types.compose("CollapseModel", AnnotationMixin, Model, Pro
 
 const HtxCollapse = observer(({ item }) => {
   const isBulkMode = isFF(FF_BULK_ANNOTATION) && !isSelfServe() && item.store.hasInterface("annotation:bulk");
+  const visibleChildren = item.children.filter((i) => i.type === "panel" && (!isBulkMode || i.isIndependent));
 
   // Get default active keys based on open property
-  const defaultActiveKeys = item.children
-    .filter((i) => i.type === "panel" && (!isBulkMode || i.isIndependent))
-    .filter((i) => i.open)
-    .map((i) => i._value);
+  const defaultActiveKeys = visibleChildren.filter((i) => i.open).map((i) => i._value);
 
   return (
     <Collapse bordered={item.bordered} accordion={item.accordion} defaultActiveKey={defaultActiveKeys}>
-      {item.children
-        .filter((i) => i.type === "panel" && (!isBulkMode || i.isIndependent))
-        .map((i) => (
-          <Panel key={i._value} header={i._value} forceRender>
-            {Tree.renderChildren(i, item.annotation)}
-          </Panel>
-        ))}
+      {visibleChildren.map((i) => (
+        <Panel key={i._value} header={i._value} forceRender>
+          {Tree.renderChildren(i, item.annotation)}
+        </Panel>
+      ))}
     </Collapse>
   );
 });
