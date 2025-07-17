@@ -10,6 +10,7 @@ import ProcessAttrsMixin from "../../mixins/ProcessAttrs";
 import { isSelfServe } from "../../utils/billing";
 import { FF_BULK_ANNOTATION, isFF } from "../../utils/feature-flags";
 import { guidGenerator } from "../../utils/unique";
+import { isDefined } from "@humansignal/core/lib/utils/helpers";
 
 const { Panel } = Collapse;
 
@@ -33,7 +34,7 @@ const PanelModel = types
     _value: types.optional(types.string, ""),
     value: types.optional(types.string, ""),
 
-    open: types.optional(types.boolean, false),
+    open: types.maybeNull(types.boolean),
 
     children: Types.unionArray([
       "view",
@@ -104,7 +105,7 @@ const Model = types
 
     bordered: types.optional(types.boolean, false),
     accordion: types.optional(types.boolean, true),
-    open: types.optional(types.boolean, false),
+    open: types.maybeNull(types.boolean),
 
     children: Types.unionArray(["panel"]),
   })
@@ -130,13 +131,26 @@ const HtxCollapse = observer(({ item }) => {
   // Get default active keys based on both Collapse-level and Panel-level open properties
   // Global open sets the base state for all panels
   // Local open can override the global state for individual panels
-  const defaultActiveKeys = visibleChildren.filter((i) => i.open ?? item.open).map((i) => i._value);
+  const defaultActiveKeys = visibleChildren
+    .filter((c, index) => {
+      console.log(index, c.value, c.open, c.open ?? item.open);
+      if (isDefined(c.open)) return c.open;
+      return item.open;
+    })
+    .map((c) => `panel-${c.value}`);
+
+  // For accordion mode, only the first active key should be used
+  const finalActiveKeys = item.accordion
+    ? defaultActiveKeys.length > 0
+      ? [defaultActiveKeys[0]]
+      : []
+    : defaultActiveKeys;
 
   return (
-    <Collapse bordered={item.bordered} accordion={item.accordion} defaultActiveKey={defaultActiveKeys}>
-      {visibleChildren.map((i) => (
-        <Panel key={i._value} header={i._value} forceRender>
-          {Tree.renderChildren(i, item.annotation)}
+    <Collapse bordered={item.bordered} accordion={item.accordion} defaultActiveKey={finalActiveKeys}>
+      {visibleChildren.map((c, index) => (
+        <Panel key={`panel-${c.value}`} header={c._value || c.value || `Panel ${index + 1}`} forceRender>
+          {Tree.renderChildren(c, item.annotation)}
         </Panel>
       ))}
     </Collapse>
