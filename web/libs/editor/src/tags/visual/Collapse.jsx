@@ -24,6 +24,7 @@ const { Panel } = Collapse;
  * @name Collapse
  * @param {boolean} [accordion=true]  - Works as an accordion
  * @param {string} [bordered=false]   - Shows border
+ * @param {boolean} [open=false]      - Sets default collapsed state
  */
 const PanelModel = types
   .model({
@@ -31,6 +32,8 @@ const PanelModel = types
 
     _value: types.optional(types.string, ""),
     value: types.optional(types.string, ""),
+
+    open: types.optional(types.boolean, false),
 
     children: Types.unionArray([
       "view",
@@ -101,6 +104,7 @@ const Model = types
 
     bordered: types.optional(types.boolean, false),
     accordion: types.optional(types.boolean, true),
+    open: types.optional(types.boolean, false),
 
     children: Types.unionArray(["panel"]),
   })
@@ -122,8 +126,18 @@ const CollapseModel = types.compose("CollapseModel", AnnotationMixin, Model, Pro
 const HtxCollapse = observer(({ item }) => {
   const isBulkMode = isFF(FF_BULK_ANNOTATION) && !isSelfServe() && item.store.hasInterface("annotation:bulk");
 
+  // Get default active keys based on open property
+  const defaultActiveKeys = item.children
+    .filter((i) => i.type === "panel" && (!isBulkMode || i.isIndependent))
+    .filter((i) => i.open)
+    .map((i) => i._value);
+
   return (
-    <Collapse bordered={item.bordered} accordion={item.accordion}>
+    <Collapse 
+      bordered={item.bordered} 
+      accordion={item.accordion}
+      defaultActiveKey={defaultActiveKeys}
+    >
       {item.children
         .filter((i) => i.type === "panel" && (!isBulkMode || i.isIndependent))
         .map((i) => (
