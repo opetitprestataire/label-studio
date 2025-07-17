@@ -218,16 +218,19 @@ To learn how different team structures use agreement metrics to scale high-quali
   * **Annotator pausing:** Manual and automatic pausing based on performance criteria
   * **Annotation limits:** Configure maximum annotations per user to prevent spam
  
+### Project performance dashboards
 
-### Workforce management
+The project dashboard provides a high-level view of project status over time, including metrics like tasks completed, annotations submitted, reviews performed, label distribution, and lead times. Users can filter by date ranges and reorder visualizations to focus on key indicators. [ ](https://docs.humansignal.com/guide/dashboard_project?utm_source=chatgpt.com)
 
-Label Studio Enterprise includes tools to manage task assignment and control user access to annotations across complex workflows.
+### Annotator performance dashboards
 
-### Project Management
+Organization owners and administrators can view individual annotator dashboards to analyze task counts, average annotation times, review turnaround, and performance scoring. These dashboards help in managing resources, identifying top performers, and tracking quality without building custom analytics tools.
+
+## Project Management
 
 Label Studio Enterprise includes advanced project configuration options to support complex workflows across teams and workspaces.
 
-#### Enterprise-Only Project Settings
+### Enterprise-Only Project Settings
 
 | Setting Category       | Option                                                                                                                                                                                        | Open Source | Enterprise |
 | :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------- | :--------- |
@@ -260,35 +263,27 @@ Label Studio Enterprise includes advanced project configuration options to suppo
 
 For details, view the [Enterprise Project Settings](https://docs.humansignal.com/guide/project_settings_lse).
 
-### Collaboration features
+## Collaboration features
 
 Label Studio Enterprise supports rich collaboration capabilities to enhance communication, review workflows, and performance visibility across teams.
 
-#### Comments and notifications
+### Comments and notifications
 
 Annotators and reviewers can leave threaded comments linked to specific regions or fields within an annotation, enabling contextual feedback and clarification. All collaborators can view and add comments, with permissions to resolve or delete based on their role. Notifications inform users of new comments, either as the first comment on an annotation or replies to ongoing discussions
 
-#### Deep linking
+### Deep linking
 
 Users can generate direct links to specific annotations, regions, or fields, allowing reviewers or teammates to jump directly to the exact location needing attention. This improves communication efficiency and review precision.
 
-### Project performance dashboards
-
-The project dashboard provides a high-level view of project status over time, including metrics like tasks completed, annotations submitted, reviews performed, label distribution, and lead times. Users can filter by date ranges and reorder visualizations to focus on key indicators. [ ](https://docs.humansignal.com/guide/dashboard_project?utm_source=chatgpt.com)
-
-### Annotator performance dashboards
-
-Organization owners and administrators can view individual annotator dashboards to analyze task counts, average annotation times, review turnaround, and performance scoring. These dashboards help in managing resources, identifying top performers, and tracking quality without building custom analytics tools.
-
-### Enterprise deployment options
+## Enterprise deployment options
 
 Label Studio Enterprise may be deployed on-prem for air-gapped environments. It supports flexible deployment options designed for high availability and scalability.
 
-#### Kubernetes deployment
+### Kubernetes deployment
 
 Label Studio Enterprise can be deployed on Kubernetes clusters with advanced configuration options:
 
-#### Docker Compose deployment
+### Docker Compose deployment
 
 For simpler enterprise deployments, Label Studio Enterprise supports Docker Compose with external PostgreSQL and Redis dependencies. Key configuration elements:
 
@@ -297,7 +292,7 @@ For simpler enterprise deployments, Label Studio Enterprise supports Docker Comp
   * **Environment variables:** Database connections, Redis configuration, storage settings
   * **Worker queues:** Separate containers for different priority levels
 
-#### High availability configuration
+### High availability configuration
 
 Enterprise deployments support high availability configurations:
 
@@ -306,14 +301,14 @@ Enterprise deployments support high availability configurations:
   * Resource configuration for optimal performance
   * PostgreSQL and Redis with TLS support and high availability options
 
-### Performance and scalability features
+## Performance and scalability features
 
   * Storage Proxies
   * Optimized Database Queries: Improved performance for large projects
   * Scale-Out Architecture: Distribute workload across multiple pods
   * Redis for Background Tasks: Efficient queue system for handling asynchronous operations
 
-### Whitelabeling
+## Whitelabeling
 
 Enterprise customers can customize the appearance of their Label Studio instance:
 
