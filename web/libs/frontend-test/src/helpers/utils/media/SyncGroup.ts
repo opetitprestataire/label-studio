@@ -1,5 +1,4 @@
 import type { MediaView, ViewWithMedia } from "@humansignal/frontend-test/helpers/utils/media/types";
-import { TWO_FRAMES_TIMEOUT } from "../../../../../editor/tests/integration/e2e/utils/constants";
 
 type SyncableView = MediaView & ViewWithMedia;
 
@@ -8,7 +7,8 @@ class SyncGroup {
   constructor(views: SyncableView[]) {
     this.views = views;
   }
-  checkSynchronization(tolerance = 0.01, attempt = 1, maxAttempts = 3) {
+
+  checkSynchronization(tolerance = 0.01, maxShiftAlias: string | null = null, attempts = 3) {
     const mediaChains = this.views.map((view) => view.mediaElement);
 
     mediaChains[0].then((baseMedia) => {
@@ -16,17 +16,43 @@ class SyncGroup {
         mediaChain.then((media) => {
           const baseMediaElement = baseMedia[0] as HTMLMediaElement;
           const mediaElement = media[0] as HTMLMediaElement;
+          const tag1 = `${baseMediaElement.tagName}#${0}`;
+          const tag2 = `${mediaElement.tagName}#${idx + 1}`;
 
-          try {
-            expect(baseMediaElement.currentTime).closeTo(mediaElement.currentTime, tolerance);
-            expect(baseMediaElement.paused).to.equal(mediaElement.paused);
-          } catch (error) {
-            if (attempt < maxAttempts) {
-              cy.wait(TWO_FRAMES_TIMEOUT);
-              return this.checkSynchronization(tolerance, attempt + 1);
+          const check = () => {
+            try {
+              expect(baseMediaElement.paused).to.equal(
+                mediaElement.paused,
+                `Compare paused state  for ${tag2} and ${tag1}`,
+              );
+              expect(baseMediaElement.currentTime).closeTo(
+                mediaElement.currentTime,
+                tolerance,
+                `Compare currentTime for ${tag2} and ${tag1}`,
+              );
+              if (maxShiftAlias) {
+                cy.get(`@${maxShiftAlias}`)
+                  .then((maxShift: number) => {
+                    const currentShift = Math.abs(mediaElement.currentTime - baseMediaElement.currentTime);
+                    maxShift = Math.max(maxShift, currentShift);
+                    return maxShift;
+                  })
+                  .as(maxShiftAlias);
+              }
+            } catch (e) {
+              if (attempts > 1) {
+                // The other case is when syncronisatiom check happens in the middle of play/pause batch
+                // In that case we just need to recheck it 1 or 2 times (in good case it takes 1ms)
+                cy.wait(200).then(() => {
+                  attempts--;
+                  check();
+                });
+              } else {
+                throw new Error(`Synchronization check failed after multiple attempts: ${e}`);
+              }
             }
-            throw error;
-          }
+          };
+          check();
         });
       });
     });

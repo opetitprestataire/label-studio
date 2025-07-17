@@ -209,12 +209,10 @@ const Model = types
       self.isBuffering = self.syncManager?.isBuffering;
       if (data.buffering) {
         self.wasPlayingBeforeBuffering = playing;
-        if (self.ref.current?.playing) {
-          self.ref.current?.pause();
-        }
+        self.ref.current?.pause();
       }
       if (!self.isBuffering && !data.buffering) {
-        if (!self.ref.current?.playing && playing) {
+        if (playing) {
           self.ref.current?.play();
         }
       }
@@ -244,7 +242,7 @@ const Model = types
         self.speed = data.speed;
       }
 
-      if (isDefined(data.time)) {
+      if (isDefined(data.time) && (!isSyncedBuffering || video.currentTime !== data.time)) {
         video.currentTime = data.time;
       }
     },

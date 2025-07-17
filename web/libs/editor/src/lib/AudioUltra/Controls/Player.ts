@@ -257,9 +257,7 @@ export abstract class Player extends Destructable {
       this.updateBufferingTimeoutId = setTimeout(() => {
         this.updateBuffering();
       }, 16);
-    }
-
-    if (!isBuffering) {
+    } else {
       this.bufferResolve?.();
     }
   }
@@ -296,6 +294,7 @@ export abstract class Player extends Destructable {
     }
 
     this.playAudio(start, duration);
+    this.updateBuffering?.();
   }
 
   protected abstract playAudio(start?: number, duration?: number): void;

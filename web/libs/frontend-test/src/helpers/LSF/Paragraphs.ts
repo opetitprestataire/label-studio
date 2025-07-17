@@ -21,17 +21,21 @@ class ParagraphsHelper extends withMedia(
       return this.root.get("audio[controls]");
     }
 
-    hasPhrasePlaying(idx: number) {
-      this.root
-        .find(`[data-testid="phrase:${idx}"]`)
-        .find("button[aria-label]")
-        .should("have.attr", "aria-label", "pause");
+    getPhrase(idx: number) {
+      return this.root.find(`[data-testid="phrase:${idx}"]`);
     }
-    hasNoPhrasePlaying(idx: number) {
-      this.root
-        .find(`[data-testid="phrase:${idx}"]`)
-        .find("button[aria-label]")
-        .should("have.attr", "aria-label", "play");
+    getPhrasePlayButton(idx: number, timeout = 4000) {
+      return this.getPhrase(idx).find("button[aria-label='play']", { timeout });
+    }
+    getPhrasePauseButton(idx: number, timeout = 4000) {
+      return this.getPhrase(idx).find("button[aria-label='pause']", { timeout });
+    }
+
+    hasPhrasePlaying(idx: number, timeout = 4000) {
+      this.getPhrasePauseButton(idx, timeout).should("exist");
+    }
+    hasNoPhrasePlaying(idx: number, timeout = 4000) {
+      this.getPhrasePlayButton(idx, timeout).should("exist");
     }
   },
 ) {}

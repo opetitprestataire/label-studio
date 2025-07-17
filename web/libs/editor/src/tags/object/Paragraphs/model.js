@@ -279,19 +279,22 @@ const PlayableAndSyncable = types
     handleSyncBuffering({ playing, ...data }) {
       const audio = self.audioRef.current;
 
+      audio.currentTime = data.time;
+
       self.isBuffering = self.syncManager?.isBuffering;
 
       if (data.buffering) {
         self.wasPlayingBeforeBuffering = playing;
         audio?.pause();
+        self.playing = false;
       }
       if (!self.isBuffering && !data.buffering) {
         if (playing) {
           audio?.play();
+          self.playing = true;
+          self.trackPlayingId();
         }
       }
-      // process other data
-      self.handleSyncPlay(data);
     },
 
     handleSyncPlay({ time, playing }, event) {
@@ -397,6 +400,14 @@ const PlayableAndSyncable = types
     },
 
     trackPlayingId() {
+      if (!isSyncedBuffering) {
+        self._trackPlayingId();
+        return;
+      }
+      if (self.audioFrameHandler) cancelAnimationFrame(self.audioFrameHandler);
+      self.audioFrameHandler = requestAnimationFrame(self._trackPlayingId);
+    },
+    _trackPlayingId() {
       if (self.audioFrameHandler) cancelAnimationFrame(self.audioFrameHandler);
 
       const audio = self.audioRef.current;
@@ -416,7 +427,7 @@ const PlayableAndSyncable = types
 
       const isPlaying = isSyncedBuffering ? self.playing && !self.isBuffering : !audio.paused;
       if (isPlaying) {
-        self.audioFrameHandler = requestAnimationFrame(self.trackPlayingId);
+        self.audioFrameHandler = requestAnimationFrame(self._trackPlayingId);
       }
     },
 

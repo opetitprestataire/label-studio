@@ -1,3 +1,4 @@
+import { ff } from "@humansignal/core";
 import type { WaveformAudio } from "../Media/WaveformAudio";
 import { BROWSER_SCROLLBAR_WIDTH, clamp, debounce, defaults, warn } from "../Common/Utils";
 import type { Waveform, WaveformOptions } from "../Waveform";
@@ -22,6 +23,8 @@ import type { RenderContext, Renderer } from "./Renderer/Renderer";
 import { LayerM } from "./Composition/LayerM";
 import { isFF, FF_AUDIO_SPECTROGRAMS } from "../../../utils/feature-flags";
 import { RateLimitedRenderer } from "./Renderer/RateLimitedRenderer";
+
+const isSyncedBuffering = ff.isActive(ff.FF_SYNCED_BUFFERING);
 
 interface VisualizerEvents {
   draw: (visualizer: Visualizer) => void;
@@ -391,7 +394,34 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.seekLocked = false;
   }
 
+  drawRequestId: number | null = null;
+  drawRequestDry = false;
+  drawRequestPendingSince: number | null = null;
   draw(dry = false) {
+    if (!isSyncedBuffering) {
+      this._draw(dry);
+      return;
+    }
+    if (this.isDestroyed) return;
+    if (this.drawRequestId) {
+      if (this.drawRequestPendingSince !== null && performance.now() - this.drawRequestPendingSince < 10) {
+        cancelAnimationFrame(this.drawRequestId);
+        this.drawRequestDry = this.drawRequestDry || dry;
+      }
+    } else {
+      this.drawRequestDry = dry;
+    }
+    if (this.drawRequestPendingSince === null) {
+      this.drawRequestPendingSince = performance.now();
+    }
+    this.drawRequestId = requestAnimationFrame(() => {
+      this.drawRequestId = null;
+      this._draw(this.drawRequestDry);
+      this.drawRequestPendingSince = null;
+    });
+  }
+
+  _draw(dry = false) {
     if (this.isDestroyed) return;
     if (!dry) {
       // Center to the current time if playing and autoCenter are enabled

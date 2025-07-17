@@ -1,5 +1,5 @@
 import { observe } from "mobx";
-import { getEnv, getRoot, getType, types } from "mobx-state-tree";
+import { getEnv, getRoot, getType, isAlive, types } from "mobx-state-tree";
 import { createRef } from "react";
 import { customTypes } from "../../../core/CustomTypes";
 import { AnnotationMixin } from "../../../mixins/AnnotationMixin";
@@ -253,18 +253,20 @@ export const AudioModel = types.compose(
         if (data.buffering) {
           self.wasPlayingBeforeBuffering = playing;
           self._skip_seek_event = true;
+          self.isPlaying = false;
           self._ws?.pause();
           self._skip_seek_event = false;
         }
         if (!self.isBuffering && !data.buffering) {
           if (playing) {
             self._skip_seek_event = true;
+            self.isPlaying = true;
             self._ws?.play();
             self._skip_seek_event = false;
           }
         }
         // process other data
-        self.handleSync(data);
+        self.handleSyncSeek(data);
       },
 
       handleSync(data, event) {
@@ -279,9 +281,15 @@ export const AudioModel = types.compose(
         // Normal logic when no buffering
         if (!isSyncedBuffering || (!isBuffering && isDefined(data.playing))) {
           if (data.playing) {
-            if (!self._ws.playing) self._ws?.play();
+            if (!self._ws.playing) {
+              self.isPlaying = true;
+              self._ws?.play();
+            }
           } else {
-            if (self._ws.playing) self._ws?.pause();
+            if (self._ws.playing) {
+              self.isPlaying = false;
+              self._ws?.pause();
+            }
           }
         }
         // during the buffering only these events have real `playing` values (in other cases it's paused all the time)
@@ -298,12 +306,14 @@ export const AudioModel = types.compose(
       handleSyncPlay() {
         if (self._ws?.playing) return;
 
+        self.isPlaying = true;
         self._ws?.play();
       },
 
       handleSyncPause() {
         if (!self._ws?.playing) return;
 
+        self.isPlaying = false;
         self._ws?.pause();
       },
 
@@ -311,8 +321,12 @@ export const AudioModel = types.compose(
         if (!self._ws?.loaded || !isDefined(time)) return;
 
         try {
+          // setCurrentTime some times can take up to 76ms and it is syncronous
           self._ws.setCurrentTime(time, true);
-          self._ws.syncCursor(); // sync cursor with current time
+          // syncCursor provides sync drawing which can cost up to 10ms which is too much for syncing playback
+          setTimeout(() => {
+            if (isAlive(self)) self._ws?.syncCursor();
+          });
         } catch (err) {
           console.log(err);
         }
@@ -546,6 +560,7 @@ export const AudioModel = types.compose(
         },
 
         onPlaying(playing) {
+          if (isSyncedBuffering && self.isPlaying === playing) return;
           if (playing) {
             // @todo self.play();
             self.triggerSyncPlay();
@@ -553,6 +568,7 @@ export const AudioModel = types.compose(
             // @todo self.pause();
             self.triggerSyncPause();
           }
+          self.isPlaying = playing;
         },
 
         handleBuffering(isBuffering) {
@@ -566,6 +582,7 @@ export const AudioModel = types.compose(
 
           if (willStopBuffering) {
             if (self.wasPlayingBeforeBuffering) {
+              self.isPlaying = true;
               self._ws?.play();
             }
           }
@@ -577,6 +594,7 @@ export const AudioModel = types.compose(
 
           if (willStartBuffering) {
             if (self._ws?.playing) {
+              self.isPlaying = false;
               self._ws?.pause();
             }
           }
