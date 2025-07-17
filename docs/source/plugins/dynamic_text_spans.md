@@ -19,6 +19,10 @@ tier: enterprise
 
 This plugin “binds” a `TextArea` to a `Text` field, keeping them in sync as you edit. You can then apply labels to the text in the `Text` field, allowing you annotate text that is unique from the text you imported. 
 
+<video style="max-width: 800px;" class="gif-border" autoplay loop muted>
+  <source src="/images/plugins/dynamic-text-spans.mp4">
+</video>
+
 How this plugin works:
 
 1. It defines two tag names: 
