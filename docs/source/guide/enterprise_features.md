@@ -316,7 +316,7 @@ Enterprise customers can customize the appearance of their Label Studio instance
   * **Custom Domain:** Use your own domain for the Label Studio instance
   * **Login Page Redirects:** Configure custom login page redirects with the LOGIN\_PAGE\_URL variable
 
-### Enterprise support & professional services
+## Enterprise support & professional services
 
 Enterprise customers receive:
 
