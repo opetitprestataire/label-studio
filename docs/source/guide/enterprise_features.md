@@ -1,0 +1,203 @@
+---
+title: "Enterprise features: Label Studio at scale"
+short: Enterprise features
+type: guide
+tier: opensource
+order: 35
+order_enterprise: 0
+section: "Discover & Learn"
+meta_title: Label Studio Enterprise Features
+meta_description: Overview of the features in Label Studio Enterprise.
+---
+
+This page provides an overview of the advanced capabilities available exclusively in Label Studio Enterprise. These features extend the core functionality of Label Studio with enterprise-scale user management, security, quality assurance, and automation.
+
+## Organizations and Workspaces
+
+Label Studio Enterprise introduces a hierarchical structure for organizing projects and users through organizations and workspaces, which is not available in the community edition.
+
+### Organizations
+
+Organizations are the top-level entity in Label Studio Enterprise that contain workspaces, projects, and users. Each organization is isolated from others, providing complete data separation.
+
+Key capabilities of organizations:
+
+  - Organization-level user management
+  - Isolated data and resources
+  - Centralized billing and usage tracking
+  - Custom branding options
+
+### Workspaces
+
+Workspaces provide a way to group related projects within an organization. They help structure projects by department, team, or use case.
+
+Key capabilities of workspaces:
+
+  - Group related projects together
+  - Delegate management responsibilities
+  - Control access at the workspace level
+  - Share resources between projects in the same workspace
+
+## Multi-tenant SaaS architecture
+
+Organizations provide complete isolation between different Label Studio Enterprise SaaS customers, ensuring data segregation and independent user management. Workspaces within organizations group related projects by team, department, or product line. Label Studio Enterprise may also be deployed on-prem (see [Enterprise Deployment Options](https://docs.google.com/document/d/18c0DU4LCz5-KoSpYb8xXtAZTphoFtnUY3PTsqCOiohE/edit?ouid=117018906396712310210&tab=t.gclw7dpayxrq)).
+
+## User management and role-based access control
+
+### Role hierarchy and permissions
+
+Label Studio Enterprise implements a comprehensive role-based access control (RBAC) system with five distinct roles, each providing specific capabilities and access levels. For information on how to assign users to roles, see [Manage user accounts.](https://docs.humansignal.com/guide/admin_manage_lse.html)
+
+| Role      | Organization Access | Primary Capabilities                       | Project Management | Annotation | Review | User Management |
+| :-------- | :------------------ | :----------------------------------------- | :----------------- | :--------- | :----- | :-------------- |
+| Owner     | Full control        | Full system access, billing management     | All projects       | ✅          | ✅      | Full            |
+| Admin     | Organization-wide   | User management, all organization settings | All projects       | ✅          | ✅      | Limited         |
+| Manager   | Workspace-scoped    | Project creation, workspace management     | Assigned projects  | ✅          | ✅      | Project-level   |
+| Reviewer  | Project-scoped      | Review annotations, manage quality control | View only          | ✅          | ✅      | None            |
+| Annotator | Project-scoped      | Create and edit annotations                | View only          | ✅          | ❌      | None            |
+
+### Project-level roles
+
+Project roles are assigned independently of organization roles. For example, a user can be an Annotator in one project and a Reviewer in another project, allowing for flexible permission management:
+
+  - **Annotator:** Can view projects and assigned tasks and can create annotations
+  - **Reviewer:** Can review annotations, accept or reject them, and provide feedback
+
+### User lifecycle management
+
+Enterprise features include comprehensive user account management capabilities:
+
+  - Invitation-based signup: Control user onboarding through invitation links
+  - Bulk user operations: Assign roles and update workspace memberships in bulk
+  - User activity monitoring: Track annotation activity and system usage
+  - Account deactivation: Preserve annotation history while removing access
+
+## Authentication and identity management
+
+Label Studio Enterprise provides comprehensive identity management capabilities for large-scale deployments, supporting integration with existing enterprise identity providers.
+
+### SSO and SAML integration
+
+The enterprise edition supports Single Sign-On through SAML 2.0 assertions, allowing integration with identity providers like Okta, Google SAML, Ping Identity, Microsoft Active Directory, and other SAML-compatible systems. For setup instructions, see the[ Authentication and SSO Configuration Guide](https://docs.humansignal.com/guide/auth_setup).
+
+### SCIM 2.0 provisioning
+
+System for Cross-domain Identity Management (SCIM) 2.0 enables automated user provisioning and deprovisioning from identity providers.
+
+The SCIM integration supports:
+
+  - Create Users: Automatic user provisioning with role assignments
+  - Update User Attributes: Synchronize profile changes and role modifications
+  - Deactivate Users: Remove access while preserving annotation history
+  - Push Groups: Workspace and project membership management
+
+For setup instructions, see the [SCIM 2.0 Integration Guide](https://docs.humansignal.com/guide/scim_setup).
+
+### LDAP integration
+
+Enterprise customers can integrate with LDAP directories for user authentication while maintaining local role management.
+
+## Advanced security features
+
+### Enterprise security architecture
+
+Label Studio Enterprise includes comprehensive security features designed for enterprise compliance requirements. Enterprise security features include:
+
+  - SSRF Protection: Configurable via `SSRF_PROTECTION_ENABLED` environment variable
+  - Database Security: SSL connections, certificate validation for PostgreSQL
+  - Storage Security: Pre-signed URLs, IP restrictions, VPN access control
+  - Network Security: TLS enforcement, CORS policies, secure headers
+  - Personal Access Tokens: JWT standard-based tokens for API access
+
+### Data security
+
+  - End-to-end TLS/SSL: Secure communication between all components
+  - Audit Logging: Comprehensive logging of all user activities
+
+### Cloud storage security architecture
+
+### Advanced security configurations and storage providers
+
+Advanced security configurations for enterprise cloud storage integrations:
+
+  - IP Filtering: Restrict storage access to specific IP ranges
+  - VPN Integration: Enable private network access through VPC endpoints
+  - Certificate Management: Use custom CA certificates for self-signed environments
+  - Encryption: Support for server-side encryption and client-side certificate management
+
+Enterprise supports multiple cloud storage options with enhanced configuration:
+
+  - Amazon S3: With IAM roles, OIDC integration, and VPC endpoint support
+  - Google Cloud Storage: With Application Default Credentials and IP filtering of Workload Identity Federation (WIF)
+  - Microsoft Azure Storage: With secure credential management
+  - TLS for PostgreSQL and Redis: Enhanced security for database connections
+
+## Advanced labeling & evaluation workflows
+
+### AI features and model integration
+
+Label Studio Enterprise provides enhanced machine learning capabilities:
+
+  - AI Features Toggle: Enable AI helper tools via the *Billing & Usage* page
+  - Enhanced ML Backend Integration: More powerful integration with ML models
+  - Prediction Score Display: View prediction/confidence scores in the labeling interface
+  - Bulk Labeling: Quickly label multiple tasks at once
+
+### Automated active learning loops
+
+Label Studio Enterprise supports active learning workflows that automatically update model predictions as labeling progresses.
+
+After each annotation, Label Studio can send a webhook to a connected machine learning backend. The backend uses the new data to retrain the model `(fit())`, and Label Studio fetches updated predictions (predict()) for the next task, creating a continuous feedback loop.
+
+Key components:
+
+  - **ML backend setup:** Register a model to receive training data and return predictions
+  - **Prediction integration:** Display updated predictions during labeling
+  - **Webhooks:** Trigger model retraining after annotations
+  - **Task sampling:** Use prediction scores to prioritize which tasks to label
+  - C**ontinuous loop:** As labeling continues, predictions improve with each iteration
+
+### Prompts
+
+Label Studio Enterprise includes a built-in Prompts interface for working with language models as part of the labeling workflow.
+
+Prompt templates allow users to define inputs, models, and outputs to send to connected LLMs. Prompts can be used to pre-label data, generate new tasks, or support review workflows.
+
+The Prompts interface supports:
+
+  - Prompt Templates: Define inputs, outputs, and model parameters
+  - Inline Generation: Run prompts directly from the labeling interface
+  - Model Connections: Connect to OpenAI, Anthropic, or custom endpoints via API
+  - Pre-labeling: Populate fields using model-generated responses
+  - Task Creation: Generate new tasks from prompt outputs
+
+For more information, see the [Prompts Overview](https://docs.humansignal.com/guide/prompts_overview/).
+
+### Customization with plugins
+
+Label Studio Enterprise supports custom JavaScript plugins to extend and tailor the labeling interface for project-specific needs.
+
+Plugins run automatically when users interact with annotation tasks. They can be used to validate annotations, add visual elements, call external services, or apply custom logic based on events in the labeling UI.
+
+The plugin framework supports:
+
+  - Project-specific scripts: Define custom plugins on a per-project basis
+  - Event-driven behavior: Trigger logic on task load, annotation switch, and other actions
+  - UI extensions: Add validations, overlays, or context-aware functionality
+  - External integration: Connect to APIs or fetch reference data in real time
+  - Testing and preview: Use the built-in panel to test plugins before deployment
+
+To learn how organizations are using plugins in real-world workflows, see the blog post [Build Powerful Labeling Interfaces with Plugins](https://humansignal.com/blog/build-powerful-labeling-interfaces-with-plugins/).
+
+## Quality workflows and analytics
+
+Label Studio Enterprise enhances the annotation workflow with features designed for quality control and team collaboration, as well as analytics to optimize annotation and dataset quality.
+
+### Quality control features
+
+  - Auto-validation
+  - Review Workflows: Configure review processes for annotations
+  - Inter-annotator agreement: Measure agreement between annotators to ensure quality
+  - Annotator Performance Dashboard: Track and analyze annotator quality to identity low performers, implement training and corrective actions
+  - Project Performance Dashboard: View label distribution to ensure completeness
+  - Guardrails for low-trust annotators: Set limits or pause annotators to prevent
