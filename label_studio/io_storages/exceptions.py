@@ -1,8 +1,2 @@
-"""This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
-"""
-
-
 class UnsupportedFileFormatError(ValueError):
-    """Raised when attempting to import a file format that is not supported by the storage configuration."""
-
     pass
