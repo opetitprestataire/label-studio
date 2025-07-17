@@ -24,7 +24,7 @@ const { Panel } = Collapse;
  * @name Collapse
  * @param {boolean} [accordion=true]  - Works as an accordion
  * @param {string} [bordered=false]   - Shows border
- * @param {boolean} [open=false]      - Sets default collapsed state
+ * @param {boolean} [open=true]      - Sets default collapsed state
  */
 const PanelModel = types
   .model({
@@ -33,7 +33,7 @@ const PanelModel = types
     _value: types.optional(types.string, ""),
     value: types.optional(types.string, ""),
 
-    open: types.optional(types.boolean, false),
+    open: types.optional(types.boolean, true),
 
     children: Types.unionArray([
       "view",
@@ -104,7 +104,7 @@ const Model = types
 
     bordered: types.optional(types.boolean, false),
     accordion: types.optional(types.boolean, true),
-    open: types.optional(types.boolean, false),
+    open: types.optional(types.boolean, true),
 
     children: Types.unionArray(["panel"]),
   })
