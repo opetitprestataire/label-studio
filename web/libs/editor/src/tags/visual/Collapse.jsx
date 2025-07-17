@@ -33,7 +33,7 @@ const PanelModel = types
     _value: types.optional(types.string, ""),
     value: types.optional(types.string, ""),
 
-    open: types.optional(types.boolean, true),
+    open: types.optional(types.boolean, false),
 
     children: Types.unionArray([
       "view",
@@ -104,7 +104,7 @@ const Model = types
 
     bordered: types.optional(types.boolean, false),
     accordion: types.optional(types.boolean, true),
-    open: types.optional(types.boolean, true),
+    open: types.optional(types.boolean, false),
 
     children: Types.unionArray(["panel"]),
   })
