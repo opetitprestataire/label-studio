@@ -118,7 +118,17 @@ pip install label-studio
 
 ### Install for local development
 
-You can run the latest Label Studio version locally without installing the package from pypi. 
+You can run the latest Label Studio version locally without installing the package from pypi.
+
+1. Configure the frontend
+
+```bash
+npm install -g yarn
+make frontend-install
+make frontend-build
+```
+
+2. Configure the backend
 
 ```bash
 # Install all package dependencies
@@ -127,6 +137,11 @@ poetry install
 # Run database migrations
 python label_studio/manage.py migrate
 python label_studio/manage.py collectstatic
+```
+
+3. Start the server
+
+```bash
 # Start the server in development mode at http://localhost:8080
 python label_studio/manage.py runserver
 ```
