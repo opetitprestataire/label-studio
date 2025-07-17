@@ -133,11 +133,7 @@ const HtxCollapse = observer(({ item }) => {
     .map((i) => i._value);
 
   return (
-    <Collapse 
-      bordered={item.bordered} 
-      accordion={item.accordion}
-      defaultActiveKey={defaultActiveKeys}
-    >
+    <Collapse bordered={item.bordered} accordion={item.accordion} defaultActiveKey={defaultActiveKeys}>
       {item.children
         .filter((i) => i.type === "panel" && (!isBulkMode || i.isIndependent))
         .map((i) => (
