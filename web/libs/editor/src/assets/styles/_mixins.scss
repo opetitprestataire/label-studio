@@ -3,7 +3,7 @@
     @media (width <=760px) {
       @content;
     }
-  } @else if $breakpoint =="tablet" {
+  } @else if $breakpoint == "tablet" {
     @media (width <=1200px) {
       @content;
     }
