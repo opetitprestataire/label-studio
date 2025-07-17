@@ -201,3 +201,132 @@ Label Studio Enterprise enhances the annotation workflow with features designed 
   - Annotator Performance Dashboard: Track and analyze annotator quality to identity low performers, implement training and corrective actions
   - Project Performance Dashboard: View label distribution to ensure completeness
   - Guardrails for low-trust annotators: Set limits or pause annotators to prevent
+
+### Inter-annotator agreement metrics and matrices
+
+View real-time agreement metrics to take proactive action on quality. The Enterprise edition includes 30+ built-in agreement metrics for different annotation types, including:
+
+* **Basic matching:** Default evaluation for each control tag type
+* **Intersection over Union (IoU):** For bounding boxes and polygons
+* **Edit distance algorithms:** For text transcription tasks
+* **F1, Precision, Recall:** For classification and detection tasks
+
+To learn how different team structures use agreement metrics to scale high-quality labeling, see the blog post [3 Annotation Team Playbooks for Scalable Labeling](https://labelstud.io/blog/the-spectrum-of-annotators-how-to-match-your-labeling-workflow-to-your-team/).
+
+### Low-trust annotator guardrails
+
+  * **Annotator pausing:** Manual and automatic pausing based on performance criteria
+  * **Annotation limits:** Configure maximum annotations per user to prevent spam
+ 
+
+### Workforce management
+
+Label Studio Enterprise includes tools to manage task assignment and control user access to annotations across complex workflows.
+
+### Project Management
+
+Label Studio Enterprise includes advanced project configuration options to support complex workflows across teams and workspaces.
+
+#### Enterprise-Only Project Settings
+
+| Setting Category       | Option                                                                                                                                                                                        | Open Source | Enterprise |
+| :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------- | :--------- |
+| **General**            | **Project Name, Description, Color**                                                                                                                                                          | ✅           | ✅          |
+|                        | **Workspace**                                                                                                                                                                                 | ❌           | ✅          |
+|                        | **Proxy Credentials**                                                                                                                                                                         | ❌           | ✅          |
+| **Labeling interface** | **Labeling configuration (XML tags)**                                                                                                                                                         | ✅           | ✅          |
+| **Annotation**         | **Labeling Instructions (“Show before labeling”)**                                                                                                                                            | ✅           | ✅          |
+|                        | **Distribute Labeling Tasks (Auto vs. Manual)**                                                                                                                                               | ❌           | ✅          |
+|                        | **Task Reservation**                                                                                                                                                                          | ❌           | ✅          |
+|                        | **Skip Queue behavior (Requeue, Ignore, etc.)**                                                                                                                                               | ❌           | ✅          |
+|                        | **Annotating Options**\<br\>• Show Skip button\<br\>• Allow empty annotations\<br\>• Reveal pre-annotations interactively\<br\>• Require skip comments\<br\>• Show Data Manager to annotators | ❌           | ✅          |
+| **Live Predictions**   | **Pre-label tasks via connected ML backend or Prompts**                                                                                                                                       | ✅           | ✅          |
+| **Task Sampling**      | **Sequential, Uniform, Uncertainty Sampling**                                                                                                                                                 | ❌           | ✅          |
+| **Review**             | **Review stream settings:**\<br\>• Instructions\<br\>• Reviewing Options\<br\>• Reject Options\<br\>• Data Manager for reviewers\<br\>• Agreement column visibility                           | ❌           | ✅          |
+| **Quality**            | **Overlap of Annotations**                                                                                                                                                                    | ❌           | ✅          |
+|                        | **Annotation Limit (per-user caps)**                                                                                                                                                          | ❌           | ✅          |
+|                        | **Annotator Evaluation (ground-truth scoring & auto-pause)**                                                                                                                                  | ❌           | ✅          |
+|                        | **Task Agreement (metric, low-agreement strategy)**                                                                                                                                           | ❌           | ✅          |
+|                        | **Custom label weights**                                                                                                                                                                      | ❌           | ✅          |
+| **Members**            | **Project-level roles (Annotator/Reviewer per project)**                                                                                                                                      | ❌           | ✅          |
+|                        | **Manage Members (add/remove users, assign project roles)**                                                                                                                                   | ❌           | ✅          |
+| **Model**              | **Connect ML backends (fit on submit, interactive pre-annotations)**                                                                                                                          | ✅           | ✅          |
+| **Predictions**        | **View/import pre-annotations**                                                                                                                                                               | ✅           | ✅          |
+| **Cloud storage**      | **Source/Target connectors (S3, GCS, Azure, local)**                                                                                                                                          | ✅           | ✅          |
+| **Webhooks**           | **Configure task/annotation webhooks**                                                                                                                                                        | ✅           | ✅          |
+| **Danger Zone**        | **Delete Project, Drop All Tabs**                                                                                                                                                             | ✅           | ✅          |
+|                        | **Reset Cache**                                                                                                                                                                               | ❌           | ✅          |
+
+
+For details, view the [Enterprise Project Settings](https://docs.humansignal.com/guide/project_settings_lse).
+
+### Collaboration features
+
+Label Studio Enterprise supports rich collaboration capabilities to enhance communication, review workflows, and performance visibility across teams.
+
+#### Comments and notifications
+
+Annotators and reviewers can leave threaded comments linked to specific regions or fields within an annotation, enabling contextual feedback and clarification. All collaborators can view and add comments, with permissions to resolve or delete based on their role. Notifications inform users of new comments, either as the first comment on an annotation or replies to ongoing discussions
+
+#### Deep linking
+
+Users can generate direct links to specific annotations, regions, or fields, allowing reviewers or teammates to jump directly to the exact location needing attention. This improves communication efficiency and review precision.
+
+### Project performance dashboards
+
+The project dashboard provides a high-level view of project status over time, including metrics like tasks completed, annotations submitted, reviews performed, label distribution, and lead times. Users can filter by date ranges and reorder visualizations to focus on key indicators. [ ](https://docs.humansignal.com/guide/dashboard_project?utm_source=chatgpt.com)
+
+### Annotator performance dashboards
+
+Organization owners and administrators can view individual annotator dashboards to analyze task counts, average annotation times, review turnaround, and performance scoring. These dashboards help in managing resources, identifying top performers, and tracking quality without building custom analytics tools.
+
+### Enterprise deployment options
+
+Label Studio Enterprise may be deployed on-prem for air-gapped environments. It supports flexible deployment options designed for high availability and scalability.
+
+#### Kubernetes deployment
+
+Label Studio Enterprise can be deployed on Kubernetes clusters with advanced configuration options:
+
+#### Docker Compose deployment
+
+For simpler enterprise deployments, Label Studio Enterprise supports Docker Compose with external PostgreSQL and Redis dependencies. Key configuration elements:
+
+  * **Image repository:** `humansignal/label-studio-enterprise`
+  * **License integration:** Volume-mounted license file
+  * **Environment variables:** Database connections, Redis configuration, storage settings
+  * **Worker queues:** Separate containers for different priority levels
+
+#### High availability configuration
+
+Enterprise deployments support high availability configurations:
+
+  * Multiple app replicas for fault tolerance
+  * Configurable RQ worker replicas for different queues
+  * Resource configuration for optimal performance
+  * PostgreSQL and Redis with TLS support and high availability options
+
+### Performance and scalability features
+
+  * Storage Proxies
+  * Optimized Database Queries: Improved performance for large projects
+  * Scale-Out Architecture: Distribute workload across multiple pods
+  * Redis for Background Tasks: Efficient queue system for handling asynchronous operations
+
+### Whitelabeling
+
+Enterprise customers can customize the appearance of their Label Studio instance:
+
+  * **Custom Branding:** Customize logos, colors, and styles
+  * **Custom Domain:** Use your own domain for the Label Studio instance
+  * **Login Page Redirects:** Configure custom login page redirects with the LOGIN\_PAGE\_URL variable
+
+### Enterprise support & professional services
+
+Enterprise customers receive:
+
+  * 99.9% Uptime SLA: Production reliability guarantees
+  * Premium Technical Support and SLAs: Priority technical support access
+  * Customer Success Manager: Dedicated account management
+  * Professional Services: Implementation and optimization assistance
+  * Labeling Services: On-demand expert labeling services augment core team, fully integrated into the platform with full visibility and governance
