@@ -128,9 +128,11 @@ const HtxCollapse = observer(({ item }) => {
   const visibleChildren = item.children.filter((i) => i.type === "panel" && (!isBulkMode || i.isIndependent));
 
   // Get default active keys based on both Collapse-level and Panel-level open properties
-  // If Collapse-level open is true, all panels should be open by default
-  // If Collapse-level open is false, only panels with open=true should be open
-  const defaultActiveKeys = visibleChildren.filter((i) => (item.open ? true : i.open)).map((i) => i._value);
+  // Global open sets the base state for all panels
+  // Local open can override the global state for individual panels
+  const defaultActiveKeys = visibleChildren
+    .filter((i) => (i.open !== undefined ? i.open : item.open))
+    .map((i) => i._value);
 
   return (
     <Collapse bordered={item.bordered} accordion={item.accordion} defaultActiveKey={defaultActiveKeys}>
