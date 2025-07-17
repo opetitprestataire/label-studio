@@ -497,12 +497,14 @@ const HtxRectangleView = ({ item, setShapeRef }) => {
 
       t.setAttr("scaleX", 1);
       t.setAttr("scaleY", 1);
-      
+
       // Sync Konva shape attributes back to computed canvas coordinates to cause a re-render
-      t.setAttr("x", item.canvasX);
-      t.setAttr("y", item.canvasY);
-      t.setAttr("width", item.canvasWidth);
-      t.setAttr("height", item.canvasHeight);
+      t.position({
+        x: item.canvasX,
+        y: item.canvasY,
+        width: item.canvasWidth,
+        height: item.canvasHeight,
+      });
 
       item.notifyDrawingFinished();
     };
@@ -520,13 +522,15 @@ const HtxRectangleView = ({ item, setShapeRef }) => {
 
       item.setPosition(t.getAttr("x"), t.getAttr("y"), t.getAttr("width"), t.getAttr("height"), t.getAttr("rotation"));
       item.setScale(t.getAttr("scaleX"), t.getAttr("scaleY"));
-      
+
       // Sync Konva shape attributes back to computed canvas coordinates to cause a re-render
-      t.setAttr("x", item.canvasX);
-      t.setAttr("y", item.canvasY);
-      t.setAttr("width", item.canvasWidth);
-      t.setAttr("height", item.canvasHeight);
-      
+      t.position({
+        x: item.canvasX,
+        y: item.canvasY,
+        width: item.canvasWidth,
+        height: item.canvasHeight,
+      });
+
       item.annotation.history.unfreeze(item.id);
 
       item.notifyDrawingFinished();
