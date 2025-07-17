@@ -127,8 +127,10 @@ const HtxCollapse = observer(({ item }) => {
   const isBulkMode = isFF(FF_BULK_ANNOTATION) && !isSelfServe() && item.store.hasInterface("annotation:bulk");
   const visibleChildren = item.children.filter((i) => i.type === "panel" && (!isBulkMode || i.isIndependent));
 
-  // Get default active keys based on open property
-  const defaultActiveKeys = visibleChildren.filter((i) => i.open).map((i) => i._value);
+  // Get default active keys based on both Collapse-level and Panel-level open properties
+  // If Collapse-level open is true, all panels should be open by default
+  // If Collapse-level open is false, only panels with open=true should be open
+  const defaultActiveKeys = visibleChildren.filter((i) => (item.open ? true : i.open)).map((i) => i._value);
 
   return (
     <Collapse bordered={item.bordered} accordion={item.accordion} defaultActiveKey={defaultActiveKeys}>
