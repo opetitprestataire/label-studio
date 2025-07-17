@@ -1,0 +1,48 @@
+version: "3.9"
+services:
+  nginx:
+    build: .
+    image: heartexlabs/label-studio:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8085"
+      - "8081:8086"
+    depends_on:
+      - app
+    environment:
+      - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
+    #   Optional: Specify SSL termination certificate & key
+    #   Just drop your cert.pem and cert.key into folder 'deploy/nginx/certs'
+    #      - NGINX_SSL_CERT=/certs/cert.pem
+    #      - NGINX_SSL_CERT_KEY=/certs/cert.key
+    volumes:
+      - ./mydata:/label-studio/data:rw
+      - ./deploy/nginx/certs:/certs:ro
+    #   Optional: Override nginx default conf
+    #      - ./deploy/my.conf:/etc/nginx/nginx.conf
+    command: nginx
+
+  app:
+    stdin_open: true
+    tty: true
+    build: .
+    image: heartexlabs/label-studio:latest
+    restart: unless-stopped
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    environment:
+      - DJANGO_DB=default
+      - POSTGRE_NAME=devlabelstudio2
+      - POSTGRE_USER=devlabelstudio2
+      - POSTGRE_PASSWORD=devlabelstudio2
+      - POSTGRE_PORT=5432
+      - POSTGRE_HOST=testpg1-site2-numerade-iac.chxjtkx8bmcu.us-west-2.rds.amazonaws.com
+      - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
+      - JSON_LOG=1
+    #      - LOG_LEVEL=DEBUG
+    volumes:
+      - ./mydata:/nfs/fs-7faa6779.efs.us-west-2.amazonaws.com/site2-labelstudio/dvo-1137-data/mydata:rw
+    command: label-studio-uwsgi
+
