@@ -29,6 +29,7 @@
 
   &.panel {
     &_alignment {
+
       &_left,
       &_right {
         & .panel__header {
@@ -243,8 +244,6 @@
     overflow: hidden auto;
     height: calc(100% - var(--header-height));
     position: relative;
-
-    @include styled-scrollbars;
   }
 
   &__resizer {

@@ -1,18 +1,3 @@
-@mixin styled-scrollbars() {
-  scrollbar-color: var(--color-neutral-border) var(--color-neutral-background);
-  scrollbar-width: thin;
-
-  &::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-    background-color: var(--color-neutral-surface);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: var(--color-neutral-border-boldest);
-  }
-}
-
 .sidebar-menu {
   flex: 1;
   display: flex;
@@ -41,6 +26,5 @@
     flex: 1;
     overflow: auto;
     padding: 2rem;
-    @include styled-scrollbars;
   }
 }

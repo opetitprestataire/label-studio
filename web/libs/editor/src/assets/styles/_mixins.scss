@@ -1,27 +1,14 @@
 @mixin respond($breakpoint) {
-  @if $breakpoint == "phone" {
-    @media (width <= 760px) {
-      @content;
-    }
-  } @else if $breakpoint == "tablet" {
-    @media (width <= 1200px) {
+  @if $breakpoint =="phone" {
+    @media (width <=760px) {
       @content;
     }
   }
-}
 
-@mixin styled-scrollbars(){
-  scrollbar-color: var(--color-neutral-border) var(--color-neutral-background);
-  scrollbar-width: thin;
-
-  &::-webkit-scrollbar{
-    width: 4px;
-    height: 4px;
-    background-color: var(--color-neutral-surface);
-  }
-
-  &::-webkit-scrollbar-thumb{
-    background: var(--color-neutral-border-boldest);
+  @else if $breakpoint =="tablet" {
+    @media (width <=1200px) {
+      @content;
+    }
   }
 }
 
