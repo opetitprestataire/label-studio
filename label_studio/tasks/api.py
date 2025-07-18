@@ -2,9 +2,9 @@
 """
 import logging
 
+from core.feature_flags import flag_set
 from core.mixins import GetParentObjectMixin
 from core.permissions import ViewClassPermission, all_permissions
-from core.feature_flags import flag_set
 from core.utils.params import bool_from_request
 from data_manager.api import TaskListAPI as DMTaskListAPI
 from data_manager.functions import evaluate_predictions
@@ -339,7 +339,10 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
             kwargs = {'fields_for_evaluation': ['annotators', 'reviewed']}
         else:
             if flag_set('fflag_fix_back_bros_182_api_task_optimizations', user=self.request.user):
-                kwargs = {'all_fields': True, 'excluded_fields_for_evaluation': self.get_excluded_fields_for_evaluation()}
+                kwargs = {
+                    'all_fields': True,
+                    'excluded_fields_for_evaluation': self.get_excluded_fields_for_evaluation(),
+                }
             else:
                 kwargs = {'all_fields': True}
         project = self.request.query_params.get('project') or self.request.data.get('project')
