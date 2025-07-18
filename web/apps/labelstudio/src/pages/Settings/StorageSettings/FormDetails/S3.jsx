@@ -4,8 +4,7 @@ import { Label, Toggle, Select, SelectContent, SelectItem, SelectTrigger, Select
 import { Input } from "../../../../components/Form";
 
 
-
-export const S3 = ({ formData, handleChange }) => {
+export const S3 = ({ formData, setFormData, handleChange }) => {
   return (
     <div className="space-y-8">
 
@@ -147,15 +146,15 @@ export const S3 = ({ formData, handleChange }) => {
                 min={1}
                 max={10080}
                 value={formData.presign_ttl}
-                onChange={(e) => handleNumberChange('presign_ttl', parseInt(e.target.value))}
+                onChange={(e) => handleChange('presign_ttl', parseInt(e.target.value))}
                 className="w-24"
               />
-              <Slider
+              <input type="range"
                 min={1}
                 max={60}
                 step={1}
                 value={[formData.presign_ttl]}
-                onValueChange={(value) => handleNumberChange('presign_ttl', value[0])}
+                onChange={(value) => handleChange('presign_ttl', value[0])}
                 className="flex-1"
               />
             </div>

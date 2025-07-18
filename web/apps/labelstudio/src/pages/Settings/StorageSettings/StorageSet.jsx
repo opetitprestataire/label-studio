@@ -56,19 +56,19 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
             }}
           />
         ),
-        footer: (
-          <>
-            <a
-              href="https://labelstud.io/guide/storage.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Learn more (Open in new tab)"
-            >
-              Learn more
-            </a>{" "}
-            about importing data and saving annotations to Cloud Storage!
-          </>
-        ),
+        // footer: (
+        //   <>
+        //     <a
+        //       href="https://labelstud.io/guide/storage.html"
+        //       target="_blank"
+        //       rel="noopener noreferrer"
+        //       aria-label="Learn more (Open in new tab)"
+        //     >
+        //       Learn more
+        //     </a>{" "}
+        //     about importing data and saving annotations to Cloud Storage!
+        //   </>
+        // ),
       });
     },
     [project, fetchStorages, target, rootClass],

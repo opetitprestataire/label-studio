@@ -4,7 +4,6 @@ import { cn } from "@humansignal/shad/utils";
 import { z } from 'zod';
 
 // import { zodResolver } from '@hookform/resolvers/zod';
-
 import { Button } from "@humansignal/ui";
 import { InlineError } from "../../../components/Error/InlineError";
 import { Form, Input } from "../../../components/Form";
@@ -13,18 +12,13 @@ import { ApiContext } from "../../../providers/ApiProvider";
 import { Block, Elem } from "../../../utils/bem";
 import { isDefined } from "../../../utils/helpers";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@humansignal/shad/components/ui/card";
-
 import { Label, Toggle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@humansignal/ui";
-
 import { RadioGroup, RadioGroupItem } from "@humansignal/shad/components/ui/radio-group";
-
-
 import { IconCross, IconDocument, IconSearch } from "@humansignal/icons";
-
 import { S3 } from "./FormDetails/S3";
 import { formatDistanceToNow, format } from 'date-fns';
-
 import { Toast, ToastProvider, ToastViewport } from "@radix-ui/react-toast";
+
 
 const Stepper = ({ steps, currentStep }) => {
   return (
@@ -138,21 +132,6 @@ const formSchema = basicInfoSchema.merge(storageDetailsSchema).merge(previewDeta
   });
 
 
-// // State atom
-// const formStateAtom = atom({
-//   currentStep: 0,
-//   formData: {
-//     connectionName: "",
-//     provider: "",
-//     region: "",
-//     bucket: "",
-//     apiKey: "",
-//     secretKey: ""
-//   },
-//   isComplete: false
-// });
-
-
 export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass, storage, storageTypes, title, onClose = () => {} }, ref) => {
   /**@type {import('react').RefObject<Form>} */
   const api = useContext(ApiContext);
@@ -168,6 +147,7 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
   const [nextPreviewToken, setNextPreviewToken] = useState("");
   
   useEffect(() => {
+    console.log("type changed: " + type); 
     api
       .callApi("storageForms", {
         params: {
@@ -181,27 +161,9 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
   // Error state
   const [errors, setErrors] = useState({});
 
-
   const [ testingConnection, setTestingConnection ] = useState(false);
-  const [connectionChecked, setConnectionChecked] = useState(false);
-  
-  // const [currentStep, setCurrentStep] = useState(0);
-  
-  // // new stuff START
-
-  // Define step components
-
-  // const [formData, setFormData] = useState({
-  //   connectionName: "",
-  //   provider: "",
-  //   region: "",
-  //   bucket: "",
-  //   apiKey: "",
-  //   secretKey: ""
-  // });
-
-
-  
+  const [ connectionChecked, setConnectionChecked ] = useState(false);
+    
   const [ formState, setFormState ] = useAtom(formStateAtom);
   const { currentStep, formData } = formState;
 
@@ -261,10 +223,6 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
   
   // Handle select changes
   const handleSelectChange = (name, value) => {
-
-    console.log(name);
-    console.log(value);
-
     setType(value);
 
     setFormState(prev => ({
@@ -330,13 +288,6 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
     }
   };
   
-  // Setup form with current schema
-  // const form = useForm({
-  //   // resolver: zodResolver(currentSchema),
-  //   defaultValues: formData,
-  //   mode: "onChange"
-  // });
-
   const nextStep = () => {
     //if (validateStep()) {
       if (currentStep < steps.length - 1) {
@@ -369,6 +320,7 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
   
 
   const testStorageConnection = useCallback(async () => {
+    // TODO should be real
     setConnectionChecked(true);
   }, [formState, target, storage]);
   
@@ -394,35 +346,31 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
         body.id = storage.id;
       }
 
-      console.log(target, type, body)
-      
       // Use your API service directly instead of form.api
       // You might need to adapt this to your actual API service
-      // const response = await api.callApi("storageFiles", {
-      //   params: {
-      //     limit: 10,
-      //     target,
-      //     type,
-      //   },
-      //   body,
-      // });
-
-      const fl = [
-        { "key": "hello/world.jpg", last_modified: "2024", size: 423748 },
-        { "key": "yo/hello/world.jpg", last_modified: "2025", size: 3748 }
-      ]
-
-      for (let i = 0; i<10000; i++) {
-        fl.push({ "key": "hello/world.jpg", last_modified: "2024", size: 423748 });
-      }
+      const response = await api.callApi("storageFiles", {
+        params: {
+          limit: 10,
+          target,
+          type,
+        },
+        body,
+      });
       
-      const response = { "files": fl };
+      // const fl = [
+      //   { "key": "hello/world.jpg", last_modified: "2024", size: 423748 },
+      //   { "key": "yo/hello/world.jpg", last_modified: "2025", size: 3748 }
+      // ]
+      
+      // for (let i = 0; i<10000; i++) {
+      //   fl.push({ "key": "hello/world.jpg", last_modified: "2024", size: 423748 });
+      // }
+      
+      // const response = { "files": fl };
       
       setFilesPreview(response?.files);
       setNextPreviewToken(response?.continuation_token);
-      setLoadingFilesPreiview(false);
-      // console.log(response);
-      // console.log(response);
+      setLoadingFilesPreiview(false);      
       // if (response?.$meta?.ok) setConnectionValid(true);
       // else setConnectionValid(false);
     }
@@ -500,94 +448,83 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
       </div>
 
       <div className="space-y-2">
-  <Label htmlFor="provider">Storage Provider *</Label>
-
-<RadioGroup
-  name="provider"
-  value={formData.provider}
-  onValueChange={(value) => handleSelectChange("provider", value)}
-
->
-    <label htmlFor="s3" className="block cursor-pointer">
-    <div className={`flex items-center border rounded-md p-2 gap-4 hover:bg-gray-50 
+        <Label htmlFor="provider">Storage Provider *</Label>
+        <RadioGroup
+          name="provider"
+          value={formData.provider}
+          onValueChange={(value) => handleSelectChange("provider", value)}>
+          <label htmlFor="s3" className="block cursor-pointer">
+            <div className={`flex items-center border rounded-md p-2 gap-4 hover:bg-gray-50 
       ${formData.provider === "s3" ? "bg-blue-50 border-blue-200 ring-2 ring-blue-200 ring-opacity-50" : ""}`}>
-      <RadioGroupItem value="s3" id="s3" className="ml-2" />
-      <div className="h-10 w-10 bg-blue-100 rounded-md flex items-center justify-center text-blue-600">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-          <path d="M4 20V8.5L12 4L20 8.5V20"></path>
-          <path d="M2 8L12 16L22 8"></path>
-          <path d="M12 16V21"></path>
-        </svg>
-      </div>
-      
-      <div>
-        <span className="font-medium text-base block">Amazon S3</span>
-        <p className="text-sm text-muted-foreground">AWS Simple Storage Service</p>
-      </div>
-    </div>
-  </label>
+              <RadioGroupItem value="s3" id="s3" className="ml-2" />
+              <div className="h-10 w-10 bg-blue-100 rounded-md flex items-center justify-center text-blue-600">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <path d="M4 20V8.5L12 4L20 8.5V20"></path>
+                  <path d="M2 8L12 16L22 8"></path>
+                  <path d="M12 16V21"></path>
+                </svg>
+              </div>
+              
+              <div>
+                <span className="font-medium text-base block">Amazon S3</span>
+                <p className="text-sm text-muted-foreground">AWS Simple Storage Service</p>
+              </div>
+            </div>
+          </label>
 
-  {/* GCP Option */}
-  <label htmlFor="gcp" className="block cursor-pointer">
-    <div className={`flex items-center border rounded-md p-2 gap-4 hover:bg-gray-50
+          {/* GCP Option */}
+          <label htmlFor="gcp" className="block cursor-pointer">
+            <div className={`flex items-center border rounded-md p-2 gap-4 hover:bg-gray-50
       ${formData.provider === "gcp" ? "bg-green-50 border-green-200 ring-2 ring-green-200 ring-opacity-50" : ""}`}>
-        <RadioGroupItem value="gcp" id="gcp" className="ml-2" />
-      <div className="h-10 w-10 bg-green-100 rounded-md flex items-center justify-center text-green-600">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-          <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
-          <path d="M2 17L12 22L22 17"></path>
-          <path d="M2 12L12 17L22 12"></path>
-        </svg>
-      </div>
-      
-      <div>
-        <span className="font-medium text-base block">Google Cloud Storage</span>
-        <p className="text-sm text-muted-foreground">Unified object storage for developers and enterprises</p>
-      </div>
-    </div>
-  </label>
+              <RadioGroupItem value="gcp" id="gcp" className="ml-2" />
+              <div className="h-10 w-10 bg-green-100 rounded-md flex items-center justify-center text-green-600">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
+                  <path d="M2 17L12 22L22 17"></path>
+                  <path d="M2 12L12 17L22 12"></path>
+                </svg>
+              </div>
+              
+              <div>
+                <span className="font-medium text-base block">Google Cloud Storage</span>
+                <p className="text-sm text-muted-foreground">Unified object storage for developers and enterprises</p>
+              </div>
+            </div>
+          </label>
 
-  {/* Azure Option */}
-  <label htmlFor="azure" className="block cursor-pointer">
-    <div className={`flex items-center border rounded-md p-2 gap-4 hover:bg-gray-50
+          {/* Azure Option */}
+          <label htmlFor="azure" className="block cursor-pointer">
+            <div className={`flex items-center border rounded-md p-2 gap-4 hover:bg-gray-50
       ${formData.provider === "azure" ? "bg-purple-50 border-purple-200 ring-2 ring-purple-200 ring-opacity-50" : ""}`}>
-        <RadioGroupItem value="azure" id="azure" className="ml-2" />
-      
-      <div className="h-10 w-10 bg-purple-100 rounded-md flex items-center justify-center text-purple-600">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-          <path d="M12 22L2 17V7L12 2L22 7V17L12 22Z"></path>
-          <path d="M12 2V22"></path>
-          <path d="M2 7L22 7"></path>
-          <path d="M2 17L22 17"></path>
-        </svg>
+              <RadioGroupItem value="azure" id="azure" className="ml-2" />
+              
+              <div className="h-10 w-10 bg-purple-100 rounded-md flex items-center justify-center text-purple-600">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <path d="M12 22L2 17V7L12 2L22 7V17L12 22Z"></path>
+                  <path d="M12 2V22"></path>
+                  <path d="M2 7L22 7"></path>
+                  <path d="M2 17L22 17"></path>
+                </svg>
+              </div>
+              
+              <div>
+                <span className="font-medium text-base block">Azure Blob Storage</span>
+                <p className="text-sm text-muted-foreground">Microsoft's object storage solution for the cloud</p>
+              </div>
+            </div>
+          </label>
+        </RadioGroup>
+        
+        {errors.provider && (
+          <p className="text-sm text-destructive">{errors.provider}</p>
+        )}
       </div>
-      
-      <div>
-        <span className="font-medium text-base block">Azure Blob Storage</span>
-        <p className="text-sm text-muted-foreground">Microsoft's object storage solution for the cloud</p>
-      </div>
-    </div>
-  </label>
-  
-  
-</RadioGroup>
-
-  
-  {errors.provider && (
-    <p className="text-sm text-destructive">{errors.provider}</p>
-  )}
-</div>
-
-      
-      
     </div>
   );
-
 
   const action = useMemo(() => {
     return storage ? "updateStorage" : "createStorage";
   }, [storage]);
-
 
   const renderProviderDetails = () => {
     return (
@@ -606,9 +543,7 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
               autoFill="off"
               autoComplete="off">
           <Input type="hidden" name="project" value={project} />
-          <S3 formData={formData} handleChange={handleChange} />
-          
-
+          <S3 formData={formData} setFormData={() => {}} handleChange={handleChange} />
           <InlineError />
         </Form>
         
@@ -619,288 +554,287 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
     );
   };
 
-
   const renderPreviewStep = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold">Configure Import Settings & Preview Data</h2>
-        <p className="text-muted-foreground">Set up filters for your files and preview what will be synchronized</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Left Column Header */}
-        <h4>Import Configuration</h4>
-        
-        {/* Right Column Header with Button */}
-        <div className="flex justify-between items-center">
-          <h4>Files Preview</h4>          
-        </div>
-        
-        {/* Left Column: Configuration */}
+    return (
+      <div className="space-y-6">
         <div>
-          <Form
-            ref={formRef}
-            action={action}
-            params={{ target, type, project, pk: storage?.id }}
-    /* fields={[...(formFields ?? [])]} */
-            formData={{ ...(storage ?? {}) }}
-            skipEmpty={false}
-            onSubmit={onSubmit}
-            autoFill="off"
-            autoComplete="off">
-            
-            <div className="space-y-8">
-              {/* File Filter Section */}
-              <div className="space-y-2">
-                <Label htmlFor="regex_filter">File Name Filter (Optional)</Label>
-                <div>
-                  <Input 
-                    id="regex_filter"
-                    name="regex_filter"
-                    value={formData.regex_filter}
-                    onChange={handleChange}
-                    placeholder=".*\.(jpg|png)$ - imports only JPG, PNG files"
-                    style={{ width: "100%" }}
-                  />
-                  
-                  <div className="flex flex-wrap gap-x-2 items-center text-xs">
-                    <span className="text-muted-foreground">Common filters:</span>
-                    <a 
-                      href="#" 
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState(prevState => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\.(jpe?g|png|gif)$"
-                          }
-                        }));
-                      }}
-                    >
-                      Images
-                    </a>
-                    <a 
-                      href="#" 
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState(prevState => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.(mp4|avi|mov|wmv|webm)$"
-                          }
-                        }));
-                      }}
-                    >
-                      Videos
-                    </a>
-                    <a 
-                      href="#" 
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState(prevState => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.(mp3|wav|ogg|flac)$"
-                          }
-                        }));
-                      }}
-                    >
-                      Audio
-                    </a>
-                    <a 
-                      href="#" 
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState(prevState => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.(csv|tsv)$"
-                          }
-                        }));
-                      }}
-                    >
-                      Tabular
-                    </a>
-                    <a 
-                      href="#" 
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState(prevState => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.(txt|html|xml)$"
-                          }
-                        }));
-                      }}
-                    >
-                      Text
-                    </a>
-                    <a 
-                      href="#" 
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState(prevState => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.pdf$"
-                          }
-                        }));
-                      }}
-                    >
-                      PDFs
-                    </a>
-                    <a 
-                      href="#" 
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState(prevState => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.json$"
-                          }
-                        }));
-                      }}
-                    >
-                      JSON
-                    </a>
-                    <a 
-                      href="#" 
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState(prevState => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*"
-                          }
-                        }));
-                      }}
-                    >
-                      All Files
-                    </a>
+          <h2 className="text-xl font-semibold">Configure Import Settings & Preview Data</h2>
+          <p className="text-muted-foreground">Set up filters for your files and preview what will be synchronized</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column Header */}
+          <h4>Import Configuration</h4>
+          
+          {/* Right Column Header with Button */}
+          <div className="flex justify-between items-center">
+            <h4>Files Preview</h4>          
+          </div>
+          
+          {/* Left Column: Configuration */}
+          <div>
+            <Form
+              ref={formRef}
+              action={action}
+              params={{ target, type, project, pk: storage?.id }}
+      /* fields={[...(formFields ?? [])]} */
+              formData={{ ...(storage ?? {}) }}
+              skipEmpty={false}
+              onSubmit={onSubmit}
+              autoFill="off"
+              autoComplete="off">
+              
+              <div className="space-y-8">
+                {/* File Filter Section */}
+                <div className="space-y-2">
+                  <Label htmlFor="regex_filter">File Name Filter (Optional)</Label>
+                  <div>
+                    <Input 
+                      id="regex_filter"
+                      name="regex_filter"
+                      value={formData.regex_filter}
+                      onChange={handleChange}
+                      placeholder=".*\.(jpg|png)$ - imports only JPG, PNG files"
+                      style={{ width: "100%" }}
+                    />
+                    
+                    <div className="flex flex-wrap gap-x-2 items-center text-xs">
+                      <span className="text-muted-foreground">Common filters:</span>
+                      <a 
+                        href="#" 
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState(prevState => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\.(jpe?g|png|gif)$"
+                            }
+                          }));
+                        }}
+                      >
+                        Images
+                      </a>
+                      <a 
+                        href="#" 
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState(prevState => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.(mp4|avi|mov|wmv|webm)$"
+                            }
+                          }));
+                        }}
+                      >
+                        Videos
+                      </a>
+                      <a 
+                        href="#" 
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState(prevState => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.(mp3|wav|ogg|flac)$"
+                            }
+                          }));
+                        }}
+                      >
+                        Audio
+                      </a>
+                      <a 
+                        href="#" 
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState(prevState => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.(csv|tsv)$"
+                            }
+                          }));
+                        }}
+                      >
+                        Tabular
+                      </a>
+                      <a 
+                        href="#" 
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState(prevState => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.(txt|html|xml)$"
+                            }
+                          }));
+                        }}
+                      >
+                        Text
+                      </a>
+                      <a 
+                        href="#" 
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState(prevState => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.pdf$"
+                            }
+                          }));
+                        }}
+                      >
+                        PDFs
+                      </a>
+                      <a 
+                        href="#" 
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState(prevState => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.json$"
+                            }
+                          }));
+                        }}
+                      >
+                        JSON
+                      </a>
+                      <a 
+                        href="#" 
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState(prevState => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*"
+                            }
+                          }));
+                        }}
+                      >
+                        All Files
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Import Options */}
+                {/* Import Options */}
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="use_blob_urls" className="block mb-2">
-                    Import as source files
-                  </Label>
-                  <span className="text-sm text-gray-500 leading-tight block">
-                    Files will be imported as source data (images, text, etc.) rather than annotation tasks (JSON)
-                  </span>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="use_blob_urls" className="block mb-2">
+                      Import as source files
+                    </Label>
+                    <span className="text-sm text-gray-500 leading-tight block">
+                      Files will be imported as source data (images, text, etc.) rather than annotation tasks (JSON)
+                    </span>
+                  </div>
+                  <Toggle
+                    id="use_blob_urls"
+                    name="use_blob_urls"
+                    checked={formState.formData.use_blob_urls}
+                    onCheckedChange={(checked) => 
+                      setFormState(prevState => ({
+                        ...prevState,
+                        formData: {
+                          ...prevState.formData,
+                          use_blob_urls: checked
+                        }
+                      }))
+                    }
+                  />
                 </div>
-                <Toggle
-                  id="use_blob_urls"
-                  name="use_blob_urls"
-                  checked={formState.formData.use_blob_urls}
-                  onCheckedChange={(checked) => 
-                    setFormState(prevState => ({
-                      ...prevState,
-                      formData: {
-                        ...prevState.formData,
-                        use_blob_urls: checked
-                      }
-                    }))
-                  }
-                />
-              </div>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="recursive_scan" className="block mb-2">
-                    Include subfolders
-                  </Label>
-                  <p className="text-sm text-gray-500">
-                    Scan all subdirectories within the bucket or folder path
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="recursive_scan" className="block mb-2">
+                      Include subfolders
+                    </Label>
+                    <p className="text-sm text-gray-500">
+                      Scan all subdirectories within the bucket or folder path
+                    </p>
+                  </div>
+                  <Toggle 
+                    id="recursive_scan"
+                    name="recursive_scan"
+                    checked={formState.formData.recursive_scan}
+                    onCheckedChange={(checked) => 
+                      setFormState(prevState => ({
+                        ...prevState,
+                        formData: {
+                          ...prevState.formData,
+                          recursive_scan: checked
+                        }
+                      }))
+                    } 
+                  />
+                </div>              
+              </div>
+            </Form>
+          </div>
+
+          {/* Right Column: Preview Files */}
+          <div className="border rounded-md overflow-hidden h-[340px]">
+            <div className="bg-card h-full flex flex-col">
+              {filesPreview === null ? (
+                // No API response yet
+                <div className="flex flex-col items-center justify-center py-12 px-4 text-center flex-grow">
+                  <div className="rounded-full bg-muted p-3 mb-4">
+                    <IconDocument className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-medium mb-1">No Preview Available</h3>
+                  <p className="text-sm text-muted-foreground max-w-md">
+                    Configure your import settings and click "Load Preview" to see a sample of files that will be imported.
                   </p>
                 </div>
-                <Toggle 
-                  id="recursive_scan"
-                  name="recursive_scan"
-                  checked={formState.formData.recursive_scan}
-                  onCheckedChange={(checked) => 
-                    setFormState(prevState => ({
-                      ...prevState,
-                      formData: {
-                        ...prevState.formData,
-                        recursive_scan: checked
-                      }
-                    }))
-                  } 
-                />
-              </div>              
-            </div>
-          </Form>
-        </div>
-
-        {/* Right Column: Preview Files */}
-        <div className="border rounded-md overflow-hidden h-[340px]">
-          <div className="bg-card h-full flex flex-col">
-            {filesPreview === null ? (
-              // No API response yet
-              <div className="flex flex-col items-center justify-center py-12 px-4 text-center flex-grow">
-                <div className="rounded-full bg-muted p-3 mb-4">
-                  <IconDocument className="h-6 w-6 text-muted-foreground" />
+              ) : filesPreview.length === 0 ? (
+                // API returned empty array
+                <div className="flex flex-col items-center justify-center py-12 px-4 text-center flex-grow">
+                  <div className="rounded-full bg-muted p-3 mb-4">
+                    <IconSearch className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-medium mb-1">No Files Found</h3>
+                  <p className="text-sm text-muted-foreground max-w-md">
+                    No files matching your current criteria were found. Try adjusting your filter settings and reload the preview. 
+                  </p>
                 </div>
-                <h3 className="font-medium mb-1">No Preview Available</h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  Configure your import settings and click "Load Preview" to see a sample of files that will be imported.
-                </p>
-              </div>
-            ) : filesPreview.length === 0 ? (
-              // API returned empty array
-              <div className="flex flex-col items-center justify-center py-12 px-4 text-center flex-grow">
-                <div className="rounded-full bg-muted p-3 mb-4">
-                  <IconSearch className="h-6 w-6 text-muted-foreground" />
-                </div>
-                <h3 className="font-medium mb-1">No Files Found</h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  No files matching your current criteria were found. Try adjusting your filter settings and reload the preview. 
-                </p>
-              </div>
-            ) : (
-              // Files available - display in a table format with fixed height and scrolling
-              <div className="px-2 py-2 flex-grow overflow-auto">
-                <div className="grid grid-cols-1 text-xs gap-1">
-                  {filesPreview.map((file, index) => (
-                    <div key={index} className="flex justify-between py-0.5 px-2 bg-gray-50 hover:bg-gray-100 border-b last:border-b-0 rounded-md">
-                      <div className="truncate max-w-[260px]">{file.key}</div>
-                      <div className="flex items-center space-x-1 text-muted-foreground whitespace-nowrap">
-                        <span>{formatDistanceToNow(new Date(file.last_modified), {addSuffix: true})}</span>
-                        <span className="mx-0.5">•</span>
-                        <span>{formatSize(file.size)}</span>
+              ) : (
+                // Files available - display in a table format with fixed height and scrolling
+                <div className="px-2 py-2 flex-grow overflow-auto">
+                  <div className="grid grid-cols-1 text-xs gap-1">
+                    {filesPreview.map((file, index) => (
+                      <div key={index} className="flex justify-between py-0.5 px-2 bg-gray-50 hover:bg-gray-100 border-b last:border-b-0 rounded-md">
+                        <div className="truncate max-w-[260px]">{file.key}</div>
+                        <div className="flex items-center space-x-1 text-muted-foreground whitespace-nowrap">
+                          <span>{formatDistanceToNow(new Date(file.last_modified), {addSuffix: true})}</span>
+                          <span className="mx-0.5">•</span>
+                          <span>{formatSize(file.size)}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
   
   const renderReviewStep = () => {
@@ -969,57 +903,57 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
   
   return (
     <div style={{
-        display: "flex", 
-        flexDirection: "column",
-        height: "100%",
+      display: "flex", 
+      flexDirection: "column",
+      height: "100%",
       width: "100%",
 
-      }}>
+    }}>
 
       {/* Custom header with title, subtitle and close button */}
-        <div style={{
-          padding: "1rem 1.5rem",
-          paddingTop: "1.5rem",
-          
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-        }}>
-          <div>
-            <h2 style={{ 
-              margin: "0 0 0.5rem 0",
-              fontSize: "1.75rem",
-              fontWeight: "500",
-              color: "var(--color-neutral-content)"
+      <div style={{
+        padding: "1rem 1.5rem",
+        paddingTop: "1.5rem",
+        
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+      }}>
+        <div>
+          <h2 style={{ 
+            margin: "0 0 0.5rem 0",
+            fontSize: "1.75rem",
+            fontWeight: "500",
+            color: "var(--color-neutral-content)"
+          }}>
+            {title}
+          </h2>
+          {true && (
+            <div style={{
+              fontSize: "1rem",
+              color: "var(--color-neutral-content-subtle)",
+              lineHeight: "1.4"
             }}>
-              {title}
-            </h2>
-            {true && (
-              <div style={{
-                fontSize: "1rem",
-                color: "var(--color-neutral-content-subtle)",
-                lineHeight: "1.4"
-              }}>
-                {"Import your data from cloud storage providers"}
-              </div>
-            )}
-          </div>
-          <Button 
-            icon={<IconCross />} 
-            style={{ 
-              border: "none",
-              background: "transparent",
-              cursor: "pointer",
-              padding: "0.5rem",
-              marginRight: "-0.5rem",
-              marginTop: "-0.25rem"
-            }}
-            onClick={handleClose}
-          />
+              {"Import your data from cloud storage providers"}
+            </div>
+          )}
         </div>
+        <Button 
+          icon={<IconCross />} 
+          style={{ 
+            border: "none",
+            background: "transparent",
+            cursor: "pointer",
+            padding: "0.5rem",
+            marginRight: "-0.5rem",
+            marginTop: "-0.25rem"
+          }}
+          onClick={handleClose}
+        />
+      </div>
 
       
-        <Stepper steps={steps} currentStep={currentStep} />
+      <Stepper steps={steps} currentStep={currentStep} />
       
       <div style={{
         maxHeight: "60vh", // Adjust height as needed
@@ -1040,7 +974,6 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
           Previous
         </Button>
 
-
         <div className="flex" style={{ gap: '12px' }}>
           {currentStep === 1 && (
             <Button.Group className={rootClass.elem("buttons")}>
@@ -1056,7 +989,7 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
                 Load Preview
               </Button>
             </Button.Group>
-              
+            
           )}
           
           <Button onClick={nextStep} disabled={(currentStep === 1 && ! connectionChecked) || (currentStep === 2 && filesPreview === null)} primary>
@@ -1097,184 +1030,3 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
   );
 
 });
-
-
-// import { forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-// import { Button } from "../../../components";
-// import { InlineError } from "../../../components/Error/InlineError";
-// import { Form, Input } from "../../../components/Form";
-// import { Oneof } from "../../../components/Oneof/Oneof";
-// import { ApiContext } from "../../../providers/ApiProvider";
-// import { Block, Elem } from "../../../utils/bem";
-// import { isDefined } from "../../../utils/helpers";
-
-// // import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@humansignal/shad/components/ui/card";
-
-// // Custom Card Components
-// // const Card = ({ className, ...props }) => {
-// //   return (
-// //     <div
-// //       className={cn(
-// //         "rounded-lg border bg-card text-card-foreground shadow-sm",
-// //         className
-// //       )}
-// //       {...props}
-// //     />
-// //   )
-// // }
-
-// // const CardHeader = ({ className, ...props }) => {
-// //   return (
-// //     <div
-// //       className={cn("flex flex-col space-y-1.5 p-6", className)}
-// //       {...props}
-// //     />
-// //   )
-// // }
-
-// // const CardTitle = ({ className, ...props }) => {
-// //   return (
-// //     <h3
-// //       className={cn(
-// //         "text-2xl font-semibold leading-none tracking-tight",
-// //         className
-// //       )}
-// //       {...props}
-// //     />
-// //   )
-// // }
-
-// // const CardContent = ({ className, ...props }) => {
-// //   return <div className={cn("p-6 pt-0", className)} {...props} />
-// // }
-
-// // const CardFooter = ({ className, ...props }) => {
-// //   return (
-// //     <div
-// //       className={cn("flex items-center p-6 pt-0", className)}
-// //       {...props}
-// //     />
-// //   )
-// // }
-
-// export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass, storage, storageTypes }, ref) => {
-//   /**@type {import('react').RefObject<Form>} */
-//   const api = useContext(ApiContext);
-//   const formRef = ref ?? useRef();
-//   const [type, setType] = useState(storage?.type ?? storageTypes?.[0]?.name ?? "s3");
-//   const [checking, setChecking] = useState(false);
-//   const [connectionValid, setConnectionValid] = useState(null);
-//   const [formFields, setFormFields] = useState([]);
-
-//   useEffect(() => {
-//     api
-//       .callApi("storageForms", {
-//         params: {
-//           target,
-//           type,
-//         },
-//       })
-//       .then((formFields) => setFormFields(formFields ?? []));
-//   }, [type]);
-
-//   const storageTypeSelect = {
-//     columnCount: 1,
-//     fields: [
-//       {
-//         skip: true,
-//         type: "select",
-//         name: "storage_type",
-//         label: "Storage Type",
-//         disabled: !!storage,
-//         options: storageTypes.map(({ name, title }) => ({
-//           value: name,
-//           label: title,
-//         })),
-//         value: storage?.type ?? type,
-//         onChange: setType,
-//       },
-//     ],
-//   };
-
-//   const validateStorageConnection = useCallback(async () => {
-//     setChecking(true);
-//     setConnectionValid(null);
-
-//     const form = formRef.current;
-
-//     if (form && form.validateFields()) {
-//       const body = form.assembleFormData({ asJSON: true });
-//       const type = form.getField("storage_type").value;
-
-//       if (isDefined(storage?.id)) {
-//         body.id = storage.id;
-//       }
-
-//       // we're using api provided by the form to be able to save
-//       // current api context and render inline erorrs properly
-//       const response = await form.api.callApi("validateStorage", {
-//         params: {
-//           target,
-//           type,
-//         },
-//         body,
-//       });
-
-//       if (response?.$meta?.ok) setConnectionValid(true);
-//       else setConnectionValid(false);
-//     }
-//     setChecking(false);
-//   }, [formRef, target, type, storage]);
-
-//   const action = useMemo(() => {
-//     return storage ? "updateStorage" : "createStorage";
-//   }, [storage]);
-
-//   return (
-//     <Elem>
-//       <Form.Builder
-//         ref={formRef}
-//         action={action}
-//         params={{ target, type, project, pk: storage?.id }}
-//         fields={[storageTypeSelect]}
-//         formData={{ ...(storage ?? {}) }}
-//         skipEmpty={false}
-//         onSubmit={onSubmit}
-//         autoFill="off"
-//         autoComplete="off"
-//       >
-//         <Input type="hidden" name="project" value={project} />
-//         <Form.Actions
-//           valid={connectionValid}
-//           extra={
-//             connectionValid !== null && (
-//               <Block name="form-indicator">
-//                 <Oneof value={connectionValid}>
-//                   <Elem tag="span" mod={{ type: "success" }} name="item" case={true}>
-//                     Successfully connected!
-//                   </Elem>
-//                   <Elem tag="span" mod={{ type: "fail" }} name="item" case={false}>
-//                     Connection failed
-//                   </Elem>
-//                 </Oneof>
-//               </Block>
-//             )
-//           }
-//         >
-//           <Input type="hidden" name="project" value={project} />
-//           <Button.Group className={rootClass.elem("buttons")}>
-//             <Button type="button" waiting={checking} onClick={validateStorageConnection}>
-//               Check Connection
-//             </Button>
-//             <Button type="submit" look="primary">
-//               {storage ? "Save" : "Add Storage"}
-//             </Button>
-//           </Button.Group>
-//         </Form.Actions>
-
-//         <InlineError />
-//       </Form.Builder>
-//     </Elem>
-//   );
-// });
-
