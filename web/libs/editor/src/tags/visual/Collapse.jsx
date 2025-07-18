@@ -132,11 +132,7 @@ const HtxCollapse = observer(({ item }) => {
   // Global open sets the base state for all panels
   // Local open can override the global state for individual panels
   const defaultActiveKeys = visibleChildren
-    .filter((c, index) => {
-      console.log(index, c.value, c.open, c.open ?? item.open);
-      if (isDefined(c.open)) return c.open;
-      return item.open;
-    })
+    .filter((panel) => panel.open ?? item.open)
     .map((c) => `panel-${c.value}`);
 
   // For accordion mode, only the first active key should be used
