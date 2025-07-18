@@ -68,6 +68,7 @@ from io_storages.s3.api import (
     S3ImportStorageListAPI,
     S3ImportStorageSyncAPI,
     S3ImportStorageValidateAPI,
+    S3ImportStorageListFilesAPI
 )
 
 app_name = 'storages'
@@ -85,6 +86,7 @@ _api_urlpatterns = [
     path('s3/<int:pk>/sync', S3ImportStorageSyncAPI.as_view(), name='storage-s3-sync'),
     path('s3/validate', S3ImportStorageValidateAPI.as_view(), name='storage-s3-validate'),
     path('s3/form', S3ImportStorageFormLayoutAPI.as_view(), name='storage-s3-form'),
+    path('s3/files', S3ImportStorageListFilesAPI.as_view(), name='storage-s3-list-files'),
     path('export/s3', S3ExportStorageListAPI.as_view(), name='export-storage-s3-list'),
     path('export/s3/<int:pk>', S3ExportStorageDetailAPI.as_view(), name='export-storage-s3-detail'),
     path('export/s3/<int:pk>/sync', S3ExportStorageSyncAPI.as_view(), name='export-storage-s3-sync'),

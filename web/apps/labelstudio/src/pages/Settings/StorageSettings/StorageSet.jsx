@@ -7,6 +7,7 @@ import { ApiContext } from "../../../providers/ApiProvider";
 import { projectAtom } from "../../../providers/ProjectProvider";
 import { StorageCard } from "./StorageCard";
 import { StorageForm } from "./StorageForm";
+import { StorageFormNew } from "./StorageFormNew";
 import { useAtomValue } from "jotai";
 import { useStorageCard } from "./hooks/useStorageCard";
 
@@ -32,16 +33,18 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
 
   const showStorageFormModal = useCallback(
     (storage) => {
-      const action = storage ? "Edit" : "Add";
+      const action = storage ? "Edit" : "Connect";
       const actionTarget = target === "export" ? "Target" : "Source";
       const title = `${action} ${actionTarget} Storage`;
 
       const modalRef = modal({
         title,
         closeOnClickOutside: false,
-        style: { width: 760 },
+        style: { width: 960 },
+        bare: true,
         body: (
-          <StorageForm
+          <StorageFormNew
+            title={title}
             target={target}
             storage={storage}
             project={project.id}
@@ -63,7 +66,7 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
             >
               Learn more
             </a>{" "}
-            about importing data and saving annotations to Cloud Storage.
+            about importing data and saving annotations to Cloud Storage!
           </>
         ),
       });

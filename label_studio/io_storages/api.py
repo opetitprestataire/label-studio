@@ -176,6 +176,87 @@ class StorageValidateAPI(generics.CreateAPIView):
         return Response()
 
 
+class ImportStorageListFilesAPI(generics.CreateAPIView):
+    # permission_required = all_permissions.projects_change
+    parser_classes = (JSONParser, FormParser, MultiPartParser)
+
+    def create(self, request, *args, **kwargs):
+        storage_id = request.data.get('id')
+        instance = None
+        if storage_id:
+            instance = generics.get_object_or_404(self.serializer_class.Meta.model.objects.all(), pk=storage_id)
+            if not instance.has_permission(request.user):
+                raise PermissionDenied()
+
+        # combine instance fields with request.data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # if storage exists, we have to use instance from DB,
+        # because instance from serializer won't have credentials, they were popped intentionally
+        if instance:
+            instance = serializer.update(instance, serializer.validated_data)
+        else:
+            instance = serializer.Meta.model(**serializer.validated_data)
+            
+        # double check: not all storages validate connection in serializer, just make another explicit check here
+        try:
+            params = self._extract_pagination_params(request.data)
+            all_files = list(instance.iter_keys(**params))
+    
+            # Get files with pagination
+            files = [
+                {
+                    'key': fl.get('Key'),
+                    'last_modified': fl.get('LastModified'),
+                    'size': fl.get('Size')
+                }
+                for fl in all_files
+            ]
+    
+            # Try to get continuation token if available
+            next_token = self._extract_continuation_token(instance.iter_keys, params)
+            
+            return Response({
+                'files': files,
+                'continuation_token': next_token
+            })                        
+        except Exception as exc:
+            raise ValidationError(exc)
+        
+        return Response()
+
+    def _extract_pagination_params(self, data):
+        """Extract and validate pagination parameters."""
+        params = {}
+        
+        # Process limit parameter
+        if 'limit' in data:
+            try:
+                limit = int(data['limit'])
+                if limit <= 0:
+                    raise ValidationError({'limit': 'Must be a positive integer'})
+                params['limit'] = limit
+            except (ValueError, TypeError):
+                raise ValidationError({'limit': 'Must be a valid integer'})
+        
+        # Process pagination token
+        if data.get('starting_token'):
+            params['starting_token'] = data['starting_token']
+        
+        # Process sort direction
+        params['reverse'] = bool(data.get('reverse', False))
+        
+        # Process page size
+        try:
+            page_size = int(data.get('page_size', 1000))
+            params['page_size'] = max(1, min(page_size, 1000))  # Clamp between1-1000
+        except (ValueError, TypeError):
+            params['page_size'] = 1000
+            
+        return params
+        
+
+    
 @extend_schema(exclude=True)
 class StorageFormLayoutAPI(generics.RetrieveAPIView):
 

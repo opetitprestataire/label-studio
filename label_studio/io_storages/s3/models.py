@@ -212,6 +212,113 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
                 continue
             yield key
 
+    # [TODO] this is a bit of a refactor of the above, we will need to
+    # add proper error handling for every possible exceptions and
+    # return readable message back to the user
+    def iter_keys(self, limit=None, starting_token=None, page_size=1000):
+        """
+        Iterate through S3 object keys with pagination and sorting options.
+        Args:
+        limit (int, optional): Maximum number of keys to return. None means no limit.
+        starting_token (str, optional): Continuation token for pagination.
+        page_size (int, optional): Number of items per S3 API call (max 1000).
+        
+        Yields:
+        str: S3 object keys matching the criteria
+        """
+        client, bucket = self.get_client_and_bucket()
+        params = self._build_list_params(page_size, starting_token)
+        
+        for key in self._iter_keys_forward(client, params, limit):
+            yield key
+
+    def _build_list_params(self, page_size, starting_token):
+        """Build parameters for S3 list_objects_v2 call."""
+        params = {
+            'Bucket': self.bucket,
+            'MaxKeys': min(page_size, 1000),  # S3 max is 1000
+        }
+    
+        if self.prefix:
+            params['Prefix'] = self.prefix.rstrip('/') + '/'
+        
+        if not self.recursive_scan:
+            params['Delimiter'] = '/'
+        
+        if starting_token:
+            params['ContinuationToken'] = starting_token
+        
+        return params
+
+    def _iter_keys_forward(self, client, params, limit):
+        """Forward iteration implementation."""
+        regex = re.compile(str(self.regex_filter)) if self.regex_filter else None
+        count = 0
+    
+        while limit is None or count < limit:
+            response = client.list_objects_v2(**params)
+        
+            for obj in response.get('Contents', []):
+                key = obj['Key']
+            
+                # Skip folders and non-matching keys
+                if key.endswith('/'):
+                    logger.debug(f"{key} is skipped because it is a folder")
+                    continue
+            
+                if regex and not regex.match(key):
+                    logger.debug(f"{key} is skipped by regex filter")
+                    continue
+            
+                yield obj
+                count += 1
+                if limit is not None and count >= limit:
+                    return
+            
+            # Check for more pages
+            if not response.get('IsTruncated'):
+                break
+        
+            params['ContinuationToken'] = response.get('NextContinuationToken')
+
+    def _iter_keys_reverse(self, client, params, limit):
+        """Reverse iteration implementation."""
+        regex = re.compile(str(self.regex_filter)) if self.regex_filter else None
+        keys_to_return = []
+        max_keys = limit if limit is not None else float('inf')
+    
+        # Collect matching keys
+        while len(keys_to_return) < max_keys:
+            response = client.list_objects_v2(**params)
+        
+            for obj in response.get('Contents', []):
+                key = obj['Key']
+            
+                # Skip folders and non-matching keys
+                if key.endswith('/'):
+                    logger.debug(f"{key} is skipped because it is a folder")
+                    continue
+            
+                if regex and not regex.match(key):
+                    logger.debug(f"{key} is skipped by regex filter")
+                    continue
+            
+                keys_to_return.append(key)
+                if len(keys_to_return) >= max_keys:
+                    break
+            
+            # Check for more pages
+            if not response.get('IsTruncated') or len(keys_to_return) >= max_key:
+                break
+        
+            params['ContinuationToken'] = response.get('NextContinuationToken')
+        
+        # Yield in reverse order
+        for key in sorted(keys_to_return, reverse=True):
+            yield key        
+            
+
+            
     @catch_and_reraise_from_none
     def scan_and_create_links(self):
         return self._scan_and_create_links(S3ImportStorageLink)
