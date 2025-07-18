@@ -3,6 +3,7 @@ import React from "react";
 
 import { AnnotationMixin } from "../../../mixins/AnnotationMixin";
 import IsReadyMixin from "../../../mixins/IsReadyMixin";
+import PersistentStateMixin from "../../../mixins/PersistentState";
 import ProcessAttrsMixin from "../../../mixins/ProcessAttrs";
 import { SyncableMixin } from "../../../mixins/Syncable";
 import { parseValue } from "../../../utils/data";
@@ -160,6 +161,15 @@ const Model = types
         });
       });
       return { start, end };
+    },
+
+    get persistentValuesKey() {
+      return "ls:video-tag:settings";
+    },
+    get persistentValues() {
+      return {
+        loopTimelineRegion: self.loopTimelineRegion,
+      };
     },
   }))
   .actions((self) => ({
@@ -377,6 +387,7 @@ export const VideoModel = types.compose(
   TagAttrs,
   ProcessAttrsMixin,
   ObjectBase,
+  PersistentStateMixin,
   AnnotationMixin,
   Model,
   IsReadyMixin,
