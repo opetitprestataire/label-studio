@@ -3,7 +3,7 @@
 from django.db import migrations, models
 from django.conf import settings
 
-IS_SQLITE = settings.DJANGO_DB == settings.DJANGO_DB_SQLITE
+IS_SQLITE = settings.DJANGO_DB == settings.DJANGO_DB_SQLITE or settings.DJANGO_DB == settings.DJANGO_DB_MYSQL
 
 if IS_SQLITE:
     from django.db.migrations import AddIndex

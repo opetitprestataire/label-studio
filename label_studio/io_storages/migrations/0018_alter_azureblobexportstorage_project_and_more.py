@@ -8,7 +8,7 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-IS_SQLITE = connection.vendor == 'sqlite'
+IS_SQLITE = settings.DJANGO_DB == settings.DJANGO_DB_SQLITE or settings.DJANGO_DB == settings.DJANGO_DB_MYSQL
 
 
 class Migration(migrations.Migration):
