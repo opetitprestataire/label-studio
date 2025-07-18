@@ -16,6 +16,20 @@ This page provides an overview of the advanced capabilities available exclusivel
 
 Label Studio Enterprise introduces a hierarchical structure for organizing projects and users through organizations and workspaces, which is not available in the community edition.
 
+```mermaid
+graph TD
+    A[Organization] --> B[Users]
+    A --> C[Workspaces]
+    B --> D[User Roles]
+    D --> E[Organization Roles]
+    D --> F[Project Roles]
+    C --> G[Projects]
+    G --> H[Tasks]
+    G --> I[Annotations]
+    G --> J[Storage Integrations]
+    G --> K[ML Backends]
+```
+
 ### Organizations
 
 Organizations are the top-level entity in Label Studio Enterprise that contain workspaces, projects, and users. Each organization is isolated from others, providing complete data separation.
@@ -55,6 +69,42 @@ Label Studio Enterprise implements a comprehensive role-based access control (RB
 | Manager   | Workspace-scoped    | Project creation, workspace management     | Assigned projects  | ✅          | ✅      | Project-level   |
 | Reviewer  | Project-scoped      | Review annotations, manage quality control | View only          | ✅          | ✅      | None            |
 | Annotator | Project-scoped      | Create and edit annotations                | View only          | ✅          | ❌      | None            |
+
+```mermaid
+graph TD
+    subgraph Project Level
+        Project1[Project 1]
+        Project2[Project 2]
+        Project3[Project 3]
+        ReviewerRole[Reviewer Role]
+        AnnotatorRole[Annotator Role]
+        Project1 --> AnnotatorRole
+        Project2 --> AnnotatorRole
+        Project3 --> ReviewerRole
+    end
+
+    subgraph Workspace Level
+        WorkspaceA[Workspace A]
+        WorkspaceB[Workspace B]
+        ManagerRole[Manager Role]
+        WorkspaceA --> ManagerRole
+        WorkspaceB --> ManagerRole
+    end
+
+    subgraph Organization Level
+        Organization
+        OwnerRole[Owner Role]
+        AdminRole[Admin Role]
+        Organization --> OwnerRole
+        Organization --> AdminRole
+    end
+
+    Organization --> WorkspaceA
+    Organization --> WorkspaceB
+    WorkspaceA --> Project1
+    WorkspaceA --> Project2
+    WorkspaceB --> Project3
+```
 
 ### Project-level roles
 
