@@ -101,6 +101,7 @@ const Model = types
     frame: 1,
     length: 1,
     drawingRegion: null,
+    loopTimelineRegion: false,
   }))
   .views((self) => ({
     get store() {
@@ -133,6 +134,32 @@ const Model = types
       const states = self.states();
 
       return states && states.length > 0;
+    },
+
+    get fullFrameRange() {
+      return { start: 1, end: self.length };
+    },
+
+    get timelineRegions() {
+      return self.annotation.regionStore.selection.list.filter((reg) => reg.type === "timelineregion");
+    },
+
+    get hasSelectedRange() {
+      return self.timelineRegions.length > 0;
+    },
+
+    get selectedFrameRange() {
+      const regions = self.timelineRegions;
+      if (regions.length === 0) return null;
+      let start = regions[0].ranges[0].start;
+      let end = regions[0].ranges[0].end;
+      regions.forEach((reg) => {
+        reg.ranges.forEach((range) => {
+          if (range.start < start) start = range.start;
+          if (range.end > end) end = range.end;
+        });
+      });
+      return { start, end };
     },
   }))
   .actions((self) => ({
@@ -208,6 +235,11 @@ const Model = types
       }
     },
 
+    handleSpeed(speed) {
+      self.speed = speed;
+      self.triggerSync("speed", { speed });
+    },
+
     handleSeek() {
       self.triggerSync("seek");
     },
@@ -218,6 +250,10 @@ const Model = types
   }))
   .actions((self) => {
     return {
+      setLoopTimelineRegion(loop) {
+        self.loopTimelineRegion = loop;
+      },
+
       setLength(length) {
         self.length = length;
       },
