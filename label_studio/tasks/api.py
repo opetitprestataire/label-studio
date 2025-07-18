@@ -326,6 +326,9 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
         data = serializer.data
         return Response(data)
 
+    def get_excluded_fields_for_evaluation(self):
+        return []
+
     def get_queryset(self):
         task_id = self.request.parser_context['kwargs'].get('pk')
         task = generics.get_object_or_404(Task, pk=task_id)
@@ -334,7 +337,7 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
         if review:
             kwargs = {'fields_for_evaluation': ['annotators', 'reviewed']}
         else:
-            kwargs = {'all_fields': True}
+            kwargs = {'all_fields': True, 'excluded_fields_for_evaluation': self.get_excluded_fields_for_evaluation()}
         project = self.request.query_params.get('project') or self.request.data.get('project')
         if not project:
             project = task.project.id
