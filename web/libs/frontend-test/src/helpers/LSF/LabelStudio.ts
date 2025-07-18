@@ -194,14 +194,14 @@ export const LabelStudio = {
         };
         beforeLoadCallback?.(win);
 
-      Cypress.off("window:before:load", windowLoadCallback);
-    };
+        Cypress.off("window:before:load", windowLoadCallback);
+      };
 
-    Cypress.on("window:before:load", windowLoadCallback);
+      Cypress.on("window:before:load", windowLoadCallback);
 
-    cy.visit("/").then((win) => {
-      cy.log(`Default feature flags set ${JSON.stringify(win.APP_SETTINGS.feature_flags, null, "  ")}`);
-      const labelStudio = new win.LabelStudio("label-studio", fixLSParams(win.LSF_CONFIG, win));
+      cy.visit("/").then((win) => {
+        cy.log(`Default feature flags set ${JSON.stringify(win.APP_SETTINGS.feature_flags, null, "  ")}`);
+        const labelStudio = new win.LabelStudio("label-studio", fixLSParams(win.LSF_CONFIG, win));
 
         if (win.LSF_CONFIG.eventListeners) {
           for (const [event, listener] of Object.entries(win.LSF_CONFIG.eventListeners)) {

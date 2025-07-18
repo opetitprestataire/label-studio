@@ -287,7 +287,6 @@ const Model = types
 
       addVideoRegion(data) {
         const control = self.videoControl;
-        const value = {};
 
         if (!control) {
           console.error("No video control is found");

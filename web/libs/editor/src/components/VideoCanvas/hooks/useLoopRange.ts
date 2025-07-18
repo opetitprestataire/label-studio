@@ -31,7 +31,7 @@ export const useLoopRange = ({
   const loopFrameRangeRef = useRef(loopFrameRange ?? false);
   loopFrameRangeRef.current = loopFrameRange ?? false;
   const handeFrameChange = useCallback(
-    (timestamp: number, { mediaTime }: { mediaTime: number }) => {
+    (_timestamp: number, { mediaTime }: { mediaTime: number }) => {
       const video = videoRef.current;
       if (!video || video.paused) return;
       if (!selectedFrameRange) return;

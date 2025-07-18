@@ -256,7 +256,7 @@ export const VideoView = {
   waitForFrame(frameNumber: number) {
     cy.log(`Wait for video to be at frame ${frameNumber}`);
     // Wait for frame counter to show the expected frame
-    this.frameCounter.should("contain.text", frameNumber.toString() + " of");
+    this.frameCounter.should("contain.text", `${frameNumber.toString()} of`);
   },
 
   // Get current frame number from timeline controls
