@@ -27,11 +27,11 @@ from core.utils.common import (
 )
 from core.utils.db import batch_update_with_retry, fast_first
 from django.conf import settings
-from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVector, SearchVectorField
+from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import connection, models, transaction
 from django.db.models import Avg, BooleanField, Case, Count, GeneratedField, JSONField, Max, Q, Sum, Value, When
+from django.db.models.expressions import RawSQL
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from label_studio_sdk._extensions.label_studio_tools.core.label_config import parse_config
@@ -1148,20 +1148,26 @@ class Project(ProjectMixin, models.Model):
 
     if connection.vendor == 'postgresql':
         search_vector = GeneratedField(
-            expression=SearchVector('id', weight='A')
-            + SearchVector('title', weight='B')
-            + SearchVector('description', weight='C'),
+            expression=RawSQL(
+                "setweight(to_tsvector('english', COALESCE(CAST(id AS TEXT), '')), 'A') || "
+                "setweight(to_tsvector('english', COALESCE(title, '')), 'B') || "
+                "setweight(to_tsvector('english', COALESCE(SUBSTRING(description, 1, 250000), '')), 'C')",
+                params=[],
+                output_field=SearchVectorField(),
+            ),
             output_field=SearchVectorField(),
             db_persist=True,
         )
+    else:
+        search_vector = models.TextField(null=True, blank=True)
 
     class Meta:
         db_table = 'project'
         indexes = [
             models.Index(fields=['pinned_at', 'created_at']),
         ]
-        if connection.vendor == 'postgresql':
-            indexes.append(GinIndex(fields=['search_vector'], name='project_search_vector_idx'))
+        # This index is added with an async migration
+        #     indexes.append(GinIndex(fields=['search_vector'], name='project_search_vector_idx'))
 
 
 class ProjectOnboardingSteps(models.Model):
