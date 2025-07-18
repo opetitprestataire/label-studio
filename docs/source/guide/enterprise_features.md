@@ -1,7 +1,7 @@
 ---
 title: "Enterprise features: Label Studio at scale"
 short: Enterprise features
-type: guide
+type: opensource
 tier: all
 order: 35
 order_enterprise: 0
@@ -253,6 +253,7 @@ View real-time agreement metrics to take proactive action on quality. The Enterp
 * **Basic matching:** Default evaluation for each control tag type
 * **Intersection over Union (IoU):** For bounding boxes and polygons
 * **Edit distance algorithms:** For text transcription tasks
+* **F1, Precision, Recall:** For classification and detection tasks
 
 To learn how different team structures use agreement metrics to scale high-quality labeling, see the blog post [3 Annotation Team Playbooks for Scalable Labeling](https://labelstud.io/blog/the-spectrum-of-annotators-how-to-match-your-labeling-workflow-to-your-team/).
 
