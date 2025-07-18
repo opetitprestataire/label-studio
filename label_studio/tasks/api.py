@@ -327,7 +327,7 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
         return Response(data)
 
     def get_excluded_fields_for_evaluation(self):
-        return []
+        return ['annotations_results', 'predictions_results']
 
     def get_queryset(self):
         task_id = self.request.parser_context['kwargs'].get('pk')
