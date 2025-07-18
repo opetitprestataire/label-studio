@@ -708,12 +708,14 @@ def update_annotation_map(obj):
 
 class PreparedTaskManager(models.Manager):
     @staticmethod
-    def annotate_queryset(queryset, fields_for_evaluation=None, all_fields=False, excluded_fields_for_evaluation=None, request=None):
+    def annotate_queryset(
+        queryset, fields_for_evaluation=None, all_fields=False, excluded_fields_for_evaluation=None, request=None
+    ):
         annotations_map = get_annotations_map()
 
         if fields_for_evaluation is None:
             fields_for_evaluation = []
-        
+
         if excluded_fields_for_evaluation is None:
             excluded_fields_for_evaluation = []
 
@@ -731,7 +733,9 @@ class PreparedTaskManager(models.Manager):
 
         return queryset
 
-    def get_queryset(self, fields_for_evaluation=None, prepare_params=None, all_fields=False, excluded_fields_for_evaluation=None):
+    def get_queryset(
+        self, fields_for_evaluation=None, prepare_params=None, all_fields=False, excluded_fields_for_evaluation=None
+    ):
         """
         :param fields_for_evaluation: list of annotated fields in task
         :param prepare_params: filters, ordering, selected items
