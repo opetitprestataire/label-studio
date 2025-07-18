@@ -116,6 +116,17 @@ Label Studio Enterprise includes comprehensive security features designed for en
 
 ### Cloud storage security architecture
 
+Label Studio Enterprise secures access to cloud-hosted files using isolated credentials, signed URLs, and access controls.
+
+After a task is loaded, Label Studio generates a pre-signed URL that grants temporary access to the file without exposing storage credentials. Access can be further restricted by IP range or VPN to meet enterprise security requirements.
+
+Key components:
+
+- **Pre-signed URLs:** Grant temporary file access without exposing cloud credentials
+- **Project-specific credentials:** Use separate storage credentials per project
+- **Access control:** Limit access by IP or VPN
+- **Minimal permissions:** Use only `LIST` and `GET` to sync and serve files securely
+
 ### Advanced security configurations and storage providers
 
 Advanced security configurations for enterprise cloud storage integrations:
