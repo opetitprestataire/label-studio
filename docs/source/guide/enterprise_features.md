@@ -2,7 +2,7 @@
 title: "Enterprise features: Label Studio at scale"
 short: Enterprise features
 type: guide
-tier: opensource
+tier: all
 order: 35
 order_enterprise: 0
 section: "Discover & Learn"
@@ -153,45 +153,29 @@ Enterprise customers can integrate with LDAP directories for user authentication
 
 Label Studio Enterprise includes comprehensive security features designed for enterprise compliance requirements. Enterprise security features include:
 
-  - SSRF Protection: Configurable via `SSRF_PROTECTION_ENABLED` environment variable
-  - Database Security: SSL connections, certificate validation for PostgreSQL
-  - Storage Security: Pre-signed URLs, IP restrictions, VPN access control
-  - Network Security: TLS enforcement, CORS policies, secure headers
-  - Personal Access Tokens: JWT standard-based tokens for API access
+- Redis over TLS with client certificate authentication
+- IP allowlisting and VPN access control for cloud storage  
+ (OSS supports limited IP filtering only for GCP)
+- Advanced audit logging
+- SCIM 2.0 user provisioning and deprovisioning
+- SAML-based Single Sign-On (SSO) integration
+- Role-based access controls across organizations and workspaces
+- Granular task and annotator guardrails (e.g. auto-pausing users, setting trust thresholds)
+- Custom plugins and front-end customization with organization-level isolation
+- Deployment support for fully air-gapped, on-prem environments
+- Uptime SLA and security certifications (e.g. SOC 2, HIPAA readiness)
 
 ### Data security
 
   - End-to-end TLS/SSL: Secure communication between all components
   - Audit Logging: Comprehensive logging of all user activities
 
-### Cloud storage security architecture
+### Advanced cloud storage options 
 
-Label Studio Enterprise secures access to cloud-hosted files using isolated credentials, signed URLs, and access controls.
+Label Studio Enterprise supports a wider range of persistent storage options for scalable, production-grade deployments. These include:
 
-After a task is loaded, Label Studio generates a pre-signed URL that grants temporary access to the file without exposing storage credentials. Access can be further restricted by IP range or VPN to meet enterprise security requirements.
-
-Key components:
-
-- **Pre-signed URLs:** Grant temporary file access without exposing cloud credentials
-- **Project-specific credentials:** Use separate storage credentials per project
-- **Access control:** Limit access by IP or VPN
-- **Minimal permissions:** Use only `LIST` and `GET` to sync and serve files securely
-
-### Advanced security configurations and storage providers
-
-Advanced security configurations for enterprise cloud storage integrations:
-
-  - IP Filtering: Restrict storage access to specific IP ranges
-  - VPN Integration: Enable private network access through VPC endpoints
-  - Certificate Management: Use custom CA certificates for self-signed environments
-  - Encryption: Support for server-side encryption and client-side certificate management
-
-Enterprise supports multiple cloud storage options with enhanced configuration:
-
-  - Amazon S3: With IAM roles, OIDC integration, and VPC endpoint support
-  - Google Cloud Storage: With Application Default Credentials and IP filtering of Workload Identity Federation (WIF)
-  - Microsoft Azure Storage: With secure credential management
-  - TLS for PostgreSQL and Redis: Enhanced security for database connections
+* **AWS S3 IAM role access**: Configure secure access using IAM roles or static credentials
+* **Google Cloud Storage with Workload Identity Federation (WIF)**: Use short-lived credentials to avoid hardcoded secrets
 
 ## Advanced labeling & evaluation workflows
 
@@ -199,10 +183,9 @@ Enterprise supports multiple cloud storage options with enhanced configuration:
 
 Label Studio Enterprise provides enhanced machine learning capabilities:
 
-  - AI Features Toggle: Enable AI helper tools via the *Billing & Usage* page
-  - Enhanced ML Backend Integration: More powerful integration with ML models
-  - Prediction Score Display: View prediction/confidence scores in the labeling interface
-  - Bulk Labeling: Quickly label multiple tasks at once
+  - **AI Features Toggle:** Enable AI helper tools
+  - **Prediction Score Display:** View prediction/confidence scores in the labeling interface
+  - **Bulk Labeling:** Quickly label multiple tasks at once
 
 ### Automated active learning loops
 
@@ -216,11 +199,11 @@ Key components:
   - **Prediction integration:** Display updated predictions during labeling
   - **Webhooks:** Trigger model retraining after annotations
   - **Task sampling:** Use prediction scores to prioritize which tasks to label
-  - C**ontinuous loop:** As labeling continues, predictions improve with each iteration
+  - **Continuous loop:** As labeling continues, predictions improve with each iteration
 
 ### Prompts
 
-Label Studio Enterprise includes a built-in Prompts interface for working with language models as part of the labeling workflow.
+For an additional fee, Label Studio Enterprise includes a built-in Prompts interface for working with language models as part of the labeling workflow.
 
 Prompt templates allow users to define inputs, models, and outputs to send to connected LLMs. Prompts can be used to pre-label data, generate new tasks, or support review workflows.
 
@@ -270,7 +253,6 @@ View real-time agreement metrics to take proactive action on quality. The Enterp
 * **Basic matching:** Default evaluation for each control tag type
 * **Intersection over Union (IoU):** For bounding boxes and polygons
 * **Edit distance algorithms:** For text transcription tasks
-* **F1, Precision, Recall:** For classification and detection tasks
 
 To learn how different team structures use agreement metrics to scale high-quality labeling, see the blog post [3 Annotation Team Playbooks for Scalable Labeling](https://labelstud.io/blog/the-spectrum-of-annotators-how-to-match-your-labeling-workflow-to-your-team/).
 
@@ -371,7 +353,7 @@ Enterprise deployments support high availability configurations:
 
 ## Whitelabeling
 
-Enterprise customers can customize the appearance of their Label Studio instance:
+For an additional fee, Enterprise customers can customize the appearance of their Label Studio instance:
 
   * **Custom Branding:** Customize logos, colors, and styles
   * **Custom Domain:** Use your own domain for the Label Studio instance
@@ -386,3 +368,6 @@ Enterprise customers receive:
   * Customer Success Manager: Dedicated account management
   * Professional Services: Implementation and optimization assistance
   * Labeling Services: On-demand expert labeling services augment core team, fully integrated into the platform with full visibility and governance
+
+
+See how Label Studio Enterprise can work at your organization and [contact sales](https://humansignal.com/contact-sales/). 
