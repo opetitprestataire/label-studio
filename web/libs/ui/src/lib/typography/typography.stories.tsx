@@ -5,7 +5,7 @@ import { Typography } from "./typography";
 type TypographyStory = StoryObj<{
   variant: "display" | "headline" | "title" | "label" | "body";
   size: string;
-  style?: "normal" | "italic";
+  fontStyle?: "normal" | "italic";
   as?: keyof JSX.IntrinsicElements;
   className?: string;
   children: React.ReactNode;
@@ -32,7 +32,7 @@ const meta: Meta<typeof Typography> = {
       control: { type: "select" },
       description: "The size variant for the selected typography variant",
     },
-    style: {
+    fontStyle: {
       control: { type: "select" },
       options: ["normal", "italic"],
       description: "The text style to apply",
@@ -70,7 +70,7 @@ export const AllVariants: TypographyStory = {
   render: () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Display Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Display Variants</h3>
         <div className="space-y-2">
           <Typography variant="display" size="large">
             Display Large
@@ -85,7 +85,7 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Headline Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Headline Variants</h3>
         <div className="space-y-2">
           <Typography variant="headline" size="large">
             Headline Large
@@ -100,7 +100,7 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Title Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Title Variants</h3>
         <div className="space-y-2">
           <Typography variant="title" size="large">
             Title Large
@@ -115,7 +115,7 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Label Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Label Variants</h3>
         <div className="space-y-2">
           <Typography variant="label" size="medium">
             Label Medium
@@ -133,7 +133,7 @@ export const AllVariants: TypographyStory = {
       </div>
 
       <div>
-        <h3 className="text-title-medium font-semibold mb-4 !text-neutral-content-subtle">Body Variants</h3>
+        <h3 className="text-lg font-semibold mb-4 !text-neutral-content-subtle">Body Variants</h3>
         <div className="space-y-2">
           <Typography variant="body" size="medium">
             Body Medium
@@ -161,25 +161,25 @@ export const AllVariants: TypographyStory = {
 };
 
 // Style variations
-export const Styles: TypographyStory = {
+export const FontStyles: TypographyStory = {
   args: {
     variant: "headline",
     size: "large",
-    style: "normal",
+    fontStyle: "normal",
     children: "Normal Style - The quick brown fox jumps over the lazy dog",
   },
   render: () => (
     <div className="space-y-4">
-      <Typography variant="headline" size="large" style="normal">
+      <Typography variant="headline" size="large" fontStyle="normal">
         Normal Style - The quick brown fox jumps over the lazy dog
       </Typography>
-      <Typography variant="headline" size="large" style="italic">
+      <Typography variant="headline" size="large" fontStyle="italic">
         Italic Style - The quick brown fox jumps over the lazy dog
       </Typography>
-      <Typography variant="body" size="medium" style="normal">
+      <Typography variant="body" size="medium" fontStyle="normal">
         Normal body text - The quick brown fox jumps over the lazy dog
       </Typography>
-      <Typography variant="body" size="medium" style="italic">
+      <Typography variant="body" size="medium" fontStyle="italic">
         Italic body text - The quick brown fox jumps over the lazy dog
       </Typography>
     </div>
@@ -291,7 +291,7 @@ export const Composition: TypographyStory = {
           This example shows how <strong>typography components</strong> can be used together. You can customize the
           variant, size, and style using the controls below.
         </Typography>
-        <Typography variant="label" size="small" style="italic" className="text-neutral-content-subtle">
+        <Typography variant="label" size="small" fontStyle="italic" className="text-neutral-content-subtle">
           Use the Storybook controls to experiment with different typography options.
         </Typography>
       </div>
