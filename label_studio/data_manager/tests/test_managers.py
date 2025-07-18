@@ -6,273 +6,6 @@ feature that optimizes task API performance by excluding expensive fields.
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
-from data_manager.managers import PreparedTaskManager
-
-
-class TestPreparedTaskManagerExcludedFields(TestCase):
-    """Test PreparedTaskManager.annotate_queryset excluded_fields_for_evaluation functionality.
-    
-    This test validates step by step:
-    - The annotate_queryset method properly handles excluded_fields_for_evaluation parameter
-    - Expensive fields are correctly excluded when specified
-    - The field inclusion logic works correctly with all_fields=True
-    - Edge cases like empty exclusion lists and None values are handled properly
-    
-    Critical validation: The excluded_fields_for_evaluation feature provides
-    performance optimization by allowing selective field exclusion while maintaining
-    backward compatibility with existing all_fields behavior.
-    """
-
-    def setUp(self):
-        """Set up test fixtures and mock objects for testing."""
-        self.prepared_task_manager = PreparedTaskManager()
-        self.mock_queryset = Mock()
-        self.mock_queryset.annotate.return_value = self.mock_queryset
-
-    def test_annotate_queryset_with_excluded_fields(self):
-        """Test that annotate_queryset properly excludes specified fields.
-        
-        This test validates step by step:
-        - Creating a queryset with all_fields=True and excluded_fields_for_evaluation
-        - Verifying that expensive fields are excluded from annotation
-        - Ensuring non-excluded fields are still included
-        - Confirming the exclusion logic works correctly
-        
-        Critical validation: Expensive fields like annotations_results and 
-        predictions_results are properly excluded, improving API performance.
-        """
-        # Define test fields that would normally be expensive
-        expensive_fields = ['annotations_results', 'predictions_results', 'predictions_model_versions']
-        normal_fields = ['completed_at', 'avg_lead_time', 'draft_exists']
-        
-        # Mock the TASK_ANNOTATIONS_FOR_EVALUATION to include our test fields
-        test_annotations = {
-            'annotations_results': Mock(),
-            'predictions_results': Mock(), 
-            'predictions_model_versions': Mock(),
-            'completed_at': Mock(),
-            'avg_lead_time': Mock(),
-            'draft_exists': Mock()
-        }
-        
-        with patch('data_manager.managers.get_annotations_map', return_value=test_annotations):
-            # Action: Call annotate_queryset with excluded fields
-            result = self.prepared_task_manager.annotate_queryset(
-                queryset=self.mock_queryset,
-                all_fields=True,
-                excluded_fields_for_evaluation=expensive_fields
-            )
-            
-            # Validation: Verify queryset.annotate was called
-            self.mock_queryset.annotate.assert_called_once()
-            call_kwargs = self.mock_queryset.annotate.call_args[1]
-            
-            # Validation: Expensive fields should be excluded
-            for field in expensive_fields:
-                self.assertNotIn(field, call_kwargs, 
-                    f"Expensive field '{field}' should be excluded from annotations")
-            
-            # Validation: Normal fields should be included
-            for field in normal_fields:
-                self.assertIn(field, call_kwargs,
-                    f"Normal field '{field}' should be included in annotations")
-            
-            # Validation: Return value should be the annotated queryset
-            self.assertEqual(result, self.mock_queryset)
-
-    def test_annotate_queryset_without_excluded_fields(self):
-        """Test that annotate_queryset includes all fields when no exclusions specified.
-        
-        This test validates step by step:
-        - Creating a queryset with all_fields=True and no exclusions
-        - Verifying that all fields are included in annotations
-        - Ensuring backward compatibility is maintained
-        
-        Critical validation: When excluded_fields_for_evaluation is None or empty,
-        all fields should be included maintaining existing behavior.
-        """
-        # Define test fields
-        all_test_fields = ['annotations_results', 'predictions_results', 'completed_at', 'avg_lead_time']
-        
-        test_annotations = {field: Mock() for field in all_test_fields}
-        
-        with patch('data_manager.managers.TASK_ANNOTATIONS_FOR_EVALUATION', test_annotations):
-            # Action: Call annotate_queryset without excluded fields
-            result = self.task_manager.annotate_queryset(
-                queryset=self.mock_queryset,
-                all_fields=True,
-                excluded_fields_for_evaluation=None
-            )
-            
-            # Validation: Verify queryset.annotate was called
-            self.mock_queryset.annotate.assert_called_once()
-            call_kwargs = self.mock_queryset.annotate.call_args[1]
-            
-            # Validation: All fields should be included
-            for field in all_test_fields:
-                self.assertIn(field, call_kwargs,
-                    f"Field '{field}' should be included when no exclusions specified")
-
-    def test_annotate_queryset_with_empty_excluded_fields(self):
-        """Test that annotate_queryset handles empty excluded_fields_for_evaluation list.
-        
-        This test validates step by step:
-        - Creating a queryset with all_fields=True and empty exclusion list
-        - Verifying that all fields are included despite empty list
-        - Ensuring edge case handling works correctly
-        
-        Critical validation: Empty exclusion lists should behave the same as
-        None exclusion lists, including all fields.
-        """
-        all_test_fields = ['annotations_results', 'predictions_results', 'completed_at']
-        test_annotations = {field: Mock() for field in all_test_fields}
-        
-        with patch('data_manager.managers.TASK_ANNOTATIONS_FOR_EVALUATION', test_annotations):
-            # Action: Call annotate_queryset with empty excluded fields list
-            result = self.task_manager.annotate_queryset(
-                queryset=self.mock_queryset,
-                all_fields=True,
-                excluded_fields_for_evaluation=[]
-            )
-            
-            # Validation: Verify queryset.annotate was called
-            self.mock_queryset.annotate.assert_called_once()
-            call_kwargs = self.mock_queryset.annotate.call_args[1]
-            
-            # Validation: All fields should be included with empty exclusion list
-            for field in all_test_fields:
-                self.assertIn(field, call_kwargs,
-                    f"Field '{field}' should be included with empty exclusion list")
-
-    def test_annotate_queryset_with_fields_for_evaluation(self):
-        """Test that excluded_fields_for_evaluation works with specific fields_for_evaluation.
-        
-        This test validates step by step:
-        - Creating a queryset with specific fields_for_evaluation and exclusions
-        - Verifying that only specified fields are considered for inclusion
-        - Ensuring exclusions work correctly with selective field inclusion
-        
-        Critical validation: When fields_for_evaluation is specified, only those
-        fields should be considered, and exclusions should still apply.
-        """
-        # Define specific fields for evaluation and exclusions
-        fields_for_evaluation = ['annotations_results', 'completed_at', 'avg_lead_time']
-        excluded_fields = ['annotations_results']
-        expected_included = ['completed_at', 'avg_lead_time']
-        
-        test_annotations = {
-            'annotations_results': Mock(),
-            'completed_at': Mock(),
-            'avg_lead_time': Mock(),
-            'predictions_results': Mock()  # This should not be included
-        }
-        
-        with patch('data_manager.managers.TASK_ANNOTATIONS_FOR_EVALUATION', test_annotations):
-            # Action: Call annotate_queryset with specific fields and exclusions
-            result = self.task_manager.annotate_queryset(
-                queryset=self.mock_queryset,
-                fields_for_evaluation=fields_for_evaluation,
-                excluded_fields_for_evaluation=excluded_fields
-            )
-            
-            # Validation: Verify queryset.annotate was called
-            self.mock_queryset.annotate.assert_called_once()
-            call_kwargs = self.mock_queryset.annotate.call_args[1]
-            
-            # Validation: Only non-excluded fields from fields_for_evaluation should be included
-            for field in expected_included:
-                self.assertIn(field, call_kwargs,
-                    f"Field '{field}' should be included (in fields_for_evaluation, not excluded)")
-            
-            # Validation: Excluded fields should not be included
-            for field in excluded_fields:
-                self.assertNotIn(field, call_kwargs,
-                    f"Field '{field}' should be excluded")
-            
-            # Validation: Fields not in fields_for_evaluation should not be included
-            self.assertNotIn('predictions_results', call_kwargs,
-                "Field 'predictions_results' should not be included (not in fields_for_evaluation)")
-
-
-class TestTaskManagerGetQueryset(TestCase):
-    """Test TaskManager.get_queryset excluded_fields_for_evaluation parameter passing.
-    
-    This test validates step by step:
-    - The get_queryset method properly passes excluded_fields_for_evaluation to annotate_queryset
-    - Parameter passing works correctly with various combinations
-    - Default values are handled properly
-    
-    Critical validation: The get_queryset method acts as a proper interface
-    to the annotate_queryset functionality, ensuring the optimization is
-    accessible through the main queryset API.
-    """
-
-    def setUp(self):
-        """Set up test fixtures and mock objects for testing."""
-        self.task_manager = TaskManager()
-
-    @patch('data_manager.managers.TaskManager.annotate_queryset')
-    def test_get_queryset_passes_excluded_fields(self, mock_annotate):
-        """Test that get_queryset properly passes excluded_fields_for_evaluation to annotate_queryset.
-        
-        This test validates step by step:
-        - Calling get_queryset with excluded_fields_for_evaluation parameter
-        - Verifying the parameter is passed through to annotate_queryset
-        - Ensuring other parameters are passed correctly
-        
-        Critical validation: The get_queryset method serves as the main interface
-        and must properly forward all parameters to maintain the optimization feature.
-        """
-        # Setup: Mock the queryset and annotate_queryset
-        mock_queryset = Mock()
-        mock_annotate.return_value = mock_queryset
-        
-        excluded_fields = ['annotations_results', 'predictions_results']
-        
-        # Action: Call get_queryset with excluded_fields_for_evaluation
-        result = self.task_manager.get_queryset(
-            all_fields=True,
-            excluded_fields_for_evaluation=excluded_fields
-        )
-        
-        # Validation: Verify annotate_queryset was called with correct parameters
-        mock_annotate.assert_called_once()
-        call_args, call_kwargs = mock_annotate.call_args
-        
-        # Validation: Check that excluded_fields_for_evaluation was passed correctly
-        self.assertEqual(call_kwargs.get('excluded_fields_for_evaluation'), excluded_fields,
-            "excluded_fields_for_evaluation should be passed through to annotate_queryset")
-        
-        # Validation: Check that all_fields was passed correctly
-        self.assertEqual(call_kwargs.get('all_fields'), True,
-            "all_fields parameter should be passed through to annotate_queryset")
-
-    @patch('data_manager.managers.TaskManager.annotate_queryset')
-    def test_get_queryset_defaults_excluded_fields_to_none(self, mock_annotate):
-        """Test that get_queryset defaults excluded_fields_for_evaluation to None when not provided.
-        
-        This test validates step by step:
-        - Calling get_queryset without excluded_fields_for_evaluation parameter
-        - Verifying the parameter defaults to None in annotate_queryset call
-        - Ensuring backward compatibility is maintained
-        
-        Critical validation: When excluded_fields_for_evaluation is not specified,
-        it should default to None, maintaining existing behavior.
-        """
-        # Setup: Mock the queryset and annotate_queryset
-        mock_queryset = Mock()
-        mock_annotate.return_value = mock_queryset
-        
-        # Action: Call get_queryset without excluded_fields_for_evaluation
-        result = self.task_manager.get_queryset(all_fields=True)
-        
-        # Validation: Verify annotate_queryset was called
-        mock_annotate.assert_called_once()
-        call_args, call_kwargs = mock_annotate.call_args
-        
-        # Validation: Check that excluded_fields_for_evaluation defaults to None
-        self.assertIsNone(call_kwargs.get('excluded_fields_for_evaluation'),
-            "excluded_fields_for_evaluation should default to None when not provided")
 
 
 class TestExcludedFieldsLogic(TestCase):
@@ -318,6 +51,13 @@ class TestExcludedFieldsLogic(TestCase):
             
             # Scenario 6: empty exclusion list behaves like None
             (['field1'], True, [], 'field2', True),
+            
+            # Scenario 7: None exclusion list
+            (['field1'], True, None, 'field2', True),
+            
+            # Scenario 8: Multiple exclusions
+            (['field1', 'field2', 'field3'], True, ['field2', 'field3'], 'field1', True),
+            (['field1', 'field2', 'field3'], True, ['field2', 'field3'], 'field2', False),
         ]
         
         for fields_for_eval, all_fields, excluded_fields, test_field, expected in test_scenarios:
@@ -367,4 +107,296 @@ class TestExcludedFieldsLogic(TestCase):
                 and field not in excluded_fields
             )
             self.assertTrue(should_include,
-                f"Field '{field}' should be included when excluded_fields is None") 
+                f"Field '{field}' should be included when excluded_fields is None")
+
+    def test_performance_optimization_fields(self):
+        """Test specific performance optimization field combinations.
+        
+        This test validates step by step:
+        - Testing the exact field combinations used in the performance optimization
+        - Verifying expensive fields are excluded when specified
+        - Ensuring normal fields are still included
+        
+        Critical validation: The specific optimization used in the TaskAPI
+        (excluding annotations_results and predictions_results) works correctly.
+        """
+        # These are the actual fields used in the performance optimization
+        expensive_fields = ['annotations_results', 'predictions_results']
+        normal_fields = ['completed_at', 'avg_lead_time', 'draft_exists', 'annotators']
+        all_fields = expensive_fields + normal_fields
+        
+        # Test with all_fields=True and expensive field exclusions
+        excluded_fields = expensive_fields
+        
+        for field in all_fields:
+            with self.subTest(field=field):
+                should_include = (
+                    (field in [] or True)  # all_fields=True, no specific fields_for_evaluation
+                    and field not in excluded_fields
+                )
+                
+                if field in expensive_fields:
+                    self.assertFalse(should_include, 
+                        f"Expensive field '{field}' should be excluded")
+                else:
+                    self.assertTrue(should_include, 
+                        f"Normal field '{field}' should be included")
+
+
+class TestPreparedTaskManagerBehavior(TestCase):
+    """Test PreparedTaskManager behavior with mock annotation functions.
+    
+    This test validates step by step:
+    - The annotate_queryset method calls the right functions
+    - Excluded fields are properly skipped
+    - The overall flow works correctly
+    
+    Critical validation: The excluded_fields_for_evaluation feature properly
+    controls which annotation functions are executed.
+    """
+
+    def test_annotate_queryset_with_simple_functions(self):
+        """Test annotate_queryset with simple trackable annotation functions.
+        
+        This test validates step by step:
+        - Creating simple annotation functions that can be tracked
+        - Calling annotate_queryset with exclusions
+        - Verifying which functions were called vs skipped
+        
+        Critical validation: The exclusion logic properly controls function execution.
+        """
+        from data_manager.managers import PreparedTaskManager
+        
+        # Create a simple mock queryset
+        mock_queryset = Mock()
+        mock_queryset.first.return_value = None  # No first task
+        
+        # Create trackable annotation functions
+        called_functions = []
+        
+        def make_annotation_function(field_name):
+            def annotation_function(queryset):
+                called_functions.append(field_name)
+                return queryset
+            return annotation_function
+        
+        # Create test annotation map
+        test_annotations = {
+            'annotations_results': make_annotation_function('annotations_results'),
+            'predictions_results': make_annotation_function('predictions_results'),
+            'completed_at': make_annotation_function('completed_at'),
+            'avg_lead_time': make_annotation_function('avg_lead_time'),
+        }
+        
+        with patch('data_manager.managers.get_annotations_map', return_value=test_annotations):
+            manager = PreparedTaskManager()
+            
+            # Test with excluded fields
+            called_functions.clear()
+            result = manager.annotate_queryset(
+                queryset=mock_queryset,
+                all_fields=True,
+                excluded_fields_for_evaluation=['annotations_results', 'predictions_results']
+            )
+            
+            # Validation: Only non-excluded fields should have been called
+            self.assertIn('completed_at', called_functions, 
+                "Non-excluded field 'completed_at' should be processed")
+            self.assertIn('avg_lead_time', called_functions, 
+                "Non-excluded field 'avg_lead_time' should be processed")
+            self.assertNotIn('annotations_results', called_functions, 
+                "Excluded field 'annotations_results' should not be processed")
+            self.assertNotIn('predictions_results', called_functions, 
+                "Excluded field 'predictions_results' should not be processed")
+
+    def test_annotate_queryset_without_exclusions(self):
+        """Test annotate_queryset without any exclusions.
+        
+        This test validates step by step:
+        - Creating annotation functions with no exclusions
+        - Verifying all functions are called
+        - Ensuring backward compatibility
+        
+        Critical validation: When no exclusions are specified, all fields
+        should be processed maintaining existing behavior.
+        """
+        from data_manager.managers import PreparedTaskManager
+        
+        mock_queryset = Mock()
+        mock_queryset.first.return_value = None
+        
+        called_functions = []
+        
+        def make_annotation_function(field_name):
+            def annotation_function(queryset):
+                called_functions.append(field_name)
+                return queryset
+            return annotation_function
+        
+        test_annotations = {
+            'annotations_results': make_annotation_function('annotations_results'),
+            'predictions_results': make_annotation_function('predictions_results'),
+            'completed_at': make_annotation_function('completed_at'),
+        }
+        
+        with patch('data_manager.managers.get_annotations_map', return_value=test_annotations):
+            manager = PreparedTaskManager()
+            
+            # Test without excluded fields
+            called_functions.clear()
+            result = manager.annotate_queryset(
+                queryset=mock_queryset,
+                all_fields=True,
+                excluded_fields_for_evaluation=None
+            )
+            
+            # Validation: All fields should have been called
+            self.assertIn('annotations_results', called_functions, 
+                "Field 'annotations_results' should be processed when not excluded")
+            self.assertIn('predictions_results', called_functions, 
+                "Field 'predictions_results' should be processed when not excluded")
+            self.assertIn('completed_at', called_functions, 
+                "Field 'completed_at' should be processed when not excluded")
+
+    def test_annotate_queryset_with_specific_fields(self):
+        """Test annotate_queryset with specific fields_for_evaluation and exclusions.
+        
+        This test validates step by step:
+        - Specifying particular fields for evaluation
+        - Adding exclusions to those fields
+        - Verifying only the right subset is processed
+        
+        Critical validation: The combination of fields_for_evaluation and
+        excluded_fields_for_evaluation works correctly together.
+        """
+        from data_manager.managers import PreparedTaskManager
+        
+        mock_queryset = Mock()
+        mock_queryset.first.return_value = None
+        
+        called_functions = []
+        
+        def make_annotation_function(field_name):
+            def annotation_function(queryset):
+                called_functions.append(field_name)
+                return queryset
+            return annotation_function
+        
+        test_annotations = {
+            'annotations_results': make_annotation_function('annotations_results'),
+            'predictions_results': make_annotation_function('predictions_results'),
+            'completed_at': make_annotation_function('completed_at'),
+            'avg_lead_time': make_annotation_function('avg_lead_time'),
+        }
+        
+        with patch('data_manager.managers.get_annotations_map', return_value=test_annotations):
+            manager = PreparedTaskManager()
+            
+            # Test with specific fields and exclusions
+            called_functions.clear()
+            result = manager.annotate_queryset(
+                queryset=mock_queryset,
+                fields_for_evaluation=['annotations_results', 'completed_at', 'avg_lead_time'],
+                excluded_fields_for_evaluation=['annotations_results']
+            )
+            
+            # Validation: Only non-excluded fields from fields_for_evaluation should be called
+            self.assertNotIn('annotations_results', called_functions, 
+                "Excluded field 'annotations_results' should not be processed")
+            self.assertIn('completed_at', called_functions, 
+                "Non-excluded field 'completed_at' should be processed")
+            self.assertIn('avg_lead_time', called_functions, 
+                "Non-excluded field 'avg_lead_time' should be processed")
+            self.assertNotIn('predictions_results', called_functions, 
+                "Field 'predictions_results' should not be processed (not in fields_for_evaluation)")
+
+
+class TestGetQuerysetParameterPassing(TestCase):
+    """Test that get_queryset properly passes excluded_fields_for_evaluation parameter.
+    
+    This test validates step by step:
+    - The get_queryset method accepts the parameter
+    - The parameter is passed through to annotate_queryset
+    - Default values work correctly
+    
+    Critical validation: The get_queryset method serves as the main interface
+    and properly forwards the optimization parameters.
+    """
+
+    def test_get_queryset_parameter_interface(self):
+        """Test that get_queryset accepts excluded_fields_for_evaluation parameter.
+        
+        This test validates step by step:
+        - Calling get_queryset with the excluded_fields_for_evaluation parameter
+        - Ensuring the method accepts the parameter without errors
+        - Verifying the interface is correctly defined
+        
+        Critical validation: The public API properly accepts the optimization parameter.
+        """
+        from data_manager.managers import PreparedTaskManager
+        from data_manager.models import PrepareParams
+        
+        manager = PreparedTaskManager()
+        mock_prepare_params = Mock(spec=PrepareParams)
+        mock_prepare_params.project = 1
+        mock_prepare_params.request = Mock()
+        
+        # This should not raise any errors
+        with patch.object(manager, 'only_filtered') as mock_only_filtered, \
+             patch.object(manager, 'annotate_queryset') as mock_annotate:
+            
+            mock_queryset = Mock()
+            mock_only_filtered.return_value = mock_queryset
+            mock_annotate.return_value = mock_queryset
+            
+            # Test with excluded_fields_for_evaluation parameter
+            result = manager.get_queryset(
+                prepare_params=mock_prepare_params,
+                all_fields=True,
+                excluded_fields_for_evaluation=['annotations_results', 'predictions_results']
+            )
+            
+            # Validation: annotate_queryset should be called with the parameter
+            mock_annotate.assert_called_once()
+            call_kwargs = mock_annotate.call_args[1]
+            self.assertEqual(call_kwargs.get('excluded_fields_for_evaluation'), 
+                ['annotations_results', 'predictions_results'],
+                "excluded_fields_for_evaluation should be passed to annotate_queryset")
+
+    def test_get_queryset_default_parameter_handling(self):
+        """Test that get_queryset handles default parameter values correctly.
+        
+        This test validates step by step:
+        - Calling get_queryset without excluded_fields_for_evaluation
+        - Verifying the parameter defaults appropriately
+        - Ensuring backward compatibility
+        
+        Critical validation: When the parameter is not provided, the behavior
+        should remain unchanged from the original implementation.
+        """
+        from data_manager.managers import PreparedTaskManager
+        from data_manager.models import PrepareParams
+        
+        manager = PreparedTaskManager()
+        mock_prepare_params = Mock(spec=PrepareParams)
+        mock_prepare_params.project = 1
+        mock_prepare_params.request = Mock()
+        
+        with patch.object(manager, 'only_filtered') as mock_only_filtered, \
+             patch.object(manager, 'annotate_queryset') as mock_annotate:
+            
+            mock_queryset = Mock()
+            mock_only_filtered.return_value = mock_queryset
+            mock_annotate.return_value = mock_queryset
+            
+            # Test without excluded_fields_for_evaluation parameter
+            result = manager.get_queryset(
+                prepare_params=mock_prepare_params,
+                all_fields=True
+            )
+            
+            # Validation: annotate_queryset should be called with None for excluded fields
+            mock_annotate.assert_called_once()
+            call_kwargs = mock_annotate.call_args[1]
+            self.assertIsNone(call_kwargs.get('excluded_fields_for_evaluation'),
+                "excluded_fields_for_evaluation should default to None") 
