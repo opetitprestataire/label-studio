@@ -69,11 +69,11 @@ export const Sidebar = {
       // @link https://docs.cypress.io/api/commands/hover#Example-of-clicking-on-a-hidden-element
       .click({ force: true });
   },
-  toggleRegionSelection(selectorOrIndex: string | number) {
+  toggleRegionSelection(selectorOrIndex: string | number, metaKey = false) {
     const regionFinder =
       typeof selectorOrIndex === "number" ? this.findRegionByIndex.bind(this) : this.findRegion.bind(this);
 
-    regionFinder(selectorOrIndex).click();
+    regionFinder(selectorOrIndex).click({ metaKey });
   },
   collapseDetailsRightPanel() {
     cy.get(".lsf-sidepanels__wrapper_align_right .lsf-panel__toggle").should("be.visible").click();
