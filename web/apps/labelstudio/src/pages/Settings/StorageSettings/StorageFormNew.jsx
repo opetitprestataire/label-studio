@@ -976,19 +976,19 @@ export const StorageFormNew = forwardRef(({ onSubmit, target, project, rootClass
 
         <div className="flex" style={{ gap: '12px' }}>
           {currentStep === 1 && (
-            <Button.Group className={rootClass.elem("buttons")}>
+            
               <Button type="button" waiting={testingConnection} onClick={testStorageConnection}>
                 Test Connection
               </Button>
-            </Button.Group>
+            
           )}
 
           {currentStep === 2 && (
-            <Button.Group className={rootClass.elem("buttons")}>
+            
               <Button size="sm" waiting={loadingFilesPreiview} onClick={loadFilesPreview}>
                 Load Preview
               </Button>
-            </Button.Group>
+            
             
           )}
           
