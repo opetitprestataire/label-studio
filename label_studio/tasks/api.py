@@ -4,7 +4,7 @@ import logging
 
 from core.mixins import GetParentObjectMixin
 from core.permissions import ViewClassPermission, all_permissions
-from core.utils.feature_flags import flag_set
+from core.feature_flags import flag_set
 from core.utils.params import bool_from_request
 from data_manager.api import TaskListAPI as DMTaskListAPI
 from data_manager.functions import evaluate_predictions
