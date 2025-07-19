@@ -466,7 +466,7 @@ export const VideoCanvas = memo(
       videoRef,
       refSource,
       framerate,
-      onLastFrame: () => {
+      onRedrawRequest: () => {
         updateFrame(true);
       },
     });

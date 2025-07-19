@@ -6,7 +6,7 @@ type UseLoopRangeProps = {
   loopFrameRange?: boolean;
   selectedFrameRange?: { start: number; end: number };
   framerate: number;
-  onLastFrame?: () => void;
+  onRedrawRequest?: () => void;
   videoRef: MutableRefObject<HTMLVideoElement | undefined>;
   refSource: VideoRef;
 };
@@ -19,7 +19,7 @@ export const useLoopRange = ({
   loopFrameRange,
   selectedFrameRange,
   framerate,
-  onLastFrame,
+  onRedrawRequest,
   videoRef,
   refSource,
 }: UseLoopRangeProps): UseLoopRangeReturn => {
@@ -48,15 +48,20 @@ export const useLoopRange = ({
       } else if (currentFrame >= endFrame) {
         if (loopFrameRangeRef.current) {
           // If looping is enabled, reset to the start of the range
-          onLastFrame?.();
-          sourceRef.current.goToFrame(startFrame);
-        } else {
-          // If not looping, pause the video at the end of the range
-          sourceRef.current.pause();
           sourceRef.current.goToFrame(endFrame);
-          onLastFrame?.();
+          onRedrawRequest?.();
+          videoFrameCallbackIdRef.current = video.requestVideoFrameCallback(() => {
+            sourceRef.current.goToFrame(startFrame);
+            onRedrawRequest?.();
+            videoFrameCallbackIdRef.current = video.requestVideoFrameCallback(handeFrameChange);
+          });
           return;
         }
+        // If not looping, pause the video at the end of the range
+        sourceRef.current.pause();
+        sourceRef.current.goToFrame(endFrame);
+        onRedrawRequest?.();
+        return;
       }
       videoFrameCallbackIdRef.current = video.requestVideoFrameCallback(handeFrameChange);
     },
