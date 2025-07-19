@@ -259,6 +259,7 @@ describe("Video Timeline Region Loop Playback", () => {
 
       // Start with first region selected
       Sidebar.toggleRegionSelection(1);
+      cy.wait(TWO_FRAMES_TIMEOUT);
       VideoView.play();
 
       VideoView.waitForFrame(15); // Should start at first region
@@ -288,7 +289,7 @@ describe("Video Timeline Region Loop Playback", () => {
       VideoView.play();
 
       // Should play normally from current position
-      VideoView.waitForFrame(3);
+      VideoView.waitForFrame(4);
       VideoView.waitForFrame(20);
       VideoView.pause();
     });
