@@ -1,18 +1,14 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-
-import { Label, Toggle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@humansignal/ui";
+import { Label, Toggle } from "@humansignal/ui";
 import { Input } from "../../../../components/Form";
-
 
 export const S3 = ({ formData, setFormData, handleChange }) => {
   return (
     <div className="space-y-8">
-
       {/* Section 2: Bucket Configuration */}
       <div className="grid grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="bucket">Bucket Name *</Label>
-          <Input 
+          <Input
             id="bucket"
             name="bucket"
             value={formData.bucket}
@@ -25,7 +21,7 @@ export const S3 = ({ formData, setFormData, handleChange }) => {
 
         <div className="space-y-2">
           <Label htmlFor="region_name">Region Name</Label>
-          <Input 
+          <Input
             id="region_name"
             name="region_name"
             value={formData.region_name}
@@ -34,14 +30,13 @@ export const S3 = ({ formData, setFormData, handleChange }) => {
             style={{ width: "100%" }}
           />
         </div>
-
       </div>
 
       {/* Section 4: Credentials */}
       <div className="grid grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="aws_access_key_id">Access Key ID *</Label>
-          <Input 
+          <Input
             id="aws_access_key_id"
             name="aws_access_key_id"
             type="input"
@@ -56,7 +51,7 @@ export const S3 = ({ formData, setFormData, handleChange }) => {
 
         <div className="space-y-2">
           <Label htmlFor="aws_secret_access_key">Secret Access Key *</Label>
-          <Input 
+          <Input
             id="aws_secret_access_key"
             name="aws_secret_access_key"
             type="input"
@@ -72,10 +67,9 @@ export const S3 = ({ formData, setFormData, handleChange }) => {
 
       {/* Section 3: AWS Configuration */}
       <div className="grid grid-cols-2 gap-6">
-        
         <div className="space-y-2">
           <Label htmlFor="prefix">Bucket Prefix</Label>
-          <Input 
+          <Input
             id="prefix"
             name="prefix"
             value={formData.prefix}
@@ -88,7 +82,7 @@ export const S3 = ({ formData, setFormData, handleChange }) => {
 
         <div className="space-y-2">
           <Label htmlFor="s3_endpoint">Custom Endpoint</Label>
-          <Input 
+          <Input
             id="s3_endpoint"
             name="s3_endpoint"
             value={formData.s3_endpoint}
@@ -100,10 +94,9 @@ export const S3 = ({ formData, setFormData, handleChange }) => {
         </div>
       </div>
 
-
       <div className="space-y-2">
         <Label htmlFor="aws_session_token">Session Token</Label>
-        <Input 
+        <Input
           id="aws_session_token"
           name="aws_session_token"
           type="password"
@@ -127,9 +120,7 @@ export const S3 = ({ formData, setFormData, handleChange }) => {
               id="presign"
               name="presign"
               checked={formData.presign}
-              onCheckedChange={(checked) => 
-                setFormData(prev => ({ ...prev, presign: checked }))
-              }
+              onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, presign: checked }))}
             />
           </div>
         </div>
@@ -146,15 +137,16 @@ export const S3 = ({ formData, setFormData, handleChange }) => {
                 min={1}
                 max={10080}
                 value={formData.presign_ttl}
-                onChange={(e) => handleChange('presign_ttl', parseInt(e.target.value))}
+                onChange={(e) => handleChange("presign_ttl", Number.parseInt(e.target.value))}
                 className="w-24"
               />
-              <input type="range"
+              <input
+                type="range"
                 min={1}
                 max={60}
                 step={1}
                 value={[formData.presign_ttl]}
-                onChange={(value) => handleChange('presign_ttl', value[0])}
+                onChange={(value) => handleChange("presign_ttl", value[0])}
                 className="flex-1"
               />
             </div>
@@ -163,7 +155,7 @@ export const S3 = ({ formData, setFormData, handleChange }) => {
       </div>
     </div>
   );
-}
+};
 
 S3.title = "AWS S3 Configuration";
 S3.description = "Configure your AWS S3 connection with all required Label Studio settings";

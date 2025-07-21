@@ -6,7 +6,6 @@ import { Spinner } from "../../../components/Spinner/Spinner";
 import { ApiContext } from "../../../providers/ApiProvider";
 import { projectAtom } from "../../../providers/ProjectProvider";
 import { StorageCard } from "./StorageCard";
-import { StorageForm } from "./StorageForm";
 import { StorageFormNew } from "./StorageFormNew";
 import { useAtomValue } from "jotai";
 import { useStorageCard } from "./hooks/useStorageCard";
@@ -51,24 +50,10 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
             rootClass={rootClass}
             storageTypes={storageTypes}
             onSubmit={async () => {
-              await fetchStorages();
               modalRef.close();
             }}
           />
         ),
-        // footer: (
-        //   <>
-        //     <a
-        //       href="https://labelstud.io/guide/storage.html"
-        //       target="_blank"
-        //       rel="noopener noreferrer"
-        //       aria-label="Learn more (Open in new tab)"
-        //     >
-        //       Learn more
-        //     </a>{" "}
-        //     about importing data and saving annotations to Cloud Storage!
-        //   </>
-        // ),
       });
     },
     [project, fetchStorages, target, rootClass],

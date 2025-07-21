@@ -2,7 +2,7 @@ import { forwardRef, type PropsWithChildren } from "react";
 import clsx from "clsx";
 import styles from "./label.module.scss";
 type LabelProps = PropsWithChildren<{
-  text: string;
+  text?: string;
   required?: boolean;
   placement?: "right" | "left";
   description?: string;
@@ -11,6 +11,7 @@ type LabelProps = PropsWithChildren<{
   style?: any;
   simple?: boolean;
   flat?: boolean;
+  htmlFor?: string;
 }>;
 
 export const Label = forwardRef(
@@ -25,6 +26,7 @@ export const Label = forwardRef(
     style: inlineStyle,
     simple,
     flat,
+    htmlFor,
   }: LabelProps) => {
     const TagName = simple ? "div" : "label";
 
@@ -32,6 +34,7 @@ export const Label = forwardRef(
       <TagName
         style={inlineStyle}
         data-required={required}
+        htmlFor={htmlFor}
         className={clsx(styles.label, className, {
           [styles.label_size_small]: size === "small",
           [styles.label_size_large]: size === "large",
@@ -44,11 +47,11 @@ export const Label = forwardRef(
       >
         <span className={clsx(styles.label__text)}>
           <span className={clsx(styles.label__content)}>
-            {text}
+            {text ?? children}
             {description && <span className={clsx(styles.label__description)}>{description}</span>}
           </span>
         </span>
-        <span className={clsx(styles.label__field)}>{children}</span>
+        {text && <span className={clsx(styles.label__field)}>{children}</span>}
       </TagName>
     );
   },
