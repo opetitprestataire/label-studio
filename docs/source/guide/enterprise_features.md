@@ -1,8 +1,8 @@
 ---
 title: "Enterprise features: Label Studio at scale"
 short: Enterprise features
-type: opensource
-tier: all
+type: guide
+tier: opensource
 order: 35
 order_enterprise: 0
 section: "Discover & Learn"
@@ -264,11 +264,15 @@ To learn how different team structures use agreement metrics to scale high-quali
  
 ### Project performance dashboards
 
-The project dashboard provides a high-level view of project status over time, including metrics like tasks completed, annotations submitted, reviews performed, label distribution, and lead times. Users can filter by date ranges and reorder visualizations to focus on key indicators. [ ](https://docs.humansignal.com/guide/dashboard_project?utm_source=chatgpt.com)
+The [project dashboard](https://docs.humansignal.com/guide/dashboard_project) provides a high-level view of project status over time, including metrics like tasks completed, annotations submitted, reviews performed, label distribution, and lead times. Users can filter by date ranges and reorder visualizations to focus on key indicators.
+
+<img src="/images/FullDashboardPage.png" alt="" class="gif-border" />
 
 ### Annotator performance dashboards
 
-Organization owners and administrators can view individual annotator dashboards to analyze task counts, average annotation times, review turnaround, and performance scoring. These dashboards help in managing resources, identifying top performers, and tracking quality without building custom analytics tools.
+Organization owners and administrators can view individual [annotator dashboards](https://docs.humansignal.com/guide/dashboard_annotator) to analyze task counts, average annotation times, review turnaround, and performance scoring. These dashboards help in managing resources, identifying top performers, and tracking quality without building custom analytics tools.
+
+![Screenshot of annotator dashboard](/images/project/annotator_dashboard.png)
 
 ## Project Management
 
@@ -286,10 +290,10 @@ Label Studio Enterprise includes advanced project configuration options to suppo
 |                        | **Distribute Labeling Tasks (Auto vs. Manual)**                                                                                                                                               | ❌           | ✅          |
 |                        | **Task Reservation**                                                                                                                                                                          | ❌           | ✅          |
 |                        | **Skip Queue behavior (Requeue, Ignore, etc.)**                                                                                                                                               | ❌           | ✅          |
-|                        | **Annotating Options**\<br\>• Show Skip button\<br\>• Allow empty annotations\<br\>• Reveal pre-annotations interactively\<br\>• Require skip comments\<br\>• Show Data Manager to annotators | ❌           | ✅          |
+|                        | **Annotating Options** <br />• **Show Skip button** <br />• **Allow empty annotations** <br />• **Reveal pre-annotations interactively** <br />• **Require skip comments**<br />• **Show Data Manager to annotators** | ❌           | ✅          |
 | **Live Predictions**   | **Pre-label tasks via connected ML backend or Prompts**                                                                                                                                       | ✅           | ✅          |
 | **Task Sampling**      | **Sequential, Uniform, Uncertainty Sampling**                                                                                                                                                 | ❌           | ✅          |
-| **Review**             | **Review stream settings:**\<br\>• Instructions\<br\>• Reviewing Options\<br\>• Reject Options\<br\>• Data Manager for reviewers\<br\>• Agreement column visibility                           | ❌           | ✅          |
+| **Review**             | **Review stream settings:** <br />• **Instructions** <br />• **Reviewing Options** <br />• **Reject Options** <br />• **Data Manager for reviewers** <br />• **Agreement column visibility**                          | ❌           | ✅          |
 | **Quality**            | **Overlap of Annotations**                                                                                                                                                                    | ❌           | ✅          |
 |                        | **Annotation Limit (per-user caps)**                                                                                                                                                          | ❌           | ✅          |
 |                        | **Annotator Evaluation (ground-truth scoring & auto-pause)**                                                                                                                                  | ❌           | ✅          |
@@ -306,6 +310,45 @@ Label Studio Enterprise includes advanced project configuration options to suppo
 
 
 For details, view the [Enterprise Project Settings](https://docs.humansignal.com/guide/project_settings_lse).
+
+## Annotation workflow features
+
+### Bulk labeling
+
+Label Studio Enterprise makes it easy to apply the same annotation to multiple tasks at once, ideal for quickly labeling filtered subsets or consistent repetitive data.
+
+Key features:
+
+* **Supports all major data types:** Works with images, text, audio, and video
+
+* **Choose tasks in Data Manager:** Select multiple tasks via list or grid view, then apply bulk labeling
+
+* **Role-based access:** Available to users with Reviewer, Manager, Admin, or Owner roles (Annotators can participate via plugins)
+
+* **Supported control tags:** Choices, DateTime, Number, Rating, Taxonomy, TextArea
+
+
+### Auto distribution
+Label Studio Enterprise supports automated task assignment workflows—helping teams start labeling without manual setup.
+
+When you enable **Auto distribution** under Annotation settings, these project behaviors apply:
+
+* **Immediate task access:** Annotators can begin labeling as soon as the project is published
+* **Configurable task overlap:** Use "Annotations per task minimum" to define how many annotators must label each task
+* **Task reservation (lock timeout):** Define how long a task remains locked for an annotator before becoming available again
+* **Skip queue behavior: **Choose whether skipped tasks should be requeued to others, ignored, or skipped until reassignable
+
+
+These settings streamline labeling for large teams and support active learning workflows by routing tasks automatically and handling retries when tasks are skipped.
+
+### Annotation results filtering
+
+Label Studio Enterprise enhances task review and management with flexible filtering and sorting options in the Data Manager.
+
+Key capabilities:
+* **Field-level filtering:** Filter tasks by annotation outcomes, label values, region attributes, or reviewer actions
+* **Task sorting:** Sort tasks by creation date, prediction confidence, or other metadata
+* **Combined filters:** Apply multiple filters at once to narrow results for review, QA, or targeted labeling
 
 ## Collaboration features
 
