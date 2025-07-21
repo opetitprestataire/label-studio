@@ -10,7 +10,6 @@ import ProcessAttrsMixin from "../../mixins/ProcessAttrs";
 import { isSelfServe } from "../../utils/billing";
 import { FF_BULK_ANNOTATION, isFF } from "../../utils/feature-flags";
 import { guidGenerator } from "../../utils/unique";
-import { isDefined } from "@humansignal/core/lib/utils/helpers";
 
 const { Panel } = Collapse;
 
@@ -131,9 +130,7 @@ const HtxCollapse = observer(({ item }) => {
   // Get default active keys based on both Collapse-level and Panel-level open properties
   // Global open sets the base state for all panels
   // Local open can override the global state for individual panels
-  const defaultActiveKeys = visibleChildren
-    .filter((panel) => panel.open ?? item.open)
-    .map((c) => `panel-${c.value}`);
+  const defaultActiveKeys = visibleChildren.filter((panel) => panel.open ?? item.open).map((c) => `panel-${c.value}`);
 
   // For accordion mode, only the first active key should be used
   const finalActiveKeys = item.accordion

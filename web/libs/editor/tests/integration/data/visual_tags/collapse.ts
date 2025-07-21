@@ -120,4 +120,3 @@ export const allParamsCollapseConfig = `
   </Collapse>
 </View>
 `;
-
