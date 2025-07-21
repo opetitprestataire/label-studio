@@ -297,7 +297,7 @@ const Model = types
         self.parent.internalToCanvasY(self.y),
         self.parent.internalToCanvasX(self.width),
         self.parent.internalToCanvasY(self.height),
-        self.rotation
+        self.rotation,
       );
 
       const areaBBoxCoords = self?.bboxCoords;
