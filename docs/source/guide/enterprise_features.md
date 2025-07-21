@@ -336,7 +336,7 @@ When you enable **Auto distribution** under Annotation settings, these project b
 * **Immediate task access:** Annotators can begin labeling as soon as the project is published
 * **Configurable task overlap:** Use "Annotations per task minimum" to define how many annotators must label each task
 * **Task reservation (lock timeout):** Define how long a task remains locked for an annotator before becoming available again
-* **Skip queue behavior: **Choose whether skipped tasks should be requeued to others, ignored, or skipped until reassignable
+* **Skip queue behavior:** Choose whether skipped tasks should be requeued to others, ignored, or skipped until reassignable
 
 
 These settings streamline labeling for large teams and support active learning workflows by routing tasks automatically and handling retries when tasks are skipped.
