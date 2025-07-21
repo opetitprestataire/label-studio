@@ -1,6 +1,7 @@
 import TriggerOptions = Cypress.TriggerOptions;
 import ObjectLike = Cypress.ObjectLike;
 import ClickOptions = Cypress.ClickOptions;
+import { SINGLE_FRAME_TIMEOUT } from "../../../../editor/tests/integration/e2e/utils/constants";
 
 type MouseInteractionOptions = Partial<TriggerOptions & ObjectLike & MouseEvent>;
 
@@ -273,5 +274,31 @@ export const VideoView = {
     // select all to replace the current frame number
     this.frameCounterInput.clear();
     this.frameCounterInput.type(`${frameNumber}{enter}`);
+  },
+
+  verifyPlayingRange(startPositionMax: number, endPosition: number, withoutStopping = false) {
+    const checkFrame = (lastFrame, rewind = false, waitTimes = 3) => {
+      VideoView.getCurrentFrame().then((frame) => {
+        if (withoutStopping ? frame > endPosition : frame === endPosition) {
+          // Sequence of frames is the same as expected
+          return;
+        }
+        if (rewind) {
+          // If rewinding, we expect to see frames going back
+          expect(frame).to.be.lessThan(lastFrame);
+        } else {
+          if (frame === lastFrame && waitTimes--) {
+            // If we hit the same frame, wait a bit and check again
+            cy.wait(SINGLE_FRAME_TIMEOUT);
+            checkFrame(lastFrame, rewind, waitTimes);
+            return;
+          }
+          expect(frame).to.be.greaterThan(lastFrame);
+        }
+        cy.wait(SINGLE_FRAME_TIMEOUT);
+        checkFrame(frame);
+      });
+    };
+    checkFrame(startPositionMax, true);
   },
 };

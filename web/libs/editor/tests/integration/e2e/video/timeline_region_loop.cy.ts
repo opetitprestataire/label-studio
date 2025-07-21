@@ -37,12 +37,11 @@ describe("Video Timeline Region Loop Playback", () => {
       // Start playback
       VideoView.play();
 
-      // Verify video moved to region start (frame 5) and played to end (frame 15)
-      VideoView.waitForFrame(5);
-
-      VideoView.play();
-      // Wait for playback to complete and verify it stops
-      VideoView.waitForFrame(15);
+      // Verify video moved back to region and played to the end (frame 15)
+      VideoView.verifyPlayingRange(
+        singleTimelineRegionResult[0].value.ranges[0].end,
+        singleTimelineRegionResult[0].value.ranges[0].end,
+      );
 
       // Video should be paused after region end
       VideoView.pauseButton.should("not.exist");
@@ -107,10 +106,11 @@ describe("Video Timeline Region Loop Playback", () => {
       // Start playback
       VideoView.play();
 
-      // Should start from earliest region (frame 5) and play to latest end (frame 20)
-      VideoView.waitForFrame(5);
-
-      VideoView.waitForFrame(20);
+      // Should play from first region to the end of the second region
+      VideoView.verifyPlayingRange(
+        multipleTimelineRegionsResult[0].value.ranges[0].end,
+        multipleTimelineRegionsResult[1].value.ranges[0].end,
+      );
 
       VideoView.playButton.should("be.visible");
     });
@@ -135,10 +135,11 @@ describe("Video Timeline Region Loop Playback", () => {
 
       VideoView.play();
 
-      // Should play from frame 8 to frame 18 (covering both regions)
-      VideoView.waitForFrame(8);
-
-      VideoView.waitForFrame(18);
+      // Should play from first region to the end of the second region
+      VideoView.verifyPlayingRange(
+        overlappingTimelineRegionsResult[0].value.ranges[0].end,
+        overlappingTimelineRegionsResult[1].value.ranges[0].end,
+      );
 
       VideoView.playButton.should("be.visible");
     });
@@ -262,13 +263,12 @@ describe("Video Timeline Region Loop Playback", () => {
       cy.wait(TWO_FRAMES_TIMEOUT);
       VideoView.play();
 
-      VideoView.waitForFrame(15); // Should start at first region
+      VideoView.verifyPlayingRange(20, 15, true);
 
       // Change selection to second region during playback
       Sidebar.toggleRegionSelection(0); // Select another region
 
-      VideoView.waitForFrame(5);
-      VideoView.waitForFrame(10);
+      VideoView.verifyPlayingRange(9, 10);
       cy.wait(TWO_FRAMES_TIMEOUT);
       VideoView.getCurrentFrame().should("be.eq", 10);
     });
@@ -288,9 +288,7 @@ describe("Video Timeline Region Loop Playback", () => {
       VideoView.clickAtFrame(2);
       VideoView.play();
 
-      // Should play normally from current position
-      VideoView.waitForFrame(4);
-      VideoView.waitForFrame(20);
+      VideoView.verifyPlayingRange(10, 40, true);
       VideoView.pause();
     });
   });
