@@ -292,7 +292,13 @@ const Model = types
 
         self.height = self.parent.canvasToInternalY(canvasHeight);
       }
-      self.setPosition(self.x, self.y, self.width, self.height, self.rotation);
+      self.setPosition(
+        self.parent.internalToCanvasX(self.x),
+        self.parent.internalToCanvasY(self.y),
+        self.parent.internalToCanvasX(self.width),
+        self.parent.internalToCanvasY(self.height),
+        self.rotation
+      );
 
       const areaBBoxCoords = self?.bboxCoords;
 
