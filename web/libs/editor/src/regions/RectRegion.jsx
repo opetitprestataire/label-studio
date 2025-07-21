@@ -498,13 +498,17 @@ const HtxRectangleView = ({ item, setShapeRef }) => {
       t.setAttr("scaleX", 1);
       t.setAttr("scaleY", 1);
 
-      // Sync Konva shape attributes back to computed canvas coordinates to cause a re-render
-      t.position({
-        x: item.canvasX,
-        y: item.canvasY,
-        width: item.canvasWidth,
-        height: item.canvasHeight,
-      });
+      if (self.control?.snap === "pixel") {
+        // If snap is enabled, we need to snap the coordinates to the pixel grid -
+        // Sync Konva shape attributes back to computed canvas coordinates to cause a re-render
+        // Canvas coordinates are updated in the setPosition method
+        t.position({
+          x: item.canvasX,
+          y: item.canvasY,
+          width: item.canvasWidth,
+          height: item.canvasHeight,
+        });
+      }
 
       item.notifyDrawingFinished();
     };
@@ -523,13 +527,17 @@ const HtxRectangleView = ({ item, setShapeRef }) => {
       item.setPosition(t.getAttr("x"), t.getAttr("y"), t.getAttr("width"), t.getAttr("height"), t.getAttr("rotation"));
       item.setScale(t.getAttr("scaleX"), t.getAttr("scaleY"));
 
-      // Sync Konva shape attributes back to computed canvas coordinates to cause a re-render
-      t.position({
-        x: item.canvasX,
-        y: item.canvasY,
-        width: item.canvasWidth,
-        height: item.canvasHeight,
-      });
+      if (item.control?.snap === "pixel") {
+        // If snap is enabled, we need to snap the coordinates to the pixel grid -
+        // Sync Konva shape attributes back to computed canvas coordinates to cause a re-render
+        // Canvas coordinates are updated in the setPosition method
+        t.position({
+          x: item.canvasX,
+          y: item.canvasY,
+          width: item.canvasWidth,
+          height: item.canvasHeight,
+        });
+      }
 
       item.annotation.history.unfreeze(item.id);
 
