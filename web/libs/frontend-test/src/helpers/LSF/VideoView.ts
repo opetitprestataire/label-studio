@@ -277,7 +277,7 @@ export const VideoView = {
   },
 
   verifyPlayingRange(startPositionMax: number, endPosition: number, withoutStopping = false) {
-    const checkFrame = (lastFrame, rewind = false, waitTimes = 3) => {
+    const checkFrame = (lastFrame, rewind = false, waitTimes = 10) => {
       VideoView.getCurrentFrame().then((frame) => {
         if (withoutStopping ? frame > endPosition : frame === endPosition) {
           // Sequence of frames is the same as expected
