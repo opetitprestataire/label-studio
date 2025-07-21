@@ -35,6 +35,7 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
       const action = storage ? "Edit" : "Connect";
       const actionTarget = target === "export" ? "Target" : "Source";
       const title = `${action} ${actionTarget} Storage`;
+      console.log({ action, title, target });
 
       const modalRef = modal({
         title,

@@ -1,6 +1,6 @@
-import { Label } from "@humansignal/ui";
-import { Input } from "apps/labelstudio/src/components/Form";
-import { RadioGroup, RadioGroupItem } from "@humansignal/ui";
+import { Label, Select } from "@humansignal/ui";
+import { useMemo, useEffect, useCallback } from "react";
+import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
 
 interface ProviderSelectionStepProps {
   formData: {
@@ -9,10 +9,16 @@ interface ProviderSelectionStepProps {
   };
   errors: {
     provider?: string;
+    title?: string;
   };
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectChange: (name: string, value: string) => void;
+  handleStep1FieldChange: (name: string, value: any) => void;
   setFormState: (updater: (prevState: any) => any) => void;
+  storageTypes?: any[];
+  storageTypesLoading?: boolean;
+  target?: "import" | "export";
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 export const ProviderSelectionStep = ({
@@ -20,8 +26,177 @@ export const ProviderSelectionStep = ({
   errors,
   handleChange,
   handleSelectChange,
+  handleStep1FieldChange,
   setFormState,
+  storageTypes = [],
+  storageTypesLoading = false,
+  target = "import",
+  onValidationChange,
 }: ProviderSelectionStepProps) => {
+  // Get provider display name
+  const getProviderDisplayName = (provider: string) => {
+    switch (provider.toLowerCase()) {
+      case "s3":
+        return "Amazon S3";
+      case "gcp":
+        return "Google Cloud Storage";
+      case "azure":
+        return "Azure Blob Storage";
+      default:
+        return provider;
+    }
+  };
+
+  // Process storage types data
+  const storageTypeOptions = useMemo(() => {
+    if (!storageTypes || !Array.isArray(storageTypes)) {
+      return [];
+    }
+
+    return storageTypes.map(
+      (storageType: any) =>
+        ({
+          label: storageType.title,
+          value: storageType.name,
+        }) as const,
+    );
+  }, [storageTypes]);
+
+  // Set default provider if none is selected and we have options
+  useEffect(() => {
+    if (!formData.provider && storageTypeOptions.length > 0) {
+      handleSelectChange("provider", storageTypeOptions[0].value);
+    }
+  }, [storageTypeOptions, formData.provider, handleSelectChange]);
+
+  // Handle input blur for validation
+  const handleInputBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      // Trigger validation on blur
+      onValidationChange?.(Object.keys(errors).length === 0);
+    },
+    [errors, onValidationChange],
+  );
+
+  // Handle input change for real-time validation
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      // Use centralized validation if available, otherwise use local validation
+      if (handleStep1FieldChange) {
+        handleStep1FieldChange(name, value);
+      } else {
+        // Fallback to local validation
+        onValidationChange?.(Object.keys(errors).length === 0);
+      }
+    },
+    [errors, onValidationChange, handleStep1FieldChange],
+  );
+
+  // Default props for Input component
+  const getInputProps = (fieldName: string, label: string, required = false) => ({
+    validate: "",
+    skip: false,
+    labelProps: {},
+    ghost: false,
+    tooltip: "",
+    tooltipIcon: null,
+    required,
+    label,
+    description: "",
+    footer: errors[fieldName as keyof typeof errors] || "",
+    className: errors[fieldName as keyof typeof errors] ? "border-red-500" : "",
+  });
+
+  // Get provider icon based on provider type
+  const getProviderIcon = (provider: string) => {
+    switch (provider.toLowerCase()) {
+      case "s3":
+        return (
+          <div className="h-6 w-6 bg-blue-100 rounded-md flex items-center justify-center text-blue-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-4 h-4"
+              aria-label="S3 icon"
+            >
+              <path d="M4 20V8.5L12 4L20 8.5V20" />
+              <path d="M2 8L12 16L22 8" />
+              <path d="M12 16V21" />
+            </svg>
+          </div>
+        );
+      case "gcp":
+        return (
+          <div className="h-6 w-6 bg-green-100 rounded-md flex items-center justify-center text-green-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-4 h-4"
+              aria-label="GCP icon"
+            >
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+              <path d="M2 17L12 22L22 17" />
+              <path d="M2 12L12 17L22 12" />
+            </svg>
+          </div>
+        );
+      case "azure":
+        return (
+          <div className="h-6 w-6 bg-purple-100 rounded-md flex items-center justify-center text-purple-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-4 h-4"
+              aria-label="Azure icon"
+            >
+              <path d="M12 22L2 17V7L12 2L22 7V17L12 22Z" />
+              <path d="M12 2V22" />
+              <path d="M2 7L22 7" />
+              <path d="M2 17L22 17" />
+            </svg>
+          </div>
+        );
+      default:
+        return (
+          <div className="h-6 w-6 bg-gray-100 rounded-md flex items-center justify-center text-gray-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-4 h-4"
+              aria-label="Default storage icon"
+            >
+              <path d="M4 20V8.5L12 4L20 8.5V20" />
+              <path d="M2 8L12 16L22 8" />
+              <path d="M12 16V21" />
+            </svg>
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -30,120 +205,28 @@ export const ProviderSelectionStep = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="title">Storage Title *</Label>
         <Input
           id="title"
           name="title"
           value={formData.title}
           onChange={handleChange}
-          required
-          style={{ width: "100%" }}
+          onBlur={handleInputBlur}
           placeholder="Enter a descriptive name (e.g., 'Legal Documents', 'Training Data')"
+          {...getInputProps("title", "Storage Title", true)}
+          description="This name will help you identify this connection in your project"
         />
-        <p className="text-sm text-gray-500">This name will help you identify this connection in your project</p>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="provider">Storage Provider *</Label>
-        <RadioGroup
-          name="provider"
-          value={formData.provider}
-          onValueChange={(value) => handleSelectChange("provider", value)}
-        >
-          <label htmlFor="s3" className="block cursor-pointer">
-            <div
-              className={`flex items-center border rounded-md p-2 gap-4 hover:bg-gray-50
-    ${formData.provider === "s3" ? "bg-blue-50 border-blue-200 ring-2 ring-blue-200 ring-opacity-50" : ""}`}
-            >
-              <RadioGroupItem value="s3" id="s3" className="ml-2" />
-              <div className="h-10 w-10 bg-blue-100 rounded-md flex items-center justify-center text-blue-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6"
-                >
-                  <path d="M4 20V8.5L12 4L20 8.5V20"></path>
-                  <path d="M2 8L12 16L22 8"></path>
-                  <path d="M12 16V21"></path>
-                </svg>
-              </div>
-
-              <div>
-                <span className="font-medium text-base block">Amazon S3</span>
-                <p className="text-sm text-muted-foreground">AWS Simple Storage Service</p>
-              </div>
-            </div>
-          </label>
-
-          {/* GCP Option */}
-          <label htmlFor="gcp" className="block cursor-pointer">
-            <div
-              className={`flex items-center border rounded-md p-2 gap-4 hover:bg-gray-50
-    ${formData.provider === "gcp" ? "bg-green-50 border-green-200 ring-2 ring-green-200 ring-opacity-50" : ""}`}
-            >
-              <RadioGroupItem value="gcp" id="gcp" className="ml-2" />
-              <div className="h-10 w-10 bg-green-100 rounded-md flex items-center justify-center text-green-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6"
-                >
-                  <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
-                  <path d="M2 17L12 22L22 17"></path>
-                  <path d="M2 12L12 17L22 12"></path>
-                </svg>
-              </div>
-
-              <div>
-                <span className="font-medium text-base block">Google Cloud Storage</span>
-                <p className="text-sm text-muted-foreground">Unified object storage for developers and enterprises</p>
-              </div>
-            </div>
-          </label>
-
-          {/* Azure Option */}
-          <label htmlFor="azure" className="block cursor-pointer">
-            <div
-              className={`flex items-center border rounded-md p-2 gap-4 hover:bg-gray-50
-    ${formData.provider === "azure" ? "bg-purple-50 border-purple-200 ring-2 ring-purple-200 ring-opacity-50" : ""}`}
-            >
-              <RadioGroupItem value="azure" id="azure" className="ml-2" />
-
-              <div className="h-10 w-10 bg-purple-100 rounded-md flex items-center justify-center text-purple-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6"
-                >
-                  <path d="M12 22L2 17V7L12 2L22 7V17L12 22Z"></path>
-                  <path d="M12 2V22"></path>
-                  <path d="M2 7L22 7"></path>
-                  <path d="M2 17L22 17"></path>
-                </svg>
-              </div>
-
-              <div>
-                <span className="font-medium text-base block">Azure Blob Storage</span>
-                <p className="text-sm text-muted-foreground">Microsoft's object storage solution for the cloud</p>
-              </div>
-            </div>
-          </label>
-        </RadioGroup>
+        <Label htmlFor="provider" required>
+          Storage Provider
+        </Label>
+        <Select
+          value={formData.provider ?? storageTypeOptions[0].value ?? "s3"}
+          options={storageTypeOptions}
+          onChange={(value) => handleSelectChange("provider", value)}
+          disabled={storageTypesLoading}
+        />
 
         {errors.provider && <p className="text-sm text-destructive">{errors.provider}</p>}
       </div>

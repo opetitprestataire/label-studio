@@ -47,7 +47,7 @@ const Label = ({
       <div className={rootClass.elem("text")}>
         <div className={rootClass.elem("content")}>
           <div className={rootClass.elem("label")}>
-            {text}
+            <span>{text}</span>
             {tooltip && (
               <div className={rootClass.elem("tooltip")}>
                 <Tooltip title={tooltip}>{tooltipIcon ? tooltipIcon : <IconInfoOutline />}</Tooltip>
