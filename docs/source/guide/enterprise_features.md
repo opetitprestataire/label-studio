@@ -2,7 +2,7 @@
 title: "Enterprise features: Label Studio at scale"
 short: Enterprise features
 type: guide
-tier: opensource
+tier: all
 order: 35
 order_enterprise: 0
 section: "Discover & Learn"
@@ -12,23 +12,13 @@ meta_description: Overview of the features in Label Studio Enterprise.
 
 This page provides an overview of the advanced capabilities available exclusively in [Label Studio Enterprise](https://humansignal.com/pricing/). These features extend the core functionality of Label Studio with enterprise-scale user management, security, quality assurance, and automation.
 
+![Projects page screenshot](/images/lse-projects-page.png)
+
+![Annotator comparison page screenshot](/images/lse-annotator-summary.png)
+
 ## Organizations and Workspaces
 
 Label Studio Enterprise introduces a hierarchical structure for organizing projects and users through organizations and workspaces, which is not available in the community edition.
-
-```mermaid
-graph TD
-    A[Organization] --> B[Users]
-    A --> C[Workspaces]
-    B --> D[User Roles]
-    D --> E[Organization Roles]
-    D --> F[Project Roles]
-    C --> G[Projects]
-    G --> H[Tasks]
-    G --> I[Annotations]
-    G --> J[Storage Integrations]
-    G --> K[ML Backends]
-```
 
 ### Organizations
 
