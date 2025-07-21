@@ -35,6 +35,8 @@ from tasks.serializers import AnnotationSerializer, PredictionSerializer
 from webhooks.models import WebhookAction
 from webhooks.utils import emit_webhooks_for_instance
 
+from .exceptions import UnsupportedFileFormatError
+
 logger = logging.getLogger(__name__)
 
 
@@ -422,6 +424,11 @@ class ImportStorage(Storage):
         task = self.project.tasks.order_by('-inner_id').first()
         max_inner_id = (task.inner_id + 1) if task else 1
 
+        # Check feature flag once for the entire sync process
+        check_file_extension = flag_set(
+            'fflag_fix_back_plt_804_check_file_extension_11072025_short', user=self.project.organization.created_by
+        )
+
         tasks_for_webhook = []
         for key in self.iterkeys():
             # w/o Dataflow
@@ -437,6 +444,21 @@ class ImportStorage(Storage):
                 continue
 
             logger.debug(f'{self}: found new key {key}')
+
+            # Check if file should be processed as JSON based on extension
+            # Skip non-JSON files if use_blob_urls is False
+            if check_file_extension and not self.use_blob_urls:
+                _, ext = os.path.splitext(key.lower())
+                # Only process files with JSON/JSONL/PARQUET extensions
+                json_extensions = {'.json', '.jsonl', '.parquet'}
+
+                if ext and ext not in json_extensions:
+                    raise UnsupportedFileFormatError(
+                        f'File "{key}" is not a JSON/JSONL/Parquet file. Only .json, .jsonl, and .parquet files can be processed.\n'
+                        f"If you're trying to import non-JSON data (images, audio, text, etc.), "
+                        f'edit storage settings and enable "Treat every bucket object as a source file"'
+                    )
+
             try:
                 link_objects = self.get_data(key)
             except (UnicodeDecodeError, json.decoder.JSONDecodeError) as exc:
@@ -467,7 +489,7 @@ class ImportStorage(Storage):
                 tasks_created += 1
 
                 # add task to webhook list
-                tasks_for_webhook.append(task)
+                tasks_for_webhook.append(task.id)
 
                 # settings.WEBHOOK_BATCH_SIZE
                 # `WEBHOOK_BATCH_SIZE` sets the maximum number of tasks sent in a single webhook call, ensuring manageable payload sizes.
@@ -551,7 +573,14 @@ class ProjectStorageMixin(models.Model):
 @job('low')
 def import_sync_background(storage_class, storage_id, timeout=settings.RQ_LONG_JOB_TIMEOUT, **kwargs):
     storage = storage_class.objects.get(id=storage_id)
-    storage.scan_and_create_links()
+    try:
+        storage.scan_and_create_links()
+    except UnsupportedFileFormatError:
+        # This is an expected error when user tries to import non-JSON files without enabling blob URLs
+        # We don't want to fail the job in this case, just mark the storage as failed with a clear message
+        storage.info_set_failed()
+        # Exit gracefully without raising exception to avoid job failure
+        return
 
 
 @job('low', timeout=settings.RQ_LONG_JOB_TIMEOUT)

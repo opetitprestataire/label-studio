@@ -5,7 +5,7 @@ import { ConfigProvider } from "../../providers/ConfigProvider";
 import { CurrentUserProvider } from "../../providers/CurrentUser";
 import { MultiProvider } from "../../providers/MultiProvider";
 import { cn } from "../../utils/bem";
-import { Button } from "../Button/Button";
+import { Button } from "@humansignal/ui";
 import { Space } from "../Space/Space";
 import { Modal } from "./ModalPopup";
 import { ToastProvider, ToastViewport } from "@humansignal/ui";
@@ -78,8 +78,9 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
             onCancel?.();
             modal.close();
           }}
-          size="compact"
+          look="outlined"
           autoFocus
+          className="min-w-[120px]"
         >
           {cancelText ?? "Cancel"}
         </Button>
@@ -89,8 +90,8 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
             onOk?.();
             modal.close();
           }}
-          size="compact"
-          look={buttonLook ?? "primary"}
+          variant={buttonLook ?? "primary"}
+          className="min-w-[120px]"
         >
           {okText ?? "OK"}
         </Button>
@@ -111,8 +112,8 @@ export const info = ({ okText, onOkPress, ...props }) => {
             onOkPress?.();
             modal.close();
           }}
-          look="primary"
-          size="compact"
+          size="small"
+          className="min-w-[120px]"
         >
           {okText ?? "OK"}
         </Button>
