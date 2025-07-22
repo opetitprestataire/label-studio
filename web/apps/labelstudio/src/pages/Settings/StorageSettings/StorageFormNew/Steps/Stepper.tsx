@@ -1,4 +1,4 @@
-import { cn } from "@humansignal/shad/utils";
+import { cn } from "@humansignal/ui";
 
 interface StepperProps {
   steps: { title: string }[];
@@ -7,27 +7,20 @@ interface StepperProps {
 
 export const Stepper = ({ steps, currentStep }: StepperProps) => {
   return (
-    <div
-      className="w-full mb-2 py-4"
-      style={{
-        background: "rgb(248 250 252)",
-        padding: "1rem 1.5rem",
-        borderBottom: "1px solid var(--color-neutral-border)",
-      }}
-    >
+    <div className="w-full mb-tight py-base bg-neutral-background border-b border-neutral-border px-wide">
       <div className="flex flex-col">
         {/* Step circles and names */}
-        <div className="flex justify-between items-start mb-2">
+        <div className="flex justify-between items-start mb-tight">
           {steps.map((step, index) => (
             <div key={index} className="flex items-center">
               <div
                 className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center font-sm text-sm border mr-2",
+                  "w-10 h-10 rounded-full flex items-center justify-center text-body-small border mr-tight",
                   currentStep > index
-                    ? "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-200" // completed
+                    ? "w-8 h-8 rounded-full flex items-center justify-center text-body-small font-semibold transition-all duration-300 bg-primary-surface text-primary-surface-content shadow-sm" // completed
                     : currentStep === index
-                      ? "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-200" // current
-                      : "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 bg-white border-2 border-slate-200 text-slate-400", // upcoming
+                      ? "w-8 h-8 rounded-full flex items-center justify-center text-body-small font-semibold transition-all duration-300 bg-primary-surface text-primary-surface-content shadow-sm" // current
+                      : "w-8 h-8 rounded-full flex items-center justify-center text-body-small font-semibold transition-all duration-300 bg-neutral-surface border-2 border-neutral-border text-neutral-content-subtle", // upcoming
                 )}
               >
                 {currentStep > index ? (
@@ -49,7 +42,7 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
                   index + 1
                 )}
               </div>
-              <span className={cn("text-sm", currentStep >= index ? "text-primary font-sm" : "text-muted-foreground")}>
+              <span className={cn("text-body-small", currentStep >= index ? "text-primary-content font-semibold" : "text-neutral-content-subtle")}>
                 {step.title}
               </span>
             </div>
@@ -57,9 +50,9 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
         </div>
 
         {/* Progress bar */}
-        <div className="relative w-full overflow-hidden rounded-full h-1 bg-slate-200">
+        <div className="relative w-full overflow-hidden rounded-full h-1 bg-neutral-emphasis">
           <div
-            className="h-full bg-blue-500 transition-all duration-300 rounded-full"
+            className="h-full bg-primary-surface transition-all duration-300 rounded-full"
             style={{
               width: `${(Math.min(currentStep, steps.length - 1) / (steps.length - 1)) * 100}%`,
             }}

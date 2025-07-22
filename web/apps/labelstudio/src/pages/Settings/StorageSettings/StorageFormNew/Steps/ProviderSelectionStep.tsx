@@ -1,6 +1,7 @@
-import { Label, Select } from "@humansignal/ui";
+import { Label } from "@humansignal/ui";
 import { useMemo, useEffect, useCallback } from "react";
 import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
+import { ProviderGrid } from "../components";
 
 interface ProviderSelectionStepProps {
   formData: {
@@ -33,39 +34,19 @@ export const ProviderSelectionStep = ({
   target = "import",
   onValidationChange,
 }: ProviderSelectionStepProps) => {
-  // Get provider display name
-  const getProviderDisplayName = (provider: string) => {
-    switch (provider.toLowerCase()) {
-      case "s3":
-        return "Amazon S3";
-      case "gcp":
-        return "Google Cloud Storage";
-      case "azure":
-        return "Azure Blob Storage";
-      default:
-        return provider;
-    }
-  };
-
   // Process storage types data
   const storageTypeOptions = useMemo(() => {
     if (!storageTypes || !Array.isArray(storageTypes)) {
       return [];
     }
 
-    return storageTypes.map(
-      (storageType: any) =>
-        ({
-          label: storageType.title,
-          value: storageType.name,
-        }) as const,
-    );
+    return storageTypes;
   }, [storageTypes]);
 
   // Set default provider if none is selected and we have options
   useEffect(() => {
     if (!formData.provider && storageTypeOptions.length > 0) {
-      handleSelectChange("provider", storageTypeOptions[0].value);
+      handleSelectChange("provider", storageTypeOptions[0].name);
     }
   }, [storageTypeOptions, formData.provider, handleSelectChange]);
 
@@ -110,92 +91,7 @@ export const ProviderSelectionStep = ({
     className: errors[fieldName as keyof typeof errors] ? "border-red-500" : "",
   });
 
-  // Get provider icon based on provider type
-  const getProviderIcon = (provider: string) => {
-    switch (provider.toLowerCase()) {
-      case "s3":
-        return (
-          <div className="h-6 w-6 bg-blue-100 rounded-md flex items-center justify-center text-blue-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-4 h-4"
-              aria-label="S3 icon"
-            >
-              <path d="M4 20V8.5L12 4L20 8.5V20" />
-              <path d="M2 8L12 16L22 8" />
-              <path d="M12 16V21" />
-            </svg>
-          </div>
-        );
-      case "gcp":
-        return (
-          <div className="h-6 w-6 bg-green-100 rounded-md flex items-center justify-center text-green-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-4 h-4"
-              aria-label="GCP icon"
-            >
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" />
-              <path d="M2 17L12 22L22 17" />
-              <path d="M2 12L12 17L22 12" />
-            </svg>
-          </div>
-        );
-      case "azure":
-        return (
-          <div className="h-6 w-6 bg-purple-100 rounded-md flex items-center justify-center text-purple-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-4 h-4"
-              aria-label="Azure icon"
-            >
-              <path d="M12 22L2 17V7L12 2L22 7V17L12 22Z" />
-              <path d="M12 2V22" />
-              <path d="M2 7L22 7" />
-              <path d="M2 17L22 17" />
-            </svg>
-          </div>
-        );
-      default:
-        return (
-          <div className="h-6 w-6 bg-gray-100 rounded-md flex items-center justify-center text-gray-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-4 h-4"
-              aria-label="Default storage icon"
-            >
-              <path d="M4 20V8.5L12 4L20 8.5V20" />
-              <path d="M2 8L12 16L22 8" />
-              <path d="M12 16V21" />
-            </svg>
-          </div>
-        );
-    }
-  };
+
 
   return (
     <div className="space-y-6">
@@ -221,14 +117,13 @@ export const ProviderSelectionStep = ({
         <Label htmlFor="provider" required>
           Storage Provider
         </Label>
-        <Select
-          value={formData.provider ?? storageTypeOptions[0].value ?? "s3"}
-          options={storageTypeOptions}
-          onChange={(value) => handleSelectChange("provider", value)}
+        <ProviderGrid
+          providers={storageTypeOptions}
+          selectedProvider={formData.provider}
+          onProviderSelect={(providerName) => handleSelectChange("provider", providerName)}
           disabled={storageTypesLoading}
+          error={errors.provider}
         />
-
-        {errors.provider && <p className="text-sm text-destructive">{errors.provider}</p>}
       </div>
     </div>
   );

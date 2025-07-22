@@ -79,8 +79,8 @@ const localFilesSchema = z.object({
   presign_ttl: z.number().min(1).max(10080).optional(),
 });
 
-// Combine all schemas
-const formStateAtom = atom({
+// Initial form state
+const initialFormState = {
   currentStep: 0,
   formData: {
     project: 0,
@@ -107,7 +107,10 @@ const formStateAtom = atom({
     recursive_scan: true,
   },
   isComplete: false,
-});
+};
+
+// Combine all schemas
+const formStateAtom = atom(initialFormState);
 
 // Helper function to get provider-specific schema
 const getProviderSchema = (provider: string) => {
@@ -531,49 +534,32 @@ export const StorageFormNew = forwardRef<
   };
 
   const handleClose = () => {
+    // Reset Jotai state to initial values
+    setFormState(initialFormState);
+    
+    // Reset local state
+    setType(undefined);
+    setFilesPreview(null);
+    setLoadingFilesPreiview(false);
+    setNextPreviewToken("");
+    setErrors({});
+    setTestingConnection(false);
+    setConnectionChecked(false);
+    
     onClose();
     modal?.hide();
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        width: "100%",
-      }}
-    >
+    <div className="flex flex-col h-full w-full">
       {/* Custom header with title, subtitle and close button */}
-      <div
-        style={{
-          padding: "1rem 1.5rem",
-          paddingTop: "1.5rem",
-
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-        }}
-      >
+      <div className="flex justify-between items-start px-wide py-base pt-wide">
         <div>
-          <h2
-            style={{
-              margin: "0 0 0.5rem 0",
-              fontSize: "1.75rem",
-              fontWeight: "500",
-              color: "var(--color-neutral-content)",
-            }}
-          >
+          <h2 className="m-0 mb-tight text-headline-large font-medium text-neutral-content">
             {title}
           </h2>
           {true && (
-            <div
-              style={{
-                fontSize: "1rem",
-                color: "var(--color-neutral-content-subtle)",
-                lineHeight: "1.4",
-              }}
-            >
+            <div className="text-body-medium text-neutral-content-subtle leading-relaxed">
               {"Import your data from cloud storage providers"}
             </div>
           )}
@@ -583,22 +569,16 @@ export const StorageFormNew = forwardRef<
 
       <Stepper steps={steps} currentStep={currentStep} />
 
-      <div
-        style={{
-          maxHeight: "60vh", // Adjust height as needed
-          overflowY: "auto", // This enables vertical scrolling
-          padding: "1rem 1.5rem",
-        }}
-      >
+      <div className="max-h-[60vh] overflow-y-auto px-wide py-base">
         {renderStepContent()}
       </div>
 
-      <div className="flex items-center justify-between p-6 border-t border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50">
+      <div className="flex items-center justify-between p-wide border-t border-neutral-border bg-neutral-background">
         <Button look="outlined" onClick={prevStep} disabled={currentStep === 0}>
           Previous
         </Button>
 
-        <div className="flex" style={{ gap: "12px" }}>
+        <div className="flex gap-tight">
           {currentStep === 1 && (
             <Button waiting={testingConnection} onClick={testStorageConnection}>
               Test Connection
