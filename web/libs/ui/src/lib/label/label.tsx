@@ -1,4 +1,4 @@
-import { forwardRef, type PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import clsx from "clsx";
 import styles from "./label.module.scss";
 type LabelProps = PropsWithChildren<{
@@ -8,13 +8,13 @@ type LabelProps = PropsWithChildren<{
   description?: string;
   size?: "large" | "small";
   className?: string;
-  style?: any;
+  style?: React.CSSProperties;
   simple?: boolean;
   flat?: boolean;
 }>;
 
-export const Label = forwardRef(
-  ({
+export const Label = (
+  {
     text,
     children,
     required,
@@ -51,5 +51,4 @@ export const Label = forwardRef(
         <span className={clsx(styles.label__field)}>{children}</span>
       </TagName>
     );
-  },
-);
+  };
