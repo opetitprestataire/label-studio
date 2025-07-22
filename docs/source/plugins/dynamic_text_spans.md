@@ -10,6 +10,8 @@ meta_description: Annotate edited text
 tier: enterprise
 ---
 
+<img src="/images/plugins/dynamic-text-spans.png" alt="" class="gif-border" style="max-width: 552px !important;" />
+
 !!! note
      For information about modifying this plugin or creating your own custom plugins, see [Customize and Build Your Own Plugins](custom).
 
