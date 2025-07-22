@@ -1,41 +1,26 @@
-import { Label, Toggle } from "@humansignal/ui";
-import { atom, useAtom } from "jotai";
+import { Label, Toggle, Select } from "@humansignal/ui";
+import Counter from "apps/labelstudio/src/components/Form/Elements/Counter/Counter";
 import { z } from "zod";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
 
 // S3 Form validation schema
 const s3FormSchema = z.object({
   bucket: z.string().min(1, "Bucket name is required"),
+  prefix: z.string().optional(),
+  regex_filter: z.string().optional(),
   region_name: z.string().optional(),
+  s3_endpoint: z.string().optional(),
   aws_access_key_id: z.string().min(1, "Access Key ID is required"),
   aws_secret_access_key: z.string().min(1, "Secret Access Key is required"),
   aws_session_token: z.string().optional(),
-  prefix: z.string().optional(),
-  s3_endpoint: z.string().optional(),
-  regex_filter: z.string().optional(),
-  presign: z.boolean().default(false),
-  presign_ttl: z.number().min(1).max(10080).optional(),
+  use_blob_urls: z.boolean().default(true),
+  presign: z.boolean().default(true),
+  presign_ttl: z.number().min(1).max(10080).default(15),
+  recursive_scan: z.boolean().default(true),
 });
 
 type S3FormData = z.infer<typeof s3FormSchema>;
-
-// S3 Form state atom
-const s3FormAtom = atom<S3FormData>({
-  bucket: "",
-  region_name: "",
-  aws_access_key_id: "",
-  aws_secret_access_key: "",
-  aws_session_token: "",
-  prefix: "",
-  s3_endpoint: "",
-  regex_filter: "",
-  presign: false,
-  presign_ttl: 60,
-});
-
-// S3 Form errors atom
-const s3FormErrorsAtom = atom<Record<string, string>>({});
 
 interface S3Props {
   formData?: any;
@@ -48,57 +33,18 @@ interface S3Props {
   validationErrors?: Record<string, string>;
 }
 
-export const S3 = ({
-  initialData = {},
-  onChange,
-  onValidationChange,
-  validationErrors = {},
-  handleProviderFieldChange,
-}: S3Props) => {
-  const [formData, setFormData] = useAtom(s3FormAtom);
-  const [localErrors, setLocalErrors] = useAtom(s3FormErrorsAtom);
-
-  // Initialize form data with initial values
-  useEffect(() => {
-    if (initialData && Object.keys(initialData).length > 0) {
-      setFormData((prev) => ({ ...prev, ...initialData }));
-    }
-  }, [initialData, setFormData]);
-
-  // Validate form data
-  const validateForm = useCallback(
-    (data: S3FormData) => {
-      try {
-        s3FormSchema.parse(data);
-        setLocalErrors({});
-        onValidationChange?.(true);
-        return true;
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          const newErrors: Record<string, string> = {};
-          error.errors.forEach((err) => {
-            if (err.path[0]) {
-              newErrors[err.path[0] as string] = err.message;
-            }
-          });
-          setLocalErrors(newErrors);
-          onValidationChange?.(false);
-        }
-        return false;
-      }
-    },
-    [setLocalErrors, onValidationChange],
-  );
+export const S3 = ({ formData: mainFormData, handleProviderFieldChange, validationErrors = {} }: S3Props) => {
+  // Use the main form data instead of local atom
+  const formData = mainFormData || {};
+  const localErrors = validationErrors;
 
   // Handle form data changes
   const handleChange = useCallback(
     (name: string, value: any) => {
-      const newFormData = { ...formData, [name]: value };
-      setFormData(newFormData);
-      validateForm(newFormData);
-      onChange?.(newFormData);
+      // Use the main form's handleProviderFieldChange
+      handleProviderFieldChange?.(name, value);
     },
-    [formData, setFormData, validateForm, onChange],
+    [handleProviderFieldChange],
   );
 
   // Handle input change events
@@ -106,46 +52,30 @@ export const S3 = ({
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value, type } = e.target;
       const parsedValue = type === "number" ? Number(value) : value;
-
-      // Use centralized validation if available, otherwise use local validation
-      if (handleProviderFieldChange) {
-        handleProviderFieldChange(name, parsedValue);
-      } else {
-        const newFormData = { ...formData, [name]: parsedValue };
-        setFormData(newFormData);
-        validateForm(newFormData);
-        onChange?.(newFormData);
-      }
+      handleProviderFieldChange?.(name, parsedValue);
     },
-    [formData, setFormData, validateForm, onChange, handleProviderFieldChange],
+    [handleProviderFieldChange],
   );
 
-  // Handle input blur events for validation
-  const handleInputBlur = useCallback(
-    (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value, type } = e.target;
-      const parsedValue = type === "number" ? Number(value) : value;
-      const newFormData = { ...formData, [name]: parsedValue };
-      validateForm(newFormData);
-    },
-    [formData, validateForm],
-  );
+  // Handle input blur events
+  const handleInputBlur = useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // Optional: Add any blur-specific logic here
+  }, []);
 
   // Handle toggle change
   const handleToggleChange = useCallback(
     (name: string, checked: boolean) => {
-      handleChange(name, checked);
+      handleProviderFieldChange?.(name, checked);
     },
-    [handleChange],
+    [handleProviderFieldChange],
   );
 
-  // Use external validation errors if provided, otherwise use local errors
-  const displayErrors = Object.keys(validationErrors).length > 0 ? validationErrors : localErrors;
+  // Use external validation errors
+  const displayErrors = validationErrors;
 
   // Debug: Log validation errors
-  console.log('S3 validationErrors:', validationErrors);
-  console.log('S3 localErrors:', localErrors);
-  console.log('S3 displayErrors:', displayErrors);
+  console.log("S3 validationErrors:", validationErrors);
+  console.log("S3 displayErrors:", displayErrors);
 
   // Default props for Input component
   const getInputProps = (fieldName: string, label: string, required = false) => {
@@ -167,23 +97,48 @@ export const S3 = ({
   };
 
   return (
-    <div className="space-y-8">
-      {/* Section 2: Bucket Configuration */}
-      <div className="grid grid-cols-2 gap-6">
+    <div className="space-y-6">
+      {/* Section 1: Bucket Name */}
+      <div className="space-y-2">
+        <Input
+          name="bucket"
+          value={formData.bucket}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          placeholder="my-storage-bucket"
+          {...getInputProps("bucket", "Bucket Name", true)}
+        />
+      </div>
+
+      {/* Section 2: Bucket Prefix and File Filter */}
+      <div className="grid grid-cols-2 gap-6 items-start">
         <div className="space-y-2">
           <Input
-            name="bucket"
-            value={formData.bucket}
+            name="prefix"
+            value={formData.prefix}
             onChange={handleInputChange}
             onBlur={handleInputBlur}
-            placeholder="my-storage-bucket"
-            {...getInputProps("bucket", "Bucket Name", true)}
+            placeholder="path/to/files/"
+            {...getInputProps("prefix", "Bucket Prefix")}
           />
         </div>
 
         <div className="space-y-2">
           <Input
-            id="region_name"
+            name="regex_filter"
+            value={formData.regex_filter}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            placeholder=".*csv or .*(jpe?g|png|tiff) or .\\w+-\\d+.text"
+            {...getInputProps("regex_filter", "File Filter Regex")}
+          />
+        </div>
+      </div>
+
+      {/* Section 3: AWS Configuration */}
+      <div className="grid grid-cols-2 gap-6 items-start">
+        <div className="space-y-2">
+          <Input
             name="region_name"
             value={formData.region_name}
             onChange={handleInputChange}
@@ -192,15 +147,25 @@ export const S3 = ({
             {...getInputProps("region_name", "Region Name")}
           />
         </div>
+
+        <div className="space-y-2">
+          <Input
+            name="s3_endpoint"
+            value={formData.s3_endpoint}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            placeholder="https://s3.amazonaws.com"
+            {...getInputProps("s3_endpoint", "S3 Endpoint")}
+          />
+        </div>
       </div>
 
       {/* Section 4: Credentials */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-3 gap-6 items-start">
         <div className="space-y-2">
           <Input
-            id="aws_access_key_id"
             name="aws_access_key_id"
-            type="text"
+            type="password"
             value={formData.aws_access_key_id}
             onChange={handleInputChange}
             onBlur={handleInputBlur}
@@ -212,7 +177,6 @@ export const S3 = ({
 
         <div className="space-y-2">
           <Input
-            id="aws_secret_access_key"
             name="aws_secret_access_key"
             type="password"
             value={formData.aws_secret_access_key}
@@ -223,106 +187,109 @@ export const S3 = ({
             {...getInputProps("aws_secret_access_key", "Secret Access Key", true)}
           />
         </div>
-      </div>
-
-      {/* Section 3: AWS Configuration */}
-      <div className="grid grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Input
-            id="prefix"
-            name="prefix"
-            value={formData.prefix}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-            placeholder="data/images/"
-            {...getInputProps("prefix", "Bucket Prefix")}
-            description="Optional prefix to limit files to a specific folder"
-          />
-        </div>
 
         <div className="space-y-2">
           <Input
-            id="s3_endpoint"
-            name="s3_endpoint"
-            value={formData.s3_endpoint}
+            name="aws_session_token"
+            type="password"
+            value={formData.aws_session_token}
             onChange={handleInputChange}
             onBlur={handleInputBlur}
-            placeholder="https://s3.amazon.aws.com"
-            {...getInputProps("s3_endpoint", "Custom Endpoint")}
-            description="For S3-compatible storage (leave empty for AWS S3)"
+            autoComplete="new-password"
+            placeholder="Session token (optional)"
+            {...getInputProps("aws_session_token", "Session Token")}
           />
         </div>
       </div>
 
+      {/* Section 5: Import Method */}
       <div className="space-y-2">
-        <Input
-          id="aws_session_token"
-          name="aws_session_token"
-          type="password"
-          value={formData.aws_session_token}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          autoComplete="new-password"
-          {...getInputProps("aws_session_token", "Session Token")}
-          description="Optional session token for temporary AWS credentials"
+        <Label text="Import method" description="Choose how to import your data from storage"></Label>
+        <Select
+          name="use_blob_urls"
+          value={formData.use_blob_urls ? "Files" : "JSON"}
+          onChange={(value) => handleProviderFieldChange?.("use_blob_urls", value === "Files")}
+          options={[
+            {
+              value: "Files",
+              label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)",
+            },
+            {
+              value: "JSON",
+              label: "JSON - Treat each JSON or JSONL file as a task definition (one or more tasks per file)",
+            },
+          ]}
+          placeholder="Select import method"
         />
       </div>
 
-      {/* Section 4: File Filter */}
-      <div className="space-y-2">
-        <Input
-          id="regex_filter"
-          name="regex_filter"
-          value={formData.regex_filter}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          placeholder=".*\.(jpg|jpeg|png|gif)$"
-          {...getInputProps("regex_filter", "File Filter Regex")}
-          description="Optional regex pattern to filter files (e.g., .*\.(jpg|jpeg|png|gif)$ for images only)"
-        />
-      </div>
-
-      {/* Section 5: Additional Settings */}
-      <div className="space-y-4">
-        <div>
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <Label htmlFor="presign">Use pre-signed URLs</Label>
-              <p className="text-sm text-gray-500">Generate pre-signed URLs for secure file access</p>
+      {/* Section 6: Pre-signed URLs and Scan Settings */}
+      <div className="space-y-6">
+        <div className="flex items-start justify-between gap-6">
+          <div className="flex items-start space-x-4">
+            <Toggle
+              checked={formData.presign}
+              onChange={(e) => handleToggleChange("presign", e.target.checked)}
+              aria-label="Use pre-signed URLs"
+            />
+            <div>
+              <Label className="text-sm font-medium">Use pre-signed URLs (On)</Label>
+              <p className="text-sm text-muted-foreground">Proxy through the platform (Off)</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                When pre-signed URLs are enabled, all data bypasses the platform and user browsers directly read data
+                from storage
+              </p>
             </div>
-            <Toggle checked={formData.presign} onChange={(e) => handleToggleChange("presign", e.target.checked)} />
           </div>
-        </div>
 
-        {formData.presign && (
-          <div className="space-y-2 mt-4">
-            <Label htmlFor="presign_ttl">Expiration Minutes</Label>
-            <p className="text-sm text-gray-500">Minutes until pre-signed URLs expire (1-10080 minutes)</p>
-            <div className="flex items-center space-x-2">
-              <Input
-                id="presign_ttl"
+          <div>
+            {formData.presign ? (
+              <Counter
                 name="presign_ttl"
-                type="number"
+                label="Expire pre-signed URLs (minutes)"
+                value={formData.presign_ttl}
                 min={1}
                 max={10080}
-                value={formData.presign_ttl}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-                {...getInputProps("presign_ttl", "Expiration Minutes")}
-                className={`w-24 ${displayErrors.presign_ttl ? "border-red-500" : ""}`}
-              />
-              <input
-                type="range"
-                min={1}
-                max={60}
                 step={1}
-                value={formData.presign_ttl}
-                onChange={(e) => handleChange("presign_ttl", Number(e.target.value))}
-                className="flex-1"
+                onChange={(e: any) => handleProviderFieldChange?.("presign_ttl", Number(e.target.value))}
+                className=""
+                validate=""
+                required={false}
+                skip={false}
+                labelProps={{}}
               />
-            </div>
+            ) : (
+              <div className="opacity-50">
+                <Counter
+                  name="presign_ttl"
+                  label="Expire pre-signed URLs (minutes)"
+                  value={formData.presign_ttl}
+                  min={1}
+                  max={10080}
+                  step={1}
+                  onChange={() => {}} // No-op when disabled
+                  className=""
+                  validate=""
+                  required={false}
+                  skip={true}
+                  labelProps={{}}
+                />
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
+        <div className="flex items-start space-x-4">
+          <Toggle
+            checked={formData.recursive_scan}
+            onChange={(e) => handleToggleChange("recursive_scan", e.target.checked)}
+            aria-label="Scan all sub-folders"
+          />
+          <div>
+            <Label className="text-sm font-medium">Scan all sub-folders</Label>
+            <p className="text-sm text-muted-foreground">Include files from all nested folders</p>
+          </div>
+        </div>
       </div>
     </div>
   );

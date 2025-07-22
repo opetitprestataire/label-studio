@@ -10,6 +10,7 @@ import {
 } from "react";
 import { atom, useAtom } from "jotai";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
 
 import { Button } from "@humansignal/ui";
 import { ApiContext } from "apps/labelstudio/src/providers/ApiProvider";
@@ -79,38 +80,27 @@ const localFilesSchema = z.object({
   presign_ttl: z.number().min(1).max(10080).optional(),
 });
 
-// Initial form state
-const initialFormState = {
+// Combine all schemas
+const formStateAtom = atom({
   currentStep: 0,
   formData: {
-    project: 0,
-
-    title: "", // Storage title
+    project: 0, // Will be set properly in component
     provider: "s3",
-
     bucket: "", // Bucket Name *
     prefix: "", // Bucket Prefix
-
     region_name: "", // Region Name
     s3_endpoint: "", // S3 Endpoint
-
     aws_access_key_id: "", // Access Key ID *
     aws_secret_access_key: "", // Secret Access Key *
-
     aws_session_token: "",
-
-    presign: false, // Use pre-signed URLs
-
+    presign: true, // Use pre-signed URLs (default to true per schema)
     regex_filter: "",
-
-    use_blob_urls: false,
+    use_blob_urls: true, // Default to true per schema
     recursive_scan: true,
+    presign_ttl: 15, // Default to 15 minutes per schema
   },
   isComplete: false,
-};
-
-// Combine all schemas
-const formStateAtom = atom(initialFormState);
+});
 
 // Helper function to get provider-specific schema
 const getProviderSchema = (provider: string) => {
@@ -135,14 +125,14 @@ const getProviderSchema = (provider: string) => {
 // Helper function to format validation errors in human-friendly format
 const formatValidationErrors = (zodError: z.ZodError): Record<string, string> => {
   const errors: Record<string, string> = {};
-  
+
   zodError.errors.forEach((error) => {
     const fieldName = error.path.join(".");
     if (fieldName) {
       errors[fieldName] = error.message;
     }
   });
-  
+
   return errors;
 };
 
@@ -171,7 +161,6 @@ export const StorageFormNew = forwardRef<
   // Error state
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const [testingConnection, setTestingConnection] = useState(false);
   const [connectionChecked, setConnectionChecked] = useState(false);
 
   const [formState, setFormState] = useAtom(formStateAtom);
@@ -179,6 +168,37 @@ export const StorageFormNew = forwardRef<
 
   // Fetch storage types
   const { storageTypes, storageTypesLoading } = useStorageCard(target, project);
+
+  // Test connection mutation
+  const testConnectionMutation = useMutation({
+    mutationFn: async (connectionData: any) => {
+      if (!api) throw new Error("API context not available");
+
+      const body = { ...connectionData };
+
+      if (isDefined(storage?.id)) {
+        body.id = storage.id;
+      }
+
+      const response = await api.callApi("validateStorage", {
+        params: {
+          target,
+          type: formData.provider,
+        },
+        body,
+      });
+
+      return response;
+    },
+    onSuccess: (response) => {
+      // Check if the response indicates success (200 status or $meta.ok)
+      const isSuccess = response?.$meta?.ok || response?.$meta?.status === 200;
+      setConnectionChecked(isSuccess);
+    },
+    onError: () => {
+      setConnectionChecked(false);
+    },
+  });
 
   useEffect(() => {
     setFormState((prevState) => ({
@@ -188,7 +208,7 @@ export const StorageFormNew = forwardRef<
         project: project,
       },
     }));
-  }, []); // Empty dependency array means this runs once on component mount
+  }, [project]); // Update when project prop changes
 
   const setCurrentStep = (step: number) => {
     setFormState((prevState) => ({
@@ -207,7 +227,7 @@ export const StorageFormNew = forwardRef<
   // Validate current step
   const validateCurrentStep = useCallback(() => {
     const currentSchema = steps[currentStep]?.schema;
-    
+
     if (!currentSchema) {
       return true; // No validation for steps without schema
     }
@@ -227,36 +247,42 @@ export const StorageFormNew = forwardRef<
   }, [currentStep, formData, steps]);
 
   // Validate specific provider fields
-  const validateProviderFields = useCallback((providerData: any) => {
-    const providerSchema = getProviderSchema(formData.provider);
-    
-    try {
-      providerSchema.parse(providerData);
-      setErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const formattedErrors = formatValidationErrors(error);
-        console.log('StorageFormNew validateProviderFields error:', formattedErrors);
-        setErrors(formattedErrors);
+  const validateProviderFields = useCallback(
+    (providerData: any) => {
+      const providerSchema = getProviderSchema(formData.provider);
+
+      try {
+        providerSchema.parse(providerData);
+        setErrors({});
+        return true;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          const formattedErrors = formatValidationErrors(error);
+          console.log("StorageFormNew validateProviderFields error:", formattedErrors);
+          setErrors(formattedErrors);
+          return false;
+        }
         return false;
       }
-      return false;
-    }
-  }, [formData.provider]);
+    },
+    [formData.provider],
+  );
 
   // Handle provider field changes with validation
-  const handleProviderFieldChange = useCallback((name: string, value: any) => {
-    const newFormData = { ...formData, [name]: value };
-    
-    setFormState((prev) => ({
-      ...prev,
-      formData: newFormData,
-    }));
+  const handleProviderFieldChange = useCallback(
+    (name: string, value: any) => {
+      const newFormData = { ...formData, [name]: value };
 
-    // Validate provider fields in real-time
-    validateProviderFields(newFormData);
-  }, [formData, setFormState, validateProviderFields]);
+      setFormState((prev) => ({
+        ...prev,
+        formData: newFormData,
+      }));
+
+      // Validate provider fields in real-time
+      validateProviderFields(newFormData);
+    },
+    [formData, setFormState, validateProviderFields],
+  );
 
   // Validate step 1 fields (title and provider)
   const validateStep1Fields = useCallback((stepData: any) => {
@@ -275,17 +301,20 @@ export const StorageFormNew = forwardRef<
   }, []);
 
   // Handle step 1 field changes with validation
-  const handleStep1FieldChange = useCallback((name: string, value: any) => {
-    const newFormData = { ...formData, [name]: value };
-    
-    setFormState((prev) => ({
-      ...prev,
-      formData: newFormData,
-    }));
+  const handleStep1FieldChange = useCallback(
+    (name: string, value: any) => {
+      const newFormData = { ...formData, [name]: value };
 
-    // Validate step 1 fields in real-time
-    validateStep1Fields(newFormData);
-  }, [formData, setFormState, validateStep1Fields]);
+      setFormState((prev) => ({
+        ...prev,
+        formData: newFormData,
+      }));
+
+      // Validate step 1 fields in real-time
+      validateStep1Fields(newFormData);
+    },
+    [formData, setFormState, validateStep1Fields],
+  );
 
   const handleChange: ChangeEventHandler = (e) => {
     const { name, value } = e.target as HTMLInputElement;
@@ -356,7 +385,7 @@ export const StorageFormNew = forwardRef<
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${Number.parseFloat((bytes / (k ** i)).toFixed(2))} ${sizes[i]}`;
+    return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
   };
 
   const testStorageConnection = useCallback(async () => {
@@ -366,9 +395,10 @@ export const StorageFormNew = forwardRef<
       return;
     }
 
-    // TODO should be real
-    setConnectionChecked(true);
-  }, [formState, target, storage, validateCurrentStep]);
+    console.log("Validation passed, testing connection...");
+    // Use react-query mutation to test connection
+    testConnectionMutation.mutate(formData);
+  }, [formData, validateCurrentStep, testConnectionMutation, errors]);
 
   const loadFilesPreview = useCallback(async () => {
     // Validate the current step first
@@ -492,7 +522,7 @@ export const StorageFormNew = forwardRef<
           />
         );
       case 1:
-        console.log('StorageFormNew passing errors to ProviderDetailsStep:', errors);
+        console.log("StorageFormNew passing errors to ProviderDetailsStep:", errors);
         return (
           <ProviderDetailsStep
             formData={formData}
@@ -535,17 +565,35 @@ export const StorageFormNew = forwardRef<
 
   const handleClose = () => {
     // Reset Jotai state to initial values
-    setFormState(initialFormState);
-    
+    setFormState({
+      currentStep: 0,
+      formData: {
+        project: project,
+        provider: "s3",
+        bucket: "",
+        prefix: "",
+        region_name: "",
+        s3_endpoint: "",
+        aws_access_key_id: "",
+        aws_secret_access_key: "",
+        aws_session_token: "",
+        presign: true,
+        regex_filter: "",
+        use_blob_urls: true,
+        recursive_scan: true,
+        presign_ttl: 15,
+      },
+      isComplete: false,
+    });
+
     // Reset local state
     setType(undefined);
     setFilesPreview(null);
     setLoadingFilesPreiview(false);
     setNextPreviewToken("");
     setErrors({});
-    setTestingConnection(false);
     setConnectionChecked(false);
-    
+
     onClose();
     modal?.hide();
   };
@@ -555,9 +603,7 @@ export const StorageFormNew = forwardRef<
       {/* Custom header with title, subtitle and close button */}
       <div className="flex justify-between items-start px-wide py-base pt-wide">
         <div>
-          <h2 className="m-0 mb-tight text-headline-large font-medium text-neutral-content">
-            {title}
-          </h2>
+          <h2 className="m-0 mb-tight text-headline-large font-medium text-neutral-content">{title}</h2>
           {true && (
             <div className="text-body-medium text-neutral-content-subtle leading-relaxed">
               {"Import your data from cloud storage providers"}
@@ -569,20 +615,21 @@ export const StorageFormNew = forwardRef<
 
       <Stepper steps={steps} currentStep={currentStep} />
 
-      <div className="max-h-[60vh] overflow-y-auto px-wide py-base">
-        {renderStepContent()}
-      </div>
+      <div className="max-h-[60vh] overflow-y-auto px-wide py-base">{renderStepContent()}</div>
 
       <div className="flex items-center justify-between p-wide border-t border-neutral-border bg-neutral-background">
         <Button look="outlined" onClick={prevStep} disabled={currentStep === 0}>
           Previous
         </Button>
 
-        <div className="flex gap-tight">
+        <div className="flex gap-tight items-center">
           {currentStep === 1 && (
-            <Button waiting={testingConnection} onClick={testStorageConnection}>
-              Test Connection
-            </Button>
+            <>
+              {connectionChecked && <span className="text-sm text-green-600 font-medium">✓ Connection successful</span>}
+              <Button waiting={testConnectionMutation.isLoading} onClick={testStorageConnection}>
+                Test Connection
+              </Button>
+            </>
           )}
 
           {currentStep === 2 && (
