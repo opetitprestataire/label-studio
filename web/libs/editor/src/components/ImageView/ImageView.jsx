@@ -1289,9 +1289,9 @@ const ImageLayer = observer(({ item }) => {
     if (imageEntity?.downloaded && imageEntity.currentSrc) {
       const img = new window.Image();
       img.crossOrigin = "anonymous";
-      img.src = `${imageEntity.currentSrc}?cb=${Date.now()}`; // avoid tainted cache
-      img.width = Number(imageEntity.naturalWidth);
-      img.height = Number(imageEntity.naturalHeight);
+      img.src = imageEntity.currentSrc;
+      img.width = imageEntity.naturalWidth;
+      img.height = imageEntity.naturalHeight;
       img.onload = () => {
         setLoadedImage(img);
       };
@@ -1305,7 +1305,7 @@ const ImageLayer = observer(({ item }) => {
       width: imageEntity.naturalWidth,
       height: imageEntity.naturalHeight,
     };
-  }, [imageEntity.naturalWidth, imageEntity.naturalHeight]);
+  }, [imageEntity.naturalWidth, imageEntity.naturalHeight, item.stageWidth, item.stageHeight]);
 
   const brightness = mapKonvaBrightness(imageEntity.brightnessGrade);
   const contrast = imageEntity.contrastGrade - 100;
