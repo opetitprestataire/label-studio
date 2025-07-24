@@ -1,5 +1,77 @@
 ---
-description:
+description: Set of rules to maintain and extend cloud storage provides like S3, Azure, etc.
 globs:
 alwaysApply: false
 ---
+
+# Cursor Rule: Implementing New Storage Providers in Label Studio
+
+## Overview
+This rule describes the process and best practices for adding a new storage provider to Label Studio using the declarative provider schema system.
+
+## Steps to Add a New Storage Provider
+
+1. **Create a Provider Config File**
+   - Add a new file under `web/lib/app-common/src/blocks/StorageProviderForm/providers/` named after your provider (e.g., `myProvider.ts`).
+
+2. **Define Fields**
+   - Use the `FieldDefinition` type for each field.
+   - Each field should specify:
+     - `name`: Unique string identifier
+     - `type`: One of `text`, `password`, `select`, `toggle`, `counter`, etc.
+     - `label`: User-facing label
+     - `required`: Boolean (if applicable)
+     - `placeholder`: Example value (if applicable)
+     - `description`: (optional) Help text for the user
+     - `autoComplete`: (optional) For password fields
+     - `accessKey`: Boolean for credential fields (enables edit mode handling)
+     - `options`: For select fields
+     - `min`, `max`, `step`: For counter fields
+     - `schema`: Zod schema for validation, with `.default()` for default values
+
+3. **Assemble the Layout**
+   - Use the `layout` array to group fields into rows.
+   - Each row is an object with a `fields` array listing the field names in order.
+   - Omit fields like `title`, `regex_filter`, and `use_blob_urls` from the provider schema; these are handled globally or in the preview step.
+
+4. **Validation**
+   - Use Zod for all field validation.
+   - Use `.default()` for default values where appropriate.
+   - For optional fields, use `.optional().default("")` or similar.
+
+5. **Credential Fields**
+   - Mark credential fields (e.g., API keys, secrets) with `accessKey: true`.
+   - Use `type: "password"` and set `autoComplete` as needed.
+   - Provide a realistic placeholder.
+
+6. **Placeholders and Descriptions**
+   - Always provide a meaningful placeholder for each field.
+   - Add a description if the field may be confusing or has special requirements.
+
+7. **Export the Provider**
+   - Export your provider config as the default export from the file.
+
+8. **Register the Provider**
+   - Add your provider to the central registry in `providers/index.ts`.
+
+## Example Field Definition
+```ts
+{
+  name: "api_key",
+  type: "password",
+  label: "API Key",
+  required: true,
+  accessKey: true,
+  placeholder: "sk-...",
+  autoComplete: "off",
+  schema: z.string().min(1, "API Key is required"),
+}
+```
+
+## Best Practices
+- Do **not** include global fields like `title`, `regex_filter`, or `use_blob_urls` in provider configs.
+- Use `.default()` in Zod schemas for all fields that should have a default value.
+- Use `accessKey: true` for any field that is a credential or secret.
+- Keep field and layout definitions minimal and focused on provider-specific configuration.
+- Test your provider in both create and edit modes to ensure correct behavior.
+

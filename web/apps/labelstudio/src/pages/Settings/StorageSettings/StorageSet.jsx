@@ -6,7 +6,6 @@ import { Spinner } from "../../../components/Spinner/Spinner";
 import { ApiContext } from "../../../providers/ApiProvider";
 import { projectAtom } from "../../../providers/ProjectProvider";
 import { StorageCard } from "./StorageCard";
-import { StorageFormNew } from "./StorageFormNew";
 import { useAtomValue } from "jotai";
 import { useStorageCard } from "./hooks/useStorageCard";
 
@@ -43,7 +42,7 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
         style: { width: 960 },
         bare: true,
         body: (
-          <StorageFormNew
+          <StorageProviderForm
             title={title}
             target={target}
             storage={storage}
