@@ -105,10 +105,10 @@ Project roles are assigned independently of organization roles. For example, a u
 
 Enterprise features include comprehensive user account management capabilities:
 
-  - Invitation-based signup: Control user onboarding through invitation links
-  - Bulk user operations: Assign roles and update workspace memberships in bulk
-  - User activity monitoring: Track annotation activity and system usage
-  - Account deactivation: Preserve annotation history while removing access
+  - **Invitation-based signup:** Control user onboarding through invitation links
+  - **Bulk user operations:** Assign roles and update workspace memberships in bulk
+  - **User activity monitoring:** Track annotation activity and system usage
+  - **Account deactivation:** Preserve annotation history while removing access
 
 ## Authentication and identity management
 
@@ -124,10 +124,10 @@ System for Cross-domain Identity Management (SCIM) 2.0 enables automated user pr
 
 The SCIM integration supports:
 
-  - Create Users: Automatic user provisioning with role assignments
-  - Update User Attributes: Synchronize profile changes and role modifications
-  - Deactivate Users: Remove access while preserving annotation history
-  - Push Groups: Workspace and project membership management
+  - **Create Users:** Automatic user provisioning with role assignments
+  - **Update User Attributes:** Synchronize profile changes and role modifications
+  - **Deactivate Users:** Remove access while preserving annotation history
+  - **Push Groups:** Workspace and project membership management
 
 For setup instructions, see the [SCIM 2.0 Integration Guide](https://docs.humansignal.com/guide/scim_setup).
 
@@ -155,8 +155,8 @@ Label Studio Enterprise includes comprehensive security features designed for en
 
 ### Data security
 
-  - End-to-end TLS/SSL: Secure communication between all components
-  - Audit Logging: Comprehensive logging of all user activities
+  - **End-to-end TLS/SSL:** Secure communication between all components
+  - **Audit Logging:** Comprehensive logging of all user activities
 
 ### Advanced cloud storage options 
 
@@ -197,11 +197,11 @@ Prompt templates allow users to define inputs, models, and outputs to send to co
 
 The Prompts interface supports:
 
-  - Prompt Templates: Define inputs, outputs, and model parameters
-  - Inline Generation: Run prompts directly from the labeling interface
-  - Model Connections: Connect to OpenAI, Anthropic, or custom endpoints via API
-  - Pre-labeling: Populate fields using model-generated responses
-  - Task Creation: Generate new tasks from prompt outputs
+  - **Prompt Templates:** Define inputs, outputs, and model parameters
+  - **Inline Generation:** Run prompts directly from the labeling interface
+  - **Model Connections:** Connect to OpenAI, Anthropic, or custom endpoints via API
+  - **Pre-labeling:** Populate fields using model-generated responses
+  - **Task Creation:** Generate new tasks from prompt outputs
 
 For more information, see the [Prompts Overview](https://docs.humansignal.com/guide/prompts_overview/).
 
@@ -213,11 +213,11 @@ Plugins run automatically when users interact with annotation tasks. They can be
 
 The plugin framework supports:
 
-  - Project-specific scripts: Define custom plugins on a per-project basis
-  - Event-driven behavior: Trigger logic on task load, annotation switch, and other actions
-  - UI extensions: Add validations, overlays, or context-aware functionality
-  - External integration: Connect to APIs or fetch reference data in real time
-  - Testing and preview: Use the built-in panel to test plugins before deployment
+  - **Project-specific scripts:** Define custom plugins on a per-project basis
+  - **Event-driven behavior:** Trigger logic on task load, annotation switch, and other actions
+  - **UI extensions:** Add validations, overlays, or context-aware functionality
+  - **External integration:** Connect to APIs or fetch reference data in real time
+  - **Testing and preview:** Use the built-in panel to test plugins before deployment
 
 To learn how organizations are using plugins in real-world workflows, see the blog post [Build Powerful Labeling Interfaces with Plugins](https://humansignal.com/blog/build-powerful-labeling-interfaces-with-plugins/).
 
@@ -227,12 +227,12 @@ Label Studio Enterprise enhances the annotation workflow with features designed 
 
 ### Quality control features
 
-  - Auto-validation
-  - Review Workflows: Configure review processes for annotations
-  - Inter-annotator agreement: Measure agreement between annotators to ensure quality
-  - Annotator Performance Dashboard: Track and analyze annotator quality to identity low performers, implement training and corrective actions
-  - Project Performance Dashboard: View label distribution to ensure completeness
-  - Guardrails for low-trust annotators: Set limits or pause annotators to prevent
+  - **Auto-validation**
+  - **Review Workflows:** Configure review processes for annotations
+  - **Inter-annotator agreement:** Measure agreement between annotators to ensure quality
+  - **Annotator Performance Dashboard:** Track and analyze annotator quality to identity low performers, implement training and corrective actions
+  - **Project Performance Dashboard:** View label distribution to ensure completeness
+  - **Guardrails for low-trust annotators:** Set limits or pause annotators to prevent
 
 ### Inter-annotator agreement metrics and matrices
 
