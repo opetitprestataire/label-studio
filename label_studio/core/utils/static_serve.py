@@ -51,11 +51,16 @@ def serve(request, path, document_root=None, show_indexes=False, manifest_asset_
         raise Http404(_('Directory indexes are not allowed here.'))
     if manifest_asset_prefix and not fullpath.exists():
         possible_asset = get_manifest_asset(path)
+        if possible_asset.startswith('http'):
+            from urllib.parse import urlparse
+            parsed_url = urlparse(possible_asset)
+            possible_asset = parsed_url.path
         manifest_asset_prefix = (
             f'/{manifest_asset_prefix}' if not manifest_asset_prefix.startswith('/') else manifest_asset_prefix
         )
         if possible_asset.startswith(manifest_asset_prefix):
             possible_asset = possible_asset[len(manifest_asset_prefix) :]
+        possible_asset = posixpath.normpath(possible_asset).lstrip('/')
         fullpath = Path(safe_join(document_root, possible_asset))
     if not fullpath.exists():
         raise Http404(_('“%(path)s” does not exist') % {'path': fullpath})
