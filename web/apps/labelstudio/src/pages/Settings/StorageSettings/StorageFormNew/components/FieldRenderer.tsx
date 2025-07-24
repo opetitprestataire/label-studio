@@ -69,9 +69,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
 
   // Enhanced description for access key fields in edit mode
   const getEnhancedDescription = () => {
-    if (isAccessKeyWithPlaceholder) {
-      return `${field.description || ""} (Currently using existing credentials - leave unchanged to keep current values)`;
-    }
     return field.description || "";
   };
 
