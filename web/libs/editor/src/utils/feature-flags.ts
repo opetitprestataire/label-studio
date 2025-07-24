@@ -64,6 +64,13 @@ export const FF_DEV_4174 = "fflag_fix_back_dev_4174_overlap_issue_experiments_10
 export const FF_LSDV_E_278 = "fflag_feat_front_lsdv_e_278_contextual_scrolling_short";
 
 /**
+ * Enhanced paragraph annotation with automatic label selection and smart duplicate prevention
+ * Enables automatic phrase annotation when labels are selected, with priority for user text selection
+ * @link https://app.launchdarkly.com/default/production/features/fflag_feat_front_bros_199_enable_select_all_in_ner_phrase_short
+ */
+export const FF_NER_SELECT_ALL = "fflag_feat_front_bros_199_enable_select_all_in_ner_phrase_short";
+
+/**
  * Annotations with LLM assistance
  * @link https://app.launchdarkly.com/default/production/features/fflag_feat_all_lsdv_e_294_llm_annotations_180723_long
  */

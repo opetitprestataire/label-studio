@@ -62,4 +62,21 @@ module.exports = {
     I.pressKey("Escape");
     I.waitTicks(3); // Wait for UI to update after filter change
   },
+
+  // Select All button helpers
+  seeSelectAllButton(index) {
+    I.seeElement(`[data-testid="select-all-btn:${index}"]`);
+  },
+
+  clickSelectAllButton(index) {
+    I.click(`[data-testid="select-all-btn:${index}"]`);
+  },
+
+  seeSelectAllButtonDisabled(index) {
+    I.seeElement(`[data-testid="select-all-btn:${index}"][disabled]`);
+  },
+
+  dontSeeSelectAllButton(index) {
+    I.dontSeeElement(`[data-testid="select-all-btn:${index}"]`);
+  },
 };

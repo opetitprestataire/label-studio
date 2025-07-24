@@ -2,7 +2,14 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
 import ObjectTag from "../../../components/Tags/Object";
-import { FF_DEV_2669, FF_DEV_2918, FF_LSDV_4711, FF_LSDV_E_278, isFF } from "../../../utils/feature-flags";
+import {
+  FF_DEV_2669,
+  FF_DEV_2918,
+  FF_LSDV_4711,
+  FF_LSDV_E_278,
+  FF_NER_SELECT_ALL,
+  isFF,
+} from "../../../utils/feature-flags";
 import { findNodeAt, matchesSelector, splitBoundaries } from "../../../utils/html";
 import { isSelectionContainsSpan } from "../../../utils/selection-tools";
 import styles from "./Paragraphs.module.scss";
@@ -11,6 +18,7 @@ import { Phrases } from "./Phrases";
 import { IconHelp } from "@humansignal/icons";
 import { Toggle, Tooltip } from "@humansignal/ui";
 import { cn } from "../../../utils/bem";
+import { Hotkey } from "../../../core/Hotkey";
 
 const audioDefaultProps = {};
 
@@ -31,7 +39,9 @@ class HtxParagraphsView extends Component {
     this.state = {
       canScroll: true,
       inViewport: true,
+      // focusedPhraseIndex removed
     };
+    // Removed unused processAnnotationDebounced
   }
 
   getSelectionText(sel) {
@@ -254,6 +264,8 @@ class HtxParagraphsView extends Component {
     return ranges;
   }
 
+  // Removed unused expandSelectionForTripleClickSync and expandSelectionForTripleClickDebounced methods
+
   _selectRegions = (additionalMode) => {
     const { item } = this.props;
     const root = this.myRef.current;
@@ -296,6 +308,95 @@ class HtxParagraphsView extends Component {
     }
   }
 
+  // Removed unused processAnnotation method
+
+  // Removed unused expandSelectionForTripleClick method
+
+  /**
+   * Capture document selection from a specific range
+   */
+  captureDocumentSelectionFromRange(range) {
+    // Create a temporary selection with our expanded range
+    const tempSelection = window.getSelection();
+    tempSelection.removeAllRanges();
+    tempSelection.addRange(range);
+    // Use existing capture logic
+    const result = this.captureDocumentSelection();
+    return result;
+  }
+
+  /**
+   * Create annotation from selected ranges. If the enhanced feature is enabled,
+   * the newly created region will be automatically selected.
+   * @param {Array} selectedRanges - The ranges to create annotations from
+   */
+  createAnnotationFromRanges(selectedRanges) {
+    const item = this.props.item;
+    item._currentSpan = null;
+    let createdRegion = null;
+    // Check if a label is selected
+    const states = item.activeStates && item.activeStates();
+    if (!states || states.length === 0) {
+      console.warn("[DEBUG] No label selected. Annotation will not be created.");
+    }
+    if (isFF(FF_DEV_2918)) {
+      const htxRanges = item.addRegions(selectedRanges);
+      if (htxRanges && htxRanges.length > 0) {
+        createdRegion = htxRanges[0]; // Get the first created region
+        for (const htxRange of htxRanges) {
+          const spans = htxRange.createSpans();
+          htxRange.addEventsToSpans(spans);
+        }
+      }
+    } else {
+      createdRegion = item.addRegion(selectedRanges[0]);
+      if (createdRegion) {
+        const spans = createdRegion.createSpans();
+        createdRegion.addEventsToSpans(spans);
+      }
+    }
+    console.log("[DEBUG] createAnnotationFromRanges: createdRegion", createdRegion);
+    // Always select the newly created region if the feature flag is on.
+    if (isFF(FF_NER_SELECT_ALL) && createdRegion) {
+      setTimeout(() => {
+        item.annotation.selectArea(createdRegion);
+      }, 50);
+    }
+  }
+
+  createAnnotationForPhrase = (phraseIndex) => {
+    const item = this.props.item;
+    const phrases = item._value;
+    const cls = item.layoutClasses;
+    const phraseElements = this.myRef.current?.getElementsByClassName(cls.text);
+    if (!phrases || phraseIndex < 0 || phraseIndex >= phrases.length || !phraseElements) return;
+    const phraseElement = phraseElements[phraseIndex];
+    if (!phraseElement) return;
+    // Find the first and last text nodes in the phrase
+    const walker = document.createTreeWalker(phraseElement, NodeFilter.SHOW_TEXT, null, false);
+    const firstTextNode = walker.nextNode();
+    if (!firstTextNode) return;
+    let lastTextNode = firstTextNode;
+    let currentNode;
+    while ((currentNode = walker.nextNode())) {
+      lastTextNode = currentNode;
+    }
+    // Create a range that covers the entire phrase
+    const range = document.createRange();
+    range.setStart(firstTextNode, 0);
+    range.setEnd(lastTextNode, lastTextNode.textContent.length);
+    // Set the selection in the DOM for visual feedback
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    // Use the same logic as manual selection to create the annotation
+    const selectedRanges = this.captureDocumentSelectionFromRange(range);
+    console.log("[DEBUG] createAnnotationForPhrase: selectedRanges", selectedRanges);
+    if (selectedRanges.length > 0) {
+      this.createAnnotationFromRanges(selectedRanges);
+    }
+  };
+
   onMouseUp(ev) {
     const item = this.props.item;
     const states = item.activeStates();
@@ -308,27 +409,21 @@ class HtxParagraphsView extends Component {
     }
 
     const selectedRanges = this.captureDocumentSelection();
-
     if (selectedRanges.length === 0) {
       return;
     }
-
     item._currentSpan = null;
 
     if (isFF(FF_DEV_2918)) {
       const htxRanges = item.addRegions(selectedRanges);
-
       for (const htxRange of htxRanges) {
         const spans = htxRange.createSpans();
-
         htxRange.addEventsToSpans(spans);
       }
     } else {
       const htxRange = item.addRegion(selectedRanges[0]);
-
       if (htxRange) {
         const spans = htxRange.createSpans();
-
         htxRange.addEventsToSpans(spans);
       }
     }
@@ -518,6 +613,17 @@ class HtxParagraphsView extends Component {
     if (isFF(FF_LSDV_E_278) && this.props.item.contextscroll)
       this._resizeObserver.observe(document.querySelector(this.mainContentSelector));
     this._handleUpdate();
+    if (isFF(FF_NER_SELECT_ALL)) this.props.item.setViewRef(this);
+    // Register hotkeys for phrase navigation and annotation
+    if (isFF(FF_NER_SELECT_ALL)) {
+      this.hotkey = Hotkey("phrases", "Phrase navigation");
+      this.hotkey.addNamed("phrases:next-phrase", this.handleNextPhrase);
+      this.hotkey.addNamed("phrases:previous-phrase", this.handlePreviousPhrase);
+      this.hotkey.addNamed("phrases:select_all_annotate", this.handleSelectAllAndAnnotate);
+
+      this.hotkey.addNamed("phrases:next-region", this.handleNextRegion);
+      this.hotkey.addNamed("phrases:previous-region", this.handlePreviousRegion);
+    }
   }
 
   componentWillUnmount() {
@@ -525,11 +631,197 @@ class HtxParagraphsView extends Component {
 
     if (target) this._resizeObserver?.unobserve(target);
     this._resizeObserver?.disconnect();
+    if (isFF(FF_NER_SELECT_ALL)) this.props.item.setViewRef(null);
+    if (this.hotkey) this.hotkey.unbindAll();
   }
+
+  // Check if any labels are selected for the current annotation (reactive to MobX changes)
+  get hasSelectedLabels() {
+    if (!isFF(FF_NER_SELECT_ALL)) return false;
+
+    try {
+      const { item } = this.props;
+      const states = item.activeStates && item.activeStates();
+
+      console.log("[DEBUG] hasSelectedLabels - activeStates:", {
+        itemName: item.name,
+        hasActiveStatesMethod: typeof item.activeStates,
+        states: states,
+        statesLength: states?.length || 0,
+        hasStates: !!(states && states.length > 0),
+      });
+
+      return !!(states && states.length > 0);
+    } catch (error) {
+      console.warn("Error checking selected labels:", error);
+      return false;
+    }
+  }
+
+  selectText = (phraseIndex) => {
+    const item = this.props.item;
+    const phrases = item._value;
+    const cls = item.layoutClasses;
+    const phraseElements = this.myRef.current?.getElementsByClassName(cls.text);
+
+    if (!phrases || phraseIndex < 0 || phraseIndex >= phrases.length || !phraseElements) return;
+
+    const phraseElement = phraseElements[phraseIndex];
+    if (!phraseElement) return;
+
+    const range = document.createRange();
+    range.selectNodeContents(phraseElement);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
 
   setIsInViewPort(isInViewPort) {
     this.setState({ inViewPort: isInViewPort });
   }
+
+  // Helper to deselect only regions without affecting labels
+  unselectAllRegions = () => {
+    const item = this.props.item;
+    if (!item || !item.annotation) return;
+
+    // Get currently selected regions
+    const selectedRegions = item.annotation.selectedRegions || [];
+
+    // Deselect each region individually to preserve label selection
+    selectedRegions.forEach((region) => {
+      if (item.annotation.unselectArea && typeof item.annotation.unselectArea === "function") {
+        item.annotation.unselectArea(region);
+      }
+    });
+  };
+
+  // Helper to select all regions for a phrase index
+  selectRegionsForPhrase = (phraseIdx) => {
+    if (!isFF(FF_NER_SELECT_ALL)) return;
+
+    const item = this.props.item;
+    if (!item || !item.annotation || !item.annotation.results) return;
+
+    // Only deselect regions, not labels
+    this.unselectAllRegions();
+
+    // Get all regions for this phrase
+    const phraseRegions = this.getRegionsForPhrase(phraseIdx);
+
+    // If there are regions, automatically select the first one
+    if (phraseRegions.length > 0) {
+      this.selectRegion(phraseRegions[0]);
+    }
+  };
+
+  // Move to the next phrase
+  handleNextPhrase = () => {
+    const item = this.props.item;
+    if (!item || !item._value || item._value.length === 0) return;
+    const currentIdx = typeof item.playingId === "number" && item.playingId >= 0 ? item.playingId : -1;
+    const nextIdx = Math.min(currentIdx + 1, item._value.length - 1);
+    if (nextIdx !== currentIdx) {
+      if (item.seekToPhrase) item.seekToPhrase(nextIdx);
+      this.selectRegionsForPhrase(nextIdx);
+    }
+  };
+
+  // Move to the previous phrase
+  handlePreviousPhrase = () => {
+    const item = this.props.item;
+    if (!item || !item._value || item._value.length === 0) return;
+    const currentIdx = typeof item.playingId === "number" && item.playingId >= 0 ? item.playingId : 0;
+    const prevIdx = Math.max(currentIdx - 1, 0);
+    if (prevIdx !== currentIdx) {
+      if (item.seekToPhrase) item.seekToPhrase(prevIdx);
+      this.selectRegionsForPhrase(prevIdx);
+    }
+  };
+
+  // Select all text in the current phrase and annotate
+  handleSelectAllAndAnnotate = () => {
+    const item = this.props.item;
+    if (!item || !item._value || item._value.length === 0) return;
+    const idx = typeof item.playingId === "number" && item.playingId >= 0 ? item.playingId : 0;
+    if (item.selectAndAnnotatePhrase) {
+      item.selectAndAnnotatePhrase(idx);
+    } else if (this.selectText) {
+      // fallback: just select the text
+      this.selectText(idx);
+    }
+  };
+
+  // Get all regions for the current phrase
+  getRegionsForPhrase = (phraseIdx) => {
+    if (!isFF(FF_NER_SELECT_ALL)) return [];
+
+    const item = this.props.item;
+    if (!item || !item.annotation) return [];
+
+    const regions = item.annotation.regionStore?.regions || item.annotation.regions || [];
+    return regions.filter((region) => {
+      const start = Number.parseInt(region.start, 10);
+      const end = Number.parseInt(region.end, 10);
+      return !isNaN(start) && !isNaN(end) && start <= phraseIdx && end >= phraseIdx;
+    });
+  };
+
+  // Helper to select a region using the proper MobX-State-Tree action
+  selectRegion = (region) => {
+    if (!isFF(FF_NER_SELECT_ALL)) return false;
+
+    const item = this.props.item;
+
+    if (item.annotation.selectArea && typeof item.annotation.selectArea === "function") {
+      item.annotation.selectArea(region);
+      return true;
+    }
+
+    return false;
+  };
+
+  // Cycle through regions in the current phrase (Ctrl+Right)
+  handleNextRegion = () => {
+    if (!isFF(FF_NER_SELECT_ALL)) return;
+
+    const item = this.props.item;
+    if (!item || typeof item.playingId !== "number" || item.playingId < 0) return;
+
+    const phraseRegions = this.getRegionsForPhrase(item.playingId);
+    if (phraseRegions.length === 0) return;
+
+    const selectedRegions = item.annotation.selectedRegions || [];
+    let currentIndex = -1;
+    if (selectedRegions.length > 0) {
+      currentIndex = phraseRegions.findIndex((region) => selectedRegions.includes(region));
+    }
+
+    const nextIndex = (currentIndex + 1) % phraseRegions.length;
+    if (item.annotation.unselectAll) item.annotation.unselectAll();
+    this.selectRegion(phraseRegions[nextIndex]);
+  };
+
+  // Cycle through regions in the current phrase (Ctrl+Left)
+  handlePreviousRegion = () => {
+    if (!isFF(FF_NER_SELECT_ALL)) return;
+
+    const item = this.props.item;
+    if (!item || typeof item.playingId !== "number" || item.playingId < 0) return;
+
+    const phraseRegions = this.getRegionsForPhrase(item.playingId);
+    if (phraseRegions.length === 0) return;
+
+    const selectedRegions = item.annotation.selectedRegions || [];
+    let currentIndex = -1;
+    if (selectedRegions.length > 0) {
+      currentIndex = phraseRegions.findIndex((region) => selectedRegions.includes(region));
+    }
+
+    const prevIndex = currentIndex <= 0 ? phraseRegions.length - 1 : currentIndex - 1;
+    if (item.annotation.unselectAll) item.annotation.unselectAll();
+    this.selectRegion(phraseRegions[prevIndex]);
+  };
 
   renderWrapperHeader() {
     const { item } = this.props;
@@ -610,6 +902,7 @@ class HtxParagraphsView extends Component {
             setIsInViewport={this.setIsInViewPort.bind(this)}
             item={item}
             playingId={item.playingId}
+            hasSelectedLabels={this.hasSelectedLabels}
             {...(isFF(FF_LSDV_E_278) ? { activeRef: this.activeRef } : {})}
           />
         </div>

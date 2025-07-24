@@ -190,6 +190,7 @@ const PlayableAndSyncable = types
     audioRef: createRef(),
     audioDuration: null,
     audioFrameHandler: null,
+    _viewRef: null, // Add this line
   }))
   .views((self) => ({
     /**
@@ -411,6 +412,45 @@ const PlayableAndSyncable = types
 
     setAuthorFilter(value) {
       self.filterByAuthor = value;
+    },
+
+    seekToPhrase(idx) {
+      if (!isDefined(idx) || !self._value || idx < 0 || idx >= self._value.length) return;
+
+      const phrase = self._value[idx];
+      if (!isDefined(phrase.start)) return;
+
+      if (self.playingId === idx) {
+        return;
+      }
+
+      self.playingId = idx;
+
+      if (self.syncSend) {
+        self.syncSend({ time: phrase.start, playing: false }, "seek");
+      } else {
+        const audio = self.audioRef?.current;
+        if (audio) {
+          audio.currentTime = phrase.start;
+        }
+      }
+    },
+
+    setViewRef(ref) {
+      self._viewRef = ref;
+    },
+    selectPhraseText(phraseIndex) {
+      if (self._viewRef && typeof self._viewRef.selectText === "function") {
+        self._viewRef.selectText(phraseIndex);
+      }
+    },
+    selectAndAnnotatePhrase(phraseIndex) {
+      // Select the phrase text in the DOM
+      self.selectPhraseText(phraseIndex);
+      // Now trigger annotation creation for the full phrase
+      if (self._viewRef && typeof self._viewRef.createAnnotationForPhrase === "function") {
+        self._viewRef.createAnnotationForPhrase(phraseIndex);
+      }
     },
   }));
 
