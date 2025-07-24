@@ -2,7 +2,7 @@
 title: "Enterprise features: Label Studio at scale"
 short: Enterprise features
 type: guide
-tier: all
+tier: opensource
 order: 35
 order_enterprise: 0
 section: "Discover & Learn"
