@@ -8,6 +8,8 @@ order: 1103
 meta_description: Template for using Label Studio to perform object detection with rectangular bounding boxes for traffic monitoring.
 ---
 
+![Screenshot of labeling interface with traffic monitoring image](/images/templates-misc/bbox-traffic.png)
+
 Object Detection with Bounding Boxes labeled data is essential for AI-driven traffic monitoring models, enabling them to accurately identify and classify vehicles, pedestrians, and road signs in real-time. This capability is critical for enhancing traffic management systems, informing autonomous driving protocols, and improving road safety.
 
 However, labeling data for traffic monitoring presents significant challenges. The process is often time-intensive and fraught with inconsistencies due to the complex and dynamic nature of traffic environments. Moreover, specialized domain expertise is often required to accurately interpret and label objects, further complicating the workflow. Label Studio effectively addresses these challenges with its robust hybrid AI + human-in-the-loop approach. By leveraging AI-assisted pre-labeling, our platform accelerates the initial labeling phase, allowing human annotators to focus on validation and refinement. Collaboration tools facilitate seamless communication among team members, while customizable templates ensure that specific domain requirements are met consistently. This results in not only improved model performance but also reduced labeling time and increased expert efficiency, allowing for scalable workflows that adapt to the needs of any traffic monitoring operation.
