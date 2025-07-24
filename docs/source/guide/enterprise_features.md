@@ -12,9 +12,7 @@ meta_description: Overview of the features in Label Studio Enterprise.
 
 This page provides an overview of the advanced capabilities available exclusively in [Label Studio Enterprise](https://humansignal.com/pricing/). These features extend the core functionality of Label Studio with enterprise-scale user management, security, quality assurance, and automation.
 
-![Projects page screenshot](/images/lse-projects-page.png)
-
-![Annotator comparison page screenshot](/images/lse-annotator-summary.png)
+![Annotator comparison page screenshot](/images/lse-enterprise.png)
 
 ## Organizations and Workspaces
 
