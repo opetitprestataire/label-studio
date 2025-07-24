@@ -1,17 +1,17 @@
 import { z } from "zod";
-import { ProviderConfig } from "../types/provider";
+import type { ProviderConfig } from "../types/provider";
 
 export const localFilesProvider: ProviderConfig = {
   name: "localfiles",
   title: "Local Files",
-  description: "Configure your local files connection",
+  description: "Configure your local file storage connection with all required Label Studio settings",
   fields: [
     {
       name: "path",
       type: "text",
-      label: "Path",
+      label: "Absolute local path",
       required: true,
-      placeholder: "/path/to/files",
+      placeholder: "/data/my-folder/",
       schema: z.string().min(1, "Path is required"),
     },
   ],
@@ -20,4 +20,6 @@ export const localFilesProvider: ProviderConfig = {
       fields: ["path"],
     },
   ],
-}; 
+};
+
+export default localFilesProvider; 

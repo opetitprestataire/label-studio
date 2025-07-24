@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { ProviderConfig } from "../types/provider";
+import type { ProviderConfig } from "../types/provider";
 
 export const azureProvider: ProviderConfig = {
   name: "azure",
   title: "Azure Blob Storage",
-  description: "Configure your Azure Blob Storage connection",
+  description: "Configure your Azure Blob Storage connection with all required Label Studio settings",
   fields: [
     {
       name: "container",
@@ -15,30 +15,60 @@ export const azureProvider: ProviderConfig = {
       schema: z.string().min(1, "Container name is required"),
     },
     {
-      name: "account_name",
+      name: "prefix",
       type: "text",
-      label: "Storage Account Name",
-      required: true,
-      placeholder: "mystorageaccount",
+      label: "Container Prefix",
+      placeholder: "path/to/files/",
+      schema: z.string().optional().default(""),
+    },
+    {
+      name: "account_name",
+      type: "password",
+      label: "Account Name",
+      autoComplete: "off",
       accessKey: true,
-      schema: z.string().min(1, "Storage Account Name is required"),
+      placeholder: "mystorageaccount",
+      schema: z.string().min(1, "Account Name is required"),
     },
     {
       name: "account_key",
       type: "password",
-      label: "Storage Account Key",
-      required: true,
-      placeholder: "Your storage account key",
+      label: "Account Key",
+      autoComplete: "new-password",
       accessKey: true,
-      schema: z.string().min(1, "Storage Account Key is required"),
+      placeholder: "Your storage account key",
+      schema: z.string().min(1, "Account Key is required"),
+    },
+    {
+      name: "presign",
+      type: "toggle",
+      label: "Use pre-signed URLs (On)\n Proxy through the platform (Off)",
+      description:
+        "When pre-signed URLs are enabled, all data bypasses the platform and user browsers directly read data from storage",
+      schema: z.boolean().default(true),
+    },
+    {
+      name: "presign_ttl",
+      type: "counter",
+      label: "Expire pre-signed URLs (minutes)",
+      min: 1,
+      max: 10080,
+      step: 1,
+      schema: z.number().min(1).max(10080).default(15),
+      // dependency: "presign" // Not implemented in UI yet
     },
   ],
   layout: [
     {
-      fields: ["container"],
+      fields: ["container", "prefix"],
     },
     {
       fields: ["account_name", "account_key"],
     },
+    {
+      fields: ["presign", "presign_ttl"],
+    },
   ],
-}; 
+};
+
+export default azureProvider; 
