@@ -107,12 +107,12 @@ const formStateAtom = atom({
 });
 
 // Helper function to get provider-specific schema
-const getProviderSchema = (provider: string, isEditMode: boolean = false) => {
+const getProviderSchema = (provider: string, isEditMode = false) => {
   const providerConfig = getProviderConfig(provider);
   if (!providerConfig) {
     return z.object({}); // Empty schema for unknown providers
   }
-  
+
   // Combine provider-specific fields with common fields like title
   const commonFields = [
     {
@@ -123,7 +123,7 @@ const getProviderSchema = (provider: string, isEditMode: boolean = false) => {
       schema: z.string().min(1, "Storage title is required"),
     },
   ];
-  
+
   const allFields = [...commonFields, ...providerConfig.fields];
   return assembleSchema(allFields, isEditMode);
 };
@@ -146,23 +146,20 @@ export const StorageFormNew = forwardRef<
   unknown,
   {
     onSubmit: () => void;
-    target?: string;
+    target?: "import" | "export";
     project?: any;
     storage?: any;
     title?: string;
     onClose?: () => void;
   }
 >(({ onSubmit, target, project, storage, title, onClose = () => {} }, ref) => {
-  console.log({ target });
   const api = useContext(ApiContext);
   const modal = useModalControls();
   const formRef = ref ?? useRef();
-  const [type, setType] = useState<string>("s3");
+  const [type, setType] = useState<string | undefined>("s3");
 
-  const [filesPreview, setFilesPreview] = useState(null);
+  const [filesPreview, setFilesPreview] = useState<any[] | null>(null);
   const [loadingFilesPreiview, setLoadingFilesPreiview] = useState(false);
-
-  const [nextPreviewToken, setNextPreviewToken] = useState("");
 
   // Error state
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -176,7 +173,7 @@ export const StorageFormNew = forwardRef<
   const isEditMode = Boolean(storage);
 
   // Fetch storage types
-  const { storageTypes, storageTypesLoading } = useStorageCard(target, project);
+  const { storageTypes, storageTypesLoading } = useStorageCard(target!, project);
 
   const action = useMemo(() => {
     return storage ? "updateStorage" : "createStorage";
@@ -242,7 +239,6 @@ export const StorageFormNew = forwardRef<
       }
     },
     onError: (error) => {
-      console.error("Failed to create/update storage:", error);
       // You might want to show an error message to the user here
     },
   });
@@ -278,10 +274,10 @@ export const StorageFormNew = forwardRef<
   useEffect(() => {
     if (isEditMode && storage) {
       const providerConfig = getProviderConfig(storage.type || storage.provider || "s3");
-      
+
       // Prepare form data with placeholder values for access keys
       const formDataWithPlaceholders = { ...storage };
-      
+
       if (providerConfig) {
         providerConfig.fields.forEach((field) => {
           if (field.accessKey) {
@@ -318,7 +314,7 @@ export const StorageFormNew = forwardRef<
     }
   };
 
-  const steps = isEditMode 
+  const steps = isEditMode
     ? [
         { title: "Configure Connection", schema: getProviderSchema(formData.provider, isEditMode) },
         { title: "Preview & Import Settings" },
@@ -331,28 +327,6 @@ export const StorageFormNew = forwardRef<
         { title: "Review & Confirm" },
       ];
 
-  // Validate current step
-  const validateCurrentStep = useCallback(() => {
-    const currentSchema = steps[currentStep]?.schema;
-
-    if (!currentSchema) {
-      return true; // No validation for steps without schema
-    }
-
-    try {
-      currentSchema.parse(formData);
-      setErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const formattedErrors = formatValidationErrors(error);
-        setErrors(formattedErrors);
-        return false;
-      }
-      return false;
-    }
-  }, [currentStep, formData, steps]);
-
   // Validate a single field
   const validateSingleField = useCallback(
     (fieldName: string, value: any) => {
@@ -363,7 +337,7 @@ export const StorageFormNew = forwardRef<
         // Create a partial schema for just this field
         const fieldSchema = z.object({ [fieldName]: currentSchema.shape[fieldName] });
         fieldSchema.parse({ [fieldName]: value });
-        
+
         // Clear error for this field
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -433,8 +407,6 @@ export const StorageFormNew = forwardRef<
     [validateSingleField],
   );
 
-
-
   const handleChange: ChangeEventHandler = (e) => {
     const { name, value } = e.target as HTMLInputElement;
 
@@ -484,7 +456,6 @@ export const StorageFormNew = forwardRef<
         setCurrentStep(currentStep + 1);
       } else {
         // Submit the form
-        console.log("Form submitted with data:", formData);
         createStorageMutation.mutate(formData);
       }
     }
@@ -512,15 +483,16 @@ export const StorageFormNew = forwardRef<
 
     const cleanedData = { ...data };
     const providerConfig = getProviderConfig(formData.provider);
-    
+
     if (providerConfig) {
       // Remove empty access key fields in edit mode
       providerConfig.fields.forEach((field) => {
-        if (field.accessKey && (
-          cleanedData[field.name] === "" || 
-          cleanedData[field.name] === undefined || 
-          cleanedData[field.name] === "••••••••••••••••"
-        )) {
+        if (
+          field.accessKey &&
+          (cleanedData[field.name] === "" ||
+            cleanedData[field.name] === undefined ||
+            cleanedData[field.name] === "••••••••••••••••")
+        ) {
           delete cleanedData[field.name];
         }
       });
@@ -536,7 +508,6 @@ export const StorageFormNew = forwardRef<
       return;
     }
 
-    console.log("Validation passed, testing connection...");
     // Use react-query mutation to test connection
     testConnectionMutation.mutate(formData);
   }, [formData, validateEntireForm, testConnectionMutation, errors]);
@@ -549,8 +520,6 @@ export const StorageFormNew = forwardRef<
     }
 
     setLoadingFilesPreiview(true);
-    // setChecking(true);
-    // setConnectionValid(null);
 
     // Get the form data directly from Atom state
     const { formData } = formState;
@@ -568,7 +537,7 @@ export const StorageFormNew = forwardRef<
 
     // Use your API service directly instead of form.api
     // You might need to adapt this to your actual API service
-    const response = await api.callApi("storageFiles", {
+    const response = await api!.callApi<{ files: any[] }>("storageFiles", {
       params: {
         limit: 10,
         target,
@@ -577,78 +546,17 @@ export const StorageFormNew = forwardRef<
       body,
     });
 
-    // const fl = [
-    //   { "key": "hello/world.jpg", last_modified: "2024", size: 423748 },
-    //   { "key": "yo/hello/world.jpg", last_modified: "2025", size: 3748 }
-    // ]
-
-    // for (let i = 0; i<10000; i++) {
-    //   fl.push({ "key": "hello/world.jpg", last_modified: "2024", size: 423748 });
-    // }
-
-    // const response = { "files": fl };
-
-    setFilesPreview(response?.files);
-    setNextPreviewToken(response?.continuation_token);
+    if (response?.files) {
+      setFilesPreview(response.files);
+    }
     setLoadingFilesPreiview(false);
-    // if (response?.$meta?.ok) setConnectionValid(true);
-    // else setConnectionValid(false);
-
-    // setChecking(false);
   }, [formState, target, storage, validateEntireForm, cleanFormDataForSubmission]);
-
-  // const validateConnection = useCallback(async () => {
-  //   setChecking(true);
-  //   setConnectionValid(null);
-
-  //   const form = formRef.current;
-
-  //   if (form && form.validateFields()) {
-  //     const body = formData form.assembleFormData({ asJSON: true });
-  //     const type = form.getField("storage_type").value;
-
-  //     if (isDefined(storage?.id)) {
-  //       body.id = storage.id;
-  //     }
-
-  //     // we're using api provided by the form to be able to save
-  //     // current api context and render inline erorrs properly
-  //     const response = await form.api.callApi("storageFiles", {
-  //       params: {
-  //         target,
-  //         type,
-  //       },
-  //       body,
-  //     });
-
-  //     if (response?.$meta?.ok) setConnectionValid(true);
-  //     else setConnectionValid(false);
-  //   }
-  //   setChecking(false);
-  // }, [formRef, target, type, storage]);
-
-  // const RadioButtonContent = ({ value, label, description }) => {
-  //   // The component will re-render when RadioButton re-renders
-  //   // and will receive the current checked state
-  //   return (
-  //     <Label placement="right" text={label} description={description}>
-  //       <input
-  //         type="radio"
-  //         value={value}
-  //     // Instead of hardcoding true, we leave this out
-  //     // The RadioButton component will handle the checked state automatically
-  //         readOnly
-  //         style={{ pointerEvents: "none" }}
-  //       />
-  //     </Label>
-  //   );
-  // };
 
   const renderStepContent = () => {
     // In edit mode, step 0 is "Configure Connection", step 1 is "Preview & Import Settings", step 2 is "Review & Confirm"
     // In create mode, step 0 is "Select Provider", step 1 is "Configure Connection", step 2 is "Preview & Import Settings", step 3 is "Review & Confirm"
     const actualStep = isEditMode ? currentStep + 1 : currentStep;
-    
+
     switch (actualStep) {
       case 0:
         return (
@@ -663,8 +571,6 @@ export const StorageFormNew = forwardRef<
           />
         );
       case 1:
-        console.log("StorageFormNew passing errors to ProviderDetailsStep:", errors);
-        console.log("Provider being passed:", formData.provider);
         return (
           <ProviderDetailsStep
             formData={formData}
@@ -683,8 +589,8 @@ export const StorageFormNew = forwardRef<
             setFormState={setFormState}
             handleChange={handleChange}
             action={action}
-            target={target}
-            type={type}
+            target={target!}
+            type={type!}
             project={project}
             storage={storage}
             onSubmit={onSubmit}
@@ -720,7 +626,7 @@ export const StorageFormNew = forwardRef<
     setType(undefined);
     setFilesPreview(null);
     setLoadingFilesPreiview(false);
-    setNextPreviewToken("");
+
     setErrors({});
     setConnectionChecked(false);
 
@@ -773,10 +679,7 @@ export const StorageFormNew = forwardRef<
             waiting={currentStep === steps.length - 1 && createStorageMutation.isLoading}
             disabled={
               // Only disable in create mode, not in edit mode
-              !isEditMode && (
-                (currentStep === 1 && !connectionChecked) ||
-                (currentStep === 2 && filesPreview === null)
-              )
+              !isEditMode && ((currentStep === 1 && !connectionChecked) || (currentStep === 2 && filesPreview === null))
             }
           >
             {currentStep < steps.length - 1 ? "Next" : "Submit"}

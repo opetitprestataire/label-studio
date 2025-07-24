@@ -1,5 +1,5 @@
 import { Label } from "@humansignal/ui";
-import { useMemo, useEffect, useCallback } from "react";
+import { useMemo, useEffect } from "react";
 import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
 import { ProviderGrid } from "../components";
 
@@ -15,7 +15,6 @@ interface ProviderSelectionStepProps {
   storageTypes?: any[];
   storageTypesLoading?: boolean;
   target?: "import" | "export";
-  onValidationChange?: (isValid: boolean) => void;
 }
 
 export const ProviderSelectionStep = ({
@@ -26,7 +25,6 @@ export const ProviderSelectionStep = ({
   storageTypes = [],
   storageTypesLoading = false,
   target = "import",
-  onValidationChange,
 }: ProviderSelectionStepProps) => {
   // Process storage types data
   const storageTypeOptions = useMemo(() => {
@@ -43,10 +41,6 @@ export const ProviderSelectionStep = ({
       handleSelectChange("provider", storageTypeOptions[0].name);
     }
   }, [storageTypeOptions, formData.provider, handleSelectChange]);
-
-
-
-
 
   return (
     <div className="space-y-6">
