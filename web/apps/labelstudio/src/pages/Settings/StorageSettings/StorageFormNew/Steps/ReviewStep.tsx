@@ -1,4 +1,36 @@
-export const ReviewStep = () => {
+interface ReviewStepProps {
+  formData: any;
+  filesPreview?: any;
+  formatSize?: (bytes: number) => string;
+}
+
+export const ReviewStep = ({ formData, filesPreview, formatSize }: ReviewStepProps) => {
+  const getProviderDisplayName = (provider: string) => {
+    const providerMap: Record<string, string> = {
+      s3: "Amazon S3",
+      gcp: "Google Cloud Storage",
+      azure: "Azure Blob Storage",
+      redis: "Redis",
+      localfiles: "Local Files",
+    };
+    return providerMap[provider] || provider;
+  };
+
+  const getBucketName = () => {
+    return formData.bucket || formData.container || "Not specified";
+  };
+
+  const getFileCount = () => {
+    if (!filesPreview) return "0 files";
+    return `${filesPreview.length} files`;
+  };
+
+  const getTotalSize = () => {
+    if (!filesPreview || !formatSize) return "0 Bytes";
+    const totalBytes = filesPreview.reduce((sum: number, file: any) => sum + (file.size || 0), 0);
+    return formatSize(totalBytes);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6 max-w-3xl mx-auto">
       <div className="border-b pb-4 mb-6">
@@ -10,23 +42,34 @@ export const ReviewStep = () => {
       <div className="grid grid-cols-2 gap-y-4 mb-8">
         <div>
           <p className="text-sm text-gray-500">Provider</p>
-          <p className="font-medium">Amazon S3</p>
+          <p className="font-medium">{getProviderDisplayName(formData.provider)}</p>
         </div>
 
         <div>
-          <p className="text-sm text-gray-500">Bucket</p>
-          <p className="font-medium">asdfasdf</p>
+          <p className="text-sm text-gray-500">Storage Location</p>
+          <p className="font-medium">{getBucketName()}</p>
         </div>
 
-        <div>
-          <p className="text-sm text-gray-500">Files to import</p>
-          <p className="font-medium">1247 files</p>
-        </div>
+        {formData.prefix && (
+          <div>
+            <p className="text-sm text-gray-500">Prefix</p>
+            <p className="font-medium">{formData.prefix}</p>
+          </div>
+        )}
 
-        <div>
-          <p className="text-sm text-gray-500">Total size</p>
-          <p className="font-medium">2.3 GB</p>
-        </div>
+        {filesPreview && (
+          <>
+            <div>
+              <p className="text-sm text-gray-500">Files to import</p>
+              <p className="font-medium">{getFileCount()}</p>
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-500">Total size</p>
+              <p className="font-medium">{getTotalSize()}</p>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Import Process Section */}

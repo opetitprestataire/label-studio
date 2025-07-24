@@ -19,10 +19,11 @@ import { IconCross } from "@humansignal/icons";
 import { useModalControls } from "apps/labelstudio/src/components/Modal/ModalPopup";
 import { useStorageCard } from "../hooks/useStorageCard";
 import { Stepper, ProviderSelectionStep, ProviderDetailsStep, PreviewStep, ReviewStep } from "./Steps";
+import { getProviderConfig, extractDefaultValues } from "./providers";
+import { assembleSchema } from "./types/provider";
 
 // Step validation schemas
 const step1Schema = z.object({
-  title: z.string().min(1, "Storage title is required"),
   provider: z.string().min(1, "Please select a storage provider"),
 });
 
@@ -86,40 +87,32 @@ const formStateAtom = atom({
   formData: {
     project: 0, // Will be set properly in component
     provider: "s3",
-    bucket: "", // Bucket Name *
-    prefix: "", // Bucket Prefix
-    region_name: "", // Region Name
-    s3_endpoint: "", // S3 Endpoint
-    aws_access_key_id: "", // Access Key ID *
-    aws_secret_access_key: "", // Secret Access Key *
-    aws_session_token: "",
-    presign: true, // Use pre-signed URLs (default to true per schema)
-    regex_filter: "",
-    use_blob_urls: true, // Default to true per schema
-    recursive_scan: true,
-    presign_ttl: 15, // Default to 15 minutes per schema
+    title: "", // Initialize title field to prevent uncontrolled input warning
+    // Other fields will be initialized dynamically based on provider
   },
   isComplete: false,
 });
 
 // Helper function to get provider-specific schema
 const getProviderSchema = (provider: string) => {
-  switch (provider?.toLowerCase()) {
-    case "s3":
-    case "s3s":
-      return s3Schema;
-    case "gcp":
-    case "gcs":
-      return gcpSchema;
-    case "azure":
-      return azureSchema;
-    case "redis":
-      return redisSchema;
-    case "localfiles":
-      return localFilesSchema;
-    default:
-      return z.object({}); // Empty schema for unknown providers
+  const providerConfig = getProviderConfig(provider);
+  if (!providerConfig) {
+    return z.object({}); // Empty schema for unknown providers
   }
+  
+  // Combine provider-specific fields with common fields like title
+  const commonFields = [
+    {
+      name: "title",
+      type: "text" as const,
+      label: "Storage Title",
+      required: true,
+      schema: z.string().min(1, "Storage title is required"),
+    },
+  ];
+  
+  const allFields = [...commonFields, ...providerConfig.fields];
+  return assembleSchema(allFields);
 };
 
 // Helper function to format validation errors in human-friendly format
@@ -151,7 +144,7 @@ export const StorageFormNew = forwardRef<
   const api = useContext(ApiContext);
   const modal = useModalControls();
   const formRef = ref ?? useRef();
-  const [type, setType] = useState<string>();
+  const [type, setType] = useState<string>("s3");
 
   const [filesPreview, setFilesPreview] = useState(null);
   const [loadingFilesPreiview, setLoadingFilesPreiview] = useState(false);
@@ -168,6 +161,10 @@ export const StorageFormNew = forwardRef<
 
   // Fetch storage types
   const { storageTypes, storageTypesLoading } = useStorageCard(target, project);
+
+  const action = useMemo(() => {
+    return storage ? "updateStorage" : "createStorage";
+  }, [storage]);
 
   // Test connection mutation
   const testConnectionMutation = useMutation({
@@ -200,6 +197,36 @@ export const StorageFormNew = forwardRef<
     },
   });
 
+  // Create/Update storage mutation
+  const createStorageMutation = useMutation({
+    mutationFn: async (storageData: any) => {
+      if (!api) throw new Error("API context not available");
+
+      const body = { ...storageData };
+
+      if (isDefined(storage?.id)) {
+        body.id = storage.id;
+      }
+
+      const response = await api.callApi(action, {
+        params: { target, type: formData.provider, project, pk: storage?.id },
+        body,
+      });
+
+      return response;
+    },
+    onSuccess: (response) => {
+      if (response?.$meta?.ok) {
+        onSubmit();
+        handleClose();
+      }
+    },
+    onError: (error) => {
+      console.error("Failed to create/update storage:", error);
+      // You might want to show an error message to the user here
+    },
+  });
+
   useEffect(() => {
     setFormState((prevState) => ({
       ...prevState,
@@ -209,6 +236,23 @@ export const StorageFormNew = forwardRef<
       },
     }));
   }, [project]); // Update when project prop changes
+
+  // Initialize form data with provider defaults when provider changes
+  useEffect(() => {
+    if (formData.provider) {
+      const providerConfig = getProviderConfig(formData.provider);
+      if (providerConfig) {
+        const defaultValues = extractDefaultValues(providerConfig.fields);
+        setFormState((prevState) => ({
+          ...prevState,
+          formData: {
+            ...prevState.formData,
+            ...defaultValues,
+          },
+        }));
+      }
+    }
+  }, [formData.provider]); // Update when provider changes
 
   const setCurrentStep = (step: number) => {
     setFormState((prevState) => ({
@@ -284,37 +328,7 @@ export const StorageFormNew = forwardRef<
     [formData, setFormState, validateProviderFields],
   );
 
-  // Validate step 1 fields (title and provider)
-  const validateStep1Fields = useCallback((stepData: any) => {
-    try {
-      step1Schema.parse(stepData);
-      setErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const formattedErrors = formatValidationErrors(error);
-        setErrors(formattedErrors);
-        return false;
-      }
-      return false;
-    }
-  }, []);
 
-  // Handle step 1 field changes with validation
-  const handleStep1FieldChange = useCallback(
-    (name: string, value: any) => {
-      const newFormData = { ...formData, [name]: value };
-
-      setFormState((prev) => ({
-        ...prev,
-        formData: newFormData,
-      }));
-
-      // Validate step 1 fields in real-time
-      validateStep1Fields(newFormData);
-    },
-    [formData, setFormState, validateStep1Fields],
-  );
 
   const handleChange: ChangeEventHandler = (e) => {
     const { name, value } = e.target as HTMLInputElement;
@@ -366,8 +380,7 @@ export const StorageFormNew = forwardRef<
       } else {
         // Submit the form
         console.log("Form submitted with data:", formData);
-        // Here you would typically make an API call
-        alert("Form submitted successfully!");
+        createStorageMutation.mutate(formData);
       }
     }
   };
@@ -501,10 +514,6 @@ export const StorageFormNew = forwardRef<
   //   );
   // };
 
-  const action = useMemo(() => {
-    return storage ? "updateStorage" : "createStorage";
-  }, [storage]);
-
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
@@ -512,9 +521,7 @@ export const StorageFormNew = forwardRef<
           <ProviderSelectionStep
             formData={formData}
             errors={errors}
-            handleChange={handleChange}
             handleSelectChange={handleSelectChange}
-            handleStep1FieldChange={handleStep1FieldChange}
             setFormState={setFormState}
             storageTypes={storageTypes}
             storageTypesLoading={storageTypesLoading}
@@ -523,19 +530,13 @@ export const StorageFormNew = forwardRef<
         );
       case 1:
         console.log("StorageFormNew passing errors to ProviderDetailsStep:", errors);
+        console.log("Provider being passed:", formData.provider);
         return (
           <ProviderDetailsStep
             formData={formData}
             errors={errors}
-            handleChange={handleChange}
             handleProviderFieldChange={handleProviderFieldChange}
-            action={action}
-            target={target}
-            type={type}
-            project={project}
-            storage={storage}
-            onSubmit={onSubmit}
-            formRef={formRef}
+            provider={formData.provider || "s3"}
           />
         );
       case 2:
@@ -557,7 +558,7 @@ export const StorageFormNew = forwardRef<
           />
         );
       case 3:
-        return <ReviewStep />;
+        return <ReviewStep formData={formData} filesPreview={filesPreview} formatSize={formatSize} />;
       default:
         return null;
     }
@@ -570,18 +571,8 @@ export const StorageFormNew = forwardRef<
       formData: {
         project: project,
         provider: "s3",
-        bucket: "",
-        prefix: "",
-        region_name: "",
-        s3_endpoint: "",
-        aws_access_key_id: "",
-        aws_secret_access_key: "",
-        aws_session_token: "",
-        presign: true,
-        regex_filter: "",
-        use_blob_urls: true,
-        recursive_scan: true,
-        presign_ttl: 15,
+        title: "", // Reset title field
+        // Other fields will be initialized by the useEffect when provider changes
       },
       isComplete: false,
     });
@@ -640,6 +631,7 @@ export const StorageFormNew = forwardRef<
 
           <Button
             onClick={nextStep}
+            waiting={currentStep === steps.length - 1 && createStorageMutation.isLoading}
             disabled={(currentStep === 1 && !connectionChecked) || (currentStep === 2 && filesPreview === null)}
           >
             {currentStep < steps.length - 1 ? "Next" : "Submit"}

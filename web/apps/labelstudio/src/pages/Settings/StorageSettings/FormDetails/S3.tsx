@@ -7,7 +7,7 @@ import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
 // S3 Form validation schema
 const s3FormSchema = z.object({
   bucket: z.string().min(1, "Bucket name is required"),
-  prefix: z.string().optional(),
+  prefix: z.string().optional().describe("Bucket prefix"),
   regex_filter: z.string().optional(),
   region_name: z.string().optional(),
   s3_endpoint: z.string().optional(),
