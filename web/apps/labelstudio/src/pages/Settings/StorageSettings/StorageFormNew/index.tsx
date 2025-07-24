@@ -320,6 +320,25 @@ export const StorageFormNew = forwardRef<
           if (field.accessKey) {
             // Fill access key fields with placeholder values in edit mode
             formDataWithPlaceholders[field.name] = "••••••••••••••••";
+          } else if (field.type === "counter") {
+            // For counter fields, if the value is null, undefined, or 0, use the default from schema
+            if (formDataWithPlaceholders[field.name] === null || 
+                formDataWithPlaceholders[field.name] === undefined || 
+                formDataWithPlaceholders[field.name] === 0) {
+              try {
+                const schemaAny = field.schema as any;
+                if (schemaAny._def?.defaultValue !== undefined) {
+                  const defaultValue = typeof schemaAny._def.defaultValue === "function" 
+                    ? schemaAny._def.defaultValue() 
+                    : schemaAny._def.defaultValue;
+                  formDataWithPlaceholders[field.name] = defaultValue;
+                } else {
+                  formDataWithPlaceholders[field.name] = field.min || 0;
+                }
+              } catch (error) {
+                formDataWithPlaceholders[field.name] = field.min || 0;
+              }
+            }
           }
         });
       }
