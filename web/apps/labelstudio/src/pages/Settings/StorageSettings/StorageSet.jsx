@@ -52,6 +52,7 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
             storageTypes={storageTypes}
             onSubmit={async () => {
               modalRef.close();
+              fetchStorages();
             }}
           />
         ),

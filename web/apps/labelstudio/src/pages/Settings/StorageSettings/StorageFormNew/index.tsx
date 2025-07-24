@@ -311,8 +311,9 @@ export const StorageFormNew = forwardRef<
   };
 
   const handleStepClick = (stepIndex: number) => {
-    // Only allow navigation to completed steps or the current step
-    if (stepIndex <= currentStep) {
+    // In edit mode, allow navigation to all steps
+    // In create mode, only allow navigation to completed steps or the current step
+    if (isEditMode || stepIndex <= currentStep) {
       setCurrentStep(stepIndex);
     }
   };
@@ -352,29 +353,59 @@ export const StorageFormNew = forwardRef<
     }
   }, [currentStep, formData, steps]);
 
-  // Validate specific provider fields
-  const validateProviderFields = useCallback(
-    (providerData: any) => {
-      const providerSchema = getProviderSchema(formData.provider, isEditMode);
+  // Validate a single field
+  const validateSingleField = useCallback(
+    (fieldName: string, value: any) => {
+      const currentSchema = steps[currentStep]?.schema;
+      if (!currentSchema) return true;
 
       try {
-        providerSchema.parse(providerData);
-        setErrors({});
+        // Create a partial schema for just this field
+        const fieldSchema = z.object({ [fieldName]: currentSchema.shape[fieldName] });
+        fieldSchema.parse({ [fieldName]: value });
+        
+        // Clear error for this field
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[fieldName];
+          return newErrors;
+        });
         return true;
       } catch (error) {
         if (error instanceof z.ZodError) {
           const formattedErrors = formatValidationErrors(error);
-          console.log("StorageFormNew validateProviderFields error:", formattedErrors);
-          setErrors(formattedErrors);
-          return false;
+          // Only set error for this specific field
+          setErrors((prev) => ({
+            ...prev,
+            [fieldName]: formattedErrors[fieldName],
+          }));
         }
         return false;
       }
     },
-    [formData.provider, isEditMode],
+    [currentStep, steps],
   );
 
-  // Handle provider field changes with validation
+  // Validate entire form (for submission)
+  const validateEntireForm = useCallback(() => {
+    const currentSchema = steps[currentStep]?.schema;
+    if (!currentSchema) return true;
+
+    try {
+      currentSchema.parse(formData);
+      setErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const formattedErrors = formatValidationErrors(error);
+        setErrors(formattedErrors);
+        return false;
+      }
+      return false;
+    }
+  }, [currentStep, formData, steps]);
+
+  // Handle provider field changes (reset validation for this field only)
   const handleProviderFieldChange = useCallback(
     (name: string, value: any) => {
       const newFormData = { ...formData, [name]: value };
@@ -384,10 +415,22 @@ export const StorageFormNew = forwardRef<
         formData: newFormData,
       }));
 
-      // Validate provider fields in real-time
-      validateProviderFields(newFormData);
+      // Clear error for this field when it changes
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     },
-    [formData, setFormState, validateProviderFields],
+    [formData, setFormState],
+  );
+
+  // Handle field blur (validate single field on blur)
+  const handleFieldBlur = useCallback(
+    (name: string, value: any) => {
+      validateSingleField(name, value);
+    },
+    [validateSingleField],
   );
 
 
@@ -436,7 +479,7 @@ export const StorageFormNew = forwardRef<
   };
 
   const nextStep = () => {
-    if (validateCurrentStep()) {
+    if (validateEntireForm()) {
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1);
       } else {
@@ -487,8 +530,8 @@ export const StorageFormNew = forwardRef<
   };
 
   const testStorageConnection = useCallback(async () => {
-    // Validate the current step (provider configuration) first
-    if (!validateCurrentStep()) {
+    // Validate the entire form before testing connection
+    if (!validateEntireForm()) {
       // Validation failed, don't proceed with connection test
       return;
     }
@@ -496,11 +539,11 @@ export const StorageFormNew = forwardRef<
     console.log("Validation passed, testing connection...");
     // Use react-query mutation to test connection
     testConnectionMutation.mutate(formData);
-  }, [formData, validateCurrentStep, testConnectionMutation, errors]);
+  }, [formData, validateEntireForm, testConnectionMutation, errors]);
 
   const loadFilesPreview = useCallback(async () => {
-    // Validate the current step first
-    if (!validateCurrentStep()) {
+    // Validate the entire form before loading preview
+    if (!validateEntireForm()) {
       // Validation failed, don't proceed with loading preview
       return;
     }
@@ -552,7 +595,7 @@ export const StorageFormNew = forwardRef<
     // else setConnectionValid(false);
 
     // setChecking(false);
-  }, [formState, target, storage, validateCurrentStep, cleanFormDataForSubmission]);
+  }, [formState, target, storage, validateEntireForm, cleanFormDataForSubmission]);
 
   // const validateConnection = useCallback(async () => {
   //   setChecking(true);
@@ -627,6 +670,7 @@ export const StorageFormNew = forwardRef<
             formData={formData}
             errors={errors}
             handleProviderFieldChange={handleProviderFieldChange}
+            handleFieldBlur={handleFieldBlur}
             provider={formData.provider || "s3"}
             isEditMode={isEditMode}
           />
@@ -699,7 +743,7 @@ export const StorageFormNew = forwardRef<
         <Button leading={<IconCross />} look="string" onClick={handleClose} />
       </div>
 
-      <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} />
+      <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isEditMode={isEditMode} />
 
       <div className="max-h-[60vh] overflow-y-auto px-wide py-base">{renderStepContent()}</div>
 
@@ -728,8 +772,11 @@ export const StorageFormNew = forwardRef<
             onClick={nextStep}
             waiting={currentStep === steps.length - 1 && createStorageMutation.isLoading}
             disabled={
-              (isEditMode ? currentStep === 0 : currentStep === 1) && !connectionChecked ||
-              (isEditMode ? currentStep === 1 : currentStep === 2) && filesPreview === null
+              // Only disable in create mode, not in edit mode
+              !isEditMode && (
+                (currentStep === 1 && !connectionChecked) ||
+                (currentStep === 2 && filesPreview === null)
+              )
             }
           >
             {currentStep < steps.length - 1 ? "Next" : "Submit"}

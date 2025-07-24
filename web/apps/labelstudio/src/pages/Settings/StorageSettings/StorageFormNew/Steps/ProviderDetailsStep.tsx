@@ -6,6 +6,7 @@ interface ProviderDetailsStepProps {
   formData: any;
   errors: Record<string, string>;
   handleProviderFieldChange: (name: string, value: any) => void;
+  handleFieldBlur?: (name: string, value: any) => void;
   provider?: string;
   isEditMode?: boolean;
 }
@@ -14,6 +15,7 @@ export const ProviderDetailsStep = ({
   formData,
   errors,
   handleProviderFieldChange,
+  handleFieldBlur,
   provider,
   isEditMode = false,
 }: ProviderDetailsStepProps) => {
@@ -56,6 +58,7 @@ export const ProviderDetailsStep = ({
         formData={formData}
         errors={errors}
         onChange={handleProviderFieldChange}
+        onBlur={handleFieldBlur}
         isEditMode={isEditMode}
       />
     </div>

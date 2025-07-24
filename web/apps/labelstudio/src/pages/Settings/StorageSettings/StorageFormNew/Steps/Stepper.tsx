@@ -4,32 +4,29 @@ interface StepperProps {
   steps: { title: string }[];
   currentStep: number;
   onStepClick?: (stepIndex: number) => void;
+  isEditMode?: boolean;
 }
 
-export const Stepper = ({ steps, currentStep, onStepClick }: StepperProps) => {
+const MAX_STEPS_COUNT = 4;
+
+export const Stepper = ({ steps, currentStep, onStepClick, isEditMode = false }: StepperProps) => {
   // Calculate progress that aligns with circle centers
   const calculateProgressWidth = () => {
     if (currentStep === 0) return 0;
     if (currentStep >= steps.length - 1) return 100;
 
     // Calculate the position of the current step circle (left edge)
-    const stepWidth = 100 / steps.length;
+    const stepWidth = 100 / MAX_STEPS_COUNT;
     // Stop at the current step's circle, not extend to the next step
     const progressToCurrentStep = currentStep * stepWidth;
 
     return Math.max(0, Math.min(100, progressToCurrentStep));
   };
 
-  // Calculate circle position accounting for grid gaps
-  const calculateCirclePosition = (index: number) => {
-    // For 4 steps: 0%, 33.33%, 66.67%, 100%
-    const stepWidth = 100 / (steps.length - 1);
-    return index * stepWidth;
-  };
-
   const handleStepClick = (stepIndex: number) => {
-    // Only allow clicking on completed steps (steps before current step)
-    if (stepIndex < currentStep && onStepClick) {
+    // In edit mode, allow clicking on all steps
+    // In create mode, only allow clicking on completed steps
+    if (onStepClick && (isEditMode || stepIndex < currentStep)) {
       onStepClick(stepIndex);
     }
   };
@@ -45,8 +42,9 @@ export const Stepper = ({ steps, currentStep, onStepClick }: StepperProps) => {
                 className={cn(
                   "text-body-small",
                   currentStep >= index ? "text-primary-content font-semibold" : "text-neutral-content-subtle",
-                  // Make completed steps clickable
-                  index < currentStep && onStepClick && "cursor-pointer hover:text-primary-content-subtle transition-colors",
+                  // Make steps clickable in edit mode or completed steps in create mode
+                  ((isEditMode && onStepClick) || (index < currentStep && onStepClick)) &&
+                    "cursor-pointer hover:text-primary-content-subtle transition-colors",
                 )}
                 onClick={() => handleStepClick(index)}
               >
@@ -79,8 +77,12 @@ export const Stepper = ({ steps, currentStep, onStepClick }: StepperProps) => {
                     currentStep > index
                       ? "bg-primary-surface text-primary-surface-content shadow-sm border-primary-surface cursor-pointer hover:bg-primary-emphasis" // completed - clickable
                       : currentStep === index
-                        ? "bg-primary-surface text-primary-surface-content shadow-sm border-primary-surface" // current
-                        : "bg-neutral-surface border-neutral-border text-neutral-content-subtle", // upcoming
+                        ? isEditMode
+                          ? "bg-primary-surface text-primary-surface-content shadow-sm border-primary-surface cursor-pointer hover:bg-primary-emphasis" // current - clickable in edit mode
+                          : "bg-primary-surface text-primary-surface-content shadow-sm border-primary-surface" // current - not clickable in create mode
+                        : isEditMode
+                          ? "bg-neutral-surface border-neutral-border text-neutral-content-subtle cursor-pointer hover:bg-neutral-emphasis" // upcoming - clickable in edit mode
+                          : "bg-neutral-surface border-neutral-border text-neutral-content-subtle", // upcoming - not clickable in create mode
                   )}
                   onClick={() => handleStepClick(index)}
                 >

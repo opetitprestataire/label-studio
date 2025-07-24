@@ -1,22 +1,38 @@
-import React from "react";
+import type React from "react";
 import { Label, Toggle, Select } from "@humansignal/ui";
 import Counter from "apps/labelstudio/src/components/Form/Elements/Counter/Counter";
 import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
-import { FieldDefinition } from "../types/provider";
+import type { FieldDefinition } from "../types/provider";
 
 interface FieldRendererProps {
   field: FieldDefinition;
   value: any;
   onChange: (name: string, value: any) => void;
+  onBlur?: (name: string, value: any) => void;
   error?: string;
   isEditMode?: boolean;
 }
 
-export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onChange, error, isEditMode = false }) => {
+export const FieldRenderer: React.FC<FieldRendererProps> = ({
+  field,
+  value,
+  onChange,
+  onBlur,
+  error,
+  isEditMode = false,
+}) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value: inputValue, type } = e.target;
     const parsedValue = type === "number" ? Number(inputValue) : inputValue;
     onChange(name, parsedValue);
+  };
+
+  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (onBlur) {
+      const { name, value: inputValue, type } = e.target;
+      const parsedValue = type === "number" ? Number(inputValue) : inputValue;
+      onBlur(name, parsedValue);
+    }
   };
 
   const handleToggleChange = (checked: boolean) => {
@@ -42,7 +58,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
     required: field.required,
     label: field.label,
     description: field.description || "",
-    footer: error || "",
+    footer: error ? <div className="text-negative-content">{error}</div> : "",
     className: error ? "border-red-500" : "",
     placeholder: field.placeholder,
     autoComplete: field.autoComplete,
@@ -50,7 +66,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
 
   // Check if this is an access key field with placeholder value in edit mode
   const isAccessKeyWithPlaceholder = field.accessKey && isEditMode && value === "••••••••••••••••";
-  
+
   // Enhanced description for access key fields in edit mode
   const getEnhancedDescription = () => {
     if (isAccessKeyWithPlaceholder) {
@@ -68,6 +84,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
           type={field.type}
           value={value || ""}
           onChange={handleInputChange}
+          onBlur={handleInputBlur}
           {...getInputProps()}
           description={getEnhancedDescription()}
         />
@@ -80,6 +97,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
           type="number"
           value={value || ""}
           onChange={handleInputChange}
+          onBlur={handleInputBlur}
           min={field.min}
           max={field.max}
           step={field.step}
@@ -93,6 +111,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
           name={field.name}
           value={value || ""}
           onChange={handleInputChange}
+          onBlur={handleInputBlur}
           {...getInputProps()}
           description={getEnhancedDescription()}
         />
@@ -123,9 +142,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
           />
           <div>
             <Label className="text-sm font-medium">{field.label}</Label>
-            {field.description && (
-              <p className="text-sm text-muted-foreground">{field.description}</p>
-            )}
+            {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
             {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
         </div>
@@ -150,10 +167,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
       );
 
     default:
-      return (
-        <div className="text-red-500">
-          Unknown field type: {field.type}
-        </div>
-      );
+      return <div className="text-red-500">Unknown field type: {field.type}</div>;
   }
-}; 
+};
