@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { ProviderConfig } from "../types/provider";
 
-export const gcpProvider: ProviderConfig = {
+export const gcsProvider: ProviderConfig = {
   name: "gcs",
   title: "Google Cloud Storage",
   description: "Configure your Google Cloud Storage connection",
@@ -20,6 +20,7 @@ export const gcpProvider: ProviderConfig = {
       label: "Service Account Key",
       required: true,
       placeholder: "Paste your service account JSON key here",
+      accessKey: true,
       schema: z.string().min(1, "Service Account Key is required"),
     },
   ],
@@ -32,4 +33,3 @@ export const gcpProvider: ProviderConfig = {
     },
   ],
 };
-

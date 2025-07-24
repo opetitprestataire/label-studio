@@ -20,7 +20,17 @@ export const azureProvider: ProviderConfig = {
       label: "Storage Account Name",
       required: true,
       placeholder: "mystorageaccount",
+      accessKey: true,
       schema: z.string().min(1, "Storage Account Name is required"),
+    },
+    {
+      name: "account_key",
+      type: "password",
+      label: "Storage Account Key",
+      required: true,
+      placeholder: "Your storage account key",
+      accessKey: true,
+      schema: z.string().min(1, "Storage Account Key is required"),
     },
   ],
   layout: [
@@ -28,7 +38,7 @@ export const azureProvider: ProviderConfig = {
       fields: ["container"],
     },
     {
-      fields: ["account_name"],
+      fields: ["account_name", "account_key"],
     },
   ],
 }; 

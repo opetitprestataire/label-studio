@@ -3,16 +3,17 @@ import { cn } from "@humansignal/ui";
 interface StepperProps {
   steps: { title: string }[];
   currentStep: number;
+  onStepClick?: (stepIndex: number) => void;
 }
 
-export const Stepper = ({ steps, currentStep }: StepperProps) => {
+export const Stepper = ({ steps, currentStep, onStepClick }: StepperProps) => {
   // Calculate progress that aligns with circle centers
   const calculateProgressWidth = () => {
     if (currentStep === 0) return 0;
     if (currentStep >= steps.length - 1) return 100;
 
     // Calculate the position of the current step circle (left edge)
-    const stepWidth = 100 / (steps.length - 1);
+    const stepWidth = 100 / steps.length;
     // Stop at the current step's circle, not extend to the next step
     const progressToCurrentStep = currentStep * stepWidth;
 
@@ -26,6 +27,13 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
     return index * stepWidth;
   };
 
+  const handleStepClick = (stepIndex: number) => {
+    // Only allow clicking on completed steps (steps before current step)
+    if (stepIndex < currentStep && onStepClick) {
+      onStepClick(stepIndex);
+    }
+  };
+
   return (
     <div className="w-full mb-tight py-base bg-neutral-background border-b border-neutral-border px-wide">
       <div className="flex flex-col">
@@ -37,7 +45,10 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
                 className={cn(
                   "text-body-small",
                   currentStep >= index ? "text-primary-content font-semibold" : "text-neutral-content-subtle",
+                  // Make completed steps clickable
+                  index < currentStep && onStepClick && "cursor-pointer hover:text-primary-content-subtle transition-colors",
                 )}
+                onClick={() => handleStepClick(index)}
               >
                 {step.title}
               </span>
@@ -54,7 +65,7 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
           <div
             className="absolute inset-y-0 h-1 left-0 bg-primary-surface transition-all duration-300 rounded-full my-auto "
             style={{
-              width: `calc(${calculateProgressWidth()}% - 65px)`,
+              width: `calc(${calculateProgressWidth()}% + 10px)`,
             }}
           />
 
@@ -66,11 +77,12 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
                   className={cn(
                     "w-6 h-6 rounded-full flex items-center justify-center text-body-small border-2 transition-all duration-300",
                     currentStep > index
-                      ? "bg-primary-surface text-primary-surface-content shadow-sm border-primary-surface" // completed
+                      ? "bg-primary-surface text-primary-surface-content shadow-sm border-primary-surface cursor-pointer hover:bg-primary-emphasis" // completed - clickable
                       : currentStep === index
                         ? "bg-primary-surface text-primary-surface-content shadow-sm border-primary-surface" // current
                         : "bg-neutral-surface border-neutral-border text-neutral-content-subtle", // upcoming
                   )}
+                  onClick={() => handleStepClick(index)}
                 >
                   {currentStep > index ? (
                     <svg

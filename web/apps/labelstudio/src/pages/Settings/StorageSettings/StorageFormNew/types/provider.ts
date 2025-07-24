@@ -18,6 +18,7 @@ export interface FieldDefinition {
   step?: number; // For number/counter fields
   autoComplete?: string; // For input fields
   gridCols?: number; // How many columns this field should span (1-12)
+  accessKey?: boolean; // Whether this field is an access key/credential that should be handled specially in edit mode
 }
 
 // Layout row definition
@@ -36,14 +37,17 @@ export interface ProviderConfig {
 }
 
 // Helper function to assemble the complete schema from field definitions
-export function assembleSchema(fields: FieldDefinition[]): z.ZodObject<any> {
+export function assembleSchema(fields: FieldDefinition[], isEditMode: boolean = false): z.ZodObject<any> {
   const schemaObject: Record<string, z.ZodTypeAny> = {};
 
   fields.forEach((field) => {
     let fieldSchema = field.schema;
 
-    // Make field required if specified
-    if (field.required && fieldSchema instanceof z.ZodString) {
+    // For access keys in edit mode, make them optional and skip validation
+    if (field.accessKey && isEditMode) {
+      fieldSchema = fieldSchema.optional();
+    } else if (field.required && fieldSchema instanceof z.ZodString) {
+      // Make field required if specified (only in create mode or for non-access-key fields)
       fieldSchema = fieldSchema.min(1, `${field.label} is required`);
     }
 

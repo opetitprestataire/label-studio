@@ -13,6 +13,7 @@ export const exampleProvider: ProviderConfig = {
       label: "API Key",
       required: true,
       placeholder: "Enter your API key",
+      accessKey: true,
       schema: z.string().min(1, "API Key is required"),
     },
     {

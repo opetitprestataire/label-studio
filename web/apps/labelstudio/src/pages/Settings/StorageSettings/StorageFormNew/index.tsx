@@ -36,9 +36,11 @@ const s3Schema = z.object({
   aws_session_token: z.string().optional(),
   prefix: z.string().optional(),
   s3_endpoint: z.string().optional(),
-  regex_filter: z.string().optional(),
   presign: z.boolean().default(false),
   presign_ttl: z.number().min(1).max(10080).optional(),
+  use_blob_urls: z.boolean().default(false),
+  recursive_scan: z.boolean().default(true),
+  regex_filter: z.string().optional(),
 });
 
 const gcpSchema = z.object({
@@ -46,9 +48,11 @@ const gcpSchema = z.object({
   google_application_credentials: z.string().min(1, "Service Account Key is required"),
   project_id: z.string().optional(),
   prefix: z.string().optional(),
-  regex_filter: z.string().optional(),
   presign: z.boolean().default(false),
   presign_ttl: z.number().min(1).max(10080).optional(),
+  use_blob_urls: z.boolean().default(false),
+  recursive_scan: z.boolean().default(true),
+  regex_filter: z.string().optional(),
 });
 
 const azureSchema = z.object({
@@ -57,9 +61,11 @@ const azureSchema = z.object({
   account_key: z.string().min(1, "Storage Account Key is required"),
   sas_token: z.string().optional(),
   prefix: z.string().optional(),
-  regex_filter: z.string().optional(),
   presign: z.boolean().default(false),
   presign_ttl: z.number().min(1).max(10080).optional(),
+  use_blob_urls: z.boolean().default(false),
+  recursive_scan: z.boolean().default(true),
+  regex_filter: z.string().optional(),
 });
 
 const redisSchema = z.object({
@@ -68,17 +74,21 @@ const redisSchema = z.object({
   db: z.number().min(0).max(15, "Database must be between 0 and 15"),
   password: z.string().optional(),
   prefix: z.string().optional(),
-  regex_filter: z.string().optional(),
   presign: z.boolean().default(false),
   presign_ttl: z.number().min(1).max(10080).optional(),
+  use_blob_urls: z.boolean().default(false),
+  recursive_scan: z.boolean().default(true),
+  regex_filter: z.string().optional(),
 });
 
 const localFilesSchema = z.object({
   path: z.string().min(1, "Path is required"),
   prefix: z.string().optional(),
-  regex_filter: z.string().optional(),
   presign: z.boolean().default(false),
   presign_ttl: z.number().min(1).max(10080).optional(),
+  use_blob_urls: z.boolean().default(false),
+  recursive_scan: z.boolean().default(true),
+  regex_filter: z.string().optional(),
 });
 
 // Combine all schemas
@@ -88,13 +98,16 @@ const formStateAtom = atom({
     project: 0, // Will be set properly in component
     provider: "s3",
     title: "", // Initialize title field to prevent uncontrolled input warning
+    use_blob_urls: false, // Initialize import method field
+    recursive_scan: true, // Initialize recursive scan field
+    regex_filter: "", // Initialize file filter regex field
     // Other fields will be initialized dynamically based on provider
   },
   isComplete: false,
 });
 
 // Helper function to get provider-specific schema
-const getProviderSchema = (provider: string) => {
+const getProviderSchema = (provider: string, isEditMode: boolean = false) => {
   const providerConfig = getProviderConfig(provider);
   if (!providerConfig) {
     return z.object({}); // Empty schema for unknown providers
@@ -112,7 +125,7 @@ const getProviderSchema = (provider: string) => {
   ];
   
   const allFields = [...commonFields, ...providerConfig.fields];
-  return assembleSchema(allFields);
+  return assembleSchema(allFields, isEditMode);
 };
 
 // Helper function to format validation errors in human-friendly format
@@ -159,6 +172,9 @@ export const StorageFormNew = forwardRef<
   const [formState, setFormState] = useAtom(formStateAtom);
   const { currentStep, formData } = formState;
 
+  // Determine if we're in edit mode
+  const isEditMode = Boolean(storage);
+
   // Fetch storage types
   const { storageTypes, storageTypesLoading } = useStorageCard(target, project);
 
@@ -171,7 +187,9 @@ export const StorageFormNew = forwardRef<
     mutationFn: async (connectionData: any) => {
       if (!api) throw new Error("API context not available");
 
-      const body = { ...connectionData };
+      // Clean the form data to remove empty access keys in edit mode
+      const cleanedData = cleanFormDataForSubmission(connectionData);
+      const body = { ...cleanedData };
 
       if (isDefined(storage?.id)) {
         body.id = storage.id;
@@ -202,7 +220,9 @@ export const StorageFormNew = forwardRef<
     mutationFn: async (storageData: any) => {
       if (!api) throw new Error("API context not available");
 
-      const body = { ...storageData };
+      // Clean the form data to remove empty access keys in edit mode
+      const cleanedData = cleanFormDataForSubmission(storageData);
+      const body = { ...cleanedData };
 
       if (isDefined(storage?.id)) {
         body.id = storage.id;
@@ -254,6 +274,35 @@ export const StorageFormNew = forwardRef<
     }
   }, [formData.provider]); // Update when provider changes
 
+  // Initialize form data with existing storage data in edit mode
+  useEffect(() => {
+    if (isEditMode && storage) {
+      const providerConfig = getProviderConfig(storage.type || storage.provider || "s3");
+      
+      // Prepare form data with placeholder values for access keys
+      const formDataWithPlaceholders = { ...storage };
+      
+      if (providerConfig) {
+        providerConfig.fields.forEach((field) => {
+          if (field.accessKey) {
+            // Fill access key fields with placeholder values in edit mode
+            formDataWithPlaceholders[field.name] = "••••••••••••••••";
+          }
+        });
+      }
+
+      setFormState((prevState) => ({
+        ...prevState,
+        currentStep: 0, // Start from first step (Configure Connection in edit mode)
+        formData: {
+          ...prevState.formData,
+          ...formDataWithPlaceholders, // Load existing storage data with placeholders
+          provider: storage.type || storage.provider || "s3", // Ensure provider is set
+        },
+      }));
+    }
+  }, [isEditMode, storage, setFormState]);
+
   const setCurrentStep = (step: number) => {
     setFormState((prevState) => ({
       ...prevState,
@@ -261,12 +310,25 @@ export const StorageFormNew = forwardRef<
     }));
   };
 
-  const steps = [
-    { title: "Select Provider", schema: step1Schema },
-    { title: "Configure Connection", schema: getProviderSchema(formData.provider) },
-    { title: "Preview & Import Settings" },
-    { title: "Review & Confirm" },
-  ];
+  const handleStepClick = (stepIndex: number) => {
+    // Only allow navigation to completed steps or the current step
+    if (stepIndex <= currentStep) {
+      setCurrentStep(stepIndex);
+    }
+  };
+
+  const steps = isEditMode 
+    ? [
+        { title: "Configure Connection", schema: getProviderSchema(formData.provider, isEditMode) },
+        { title: "Preview & Import Settings" },
+        { title: "Review & Confirm" },
+      ]
+    : [
+        { title: "Select Provider", schema: step1Schema },
+        { title: "Configure Connection", schema: getProviderSchema(formData.provider, isEditMode) },
+        { title: "Preview & Import Settings" },
+        { title: "Review & Confirm" },
+      ];
 
   // Validate current step
   const validateCurrentStep = useCallback(() => {
@@ -293,7 +355,7 @@ export const StorageFormNew = forwardRef<
   // Validate specific provider fields
   const validateProviderFields = useCallback(
     (providerData: any) => {
-      const providerSchema = getProviderSchema(formData.provider);
+      const providerSchema = getProviderSchema(formData.provider, isEditMode);
 
       try {
         providerSchema.parse(providerData);
@@ -309,7 +371,7 @@ export const StorageFormNew = forwardRef<
         return false;
       }
     },
-    [formData.provider],
+    [formData.provider, isEditMode],
   );
 
   // Handle provider field changes with validation
@@ -401,6 +463,29 @@ export const StorageFormNew = forwardRef<
     return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
   };
 
+  // Helper function to clean form data for submission (remove empty access keys in edit mode)
+  const cleanFormDataForSubmission = (data: any) => {
+    if (!isEditMode) return data;
+
+    const cleanedData = { ...data };
+    const providerConfig = getProviderConfig(formData.provider);
+    
+    if (providerConfig) {
+      // Remove empty access key fields in edit mode
+      providerConfig.fields.forEach((field) => {
+        if (field.accessKey && (
+          cleanedData[field.name] === "" || 
+          cleanedData[field.name] === undefined || 
+          cleanedData[field.name] === "••••••••••••••••"
+        )) {
+          delete cleanedData[field.name];
+        }
+      });
+    }
+
+    return cleanedData;
+  };
+
   const testStorageConnection = useCallback(async () => {
     // Validate the current step (provider configuration) first
     if (!validateCurrentStep()) {
@@ -430,7 +515,9 @@ export const StorageFormNew = forwardRef<
     // TODO this needs to be dynamic
     const type = "s3";
 
-    const body = { ...formData };
+    // Clean the form data to remove placeholder access keys in edit mode
+    const cleanedData = cleanFormDataForSubmission(formData);
+    const body = { ...cleanedData };
 
     if (isDefined(storage?.id)) {
       body.id = storage.id;
@@ -465,7 +552,7 @@ export const StorageFormNew = forwardRef<
     // else setConnectionValid(false);
 
     // setChecking(false);
-  }, [formState, target, storage, validateCurrentStep]);
+  }, [formState, target, storage, validateCurrentStep, cleanFormDataForSubmission]);
 
   // const validateConnection = useCallback(async () => {
   //   setChecking(true);
@@ -515,7 +602,11 @@ export const StorageFormNew = forwardRef<
   // };
 
   const renderStepContent = () => {
-    switch (currentStep) {
+    // In edit mode, step 0 is "Configure Connection", step 1 is "Preview & Import Settings", step 2 is "Review & Confirm"
+    // In create mode, step 0 is "Select Provider", step 1 is "Configure Connection", step 2 is "Preview & Import Settings", step 3 is "Review & Confirm"
+    const actualStep = isEditMode ? currentStep + 1 : currentStep;
+    
+    switch (actualStep) {
       case 0:
         return (
           <ProviderSelectionStep
@@ -537,6 +628,7 @@ export const StorageFormNew = forwardRef<
             errors={errors}
             handleProviderFieldChange={handleProviderFieldChange}
             provider={formData.provider || "s3"}
+            isEditMode={isEditMode}
           />
         );
       case 2:
@@ -572,6 +664,9 @@ export const StorageFormNew = forwardRef<
         project: project,
         provider: "s3",
         title: "", // Reset title field
+        use_blob_urls: false, // Reset import method field
+        recursive_scan: true, // Reset recursive scan field
+        regex_filter: "", // Reset file filter regex field
         // Other fields will be initialized by the useEffect when provider changes
       },
       isComplete: false,
@@ -604,7 +699,7 @@ export const StorageFormNew = forwardRef<
         <Button leading={<IconCross />} look="string" onClick={handleClose} />
       </div>
 
-      <Stepper steps={steps} currentStep={currentStep} />
+      <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} />
 
       <div className="max-h-[60vh] overflow-y-auto px-wide py-base">{renderStepContent()}</div>
 
@@ -614,7 +709,7 @@ export const StorageFormNew = forwardRef<
         </Button>
 
         <div className="flex gap-tight items-center">
-          {currentStep === 1 && (
+          {(isEditMode ? currentStep === 0 : currentStep === 1) && (
             <>
               {connectionChecked && <span className="text-sm text-green-600 font-medium">✓ Connection successful</span>}
               <Button waiting={testConnectionMutation.isLoading} onClick={testStorageConnection}>
@@ -623,7 +718,7 @@ export const StorageFormNew = forwardRef<
             </>
           )}
 
-          {currentStep === 2 && (
+          {(isEditMode ? currentStep === 1 : currentStep === 2) && (
             <Button waiting={loadingFilesPreiview} onClick={loadFilesPreview}>
               Load Preview
             </Button>
@@ -632,7 +727,10 @@ export const StorageFormNew = forwardRef<
           <Button
             onClick={nextStep}
             waiting={currentStep === steps.length - 1 && createStorageMutation.isLoading}
-            disabled={(currentStep === 1 && !connectionChecked) || (currentStep === 2 && filesPreview === null)}
+            disabled={
+              (isEditMode ? currentStep === 0 : currentStep === 1) && !connectionChecked ||
+              (isEditMode ? currentStep === 1 : currentStep === 2) && filesPreview === null
+            }
           >
             {currentStep < steps.length - 1 ? "Next" : "Submit"}
           </Button>

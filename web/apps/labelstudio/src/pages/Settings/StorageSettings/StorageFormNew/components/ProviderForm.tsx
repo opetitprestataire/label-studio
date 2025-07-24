@@ -7,9 +7,10 @@ interface ProviderFormProps {
   formData: Record<string, any>;
   errors: Record<string, string>;
   onChange: (name: string, value: any) => void;
+  isEditMode?: boolean;
 }
 
-export const ProviderForm: React.FC<ProviderFormProps> = ({ provider, formData, errors, onChange }) => {
+export const ProviderForm: React.FC<ProviderFormProps> = ({ provider, formData, errors, onChange, isEditMode = false }) => {
   return (
     <div className="space-y-6">
       {provider.layout.map((row, rowIndex) => (
@@ -21,6 +22,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({ provider, formData, 
                 value={formData[field.name]}
                 onChange={onChange}
                 error={errors[field.name]}
+                isEditMode={isEditMode}
               />
             </div>
           ))}

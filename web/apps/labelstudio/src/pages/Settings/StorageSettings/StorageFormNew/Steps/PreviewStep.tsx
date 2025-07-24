@@ -1,4 +1,4 @@
-import { Label, Toggle } from "@humansignal/ui";
+import { Label, Toggle, Select } from "@humansignal/ui";
 import { Form, Input } from "apps/labelstudio/src/components/Form";
 import { IconDocument, IconSearch } from "@humansignal/icons";
 import { formatDistanceToNow } from "date-fns";
@@ -66,193 +66,157 @@ export const PreviewStep = ({
               {/* File Filter Section */}
               <div className="space-y-2">
                 <Label htmlFor="regex_filter">File Name Filter (Optional)</Label>
-                <div>
-                  <Input
-                    id="regex_filter"
-                    name="regex_filter"
-                    value={formData.regex_filter}
-                    onChange={handleChange}
-                    placeholder=".*\.(jpg|png)$ - imports only JPG, PNG files"
-                    style={{ width: "100%" }}
-                  />
+                <p className="text-sm text-muted-foreground">Use regex patterns to filter which files are imported</p>
+                <Input
+                  id="regex_filter"
+                  name="regex_filter"
+                  value={formData.regex_filter ?? ""}
+                  onChange={handleChange}
+                  placeholder=".*\.(jpg|png)$ - imports only JPG, PNG files"
+                  style={{ width: "100%" }}
+                  label=""
+                  description=""
+                  footer=""
+                  className=""
+                  validate=""
+                  required={false}
+                  skip={false}
+                  labelProps={{}}
+                  ghost={false}
+                  tooltip=""
+                  tooltipIcon={null}
+                />
 
-                  <div className="flex flex-wrap gap-x-2 items-center text-xs">
-                    <span className="text-muted-foreground">Common filters:</span>
-                    <a
-                      href="#"
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState((prevState) => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*.(jpe?g|png|gif)$",
-                          },
-                        }));
-                      }}
-                    >
-                      Images
-                    </a>
-                    <a
-                      href="#"
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState((prevState) => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.(mp4|avi|mov|wmv|webm)$",
-                          },
-                        }));
-                      }}
-                    >
-                      Videos
-                    </a>
-                    <a
-                      href="#"
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState((prevState) => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.(mp3|wav|ogg|flac)$",
-                          },
-                        }));
-                      }}
-                    >
-                      Audio
-                    </a>
-                    <a
-                      href="#"
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState((prevState) => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.(csv|tsv)$",
-                          },
-                        }));
-                      }}
-                    >
-                      Tabular
-                    </a>
-                    <a
-                      href="#"
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState((prevState) => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.(txt|html|xml)$",
-                          },
-                        }));
-                      }}
-                    >
-                      Text
-                    </a>
-                    <a
-                      href="#"
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState((prevState) => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.pdf$",
-                          },
-                        }));
-                      }}
-                    >
-                      PDFs
-                    </a>
-                    <a
-                      href="#"
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState((prevState) => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*\\.json$",
-                          },
-                        }));
-                      }}
-                    >
-                      JSON
-                    </a>
-                    <a
-                      href="#"
-                      className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setFormState((prevState) => ({
-                          ...prevState,
-                          formData: {
-                            ...prevState.formData,
-                            regex_filter: ".*",
-                          },
-                        }));
-                      }}
-                    >
-                      All Files
-                    </a>
-                  </div>
+                <div className="flex flex-wrap gap-x-2 items-center text-xs">
+                  <span className="text-muted-foreground">Common filters:</span>
+                  <a
+                    href="#"
+                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        formData: {
+                          ...prevState.formData,
+                          regex_filter: ".*.(jpe?g|png|gif)$",
+                        },
+                      }));
+                    }}
+                  >
+                    Images
+                  </a>
+                  <a
+                    href="#"
+                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        formData: {
+                          ...prevState.formData,
+                          regex_filter: ".*\\.(mp4|avi|mov|wmv|webm)$",
+                        },
+                      }));
+                    }}
+                  >
+                    Videos
+                  </a>
+                  <a
+                    href="#"
+                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        formData: {
+                          ...prevState.formData,
+                          regex_filter: ".*\\.(mp3|wav|ogg|flac)$",
+                        },
+                      }));
+                    }}
+                  >
+                    Audio
+                  </a>
+                  <a
+                    href="#"
+                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        formData: {
+                          ...prevState.formData,
+                          regex_filter: ".*\\.(csv|tsv)$",
+                        },
+                      }));
+                    }}
+                  >
+                    Tabular
+                  </a>
+                  <a
+                    href="#"
+                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        formData: {
+                          ...prevState.formData,
+                          regex_filter: ".*",
+                        },
+                      }));
+                    }}
+                  >
+                    All Files
+                  </a>
                 </div>
               </div>
 
-              {/* Import Options */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="use_blob_urls" className="block mb-2">
-                    Import as source files
-                  </Label>
-                  <span className="text-sm text-gray-500 leading-tight block">
-                    Files will be imported as source data (images, text, etc.) rather than annotation tasks (JSON)
-                  </span>
-                </div>
-                <Toggle
-                  id="use_blob_urls"
+              {/* Import Method */}
+              <div className="space-y-2">
+                <Label htmlFor="use_blob_urls">Import Method</Label>
+                <p className="text-sm text-muted-foreground">Choose how to import your data from storage</p>
+                <Select
                   name="use_blob_urls"
-                  checked={formState.formData.use_blob_urls}
-                  onCheckedChange={(checked) =>
+                  value={formData.use_blob_urls ? "Files" : "JSON"}
+                  onChange={(value) => {
+                    const isFiles = value === "Files";
                     setFormState((prevState) => ({
                       ...prevState,
                       formData: {
                         ...prevState.formData,
-                        use_blob_urls: checked,
+                        use_blob_urls: isFiles,
                       },
-                    }))
-                  }
+                    }));
+                  }}
+                  options={[
+                    {
+                      value: "Files",
+                      label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)",
+                    },
+                    {
+                      value: "JSON",
+                      label: "JSON - Treat each JSON or JSONL file as a task definition (one or more tasks per file)",
+                    },
+                  ] as any}
+                  placeholder="Select import method"
                 />
               </div>
 
+              {/* Scan All Subfolders */}
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="recursive_scan" className="block mb-2">
-                    Include subfolders
-                  </Label>
-                  <p className="text-sm text-gray-500">Scan all subdirectories within the bucket or folder path</p>
+                  <Label className="block mb-2">Scan all sub-folders</Label>
+                  <p className="text-sm text-muted-foreground">Include files from all nested folders</p>
                 </div>
                 <Toggle
-                  id="recursive_scan"
-                  name="recursive_scan"
-                  checked={formState.formData.recursive_scan}
-                  onCheckedChange={(checked) =>
+                  checked={formData.recursive_scan ?? true}
+                  onChange={(e) =>
                     setFormState((prevState) => ({
                       ...prevState,
                       formData: {
                         ...prevState.formData,
-                        recursive_scan: checked,
+                        recursive_scan: e.target.checked,
                       },
                     }))
                   }

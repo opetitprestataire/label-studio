@@ -21,13 +21,7 @@ export const s3Provider: ProviderConfig = {
       placeholder: "path/to/files/",
       schema: z.string().optional().default(""),
     },
-    {
-      name: "regex_filter",
-      type: "text",
-      label: "File Filter Regex",
-      placeholder: ".*csv or .*(jpe?g|png|tiff) or .\\w+-\\d+.text",
-      schema: z.string().optional().default(""),
-    },
+
     {
       name: "region_name",
       type: "text",
@@ -49,6 +43,7 @@ export const s3Provider: ProviderConfig = {
       required: true,
       placeholder: "AKIAIOSFODNN7EXAMPLE",
       autoComplete: "off",
+      accessKey: true,
       schema: z.string().min(1, "Access Key ID is required"),
     },
     {
@@ -58,6 +53,7 @@ export const s3Provider: ProviderConfig = {
       required: true,
       placeholder: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
       autoComplete: "new-password",
+      accessKey: true,
       schema: z.string().min(1, "Secret Access Key is required"),
     },
     {
@@ -67,23 +63,6 @@ export const s3Provider: ProviderConfig = {
       placeholder: "Session token (optional)",
       autoComplete: "new-password",
       schema: z.string().optional().default(""),
-    },
-    {
-      name: "use_blob_urls",
-      type: "select",
-      label: "Import method",
-      description: "Choose how to import your data from storage",
-      schema: z.boolean().default(false),
-      options: [
-        {
-          value: false,
-          label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)",
-        },
-        {
-          value: true,
-          label: "JSON - Treat each JSON or JSONL file as a task definition (one or more tasks per file)",
-        },
-      ],
     },
     {
       name: "presign",
@@ -102,20 +81,13 @@ export const s3Provider: ProviderConfig = {
       step: 1,
       schema: z.number().min(1).max(10080).default(15),
     },
-    {
-      name: "recursive_scan",
-      type: "toggle",
-      label: "Scan all sub-folders",
-      description: "Include files from all nested folders",
-      schema: z.boolean().default(true),
-    },
   ],
   layout: [
     {
       fields: ["bucket"],
     },
     {
-      fields: ["prefix", "regex_filter"],
+      fields: ["prefix"],
     },
     {
       fields: ["region_name", "s3_endpoint"],
@@ -124,13 +96,7 @@ export const s3Provider: ProviderConfig = {
       fields: ["aws_access_key_id", "aws_secret_access_key", "aws_session_token"],
     },
     {
-      fields: ["use_blob_urls"],
-    },
-    {
       fields: ["presign", "presign_ttl"],
-    },
-    {
-      fields: ["recursive_scan"],
     },
   ],
 };

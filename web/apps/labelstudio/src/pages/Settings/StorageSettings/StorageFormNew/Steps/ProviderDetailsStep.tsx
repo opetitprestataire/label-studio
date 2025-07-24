@@ -7,6 +7,7 @@ interface ProviderDetailsStepProps {
   errors: Record<string, string>;
   handleProviderFieldChange: (name: string, value: any) => void;
   provider?: string;
+  isEditMode?: boolean;
 }
 
 export const ProviderDetailsStep = ({
@@ -14,6 +15,7 @@ export const ProviderDetailsStep = ({
   errors,
   handleProviderFieldChange,
   provider,
+  isEditMode = false,
 }: ProviderDetailsStepProps) => {
   const providerConfig = getProviderConfig(provider);
 
@@ -54,6 +56,7 @@ export const ProviderDetailsStep = ({
         formData={formData}
         errors={errors}
         onChange={handleProviderFieldChange}
+        isEditMode={isEditMode}
       />
     </div>
   );

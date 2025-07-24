@@ -9,9 +9,10 @@ interface FieldRendererProps {
   value: any;
   onChange: (name: string, value: any) => void;
   error?: string;
+  isEditMode?: boolean;
 }
 
-export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onChange, error }) => {
+export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onChange, error, isEditMode = false }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value: inputValue, type } = e.target;
     const parsedValue = type === "number" ? Number(inputValue) : inputValue;
@@ -47,6 +48,17 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
     autoComplete: field.autoComplete,
   });
 
+  // Check if this is an access key field with placeholder value in edit mode
+  const isAccessKeyWithPlaceholder = field.accessKey && isEditMode && value === "••••••••••••••••";
+  
+  // Enhanced description for access key fields in edit mode
+  const getEnhancedDescription = () => {
+    if (isAccessKeyWithPlaceholder) {
+      return `${field.description || ""} (Currently using existing credentials - leave unchanged to keep current values)`;
+    }
+    return field.description || "";
+  };
+
   switch (field.type) {
     case "text":
     case "password":
@@ -57,6 +69,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
           value={value || ""}
           onChange={handleInputChange}
           {...getInputProps()}
+          description={getEnhancedDescription()}
         />
       );
 
@@ -81,6 +94,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
           value={value || ""}
           onChange={handleInputChange}
           {...getInputProps()}
+          description={getEnhancedDescription()}
         />
       );
 
