@@ -179,7 +179,7 @@ Label Studio Enterprise provides enhanced machine learning capabilities:
 
 Label Studio Enterprise supports active learning workflows that automatically update model predictions as labeling progresses.
 
-After each annotation, Label Studio can send a webhook to a connected machine learning backend. The backend uses the new data to retrain the model `(fit())`, and Label Studio fetches updated predictions (predict()) for the next task, creating a continuous feedback loop.
+After each annotation, Label Studio can send a webhook to a connected machine learning backend. The backend uses the new data to retrain the model `(fit())`, and Label Studio fetches updated predictions `(predict())` for the next task, creating a continuous feedback loop.
 
 Key components:
 
