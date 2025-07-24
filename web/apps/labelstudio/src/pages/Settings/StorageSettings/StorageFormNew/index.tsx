@@ -159,7 +159,6 @@ export const StorageFormNew = forwardRef<
   const [type, setType] = useState<string | undefined>("s3");
 
   const [filesPreview, setFilesPreview] = useState<any[] | null>(null);
-  const [loadingFilesPreiview, setLoadingFilesPreiview] = useState(false);
 
   // Error state
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -240,6 +239,44 @@ export const StorageFormNew = forwardRef<
     },
     onError: (error) => {
       // You might want to show an error message to the user here
+    },
+  });
+
+  // Load files preview mutation
+  const loadFilesPreviewMutation = useMutation({
+    mutationFn: async (previewData: any) => {
+      if (!api) throw new Error("API context not available");
+
+      // Clean the form data to remove placeholder access keys in edit mode
+      const cleanedData = cleanFormDataForSubmission(previewData);
+      const body = { ...cleanedData };
+
+      if (isDefined(storage?.id)) {
+        body.id = storage.id;
+      }
+
+      // TODO this needs to be dynamic
+      const type = "s3";
+
+      const response = await api.callApi<{ files: any[] }>("storageFiles", {
+        params: {
+          limit: 10,
+          target,
+          type,
+        },
+        body,
+      });
+
+      return response;
+    },
+    onSuccess: (response) => {
+      if (response?.files) {
+        setFilesPreview(response.files);
+      }
+    },
+    onError: (error) => {
+      // Handle error - could show a toast or error message
+      setFilesPreview(null);
     },
   });
 
@@ -519,38 +556,9 @@ export const StorageFormNew = forwardRef<
       return;
     }
 
-    setLoadingFilesPreiview(true);
-
-    // Get the form data directly from Atom state
-    const { formData } = formState;
-
-    // TODO this needs to be dynamic
-    const type = "s3";
-
-    // Clean the form data to remove placeholder access keys in edit mode
-    const cleanedData = cleanFormDataForSubmission(formData);
-    const body = { ...cleanedData };
-
-    if (isDefined(storage?.id)) {
-      body.id = storage.id;
-    }
-
-    // Use your API service directly instead of form.api
-    // You might need to adapt this to your actual API service
-    const response = await api!.callApi<{ files: any[] }>("storageFiles", {
-      params: {
-        limit: 10,
-        target,
-        type,
-      },
-      body,
-    });
-
-    if (response?.files) {
-      setFilesPreview(response.files);
-    }
-    setLoadingFilesPreiview(false);
-  }, [formState, target, storage, validateEntireForm, cleanFormDataForSubmission]);
+    // Use react-query mutation to load files preview
+    loadFilesPreviewMutation.mutate(formData);
+  }, [formData, validateEntireForm, loadFilesPreviewMutation]);
 
   const renderStepContent = () => {
     // In edit mode, step 0 is "Configure Connection", step 1 is "Preview & Import Settings", step 2 is "Review & Confirm"
@@ -625,7 +633,6 @@ export const StorageFormNew = forwardRef<
     // Reset local state
     setType(undefined);
     setFilesPreview(null);
-    setLoadingFilesPreiview(false);
 
     setErrors({});
     setConnectionChecked(false);
@@ -669,7 +676,7 @@ export const StorageFormNew = forwardRef<
           )}
 
           {(isEditMode ? currentStep === 1 : currentStep === 2) && (
-            <Button waiting={loadingFilesPreiview} onClick={loadFilesPreview}>
+            <Button waiting={loadFilesPreviewMutation.isLoading} onClick={loadFilesPreview}>
               Load Preview
             </Button>
           )}
