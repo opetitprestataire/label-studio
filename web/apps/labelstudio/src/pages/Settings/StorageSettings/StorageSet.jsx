@@ -6,8 +6,11 @@ import { Spinner } from "../../../components/Spinner/Spinner";
 import { ApiContext } from "../../../providers/ApiProvider";
 import { projectAtom } from "../../../providers/ProjectProvider";
 import { StorageCard } from "./StorageCard";
+import { StorageForm } from "./StorageForm";
 import { useAtomValue } from "jotai";
 import { useStorageCard } from "./hooks/useStorageCard";
+import { ff } from "@humansignal/core";
+import { StorageProviderForm } from "@humansignal/app-common/blocks/StorageProviderForm";
 
 export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
   const api = useContext(ApiContext);
@@ -40,8 +43,8 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
         title,
         closeOnClickOutside: false,
         style: { width: 960 },
-        bare: true,
-        body: (
+        bare: ff.isActive(ff.FF_NEW_STORAGES),
+        body: ff.isActive(ff.FF_NEW_STORAGES) ? (
           <StorageProviderForm
             title={title}
             target={target}
@@ -52,6 +55,18 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
             onSubmit={async () => {
               modalRef.close();
               fetchStorages();
+            }}
+          />
+        ) : (
+          <StorageForm
+            target={target}
+            storage={storage}
+            project={project.id}
+            rootClass={rootClass}
+            storageTypes={storageTypes}
+            onSubmit={async () => {
+              await fetchStorages();
+              modalRef.close();
             }}
           />
         ),
