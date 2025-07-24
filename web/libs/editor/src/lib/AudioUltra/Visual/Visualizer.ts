@@ -396,29 +396,21 @@ export class Visualizer extends Events<VisualizerEvents> {
 
   drawRequestId: number | null = null;
   drawRequestDry = false;
-  drawRequestPendingSince: number | null = null;
   draw(dry = false) {
     if (!isSyncedBuffering) {
       this._draw(dry);
       return;
     }
-    if (this.isDestroyed) return;
     if (this.drawRequestId) {
-      if (this.drawRequestPendingSince !== null && performance.now() - this.drawRequestPendingSince < 10) {
-        cancelAnimationFrame(this.drawRequestId);
-        this.drawRequestDry = this.drawRequestDry || dry;
-      }
+      this.drawRequestDry = this.drawRequestDry || dry;
     } else {
       this.drawRequestDry = dry;
+      this.drawRequestId = requestAnimationFrame(() => {
+        this.drawRequestId = null;
+        if (this.isDestroyed) return;
+        this._draw(this.drawRequestDry);
+      });
     }
-    if (this.drawRequestPendingSince === null) {
-      this.drawRequestPendingSince = performance.now();
-    }
-    this.drawRequestId = requestAnimationFrame(() => {
-      this.drawRequestId = null;
-      this._draw(this.drawRequestDry);
-      this.drawRequestPendingSince = null;
-    });
   }
 
   _draw(dry = false) {
