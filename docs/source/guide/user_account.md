@@ -14,7 +14,17 @@ date: 2024-01-03 12:03:59
 
 To access your user account and settings, click your user icon in the upper right and select **Account & Settings**. 
 
+<div class="opensource-only">
+
 ![Screenshot of the account and settings option](/images/admin/account_settings.png)
+
+</div>
+
+<div class="enterprise-only">
+
+![Screenshot of the account and settings option](/images/admin/account_settings_lse.png)
+
+</div>
 
 
 ## Personal info
