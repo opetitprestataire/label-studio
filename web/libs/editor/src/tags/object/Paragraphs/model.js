@@ -418,20 +418,32 @@ const PlayableAndSyncable = types
       if (!isDefined(idx) || !self._value || idx < 0 || idx >= self._value.length) return;
 
       const phrase = self._value[idx];
-      if (!isDefined(phrase.start)) return;
 
       if (self.playingId === idx) {
         return;
       }
 
+      // Check if audio is currently playing
+      const audio = self.audioRef?.current;
+      const isAudioPlaying = audio && !audio.paused;
+
+      // If audio is playing and phrase has timing data, use play() method for proper transition
+      if (isAudioPlaying && phrase.start !== undefined) {
+        self.play(idx);
+        return;
+      }
+
+      // Always set playingId for visual selection, regardless of audio
       self.playingId = idx;
 
-      if (self.syncSend) {
-        self.syncSend({ time: phrase.start, playing: false }, "seek");
-      } else {
-        const audio = self.audioRef?.current;
-        if (audio) {
-          audio.currentTime = phrase.start;
+      // Only handle audio/sync logic if audio timing data exists
+      if (phrase.start !== undefined) {
+        if (self.syncSend) {
+          self.syncSend({ time: phrase.start, playing: false }, "seek");
+        } else {
+          if (audio) {
+            audio.currentTime = phrase.start;
+          }
         }
       }
     },
@@ -440,17 +452,32 @@ const PlayableAndSyncable = types
       self._viewRef = ref;
     },
     selectPhraseText(phraseIndex) {
-      if (self._viewRef && typeof self._viewRef.selectText === "function") {
-        self._viewRef.selectText(phraseIndex);
-      }
+      self._viewRef?.selectText?.(phraseIndex);
     },
     selectAndAnnotatePhrase(phraseIndex) {
-      // Select the phrase text in the DOM
+      // Select text and create annotation
       self.selectPhraseText(phraseIndex);
-      // Now trigger annotation creation for the full phrase
-      if (self._viewRef && typeof self._viewRef.createAnnotationForPhrase === "function") {
-        self._viewRef.createAnnotationForPhrase(phraseIndex);
-      }
+      self._viewRef?.createAnnotationForPhrase?.(phraseIndex);
+    },
+
+    selectAllAndAnnotateCurrentPhrase() {
+      if (!self._value || self._value.length === 0) return;
+      const idx = Math.max(0, self.playingId);
+      self.selectAndAnnotatePhrase(idx);
+    },
+
+    goToNextPhrase() {
+      if (!self._value || self._value.length === 0) return;
+      const currentIdx = self.playingId >= 0 ? self.playingId : -1;
+      const nextIdx = (currentIdx + 1) % self._value.length;
+      self.seekToPhrase(nextIdx);
+    },
+
+    goToPreviousPhrase() {
+      if (!self._value || self._value.length === 0) return;
+      const currentIdx = Math.max(0, self.playingId);
+      const prevIdx = (currentIdx - 1 + self._value.length) % self._value.length;
+      self.seekToPhrase(prevIdx);
     },
   }));
 

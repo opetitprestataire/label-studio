@@ -21,7 +21,7 @@ const formatTime = (seconds) => {
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
 
-export const Phrases = observer(({ item, playingId, activeRef, setIsInViewport, hasSelectedLabels }) => {
+export const Phrases = observer(({ item, playingId, activeRef, setIsInViewPort, hasSelectedLabels }) => {
   const [animationKeyFrame, setAnimationKeyFrame] = useState(null);
   const [seek, setSeek] = useState(0);
   const [isSeek, setIsSeek] = useState(null);
@@ -85,7 +85,7 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewport, 
 
         observer = new IntersectionObserver(
           (entries) => {
-            setIsInViewport(entries[0].isIntersecting);
+            setIsInViewPort(entries[0].isIntersecting);
           },
           {
             rootMargin: "0px",
@@ -104,7 +104,7 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewport, 
     item.syncHandlers?.set("seek", (seek) => {
       item.handleSyncPlay(seek);
       setSeek(seek);
-      setIsInViewport(true);
+      setIsInViewPort(true);
     });
 
     return () => {
@@ -176,11 +176,12 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewport, 
 
     return (
       <div className={styles.phraseContainer}>
-        {isContentVisible && withAudio && !isNaN(v.start) && (
+        {isContentVisible && !isNaN(v.start) && (
           <Button
             look="string"
             className={isFF(FF_LSDV_E_278) ? styles.playNewUi : styles.play}
             aria-label={isPlaying ? "pause" : "play"}
+            disabled={!withAudio}
             icon={
               isPlaying ? (
                 isFF(FF_LSDV_E_278) ? (
@@ -196,8 +197,10 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewport, 
             }
             onClick={(e) => {
               e.stopPropagation();
-              setIsInViewport(true);
-              item.play(idx);
+              setIsInViewPort(true);
+              if (withAudio) {
+                item.play(idx);
+              }
             }}
           />
         )}

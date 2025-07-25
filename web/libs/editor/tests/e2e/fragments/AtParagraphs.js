@@ -8,7 +8,9 @@ module.exports = {
   _phraseDialoguetextSelector: "[class^='dialoguetext--']",
 
   getParagraphTextSelector(idx) {
-    return `${this._rootSelector} ${this._phraseSelector}:nth-child(${idx}) ${this._phraseDialoguetextSelector}`;
+    // Convert 1-based test index to 0-based data-testid index
+    const zeroBasedIdx = idx - 1;
+    return `[data-testid="phrase:${zeroBasedIdx}"] [class^='dialoguetext--']`;
   },
 
   selectTextByOffset(paragraphIdx, startOffset, endOffset) {

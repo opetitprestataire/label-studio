@@ -91,10 +91,6 @@ const Model = types
 
       return res;
     },
-
-    onClickRegion() {
-      self._selectArea();
-    },
   }));
 
 const ParagraphsRegionModel = types.compose(
