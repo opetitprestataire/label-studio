@@ -4,7 +4,6 @@ import styles from "./callout.module.scss";
 
 export const CalloutVariants = {
   warning: clsx(styles.variantWarning),
-  info: clsx(styles.variantInfo),
 };
 
 export type CalloutVariant = keyof typeof CalloutVariants;
@@ -24,7 +23,7 @@ export function Callout({
 }
 
 export function CalloutIcon({ children, className, ...rest }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) {
-  const cls = clsx(styles.icon, className);
+  const cls = clsx("", className);
   return (
     <div className={cls} {...rest}>
       {children}
