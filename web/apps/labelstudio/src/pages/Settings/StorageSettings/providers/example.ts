@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ProviderConfig } from "../types/provider";
+import { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
 
 // Example: Adding a new provider is now as simple as defining this configuration
 export const exampleProvider: ProviderConfig = {

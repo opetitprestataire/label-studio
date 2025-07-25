@@ -17,8 +17,8 @@ import { ApiContext } from "apps/labelstudio/src/providers/ApiProvider";
 import { isDefined } from "apps/labelstudio/src/utils/helpers";
 import { IconCross } from "@humansignal/icons";
 import { Stepper, ProviderSelectionStep, ProviderDetailsStep, PreviewStep, ReviewStep } from "./Steps";
-import { getProviderConfig, extractDefaultValues } from "./providers";
-import { assembleSchema } from "./types/provider";
+import { getProviderConfig, extractDefaultValues, addProvider } from "./providers";
+import { assembleSchema, type ProviderConfig } from "./types/provider";
 
 // FIXME: This is not an intended way of importing components. We need to migrate it to @humansignal/ui
 import { useModalControls } from "apps/labelstudio/src/components/Modal/ModalPopup";
@@ -26,70 +26,6 @@ import { useModalControls } from "apps/labelstudio/src/components/Modal/ModalPop
 // Step validation schemas
 const step1Schema = z.object({
   provider: z.string().min(1, "Please select a storage provider"),
-});
-
-// Provider-specific validation schemas
-const s3Schema = z.object({
-  bucket: z.string().min(1, "Bucket name is required"),
-  aws_access_key_id: z.string().min(1, "Access Key ID is required"),
-  aws_secret_access_key: z.string().min(1, "Secret Access Key is required"),
-  region_name: z.string().optional(),
-  aws_session_token: z.string().optional(),
-  prefix: z.string().optional(),
-  s3_endpoint: z.string().optional(),
-  presign: z.boolean().default(false),
-  presign_ttl: z.number().min(1).max(10080).optional(),
-  use_blob_urls: z.boolean().default(false),
-  recursive_scan: z.boolean().default(true),
-  regex_filter: z.string().optional(),
-});
-
-const gcpSchema = z.object({
-  bucket: z.string().min(1, "Bucket name is required"),
-  google_application_credentials: z.string().min(1, "Service Account Key is required"),
-  project_id: z.string().optional(),
-  prefix: z.string().optional(),
-  presign: z.boolean().default(false),
-  presign_ttl: z.number().min(1).max(10080).optional(),
-  use_blob_urls: z.boolean().default(false),
-  recursive_scan: z.boolean().default(true),
-  regex_filter: z.string().optional(),
-});
-
-const azureSchema = z.object({
-  container: z.string().min(1, "Container name is required"),
-  account_name: z.string().min(1, "Storage Account Name is required"),
-  account_key: z.string().min(1, "Storage Account Key is required"),
-  sas_token: z.string().optional(),
-  prefix: z.string().optional(),
-  presign: z.boolean().default(false),
-  presign_ttl: z.number().min(1).max(10080).optional(),
-  use_blob_urls: z.boolean().default(false),
-  recursive_scan: z.boolean().default(true),
-  regex_filter: z.string().optional(),
-});
-
-const redisSchema = z.object({
-  host: z.string().min(1, "Host is required"),
-  port: z.number().min(1).max(65535, "Port must be between 1 and 65535"),
-  db: z.number().min(0).max(15, "Database must be between 0 and 15"),
-  password: z.string().optional(),
-  prefix: z.string().optional(),
-  presign: z.boolean().default(false),
-  presign_ttl: z.number().min(1).max(10080).optional(),
-  use_blob_urls: z.boolean().default(false),
-  recursive_scan: z.boolean().default(true),
-  regex_filter: z.string().optional(),
-});
-
-const localFilesSchema = z.object({
-  path: z.string().min(1, "Path is required"),
-  prefix: z.string().optional(),
-  presign: z.boolean().default(false),
-  presign_ttl: z.number().min(1).max(10080).optional(),
-  use_blob_urls: z.boolean().default(false),
-  recursive_scan: z.boolean().default(true),
-  regex_filter: z.string().optional(),
 });
 
 // Combine all schemas
@@ -155,9 +91,10 @@ export const StorageProviderForm = forwardRef<
       title: string;
       name: string;
     }[];
+    providers: Record<string, ProviderConfig>;
     onClose?: () => void;
   }
->(({ onSubmit, target, project, storage, title, storageTypes, onClose = () => {} }, ref) => {
+>(({ onSubmit, target, project, storage, title, storageTypes, providers, onClose = () => {} }, ref) => {
   const api = useContext(ApiContext);
   const modal = useModalControls();
   const formRef = ref ?? useRef();
@@ -291,6 +228,15 @@ export const StorageProviderForm = forwardRef<
       },
     }));
   }, [project]); // Update when project prop changes
+
+  useEffect(() => {
+    const configs = Object.entries(providers);
+    console.log(configs);
+    for (const [name, config] of configs) {
+      console.log(name, config);
+      addProvider(name, config);
+    }
+  }, [providers]);
 
   // Initialize form data with provider defaults when provider changes
   useEffect(() => {

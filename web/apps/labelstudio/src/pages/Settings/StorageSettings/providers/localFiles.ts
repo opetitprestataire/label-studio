@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { ProviderConfig } from "../types/provider";
+import type { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
 
 export const localFilesProvider: ProviderConfig = {
   name: "localfiles",
@@ -22,4 +22,5 @@ export const localFilesProvider: ProviderConfig = {
   ],
 };
 
-export default localFilesProvider; 
+export default localFilesProvider;
+

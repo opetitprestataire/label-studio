@@ -1,5 +1,5 @@
+import { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
 import { z } from "zod";
-import type { ProviderConfig } from "../types/provider";
 
 export const azureProvider: ProviderConfig = {
   name: "azure",

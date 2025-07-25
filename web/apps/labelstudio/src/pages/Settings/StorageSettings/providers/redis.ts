@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { ProviderConfig } from "../types/provider";
+import { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
 
 export const redisProvider: ProviderConfig = {
   name: "redis",

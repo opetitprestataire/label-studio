@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { ProviderConfig } from "../types/provider";
+import type { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
 
 export const s3Provider: ProviderConfig = {
   name: "s3",
