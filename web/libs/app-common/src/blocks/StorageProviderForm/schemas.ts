@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { FieldDefinition } from "./types/common";
 import { getProviderConfig } from "./providers";
 import { assembleSchema } from "./types/provider";
 
@@ -15,17 +16,22 @@ export const getProviderSchema = (provider: string, isEditMode = false) => {
   }
 
   // Combine provider-specific fields with common fields like title
-  const commonFields = [
+  const commonFields: FieldDefinition[] = [
     {
       name: "title",
-      type: "text" as const,
+      type: "text",
       label: "Storage Title",
       required: true,
       schema: z.string().min(1, "Storage title is required"),
     },
   ];
 
-  const allFields = [...commonFields, ...providerConfig.fields];
+  // Filter out message fields and combine with common fields
+  const providerFields = providerConfig.fields.filter((field): field is FieldDefinition => 
+    'type' in field && field.type !== 'message'
+  );
+  
+  const allFields = [...commonFields, ...providerFields];
   return assembleSchema(allFields, isEditMode);
 };
 
@@ -33,10 +39,10 @@ export const getProviderSchema = (provider: string, isEditMode = false) => {
 export const formatValidationErrors = (zodError: z.ZodError): Record<string, string> => {
   const errors: Record<string, string> = {};
 
-  zodError.errors.forEach((error) => {
-    const fieldName = error.path.join(".");
+  zodError.issues.forEach((issue) => {
+    const fieldName = issue.path.join(".");
     if (fieldName) {
-      errors[fieldName] = error.message;
+      errors[fieldName] = issue.message;
     }
   });
 
