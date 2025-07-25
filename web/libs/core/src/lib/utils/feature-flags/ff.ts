@@ -1,3 +1,5 @@
+import { FF_NEW_STORAGES } from "./flags";
+
 const FEATURE_FLAGS = window.APP_SETTINGS?.feature_flags || {};
 
 // TODO: remove the override + if statement once LSE and LSO start building
@@ -9,7 +11,7 @@ const FLAGS_OVERRIDE: Record<string, boolean> = {
   //
   // Add your flags overrides as following:
   // [FF_FLAG_NAME]: boolean
-  // [FF_NEW_STORAGES]: false,
+  [FF_NEW_STORAGES]: true,
 };
 
 /**

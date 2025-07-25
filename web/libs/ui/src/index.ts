@@ -7,6 +7,7 @@ export * from "./lib/Userpic/Userpic";
 export * from "./lib/badge/badge";
 export * from "./lib/button/button";
 export * from "./lib/checkbox/checkbox";
+export * from "./lib/callout/callout";
 export * from "./lib/code-block/code-block";
 export * from "./lib/code-block/code-block";
 export * from "./lib/code-editor/code-editor";

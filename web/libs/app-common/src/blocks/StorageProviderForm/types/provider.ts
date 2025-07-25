@@ -1,3 +1,4 @@
+import type { CalloutVariant } from "@humansignal/ui";
 import type { FC } from "react";
 import { z } from "zod";
 
@@ -12,7 +13,7 @@ export interface FieldDefinition {
   description?: string;
   placeholder?: string;
   required?: boolean;
-  schema: z.ZodTypeAny;
+  schema: z.ZodSchema;
   options?: Array<{ value: string | boolean | number; label: string }>; // For select fields
   min?: number; // For number/counter fields
   max?: number; // For number/counter fields
@@ -20,6 +21,14 @@ export interface FieldDefinition {
   autoComplete?: string; // For input fields
   gridCols?: number; // How many columns this field should span (1-12)
   accessKey?: boolean; // Whether this field is an access key/credential that should be handled specially in edit mode
+}
+
+export interface MessageDefinition {
+  name: string;
+  type: "message";
+  content: JSX.Element;
+  gridCols?: number;
+  variant?: CalloutVariant;
 }
 
 // Layout row definition
@@ -33,7 +42,7 @@ export interface ProviderConfig {
   name: string;
   title: string;
   description: string;
-  fields: FieldDefinition[];
+  fields: (FieldDefinition | MessageDefinition)[];
   layout: LayoutRow[];
   icon?: FC<any>;
 }
@@ -139,11 +148,17 @@ export function extractDefaultValues(fields: FieldDefinition[]): Record<string, 
 }
 
 // Helper function to get field by name
-export function getFieldByName(fields: FieldDefinition[], name: string): FieldDefinition | undefined {
+export function getFieldByName(
+  fields: (FieldDefinition | MessageDefinition)[],
+  name: string,
+): FieldDefinition | MessageDefinition | undefined {
   return fields.find((field) => field.name === name);
 }
 
 // Helper function to get fields for a specific row
-export function getFieldsForRow(fields: FieldDefinition[], rowFields: string[]): FieldDefinition[] {
+export function getFieldsForRow(
+  fields: (FieldDefinition | MessageDefinition)[],
+  rowFields: string[],
+): (FieldDefinition | MessageDefinition)[] {
   return rowFields.map((fieldName) => getFieldByName(fields, fieldName)).filter(Boolean) as FieldDefinition[];
 }

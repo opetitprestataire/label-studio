@@ -39,7 +39,7 @@ export const ProviderGrid = ({ providers, selectedProvider, onProviderSelect, er
             >
               {Icon && <Icon className="w-8 h-8" />}
               <div className="flex-1 min-w-0">
-                <h3 className="text-body-medium text-neutral-content truncate">{provider.title}</h3>
+                <h3 className="text-body-medium text-neutral-content truncate whitespace-pre">{provider.title}</h3>
               </div>
             </button>
           );

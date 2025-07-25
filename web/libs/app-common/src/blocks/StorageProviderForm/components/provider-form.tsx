@@ -1,6 +1,7 @@
 import type React from "react";
-import { FieldRenderer } from "./file-renderer";
+import { FieldRenderer } from "./field-renderer";
 import { type ProviderConfig, getFieldsForRow } from "../types/provider";
+import { Callout } from "@humansignal/ui";
 
 interface ProviderFormProps {
   provider: ProviderConfig;
@@ -30,15 +31,24 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
           }}
         >
           {getFieldsForRow(provider.fields, row.fields).map((field) => (
-            <div key={field.name} className={`col-span-${field.gridCols || 1}`}>
-              <FieldRenderer
-                field={field}
-                value={formData[field.name]}
-                onChange={onChange}
-                onBlur={onBlur}
-                error={errors[field.name]}
-                isEditMode={isEditMode}
-              />
+            <div
+              key={field.name}
+              style={{
+                gridColumn: field.gridCols ?? "initial",
+              }}
+            >
+              {field.type === "message" ? (
+                <Callout variant={field.variant ?? "info"}>{field.content}</Callout>
+              ) : (
+                <FieldRenderer
+                  field={field}
+                  value={formData[field.name]}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  error={errors[field.name]}
+                  isEditMode={isEditMode}
+                />
+              )}
             </div>
           ))}
         </div>
