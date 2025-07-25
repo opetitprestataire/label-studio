@@ -2,7 +2,7 @@ import type React from "react";
 import { Label, Toggle, Select } from "@humansignal/ui";
 import Counter from "apps/labelstudio/src/components/Form/Elements/Counter/Counter";
 import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
-import type { FieldDefinition } from "../types/provider";
+import type { FieldDefinition } from "../types/common";
 
 interface FieldRendererProps {
   field: FieldDefinition;
@@ -125,7 +125,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
             options={field.options || []}
             placeholder={field.placeholder}
           />
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm text-negative-content">{error}</p>}
         </div>
       );
 
@@ -140,29 +140,29 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           <div>
             <Label className="text-sm font-medium">{field.label}</Label>
             {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
-            {error && <p className="text-sm text-red-500">{error}</p>}
+            {error && <p className="text-sm text-negative-content">{error}</p>}
           </div>
         </div>
       );
 
-          case "counter":
-        const counterValue = value !== undefined && value !== null ? value : (field.min || 0);
-        return (
-          <Counter
-            name={field.name}
-            label={field.label}
-            value={counterValue}
-            min={field.min || 0}
-            max={field.max || 100}
-            step={field.step || 1}
-            onChange={handleCounterChange}
-            className=""
-            validate=""
-            required={field.required || false}
-            skip={false}
-            labelProps={{}}
-          />
-        );
+    case "counter":
+      const counterValue = value !== undefined && value !== null ? value : field.min || 0;
+      return (
+        <Counter
+          name={field.name}
+          label={field.label}
+          value={counterValue}
+          min={field.min || 0}
+          max={field.max || 100}
+          step={field.step || 1}
+          onChange={handleCounterChange}
+          className=""
+          validate=""
+          required={field.required || false}
+          skip={false}
+          labelProps={{}}
+        />
+      );
 
     default:
       return <div className="text-red-500">Unknown field type: {field.type}</div>;

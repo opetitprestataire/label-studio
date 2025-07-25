@@ -48,8 +48,8 @@ export const ProviderDetailsStep = ({
           required={true}
           label="Storage Title"
           description="This name will help you identify this connection in your project"
-          footer={errors.title || ""}
-          className={errors.title ? "border-red-500" : ""}
+          footer={errors.title ? <span className="text-negative-content">{errors.title}</span> : ""}
+          className={errors.title ? "border-negative-content" : ""}
         />
       </div>
 

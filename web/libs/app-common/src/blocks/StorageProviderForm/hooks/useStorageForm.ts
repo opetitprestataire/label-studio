@@ -130,7 +130,6 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
   // Validate entire form
   const validateEntireForm = useCallback(() => {
     const currentSchema = steps[currentStep]?.schema;
-    console.log(currentSchema, steps, currentStep, formData);
     if (!currentSchema) return true;
 
     try {
@@ -138,7 +137,6 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       setErrors({});
       return true;
     } catch (error) {
-      console.log(error, error instanceof z.ZodError, currentSchema);
       if (error instanceof z.ZodError) {
         const formattedErrors = formatValidationErrors(error);
         setErrors(formattedErrors);
