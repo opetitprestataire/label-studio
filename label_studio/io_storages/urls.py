@@ -66,9 +66,9 @@ from io_storages.s3.api import (
     S3ImportStorageDetailAPI,
     S3ImportStorageFormLayoutAPI,
     S3ImportStorageListAPI,
+    S3ImportStorageListFilesAPI,
     S3ImportStorageSyncAPI,
     S3ImportStorageValidateAPI,
-    S3ImportStorageListFilesAPI
 )
 
 app_name = 'storages'

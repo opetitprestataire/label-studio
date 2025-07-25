@@ -10,7 +10,7 @@ import traceback as tb
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from datetime import datetime
-from typing import Union
+from typing import Any, Iterator, Union
 from urllib.parse import urljoin
 
 import django_rq
@@ -230,8 +230,29 @@ class Storage(StorageInfo):
 
 
 class ImportStorage(Storage):
-    def iterkeys(self):
-        return iter(())
+    def iter_objects(self) -> Iterator[Any]:
+        """
+        Returns:
+            Iterator[Any]: An iterator for objects in the storage.
+        """
+        raise NotImplementedError
+
+    def iter_keys(self) -> Iterator[str]:
+        """
+        Returns:
+            Iterator[str]: An iterator of keys for each object in the storage.
+        """
+        raise NotImplementedError
+
+    def get_unified_metadata(self, obj: Any) -> dict:
+        """
+        Args:
+            obj: The storage object to get metadata for
+        Returns:
+            dict: A dictionary of metadata for the object with keys:
+            'key', 'last_modified', 'size'.
+        """
+        raise NotImplementedError
 
     def get_data(self, key) -> list[StorageObject]:
         raise NotImplementedError
@@ -430,7 +451,7 @@ class ImportStorage(Storage):
         )
 
         tasks_for_webhook = []
-        for key in self.iterkeys():
+        for key in self.iter_keys():
             # w/o Dataflow
             # pubsub.push(topic, key)
             # -> GF.pull(topic, key) + env -> add_task()
