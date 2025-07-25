@@ -159,7 +159,12 @@ class StorageValidateAPI(generics.CreateAPIView):
 class ImportStorageListFilesAPI(generics.CreateAPIView):
     # permission_required = all_permissions.projects_change
     parser_classes = (JSONParser, FormParser, MultiPartParser)
+    serializer_class = None  # Default serializer
 
+    def __init__(self, serializer_class=None, *args, **kwargs):
+        self.serializer_class = serializer_class
+        super().__init__(*args, **kwargs)
+    
     def create(self, request, *args, **kwargs):
         from .functions import validate_storage_instance
 
@@ -171,6 +176,7 @@ class ImportStorageListFilesAPI(generics.CreateAPIView):
             for object in instance.iter_objects():
                 files.append(instance.get_unified_metadata(object))
                 if len(files) >= limit:
+                    files.append({'key': '...', 'last_modified': '...', 'size': '...'})
                     break
 
             return Response({'files': files})

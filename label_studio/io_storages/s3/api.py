@@ -12,7 +12,6 @@ from io_storages.api import (
     ImportStorageDetailAPI,
     ImportStorageFormLayoutAPI,
     ImportStorageListAPI,
-    ImportStorageListFilesAPI,
     ImportStorageSyncAPI,
     ImportStorageValidateAPI,
 )
@@ -141,10 +140,6 @@ class S3ImportStorageDetailAPI(ImportStorageDetailAPI):
     ),
 )
 class S3ImportStorageSyncAPI(ImportStorageSyncAPI):
-    serializer_class = S3ImportStorageSerializer
-
-
-class S3ImportStorageListFilesAPI(ImportStorageListFilesAPI):
     serializer_class = S3ImportStorageSerializer
 
 

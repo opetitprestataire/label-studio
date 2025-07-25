@@ -1,6 +1,5 @@
 import { Label } from "@humansignal/ui";
 import { useMemo, useEffect } from "react";
-import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
 import { ProviderGrid } from "../components";
 
 interface ProviderSelectionStepProps {

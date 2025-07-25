@@ -145,24 +145,24 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         </div>
       );
 
-          case "counter":
-        const counterValue = value !== undefined && value !== null ? value : (field.min || 0);
-        return (
-          <Counter
-            name={field.name}
-            label={field.label}
-            value={counterValue}
-            min={field.min || 0}
-            max={field.max || 100}
-            step={field.step || 1}
-            onChange={handleCounterChange}
-            className=""
-            validate=""
-            required={field.required || false}
-            skip={false}
-            labelProps={{}}
-          />
-        );
+    case "counter":
+      const counterValue = value !== undefined && value !== null ? value : field.min || 0;
+      return (
+        <Counter
+          name={field.name}
+          label={field.label}
+          value={counterValue}
+          min={field.min || 0}
+          max={field.max || 100}
+          step={field.step || 1}
+          onChange={handleCounterChange}
+          className=""
+          validate=""
+          required={field.required || false}
+          skip={false}
+          labelProps={{}}
+        />
+      );
 
     default:
       return <div className="text-red-500">Unknown field type: {field.type}</div>;

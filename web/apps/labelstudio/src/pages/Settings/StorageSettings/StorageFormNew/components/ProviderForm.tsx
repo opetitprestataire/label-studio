@@ -1,6 +1,6 @@
-import React from "react";
+import type React from "react";
 import { FieldRenderer } from "./FieldRenderer";
-import { ProviderConfig, getFieldsForRow } from "../types/provider";
+import { type ProviderConfig, getFieldsForRow } from "../types/provider";
 
 interface ProviderFormProps {
   provider: ProviderConfig;
@@ -11,7 +11,14 @@ interface ProviderFormProps {
   isEditMode?: boolean;
 }
 
-export const ProviderForm: React.FC<ProviderFormProps> = ({ provider, formData, errors, onChange, onBlur, isEditMode = false }) => {
+export const ProviderForm: React.FC<ProviderFormProps> = ({
+  provider,
+  formData,
+  errors,
+  onChange,
+  onBlur,
+  isEditMode = false,
+}) => {
   return (
     <div className="space-y-6">
       {provider.layout.map((row, rowIndex) => (
@@ -32,4 +39,4 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({ provider, formData, 
       ))}
     </div>
   );
-}; 
+};

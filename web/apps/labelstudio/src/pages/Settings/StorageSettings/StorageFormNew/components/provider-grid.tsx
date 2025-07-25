@@ -175,9 +175,7 @@ export const ProviderGrid = ({
             >
               {getProviderIcon(provider.name)}
               <div className="flex-1 min-w-0">
-                <h3 className="text-body-medium text-neutral-content truncate">
-                  {provider.title}
-                </h3>
+                <h3 className="text-body-medium text-neutral-content truncate">{provider.title}</h3>
               </div>
               {isSelected && (
                 <div className="absolute top-tighter right-tighter">
@@ -199,10 +197,8 @@ export const ProviderGrid = ({
           );
         })}
       </div>
-      
-      {error && (
-        <p className="text-body-small text-negative-content">{error}</p>
-      )}
+
+      {error && <p className="text-body-small text-negative-content">{error}</p>}
     </div>
   );
-}; 
+};

@@ -71,4 +71,4 @@ export const azureProvider: ProviderConfig = {
   ],
 };
 
-export default azureProvider; 
+export default azureProvider;

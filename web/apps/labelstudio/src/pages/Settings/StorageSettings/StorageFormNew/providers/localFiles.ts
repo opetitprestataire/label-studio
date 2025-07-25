@@ -22,4 +22,4 @@ export const localFilesProvider: ProviderConfig = {
   ],
 };
 
-export default localFilesProvider; 
+export default localFilesProvider;

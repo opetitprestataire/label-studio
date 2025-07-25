@@ -189,16 +189,18 @@ export const PreviewStep = ({
                       },
                     }));
                   }}
-                  options={[
-                    {
-                      value: "Files",
-                      label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)",
-                    },
-                    {
-                      value: "JSON",
-                      label: "JSON - Treat each JSON or JSONL file as a task definition (one or more tasks per file)",
-                    },
-                  ] as any}
+                  options={
+                    [
+                      {
+                        value: "Files",
+                        label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)",
+                      },
+                      {
+                        value: "JSON",
+                        label: "JSON - Treat each JSON or JSONL file as a task definition (one or more tasks per file)",
+                      },
+                    ] as any
+                  }
                   placeholder="Select import method"
                 />
               </div>
@@ -249,8 +251,8 @@ export const PreviewStep = ({
                 </div>
                 <h3 className="font-medium mb-1">No Files Found</h3>
                 <p className="text-sm text-muted-foreground max-w-md">
-                  No files matching your current criteria were found. Try adjusting your filter settings and reload
-                  the preview.
+                  No files matching your current criteria were found. Try adjusting your filter settings and reload the
+                  preview.
                 </p>
               </div>
             ) : (
@@ -278,4 +280,4 @@ export const PreviewStep = ({
       </div>
     </div>
   );
-}; 
+};

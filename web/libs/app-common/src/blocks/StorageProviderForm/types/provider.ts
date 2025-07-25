@@ -37,7 +37,7 @@ export interface ProviderConfig {
 }
 
 // Helper function to assemble the complete schema from field definitions
-export function assembleSchema(fields: FieldDefinition[], isEditMode: boolean = false): z.ZodObject<any> {
+export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z.ZodObject<any> {
   const schemaObject: Record<string, z.ZodTypeAny> = {};
 
   fields.forEach((field) => {

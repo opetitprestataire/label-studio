@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ProviderConfig } from "../types/provider";
+import type { ProviderConfig } from "../types/provider";
 
 // Example: Adding a new provider is now as simple as defining this configuration
 export const exampleProvider: ProviderConfig = {
@@ -76,4 +76,4 @@ export const exampleProvider: ProviderConfig = {
       fields: ["use_ssl", "timeout"],
     },
   ],
-}; 
+};

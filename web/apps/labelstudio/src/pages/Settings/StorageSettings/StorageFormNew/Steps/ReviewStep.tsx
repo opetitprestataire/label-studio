@@ -81,4 +81,4 @@ export const ReviewStep = ({ formData, filesPreview, formatSize }: ReviewStepPro
       </div>
     </div>
   );
-}; 
+};
