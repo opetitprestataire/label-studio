@@ -1,51 +1,5 @@
-import type { CalloutVariant } from "@humansignal/ui";
-import type { FC } from "react";
 import { z } from "zod";
-
-// Field types that can be rendered
-export type FieldType = "text" | "password" | "number" | "select" | "toggle" | "counter" | "textarea";
-
-// Field definition interface
-export interface FieldDefinition {
-  name: string;
-  type: FieldType;
-  label: string;
-  description?: string;
-  placeholder?: string;
-  required?: boolean;
-  schema: z.ZodSchema;
-  options?: Array<{ value: string | boolean | number; label: string }>; // For select fields
-  min?: number; // For number/counter fields
-  max?: number; // For number/counter fields
-  step?: number; // For number/counter fields
-  autoComplete?: string; // For input fields
-  gridCols?: number; // How many columns this field should span (1-12)
-  accessKey?: boolean; // Whether this field is an access key/credential that should be handled specially in edit mode
-}
-
-export interface MessageDefinition {
-  name: string;
-  type: "message";
-  content: JSX.Element;
-  gridCols?: number;
-  variant?: CalloutVariant;
-}
-
-// Layout row definition
-export interface LayoutRow {
-  fields: string[]; // Array of field names that should be on the same row
-  gap?: number; // Gap between fields in the row
-}
-
-// Provider configuration interface
-export interface ProviderConfig {
-  name: string;
-  title: string;
-  description: string;
-  fields: (FieldDefinition | MessageDefinition)[];
-  layout: LayoutRow[];
-  icon?: FC<any>;
-}
+import type { FieldDefinition, MessageDefinition } from "./common";
 
 // Helper function to assemble the complete schema from field definitions
 export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z.ZodObject<any> {
@@ -69,10 +23,11 @@ export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z
 }
 
 // Helper function to extract default values from Zod schemas
-export function extractDefaultValues(fields: FieldDefinition[]): Record<string, any> {
+export function extractDefaultValues(fields: (FieldDefinition | MessageDefinition)[]): Record<string, any> {
   const defaultValues: Record<string, any> = {};
 
   fields.forEach((field) => {
+    if (field.type === "message") return;
     try {
       // Try to get the default value from the schema by accessing the internal structure
       const schemaAny = field.schema as any;
@@ -116,8 +71,6 @@ export function extractDefaultValues(fields: FieldDefinition[]): Record<string, 
           case "toggle":
             defaultValues[field.name] = false;
             break;
-          default:
-            defaultValues[field.name] = "";
         }
       }
     } catch (error) {
@@ -138,8 +91,6 @@ export function extractDefaultValues(fields: FieldDefinition[]): Record<string, 
         case "toggle":
           defaultValues[field.name] = false;
           break;
-        default:
-          defaultValues[field.name] = "";
       }
     }
   });

@@ -1,8 +1,8 @@
 import { useCallback, useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { z } from "zod";
-import { formStateAtom, type FormState } from "../atoms";
-import { formatValidationErrors, getProviderSchema, step1Schema } from "../schemas";
+import { formStateAtom } from "../atoms";
+import { formatValidationErrors } from "../schemas";
 import { getProviderConfig } from "../providers";
 import { extractDefaultValues } from "../types/provider";
 
@@ -45,7 +45,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
 
       if (providerConfig) {
         providerConfig.fields.forEach((field) => {
-          if (field.accessKey) {
+          if (field.type !== "message" && field.accessKey) {
             // Fill access key fields with placeholder values in edit mode
             formDataWithPlaceholders[field.name] = "••••••••••••••••";
           } else if (field.type === "counter") {
@@ -130,6 +130,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
   // Validate entire form
   const validateEntireForm = useCallback(() => {
     const currentSchema = steps[currentStep]?.schema;
+    console.log(currentSchema, steps, currentStep, formData);
     if (!currentSchema) return true;
 
     try {
@@ -137,6 +138,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       setErrors({});
       return true;
     } catch (error) {
+      console.log(error, error instanceof z.ZodError, currentSchema);
       if (error instanceof z.ZodError) {
         const formattedErrors = formatValidationErrors(error);
         setErrors(formattedErrors);
@@ -150,7 +152,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
   const handleProviderFieldChange = useCallback(
     (name: string, value: any) => {
       // If changing provider, get new defaults first
-      if (name === 'provider') {
+      if (name === "provider") {
         const providerConfig = getProviderConfig(value);
         if (providerConfig) {
           const defaultValues = extractDefaultValues(providerConfig.fields);
@@ -190,12 +192,15 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
     [validateSingleField],
   );
 
-  const setCurrentStep = useCallback((step: number) => {
-    setFormState((prevState) => ({
-      ...prevState,
-      currentStep: step,
-    }));
-  }, [setFormState]);
+  const setCurrentStep = useCallback(
+    (step: number) => {
+      setFormState((prevState) => ({
+        ...prevState,
+        currentStep: step,
+      }));
+    },
+    [setFormState],
+  );
 
   const resetForm = useCallback(() => {
     setFormState({
@@ -225,4 +230,4 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
     setCurrentStep,
     resetForm,
   };
-}; 
+};

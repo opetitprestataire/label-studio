@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { type ProviderConfig, assembleSchema, extractDefaultValues } from "./types/provider";
+import type { ProviderConfig, FieldDefinition } from "./types/common";
+import { assembleSchema, extractDefaultValues } from "./types/provider";
 
 // Registry of all available providers
 export const providerRegistry: Record<string, ProviderConfig> = {};
@@ -21,7 +22,8 @@ export function getProviderSchema(providerName: string) {
   if (!config) {
     return z.object({}); // Empty schema for unknown providers
   }
-  return assembleSchema(config.fields);
+  const fieldDefinitions = config.fields.filter((field): field is FieldDefinition => 'type' in field && field.type !== 'message');
+  return assembleSchema(fieldDefinitions);
 }
 
 // Helper function to get default values for a provider
@@ -30,7 +32,8 @@ export function getProviderDefaultValues(providerName: string): Record<string, a
   if (!config) {
     return {}; // Empty defaults for unknown providers
   }
-  return extractDefaultValues(config.fields);
+  const fieldDefinitions = config.fields.filter((field): field is FieldDefinition => 'type' in field && field.type !== 'message');
+  return extractDefaultValues(fieldDefinitions);
 }
 
 // Helper function to get all available providers
@@ -42,6 +45,3 @@ export function getAvailableProviders(): ProviderConfig[] {
 export function getProviderByName(name: string): ProviderConfig | undefined {
   return providerRegistry[name.toLowerCase()];
 }
-
-// Re-export extractDefaultValues for convenience
-export { extractDefaultValues } from "./types/provider";
