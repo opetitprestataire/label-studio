@@ -1,6 +1,7 @@
 import { Label } from "@humansignal/ui";
-import { useMemo, useEffect } from "react";
+import { useEffect } from "react";
 import { ProviderGrid } from "../components";
+import type { ProviderConfig } from "../types/provider";
 
 interface ProviderSelectionStepProps {
   formData: {
@@ -11,32 +12,23 @@ interface ProviderSelectionStepProps {
   };
   handleSelectChange: (name: string, value: string) => void;
   setFormState: (updater: (prevState: any) => any) => void;
-  storageTypes?: any[];
   storageTypesLoading?: boolean;
   target?: "import" | "export";
+  providers: Record<string, ProviderConfig>;
 }
 
 export const ProviderSelectionStep = ({
   formData,
   errors,
   handleSelectChange,
-  storageTypes = [],
+  providers,
 }: ProviderSelectionStepProps) => {
-  // Process storage types data
-  const storageTypeOptions = useMemo(() => {
-    if (!storageTypes || !Array.isArray(storageTypes)) {
-      return [];
-    }
-
-    return storageTypes;
-  }, [storageTypes]);
-
   // Set default provider if none is selected and we have options
   useEffect(() => {
-    if (!formData.provider && storageTypeOptions.length > 0) {
-      handleSelectChange("provider", storageTypeOptions[0].name);
+    if (!formData.provider && Object.entries(providers).length > 0) {
+      handleSelectChange("provider", providers[0].name);
     }
-  }, [storageTypeOptions, formData.provider, handleSelectChange]);
+  }, [providers, formData.provider, handleSelectChange]);
 
   return (
     <div className="space-y-6">
@@ -50,7 +42,7 @@ export const ProviderSelectionStep = ({
           Storage Provider
         </Label>
         <ProviderGrid
-          providers={storageTypeOptions}
+          providers={providers}
           selectedProvider={formData.provider}
           onProviderSelect={(providerName) => handleSelectChange("provider", providerName)}
           error={errors.provider}

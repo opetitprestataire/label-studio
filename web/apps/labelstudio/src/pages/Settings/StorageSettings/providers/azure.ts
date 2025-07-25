@@ -1,10 +1,12 @@
-import { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
+import type { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
+import { IconCloudProviderAzure } from "@humansignal/icons";
 import { z } from "zod";
 
 export const azureProvider: ProviderConfig = {
   name: "azure",
   title: "Azure Blob Storage",
   description: "Configure your Azure Blob Storage connection with all required Label Studio settings",
+  icon: IconCloudProviderAzure,
   fields: [
     {
       name: "container",
@@ -71,4 +73,4 @@ export const azureProvider: ProviderConfig = {
   ],
 };
 
-export default azureProvider; 
+export default azureProvider;

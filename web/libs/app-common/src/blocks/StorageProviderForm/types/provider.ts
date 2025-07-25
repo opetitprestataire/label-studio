@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import { z } from "zod";
 
 // Field types that can be rendered
@@ -34,10 +35,11 @@ export interface ProviderConfig {
   description: string;
   fields: FieldDefinition[];
   layout: LayoutRow[];
+  icon?: FC<any>;
 }
 
 // Helper function to assemble the complete schema from field definitions
-export function assembleSchema(fields: FieldDefinition[], isEditMode: boolean = false): z.ZodObject<any> {
+export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z.ZodObject<any> {
   const schemaObject: Record<string, z.ZodTypeAny> = {};
 
   fields.forEach((field) => {

@@ -80,12 +80,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
     const { currentStep, formData } = formState;
 
     // Initialize API hooks
-    const {
-      testConnectionMutation,
-      createStorageMutation,
-      loadFilesPreviewMutation,
-      action,
-    } = useStorageApi({
+    const { testConnectionMutation, createStorageMutation, loadFilesPreviewMutation, action } = useStorageApi({
       target,
       storage,
       project,
@@ -181,7 +176,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
                     errors={errors}
                     handleSelectChange={handleSelectChange}
                     setFormState={setFormState}
-                    storageTypes={storageTypes}
+                    providers={providers}
                     target={target}
                   />
                 );
