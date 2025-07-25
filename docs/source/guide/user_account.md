@@ -47,8 +47,12 @@ For each hotkey, click the default hotkeys listed next each action. Then, when p
 !!! note
     Each hotkey can be a single character key (a number, letter, symbol) or it can be a combination of a character key and multiple control keys (for example, `Shift`, `Control` `Option`, etc). 
 
+
+<div style="width: 80%; margin-left: auto; margin-right: auto">
+
 ![Screenshot of customized key](/images/admin/global-hotkeys.png)
 
+</div>
 
 ## Email preferences 
 
