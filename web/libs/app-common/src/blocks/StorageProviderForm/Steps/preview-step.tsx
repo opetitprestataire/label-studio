@@ -263,11 +263,17 @@ export const PreviewStep = ({
                       key={index}
                       className="flex justify-between py-0.5 px-2 bg-gray-50 hover:bg-gray-100 border-b last:border-b-0 rounded-md"
                     >
-                      <div className="truncate max-w-[260px]">{file.key}</div>
+                      <div className="truncate max-w-[260px]">
+                        {file.key ? (
+                          file.key
+                        ) : (
+                          <span className="italic">... preview limit reached ...</span>
+                        )}
+                      </div>
                       <div className="flex items-center space-x-1 text-muted-foreground whitespace-nowrap">
-                        <span>{formatDistanceToNow(new Date(file.last_modified), { addSuffix: true })}</span>
+                        <span>{file.last_modified && formatDistanceToNow(new Date(file.last_modified), { addSuffix: true })}</span>
                         <span className="mx-0.5">•</span>
-                        <span>{formatSize(file.size)}</span>
+                        <span>{file.size && formatSize(file.size)}</span>
                       </div>
                     </div>
                   ))}

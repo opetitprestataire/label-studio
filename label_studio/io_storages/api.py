@@ -176,7 +176,7 @@ class ImportStorageListFilesAPI(generics.CreateAPIView):
             for object in instance.iter_objects():
                 files.append(instance.get_unified_metadata(object))
                 if len(files) >= limit:
-                    files.append({'key': '...', 'last_modified': '...', 'size': '...'})
+                    files.append({'key': None, 'last_modified': None, 'size': None})
                     break
 
             return Response({'files': files})
