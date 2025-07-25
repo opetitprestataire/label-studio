@@ -1,7 +1,6 @@
 import type React from "react";
 import { FieldRenderer } from "./field-renderer";
 import { type ProviderConfig, getFieldsForRow } from "../types/provider";
-import { Callout } from "@humansignal/ui";
 
 interface ProviderFormProps {
   provider: ProviderConfig;
@@ -38,7 +37,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
               }}
             >
               {field.type === "message" ? (
-                <Callout variant={field.variant ?? "info"}>{field.content}</Callout>
+                <div>{field.content}</div>
               ) : (
                 <FieldRenderer
                   field={field}
