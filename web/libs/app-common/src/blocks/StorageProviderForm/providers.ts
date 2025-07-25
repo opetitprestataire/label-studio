@@ -1,24 +1,18 @@
 import { z } from "zod";
-import { type ProviderConfig, assembleSchema, extractDefaultValues } from "../types/provider";
-import { s3Provider } from "./s3";
-import { gcsProvider } from "./gcs";
-import { azureProvider } from "./azure";
-import { redisProvider } from "./redis";
-import { localFilesProvider } from "./localFiles";
+import { type ProviderConfig, assembleSchema, extractDefaultValues } from "./types/provider";
 
 // Registry of all available providers
-export const providerRegistry: Record<string, ProviderConfig> = {
-  s3: s3Provider,
-  gcs: gcsProvider,
-  azure: azureProvider,
-  redis: redisProvider,
-  localfiles: localFilesProvider,
-};
+export const providerRegistry: Record<string, ProviderConfig> = {};
 
 // Helper function to get provider configuration
 export function getProviderConfig(providerName?: string): ProviderConfig | undefined {
   if (!providerName) return undefined;
   return providerRegistry[providerName.toLowerCase()];
+}
+
+// Add new storage provider
+export function addProvider(providerName: string, providerConfig: ProviderConfig) {
+  providerRegistry[providerName] = providerConfig;
 }
 
 // Helper function to get provider schema
@@ -50,4 +44,4 @@ export function getProviderByName(name: string): ProviderConfig | undefined {
 }
 
 // Re-export extractDefaultValues for convenience
-export { extractDefaultValues } from "../types/provider";
+export { extractDefaultValues } from "./types/provider";

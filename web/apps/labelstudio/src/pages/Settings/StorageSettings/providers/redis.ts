@@ -1,10 +1,12 @@
 import { z } from "zod";
-import type { ProviderConfig } from "../types/provider";
+import type { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
+import { IconCloudProviderRedis } from "@humansignal/icons";
 
 export const redisProvider: ProviderConfig = {
   name: "redis",
   title: "Redis Storage",
   description: "Configure your Redis storage connection with all required Label Studio settings",
+  icon: IconCloudProviderRedis,
   fields: [
     {
       name: "db",

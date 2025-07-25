@@ -1,10 +1,12 @@
 import { z } from "zod";
-import type { ProviderConfig } from "../types/provider";
+import type { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
+import { IconCloudProviderS3 } from "@humansignal/icons";
 
 export const s3Provider: ProviderConfig = {
   name: "s3",
   title: "Amazon S3",
   description: "Configure your AWS S3 connection with all required Label Studio settings",
+  icon: IconCloudProviderS3,
   fields: [
     {
       name: "bucket",

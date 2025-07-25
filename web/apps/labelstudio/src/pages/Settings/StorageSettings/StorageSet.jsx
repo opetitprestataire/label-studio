@@ -11,6 +11,7 @@ import { useAtomValue } from "jotai";
 import { useStorageCard } from "./hooks/useStorageCard";
 import { ff } from "@humansignal/core";
 import { StorageProviderForm } from "@humansignal/app-common/blocks/StorageProviderForm";
+import { providers } from "./providers";
 
 export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
   const api = useContext(ApiContext);
@@ -52,6 +53,7 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
             project={project.id}
             rootClass={rootClass}
             storageTypes={storageTypes}
+            providers={providers}
             onSubmit={async () => {
               modalRef.close();
               fetchStorages();

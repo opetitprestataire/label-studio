@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import { z } from "zod";
 
 // Field types that can be rendered
@@ -34,6 +35,7 @@ export interface ProviderConfig {
   description: string;
   fields: FieldDefinition[];
   layout: LayoutRow[];
+  icon?: FC<any>;
 }
 
 // Helper function to assemble the complete schema from field definitions

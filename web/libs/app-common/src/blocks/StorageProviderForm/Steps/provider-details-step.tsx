@@ -1,5 +1,5 @@
 import { getProviderConfig } from "../providers";
-import { ProviderForm } from "../components/ProviderForm";
+import { ProviderForm } from "../components/provider-form";
 import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
 
 interface ProviderDetailsStepProps {

@@ -1,5 +1,5 @@
 import type React from "react";
-import { FieldRenderer } from "./FieldRenderer";
+import { FieldRenderer } from "./file-renderer";
 import { type ProviderConfig, getFieldsForRow } from "../types/provider";
 
 interface ProviderFormProps {
@@ -22,7 +22,13 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
   return (
     <div className="space-y-6">
       {provider.layout.map((row, rowIndex) => (
-        <div key={rowIndex} className={`grid grid-cols-${row.fields.length} gap-6`}>
+        <div
+          key={rowIndex}
+          className={`grid gap-6`}
+          style={{
+            gridTemplateColumns: `repeat(${row.fields.length}, 1fr)`,
+          }}
+        >
           {getFieldsForRow(provider.fields, row.fields).map((field) => (
             <div key={field.name} className={`col-span-${field.gridCols || 1}`}>
               <FieldRenderer

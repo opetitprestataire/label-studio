@@ -1,10 +1,12 @@
 import { z } from "zod";
-import type { ProviderConfig } from "../types/provider";
+import type { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
+import { IconCloudProviderGCS } from "@humansignal/icons";
 
 export const gcsProvider: ProviderConfig = {
   name: "gcs",
   title: "Google Cloud Storage",
   description: "Configure your Google Cloud Storage connection with all required Label Studio settings",
+  icon: IconCloudProviderGCS,
   fields: [
     {
       name: "bucket",
