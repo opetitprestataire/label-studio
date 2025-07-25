@@ -1,5 +1,5 @@
-export { Stepper } from "./Stepper";
-export { ProviderSelectionStep } from "./ProviderSelectionStep";
-export { ProviderDetailsStep } from "./ProviderDetailsStep";
-export { PreviewStep } from "./PreviewStep";
-export { ReviewStep } from "./ReviewStep"; 
+export { Stepper } from "./stepper";
+export { ProviderSelectionStep } from "./provider-selection-step";
+export { ProviderDetailsStep } from "./provider-details-step";
+export { PreviewStep } from "./preview-step";
+export { ReviewStep } from "./review-step";

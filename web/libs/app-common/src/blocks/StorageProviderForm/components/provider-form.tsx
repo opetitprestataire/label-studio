@@ -1,5 +1,5 @@
 import type React from "react";
-import { FieldRenderer } from "./FieldRenderer";
+import { FieldRenderer } from "./file-renderer";
 import { type ProviderConfig, getFieldsForRow } from "../types/provider";
 
 interface ProviderFormProps {
@@ -46,4 +46,3 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
     </div>
   );
 };
-
