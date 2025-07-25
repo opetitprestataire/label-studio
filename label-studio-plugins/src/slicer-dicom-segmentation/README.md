@@ -257,3 +257,169 @@ Include a citation for Label Studio in the **References** section of your articl
 This software is licensed under the [Apache 2.0 LICENSE](/LICENSE) © [Heartex](https://www.heartex.com/). 2020-2025
 
 <img src="https://user-images.githubusercontent.com/12534576/192582529-cf628f58-abc5-479b-a0d4-8a3542a4b35e.png" title="Hey everyone!" width="180" />
+
+# 3D Slicer DICOM Segmentation Plugin for Label Studio
+
+This plugin integrates 3D Slicer with Label Studio Enterprise (LSE) to enable medical image segmentation on DICOM files directly within the Label Studio interface.
+
+## Overview
+
+The plugin provides:
+- Full 3D Slicer segmentation capabilities within Label Studio
+- Support for DICOM medical imaging format
+- Multiple segmentation tools (paint, threshold, region growing, etc.)
+- Real-time synchronization between Slicer and Label Studio
+- Export of segmentation masks in standard formats (NRRD, NIfTI)
+
+## Architecture
+
+The plugin consists of two main components:
+
+1. **Frontend Plugin** (`plugin.js`, `view.xml`): Runs in the Label Studio interface
+2. **Slicer Server** (`slicer_server.py`): Runs 3D Slicer in headless mode with WebSocket interface
+
+## Installation
+
+### Prerequisites
+
+1. **3D Slicer**: Download and install from https://www.slicer.org/
+2. **Python packages**:
+   ```bash
+   pip install websockets asyncio pydicom numpy
+   ```
+
+### Setup
+
+1. **Start the Slicer Server**:
+   ```bash
+   # Using system Slicer installation
+   python slicer_server.py --host localhost --port 8080
+   
+   # Or specify Slicer path
+   python slicer_server.py --slicer-path /path/to/Slicer --host localhost --port 8080
+   
+   # For headless mode with Slicer
+   /path/to/Slicer --no-main-window --python-script slicer_server.py
+   ```
+
+2. **Configure Label Studio**:
+   - Copy this plugin directory to your Label Studio plugins folder
+   - Add the plugin to your Label Studio project configuration
+
+3. **Set Environment Variables** (optional):
+   ```bash
+   export SLICER_SERVER_URL=http://localhost:8080
+   export SLICER_WS_URL=ws://localhost:8080/ws
+   ```
+
+## Usage
+
+### Creating a Project
+
+1. Create a new Label Studio project
+2. Use the provided `view.xml` as your labeling configuration
+3. Import DICOM data with the following format:
+
+```json
+{
+  "dicom_series_url": "/path/to/dicom/series/",
+  "dicom_urls": [
+    "slice_001.dcm",
+    "slice_002.dcm",
+    "slice_003.dcm"
+  ],
+  "patient_id": "PATIENT001",
+  "study_date": "2024-07-25",
+  "modality": "CT"
+}
+```
+
+### Segmentation Workflow
+
+1. **Load DICOM**: Click "Load DICOM" to load the medical images into Slicer
+2. **Select Tool**: Choose from available segmentation tools:
+   - **Paint**: Manual painting tool
+   - **Erase**: Remove segmentation
+   - **Threshold**: Segment based on intensity values
+   - **Grow from Seeds**: Region growing from seed points
+   - **Fill Between Slices**: Interpolate between slices
+   - **Watershed**: Watershed segmentation
+   - **Fast Marching**: Level-set based segmentation
+
+3. **Create Segments**: Use the selected tool to create segmentation masks
+4. **Save**: Click "Save Segmentation" to export the results
+
+### Output Format
+
+Segmentations are saved in Label Studio's annotation format:
+
+```json
+{
+  "value": {
+    "format": "slicer-segmentation",
+    "segmentations": {
+      "Liver": {
+        "color": [0.8, 0.2, 0.2],
+        "label_value": 1
+      },
+      "Kidney_Right": {
+        "color": [0.2, 0.8, 0.2],
+        "label_value": 2
+      }
+    },
+    "data": "base64_encoded_segmentation_data"
+  },
+  "type": "segmentation",
+  "from_name": "segmentation",
+  "to_name": "dicom"
+}
+```
+
+## Development
+
+### Testing
+
+Use the provided test DICOM generator:
+```bash
+python create_test_dicom.py
+```
+
+This creates synthetic DICOM files in the `test-data/` directory.
+
+### Debugging
+
+1. Check WebSocket connection in browser console
+2. Monitor Slicer server logs
+3. Use browser developer tools to inspect network traffic
+
+### Extending the Plugin
+
+To add new segmentation tools:
+
+1. Add tool to `SLICER_CONFIG.tools` in `plugin.js`
+2. Update tool mapping in `slicer_server.py`
+3. Configure tool parameters as needed
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Connection Error**: Ensure Slicer server is running and accessible
+2. **DICOM Load Failed**: Check file paths and DICOM validity
+3. **Segmentation Not Saving**: Verify write permissions and disk space
+
+### Logs
+
+- Frontend logs: Browser console
+- Backend logs: Slicer server output
+- Label Studio logs: Check Label Studio server logs
+
+## License
+
+This plugin is distributed under the same license as Label Studio Enterprise.
+
+## Support
+
+For issues and questions:
+- Label Studio documentation: https://labelstud.io/
+- 3D Slicer documentation: https://www.slicer.org/wiki/Documentation

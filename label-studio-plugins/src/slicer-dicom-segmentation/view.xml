@@ -1,0 +1,35 @@
+<View>
+  <Header value="DICOM Segmentation with 3D Slicer"/>
+  
+  <Text name="instructions" value="Use 3D Slicer tools to segment anatomical structures in the DICOM series below."/>
+  
+  <!-- DICOM data source -->
+  <HyperText name="dicom" value="$dicom_series_url">
+    <slicer-dicom-interface/>
+  </HyperText>
+  
+  <!-- Segmentation labels configuration -->
+  <Choices name="segmentation_labels" toName="dicom" choice="multiple">
+    <Choice value="Liver" background="#FF6B6B"/>
+    <Choice value="Kidney_Right" background="#4ECDC4"/>
+    <Choice value="Kidney_Left" background="#45B7D1"/>
+    <Choice value="Spleen" background="#96CEB4"/>
+    <Choice value="Pancreas" background="#FECA57"/>
+    <Choice value="Aorta" background="#FF9FF3"/>
+    <Choice value="Lung_Right" background="#54A0FF"/>
+    <Choice value="Lung_Left" background="#48DBFB"/>
+    <Choice value="Heart" background="#EE5A6F"/>
+    <Choice value="Tumor" background="#F368E0"/>
+    <Choice value="Bone" background="#FFFFFF"/>
+    <Choice value="Other" background="#A0A0A0"/>
+  </Choices>
+  
+  <!-- Additional metadata fields -->
+  <TextArea name="notes" toName="dicom" placeholder="Add any notes about the segmentation..." rows="3"/>
+  
+  <Choices name="quality" toName="dicom" choice="single" required="true">
+    <Choice value="Good"/>
+    <Choice value="Needs Review"/>
+    <Choice value="Poor"/>
+  </Choices>
+</View>

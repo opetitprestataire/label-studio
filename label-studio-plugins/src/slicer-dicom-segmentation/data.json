@@ -1,0 +1,22 @@
+[
+  {
+    "dicom_series_url": "/data/upload/test-dicom-series-001/",
+    "dicom_urls": [
+      "test-data/slice_000.dcm",
+      "test-data/slice_001.dcm",
+      "test-data/slice_002.dcm",
+      "test-data/slice_003.dcm",
+      "test-data/slice_004.dcm",
+      "test-data/slice_005.dcm",
+      "test-data/slice_006.dcm",
+      "test-data/slice_007.dcm",
+      "test-data/slice_008.dcm",
+      "test-data/slice_009.dcm"
+    ],
+    "patient_id": "TEST001",
+    "study_date": "2024-07-25",
+    "modality": "CT",
+    "body_part": "Abdomen",
+    "series_description": "Test CT Series"
+  }
+]
