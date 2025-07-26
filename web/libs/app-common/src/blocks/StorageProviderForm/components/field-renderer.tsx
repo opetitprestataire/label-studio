@@ -136,12 +136,9 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
             checked={value || false}
             onChange={(e) => handleToggleChange(e.target.checked)}
             aria-label={field.label}
+            label={field.label}
+            description={field.description}
           />
-          <div>
-            <Label className="text-sm font-medium">{field.label}</Label>
-            {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
-            {error && <p className="text-sm text-negative-content">{error}</p>}
-          </div>
         </div>
       );
 
