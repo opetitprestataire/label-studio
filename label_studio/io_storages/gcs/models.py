@@ -183,6 +183,7 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
             prefix=self.prefix,
             regex_filter=self.regex_filter,
             return_key=False,
+            page_size=100,
         )
 
     def iter_keys(self):

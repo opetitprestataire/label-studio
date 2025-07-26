@@ -115,6 +115,7 @@ class GCS(object):
         regex_filter: str = None,
         limit: int = None,
         return_key: bool = False,
+        page_size: int = None,
     ):
         """
         Iterate files on the bucket. Optionally return limited number of files that match provided extensions
@@ -124,10 +125,11 @@ class GCS(object):
         :param regex_filter: RegEx filter
         :param limit: specify limit for max files
         :param return_key: return object key string instead of gcs.Blob object
+        :param page_size: number of blobs to return per page
         :return: Iterator object
         """
         total_read = 0
-        blob_iter = client.list_blobs(bucket_name, prefix=prefix)
+        blob_iter = client.list_blobs(bucket_name, prefix=prefix, page_size=page_size)
         prefix = str(prefix) if prefix else ''
         regex = re.compile(str(regex_filter)) if regex_filter else None
         for blob in blob_iter:
