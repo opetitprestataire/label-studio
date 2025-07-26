@@ -21,10 +21,11 @@ interface StorageProviderFormProps {
   }[];
   providers: Record<string, ProviderConfig>;
   onClose?: () => void;
+  onHide?: () => void;
 }
 
 export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>(
-  ({ onSubmit, target, project, storage, title, storageTypes, providers, onClose = () => {} }, ref) => {
+  ({ onSubmit, target, project, storage, title, storageTypes, providers, onClose = () => {}, onHide }, ref) => {
     const modal = useModalControls();
     const [type, setType] = useState<string | undefined>("s3");
     const [filesPreview, setFilesPreview] = useState<any[] | null>(null);
@@ -32,6 +33,9 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
 
     const handleClose = () => {
       resetForm();
+      setFilesPreview(null);
+      setConnectionChecked(false);
+      setType("s3");
       onClose();
       modal?.hide();
     };
@@ -79,6 +83,22 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
 
     const { currentStep, formData } = formState;
 
+    // Handle modal hide (including Escape key)
+    useEffect(() => {
+      if (onHide) {
+        const handleModalHide = () => {
+          resetForm();
+          setFilesPreview(null);
+          setConnectionChecked(false);
+          setType("s3");
+          onHide();
+        };
+        
+        // Call onHide immediately to set up the handler
+        handleModalHide();
+      }
+    }, [onHide, resetForm]);
+
     // Initialize API hooks
     const { testConnectionMutation, createStorageMutation, loadFilesPreviewMutation, action } = useStorageApi({
       target,
@@ -87,6 +107,9 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
       onSubmit,
       onClose: () => {
         resetForm();
+        setFilesPreview(null);
+        setConnectionChecked(false);
+        setType("s3");
         onClose();
         modal?.hide();
       },

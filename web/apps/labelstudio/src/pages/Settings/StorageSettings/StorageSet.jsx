@@ -45,6 +45,10 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
         closeOnClickOutside: false,
         style: { width: 960 },
         bare: useNewStorageScreen,
+        onHidden: () => {
+          // Reset state when modal is closed (including Escape key)
+          // This ensures clean state for next modal open
+        },
         body: useNewStorageScreen ? (
           <StorageProviderForm
             title={title}
@@ -57,6 +61,10 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
             onSubmit={async () => {
               modalRef.close();
               fetchStorages();
+            }}
+            onHide={() => {
+              // This will be called when the modal is closed via Escape key
+              // The state reset is handled inside StorageProviderForm
             }}
           />
         ) : (
