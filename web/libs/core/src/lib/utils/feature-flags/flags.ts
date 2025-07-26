@@ -94,3 +94,10 @@ export const FF_ENTERPRISE_EMAIL_NOTIFICATIONS = "fflag_feat_front_fit_183_email
  * @link https://app.launchdarkly.com/projects/default/flags/fflag_front_feat_bros_87_pixel_wise_16062025_short
  */
 export const FF_BITMASK = "fflag_front_feat_bros_87_pixel_wise_16062025_short";
+
+/**
+ * Allow tooltip working with the disabled button
+ *
+ * @link https://app.launchdarkly.com/projects/default/flags/fflag_feat_front_fit_418_tooltip_enhancements_short
+ */
+export const FF_TOOLTIP_ENHANCEMENT = "fflag_feat_front_fit_418_tooltip_enhancements_short";
