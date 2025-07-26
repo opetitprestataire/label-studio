@@ -16,13 +16,6 @@ export const redisProvider: ProviderConfig = {
       schema: z.string().default("1"),
     },
     {
-      name: "path",
-      type: "text",
-      label: "Path",
-      placeholder: "path/to/files/",
-      schema: z.string().optional().default(""),
-    },
-    {
       name: "password",
       type: "password",
       label: "Password",
@@ -46,9 +39,6 @@ export const redisProvider: ProviderConfig = {
     },
   ],
   layout: [
-    {
-      fields: ["path"],
-    },
     {
       fields: ["host", "port", "db", "password"],
     },
