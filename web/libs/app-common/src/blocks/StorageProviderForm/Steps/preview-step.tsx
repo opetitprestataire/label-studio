@@ -66,7 +66,7 @@ export const PreviewStep = ({
             <div className="space-y-8">
               {/* File Filter Section */}
               <div className="space-y-2">
-                <Label htmlFor="regex_filter">File Name Filter (Optional)</Label>
+                <Label text="File Name Filter (Optional)" />
                 <p className="text-sm text-muted-foreground">Use regex patterns to filter which files are imported</p>
                 <Input
                   id="regex_filter"
@@ -90,92 +90,165 @@ export const PreviewStep = ({
 
                 <div className="flex flex-wrap gap-x-2 items-center text-xs">
                   <span className="text-muted-foreground">Common filters:</span>
-                  <a
-                    href="#"
-                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        formData: {
-                          ...prevState.formData,
-                          regex_filter: ".*.(jpe?g|png|gif)$",
-                        },
-                      }));
-                    }}
-                  >
-                    Images
-                  </a>
-                  <a
-                    href="#"
-                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        formData: {
-                          ...prevState.formData,
-                          regex_filter: ".*\\.(mp4|avi|mov|wmv|webm)$",
-                        },
-                      }));
-                    }}
-                  >
-                    Videos
-                  </a>
-                  <a
-                    href="#"
-                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        formData: {
-                          ...prevState.formData,
-                          regex_filter: ".*\\.(mp3|wav|ogg|flac)$",
-                        },
-                      }));
-                    }}
-                  >
-                    Audio
-                  </a>
-                  <a
-                    href="#"
-                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        formData: {
-                          ...prevState.formData,
-                          regex_filter: ".*\\.(csv|tsv)$",
-                        },
-                      }));
-                    }}
-                  >
-                    Tabular
-                  </a>
-                  <a
-                    href="#"
-                    className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setFormState((prevState) => ({
-                        ...prevState,
-                        formData: {
-                          ...prevState.formData,
-                          regex_filter: ".*",
-                        },
-                      }));
-                    }}
-                  >
-                    All Files
-                  </a>
+                  {formData.use_blob_urls ? (
+                    // Files mode - show media file filters
+                    <>
+                      <a
+                        href="#"
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*.(jpe?g|png|gif)$",
+                            },
+                          }));
+                        }}
+                      >
+                        Images
+                      </a>
+                      <a
+                        href="#"
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.(mp4|avi|mov|wmv|webm)$",
+                            },
+                          }));
+                        }}
+                      >
+                        Videos
+                      </a>
+                      <a
+                        href="#"
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.(mp3|wav|ogg|flac)$",
+                            },
+                          }));
+                        }}
+                      >
+                        Audio
+                      </a>
+                      <a
+                        href="#"
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.(csv|tsv)$",
+                            },
+                          }));
+                        }}
+                      >
+                        Tabular
+                      </a>
+                      <a
+                        href="#"
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*",
+                            },
+                          }));
+                        }}
+                      >
+                        All Files
+                      </a>
+                    </>
+                  ) : (
+                    // JSON mode - show structured data filters
+                    <>
+                      <a
+                        href="#"
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.json$",
+                            },
+                          }));
+                        }}
+                      >
+                        JSON
+                      </a>
+                      <a
+                        href="#"
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.jsonl$",
+                            },
+                          }));
+                        }}
+                      >
+                        JSONL
+                      </a>
+                      <a
+                        href="#"
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.parquet$",
+                            },
+                          }));
+                        }}
+                      >
+                        Parquet
+                      </a>
+                      <a
+                        href="#"
+                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormState((prevState) => ({
+                            ...prevState,
+                            formData: {
+                              ...prevState.formData,
+                              regex_filter: ".*\\.(json|jsonl|parquet)$",
+                            },
+                          }));
+                        }}
+                      >
+                        All Structured
+                      </a>
+                    </>
+                  )}
                 </div>
               </div>
 
               {/* Import Method */}
               <div className="space-y-2">
-                <Label htmlFor="use_blob_urls">Import Method</Label>
+                <Label text="Import Method" />
                 <p className="text-sm text-muted-foreground">Choose how to import your data from storage</p>
                 <Select
                   name="use_blob_urls"
@@ -197,7 +270,7 @@ export const PreviewStep = ({
                     },
                     {
                       value: "JSON",
-                      label: "JSON - Treat each JSON or JSONL file as a task definition (one or more tasks per file)",
+                      label: "JSON - Treat each JSON, JSONL, or Parquet file as a task definition (one or more tasks per file)",
                     },
                   ] as any}
                   placeholder="Select import method"
@@ -207,7 +280,7 @@ export const PreviewStep = ({
               {/* Scan All Subfolders */}
               <div className="flex items-center justify-between">
                 <div>
-                  <Label className="block mb-2">Scan all sub-folders</Label>
+                  <Label text="Scan all sub-folders" className="block mb-2" />
                   <p className="text-sm text-muted-foreground">Include files from all nested folders</p>
                 </div>
                 <Toggle

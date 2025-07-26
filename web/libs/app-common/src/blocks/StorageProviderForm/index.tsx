@@ -50,13 +50,13 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
     const steps = isEditMode
       ? [
           { title: "Configure Connection", schema: getProviderSchema(type || "s3", isEditMode) },
-          { title: "Preview & Import Settings" },
+          { title: "Import Settings & Preview" },
           { title: "Review & Confirm" },
         ]
       : [
           { title: "Select Provider", schema: step1Schema },
           { title: "Configure Connection", schema: getProviderSchema(type || "s3", isEditMode) },
-          { title: "Preview & Import Settings" },
+          { title: "Import Settings & Preview" },
           { title: "Review & Confirm" },
         ];
 
