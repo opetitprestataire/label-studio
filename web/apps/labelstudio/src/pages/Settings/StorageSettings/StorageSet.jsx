@@ -18,6 +18,7 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
   const project = useAtomValue(projectAtom);
   const storageTypesQueryKey = ["storage-types", target];
   const storagesQueryKey = ["storages", target, project?.id];
+  const useNewStorageScreen = ff.isActive(ff.FF_NEW_STORAGES) && target !== "export";
 
   const {
     storageTypes,
@@ -38,14 +39,13 @@ export const StorageSet = ({ title, target, rootClass, buttonLabel }) => {
       const action = storage ? "Edit" : "Connect";
       const actionTarget = target === "export" ? "Target" : "Source";
       const title = `${action} ${actionTarget} Storage`;
-      console.log({ action, title, target });
 
       const modalRef = modal({
         title,
         closeOnClickOutside: false,
         style: { width: 960 },
-        bare: ff.isActive(ff.FF_NEW_STORAGES),
-        body: ff.isActive(ff.FF_NEW_STORAGES) ? (
+        bare: useNewStorageScreen,
+        body: useNewStorageScreen ? (
           <StorageProviderForm
             title={title}
             target={target}
