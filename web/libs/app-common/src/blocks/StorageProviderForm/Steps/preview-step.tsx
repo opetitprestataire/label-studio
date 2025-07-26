@@ -3,6 +3,7 @@ import { Form, Input } from "apps/labelstudio/src/components/Form";
 import { IconDocument, IconSearch } from "@humansignal/icons";
 import { formatDistanceToNow } from "date-fns";
 import { type ForwardedRef } from "react";
+import { InlineError } from "apps/labelstudio/src/components/Error/InlineError";
 
 interface PreviewStepProps {
   formData: any;
@@ -394,6 +395,8 @@ export const PreviewStep = ({
           </div>
         </div>
       </div>
+
+      <InlineError includeValidation />
     </div>
   );
 }; 

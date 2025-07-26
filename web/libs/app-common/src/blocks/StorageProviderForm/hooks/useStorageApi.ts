@@ -17,23 +17,22 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
   const action = storage ? "updateStorage" : "createStorage";
 
   // Clean form data for submission
-  const cleanFormDataForSubmission = useCallback((data: any) => {
-    if (!isEditMode) return data;
+  const cleanFormDataForSubmission = useCallback(
+    (data: any) => {
+      if (!isEditMode) return data;
 
-    const cleanedData = { ...data };
-    // Remove empty access key fields in edit mode
-    Object.keys(cleanedData).forEach((key) => {
-      if (
-        cleanedData[key] === "" ||
-        cleanedData[key] === undefined ||
-        cleanedData[key] === "••••••••••••••••"
-      ) {
-        delete cleanedData[key];
-      }
-    });
+      const cleanedData = { ...data };
+      // Remove empty access key fields in edit mode
+      Object.keys(cleanedData).forEach((key) => {
+        if (cleanedData[key] === "" || cleanedData[key] === undefined || cleanedData[key] === "••••••••••••••••") {
+          delete cleanedData[key];
+        }
+      });
 
-    return cleanedData;
-  }, [isEditMode]);
+      return cleanedData;
+    },
+    [isEditMode],
+  );
 
   // Test connection mutation
   const testConnectionMutation = useMutation({
@@ -47,13 +46,15 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
         body.id = storage.id;
       }
 
-      return api.callApi("validateStorage", {
+      const result = await api.callApi("validateStorage", {
         params: {
           target,
           type: connectionData.provider,
         },
         body,
       });
+      console.log(result);
+      return result;
     },
   });
 
@@ -112,4 +113,4 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
     isEditMode,
     action,
   };
-}; 
+};
