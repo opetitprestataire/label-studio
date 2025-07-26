@@ -27,7 +27,6 @@ const defaultExtractSizeOneElement = <T extends ResizeObserverSize = ResizeObser
   _elements: Element[],
   entries: ResizeObserverEntry[],
 ): T => {
-  if (entries.length === 0) return {} as T;
   const { width, height } = entries[0].contentRect;
   return { width, height } as T;
 };
@@ -53,7 +52,7 @@ export function useResizeObserver<T extends ResizeObserverSize = ResizeObserverS
   elements: ElementsOption,
   options: UseResizeObserverOptions<T> = {},
 ): T {
-  const elementArray = Array.isArray(elements) ? elements : [elements];
+  const elementsArray = Array.isArray(elements) ? elements : [elements];
   const {
     extractSize = elementArray.length === 1 ? defaultExtractSizeOneElement : defaultExtractSizeMultipleElements,
     debounceMs = DEFAULT_DEBOUNCE_MS,
@@ -89,7 +88,7 @@ export function useResizeObserver<T extends ResizeObserverSize = ResizeObserverS
               return prevSize;
             });
           } catch (error) {
-            console.warn("Error in resize observer callback:", error);
+            console.warn("Error in resize observer callback: ", error);
           }
           rafRef.current = null;
         });
