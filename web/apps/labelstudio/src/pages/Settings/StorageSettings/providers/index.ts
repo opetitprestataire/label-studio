@@ -9,5 +9,5 @@ export const providers = {
   gcs: gcsProvider,
   azure: azureProvider,
   redis: redisProvider,
-  localFiles: localFilesProvider,
+  localfiles: localFilesProvider,
 };
