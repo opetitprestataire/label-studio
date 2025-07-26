@@ -1,4 +1,4 @@
-import { Button } from "@humansignal/ui";
+import { Button, cnm } from "@humansignal/ui";
 
 interface FormFooterProps {
   currentStep: number;
@@ -42,22 +42,23 @@ export const FormFooter = ({
       <div className="flex gap-tight items-center">
         {(isEditMode ? currentStep === 0 : currentStep === 1) && (
           <>
-            <Button 
-              waiting={testConnection.isLoading} 
+            <Button
+              waiting={testConnection.isLoading}
               onClick={testConnection.mutate}
-              disabled={connectionChecked}
+              variant={connectionChecked ? "positive" : "primary"}
+              className={cnm({
+                "border-none shadow-none bg-positive-surface-content-subtle text-positive-content pointer-events-none":
+                  connectionChecked,
+              })}
+              style={connectionChecked ? { textShadow: "none" } : {}}
             >
-              {connectionChecked ? "✓ Connection Verified" : "Test Connection"}
+              {connectionChecked ? "Connection Verified" : "Test Connection"}
             </Button>
           </>
         )}
 
         {(isEditMode ? currentStep === 1 : currentStep === 2) && (
-          <Button 
-            waiting={loadPreview.isLoading} 
-            onClick={loadPreview.mutate}
-            disabled={filesPreview !== null}
-          >
+          <Button waiting={loadPreview.isLoading} onClick={loadPreview.mutate} disabled={filesPreview !== null}>
             {filesPreview !== null ? "✓ Preview Loaded" : "Load Preview"}
           </Button>
         )}
@@ -74,4 +75,4 @@ export const FormFooter = ({
       </div>
     </div>
   );
-}; 
+};
