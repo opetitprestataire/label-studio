@@ -17,14 +17,6 @@ export const s3Provider: ProviderConfig = {
       schema: z.string().min(1, "Bucket name is required"),
     },
     {
-      name: "prefix",
-      type: "text",
-      label: "Bucket Prefix",
-      placeholder: "path/to/files/",
-      schema: z.string().optional().default(""),
-    },
-
-    {
       name: "region_name",
       type: "text",
       label: "Region Name",
@@ -87,9 +79,6 @@ export const s3Provider: ProviderConfig = {
   layout: [
     {
       fields: ["bucket"],
-    },
-    {
-      fields: ["prefix"],
     },
     {
       fields: ["region_name", "s3_endpoint"],

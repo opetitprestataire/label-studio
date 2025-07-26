@@ -1,5 +1,8 @@
 import { z } from "zod";
-import type { FieldDefinition, MessageDefinition } from "./common";
+import type { FieldDefinition, MessageDefinition, ProviderConfig } from "./common";
+
+// Re-export ProviderConfig for convenience
+export type { ProviderConfig };
 
 // Helper function to assemble the complete schema from field definitions
 export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z.ZodObject<any> {

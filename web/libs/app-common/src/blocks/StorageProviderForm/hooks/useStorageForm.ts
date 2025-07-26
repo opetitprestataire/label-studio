@@ -137,6 +137,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       setErrors({});
       return true;
     } catch (error) {
+      console.log(error, currentSchema);
       if (error instanceof z.ZodError) {
         const formattedErrors = formatValidationErrors(error);
         setErrors(formattedErrors);

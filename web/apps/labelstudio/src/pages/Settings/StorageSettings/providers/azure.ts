@@ -17,13 +17,6 @@ export const azureProvider: ProviderConfig = {
       schema: z.string().min(1, "Container name is required"),
     },
     {
-      name: "prefix",
-      type: "text",
-      label: "Container Prefix",
-      placeholder: "path/to/files/",
-      schema: z.string().optional().default(""),
-    },
-    {
       name: "account_name",
       type: "password",
       label: "Account Name",
@@ -62,7 +55,7 @@ export const azureProvider: ProviderConfig = {
   ],
   layout: [
     {
-      fields: ["container", "prefix"],
+      fields: ["container"],
     },
     {
       fields: ["account_name", "account_key"],

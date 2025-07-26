@@ -64,6 +64,33 @@ export const PreviewStep = ({
             autoComplete="off"
           >
             <div className="space-y-8">
+              {/* Path to Files Section - Only show for cloud storage providers */}
+              {!["localfiles", "redis"].includes(type) && (
+                <div className="space-y-2">
+                  <Label text="Path to Files" />
+                  <p className="text-sm text-muted-foreground">Specify the folder path within your storage where your files are located</p>
+                  <Input
+                    id="prefix"
+                    name="prefix"
+                    value={formData.prefix ?? ""}
+                    onChange={handleChange}
+                    placeholder="path/to/files/ or leave empty for root"
+                    style={{ width: "100%" }}
+                    label=""
+                    description=""
+                    footer=""
+                    className=""
+                    validate=""
+                    required={false}
+                    skip={false}
+                    labelProps={{}}
+                    ghost={false}
+                    tooltip=""
+                    tooltipIcon={null}
+                  />
+                </div>
+              )}
+
               {/* File Filter Section */}
               <div className="space-y-2">
                 <Label text="File Name Filter (Optional)" />

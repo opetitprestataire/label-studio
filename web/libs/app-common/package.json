@@ -3,12 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "dependencies": {
-    "zod": "^4.0.10"
-  },
+  "dependencies": {},
   "main": "src/index.ts",
-  "files": [
-    "src/lib",
-    "src/pages"
-  ]
+  "files": ["src/lib", "src/pages"]
 }
