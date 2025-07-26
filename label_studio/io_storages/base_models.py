@@ -477,7 +477,7 @@ class ImportStorage(Storage):
                     raise UnsupportedFileFormatError(
                         f'File "{key}" is not a JSON/JSONL/Parquet file. Only .json, .jsonl, and .parquet files can be processed.\n'
                         f"If you're trying to import non-JSON data (images, audio, text, etc.), "
-                        f'edit storage settings and enable "Treat every bucket object as a source file"'
+                        f'edit storage settings and enable "Tasks" import method'
                     )
 
             try:
@@ -487,7 +487,7 @@ class ImportStorage(Storage):
                 raise ValueError(
                     f'Error loading JSON from file "{key}".\nIf you\'re trying to import non-JSON data '
                     f'(images, audio, text, etc.), edit storage settings and enable '
-                    f'"Treat every bucket object as a source file"'
+                    f'"Tasks" import method'
                 )
 
             if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):

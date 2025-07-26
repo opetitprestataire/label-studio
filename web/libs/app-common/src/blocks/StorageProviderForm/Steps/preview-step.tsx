@@ -249,7 +249,7 @@ export const PreviewStep = ({
               {/* Import Method */}
               <div className="space-y-2">
                 <Label text="Import Method" />
-                <p className="text-sm text-muted-foreground">Choose how to import your data from storage</p>
+                <p className="text-sm text-muted-foreground">Choose how to interpret your data from storage</p>
                 <Select
                   name="use_blob_urls"
                   value={formData.use_blob_urls ? "Files" : "JSON"}
@@ -270,7 +270,7 @@ export const PreviewStep = ({
                     },
                     {
                       value: "JSON",
-                      label: "JSON - Treat each JSON, JSONL, or Parquet file as a task definition (one or more tasks per file)",
+                      label: "Tasks - Treat each JSON, JSONL, or Parquet as one or more task definitions per file",
                     },
                   ] as any}
                   placeholder="Select import method"
