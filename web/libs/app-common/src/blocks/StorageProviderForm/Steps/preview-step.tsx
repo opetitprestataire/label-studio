@@ -18,6 +18,7 @@ interface PreviewStepProps {
   formRef: ForwardedRef<unknown>;
   filesPreview: any[] | null;
   formatSize: (bytes: number) => string;
+  onImportSettingsChange?: () => void;
 }
 
 export const PreviewStep = ({
@@ -34,6 +35,7 @@ export const PreviewStep = ({
   formRef,
   filesPreview,
   formatSize,
+  onImportSettingsChange,
 }: PreviewStepProps) => {
   return (
     <div className="space-y-6">
@@ -294,6 +296,8 @@ export const PreviewStep = ({
                         use_blob_urls: isFiles,
                       },
                     }));
+                    // Reset validation state when import method changes
+                    onImportSettingsChange?.();
                   }}
                   options={[
                     {
@@ -317,15 +321,17 @@ export const PreviewStep = ({
                 </div>
                 <Toggle
                   checked={formData.recursive_scan ?? true}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setFormState((prevState) => ({
                       ...prevState,
                       formData: {
                         ...prevState.formData,
                         recursive_scan: e.target.checked,
                       },
-                    }))
-                  }
+                    }));
+                    // Reset validation state when recursive scan changes
+                    onImportSettingsChange?.();
+                  }}
                 />
               </div>
             </div>

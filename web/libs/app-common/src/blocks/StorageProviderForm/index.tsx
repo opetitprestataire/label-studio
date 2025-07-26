@@ -95,7 +95,10 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
     // Handle provider selection
     const handleSelectChange = (name: string, value: string) => {
       setType(value);
-      handleProviderFieldChange(name, value);
+      handleProviderFieldChange(name, value, () => {
+        setFilesPreview(null);
+        setConnectionChecked(false);
+      });
     };
 
     // Handle form navigation
@@ -186,7 +189,12 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
                   <ProviderDetailsStep
                     formData={formData}
                     errors={errors}
-                    handleProviderFieldChange={handleProviderFieldChange}
+                    handleProviderFieldChange={(name: string, value: any) => {
+                      handleProviderFieldChange(name, value, () => {
+                        setFilesPreview(null);
+                        setConnectionChecked(false);
+                      });
+                    }}
                     handleFieldBlur={handleFieldBlur}
                     provider={formData.provider || "s3"}
                     isEditMode={isEditMode}
@@ -201,6 +209,13 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
                     handleChange={(e) => {
                       const { name, value } = e.target as HTMLInputElement;
                       handleProviderFieldChange(name, value);
+                      
+                      // Reset validation state when import settings change
+                      const importSettingsFields = ['prefix', 'path', 'regex_filter', 'use_blob_urls', 'recursive_scan'];
+                      if (importSettingsFields.includes(name)) {
+                        setFilesPreview(null);
+                        setConnectionChecked(false);
+                      }
                     }}
                     action={action}
                     target={target!}
@@ -211,6 +226,10 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
                     formRef={ref}
                     filesPreview={filesPreview}
                     formatSize={formatSize}
+                    onImportSettingsChange={() => {
+                      setFilesPreview(null);
+                      setConnectionChecked(false);
+                    }}
                   />
                 );
               case 3:

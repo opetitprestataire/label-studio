@@ -42,16 +42,23 @@ export const FormFooter = ({
       <div className="flex gap-tight items-center">
         {(isEditMode ? currentStep === 0 : currentStep === 1) && (
           <>
-            {connectionChecked && <span className="text-sm text-green-600 font-medium">✓ Connection successful</span>}
-            <Button waiting={testConnection.isLoading} onClick={testConnection.mutate}>
-              Test Connection
+            <Button 
+              waiting={testConnection.isLoading} 
+              onClick={testConnection.mutate}
+              disabled={connectionChecked}
+            >
+              {connectionChecked ? "✓ Connection Verified" : "Test Connection"}
             </Button>
           </>
         )}
 
         {(isEditMode ? currentStep === 1 : currentStep === 2) && (
-          <Button waiting={loadPreview.isLoading} onClick={loadPreview.mutate}>
-            Load Preview
+          <Button 
+            waiting={loadPreview.isLoading} 
+            onClick={loadPreview.mutate}
+            disabled={filesPreview !== null}
+          >
+            {filesPreview !== null ? "✓ Preview Loaded" : "Load Preview"}
           </Button>
         )}
 

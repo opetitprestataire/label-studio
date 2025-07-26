@@ -149,7 +149,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
 
   // Handle provider field changes
   const handleProviderFieldChange = useCallback(
-    (name: string, value: any) => {
+    (name: string, value: any, onConnectionChange?: () => void) => {
       // If changing provider, get new defaults first
       if (name === "provider") {
         const providerConfig = getProviderConfig(value);
@@ -179,6 +179,12 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
         delete newErrors[name];
         return newErrors;
       });
+
+      // Reset validation state when connection settings change
+      const connectionFields = ['bucket', 'container', 'path', 'host', 'port', 'db', 'password', 'account_name', 'account_key', 'google_application_credentials', 'region_name', 's3_endpoint'];
+      if (connectionFields.includes(name)) {
+        onConnectionChange?.();
+      }
     },
     [formData, setFormState],
   );
