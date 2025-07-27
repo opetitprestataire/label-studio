@@ -54,7 +54,7 @@ export function useResizeObserver<T extends ResizeObserverSize = ResizeObserverS
 ): T {
   const elementsArray = Array.isArray(elements) ? elements : [elements];
   const {
-    extractSize = elementArray.length === 1 ? defaultExtractSizeOneElement : defaultExtractSizeMultipleElements,
+    extractSize = elementsArray.length === 1 ? defaultExtractSizeOneElement : defaultExtractSizeMultipleElements,
     debounceMs = DEFAULT_DEBOUNCE_MS,
   } = options;
 
@@ -100,9 +100,9 @@ export function useResizeObserver<T extends ResizeObserverSize = ResizeObserverS
 
   // Effect to set up and clean up the ResizeObserver
   useEffect(() => {
-    const elementArray = Array.isArray(elements) ? elements : [elements];
+    const elementsArray = Array.isArray(elements) ? elements : [elements];
 
-    if (elementArray.length === 0) {
+    if (elementsArray.length === 0) {
       setSize({} as T);
       return;
     }
@@ -111,12 +111,12 @@ export function useResizeObserver<T extends ResizeObserverSize = ResizeObserverS
     observerRef.current = new ResizeObserver(handleResize);
 
     // Observe all elements
-    elementArray.forEach((element) => {
+    elementsArray.forEach((element) => {
       observerRef.current?.observe(element);
     });
 
     // Store current elements reference for cleanup comparison
-    elementsRef.current = elementArray;
+    elementsRef.current = elementsArray;
 
     // Cleanup function
     return () => {
