@@ -34,7 +34,7 @@ export const gcsProvider: ProviderConfig = {
     {
       name: "presign",
       type: "toggle",
-      label: "Use pre-signed URLs (On)\n Proxy through the platform (Off)",
+      label: "Use pre-signed URLs (On) / Proxy through the platform (Off)",
       description:
         "When pre-signed URLs are enabled, all data bypasses the platform and user browsers directly read data from storage",
       schema: z.boolean().default(true),

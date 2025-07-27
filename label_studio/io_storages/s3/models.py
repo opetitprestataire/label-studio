@@ -210,6 +210,7 @@ class S3ImportStorageBase(S3StorageMixin, ImportStorage):
             if regex and not regex.match(key):
                 logger.debug(key + ' is skipped by regex filter')
                 continue
+            logger.debug(f's3 {key} has passed the regex filter')
             yield obj
 
     @catch_and_reraise_from_none
