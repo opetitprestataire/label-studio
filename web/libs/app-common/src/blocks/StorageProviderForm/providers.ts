@@ -22,7 +22,9 @@ export function getProviderSchema(providerName: string) {
   if (!config) {
     return z.object({}); // Empty schema for unknown providers
   }
-  const fieldDefinitions = config.fields.filter((field): field is FieldDefinition => 'type' in field && field.type !== 'message');
+  const fieldDefinitions = config.fields.filter(
+    (field): field is FieldDefinition => "type" in field && field.type !== "message",
+  );
   return assembleSchema(fieldDefinitions);
 }
 
@@ -32,7 +34,9 @@ export function getProviderDefaultValues(providerName: string): Record<string, a
   if (!config) {
     return {}; // Empty defaults for unknown providers
   }
-  const fieldDefinitions = config.fields.filter((field): field is FieldDefinition => 'type' in field && field.type !== 'message');
+  const fieldDefinitions = config.fields.filter(
+    (field): field is FieldDefinition => "type" in field && field.type !== "message",
+  );
   return extractDefaultValues(fieldDefinitions);
 }
 

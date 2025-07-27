@@ -181,7 +181,20 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       });
 
       // Reset validation state when connection settings change
-      const connectionFields = ['bucket', 'container', 'path', 'host', 'port', 'db', 'password', 'account_name', 'account_key', 'google_application_credentials', 'region_name', 's3_endpoint'];
+      const connectionFields = [
+        "bucket",
+        "container",
+        "path",
+        "host",
+        "port",
+        "db",
+        "password",
+        "account_name",
+        "account_key",
+        "google_application_credentials",
+        "region_name",
+        "s3_endpoint",
+      ];
       if (connectionFields.includes(name)) {
         onConnectionChange?.();
       }

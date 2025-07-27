@@ -34,7 +34,7 @@ def validate_storage_instance(request, serializer_class):
     """
     if not serializer_class or not hasattr(serializer_class, 'Meta'):
         raise ValidationError('Invalid or missing serializer class')
-        
+
     storage_id = request.data.get('id')
     instance = None
 

@@ -66,9 +66,7 @@ export const FormFooter = ({
         <Button
           onClick={onNext}
           waiting={currentStep === totalSteps - 1 && createStorage.isLoading}
-          disabled={
-            !isEditMode && (currentStep === 1 && !connectionChecked)
-          }
+          disabled={!isEditMode && currentStep === 1 && !connectionChecked}
         >
           {currentStep < totalSteps - 1 ? "Next" : "Submit"}
         </Button>

@@ -1,6 +1,6 @@
 import type { CalloutVariant } from "@humansignal/ui";
 import type { FC } from "react";
-import { z } from "zod";
+import type { z } from "zod";
 
 // Field types that can be rendered
 export type FieldType = "text" | "password" | "number" | "select" | "toggle" | "counter" | "textarea";
@@ -45,4 +45,4 @@ export interface ProviderConfig {
   fields: (FieldDefinition | MessageDefinition)[];
   layout: LayoutRow[];
   icon?: FC<any>;
-} 
+}

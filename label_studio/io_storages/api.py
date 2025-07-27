@@ -158,7 +158,7 @@ class StorageValidateAPI(generics.CreateAPIView):
 
 
 class ImportStorageListFilesAPI(generics.CreateAPIView):
-    
+
     permission_required = all_permissions.projects_change
     parser_classes = (JSONParser, FormParser, MultiPartParser)
     serializer_class = None  # Default serializer
@@ -166,7 +166,7 @@ class ImportStorageListFilesAPI(generics.CreateAPIView):
     def __init__(self, serializer_class=None, *args, **kwargs):
         self.serializer_class = serializer_class
         super().__init__(*args, **kwargs)
-    
+
     def create(self, request, *args, **kwargs):
         from .functions import validate_storage_instance
 
@@ -177,15 +177,15 @@ class ImportStorageListFilesAPI(generics.CreateAPIView):
             files = []
             start_time = time.time()
             timeout_seconds = 30
-            
+
             for object in instance.iter_objects():
                 files.append(instance.get_unified_metadata(object))
-                
+
                 # Check if we've reached the file limit
                 if len(files) >= limit:
                     files.append({'key': None, 'last_modified': None, 'size': None})
                     break
-                
+
                 # Check if we've exceeded the timeout
                 if time.time() - start_time > timeout_seconds:
                     files.append({'key': '... storage scan timeout reached ...', 'last_modified': None, 'size': None})

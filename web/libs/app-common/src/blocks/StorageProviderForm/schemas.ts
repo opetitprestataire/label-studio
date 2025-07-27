@@ -27,10 +27,10 @@ export const getProviderSchema = (provider: string, isEditMode = false) => {
   ];
 
   // Filter out message fields and combine with common fields
-  const providerFields = providerConfig.fields.filter((field): field is FieldDefinition => 
-    'type' in field && field.type !== 'message'
+  const providerFields = providerConfig.fields.filter(
+    (field): field is FieldDefinition => "type" in field && field.type !== "message",
   );
-  
+
   const allFields = [...commonFields, ...providerFields];
   return assembleSchema(allFields, isEditMode);
 };

@@ -2,7 +2,7 @@ import { Label, Toggle, Select } from "@humansignal/ui";
 import { Form, Input } from "apps/labelstudio/src/components/Form";
 import { IconDocument, IconSearch } from "@humansignal/icons";
 import { formatDistanceToNow } from "date-fns";
-import { type ForwardedRef } from "react";
+import type { ForwardedRef } from "react";
 import { InlineError } from "apps/labelstudio/src/components/Error/InlineError";
 
 interface PreviewStepProps {
@@ -72,10 +72,9 @@ export const PreviewStep = ({
                 <div className="space-y-2">
                   <Label text={type === "redis" ? "Path to Files" : "Bucket Prefix"} />
                   <p className="text-sm text-muted-foreground">
-                    {type === "redis" 
+                    {type === "redis"
                       ? "Specify the folder path within your storage where your files are located"
-                      : "Specify the folder path within your bucket where your files are located"
-                    }
+                      : "Specify the folder path within your bucket where your files are located"}
                   </p>
                   <Input
                     id={type === "redis" ? "path" : "prefix"}
@@ -109,7 +108,7 @@ export const PreviewStep = ({
                   value={formData.regex_filter ?? ""}
                   onChange={handleChange}
                   placeholder={
-                    formData.use_blob_urls 
+                    formData.use_blob_urls
                       ? ".*\\.(jpg|png)$ - imports only JPG, PNG files"
                       : ".*\\.(json|jsonl|parquet)$ - imports task definitions"
                   }
@@ -304,16 +303,18 @@ export const PreviewStep = ({
                     // Reset validation state when import method changes
                     onImportSettingsChange?.();
                   }}
-                  options={[
-                    {
-                      value: "Files",
-                      label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)",
-                    },
-                    {
-                      value: "Tasks",
-                      label: "Tasks - Treat each JSON, JSONL, or Parquet as one or more task definitions per file",
-                    },
-                  ] as any}
+                  options={
+                    [
+                      {
+                        value: "Files",
+                        label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)",
+                      },
+                      {
+                        value: "Tasks",
+                        label: "Tasks - Treat each JSON, JSONL, or Parquet as one or more task definitions per file",
+                      },
+                    ] as any
+                  }
                   placeholder="Select import method"
                 />
               </div>
@@ -366,8 +367,8 @@ export const PreviewStep = ({
                 </div>
                 <h3 className="font-medium mb-1">No Files Found</h3>
                 <p className="text-sm text-muted-foreground max-w-md">
-                  No files matching your current criteria were found. Try adjusting your filter settings and reload
-                  the preview.
+                  No files matching your current criteria were found. Try adjusting your filter settings and reload the
+                  preview.
                 </p>
               </div>
             ) : (
@@ -380,14 +381,12 @@ export const PreviewStep = ({
                       className="flex justify-between py-0.5 px-2 bg-gray-50 hover:bg-gray-100 border-b last:border-b-0 rounded-md"
                     >
                       <div className="truncate max-w-[260px]">
-                        {file.key ? (
-                          file.key
-                        ) : (
-                          <span className="italic">... preview limit reached ...</span>
-                        )}
+                        {file.key ? file.key : <span className="italic">... preview limit reached ...</span>}
                       </div>
                       <div className="flex items-center space-x-1 text-muted-foreground whitespace-nowrap">
-                        <span>{file.last_modified && formatDistanceToNow(new Date(file.last_modified), { addSuffix: true })}</span>
+                        <span>
+                          {file.last_modified && formatDistanceToNow(new Date(file.last_modified), { addSuffix: true })}
+                        </span>
                         <span className="mx-0.5">•</span>
                         <span>{file.size && formatSize(file.size)}</span>
                       </div>
@@ -403,4 +402,4 @@ export const PreviewStep = ({
       <InlineError includeValidation />
     </div>
   );
-}; 
+};

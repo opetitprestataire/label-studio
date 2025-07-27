@@ -93,7 +93,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
           setType("s3");
           onHide();
         };
-        
+
         // Call onHide immediately to set up the handler
         handleModalHide();
       }
@@ -232,9 +232,15 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
                     handleChange={(e) => {
                       const { name, value } = e.target as HTMLInputElement;
                       handleProviderFieldChange(name, value);
-                      
+
                       // Reset validation state when import settings change
-                      const importSettingsFields = ['prefix', 'path', 'regex_filter', 'use_blob_urls', 'recursive_scan'];
+                      const importSettingsFields = [
+                        "prefix",
+                        "path",
+                        "regex_filter",
+                        "use_blob_urls",
+                        "recursive_scan",
+                      ];
                       if (importSettingsFields.includes(name)) {
                         setFilesPreview(null);
                         setConnectionChecked(false);

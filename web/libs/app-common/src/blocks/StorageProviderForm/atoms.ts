@@ -25,4 +25,4 @@ export const formStateAtom = atom<FormState>({
     regex_filter: "",
   },
   isComplete: false,
-}); 
+});

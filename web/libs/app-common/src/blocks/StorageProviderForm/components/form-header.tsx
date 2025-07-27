@@ -18,4 +18,4 @@ export const FormHeader = ({ title, onClose }: FormHeaderProps) => {
       <Button leading={<IconCross />} look="string" onClick={onClose} />
     </div>
   );
-}; 
+};

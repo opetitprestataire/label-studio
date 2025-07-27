@@ -22,35 +22,35 @@ export const ReviewStep = ({ formData, filesPreview, formatSize }: ReviewStepPro
 
   const getFileCount = () => {
     if (!filesPreview) return "0 files";
-    
+
     // Check if the last file is the "preview limit reached" indicator
     const lastFile = filesPreview[filesPreview.length - 1];
     const hasMoreFiles = lastFile && lastFile.key === null;
-    
+
     if (hasMoreFiles) {
       // Subtract 1 to exclude the placeholder file
       const visibleFileCount = filesPreview.length - 1;
       return `More than ${visibleFileCount} files`;
     }
-    
+
     return `${filesPreview.length} files`;
   };
 
   const getTotalSize = () => {
     if (!filesPreview || !formatSize) return "0 Bytes";
-    
+
     // Check if the last file is the "preview limit reached" indicator
     const lastFile = filesPreview[filesPreview.length - 1];
     const hasMoreFiles = lastFile && lastFile.key === null;
-    
+
     // Calculate total size excluding the placeholder file if it exists
     const filesToCount = hasMoreFiles ? filesPreview.slice(0, -1) : filesPreview;
     const totalBytes = filesToCount.reduce((sum: number, file: any) => sum + (file.size || 0), 0);
-    
+
     if (hasMoreFiles) {
       return `More than ${formatSize(totalBytes)}`;
     }
-    
+
     return formatSize(totalBytes);
   };
 
@@ -104,4 +104,4 @@ export const ReviewStep = ({ formData, filesPreview, formatSize }: ReviewStepPro
       </div>
     </div>
   );
-}; 
+};
