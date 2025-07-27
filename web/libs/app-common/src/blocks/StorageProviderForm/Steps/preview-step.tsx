@@ -108,7 +108,11 @@ export const PreviewStep = ({
                   name="regex_filter"
                   value={formData.regex_filter ?? ""}
                   onChange={handleChange}
-                  placeholder=".*\.(jpg|png)$ - imports only JPG, PNG files"
+                  placeholder={
+                    formData.use_blob_urls 
+                      ? ".*\\.(jpg|png)$ - imports only JPG, PNG files"
+                      : ".*\\.(json|jsonl|parquet)$ - imports task definitions"
+                  }
                   style={{ width: "100%" }}
                   label=""
                   description=""
