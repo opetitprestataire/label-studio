@@ -99,6 +99,7 @@ export const Stepper = ({ steps, currentStep, onStepClick, isEditMode = false }:
                       strokeLinejoin="round"
                       className="w-3 h-3"
                     >
+                      <title>Line</title>
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   ) : (

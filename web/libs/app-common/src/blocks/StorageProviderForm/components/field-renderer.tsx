@@ -64,9 +64,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
     autoComplete: field.autoComplete,
   });
 
-  // Check if this is an access key field with placeholder value in edit mode
-  const isAccessKeyWithPlaceholder = field.accessKey && isEditMode && value === "••••••••••••••••";
-
   // Enhanced description for access key fields in edit mode
   const getEnhancedDescription = () => {
     return field.description || "";
@@ -142,7 +139,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         </div>
       );
 
-    case "counter":
+    case "counter": {
       const counterValue = value !== undefined && value !== null ? value : field.min || 0;
       return (
         <Counter
@@ -160,6 +157,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           labelProps={{}}
         />
       );
+    }
 
     default:
       return <div className="text-red-500">Unknown field type: {field.type}</div>;

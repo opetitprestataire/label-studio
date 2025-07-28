@@ -22,6 +22,49 @@ interface PreviewStepProps {
   onImportSettingsChange?: () => void;
 }
 
+const regexFilters = [
+  {
+    title: "Images",
+    regex: ".*.(jpe?g|png|gif)$",
+    blob: true,
+  },
+  {
+    title: "Videos",
+    regex: ".*\\.(mp4|avi|mov|wmv|webm)$",
+    blob: true,
+  },
+  {
+    title: "Audio",
+    regex: ".*\\.(mp3|wav|ogg|flac)$",
+    blob: true,
+  },
+  {
+    title: "Tabular",
+    regex: ".*\\.(csv|tsv)$",
+    blob: true,
+  },
+  {
+    title: "JSON",
+    regex: ".*\\.json$",
+    blob: false,
+  },
+  {
+    title: "JSONL",
+    regex: ".*\\.jsonl$",
+    blob: false,
+  },
+  {
+    title: "Parquet",
+    regex: ".*\\.parquet$",
+    blob: false,
+  },
+  {
+    title: "All Tasks Files",
+    regex: ".*\\.(json|jsonl|parquet)$",
+    blob: false,
+  },
+] as const;
+
 export const PreviewStep = ({
   formData,
   formState,
@@ -128,159 +171,28 @@ export const PreviewStep = ({
 
                 <div className="flex flex-wrap gap-x-2 items-center text-xs">
                   <span className="text-muted-foreground">Common filters:</span>
-                  {formData.use_blob_urls ? (
-                    // Files mode - show media file filters
-                    <>
-                      <a
-                        href="#"
-                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setFormState((prevState) => ({
-                            ...prevState,
-                            formData: {
-                              ...prevState.formData,
-                              regex_filter: ".*.(jpe?g|png|gif)$",
-                            },
-                          }));
-                        }}
-                      >
-                        Images
-                      </a>
-                      <a
-                        href="#"
-                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setFormState((prevState) => ({
-                            ...prevState,
-                            formData: {
-                              ...prevState.formData,
-                              regex_filter: ".*\\.(mp4|avi|mov|wmv|webm)$",
-                            },
-                          }));
-                        }}
-                      >
-                        Videos
-                      </a>
-                      <a
-                        href="#"
-                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setFormState((prevState) => ({
-                            ...prevState,
-                            formData: {
-                              ...prevState.formData,
-                              regex_filter: ".*\\.(mp3|wav|ogg|flac)$",
-                            },
-                          }));
-                        }}
-                      >
-                        Audio
-                      </a>
-                      <a
-                        href="#"
-                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setFormState((prevState) => ({
-                            ...prevState,
-                            formData: {
-                              ...prevState.formData,
-                              regex_filter: ".*\\.(csv|tsv)$",
-                            },
-                          }));
-                        }}
-                      >
-                        Tabular
-                      </a>
-                      <a
-                        href="#"
-                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setFormState((prevState) => ({
-                            ...prevState,
-                            formData: {
-                              ...prevState.formData,
-                              regex_filter: ".*",
-                            },
-                          }));
-                        }}
-                      >
-                        All Files
-                      </a>
-                    </>
-                  ) : (
-                    // Tasks mode - show structured data filters
-                    <>
-                      <a
-                        href="#"
-                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setFormState((prevState) => ({
-                            ...prevState,
-                            formData: {
-                              ...prevState.formData,
-                              regex_filter: ".*\\.json$",
-                            },
-                          }));
-                        }}
-                      >
-                        JSON
-                      </a>
-                      <a
-                        href="#"
-                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setFormState((prevState) => ({
-                            ...prevState,
-                            formData: {
-                              ...prevState.formData,
-                              regex_filter: ".*\\.jsonl$",
-                            },
-                          }));
-                        }}
-                      >
-                        JSONL
-                      </a>
-                      <a
-                        href="#"
-                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setFormState((prevState) => ({
-                            ...prevState,
-                            formData: {
-                              ...prevState.formData,
-                              regex_filter: ".*\\.parquet$",
-                            },
-                          }));
-                        }}
-                      >
-                        Parquet
-                      </a>
-                      <a
-                        href="#"
-                        className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setFormState((prevState) => ({
-                            ...prevState,
-                            formData: {
-                              ...prevState.formData,
-                              regex_filter: ".*\\.(json|jsonl|parquet)$",
-                            },
-                          }));
-                        }}
-                      >
-                        All Task Files
-                      </a>
-                    </>
-                  )}
+                  {regexFilters
+                    .filter((r) => r.blob === formData.use_blob_urls)
+                    .map((r) => {
+                      return (
+                        <button
+                          key={r.regex}
+                          className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setFormState((prevState) => ({
+                              ...prevState,
+                              formData: {
+                                ...prevState.formData,
+                                regex_filter: r.regex,
+                              },
+                            }));
+                          }}
+                        >
+                          {r.title}
+                        </button>
+                      );
+                    })}
                 </div>
               </div>
 
