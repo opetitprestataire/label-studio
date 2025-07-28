@@ -374,10 +374,11 @@ def sync_user_activities_to_db(max_users: int = None) -> dict:
             cleanup_redis_activity_data(user_ids)
 
             # Reset counter only if we processed all pending activities
+            # or if remaining users are below the threshold
             remaining_users = get_batch_user_ids()
-            if not remaining_users:
+            if not remaining_users or len(remaining_users) < SYNC_THRESHOLD:
                 reset_activity_counter()
-                logger.info('Reset activity counter after successful sync')
+                logger.info('Reset activity counter after successful sync (remaining users: %s)', len(remaining_users))
 
         logger.info('Activity sync completed: %s', sync_result)
         return sync_result
@@ -478,83 +479,3 @@ def schedule_activity_sync(force: bool = False) -> bool:
     except Exception as e:
         logger.error('Failed to schedule activity sync: %s', e)
         return False
-
-
-@job('low', timeout=7200)
-def full_activity_sync() -> dict:
-    """
-    Full synchronization of all user activities from Redis to database.
-
-    This is a maintenance task that processes all pending activities
-    regardless of batch size limits.
-
-    Returns:
-        Dictionary with sync results
-    """
-    logger.info('Starting full user activity sync')
-
-    try:
-        total_processed = 0
-        total_errors = 0
-        batch_count = 0
-
-        while True:
-            # Get current batch
-            user_ids = get_batch_user_ids()
-
-            if not user_ids:
-                logger.info(
-                    'Full sync completed: %s batches, %s processed, %s errors',
-                    batch_count,
-                    total_processed,
-                    total_errors,
-                )
-                break
-
-            # Process batch
-            batch_count += 1
-            logger.info('Processing batch %s with %s users', batch_count, len(user_ids))
-
-            # Limit batch size to prevent memory issues
-            if len(user_ids) > BATCH_SIZE:
-                user_ids = set(list(user_ids)[:BATCH_SIZE])
-
-            # Get and sync activities
-            activities = get_user_activities_for_sync(user_ids)
-
-            if activities:
-                sync_result = _bulk_update_user_activities(activities)
-
-                if sync_result['success']:
-                    cleanup_redis_activity_data(user_ids)
-                    total_processed += sync_result['processed']
-                    total_errors += sync_result['errors']
-                else:
-                    logger.error('Batch sync failed: %s', sync_result)
-                    total_errors += len(user_ids)
-                    break
-            else:
-                # No activities found, clean up anyway
-                cleanup_redis_activity_data(user_ids)
-                total_errors += len(user_ids)
-
-        # Reset counter after full sync
-        reset_activity_counter()
-
-        return {
-            'success': True,
-            'batches': batch_count,
-            'processed': total_processed,
-            'errors': total_errors,
-            'message': 'Full sync completed',
-        }
-
-    except Exception as e:
-        logger.error('Full activity sync failed: %s', e, exc_info=True)
-        return {
-            'success': False,
-            'batches': batch_count,
-            'processed': total_processed,
-            'errors': total_errors + 1,
-            'message': f'Full sync failed: {str(e)}',
-        }
