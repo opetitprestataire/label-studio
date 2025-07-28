@@ -13,7 +13,7 @@ const MAX_SPEED = 10;
 
 export interface VideoConfigControlProps {
   configModal: boolean;
-  onSetModal?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onSetModal?: (isOpen: boolean) => void;
   speed: number;
   onSpeedChange: (speed: number) => void;
   loopTimelineRegion: boolean;
@@ -43,15 +43,25 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
         !modalRef.current.contains(event.target as Node) &&
         !buttonRef.current.contains(event.target as Node)
       ) {
-        // Close the modal by calling onSetModal with a fake event
-        onSetModal?.({
-          preventDefault: () => {},
-          stopPropagation: () => {},
-        } as MouseEvent<HTMLButtonElement>);
+        // Close the modal
+        onSetModal?.(false);
       }
     },
     [configModal, onSetModal],
   );
+
+  const handleButtonClick = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onSetModal?.(!configModal);
+    },
+    [configModal, onSetModal],
+  );
+
+  const handleContainerClick = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  }, []);
 
   // Effect to handle clicks outside the modal
   useEffect(() => {
@@ -173,12 +183,8 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
   };
 
   return (
-    <div
-      className={styles.videoConfig}
-      ref={buttonRef}
-      onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
-    >
-      <ControlButton look={configModal ? "filled" : undefined} onClick={onSetModal} aria-label="Video settings">
+    <div className={styles.videoConfig} ref={buttonRef} onClick={handleContainerClick}>
+      <ControlButton look={configModal ? "filled" : undefined} onClick={handleButtonClick} aria-label="Video settings">
         {<IconConfig />}
       </ControlButton>
       {configModal && renderModal()}
