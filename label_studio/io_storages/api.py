@@ -157,6 +157,7 @@ class StorageValidateAPI(generics.CreateAPIView):
         return Response()
 
 
+@extend_schema(exclude=True)
 class ImportStorageListFilesAPI(generics.CreateAPIView):
 
     permission_required = all_permissions.projects_change
