@@ -24,7 +24,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
       {provider.layout.map((row, rowIndex) => (
         <div
           key={rowIndex}
-          className={`grid gap-6`}
+          className="grid gap-6"
           style={{
             gridTemplateColumns: `repeat(${row.fields.length}, 1fr)`,
           }}

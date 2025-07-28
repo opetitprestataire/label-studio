@@ -177,6 +177,7 @@ export const PreviewStep = ({
                       return (
                         <button
                           key={r.regex}
+                          type="button"
                           className="text-blue-600 border-b border-dotted border-blue-400 hover:text-blue-800"
                           onClick={(e) => {
                             e.preventDefault();
