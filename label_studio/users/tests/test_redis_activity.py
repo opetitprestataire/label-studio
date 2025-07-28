@@ -41,27 +41,20 @@ class TestRedisActivity(TestCase):
             reset_activity_counter()
 
     @patch('users.functions.last_activity.redis_connected', return_value=True)
-    @patch('users.functions.last_activity.redis_set')
     @patch('users.functions.last_activity.get_connection')
-    @patch('users.functions.last_activity.cache')
-    def test_set_user_last_activity_success(
-        self, mock_cache, mock_get_connection, mock_redis_set, mock_redis_connected
-    ):
+    def test_set_user_last_activity_success(self, mock_get_connection, mock_redis_connected):
         """Test successful setting of user activity."""
-        mock_redis_set.return_value = True
         mock_redis_client = MagicMock()
         mock_get_connection.return_value = mock_redis_client
-        mock_cache.get.return_value = 0
+        mock_redis_client.incr.return_value = 1
 
         result = set_user_last_activity(self.user.id, self.test_time)
 
         self.assertTrue(result)
-        mock_redis_set.assert_called_once()
+        mock_redis_client.setex.assert_called_once()
         mock_redis_client.sadd.assert_called_once()
-        mock_redis_client.expire.assert_called_once()
-        # increment_activity_counter is called internally, which uses get/set instead of incr
-        mock_cache.get.assert_called()
-        mock_cache.set.assert_called()
+        self.assertEqual(mock_redis_client.expire.call_count, 2)  # One for batch key, one for counter
+        mock_redis_client.incr.assert_called_once()
 
     @patch('users.functions.last_activity.redis_connected', return_value=False)
     def test_set_user_last_activity_redis_disconnected(self, mock_redis_connected):
@@ -70,20 +63,26 @@ class TestRedisActivity(TestCase):
         self.assertFalse(result)
 
     @patch('users.functions.last_activity.redis_connected', return_value=True)
-    @patch('users.functions.last_activity.redis_get')
-    def test_get_user_last_activity_from_redis(self, mock_redis_get, mock_redis_connected):
+    @patch('users.functions.last_activity.get_connection')
+    def test_get_user_last_activity_from_redis(self, mock_get_connection, mock_redis_connected):
         """Test getting user activity from Redis."""
-        mock_redis_get.return_value = self.test_time.isoformat()
+        mock_redis_client = MagicMock()
+        mock_get_connection.return_value = mock_redis_client
+        mock_redis_client.get.return_value = self.test_time.isoformat().encode('utf-8')
 
         result = get_user_last_activity(self.user.id)
 
         self.assertEqual(result, self.test_time)
-        mock_redis_get.assert_called_once()
+        mock_redis_client.get.assert_called_once()
 
     @patch('users.functions.last_activity.redis_connected', return_value=True)
-    @patch('users.functions.last_activity.redis_get', return_value=None)
-    def test_get_user_last_activity_fallback_to_db(self, mock_redis_get, mock_redis_connected):
+    @patch('users.functions.last_activity.get_connection')
+    def test_get_user_last_activity_fallback_to_db(self, mock_get_connection, mock_redis_connected):
         """Test fallback to database when Redis has no data."""
+        mock_redis_client = MagicMock()
+        mock_get_connection.return_value = mock_redis_client
+        mock_redis_client.get.return_value = None
+
         # Update user's last_activity in database
         self.user.last_activity = self.test_time
         self.user.save(update_fields=['last_activity'])
@@ -91,7 +90,7 @@ class TestRedisActivity(TestCase):
         result = get_user_last_activity(self.user.id)
 
         self.assertEqual(result, self.test_time)
-        mock_redis_get.assert_called_once()
+        mock_redis_client.get.assert_called_once()
 
     @patch('users.functions.last_activity.redis_connected', return_value=False)
     def test_get_user_last_activity_redis_disconnected(self, mock_redis_connected):
@@ -105,38 +104,44 @@ class TestRedisActivity(TestCase):
         self.assertEqual(result, self.test_time)
 
     @patch('users.functions.last_activity.redis_connected', return_value=True)
-    @patch('users.functions.last_activity.cache')
-    def test_increment_activity_counter(self, mock_cache, mock_redis_connected):
+    @patch('users.functions.last_activity.get_connection')
+    def test_increment_activity_counter(self, mock_get_connection, mock_redis_connected):
         """Test incrementing activity counter."""
-        mock_cache.get.return_value = 4
+        mock_redis_client = MagicMock()
+        mock_get_connection.return_value = mock_redis_client
+        mock_redis_client.incr.return_value = 5
 
         result = increment_activity_counter()
 
-        # Should return current value + 1
         self.assertEqual(result, 5)
-        mock_cache.set.assert_called_with(USER_ACTIVITY_COUNTER_KEY, 5)
+        mock_redis_client.incr.assert_called_with(USER_ACTIVITY_COUNTER_KEY)
+        mock_redis_client.expire.assert_called_once()
 
     @patch('users.functions.last_activity.redis_connected', return_value=True)
-    @patch('users.functions.last_activity.cache')
-    def test_get_activity_counter(self, mock_cache, mock_redis_connected):
+    @patch('users.functions.last_activity.get_connection')
+    def test_get_activity_counter(self, mock_get_connection, mock_redis_connected):
         """Test getting activity counter."""
-        mock_cache.get.return_value = 10
+        mock_redis_client = MagicMock()
+        mock_get_connection.return_value = mock_redis_client
+        mock_redis_client.get.return_value = b'10'
 
         result = get_activity_counter()
 
         self.assertEqual(result, 10)
-        mock_cache.get.assert_called_once()
+        mock_redis_client.get.assert_called_once()
 
     @patch('users.functions.last_activity.redis_connected', return_value=True)
-    @patch('users.functions.last_activity.cache')
-    def test_reset_activity_counter(self, mock_cache, mock_redis_connected):
+    @patch('users.functions.last_activity.get_connection')
+    def test_reset_activity_counter(self, mock_get_connection, mock_redis_connected):
         """Test resetting activity counter."""
-        mock_cache.set.return_value = True
+        mock_redis_client = MagicMock()
+        mock_get_connection.return_value = mock_redis_client
 
         result = reset_activity_counter()
 
         self.assertTrue(result)
-        mock_cache.set.assert_called_once_with('user_activity_counter', 0)
+        mock_redis_client.set.assert_called_once_with(USER_ACTIVITY_COUNTER_KEY, 0)
+        mock_redis_client.expire.assert_called_once()
 
     @patch('users.functions.last_activity.redis_connected', return_value=True)
     @patch('users.functions.last_activity.get_connection')

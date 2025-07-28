@@ -9,10 +9,9 @@ import logging
 from datetime import datetime
 from typing import List, Optional, Set
 
-from core.redis import redis_connected, redis_delete, redis_get, redis_set, start_job_async_or_sync
+from core.redis import redis_connected, start_job_async_or_sync
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.cache import cache
 from django.db import transaction
 from django.utils import timezone as django_timezone
 from django_rq import get_connection, job
@@ -59,17 +58,15 @@ def set_user_last_activity(user_id: int, timestamp: Optional[datetime] = None) -
         timestamp_str = timestamp.isoformat()
         redis_key = _get_user_activity_key(user_id)
 
+        # Get Redis connection
+        redis_client = get_connection()
+
         # Set user activity with TTL
-        redis_set(redis_key, timestamp_str, ttl=REDIS_TTL)
+        redis_client.setex(redis_key, REDIS_TTL, timestamp_str)
 
         # Add user to batch set for later synchronization (atomic operation)
-        try:
-            redis_client = get_connection()
-            redis_client.sadd(USER_ACTIVITY_BATCH_KEY, user_id)
-            redis_client.expire(USER_ACTIVITY_BATCH_KEY, REDIS_TTL)
-        except Exception as e:
-            logger.error('Failed to add user %s to batch set: %s', user_id, e)
-            return False
+        redis_client.sadd(USER_ACTIVITY_BATCH_KEY, user_id)
+        redis_client.expire(USER_ACTIVITY_BATCH_KEY, REDIS_TTL)
 
         # Increment counter
         current_count = increment_activity_counter()
@@ -98,7 +95,8 @@ def get_user_last_activity(user_id: int) -> Optional[datetime]:
 
     try:
         redis_key = _get_user_activity_key(user_id)
-        timestamp_str = redis_get(redis_key)
+        redis_client = get_connection()
+        timestamp_str = redis_client.get(redis_key)
 
         if timestamp_str:
             # Decode bytes to string if needed
@@ -150,10 +148,11 @@ def increment_activity_counter() -> int:
         return 0
 
     try:
-        # Initialize counter if it doesn't exist, then increment
-        current_count = cache.get(USER_ACTIVITY_COUNTER_KEY, 0)
-        current_count = int(current_count) + 1
-        cache.set(USER_ACTIVITY_COUNTER_KEY, current_count)
+        redis_client = get_connection()
+        # Increment counter (creates key with value 1 if it doesn't exist)
+        current_count = redis_client.incr(USER_ACTIVITY_COUNTER_KEY)
+        # Set expiration to match other keys
+        redis_client.expire(USER_ACTIVITY_COUNTER_KEY, REDIS_TTL)
         logger.debug('Activity counter incremented to %s', current_count)
         return current_count
 
@@ -173,7 +172,8 @@ def get_activity_counter() -> int:
         return 0
 
     try:
-        count = cache.get(USER_ACTIVITY_COUNTER_KEY, 0)
+        redis_client = get_connection()
+        count = redis_client.get(USER_ACTIVITY_COUNTER_KEY)
         return int(count) if count is not None else 0
 
     except Exception as e:
@@ -192,7 +192,9 @@ def reset_activity_counter() -> bool:
         return False
 
     try:
-        cache.set(USER_ACTIVITY_COUNTER_KEY, 0)
+        redis_client = get_connection()
+        redis_client.set(USER_ACTIVITY_COUNTER_KEY, 0)
+        redis_client.expire(USER_ACTIVITY_COUNTER_KEY, REDIS_TTL)
         logger.debug('Activity counter reset to 0')
         return True
 
@@ -310,10 +312,12 @@ def cleanup_redis_activity_data(user_ids: Set[int]) -> bool:
         return False
 
     try:
+        redis_client = get_connection()
+
         # Delete individual user activity keys
-        for user_id in user_ids:
-            redis_key = _get_user_activity_key(user_id)
-            redis_delete(redis_key)
+        keys_to_delete = [_get_user_activity_key(user_id) for user_id in user_ids]
+        if keys_to_delete:
+            redis_client.delete(*keys_to_delete)
 
         # Remove from batch set
         clear_batch_user_ids(user_ids)
