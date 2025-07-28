@@ -1,5 +1,5 @@
 import type React from "react";
-import { type FC, type MouseEvent, useEffect, useRef } from "react";
+import { type FC, type MouseEvent, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Toggle } from "@humansignal/ui";
 import { Block, Elem } from "../../../utils/bem";
@@ -32,6 +32,39 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
   // Refs for positioning
   const modalRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  // Handler for clicks outside the modal
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    // Check if the click is outside both the modal and the button
+    if (
+      configModal &&
+      modalRef.current &&
+      buttonRef.current &&
+      !modalRef.current.contains(event.target as Node) &&
+      !buttonRef.current.contains(event.target as Node)
+    ) {
+      // Close the modal by calling onSetModal with a fake event
+      onSetModal?.({
+        preventDefault: () => {},
+        stopPropagation: () => {},
+      } as MouseEvent<HTMLButtonElement>);
+    }
+  }, [configModal, onSetModal]);
+
+  // Effect to handle clicks outside the modal
+  useEffect(() => {
+    if (configModal) {
+      // Add event listener when modal is open
+      document.addEventListener("click", handleClickOutside as any);
+    } else {
+      // Remove event listener when modal is closed
+      document.removeEventListener("click", handleClickOutside as any);
+    }
+
+    // Cleanup function to remove event listener
+    return () => {
+      document.removeEventListener("click", handleClickOutside as any);
+    };
+  }, [configModal, handleClickOutside]);
 
   // Effect to dynamically position the modal within the viewport
   useEffect(() => {
