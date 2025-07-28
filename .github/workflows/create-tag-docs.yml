@@ -18,7 +18,7 @@ env:
   FRONTEND_MONOREPO_DIR: "web"
   FRONTEND_BUILD_COMMIT_MESSAGE: "ci: Build tag docs"
   DOCS_TARGET_DIR: "docs/source/includes/tags"
-  SCHEMA_TARGET_DIR: "web/lib/utils/schema/tags.json"
+  SCHEMA_TARGET_DIR: "web/libs/core/src/lib/utils/schema/tags.json"
 
 jobs:
   build:
