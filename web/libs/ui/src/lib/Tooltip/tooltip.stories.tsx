@@ -85,3 +85,15 @@ export const WithDisabledButton: Story = {
     );
   },
 };
+
+export const WithDisabledInput: Story = {
+  render: ({ children, ...props }) => {
+    return (
+      <div className="flex items-center gap-tight">
+        <Tooltip {...props} title="This input is disabled for the reason that it is disabled">
+          <input type="text" disabled className="border p-2" />
+        </Tooltip>
+      </div>
+    );
+  },
+};

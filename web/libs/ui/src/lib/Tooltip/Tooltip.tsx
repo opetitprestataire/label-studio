@@ -164,74 +164,24 @@ const TooltipInner = forwardRef(
     const child = Children.only(children) as DetailedReactHTMLElement<any, HTMLElement>;
 
     const needFallback = !!child.props.disabled;
-    if (isEnhancedTooltip) {
-      // using parent/child elements allows detecting hover state on a disabled element that not emit mouseenter/mouseleave events
-      const cacheIsTargetElement = useRef(new WeakMap<HTMLElement, boolean>());
-      const isTargetElement = useMemo(() => {
-        return (el: HTMLElement): boolean => {
-          if (!el || !triggerElement.current) return false;
-          const checkParent = (currentEl: HTMLElement, targetEl: HTMLElement): boolean => {
-            if (currentEl === targetEl) {
-              return true;
-            }
-            if (currentEl === triggerElement.current.parentNode || !currentEl.parentNode) {
-              return false;
-            }
-            return checkParent(currentEl.parentNode as HTMLElement, targetEl);
-          };
 
-          if (cacheIsTargetElement.current.has(el)) {
-            return cacheIsTargetElement.current.get(el) as boolean;
-          }
-          const result = checkParent(el, triggerElement.current);
-          cacheIsTargetElement.current.set(el, result);
-          return result;
-        };
-      }, [triggerElement.current]);
-      const performAnimationRef = useRef(performAnimation);
-      performAnimationRef.current = performAnimation;
-      useEffect(() => {
-        if (!needFallback) return;
-        if (!triggerElement.current) return;
-        const trigger = triggerElement.current as HTMLElement;
-        let elementWasHovered = injected;
-        const enterHandler = () => {
-          setInjected(true);
-          elementWasHovered = true;
-        };
-        const leaveHandler = () => {
-          if (interactive) {
-            clearHideTimeout();
-            hideTimeoutRef.current = setTimeout(() => {
-              performAnimation(false);
-            }, 300);
-          } else {
-            performAnimation(false);
-          }
-          elementWasHovered = false;
-        };
-        const mouseMoveHandler: EventListener = (e) => {
-          if (!e.target) return;
-          const elementIsHovered = isTargetElement(e.target as HTMLElement);
-          if (elementWasHovered !== elementIsHovered) {
-            if (elementIsHovered) {
-              enterHandler();
-            } else {
-              leaveHandler();
-            }
-          }
-        };
-        trigger.parentNode?.addEventListener("mousemove", mouseMoveHandler);
-        trigger.parentNode?.addEventListener("mouseleave", leaveHandler);
-        return () => {
-          const trigger = triggerElement.current;
-          if (trigger) {
-            trigger.parentNode?.removeEventListener("mousemove", mouseMoveHandler);
-            trigger.parentNode?.removeEventListener("mouseleave", leaveHandler);
-          }
-        };
-      }, [triggerElement.current, needFallback]);
-    }
+    const onMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (disabled === true) return;
+      setInjected(true);
+      child.props.onMouseEnter?.(e);
+    };
+    const onMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (disabled === true) return;
+      if (interactive) {
+        clearHideTimeout();
+        hideTimeoutRef.current = setTimeout(() => {
+          performAnimation(false);
+        }, 300);
+      } else {
+        performAnimation(false);
+      }
+      child.props.onMouseLeave?.(e);
+    };
 
     const clone = cloneElement(child, {
       ...child.props,
@@ -239,28 +189,16 @@ const TooltipInner = forwardRef(
         setRef(triggerElement, el);
         setRef(ref, el);
       },
-      onMouseEnter(e: React.MouseEvent<HTMLDivElement>) {
-        if (disabled === true) return;
-        if (!isEnhancedTooltip || !needFallback) {
-          setInjected(true);
-        }
-        child.props.onMouseEnter?.(e);
-      },
-      onMouseLeave(e: React.MouseEvent<HTMLDivElement>) {
-        if (disabled === true) return;
-        if (!isEnhancedTooltip || !needFallback) {
-          if (interactive) {
-            clearHideTimeout();
-            hideTimeoutRef.current = setTimeout(() => {
-              performAnimation(false);
-            }, 300);
-          } else {
-            performAnimation(false);
-          }
-        }
-        child.props.onMouseLeave?.(e);
-      },
+      ...(isEnhancedTooltip && needFallback ? { onMouseEnter, onMouseLeave } : {}),
     });
+    const element =
+      isEnhancedTooltip && needFallback ? (
+        <span className={styles.wrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+          {clone}
+        </span>
+      ) : (
+        clone
+      );
 
     useEffect(() => {
       if (injected) performAnimation(true);
@@ -271,7 +209,7 @@ const TooltipInner = forwardRef(
 
     return (
       <>
-        {clone}
+        {element}
         {createPortal(tooltip, document.body)}
       </>
     );
