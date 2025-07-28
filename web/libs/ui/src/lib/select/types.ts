@@ -72,7 +72,7 @@ export type SelectProps<T, A extends SelectOption<T>[]> = {
   onSearch?: (value: string) => void;
   selectFirstIfEmpty?: boolean;
   renderSelected?: (selectedOptions?: A[number][], placeholder?: string) => React.ReactNode | string;
-  useInfiniteScroll?: boolean;
+  isVirtualList?: boolean;
 } & SelectVirtualizedProps &
   Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value" | "placeholder">;
 
