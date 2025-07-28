@@ -167,6 +167,7 @@ class ImportStorageListFilesAPI(generics.CreateAPIView):
         self.serializer_class = serializer_class
         super().__init__(*args, **kwargs)
 
+    @extend_schema(exclude=True)
     def create(self, request, *args, **kwargs):
         from .functions import validate_storage_instance
 
