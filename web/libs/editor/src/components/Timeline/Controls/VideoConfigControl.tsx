@@ -2,12 +2,11 @@ import type React from "react";
 import { type FC, type MouseEvent, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Toggle } from "@humansignal/ui";
-import { Block, Elem } from "../../../utils/bem";
 
 import { IconConfig } from "@humansignal/icons";
 import { ControlButton } from "../Controls";
 import { Slider } from "./Slider";
-import "./VideoConfigControl.scss";
+import styles from "./VideoConfigControl.module.scss";
 
 const MIN_SPEED = 0.25;
 const MAX_SPEED = 10;
@@ -31,7 +30,8 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
 }) => {
   // Refs for positioning
   const modalRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
+
   // Handler for clicks outside the modal
   const handleClickOutside = useCallback((event: MouseEvent) => {
     // Check if the click is outside both the modal and the button
@@ -137,15 +137,14 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
 
   const renderModal = () => {
     const modalJSX = (
-      <Elem
-        block="video-config"
-        name="modal"
+      <div
+        className={styles.modal}
         ref={modalRef}
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         style={{ opacity: 0, position: "fixed" }}
       >
-        <Elem name="scroll-content">
-          <Elem name="section-header">Playback Settings</Elem>
+        <div className={styles.scrollContent}>
+          <div className={styles.sectionHeader}>Playback Settings</div>
           <Slider
             min={MIN_SPEED}
             max={MAX_SPEED}
@@ -155,27 +154,27 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
             info={"Increase or decrease the playback speed"}
             onChange={handleChangePlaybackSpeed}
           />
-          <Elem name="toggle">
+          <div className={styles.toggle}>
             <Toggle
               checked={loopTimelineRegion}
               onChange={(e) => onLoopTimelineRegionChange(e.target.checked)}
               label="Loop Timeline Regions"
               labelProps={{ size: "small" }}
             />
-          </Elem>
-        </Elem>
-      </Elem>
+          </div>
+        </div>
+      </div>
     );
 
     return typeof document !== "undefined" ? createPortal(modalJSX, document.body) : null;
   };
 
   return (
-    <Block name="video-config" ref={buttonRef} onClick={(e: MouseEvent<HTMLButtonElement>) => e.stopPropagation()}>
+    <div className={styles.videoConfig} ref={buttonRef} onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
       <ControlButton look={configModal ? "filled" : undefined} onClick={onSetModal} aria-label="Video settings">
         {<IconConfig />}
       </ControlButton>
       {configModal && renderModal()}
-    </Block>
+    </div>
   );
 };
