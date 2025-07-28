@@ -78,7 +78,7 @@ export const Select = forwardRef(
       selectedValueRenderer,
       selectFirstIfEmpty,
       renderSelected,
-      useInfiniteScroll = false,
+      isVirtualList = false,
       ...props
     }: SelectProps<T, A>,
     _ref: ForwardedRef<HTMLSelectElement>,
