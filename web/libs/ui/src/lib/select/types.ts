@@ -73,6 +73,9 @@ export type SelectProps<T, A extends SelectOption<T>[]> = {
   selectFirstIfEmpty?: boolean;
   renderSelected?: (selectedOptions?: A[number][], placeholder?: string) => React.ReactNode | string;
   isVirtualList?: boolean;
+  loadMore?: () => void;
+  pageSize?: number;
+  page?: number;
 } & SelectVirtualizedProps &
   Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value" | "placeholder">;
 

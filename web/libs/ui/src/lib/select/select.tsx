@@ -17,7 +17,11 @@ import clsx from "clsx";
 import styles from "./select.module.scss";
 import { cnm } from "../../utils/utils";
 import { VariableSizeList } from "react-window";
+import InfiniteLoader from "react-window-infinite-loader";
 
+const VARIABLE_LIST_ITEM_HEIGHT = 40;
+const VARIABLE_LIST_COUNT_RENDERED = 5;
+const VARIABLE_LIST_WIDTH = 200;
 /*
  * This file defines a custom Select component for the Design System, which uses a fully custom UI for
  * dropdowns and options.
@@ -79,6 +83,9 @@ export const Select = forwardRef(
       selectFirstIfEmpty,
       renderSelected,
       isVirtualList = false,
+      loadMore,
+      pageSize = 20,
+      page = 1,
       ...props
     }: SelectProps<T, A>,
     _ref: ForwardedRef<HTMLSelectElement>,
@@ -353,18 +360,38 @@ export const Select = forwardRef(
                 <CommandGroup>
                   {props.header ? props.header : null}
                   {isVirtualList ? (
-                    <VariableSizeList
-                      itemData={renderedOptions}
-                      itemSize={() => 40}
+                    <InfiniteLoader
                       itemCount={renderedOptions.length}
-                      height={200}
-                      width="100%"
-                      overscanCount={1}
-                    >
-                      {({ index, style }) => {
-                        return <div style={style}>{renderedOptions[index]}</div>;
+                      loadMoreItems={() => {
+                        console.log("loadMoreItems");
+                        loadMore?.();
                       }}
-                    </VariableSizeList>
+                      isItemLoaded={() => true}
+                      threshold={5}
+                      minimumBatchSize={pageSize}
+                    >
+                      {({
+                        onItemsRendered,
+                        ref: infiniteLoaderRef,
+                      }: { onItemsRendered: (params: any) => void; ref: any }) => {
+                        return (
+                          <VariableSizeList
+                            itemData={renderedOptions}
+                            itemSize={() => VARIABLE_LIST_ITEM_HEIGHT}
+                            itemCount={renderedOptions.length}
+                            height={VARIABLE_LIST_COUNT_RENDERED * VARIABLE_LIST_ITEM_HEIGHT} // this makes the height based on available items
+                            width={VARIABLE_LIST_WIDTH}
+                            onItemsRendered={onItemsRendered}
+                            ref={infiniteLoaderRef}
+                            overscanCount={1}
+                          >
+                            {({ index, style }) => {
+                              return <div style={style}>{renderedOptions[index]}</div>;
+                            }}
+                          </VariableSizeList>
+                        );
+                      }}
+                    </InfiniteLoader>
                   ) : (
                     renderedOptions
                   )}

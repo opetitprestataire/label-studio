@@ -7,8 +7,11 @@ import { Space } from "../../Common/Space/Space";
 import { IconCheckAlt, IconCrossAlt } from "@humansignal/icons";
 import { Tooltip, Userpic } from "@humansignal/ui";
 import { Common } from "../../Filters/types";
-import { VariantSelect } from "../../Filters/types/List";
+import { observer } from "mobx-react";
+import { Select } from "@humansignal/ui";
 import "./Annotators.scss";
+import { useState, useMemo } from "react";
+import { useDataManagerUsers } from "./useUsers";
 
 export const Annotators = (cell) => {
   const { value, column, original: task } = cell;
@@ -72,6 +75,55 @@ export const Annotators = (cell) => {
   );
 };
 
+export const InfiniteVariantSelect = observer(
+  ({ filter, schema, onChange, multiple, value, placeholder, disabled, ...rest }) => {
+    if (!schema) return <></>;
+    const { items } = schema;
+    const [selectedValue, setSelectedValue] = useState(value);
+
+    // Get project ID from the filter context or use a default
+    const projectId = filter?.view?.project?.id || 1;
+
+    const { users, hasMore, loadMore } = useDataManagerUsers(projectId, 5);
+    const options = useMemo(() => {
+      return users.map((user) => {
+        return {
+          value: user.id,
+          label: (
+            <Tooltip title={user.displayName ?? user.username}>
+              <div className="flex gap-2 w-full items-center">
+                <Userpic user={user} size={16} key={`user-${user.id}`} showName={true} rawClassName="flex-0" />
+                <span className="text-ellipsis text-nowrap overflow-hidden w-full">
+                  {user.displayName ?? user.username}
+                </span>
+              </div>
+            </Tooltip>
+          ),
+        };
+      });
+    }, [users, hasMore, loadMore]);
+
+    // Convert users data to options format for Select component
+    return (
+      <Select
+        options={options}
+        value={selectedValue}
+        onChange={(val) => {
+          setSelectedValue(val);
+          onChange?.(val);
+        }}
+        triggerClassName={cn("form-select").elem("list").toString()}
+        loadMore={loadMore}
+        size={"small"}
+        placeholder={placeholder}
+        disabled={disabled}
+        multiple={multiple}
+        isVirtualList={true}
+      />
+    );
+  },
+);
+
 const UsersInjector = inject(({ store }) => {
   return {
     users: store.users,
@@ -111,13 +163,13 @@ Annotators.customOperators = [
     key: "contains",
     label: "contains",
     valueType: "list",
-    input: (props) => <VariantSelect {...props} />,
+    input: (props) => <InfiniteVariantSelect {...props} test={true} />,
   },
   {
     key: "not_contains",
     label: "not contains",
     valueType: "list",
-    input: (props) => <VariantSelect {...props} />,
+    input: (props) => <InfiniteVariantSelect {...props} test={true} />,
   },
   ...Common,
 ];
