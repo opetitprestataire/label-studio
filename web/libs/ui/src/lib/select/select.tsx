@@ -352,7 +352,7 @@ export const Select = forwardRef(
                 <CommandEmpty>{searchable ? "No results found." : ""}</CommandEmpty>
                 <CommandGroup>
                   {props.header ? props.header : null}
-                  {useInfiniteScroll ? (
+                  {isVirtualList ? (
                     <VariableSizeList
                       itemData={renderedOptions}
                       itemSize={() => 40}
