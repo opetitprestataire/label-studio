@@ -33,22 +33,25 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
   const buttonRef = useRef<HTMLDivElement>(null);
 
   // Handler for clicks outside the modal
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    // Check if the click is outside both the modal and the button
-    if (
-      configModal &&
-      modalRef.current &&
-      buttonRef.current &&
-      !modalRef.current.contains(event.target as Node) &&
-      !buttonRef.current.contains(event.target as Node)
-    ) {
-      // Close the modal by calling onSetModal with a fake event
-      onSetModal?.({
-        preventDefault: () => {},
-        stopPropagation: () => {},
-      } as MouseEvent<HTMLButtonElement>);
-    }
-  }, [configModal, onSetModal]);
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      // Check if the click is outside both the modal and the button
+      if (
+        configModal &&
+        modalRef.current &&
+        buttonRef.current &&
+        !modalRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        // Close the modal by calling onSetModal with a fake event
+        onSetModal?.({
+          preventDefault: () => {},
+          stopPropagation: () => {},
+        } as MouseEvent<HTMLButtonElement>);
+      }
+    },
+    [configModal, onSetModal],
+  );
 
   // Effect to handle clicks outside the modal
   useEffect(() => {
@@ -170,7 +173,11 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
   };
 
   return (
-    <div className={styles.videoConfig} ref={buttonRef} onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
+    <div
+      className={styles.videoConfig}
+      ref={buttonRef}
+      onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+    >
       <ControlButton look={configModal ? "filled" : undefined} onClick={onSetModal} aria-label="Video settings">
         {<IconConfig />}
       </ControlButton>
