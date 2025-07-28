@@ -80,8 +80,8 @@ function TokenSettingsModalView({
         </Form.Row>
       )}
       <Form.Actions>
-        <Button variant="primary" look="filled" className="w-[100px]" type="submit">
-          Save
+        <Button variant="primary" look="filled" type="submit">
+          Save Changes
         </Button>
       </Form.Actions>
     </Form>
