@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { isFF, FF_DM_FILTER_MEMBERS } from "../../../utils/feature-flags";
 
 // Extend Window interface to include DataManager properties
 declare global {
@@ -7,11 +8,7 @@ declare global {
       store?: {
         apiCall: (method: string, params: any) => Promise<any>;
       };
-    };
-    dataManager?: {
-      store?: {
-        apiCall: (method: string, params: any) => Promise<any>;
-      };
+      apiCall?: (method: string, params: any) => Promise<any>;
     };
   }
 }
@@ -25,7 +22,8 @@ interface APIUser {
 }
 
 // DataManager-style user fetching with pagination
-export const useDataManagerUsers = (projectId: string, pageSize = 20) => {
+export const useDataManagerUsers = (projectId: string, pageSize = 20, isDeleted = false) => {
+  if (!isFF(FF_DM_FILTER_MEMBERS)) return null;
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState<APIUser[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,22 +38,24 @@ export const useDataManagerUsers = (projectId: string, pageSize = 20) => {
 
       try {
         // Use the correct DataManager API pattern - window.DM is the AppStore
-        const store = window?.DM?.store || window?.dataManager?.store;
+        const store = window?.DM?.store || window?.DM;
 
         if (!store) {
           console.error("DataManager store not available");
           return;
         }
 
-        const response = await store.apiCall("users", {
+        const response = await store.apiCall?.("users", {
           page: pageNumber,
           page_size: pageSize,
           project: projectId,
+
+          is_deleted: isDeleted,
         });
 
-        if (response && response) {
-          const newUsers = response;
-          const totalCount = response.total || 0;
+        if (response) {
+          const newUsers = response?.results ?? response;
+          const totalCount = response.count || 0;
 
           if (append) {
             setUsers((prev) => {

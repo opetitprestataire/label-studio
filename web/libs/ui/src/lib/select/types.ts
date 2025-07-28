@@ -76,6 +76,7 @@ export type SelectProps<T, A extends SelectOption<T>[]> = {
   loadMore?: () => void;
   pageSize?: number;
   page?: number;
+  itemCount?: number;
 } & SelectVirtualizedProps &
   Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value" | "placeholder">;
 

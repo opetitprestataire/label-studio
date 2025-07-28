@@ -12,6 +12,10 @@ import { Select } from "@humansignal/ui";
 import "./Annotators.scss";
 import { useState, useMemo } from "react";
 import { useDataManagerUsers } from "./useUsers";
+import { isFF, FF_DM_FILTER_MEMBERS } from "../../../utils/feature-flags";
+import { VariantSelect } from "../../Filters/types/List";
+
+const isFilterMembers = isFF(FF_DM_FILTER_MEMBERS);
 
 export const Annotators = (cell) => {
   const { value, column, original: task } = cell;
@@ -84,7 +88,7 @@ export const InfiniteVariantSelect = observer(
     // Get project ID from the filter context or use a default
     const projectId = filter?.view?.project?.id || 1;
 
-    const { users, hasMore, loadMore } = useDataManagerUsers(projectId, 5);
+    const { users, hasMore, total, loadMore } = useDataManagerUsers(projectId, 5);
     const options = useMemo(() => {
       return users.map((user) => {
         return {
@@ -92,7 +96,7 @@ export const InfiniteVariantSelect = observer(
           label: (
             <Tooltip title={user.displayName ?? user.username}>
               <div className="flex gap-2 w-full items-center">
-                <Userpic user={user} size={16} key={`user-${user.id}`} showName={true} rawClassName="flex-0" />
+                <Userpic user={user} size={16} key={`user-${user.id}`} showName={true} />
                 <span className="text-ellipsis text-nowrap overflow-hidden w-full">
                   {user.displayName ?? user.username}
                 </span>
@@ -119,6 +123,9 @@ export const InfiniteVariantSelect = observer(
         disabled={disabled}
         multiple={multiple}
         isVirtualList={true}
+        searchable={true}
+        searchFilter={Annotators.searchFilter}
+        itemCount={total}
       />
     );
   },
@@ -163,13 +170,13 @@ Annotators.customOperators = [
     key: "contains",
     label: "contains",
     valueType: "list",
-    input: (props) => <InfiniteVariantSelect {...props} test={true} />,
+    input: (props) => (isFilterMembers ? <InfiniteVariantSelect {...props} /> : <VariantSelect {...props} />),
   },
   {
     key: "not_contains",
     label: "not contains",
     valueType: "list",
-    input: (props) => <InfiniteVariantSelect {...props} test={true} />,
+    input: (props) => (isFilterMembers ? <InfiniteVariantSelect {...props} /> : <VariantSelect {...props} />),
   },
   ...Common,
 ];

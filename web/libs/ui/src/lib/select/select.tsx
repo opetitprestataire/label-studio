@@ -21,7 +21,8 @@ import InfiniteLoader from "react-window-infinite-loader";
 
 const VARIABLE_LIST_ITEM_HEIGHT = 40;
 const VARIABLE_LIST_COUNT_RENDERED = 5;
-const VARIABLE_LIST_WIDTH = 200;
+const VARIABLE_LIST_WIDTH = 220;
+const VARIABLE_LIST_PAGE_SIZE = 20;
 /*
  * This file defines a custom Select component for the Design System, which uses a fully custom UI for
  * dropdowns and options.
@@ -84,8 +85,9 @@ export const Select = forwardRef(
       renderSelected,
       isVirtualList = false,
       loadMore,
-      pageSize = 20,
+      pageSize = VARIABLE_LIST_PAGE_SIZE,
       page = 1,
+      itemCount,
       ...props
     }: SelectProps<T, A>,
     _ref: ForwardedRef<HTMLSelectElement>,
@@ -361,14 +363,11 @@ export const Select = forwardRef(
                   {props.header ? props.header : null}
                   {isVirtualList ? (
                     <InfiniteLoader
-                      itemCount={renderedOptions.length}
-                      loadMoreItems={() => {
-                        console.log("loadMoreItems");
-                        loadMore?.();
-                      }}
-                      isItemLoaded={() => true}
-                      threshold={5}
-                      minimumBatchSize={pageSize}
+                      itemCount={itemCount ?? renderedOptions.length}
+                      loadMoreItems={() => loadMore?.()}
+                      isItemLoaded={(index) => index < renderedOptions.length}
+                      threshold={pageSize}
+                      minimumBatchSize={pageSize / 2}
                     >
                       {({
                         onItemsRendered,
