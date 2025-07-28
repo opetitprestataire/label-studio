@@ -189,7 +189,7 @@ const TooltipInner = forwardRef(
         setRef(triggerElement, el);
         setRef(ref, el);
       },
-      ...(isEnhancedTooltip && needFallback ? { onMouseEnter, onMouseLeave } : {}),
+      ...(!isEnhancedTooltip || !needFallback ? { onMouseEnter, onMouseLeave } : {}),
     });
     const element =
       isEnhancedTooltip && needFallback ? (
