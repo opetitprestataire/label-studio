@@ -56,7 +56,7 @@ export const FilterDropdown = observer(
         searchable={true}
         triggerClassName="whitespace-nowrap"
         searchFilter={searchFilter}
-        useInfiniteScroll={true}
+        isVirtualList={true}
       />
     );
   },
