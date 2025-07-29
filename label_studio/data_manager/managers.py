@@ -690,7 +690,7 @@ settings.DATA_MANAGER_ANNOTATIONS_MAP = {
     'predictions_results': annotate_predictions_results,
     'predictions_model_versions': annotate_predictions_model_versions,
     'predictions_score': annotate_predictions_score,
-    # 'annotators': annotate_annotators,
+    'annotators': annotate_annotators,
     'annotations_ids': annotate_annotations_ids,
     'file_upload': file_upload,
     'draft_exists': annotate_draft_exists,

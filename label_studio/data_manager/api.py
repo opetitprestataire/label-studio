@@ -339,8 +339,7 @@ class TaskListAPI(generics.ListCreateAPIView):
         review = bool_from_request(self.request.GET, 'review', False)
 
         if review:
-            # fields_for_evaluation = ['annotators', 'reviewed']
-            fields_for_evaluation = ['reviewed']
+            fields_for_evaluation = ['annotators', 'reviewed']
             all_fields = None
         if page is not None:
             ids = [task.id for task in page]  # page is a list already
