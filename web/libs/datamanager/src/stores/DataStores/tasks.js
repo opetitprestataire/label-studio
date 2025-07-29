@@ -37,6 +37,8 @@ export const create = (columns) => {
     unique_lock_id: types.maybeNull(types.string),
     updated_by: types.optional(types.array(Assignee), []),
     annotators_count: types.optional(types.number, 0),
+    reviewers_count: types.optional(types.number, 0),
+    comment_authors_count: types.optional(types.number, 0),
     ...(isFF(FF_LOPS_E_3)
       ? {
           _additional: types.optional(fileAttributes, {}),

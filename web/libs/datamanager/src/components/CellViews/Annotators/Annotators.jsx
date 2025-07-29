@@ -1,5 +1,6 @@
 import { inject } from "mobx-react";
 import clsx from "clsx";
+import { useMemo } from "react";
 import { useSDK } from "../../../providers/SDKProvider";
 import { cn } from "../../../utils/bem";
 import { isDefined } from "../../../utils/utils";
@@ -19,7 +20,24 @@ export const Annotators = (cell) => {
   const userPickBadge = cn("userpic-badge");
   const annotatorsCN = cn("annotators");
   const isEnterprise = window.APP_SETTINGS.billing?.enterprise;
-  const annotatorsCount = task?.annotators_count || 0;
+
+  // Memoize the count field calculation
+  const extraCount = useMemo(() => {
+    const getCountField = () => {
+      switch (column.alias) {
+        case "annotators":
+          return task?.annotators_count || 0;
+        case "reviewers":
+          return task?.reviewers_count || 0;
+        case "comment_authors":
+          return task?.comment_authors_count || 0;
+        default:
+          return 0;
+      }
+    };
+
+    return getCountField() - 10;
+  }, [column.alias, task?.annotators_count, task?.reviewers_count, task?.comment_authors_count]);
 
   return (
     <div className={annotatorsCN.toString()}>
@@ -57,7 +75,7 @@ export const Annotators = (cell) => {
           </div>
         );
       })}
-      {annotatorsCount > 0 && (
+      {extraCount > 0 && (
         <div
           className={annotatorsCN.elem("item").toString()}
           onClick={(e) => {
@@ -66,7 +84,7 @@ export const Annotators = (cell) => {
             sdk.invoke("userCellCounterClick", e, column.alias, task, userList);
           }}
         >
-          <Userpic addCount={`+${annotatorsCount}`} />
+          <Userpic addCount={`+${extraCount}`} />
         </div>
       )}
     </div>
