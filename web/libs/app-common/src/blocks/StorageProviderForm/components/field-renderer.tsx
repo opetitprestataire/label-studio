@@ -59,7 +59,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
     label: field.label,
     description: field.description || "",
     footer: error ? <div className="text-negative-content">{error}</div> : "",
-    className: error ? "border-red-500" : "",
+    className: error ? "border-negative-content" : "",
     placeholder: field.placeholder,
     autoComplete: field.autoComplete,
   });
