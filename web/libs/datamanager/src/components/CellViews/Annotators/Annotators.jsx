@@ -16,10 +16,10 @@ export const Annotators = (cell) => {
   const sdk = useSDK();
   const userList = Array.from(value);
   const renderable = userList.slice(0, 10);
-  const extra = userList.length - renderable.length;
   const userPickBadge = cn("userpic-badge");
   const annotatorsCN = cn("annotators");
   const isEnterprise = window.APP_SETTINGS.billing?.enterprise;
+  const annotatorsCount = task?.annotators_count || 0;
 
   return (
     <div className={annotatorsCN.toString()}>
@@ -57,7 +57,7 @@ export const Annotators = (cell) => {
           </div>
         );
       })}
-      {extra > 0 && (
+      {annotatorsCount > 0 && (
         <div
           className={annotatorsCN.elem("item").toString()}
           onClick={(e) => {
@@ -66,7 +66,7 @@ export const Annotators = (cell) => {
             sdk.invoke("userCellCounterClick", e, column.alias, task, userList);
           }}
         >
-          <Userpic addCount={`+${extra}`} />
+          <Userpic addCount={`+${annotatorsCount}`} />
         </div>
       )}
     </div>
