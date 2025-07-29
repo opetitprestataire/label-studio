@@ -6,8 +6,9 @@ import { FormFooter } from "./components/form-footer";
 import { useStorageForm } from "./hooks/useStorageForm";
 import { useStorageApi } from "./hooks/useStorageApi";
 import { step1Schema, getProviderSchema } from "./schemas";
-import { addProvider, providerRegistry } from "./providers";
+import { addProvider } from "./providers";
 import type { ProviderConfig } from "./types/provider";
+import { InlineError } from "apps/labelstudio/src/components/Error/InlineError";
 
 interface StorageProviderFormProps {
   onSubmit: () => void;
@@ -266,6 +267,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
           })()}
         </div>
 
+        <InlineError includeValidation />
         <FormFooter
           currentStep={currentStep}
           totalSteps={steps.length}

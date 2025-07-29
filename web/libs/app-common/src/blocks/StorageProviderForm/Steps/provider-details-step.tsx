@@ -1,7 +1,6 @@
 import { getProviderConfig } from "../providers";
 import { ProviderForm } from "../components/provider-form";
 import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
-import { InlineError } from "apps/labelstudio/src/components/Error/InlineError";
 
 interface ProviderDetailsStepProps {
   formData: any;
@@ -62,8 +61,6 @@ export const ProviderDetailsStep = ({
         onBlur={handleFieldBlur}
         isEditMode={isEditMode}
       />
-
-      <InlineError includeValidation />
     </div>
   );
 };
