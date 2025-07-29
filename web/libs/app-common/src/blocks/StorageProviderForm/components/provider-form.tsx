@@ -29,27 +29,30 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
             gridTemplateColumns: `repeat(${row.fields.length}, 1fr)`,
           }}
         >
-          {getFieldsForRow(provider.fields, row.fields).map((field) => (
-            <div
-              key={field.name}
-              style={{
-                gridColumn: field.gridCols ?? "initial",
-              }}
-            >
-              {field.type === "message" ? (
-                <div>{field.content}</div>
-              ) : (
-                <FieldRenderer
-                  field={field}
-                  value={formData[field.name]}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  error={errors[field.name]}
-                  isEditMode={isEditMode}
-                />
-              )}
-            </div>
-          ))}
+          {getFieldsForRow(provider.fields, row.fields).map((field) => {
+            const fieldValue = formData[field.name];
+            return (
+              <div
+                key={field.name}
+                style={{
+                  gridColumn: field.gridCols ?? "initial",
+                }}
+              >
+                {field.type === "message" ? (
+                  <div>{field.content}</div>
+                ) : (
+                  <FieldRenderer
+                    field={field}
+                    value={fieldValue}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    error={errors[field.name]}
+                    isEditMode={isEditMode}
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
       ))}
     </div>

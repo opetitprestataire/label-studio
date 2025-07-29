@@ -6,7 +6,7 @@ import { FormFooter } from "./components/form-footer";
 import { useStorageForm } from "./hooks/useStorageForm";
 import { useStorageApi } from "./hooks/useStorageApi";
 import { step1Schema, getProviderSchema } from "./schemas";
-import { addProvider } from "./providers";
+import { addProvider, providerRegistry } from "./providers";
 import type { ProviderConfig } from "./types/provider";
 
 interface StorageProviderFormProps {
@@ -27,7 +27,7 @@ interface StorageProviderFormProps {
 export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>(
   ({ onSubmit, target, project, storage, title, storageTypes, providers, onClose = () => {}, onHide }, ref) => {
     const modal = useModalControls();
-    const [type, setType] = useState<string | undefined>("s3");
+    const [type, setType] = useState<string | undefined>(storage?.type || storage?.provider || "s3");
     const [filesPreview, setFilesPreview] = useState<any[] | null>(null);
     const [connectionChecked, setConnectionChecked] = useState(false);
 
@@ -83,6 +83,13 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
 
     const { currentStep, formData } = formState;
 
+    // Update type when formData.provider changes in edit mode
+    useEffect(() => {
+      if (isEditMode && formData.provider && formData.provider !== type) {
+        setType(formData.provider);
+      }
+    }, [isEditMode, formData.provider, type]);
+
     // Handle modal hide (including Escape key)
     useEffect(() => {
       if (onHide) {
@@ -94,8 +101,8 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
           onHide();
         };
 
-        // Call onHide immediately to set up the handler
-        handleModalHide();
+        // Set up the handler but don't call it immediately
+        // The handler will be called when the modal is actually hidden
       }
     }, [onHide, resetForm]);
 

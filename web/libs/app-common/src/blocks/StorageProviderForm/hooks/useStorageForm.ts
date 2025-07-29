@@ -3,7 +3,7 @@ import { useAtom } from "jotai";
 import { z } from "zod";
 import { formStateAtom } from "../atoms";
 import { formatValidationErrors } from "../schemas";
-import { getProviderConfig } from "../providers";
+import { getProviderConfig, providerRegistry } from "../providers";
 import { extractDefaultValues } from "../types/provider";
 
 interface UseStorageFormProps {
@@ -15,12 +15,12 @@ interface UseStorageFormProps {
 
 export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStorageFormProps) => {
   const [formState, setFormState] = useAtom(formStateAtom);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const { currentStep, formData } = formState;
+      const [errors, setErrors] = useState<Record<string, string>>({});
+    const { currentStep, formData } = formState;
 
-  // Initialize form data with provider defaults when provider changes
+    // Initialize form data with provider defaults when provider changes
   useEffect(() => {
-    if (formData.provider) {
+    if (formData.provider && !isEditMode) {
       const providerConfig = getProviderConfig(formData.provider);
       if (providerConfig) {
         const defaultValues = extractDefaultValues(providerConfig.fields);
@@ -33,16 +33,36 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
         }));
       }
     }
-  }, [formData.provider, setFormState]);
+  }, [formData.provider, setFormState, isEditMode]);
 
-  // Initialize form data with existing storage data in edit mode
+    // Initialize form data with existing storage data in edit mode
   useEffect(() => {
     if (isEditMode && storage) {
-      const providerConfig = getProviderConfig(storage.type || storage.provider || "s3");
+      const storageType = storage.type || storage.provider || "s3";
+      
+      // Wait for providers to be available
+      if (Object.keys(providerRegistry).length === 0) {
+        return;
+      }
+      
+      const providerConfig = getProviderConfig(storageType);
 
-      // Prepare form data with placeholder values for access keys
+      // Debug logging to help identify provider issues
+      if (!providerConfig) {
+        console.warn(`Provider config not found for storage type: "${storageType}"`, {
+          availableProviders: Object.keys(providerRegistry),
+          storageType,
+        });
+        
+        // If no provider config found, we'll still populate the form with existing data
+        // but we'll retry when more providers are registered
+        return;
+      }
+
+            // Prepare form data with placeholder values for access keys
       const formDataWithPlaceholders = { ...storage };
 
+      // Process provider-specific fields
       if (providerConfig) {
         providerConfig.fields.forEach((field) => {
           if (field.type !== "message" && field.accessKey) {
@@ -97,17 +117,21 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
         });
       }
 
-      setFormState((prevState) => ({
-        ...prevState,
-        currentStep: 0, // Start from first step (Configure Connection in edit mode)
-        formData: {
+            // Always populate the form with existing data, even if provider config is not found
+      setFormState((prevState) => {
+        const newFormData = {
           ...prevState.formData,
           ...formDataWithPlaceholders, // Load existing storage data with placeholders
-          provider: storage.type || storage.provider || "s3", // Ensure provider is set
-        },
-      }));
+          provider: storageType, // Ensure provider is set using the detected type
+        };
+        return {
+          ...prevState,
+          currentStep: 0, // Start from first step (Configure Connection in edit mode)
+          formData: newFormData,
+        };
+      });
     }
-  }, [isEditMode, storage, setFormState]);
+  }, [isEditMode, storage, setFormState, providerRegistry]);
 
   // Initialize form data with project when it changes
   useEffect(() => {
