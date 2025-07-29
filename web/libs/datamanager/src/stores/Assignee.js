@@ -1,11 +1,28 @@
 import { types } from "mobx-state-tree";
 import { User } from "./Users";
 import { StringOrNumberID } from "./types";
+import { FF_DISABLE_GLOBAL_USER_FETCHING, isFF } from "../utils/feature-flags";
+
+// Create a union type that can handle both user references and direct user objects
+const UserOrReference = types.union({
+  dispatcher: (snapshot) => {
+    // If it's a full user object (has firstName, email, etc.), use User model
+    if (snapshot && typeof snapshot === "object" && (snapshot.firstName || snapshot.email || snapshot.username)) {
+      return User;
+    }
+    // Otherwise, it's a reference to a user ID
+    return types.reference(User);
+  },
+  cases: {
+    [User.name]: User,
+    reference: types.reference(User),
+  },
+});
 
 export const Assignee = types
   .model("Assignee", {
     id: StringOrNumberID,
-    user: types.late(() => types.reference(User)),
+    user: types.late(() => UserOrReference),
     review: types.maybeNull(types.enumeration(["accepted", "rejected", "fixed"])),
     reviewed: types.maybeNull(types.boolean),
     annotated: types.maybeNull(types.boolean),
@@ -48,13 +65,33 @@ export const Assignee = types
         reviewed: false,
       };
     } else {
-      const { user_id, user, ...rest } = sn;
+      const { user_id, ...user } = sn;
 
-      result = {
-        ...rest,
-        id: user_id ?? user,
-        user: user_id ?? user,
-      };
+      if (isFF(FF_DISABLE_GLOBAL_USER_FETCHING)) {
+        // When global user fetching is disabled, always create user objects
+        const userData = {
+          id: user_id,
+          firstName: user.firstName || user.username || "Unknown",
+          lastName: user.lastName || "",
+          username: user.username || "",
+          email: user.email || "",
+          lastActivity: user.lastActivity || "",
+          avatar: user.avatar || null,
+          initials: user.initials || "UU",
+        };
+
+        result = {
+          id: user_id,
+          user: userData,
+        };
+      } else {
+        // When global user fetching is enabled, use references
+        result = {
+          id: user_id,
+          user: user_id, // Use user_id as reference
+          ...user, // Spread the rest of the user data
+        };
+      }
     }
 
     return result;
