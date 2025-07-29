@@ -10,7 +10,7 @@ import traceback as tb
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from datetime import datetime
-from typing import Union
+from typing import Any, Iterator, Union
 from urllib.parse import urljoin
 
 import django_rq
@@ -34,6 +34,8 @@ from tasks.models import Annotation, Task
 from tasks.serializers import AnnotationSerializer, PredictionSerializer
 from webhooks.models import WebhookAction
 from webhooks.utils import emit_webhooks_for_instance
+
+from .exceptions import UnsupportedFileFormatError
 
 logger = logging.getLogger(__name__)
 
@@ -228,8 +230,29 @@ class Storage(StorageInfo):
 
 
 class ImportStorage(Storage):
-    def iterkeys(self):
-        return iter(())
+    def iter_objects(self) -> Iterator[Any]:
+        """
+        Returns:
+            Iterator[Any]: An iterator for objects in the storage.
+        """
+        raise NotImplementedError
+
+    def iter_keys(self) -> Iterator[str]:
+        """
+        Returns:
+            Iterator[str]: An iterator of keys for each object in the storage.
+        """
+        raise NotImplementedError
+
+    def get_unified_metadata(self, obj: Any) -> dict:
+        """
+        Args:
+            obj: The storage object to get metadata for
+        Returns:
+            dict: A dictionary of metadata for the object with keys:
+            'key', 'last_modified', 'size'.
+        """
+        raise NotImplementedError
 
     def get_data(self, key) -> list[StorageObject]:
         raise NotImplementedError
@@ -428,7 +451,7 @@ class ImportStorage(Storage):
         )
 
         tasks_for_webhook = []
-        for key in self.iterkeys():
+        for key in self.iter_keys():
             # w/o Dataflow
             # pubsub.push(topic, key)
             # -> GF.pull(topic, key) + env -> add_task()
@@ -451,10 +474,10 @@ class ImportStorage(Storage):
                 json_extensions = {'.json', '.jsonl', '.parquet'}
 
                 if ext and ext not in json_extensions:
-                    raise ValueError(
+                    raise UnsupportedFileFormatError(
                         f'File "{key}" is not a JSON/JSONL/Parquet file. Only .json, .jsonl, and .parquet files can be processed.\n'
                         f"If you're trying to import non-JSON data (images, audio, text, etc.), "
-                        f'edit storage settings and enable "Treat every bucket object as a source file"'
+                        f'edit storage settings and enable "Tasks" import method'
                     )
 
             try:
@@ -464,7 +487,7 @@ class ImportStorage(Storage):
                 raise ValueError(
                     f'Error loading JSON from file "{key}".\nIf you\'re trying to import non-JSON data '
                     f'(images, audio, text, etc.), edit storage settings and enable '
-                    f'"Treat every bucket object as a source file"'
+                    f'"Tasks" import method'
                 )
 
             if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):
@@ -571,7 +594,14 @@ class ProjectStorageMixin(models.Model):
 @job('low')
 def import_sync_background(storage_class, storage_id, timeout=settings.RQ_LONG_JOB_TIMEOUT, **kwargs):
     storage = storage_class.objects.get(id=storage_id)
-    storage.scan_and_create_links()
+    try:
+        storage.scan_and_create_links()
+    except UnsupportedFileFormatError:
+        # This is an expected error when user tries to import non-JSON files without enabling blob URLs
+        # We don't want to fail the job in this case, just mark the storage as failed with a clear message
+        storage.info_set_failed()
+        # Exit gracefully without raising exception to avoid job failure
+        return
 
 
 @job('low', timeout=settings.RQ_LONG_JOB_TIMEOUT)
