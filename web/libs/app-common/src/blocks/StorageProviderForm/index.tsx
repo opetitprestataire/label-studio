@@ -267,7 +267,10 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
           })()}
         </div>
 
-        <InlineError includeValidation />
+        <div className="p-tight">
+          <InlineError includeValidation />
+        </div>
+
         <FormFooter
           currentStep={currentStep}
           totalSteps={steps.length}
