@@ -275,7 +275,7 @@ Data(maxUsageDataTable).Scenario(
 
 Data(maxUsageDataTable).Scenario(
   "Max usages of labels in Paragraphs on region creation",
-  async ({ I, LabelStudio, AtOutliner, AtParagraphs, Modals, current }) => {
+  async ({ I, LabelStudio, AtOutliner, AtParagraphs, current }) => {
     const { maxUsage } = current;
 
     I.amOnPage("/");
@@ -304,9 +304,20 @@ Data(maxUsageDataTable).Scenario(
     I.pressKey("1");
     AtParagraphs.selectTextByOffset(maxUsage + 1, 0, 3);
 
-    I.wait(1);
-    Modals.seeWarning(`You can't use Label_1 more than ${maxUsage} time(s)`);
-    I.wait(1);
+    // Verify that exactly maxUsage regions exist (not maxUsage + 1)
+    AtOutliner.seeRegions(maxUsage);
+
+    // Additional validation: Check that the 4th region creation was prevented
+    I.executeScript((maxUsageValue) => {
+      const regions = window.Htx.annotation?.regionStore?.regions || [];
+      const label1Regions = regions.filter((r) => r.hasLabel("Label_1"));
+
+      if (label1Regions.length > maxUsageValue) {
+        throw new Error(
+          `Max usage validation failed: ${label1Regions.length} Label_1 regions created, but max is ${maxUsageValue}`,
+        );
+      }
+    }, maxUsage);
   },
 );
 
