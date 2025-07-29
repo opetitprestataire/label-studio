@@ -83,6 +83,9 @@ export const Assignee = types
         result = {
           id: user_id,
           user: userData,
+          annotated: user.annotated,
+          review: user.review,
+          reviewed: user.reviewed,
         };
       } else {
         // When global user fetching is enabled, use references
