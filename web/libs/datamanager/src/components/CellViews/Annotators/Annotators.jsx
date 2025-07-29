@@ -137,7 +137,7 @@ export const InfiniteVariantSelect = observer(
         options={options}
         value={selectedValue}
         onChange={_onChange}
-        triggerClassName={cn("form-select").elem("list").toString()}
+        triggerClassName={`${cn("form-select").elem("list").toString()} w-[200px]`}
         loadMore={loadMore}
         size={"small"}
         placeholder={placeholder}
@@ -148,7 +148,6 @@ export const InfiniteVariantSelect = observer(
         onSearch={debouncedSearch}
         searchFilter={Annotators.searchFilter}
         itemCount={total}
-        triggerClassName="w-[200px]"
       />
     );
   },
