@@ -21,7 +21,7 @@ import InfiniteLoader from "react-window-infinite-loader";
 
 const VARIABLE_LIST_ITEM_HEIGHT = 40;
 const VARIABLE_LIST_COUNT_RENDERED = 5;
-const VARIABLE_LIST_WIDTH = 220;
+const VARIABLE_LIST_WIDTH = "100%";
 const VARIABLE_LIST_PAGE_SIZE = 20;
 /*
  * This file defines a custom Select component for the Design System, which uses a fully custom UI for
@@ -379,7 +379,7 @@ export const Select = forwardRef(
                             itemSize={() => VARIABLE_LIST_ITEM_HEIGHT}
                             itemCount={renderedOptions.length}
                             height={VARIABLE_LIST_COUNT_RENDERED * VARIABLE_LIST_ITEM_HEIGHT} // this makes the height based on available items
-                            width={VARIABLE_LIST_WIDTH}
+                            // width={VARIABLE_LIST_WIDTH}
                             onItemsRendered={onItemsRendered}
                             ref={infiniteLoaderRef}
                             overscanCount={1}

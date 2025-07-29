@@ -1,21 +1,22 @@
-import { inject } from "mobx-react";
+import { inject, observer } from "mobx-react";
 import clsx from "clsx";
 import { useSDK } from "../../../providers/SDKProvider";
 import { cn } from "../../../utils/bem";
 import { isDefined } from "../../../utils/utils";
+import { debounce } from "../../../utils/debounce";
 import { Space } from "../../Common/Space/Space";
 import { IconCheckAlt, IconCrossAlt } from "@humansignal/icons";
 import { Tooltip, Userpic } from "@humansignal/ui";
 import { Common } from "../../Filters/types";
-import { observer } from "mobx-react";
 import { Select } from "@humansignal/ui";
 import "./Annotators.scss";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useDataManagerUsers } from "./useUsers";
 import { isFF, FF_DM_FILTER_MEMBERS } from "../../../utils/feature-flags";
 import { VariantSelect } from "../../Filters/types/List";
 
 const isFilterMembers = isFF(FF_DM_FILTER_MEMBERS);
+const DEBOUNCE_DELAY = 300;
 
 export const Annotators = (cell) => {
   const { value, column, original: task } = cell;
@@ -80,15 +81,29 @@ export const Annotators = (cell) => {
 };
 
 export const InfiniteVariantSelect = observer(
-  ({ filter, schema, onChange, multiple, value, placeholder, disabled, ...rest }) => {
+  ({ filter, schema, onChange, multiple, value, placeholder, disabled, id }) => {
     if (!schema) return <></>;
     const { items } = schema;
+    const [search, setSearch] = useState(null);
     const [selectedValue, setSelectedValue] = useState(value);
 
     // Get project ID from the filter context or use a default
     const projectId = filter?.view?.project?.id || 1;
+    const optionsPerRequest = 10;
 
-    const { users, hasMore, total, loadMore } = useDataManagerUsers(projectId, 5);
+    const debouncedSearch = useCallback(
+      debounce((val) => setSearch(val), DEBOUNCE_DELAY),
+      [],
+    );
+
+    const { users, hasMore, total, loadMore } = useDataManagerUsers(
+      projectId,
+      optionsPerRequest,
+      false,
+      null,
+      search,
+      selectedValue,
+    );
     const options = useMemo(() => {
       return users.map((user) => {
         return {
@@ -115,6 +130,7 @@ export const InfiniteVariantSelect = observer(
         onChange={(val) => {
           setSelectedValue(val);
           onChange?.(val);
+          setSearch(null);
         }}
         triggerClassName={cn("form-select").elem("list").toString()}
         loadMore={loadMore}
@@ -124,8 +140,10 @@ export const InfiniteVariantSelect = observer(
         multiple={multiple}
         isVirtualList={true}
         searchable={true}
+        onSearch={debouncedSearch}
         searchFilter={Annotators.searchFilter}
         itemCount={total}
+        triggerClassName="w-[200px]"
       />
     );
   },

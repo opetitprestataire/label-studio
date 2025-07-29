@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { queryClient } from "@humansignal/core/lib/utils/query-client";
 import { isFF, FF_DM_FILTER_MEMBERS } from "../../../utils/feature-flags";
 
 // Extend Window interface to include DataManager properties
@@ -21,82 +23,102 @@ interface APIUser {
   email: string;
 }
 
-// DataManager-style user fetching with pagination
-export const useDataManagerUsers = (projectId: string, pageSize = 20, isDeleted = false) => {
+interface UsersResponse {
+  results: APIUser[];
+  count: number;
+}
+
+// DataManager-style user fetching with pagination using React Query
+export const useDataManagerUsers = (
+  projectId: string,
+  pageSize = 20,
+  isDeleted = false,
+  role = null,
+  search = null,
+  selectedValue = null,
+) => {
   if (!isFF(FF_DM_FILTER_MEMBERS)) return null;
-  const [page, setPage] = useState(1);
-  const [users, setUsers] = useState<APIUser[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [total, setTotal] = useState(0);
 
-  const fetchUsers = useCallback(
-    async (pageNumber = 1, append = false) => {
-      if (!projectId) return;
+  const queryKey = ["users", projectId, pageSize, isDeleted, role, search, selectedValue];
 
-      setIsLoading(true);
-
-      try {
+  const { data, isLoading, isError, error, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
+    {
+      queryKey,
+      queryFn: async ({ pageParam = 1 }) => {
         // Use the correct DataManager API pattern - window.DM is the AppStore
         const store = window?.DM?.store || window?.DM;
 
         if (!store) {
-          console.error("DataManager store not available");
-          return;
+          throw new Error("DataManager store not available");
         }
 
-        const response = await store.apiCall?.("users", {
-          page: pageNumber,
+        const params: any = {
+          page: pageParam,
           page_size: pageSize,
           project: projectId,
-
           is_deleted: isDeleted,
-        });
+        };
 
-        if (response) {
-          const newUsers = response?.results ?? response;
-          const totalCount = response.count || 0;
+        if (role) params.role = role;
+        if (search) params.search = search;
+        if (selectedValue) params.selected_value = selectedValue;
+        const response = await store.apiCall?.("users", params);
 
-          if (append) {
-            setUsers((prev) => {
-              const updated = [...prev, ...newUsers];
-              return updated;
-            });
-          } else {
-            setUsers(newUsers);
-          }
-
-          setTotal(totalCount);
-          setHasMore(pageNumber * pageSize < totalCount);
-          setPage(pageNumber);
-        } else {
-          console.log("No users found in response or response is invalid");
+        if (!response) {
+          throw new Error("No users found in response or response is invalid");
         }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setIsLoading(false);
-      }
+        if (search && selectedValue) {
+          const users: any = queryClient.getQueryData([
+            "users",
+            projectId,
+            pageSize,
+            isDeleted,
+            role,
+            null,
+            selectedValue,
+          ])?.pages?.[0];
+          if (users) {
+            const selectedUser = users.find((user: any) => user.id === selectedValue);
+
+            const results = [...response.filter((user: any) => user.id !== selectedValue), selectedUser];
+            results.count = results.length;
+            return results;
+          }
+        }
+
+        return response as UsersResponse;
+      },
+      getNextPageParam: (lastPage, allPages) => {
+        const totalCount = lastPage.count || 0;
+        const currentPage = allPages.length;
+        const hasMore = currentPage * pageSize < totalCount;
+        return hasMore ? currentPage + 1 : undefined;
+      },
+      enabled: !!projectId,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 10 * 60 * 1000, // 10 minutes
     },
-    [projectId, pageSize],
   );
 
-  const loadMore = useCallback(() => {
-    if (!isLoading && hasMore) {
-      fetchUsers(page + 1, true);
-    }
-  }, [fetchUsers, page, isLoading, hasMore]);
+  // Flatten all pages into a single array
+  const users = data?.pages.flatMap((page) => page.results ?? page) ?? [];
+  const total = data?.pages[0]?.count ?? 0;
 
-  useEffect(() => {
-    fetchUsers(1, false);
-  }, [fetchUsers]);
+  const loadMore = useCallback(() => {
+    if (!isFetchingNextPage && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, isFetchingNextPage, hasNextPage]);
 
   return {
     users,
     isLoading,
-    hasMore,
+    isError,
+    error,
+    hasMore: hasNextPage,
     total,
     loadMore,
-    refetch: () => fetchUsers(1, false),
+    refetch,
+    isFetchingNextPage,
   };
 };
