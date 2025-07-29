@@ -150,19 +150,26 @@ const RegionAction: FC<any> = observer(({ region, annotation, editMode, onEditMo
           locked={region?.locked}
           onClick={() => region.setLocked(!region.locked)}
           displayedHotkey="region:lock"
+          variant="neutral"
           look="string"
-          style={{ width: 36, height: 32 }}
+          aria-label="Unlock Region"
+          tooltip="Unlock Region"
         />
         <RegionActionButton
           aria-label={`${region.hidden ? "Show" : "Hide"} selected region`}
+          variant="neutral"
+          look="string"
           onClick={region.toggleHidden}
+          tooltip={`${region.hidden ? "Show" : "Hide"} selected region`}
         >
           {region.hidden ? <IconEyeClosed /> : <IconEyeOpened />}
         </RegionActionButton>
         <RegionActionButton
           variant="negative"
+          look="string"
           aria-label="Delete selected region"
           disabled={region.isReadOnly()}
+          tooltip="Delete selected region"
           onClick={() => annotation.deleteRegion(region)}
         >
           <IconTrash />
