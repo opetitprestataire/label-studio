@@ -21,7 +21,6 @@ import InfiniteLoader from "react-window-infinite-loader";
 
 const VARIABLE_LIST_ITEM_HEIGHT = 40;
 const VARIABLE_LIST_COUNT_RENDERED = 5;
-const VARIABLE_LIST_WIDTH = "100%";
 const VARIABLE_LIST_PAGE_SIZE = 20;
 /*
  * This file defines a custom Select component for the Design System, which uses a fully custom UI for

@@ -67,7 +67,7 @@ export const useDataManagerUsers = (
         if (!response) {
           throw new Error("No users found in response or response is invalid");
         }
-        if (search && selectedValue) {
+        if (search && selectedValue && response.count) {
           const users: any = queryClient.getQueryData([
             "users",
             projectId,
@@ -79,7 +79,6 @@ export const useDataManagerUsers = (
           ])?.pages?.[0];
           if (users) {
             const selectedUser = users.find((user: any) => user.id === selectedValue);
-
             const results = [...response.filter((user: any) => user.id !== selectedValue), selectedUser];
             results.count = results.length;
             return results;

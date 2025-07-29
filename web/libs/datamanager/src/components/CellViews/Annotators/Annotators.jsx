@@ -109,7 +109,7 @@ export const InfiniteVariantSelect = observer(
         return {
           value: user.id,
           label: (
-            <Tooltip title={user.displayName ?? user.username}>
+            <Tooltip title={user.displayName ?? user.username} alignment="top-left">
               <div className="flex gap-2 w-full items-center">
                 <Userpic user={user} size={16} key={`user-${user.id}`} showName={true} />
                 <span className="text-ellipsis text-nowrap overflow-hidden w-full">
@@ -122,16 +122,21 @@ export const InfiniteVariantSelect = observer(
       });
     }, [users, hasMore, loadMore]);
 
+    const _onChange = useCallback(
+      (val) => {
+        setSelectedValue(val);
+        onChange?.(val);
+        setSearch(null);
+      },
+      [onChange],
+    );
+
     // Convert users data to options format for Select component
     return (
       <Select
         options={options}
         value={selectedValue}
-        onChange={(val) => {
-          setSelectedValue(val);
-          onChange?.(val);
-          setSearch(null);
-        }}
+        onChange={_onChange}
         triggerClassName={cn("form-select").elem("list").toString()}
         loadMore={loadMore}
         size={"small"}
