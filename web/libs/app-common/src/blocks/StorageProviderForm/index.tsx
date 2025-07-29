@@ -231,20 +231,10 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
                     setFormState={setFormState}
                     handleChange={(e) => {
                       const { name, value } = e.target as HTMLInputElement;
-                      handleProviderFieldChange(name, value);
-
-                      // Reset validation state when import settings change
-                      const importSettingsFields = [
-                        "prefix",
-                        "path",
-                        "regex_filter",
-                        "use_blob_urls",
-                        "recursive_scan",
-                      ];
-                      if (importSettingsFields.includes(name)) {
+                      handleProviderFieldChange(name, value, () => {
                         setFilesPreview(null);
                         setConnectionChecked(false);
-                      }
+                      });
                     }}
                     action={action}
                     target={target!}

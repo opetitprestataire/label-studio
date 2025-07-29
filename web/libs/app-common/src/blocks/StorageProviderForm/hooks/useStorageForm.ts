@@ -70,6 +70,29 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
                 formDataWithPlaceholders[field.name] = field.min || 0;
               }
             }
+          } else if (field.type !== "message" && !field.required) {
+            // For optional fields, convert null to empty string for string fields
+            if (field.type === "text" || field.type === "password" || field.type === "textarea") {
+              if (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined) {
+                formDataWithPlaceholders[field.name] = "";
+              }
+            } else if (field.type === "number") {
+              // For optional number fields, keep null as is (will be handled by nullable schema)
+              // But if it's 0 and the field has a min value, use the min value
+              if (formDataWithPlaceholders[field.name] === 0 && field.min && field.min > 0) {
+                formDataWithPlaceholders[field.name] = field.min;
+              }
+            } else if (field.type === "toggle") {
+              // For optional boolean fields, convert null to false
+              if (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined) {
+                formDataWithPlaceholders[field.name] = false;
+              }
+            } else if (field.type === "select") {
+              // For optional select fields, convert null to empty string or first option
+              if (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined) {
+                formDataWithPlaceholders[field.name] = field.options?.[0]?.value || "";
+              }
+            }
           }
         });
       }
@@ -180,24 +203,8 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
         return newErrors;
       });
 
-      // Reset validation state when connection settings change
-      const connectionFields = [
-        "bucket",
-        "container",
-        "path",
-        "host",
-        "port",
-        "db",
-        "password",
-        "account_name",
-        "account_key",
-        "google_application_credentials",
-        "region_name",
-        "s3_endpoint",
-      ];
-      if (connectionFields.includes(name)) {
-        onConnectionChange?.();
-      }
+      // Reset validation state when any field changes
+      onConnectionChange?.();
     },
     [formData, setFormState],
   );

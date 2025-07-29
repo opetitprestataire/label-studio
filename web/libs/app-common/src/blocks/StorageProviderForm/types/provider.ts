@@ -17,6 +17,15 @@ export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z
     } else if (field.required && fieldSchema instanceof z.ZodString) {
       // Make field required if specified (only in create mode or for non-access-key fields)
       fieldSchema = fieldSchema.min(1, `${field.label} is required`);
+    } else if (!field.required && fieldSchema instanceof z.ZodString) {
+      // For optional string fields, make them nullable to handle null values from server
+      fieldSchema = fieldSchema.nullable().optional();
+    } else if (!field.required && fieldSchema instanceof z.ZodNumber) {
+      // For optional number fields, make them nullable to handle null values from server
+      fieldSchema = fieldSchema.nullable().optional();
+    } else if (!field.required && fieldSchema instanceof z.ZodBoolean) {
+      // For optional boolean fields, make them nullable to handle null values from server
+      fieldSchema = fieldSchema.nullable().optional();
     }
 
     schemaObject[field.name] = fieldSchema;
