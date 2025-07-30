@@ -253,6 +253,7 @@ Scenario("Hotkey: Next Region in Phrase navigates to next region", async ({ I, L
       ["Meta", "Shift", "A"],
       ["Control", "Shift", "A"],
     ]);
+    AtLabels.clickLabel("General: Positive1");
     I.click('div[data-testid="phrase:1"]');
     await tryHotkeys(I, [
       ["Meta", "Shift", "A"],
@@ -285,6 +286,7 @@ Scenario(
         ["Meta", "Shift", "A"],
         ["Control", "Shift", "A"],
       ]);
+      AtLabels.clickLabel("General: Positive1");
       I.click('div[data-testid="phrase:1"]');
       await tryHotkeys(I, [
         ["Meta", "Shift", "A"],
@@ -319,6 +321,7 @@ Scenario("Hotkey: Next/Previous Region loops at ends", async ({ I, LabelStudio, 
       ["Control", "Shift", "A"],
     ]);
 
+    AtLabels.clickLabel("General: Positive1");
     I.say("Creating region 2 on phrase 1");
     I.click('div[data-testid="phrase:1"]');
     await tryHotkeys(I, [
@@ -326,6 +329,7 @@ Scenario("Hotkey: Next/Previous Region loops at ends", async ({ I, LabelStudio, 
       ["Control", "Shift", "A"],
     ]);
 
+    AtLabels.clickLabel("General: Positive1");
     I.say("Creating region 3 on phrase 2");
     I.click('div[data-testid="phrase:2"]');
     await tryHotkeys(I, [
