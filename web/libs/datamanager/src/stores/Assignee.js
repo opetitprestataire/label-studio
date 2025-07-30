@@ -65,36 +65,16 @@ export const Assignee = types
         reviewed: false,
       };
     } else {
-      const { user_id, ...user } = sn;
+      const { user_id, annotated, review, reviewed, ...user } = sn;
 
-      if (isFF(FF_DISABLE_GLOBAL_USER_FETCHING)) {
-        // When global user fetching is disabled, always create user objects
-        const userData = {
-          id: user_id,
-          firstName: user.firstName || user.username || "Unknown",
-          lastName: user.lastName || "",
-          username: user.username || "",
-          email: user.email || "",
-          lastActivity: user.lastActivity || "",
-          avatar: user.avatar || null,
-          initials: user.initials || "UU",
-        };
-
-        result = {
-          id: user_id,
-          user: userData,
-          annotated: user.annotated,
-          review: user.review,
-          reviewed: user.reviewed,
-        };
-      } else {
-        // When global user fetching is enabled, use references
-        result = {
-          id: user_id,
-          user: user_id, // Use user_id as reference
-          ...user, // Spread the rest of the user data
-        };
-      }
+      // When global user fetching is disabled, always create user objects, otherwise use references via user id
+      result = {
+        id: user_id,
+        user: isFF(FF_DISABLE_GLOBAL_USER_FETCHING) ? { id: user_id, ...user } : user_id, // Use user_id as reference
+        annotated,
+        review,
+        reviewed,
+      };
     }
 
     return result;
