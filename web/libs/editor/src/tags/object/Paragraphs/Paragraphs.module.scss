@@ -15,22 +15,6 @@ $border-thin: 1px solid rgb(137 128 152 / 16%);
     margin-right: 4px;
   }
 
-  // Only add padding when select all button is present
-  &.withSelectAllButton {
-    padding-right: 50px !important; // Override any other padding from newUI
-  }
-  
-  // Ensure newUI doesn't add extra padding unless select all button is present
-  &.newUI {
-    // Don't add any extra padding by default
-    &:not(.withSelectAllButton) {
-      padding-right: 0.5em !important; // Reset to default, override any inherited padding
-    }
-    
-    &.withSelectAllButton {
-      padding-right: 50px !important; // Only add extra padding when button is present
-    }
-  }
 }
 
 .phrase:focus {
@@ -282,7 +266,6 @@ $border-thin: 1px solid rgb(137 128 152 / 16%);
   flex-wrap: wrap;
   width: calc(100% - 36px);
   position: relative;
-  padding-right: 40px; // Only space for select all button on right
 
   &.collapsed {
     background-color: var(--highlight-color);
@@ -296,7 +279,15 @@ $border-thin: 1px solid rgb(137 128 152 / 16%);
     border-bottom: 1px solid rgb(137 128 152 / 16%);
     border-right: 1px solid rgb(137 128 152 / 16%);
     padding: 8px 12px;
-    padding-right: 50px; // Only space for select all button on right
+  }
+
+  // Only add extra padding when select all button is present
+  &.withSelectAllButton {
+    padding-right: 40px; // Space for select all button on right
+
+    &:not(.collapsed) {
+      padding-right: 50px; // More space for select all button on right when not collapsed
+    }
   }
 
   .dialoguename {

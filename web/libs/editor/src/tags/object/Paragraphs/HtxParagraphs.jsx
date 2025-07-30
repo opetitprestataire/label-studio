@@ -74,7 +74,7 @@ class HtxParagraphsView extends Component {
     this.isProgrammaticScroll = true;
     this.myRef.current.scrollTo({
       top: Math.max(0, top),
-      behavior: "instant",
+      behavior: "smooth",
     });
     setTimeout(() => {
       this.isProgrammaticScroll = false;
@@ -523,10 +523,6 @@ class HtxParagraphsView extends Component {
         createdRegion.addEventsToSpans(spans);
       }
     }
-    // Always select the newly created region if the feature flag is on.
-    if (createdRegion) {
-      item.annotation.selectArea(createdRegion);
-    }
   }
 
   createAnnotationForPhrase = (phraseIndex) => {
@@ -597,11 +593,6 @@ class HtxParagraphsView extends Component {
         const spans = createdRegion.createSpans();
         createdRegion.addEventsToSpans(spans);
       }
-    }
-
-    // Always select the newly created region
-    if (createdRegion) {
-      item.annotation.selectArea(createdRegion);
     }
   }
 

@@ -31,6 +31,32 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewPort, 
 
   const phraseRefs = useRef([]);
 
+  // Helper function to calculate phrase timing with fallback to audio duration
+  const getPhraseTiming = useCallback(
+    (phrase) => {
+      if (!phrase) return { start: 0, end: 0, duration: 0 };
+
+      const start = phrase.start ?? 0;
+      let end;
+
+      if (phrase.end !== undefined) {
+        end = phrase.end;
+      } else if (phrase.duration !== undefined) {
+        end = start + phrase.duration;
+      } else if (start !== 0) {
+        // If no end or duration, default to audio duration
+        end = item.audioDuration || start;
+      } else {
+        end = 0;
+      }
+
+      const duration = end - start;
+
+      return { start, end, duration };
+    },
+    [item.audioDuration],
+  );
+
   // default function to animate the reading line
   const animateElement = useCallback(
     (element, start, duration, isPlaying = true) => {
@@ -54,18 +80,16 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewPort, 
     (isSeeking) => {
       if (!isFF(FF_LSDV_E_278) || !item.contextscroll) return;
 
-      const duration = item._value[playingId]?.duration || item._value[playingId]?.end - item._value[playingId]?.start;
-      const endTime = !item._value[playingId]?.end
-        ? item._value[playingId]?.start + item._value[playingId]?.duration
-        : item._value[playingId]?.end;
-      const seekDuration = endTime - seek.time;
+      const phrase = item._value[playingId];
+      const { start, end, duration } = getPhraseTiming(phrase);
+      const seekDuration = end - seek.time;
       const startValue = 100 - (seekDuration * 100) / duration;
 
       if (startValue > 0 && startValue < 100)
         animateElement(activeRef.current?.querySelector(".reading-line"), startValue, seekDuration, seek.playing);
       else setIsSeek(isSeeking);
     },
-    [seek, playingId],
+    [seek, playingId, getPhraseTiming],
   );
 
   // useRef to get the reading line element
@@ -76,10 +100,10 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewPort, 
       }
 
       if (node !== null) {
-        const duration =
-          item._value[playingId]?.duration || item._value[playingId]?.end - item._value[playingId]?.start;
+        const phrase = item._value[playingId];
+        const { duration } = getPhraseTiming(phrase);
 
-        if (!isNaN(duration)) {
+        if (!isNaN(duration) && duration > 0) {
           animateElement(node, 0, duration, item.playing);
         }
 
@@ -95,7 +119,7 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewPort, 
         observer.observe(node);
       }
     },
-    [playingId],
+    [playingId, getPhraseTiming],
   );
 
   useEffect(() => {
@@ -136,7 +160,6 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewPort, 
     // Scroll the active phrase into view and focus it when playingId changes
     if (isFF(FF_NER_SELECT_ALL) && phraseRefs.current[playingId]) {
       const element = phraseRefs.current[playingId];
-      element?.scrollIntoView?.({ behavior: "smooth", block: "center" });
       element?.focus?.();
     }
   }, [playingId]);
@@ -162,10 +185,11 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewPort, 
     const isContentVisible = item.isVisibleForAuthorFilter(v);
 
     const withFormattedTime = (item) => {
-      const startTime = formatTime(item._value[idx]?.start);
-      const endTime = formatTime(
-        !item._value[idx]?.end ? item._value[idx]?.start + item._value[idx]?.duration : item._value[idx]?.end,
-      );
+      const phrase = item._value[idx];
+      const { start, end } = getPhraseTiming(phrase);
+
+      const startTime = formatTime(start);
+      const endTime = formatTime(end);
 
       return `${startTime} - ${endTime}`;
     };
@@ -173,6 +197,14 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewPort, 
     if (withAudio) classNames.push(styles.withAudio);
     if (!isContentVisible) classNames.push(styles.collapsed);
     if (getRoot(item).settings.showLineNumbers) classNames.push(styles.numbered);
+
+    // Add active phrase class when FF_NER_SELECT_ALL is enabled and phrase is active
+    if (isFF(FF_NER_SELECT_ALL) && isActive) {
+      classNames.push(styles.activePhrase);
+    }
+
+    // Define onClick handler based on feature flag
+    const handlePhraseClick = isFF(FF_NER_SELECT_ALL) ? () => item.seekToPhrase(idx) : undefined;
 
     return (
       <div className={styles.phraseContainer}>
@@ -213,9 +245,9 @@ export const Phrases = observer(({ item, playingId, activeRef, setIsInViewPort, 
           }}
           tabIndex={idx}
           data-testid={`phrase:${idx}`}
-          className={`${classNames.join(" ")} ${isFF(FF_NER_SELECT_ALL) && isActive ? styles.activePhrase : ""}`}
+          className={classNames.join(" ")}
           style={style?.phrase}
-          onClick={isFF(FF_NER_SELECT_ALL) ? () => item.seekToPhrase(idx) : undefined}
+          onClick={handlePhraseClick}
         >
           {isFF(FF_NER_SELECT_ALL) && (
             <Tooltip
