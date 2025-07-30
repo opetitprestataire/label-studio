@@ -80,78 +80,74 @@ export const Annotators = (cell) => {
   );
 };
 
-export const InfiniteVariantSelect = observer(
-  ({ filter, schema, onChange, multiple, value, placeholder, disabled, id }) => {
-    if (!schema) return <></>;
-    const { items } = schema;
-    const [search, setSearch] = useState(null);
-    const [selectedValue, setSelectedValue] = useState(value);
+export const InfiniteVariantSelect = observer(({ filter, onChange, multiple, value, placeholder, disabled }) => {
+  const [search, setSearch] = useState(null);
+  const [selectedValue, setSelectedValue] = useState(value);
 
-    // Get project ID from the filter context or use a default
-    const projectId = filter?.view?.project?.id || 1;
-    const optionsPerRequest = 10;
+  // Get project ID from the filter context or use a default
+  const projectId = filter?.view?.project?.id || 1;
+  const optionsPerRequest = 10;
 
-    const debouncedSearch = useCallback(
-      debounce((val) => setSearch(val), DEBOUNCE_DELAY),
-      [],
-    );
+  const debouncedSearch = useCallback(
+    debounce((val) => setSearch(val), DEBOUNCE_DELAY),
+    [],
+  );
 
-    const { users, hasMore, total, loadMore } = useDataManagerUsers(
-      projectId,
-      optionsPerRequest,
-      false,
-      null,
-      search,
-      selectedValue,
-    );
-    const options = useMemo(() => {
-      return users.map((user) => {
-        return {
-          value: user.id,
-          label: (
-            <Tooltip title={user.displayName ?? user.username} alignment="top-left">
-              <div className="flex gap-2 w-full items-center">
-                <Userpic user={user} size={16} key={`user-${user.id}`} showName={true} />
-                <span className="text-ellipsis text-nowrap overflow-hidden w-full">
-                  {user.displayName ?? user.username}
-                </span>
-              </div>
-            </Tooltip>
-          ),
-        };
-      });
-    }, [users, hasMore, loadMore]);
+  const { users, hasMore, total, loadMore } = useDataManagerUsers(
+    projectId,
+    optionsPerRequest,
+    false,
+    null,
+    search,
+    selectedValue,
+  );
+  const options = useMemo(() => {
+    return users.map((user) => {
+      return {
+        value: user.id,
+        label: (
+          <Tooltip title={user.displayName ?? user.username} alignment="top-left">
+            <div className="flex gap-2 w-full items-center">
+              <Userpic user={user} size={16} key={`user-${user.id}`} showName={true} />
+              <span className="text-ellipsis text-nowrap overflow-hidden w-full">
+                {user.displayName ?? user.username}
+              </span>
+            </div>
+          </Tooltip>
+        ),
+      };
+    });
+  }, [users, hasMore, loadMore]);
 
-    const _onChange = useCallback(
-      (val) => {
-        setSelectedValue(val);
-        onChange?.(val);
-        setSearch(null);
-      },
-      [onChange],
-    );
+  const _onChange = useCallback(
+    (val) => {
+      setSelectedValue(val);
+      onChange?.(val);
+      setSearch(null);
+    },
+    [onChange],
+  );
 
-    // Convert users data to options format for Select component
-    return (
-      <Select
-        options={options}
-        value={selectedValue}
-        onChange={_onChange}
-        triggerClassName={`${cn("form-select").elem("list").toString()} w-[200px]`}
-        loadMore={loadMore}
-        size={"small"}
-        placeholder={placeholder}
-        disabled={disabled}
-        multiple={multiple}
-        isVirtualList={true}
-        searchable={true}
-        onSearch={debouncedSearch}
-        searchFilter={Annotators.searchFilter}
-        itemCount={total}
-      />
-    );
-  },
-);
+  // Convert users data to options format for Select component
+  return (
+    <Select
+      options={options}
+      value={selectedValue}
+      onChange={_onChange}
+      triggerClassName={`${cn("form-select").elem("list").toString()} w-[200px]`}
+      loadMore={loadMore}
+      size={"small"}
+      placeholder={placeholder}
+      disabled={disabled}
+      multiple={multiple}
+      isVirtualList={true}
+      searchable={true}
+      onSearch={debouncedSearch}
+      searchFilter={Annotators.searchFilter}
+      itemCount={total}
+    />
+  );
+});
 
 const UsersInjector = inject(({ store }) => {
   return {
