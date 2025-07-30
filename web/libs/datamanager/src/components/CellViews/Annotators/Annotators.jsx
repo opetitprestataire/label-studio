@@ -8,7 +8,6 @@ import { Space } from "../../Common/Space/Space";
 import { IconCheckAlt, IconCrossAlt } from "@humansignal/icons";
 import { Tooltip, Userpic } from "@humansignal/ui";
 import { Common } from "../../Filters/types";
-import { FF_DISABLE_GLOBAL_USER_FETCHING, isFF } from "../../../utils/feature-flags";
 import "./Annotators.scss";
 import { isActive, FF_DM_FILTER_MEMBERS } from "@humansignal/core/lib/utils/feature-flags";
 import { VariantSelect } from "../../Filters/types/List";
@@ -103,31 +102,12 @@ const UsersInjector = inject(({ store }) => {
 
 Annotators.filterItems = (items) => {
   return items.filter((userId) => {
-    // @todo: remove this once the new user select is finished
-    // If global user fetching is disabled or usersMap is not available,
-    // we can't filter out deleted users
-    // In this case, we assume all users are valid
-    if (isFF(FF_DISABLE_GLOBAL_USER_FETCHING) || !DM.usersMap) {
-      return true;
-    }
-
     const user = DM.usersMap.get(userId);
     return !(user?.firstName === "Deleted" && user?.lastName === "User");
   });
 };
 
 Annotators.FilterItem = UsersInjector(({ item }) => {
-  // @todo: remove this once the new user select is finished
-  // If global user fetching is disabled or usersMap is not available, show a fallback display
-  if (isFF(FF_DISABLE_GLOBAL_USER_FETCHING) || !DM.usersMap) {
-    return (
-      <Space size="small">
-        <Userpic size={16} key={`user-${item}`} />
-        User {item}
-      </Space>
-    );
-  }
-
   const user = DM.usersMap.get(item);
 
   return user ? (
@@ -135,21 +115,10 @@ Annotators.FilterItem = UsersInjector(({ item }) => {
       <Userpic user={user} size={16} key={`user-${item}`} />
       {user.displayName}
     </Space>
-  ) : (
-    <Space size="small">
-      <Userpic size={16} key={`user-${item}`} />
-      User {item}
-    </Space>
-  );
+  ) : null;
 });
 
 Annotators.searchFilter = (option, queryString) => {
-  // @todo: remove this once the new user select is finished
-  // If global user fetching is disabled or usersMap is not available, we can only search by ID
-  if (isFF(FF_DISABLE_GLOBAL_USER_FETCHING) || !DM.usersMap) {
-    return option?.value?.toString().toLowerCase().includes(queryString.toLowerCase());
-  }
-
   const user = DM.usersMap.get(option?.value);
   if (!user) {
     // Fallback to searching by ID if user not found
