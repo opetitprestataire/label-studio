@@ -33,7 +33,7 @@ export const UserSelect = observer(({ filter, onChange, multiple, value, placeho
     return users.map((user) => {
       return {
         value: user.id,
-        raw: {id: user.id, email: user.email, displayName: user.displayName, username: user.username},
+        raw: { id: user.id, email: user.email, displayName: user.displayName, username: user.username },
         label: (
           <Tooltip title={user.displayName ?? user.username} alignment="top-left">
             <div className="flex gap-2 w-full items-center">
