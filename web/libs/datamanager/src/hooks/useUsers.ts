@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { queryClient } from "@humansignal/core/lib/utils/query-client";
-import { isFF, FF_DM_FILTER_MEMBERS } from "../../../utils/feature-flags";
+import { isActive, FF_DM_FILTER_MEMBERS } from "@humansignal/core/lib/utils/feature-flags";
 
 // Extend Window interface to include DataManager properties
 declare global {
@@ -37,7 +37,7 @@ export const useDataManagerUsers = (
   search = null,
   selectedValue = null,
 ) => {
-  if (!isFF(FF_DM_FILTER_MEMBERS)) return null;
+  if (!isActive(FF_DM_FILTER_MEMBERS)) return null;
 
   const queryKey = ["users", projectId, pageSize, isDeleted, role, search, selectedValue];
 

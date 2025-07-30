@@ -1,22 +1,18 @@
-import { inject, observer } from "mobx-react";
+import { inject } from "mobx-react";
 import clsx from "clsx";
 import { useSDK } from "../../../providers/SDKProvider";
 import { cn } from "../../../utils/bem";
 import { isDefined } from "../../../utils/utils";
-import { debounce } from "../../../utils/debounce";
 import { Space } from "../../Common/Space/Space";
 import { IconCheckAlt, IconCrossAlt } from "@humansignal/icons";
 import { Tooltip, Userpic } from "@humansignal/ui";
 import { Common } from "../../Filters/types";
-import { Select } from "@humansignal/ui";
 import "./Annotators.scss";
-import { useState, useMemo, useCallback } from "react";
-import { useDataManagerUsers } from "./useUsers";
-import { isFF, FF_DM_FILTER_MEMBERS } from "../../../utils/feature-flags";
+import { isActive, FF_DM_FILTER_MEMBERS } from "@humansignal/core/lib/utils/feature-flags";
 import { VariantSelect } from "../../Filters/types/List";
+import { UserSelect } from "../../Common/UserSelect";
 
-const isFilterMembers = isFF(FF_DM_FILTER_MEMBERS);
-const DEBOUNCE_DELAY = 300;
+const isFilterMembers = isActive(FF_DM_FILTER_MEMBERS);
 
 export const Annotators = (cell) => {
   const { value, column, original: task } = cell;
@@ -80,75 +76,6 @@ export const Annotators = (cell) => {
   );
 };
 
-export const InfiniteVariantSelect = observer(({ filter, onChange, multiple, value, placeholder, disabled }) => {
-  const [search, setSearch] = useState(null);
-  const [selectedValue, setSelectedValue] = useState(value);
-
-  // Get project ID from the filter context or use a default
-  const projectId = filter?.view?.project?.id || 1;
-  const optionsPerRequest = 10;
-
-  const debouncedSearch = useCallback(
-    debounce((val) => setSearch(val), DEBOUNCE_DELAY),
-    [],
-  );
-
-  const { users, hasMore, total, loadMore } = useDataManagerUsers(
-    projectId,
-    optionsPerRequest,
-    false,
-    null,
-    search,
-    selectedValue,
-  );
-  const options = useMemo(() => {
-    return users.map((user) => {
-      return {
-        value: user.id,
-        label: (
-          <Tooltip title={user.displayName ?? user.username} alignment="top-left">
-            <div className="flex gap-2 w-full items-center">
-              <Userpic user={user} size={16} key={`user-${user.id}`} showName={true} />
-              <span className="text-ellipsis text-nowrap overflow-hidden w-full">
-                {user.displayName ?? user.username}
-              </span>
-            </div>
-          </Tooltip>
-        ),
-      };
-    });
-  }, [users, hasMore, loadMore]);
-
-  const _onChange = useCallback(
-    (val) => {
-      setSelectedValue(val);
-      onChange?.(val);
-      setSearch(null);
-    },
-    [onChange],
-  );
-
-  // Convert users data to options format for Select component
-  return (
-    <Select
-      options={options}
-      value={selectedValue}
-      onChange={_onChange}
-      triggerClassName={`${cn("form-select").elem("list").toString()} w-[200px]`}
-      loadMore={loadMore}
-      size={"small"}
-      placeholder={placeholder}
-      disabled={disabled}
-      multiple={multiple}
-      isVirtualList={true}
-      searchable={true}
-      onSearch={debouncedSearch}
-      searchFilter={Annotators.searchFilter}
-      itemCount={total}
-    />
-  );
-});
-
 const UsersInjector = inject(({ store }) => {
   return {
     users: store.users,
@@ -188,13 +115,13 @@ Annotators.customOperators = [
     key: "contains",
     label: "contains",
     valueType: "list",
-    input: (props) => (isFilterMembers ? <InfiniteVariantSelect {...props} /> : <VariantSelect {...props} />),
+    input: (props) => (isFilterMembers ? <UserSelect {...props} /> : <VariantSelect {...props} />),
   },
   {
     key: "not_contains",
     label: "not contains",
     valueType: "list",
-    input: (props) => (isFilterMembers ? <InfiniteVariantSelect {...props} /> : <VariantSelect {...props} />),
+    input: (props) => (isFilterMembers ? <UserSelect {...props} /> : <VariantSelect {...props} />),
   },
   ...Common,
 ];
