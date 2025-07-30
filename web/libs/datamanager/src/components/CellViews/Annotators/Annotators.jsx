@@ -98,7 +98,6 @@ const UsersInjector = inject(({ store }) => {
 });
 
 Annotators.filterItems = (items) => {
-  console.log("filters", items);
   return items.filter((userId) => {
     // @todo: remove this once the new user select is finished
     // If global user fetching is disabled or usersMap is not available,
