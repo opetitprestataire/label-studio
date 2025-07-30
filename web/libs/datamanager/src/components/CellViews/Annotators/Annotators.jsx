@@ -15,8 +15,8 @@ import "./Annotators.scss";
 export const Annotators = (cell) => {
   const { value, column, original: task } = cell;
   const sdk = useSDK();
-  const userList = Array.from(value);
-  const renderable = userList.slice(0, 10);
+  const maxUsersToDisplay = window.APP_SETTINGS.data_manager.max_users_to_display;
+  const userList = Array.from(value).slice(0, maxUsersToDisplay);
   const userPickBadge = cn("userpic-badge");
   const annotatorsCN = cn("annotators");
   const isEnterprise = window.APP_SETTINGS.billing?.enterprise;
@@ -36,12 +36,12 @@ export const Annotators = (cell) => {
       }
     };
 
-    return getCountField() - 10;
+    return getCountField() - maxUsersToDisplay;
   }, [column.alias, task?.annotators_count, task?.reviewers_count, task?.comment_authors_count]);
 
   return (
     <div className={annotatorsCN.toString()}>
-      {renderable.map((item, index) => {
+      {userList.map((item, index) => {
         const user = item.user ?? item;
         const { annotated, reviewed, review } = item;
 
