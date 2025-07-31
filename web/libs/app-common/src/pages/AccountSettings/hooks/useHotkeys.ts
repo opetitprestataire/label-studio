@@ -127,7 +127,10 @@ export const useHotkeys = () => {
                   instance.annotation.setupHotKeys();
                 }
               } catch (error) {
-                console.warn("Failed to refresh hotkeys for editor instance:", error);
+                // Only log editor instance refresh failures in debug mode
+                if (typeof window !== "undefined" && window.APP_SETTINGS?.debug) {
+                  console.warn("Failed to refresh hotkeys for editor instance:", error);
+                }
               }
             });
           } else if (instances && typeof instances.forEach === "function") {
@@ -146,16 +149,25 @@ export const useHotkeys = () => {
                   instance.annotation.setupHotKeys();
                 }
               } catch (error) {
-                console.warn("Failed to refresh hotkeys for editor instance:", error);
+                // Only log editor instance refresh failures in debug mode
+                if (typeof window !== "undefined" && window.APP_SETTINGS?.debug) {
+                  console.warn("Failed to refresh hotkeys for editor instance:", error);
+                }
               }
             });
           }
         }
 
-        console.log("Hotkeys successfully reloaded at runtime");
+        // Only log in debug mode
+        if (typeof window !== "undefined" && window.APP_SETTINGS?.debug) {
+          console.log("Hotkeys successfully reloaded at runtime");
+        }
         return true;
       } catch (error) {
-        console.error("Failed to reload hotkeys at runtime:", error);
+        // Only log in debug mode
+        if (typeof window !== "undefined" && window.APP_SETTINGS?.debug) {
+          console.error("Failed to reload hotkeys at runtime:", error);
+        }
         return false;
       }
     },
@@ -246,10 +258,13 @@ export const useHotkeys = () => {
         // After successful save, reload hotkeys at runtime to apply changes immediately
         const reloadSuccess = await reloadHotkeysInRuntime(customHotkeys);
 
-        if (reloadSuccess) {
-          console.log("Hotkeys successfully applied at runtime - no page refresh needed");
-        } else {
-          console.warn("Runtime hotkey reload failed - page refresh may be required");
+        // Only log runtime reload status in debug mode
+        if (typeof window !== "undefined" && window.APP_SETTINGS?.debug) {
+          if (reloadSuccess) {
+            console.log("Hotkeys successfully applied at runtime - no page refresh needed");
+          } else {
+            console.warn("Runtime hotkey reload failed - page refresh may be required");
+          }
         }
 
         return {
