@@ -205,7 +205,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'drf_yasg',
+    'drf_spectacular',
     'corsheaders',
     'django_extensions',
     'django_rq',
@@ -265,9 +265,8 @@ REST_FRAMEWORK = {
     ],
     'EXCEPTION_HANDLER': 'core.utils.common.custom_exception_handler',
     'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',),
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'PAGE_SIZE': 100,
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination'
 }
 SILENCED_SYSTEM_CHECKS += ['rest_framework.W001']
 
@@ -370,32 +369,25 @@ RQ_QUEUES = {
     },
 }
 
-# specify the list of the extensions that are allowed to be presented in auto generated OpenAPI schema
-# for example, by specifying in swagger_auto_schema(..., x_fern_sdk_group_name='projects') we can group endpoints
-# /api/projects/:
-#   get:
-#     x-fern-sdk-group-name: projects
-X_VENDOR_OPENAPI_EXTENSIONS = ['x-fern']
-
-# Swagger: automatic API documentation
-SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Token': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-            'description': 'The token (or API key) must be passed as a request header. '
-            'You can find your user token on the User Account page in Label Studio. Example: '
-            '<br><pre><code class="language-bash">'
-            'curl https://label-studio-host/api/projects -H "Authorization: Token [your-token]"'
-            '</code></pre>',
-        }
+# drf-spectacular settings for OpenAPI 3.0 schema generation
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Label Studio API',
+    'DESCRIPTION': 'Label Studio API for data annotation and labeling',
+    'VERSION': '',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': None,
+    'SCHEMA_PATH_PREFIX_TRIM': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
     },
-    'APIS_SORTER': 'alpha',
-    'SUPPORTED_SUBMIT_METHODS': ['get', 'post', 'put', 'delete', 'patch'],
-    'OPERATIONS_SORTER': 'alpha',
-    'DEFAULT_AUTO_SCHEMA_CLASS': 'core.utils.openapi_extensions.XVendorExtensionsAutoSchema',
-    'DEFAULT_INFO': 'core.urls.open_api_info',
+    'AUTHENTICATION_WHITELIST': [
+        'jwt_auth.auth.TokenAuthenticationPhaseout',
+    ],
+    'CONTACT': {'url': 'https://labelstud.io'},
+    'X_LOGO': {'url': '../../static/icons/logo-black.svg'},
 }
 
 SENTRY_DSN = get_env('SENTRY_DSN', None)
@@ -699,6 +691,7 @@ FUTURE_SAVE_TASK_TO_STORAGE = get_bool_env('FUTURE_SAVE_TASK_TO_STORAGE', defaul
 FUTURE_SAVE_TASK_TO_STORAGE_JSON_EXT = get_bool_env('FUTURE_SAVE_TASK_TO_STORAGE_JSON_EXT', default=True)
 STORAGE_IN_PROGRESS_TIMER = float(get_env('STORAGE_IN_PROGRESS_TIMER', 5.0))
 STORAGE_EXPORT_CHUNK_SIZE = int(get_env('STORAGE_EXPORT_CHUNK_SIZE', 100))
+DEFAULT_STORAGE_LIST_LIMIT = int(get_env('DEFAULT_STORAGE_LIST_LIMIT', 100))
 
 USE_NGINX_FOR_EXPORT_DOWNLOADS = get_bool_env('USE_NGINX_FOR_EXPORT_DOWNLOADS', False)
 USE_NGINX_FOR_UPLOADS = get_bool_env('USE_NGINX_FOR_UPLOADS', True)
@@ -868,3 +861,9 @@ RESOLVER_PROXY_CACHE_TIMEOUT = int(get_env('RESOLVER_PROXY_CACHE_TIMEOUT', 3600)
 
 # Advanced validator for ImportStorageSerializer in enterprise
 IMPORT_STORAGE_SERIALIZER_VALIDATE = None
+
+# User activity Redis caching settings
+USER_ACTIVITY_REDIS_KEY_PREFIX = get_env('USER_ACTIVITY_REDIS_KEY_PREFIX', 'user_activity')
+USER_ACTIVITY_BATCH_SIZE = int(get_env('USER_ACTIVITY_BATCH_SIZE', '100'))
+USER_ACTIVITY_SYNC_THRESHOLD = int(get_env('USER_ACTIVITY_SYNC_THRESHOLD', '500'))
+USER_ACTIVITY_REDIS_TTL = int(get_env('USER_ACTIVITY_REDIS_TTL', '86400'))  # 24 hours

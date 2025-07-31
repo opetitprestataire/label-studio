@@ -30,7 +30,7 @@
     "test:e2e": "yarn ls:e2e && yarn lsf:e2e",
     "test:integration": "yarn lsf:integration",
     "test:unit": "nx run-many --target=unit",
-    "test:coverage": "yarn test:unit --coverage",
+    "test:unit:coverage": "yarn test:unit --coverage",
     "test:affected": "nx affected --target=test:unit --base=develop",
     "test:watch": "yarn test:unit --all --watch",
     "test:watch:affected": "yarn test --watch",
@@ -117,7 +117,7 @@
     "tailwind-merge": "^2.6.0",
     "webfft": "^1.0.3",
     "xpath-range": "^1.1.1",
-    "zod": "^3.22.4"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
@@ -243,7 +243,10 @@
     "lodash": "4.17.21",
     "merge": "2.1.1",
     "ws": "8.17.1",
-    "moment": "2.29.4"
+    "moment": "2.29.4",
+    "on-headers": "1.1.0",
+    "form-data": "4.0.4",
+    "stylus": "0.0.1-security"
   },
   "copyFiles": [
     {
