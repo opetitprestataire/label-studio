@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
 import { ToastType, useToast } from "@humansignal/ui";
-import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
 // @ts-ignore
 import { confirm } from "apps/labelstudio/src/components/Modal/Modal";
+import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
+import { useCallback, useEffect, useState } from "react";
 import {
+  type ApiResponse,
+  type ExportData,
   getTypedDefaultHotkeys,
   type Hotkey,
   type HotkeySettings,
-  type ExportData,
   type ImportData,
   type SaveResult,
-  type ApiResponse,
 } from "../sections/Hotkeys/utils";
 
 // Type the imported defaults and convert numeric ids to strings
@@ -51,6 +51,113 @@ export const useHotkeys = () => {
         // If no custom setting exists, return the default hotkey unchanged
         return hotkey;
       });
+    },
+    [],
+  );
+
+  // Runtime hotkey reload function - applies hotkeys without page refresh
+  const reloadHotkeysInRuntime = useCallback(
+    async (customHotkeys: Record<string, { key: string; active: boolean; description?: string }>) => {
+      try {
+        // Step 1: Process custom hotkeys the same way the server does in base.html
+        const editorCustomHotkeys: Record<string, any> = {};
+        const prefixRegex = /^(annotation|timeseries|audio|regions|video|image_gallery|tools):(.*)/;
+
+        for (const key in customHotkeys) {
+          const match = key.match(prefixRegex);
+          if (match) {
+            const [, prefix, shortKey] = match;
+            const value = customHotkeys[key];
+
+            // Check if value has active property set to false
+            if (value && value.active === false) {
+              // Create a copy of the value with key set to null
+              const modifiedValue = { ...value, key: null };
+              editorCustomHotkeys[shortKey] = modifiedValue;
+            } else {
+              // Use the original value
+              editorCustomHotkeys[shortKey] = value;
+            }
+          }
+        }
+
+        // Step 2: Get default editor keymap and merge with custom hotkeys
+        const defaultEditorKeymap = window.DEFAULT_HOTKEYS || {};
+        const mergedEditorKeymap = Object.assign({}, defaultEditorKeymap, editorCustomHotkeys);
+
+        // Step 3: Update window.APP_SETTINGS with new hotkeys
+        if (window.APP_SETTINGS) {
+          window.APP_SETTINGS.editor_keymap = mergedEditorKeymap;
+          window.APP_SETTINGS.user = window.APP_SETTINGS.user || {};
+          window.APP_SETTINGS.user.customHotkeys = customHotkeys;
+        }
+
+        // Step 4: Re-apply keymap to editor instances if available
+        // Check if Hotkey class is available globally (it should be)
+        if (typeof window !== "undefined") {
+          // Try to access the Hotkey class through various possible global references
+          const HotkeyClass =
+            (window as any).Hotkey || (window as any).LSF?.Hotkey || (window as any).LabelStudio?.Hotkey;
+
+          if (HotkeyClass && typeof HotkeyClass.setKeymap === "function") {
+            HotkeyClass.setKeymap(mergedEditorKeymap);
+          }
+        }
+
+        // Step 5: Trigger re-initialization of hotkeys in editor instances
+        // This is the most complex part as we need to access LabelStudio instances
+        if (typeof window !== "undefined") {
+          // Try to access LabelStudio instances through various possible global references
+          const instances = (window as any).LabelStudio?.instances || (window as any).LSF?.instances || [];
+
+          // Iterate through instances and trigger hotkey re-initialization
+          if (Array.isArray(instances)) {
+            instances.forEach((instance: any) => {
+              try {
+                // Check if the instance has the store and annotation with setupHotKeys method
+                if (
+                  instance?.store?.annotation?.setupHotKeys &&
+                  typeof instance.store.annotation.setupHotKeys === "function"
+                ) {
+                  instance.store.annotation.setupHotKeys();
+                } else if (
+                  instance?.annotation?.setupHotKeys &&
+                  typeof instance.annotation.setupHotKeys === "function"
+                ) {
+                  instance.annotation.setupHotKeys();
+                }
+              } catch (error) {
+                console.warn("Failed to refresh hotkeys for editor instance:", error);
+              }
+            });
+          } else if (instances && typeof instances.forEach === "function") {
+            // Handle Set or other iterable
+            instances.forEach((instance: any) => {
+              try {
+                if (
+                  instance?.store?.annotation?.setupHotKeys &&
+                  typeof instance.store.annotation.setupHotKeys === "function"
+                ) {
+                  instance.store.annotation.setupHotKeys();
+                } else if (
+                  instance?.annotation?.setupHotKeys &&
+                  typeof instance.annotation.setupHotKeys === "function"
+                ) {
+                  instance.annotation.setupHotKeys();
+                }
+              } catch (error) {
+                console.warn("Failed to refresh hotkeys for editor instance:", error);
+              }
+            });
+          }
+        }
+
+        console.log("Hotkeys successfully reloaded at runtime");
+        return true;
+      } catch (error) {
+        console.error("Failed to reload hotkeys at runtime:", error);
+        return false;
+      }
     },
     [],
   );
@@ -136,10 +243,20 @@ export const useHotkeys = () => {
           };
         }
 
+        // After successful save, reload hotkeys at runtime to apply changes immediately
+        const reloadSuccess = await reloadHotkeysInRuntime(customHotkeys);
+
+        if (reloadSuccess) {
+          console.log("Hotkeys successfully applied at runtime - no page refresh needed");
+        } else {
+          console.warn("Runtime hotkey reload failed - page refresh may be required");
+        }
+
         return {
           ok: true,
           error: undefined,
           data: response,
+          runtimeReloadSuccess: reloadSuccess,
         };
       } catch (error: unknown) {
         const isReset = currentHotkeys.length === 0;
@@ -248,7 +365,10 @@ export const useHotkeys = () => {
     URL.revokeObjectURL(url);
 
     if (toast) {
-      toast.show({ message: "Hotkeys exported successfully", type: ToastType.info });
+      toast.show({
+        message: "Hotkeys exported successfully",
+        type: ToastType.info,
+      });
     }
   }, [hotkeys, hotkeySettings, toast]);
 
@@ -273,7 +393,10 @@ export const useHotkeys = () => {
         setHotkeys(importedHotkeys);
 
         if (toast) {
-          toast.show({ message: "Hotkeys imported successfully", type: ToastType.info });
+          toast.show({
+            message: "Hotkeys imported successfully",
+            type: ToastType.info,
+          });
         }
 
         // Reload from API to ensure consistency
@@ -281,7 +404,10 @@ export const useHotkeys = () => {
       } catch (error: unknown) {
         if (toast) {
           const errorMessage = error instanceof Error ? error.message : "Unknown error";
-          toast.show({ message: `Error importing hotkeys: ${errorMessage}`, type: ToastType.error });
+          toast.show({
+            message: `Error importing hotkeys: ${errorMessage}`,
+            type: ToastType.error,
+          });
         }
       } finally {
         setIsLoading(false);
@@ -304,6 +430,7 @@ export const useHotkeys = () => {
     setIsLoading,
     loadHotkeysFromAPI,
     saveHotkeysToAPI,
+    reloadHotkeysInRuntime,
     handleResetToDefaults,
     handleExportHotkeys,
     handleImportHotkeys,
