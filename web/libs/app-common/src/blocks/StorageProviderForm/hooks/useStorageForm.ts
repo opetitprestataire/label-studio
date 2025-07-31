@@ -4,6 +4,7 @@ import { formatValidationErrors } from "../schemas";
 import { getProviderConfig, providerRegistry } from "../providers";
 import { extractDefaultValues } from "../types/provider";
 import type { FormState } from "../atoms";
+import { isDefined } from "@humansignal/core/lib/utils/helpers";
 
 interface UseStorageFormProps {
   project: number;
@@ -29,7 +30,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
   const [isInitialized, setIsInitialized] = useState(false);
   const { currentStep, formData } = formState;
 
-    // Initialize form data with provider defaults when provider changes (only in create mode)
+  // Initialize form data with provider defaults when provider changes (only in create mode)
   useEffect(() => {
     if (formData.provider && !isEditMode) {
       const providerConfig = getProviderConfig(formData.provider);
@@ -46,16 +47,16 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
     }
   }, [formData.provider, setFormState, isEditMode]);
 
-    // Initialize form data with existing storage data in edit mode (only once)
+  // Initialize form data with existing storage data in edit mode (only once)
   useEffect(() => {
     if (isEditMode && storage && !isInitialized) {
       const storageType = storage.type || storage.provider || "s3";
-      
+
       // Wait for providers to be available
       if (Object.keys(providerRegistry).length === 0) {
         return;
       }
-      
+
       const providerConfig = getProviderConfig(storageType);
 
       // Debug logging to help identify provider issues
@@ -64,7 +65,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
           availableProviders: Object.keys(providerRegistry),
           storageType,
         });
-        
+
         // If no provider config found, we'll still populate the form with existing data
         // but we'll retry when more providers are registered
         return;
@@ -76,54 +77,82 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       // Process provider-specific fields
       if (providerConfig) {
         providerConfig.fields.forEach((field) => {
+          // Handle access key fields first
           if (field.type !== "message" && field.accessKey) {
-            // Fill access key fields with placeholder values in edit mode
             formDataWithPlaceholders[field.name] = "••••••••••••••••";
-          } else if (field.type === "counter") {
-            // For counter fields, if the value is null, undefined, or 0, use the default from schema
-            if (
-              formDataWithPlaceholders[field.name] === null ||
-              formDataWithPlaceholders[field.name] === undefined ||
-              formDataWithPlaceholders[field.name] === 0
-            ) {
-              try {
-                const schemaAny = field.schema as any;
-                if (schemaAny._def?.defaultValue !== undefined) {
-                  const defaultValue =
-                    typeof schemaAny._def.defaultValue === "function"
-                      ? schemaAny._def.defaultValue()
-                      : schemaAny._def.defaultValue;
-                  formDataWithPlaceholders[field.name] = defaultValue;
-                } else {
+            return;
+          }
+          const placeholder = formDataWithPlaceholders[field.name];
+
+          // Handle different field types
+          switch (field.type) {
+            case "counter":
+              // For counter fields, if the value is null, undefined, or 0, use the default from schema
+              if (!isDefined(placeholder) || placeholder === 0) {
+                try {
+                  const schemaAny = field.schema as any;
+                  if (schemaAny._def?.defaultValue !== undefined) {
+                    const defaultValue =
+                      typeof schemaAny._def.defaultValue === "function"
+                        ? schemaAny._def.defaultValue()
+                        : schemaAny._def.defaultValue;
+                    formDataWithPlaceholders[field.name] = defaultValue;
+                  } else {
+                    formDataWithPlaceholders[field.name] = field.min || 0;
+                  }
+                } catch (error) {
                   formDataWithPlaceholders[field.name] = field.min || 0;
                 }
-              } catch (error) {
-                formDataWithPlaceholders[field.name] = field.min || 0;
               }
-            }
-          } else if (field.type !== "message" && !field.required) {
-            // For optional fields, convert null to empty string for string fields
-            if (field.type === "text" || field.type === "password" || field.type === "textarea") {
-              if (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined) {
+              break;
+
+            case "text":
+            case "password":
+            case "textarea":
+              // For optional string fields, convert null to empty string
+              if (
+                !field.required &&
+                (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined)
+              ) {
                 formDataWithPlaceholders[field.name] = "";
               }
-            } else if (field.type === "number") {
+              break;
+
+            case "number":
               // For optional number fields, keep null as is (will be handled by nullable schema)
               // But if it's 0 and the field has a min value, use the min value
-              if (formDataWithPlaceholders[field.name] === 0 && field.min && field.min > 0) {
+              if (!field.required && formDataWithPlaceholders[field.name] === 0 && field.min && field.min > 0) {
                 formDataWithPlaceholders[field.name] = field.min;
               }
-            } else if (field.type === "toggle") {
+              break;
+
+            case "toggle":
               // For optional boolean fields, convert null to false
-              if (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined) {
+              if (
+                !field.required &&
+                (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined)
+              ) {
                 formDataWithPlaceholders[field.name] = false;
               }
-            } else if (field.type === "select") {
-              // For optional select fields, convert null to empty string or first option
-              if (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined) {
+              break;
+
+            case "select":
+              // For optional select fields, convert null to empty string
+              if (
+                !field.required &&
+                (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined)
+              ) {
                 formDataWithPlaceholders[field.name] = "";
               }
-            }
+              break;
+
+            case "message":
+              // Skip message fields as they don't need processing
+              break;
+
+            default:
+              // For any other field types, no special processing needed
+              break;
           }
         });
       }
