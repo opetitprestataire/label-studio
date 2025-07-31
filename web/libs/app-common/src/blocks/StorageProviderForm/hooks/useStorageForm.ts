@@ -1,10 +1,9 @@
 import { useCallback, useState, useEffect } from "react";
-import { useAtom } from "jotai";
 import { z } from "zod";
-import { formStateAtom } from "../atoms";
 import { formatValidationErrors } from "../schemas";
 import { getProviderConfig, providerRegistry } from "../providers";
 import { extractDefaultValues } from "../types/provider";
+import type { FormState } from "../atoms";
 
 interface UseStorageFormProps {
   project: number;
@@ -14,11 +13,23 @@ interface UseStorageFormProps {
 }
 
 export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStorageFormProps) => {
-  const [formState, setFormState] = useAtom(formStateAtom);
-      const [errors, setErrors] = useState<Record<string, string>>({});
-    const { currentStep, formData } = formState;
+  const [formState, setFormState] = useState<FormState>({
+    currentStep: 0,
+    formData: {
+      project,
+      provider: "s3",
+      title: "",
+      use_blob_urls: false,
+      recursive_scan: true,
+      regex_filter: "",
+    },
+    isComplete: false,
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isInitialized, setIsInitialized] = useState(false);
+  const { currentStep, formData } = formState;
 
-    // Initialize form data with provider defaults when provider changes
+    // Initialize form data with provider defaults when provider changes (only in create mode)
   useEffect(() => {
     if (formData.provider && !isEditMode) {
       const providerConfig = getProviderConfig(formData.provider);
@@ -35,9 +46,9 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
     }
   }, [formData.provider, setFormState, isEditMode]);
 
-    // Initialize form data with existing storage data in edit mode
+    // Initialize form data with existing storage data in edit mode (only once)
   useEffect(() => {
-    if (isEditMode && storage) {
+    if (isEditMode && storage && !isInitialized) {
       const storageType = storage.type || storage.provider || "s3";
       
       // Wait for providers to be available
@@ -59,7 +70,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
         return;
       }
 
-            // Prepare form data with placeholder values for access keys
+      // Prepare form data with placeholder values for access keys
       const formDataWithPlaceholders = { ...storage };
 
       // Process provider-specific fields
@@ -110,14 +121,14 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
             } else if (field.type === "select") {
               // For optional select fields, convert null to empty string or first option
               if (formDataWithPlaceholders[field.name] === null || formDataWithPlaceholders[field.name] === undefined) {
-                formDataWithPlaceholders[field.name] = field.options?.[0]?.value || "";
+                formDataWithPlaceholders[field.name] = "";
               }
             }
           }
         });
       }
 
-            // Always populate the form with existing data, even if provider config is not found
+      // Always populate the form with existing data, even if provider config is not found
       setFormState((prevState) => {
         const newFormData = {
           ...prevState.formData,
@@ -130,8 +141,11 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
           formData: newFormData,
         };
       });
+
+      // Mark as initialized to prevent re-initialization
+      setIsInitialized(true);
     }
-  }, [isEditMode, storage, setFormState, providerRegistry]);
+  }, [isEditMode, storage, setFormState, isInitialized]); // Removed providerRegistry from dependencies
 
   // Initialize form data with project when it changes
   useEffect(() => {
@@ -197,8 +211,8 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
   // Handle provider field changes
   const handleProviderFieldChange = useCallback(
     (name: string, value: any, onConnectionChange?: () => void) => {
-      // If changing provider, get new defaults first
-      if (name === "provider") {
+      // If changing provider, get new defaults first (only in create mode)
+      if (name === "provider" && !isEditMode) {
         const providerConfig = getProviderConfig(value);
         if (providerConfig) {
           const defaultValues = extractDefaultValues(providerConfig.fields);
@@ -230,7 +244,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       // Reset validation state when any field changes
       onConnectionChange?.();
     },
-    [formData, setFormState],
+    [formData, setFormState, isEditMode],
   );
 
   // Handle field blur
@@ -265,7 +279,8 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       isComplete: false,
     });
     setErrors({});
-  }, [project, setFormState]);
+    setIsInitialized(false);
+  }, [project]);
 
   return {
     formState,
