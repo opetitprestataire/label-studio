@@ -1,4 +1,4 @@
-import { Label, Toggle, Select } from "@humansignal/ui";
+import { Label, Toggle, Select, Tooltip } from "@humansignal/ui";
 import { Form, Input } from "apps/labelstudio/src/components/Form";
 import { IconDocument, IconSearch } from "@humansignal/icons";
 import { formatDistanceToNow } from "date-fns";
@@ -292,9 +292,11 @@ export const PreviewStep = ({
                       key={index}
                       className="flex justify-between py-0.5 px-2 bg-gray-50 hover:bg-gray-100 border-b last:border-b-0 rounded-md"
                     >
-                      <div className="truncate max-w-[260px]">
-                        {file.key ? file.key : <span className="italic">... preview limit reached ...</span>}
-                      </div>
+                      <Tooltip title={file.key || "..."}>
+                        <div className="truncate max-w-[260px] cursor-help">
+                          {file.key ? file.key : <span className="italic">... preview limit reached ...</span>}
+                        </div>
+                      </Tooltip>
                       <div className="flex items-center space-x-1 text-muted-foreground whitespace-nowrap">
                         <span>
                           {file.last_modified && formatDistanceToNow(new Date(file.last_modified), { addSuffix: true })}
