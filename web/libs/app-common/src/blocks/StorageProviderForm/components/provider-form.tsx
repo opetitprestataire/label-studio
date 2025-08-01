@@ -23,37 +23,42 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
 }) => {
   return (
     <div className="space-y-6">
-      {provider.layout.map((row, rowIndex) => (
-        <div
-          key={rowIndex}
-          className="grid gap-6"
-          style={{
-            gridTemplateColumns: `repeat(${row.fields.length}, 1fr)`,
-          }}
-        >
-          {getFieldsForRow(provider.fields, row.fields, target).map((field) => (
+      {provider.layout.map((row, rowIndex) => {
+        const fields = getFieldsForRow(provider.fields, row.fields, target);
+        return (
+          fields.length > 0 && (
             <div
-              key={field.name}
+              key={rowIndex}
+              className="grid gap-6"
               style={{
-                gridColumn: field.gridCols ?? "initial",
+                gridTemplateColumns: `repeat(${row.fields.length}, 1fr)`,
               }}
             >
-              {field.type === "message" ? (
-                <div>{field.content}</div>
-              ) : (
-                <FieldRenderer
-                  field={field}
-                  value={formData[field.name]}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  error={errors[field.name]}
-                  isEditMode={isEditMode}
-                />
-              )}
+              {fields.map((field) => (
+                <div
+                  key={field.name}
+                  style={{
+                    gridColumn: field.gridCols ?? "initial",
+                  }}
+                >
+                  {field.type === "message" ? (
+                    <div>{field.content}</div>
+                  ) : (
+                    <FieldRenderer
+                      field={field}
+                      value={formData[field.name]}
+                      onChange={onChange}
+                      onBlur={onBlur}
+                      error={errors[field.name]}
+                      isEditMode={isEditMode}
+                    />
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      ))}
+          )
+        );
+      })}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { getProviderConfig } from "../providers";
 import { ProviderForm } from "../components/provider-form";
 import Input from "apps/labelstudio/src/components/Form/Elements/Input/Input";
+import { Toggle } from "@humansignal/ui";
 
 interface ProviderDetailsStepProps {
   formData: any;
@@ -64,6 +65,21 @@ export const ProviderDetailsStep = ({
         isEditMode={isEditMode}
         target={target}
       />
+
+      {/* Export-specific common fields */}
+      {target === "export" && (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Toggle
+              checked={formData.can_delete_objects ?? false}
+              onChange={(e) => handleProviderFieldChange("can_delete_objects", e.target.checked)}
+              aria-label="Can delete objects from storage"
+              label="Can delete objects from storage"
+              description="If unchecked, annotations will not be deleted from storage"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

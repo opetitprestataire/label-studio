@@ -112,7 +112,7 @@ export const PreviewStep = ({
               {/* Path/Bucket Prefix Section - Hide for localfiles since it has its own path field */}
               {type !== "localfiles" && (
                 <div className="space-y-2">
-                  <Label text={type === "redis" ? "Path to Files" : "Bucket Prefix"} />
+                  <Label text={`${type === "redis" ? "Path to Files" : "Bucket Prefix"} (optional)`} />
                   <p className="text-sm text-muted-foreground">
                     {type === "redis"
                       ? "Specify the folder path within your storage where your files are located"
@@ -122,19 +122,17 @@ export const PreviewStep = ({
                     id={type === "redis" ? "path" : "prefix"}
                     name={type === "redis" ? "path" : "prefix"}
                     value={type === "redis" ? (formData.path ?? "") : (formData.prefix ?? "")}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      handleChange(e);
+                      // Reset preview when prefix/path changes
+                      onImportSettingsChange?.();
+                    }}
                     placeholder="path/to/files/ or leave empty for root"
                     style={{ width: "100%" }}
-                    label=""
-                    description=""
-                    footer=""
-                    className=""
-                    validate=""
                     required={false}
                     skip={false}
                     labelProps={{}}
                     ghost={false}
-                    tooltip=""
                     tooltipIcon={null}
                   />
                 </div>
@@ -142,7 +140,7 @@ export const PreviewStep = ({
 
               {/* Import Method */}
               <div className="space-y-2">
-                <Label text="Import Method" />
+                <Label text="Import Method (optional)" />
                 <p className="text-sm text-muted-foreground">Choose how to interpret your data from storage</p>
                 <Select
                   name="use_blob_urls"
@@ -178,13 +176,17 @@ export const PreviewStep = ({
 
               {/* File Filter Section */}
               <div className="space-y-2">
-                <Label text="File Name Filter (Optional)" />
+                <Label text="File Name Filter (optional)" />
                 <p className="text-sm text-muted-foreground">Use regex patterns to filter which files are imported</p>
                 <Input
                   id="regex_filter"
                   name="regex_filter"
                   value={formData.regex_filter ?? ""}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e);
+                    // Reset preview when regex filter changes
+                    onImportSettingsChange?.();
+                  }}
                   placeholder={
                     formData.use_blob_urls
                       ? ".*\\.(jpg|png)$ - imports only JPG, PNG files"
@@ -223,6 +225,8 @@ export const PreviewStep = ({
                                 regex_filter: r.regex,
                               },
                             }));
+                            // Reset preview when common filter is selected
+                            onImportSettingsChange?.();
                           }}
                         >
                           {r.title}
