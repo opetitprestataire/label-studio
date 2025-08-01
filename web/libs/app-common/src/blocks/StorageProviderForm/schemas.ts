@@ -9,7 +9,7 @@ export const step1Schema = z.object({
 });
 
 // Helper function to get provider-specific schema
-export const getProviderSchema = (provider: string, isEditMode = false) => {
+export const getProviderSchema = (provider: string, isEditMode = false, target?: "import" | "export") => {
   const providerConfig = getProviderConfig(provider);
   if (!providerConfig) {
     return z.object({}); // Empty schema for unknown providers
@@ -31,7 +31,12 @@ export const getProviderSchema = (provider: string, isEditMode = false) => {
     (field): field is FieldDefinition => "type" in field && field.type !== "message",
   );
 
-  const allFields = [...commonFields, ...providerFields];
+  // Filter fields based on target if specified
+  const filteredProviderFields = target 
+    ? providerFields.filter(field => !field.target || field.target === target)
+    : providerFields;
+
+  const allFields = [...commonFields, ...filteredProviderFields];
   return assembleSchema(allFields, isEditMode);
 };
 

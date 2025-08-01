@@ -19,6 +19,7 @@ interface FormFooterProps {
   createStorage: {
     isLoading: boolean;
   };
+  target?: "import" | "export";
 }
 
 export const FormFooter = ({
@@ -32,6 +33,7 @@ export const FormFooter = ({
   testConnection,
   loadPreview,
   createStorage,
+  target,
 }: FormFooterProps) => {
   return (
     <div className="flex items-center justify-between p-wide border-t border-neutral-border bg-neutral-background">
@@ -68,7 +70,12 @@ export const FormFooter = ({
           waiting={currentStep === totalSteps - 1 && createStorage.isLoading}
           disabled={!isEditMode && currentStep === 1 && !connectionChecked}
         >
-          {currentStep < totalSteps - 1 ? "Next" : "Submit"}
+          {currentStep < totalSteps - 1 
+            ? "Next" 
+            : target === "export" 
+              ? "Save" 
+              : "Sync"
+          }
         </Button>
       </div>
     </div>

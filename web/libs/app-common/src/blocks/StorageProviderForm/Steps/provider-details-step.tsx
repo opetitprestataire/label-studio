@@ -9,6 +9,7 @@ interface ProviderDetailsStepProps {
   handleFieldBlur?: (name: string, value: any) => void;
   provider?: string;
   isEditMode?: boolean;
+  target?: "import" | "export";
 }
 
 export const ProviderDetailsStep = ({
@@ -18,6 +19,7 @@ export const ProviderDetailsStep = ({
   handleFieldBlur,
   provider,
   isEditMode = false,
+  target,
 }: ProviderDetailsStepProps) => {
   const providerConfig = getProviderConfig(provider);
 
@@ -60,6 +62,7 @@ export const ProviderDetailsStep = ({
         onChange={handleProviderFieldChange}
         onBlur={handleFieldBlur}
         isEditMode={isEditMode}
+        target={target}
       />
     </div>
   );

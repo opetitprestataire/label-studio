@@ -51,18 +51,25 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
     // Determine if we're in edit mode
     const isEditMode = Boolean(storage);
 
-    // Define steps based on edit mode
+    // Define steps based on edit mode and target
+    const effectiveTarget = target || "import"; // Default to import if target is undefined
     const steps = isEditMode
       ? [
-          { title: "Configure Connection", schema: getProviderSchema(type || "s3", isEditMode) },
-          { title: "Import Settings & Preview" },
-          { title: "Review & Confirm" },
+          { title: "Configure Connection", schema: getProviderSchema(type || "s3", isEditMode, effectiveTarget) },
+          // Only include preview and review steps for import storages
+          ...(effectiveTarget === "import" ? [
+            { title: "Import Settings & Preview" },
+            { title: "Review & Confirm" },
+          ] : []),
         ]
       : [
           { title: "Select Provider", schema: step1Schema },
-          { title: "Configure Connection", schema: getProviderSchema(type || "s3", isEditMode) },
-          { title: "Import Settings & Preview" },
-          { title: "Review & Confirm" },
+          { title: "Configure Connection", schema: getProviderSchema(type || "s3", isEditMode, effectiveTarget) },
+          // Only include preview and review steps for import storages
+          ...(effectiveTarget === "import" ? [
+            { title: "Import Settings & Preview" },
+            { title: "Review & Confirm" },
+          ] : []),
         ];
 
     // Initialize form state management
@@ -229,6 +236,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
                     handleFieldBlur={handleFieldBlur}
                     provider={formData.provider || "s3"}
                     isEditMode={isEditMode}
+                    target={effectiveTarget}
                   />
                 );
               case 2:
@@ -245,7 +253,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
                       });
                     }}
                     action={action}
-                    target={target!}
+                    target={effectiveTarget}
                     type={type!}
                     project={project}
                     storage={storage}
@@ -290,6 +298,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
           createStorage={{
             isLoading: createStorageMutation.isLoading,
           }}
+          target={effectiveTarget}
         />
       </div>
     );

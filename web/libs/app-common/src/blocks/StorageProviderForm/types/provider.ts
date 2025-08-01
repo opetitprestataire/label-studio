@@ -122,6 +122,17 @@ export function getFieldByName(
 export function getFieldsForRow(
   fields: (FieldDefinition | MessageDefinition)[],
   rowFields: string[],
+  target?: "import" | "export",
 ): (FieldDefinition | MessageDefinition)[] {
-  return rowFields.map((fieldName) => getFieldByName(fields, fieldName)).filter(Boolean) as FieldDefinition[];
+  const filteredFields = rowFields.map((fieldName) => getFieldByName(fields, fieldName)).filter(Boolean) as (FieldDefinition | MessageDefinition)[];
+  
+  // Filter fields based on target if specified
+  if (target) {
+    return filteredFields.filter(field => {
+      if (field.type === "message") return true; // Always show messages
+      return !field.target || field.target === target;
+    });
+  }
+  
+  return filteredFields;
 }

@@ -9,6 +9,7 @@ interface ProviderFormProps {
   onChange: (name: string, value: any) => void;
   onBlur?: (name: string, value: any) => void;
   isEditMode?: boolean;
+  target?: "import" | "export";
 }
 
 export const ProviderForm: React.FC<ProviderFormProps> = ({
@@ -18,6 +19,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
   onChange,
   onBlur,
   isEditMode = false,
+  target,
 }) => {
   return (
     <div className="space-y-6">
@@ -29,7 +31,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
             gridTemplateColumns: `repeat(${row.fields.length}, 1fr)`,
           }}
         >
-          {getFieldsForRow(provider.fields, row.fields).map((field) => (
+          {getFieldsForRow(provider.fields, row.fields, target).map((field) => (
             <div
               key={field.name}
               style={{
