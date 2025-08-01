@@ -8,7 +8,6 @@ import App from "./components/App/App";
 import { configureStore } from "./configureStore";
 import legacyEvents from "./core/External";
 import { Hotkey } from "./core/Hotkey";
-import defaultKeymap from "./core/settings/keymap.json";
 import defaultOptions from "./defaultOptions";
 import { destroy as destroySharedStore } from "./mixins/SharedChoiceStore/mixin";
 import { EventInvoker } from "./utils/events";
@@ -19,9 +18,6 @@ import { isDefined } from "./utils/utilities";
 // Extend window interface for TypeScript
 declare global {
   interface Window {
-    LabelStudio?: typeof LabelStudio;
-    Hotkey?: typeof Hotkey;
-    DEFAULT_HOTKEYS?: typeof defaultKeymap;
     Htx: any;
   }
 }
@@ -265,10 +261,4 @@ export class LabelStudio {
   }
 }
 
-// Expose LabelStudio and Hotkey classes globally for runtime hotkey reload functionality
-if (typeof window !== "undefined") {
-  window.LabelStudio = LabelStudio;
-  window.Hotkey = Hotkey;
-  // Also expose the original default keymap for runtime reset functionality
-  window.DEFAULT_HOTKEYS = { ...defaultKeymap };
-}
+
