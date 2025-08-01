@@ -268,7 +268,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
         </div>
 
         <div className="p-tight">
-          <InlineError includeValidation />
+          <InlineError includeValidation minimal />
         </div>
 
         <FormFooter
