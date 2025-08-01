@@ -892,6 +892,33 @@
       "version": 2,
       "deleted": false
     },
+    "fflag_all_feat_utc_204_users_performance_improvements_in_dm_for_large_orgs": {
+      "key": "fflag_all_feat_utc_204_users_performance_improvements_in_dm_for_large_orgs",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "f171bc9c5fa94159af06ea154aa175ea",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
+      "deleted": false
+    },
     "fflag_feat_all_dia_1576_prompts_easy_breezy_onboarding_long": {
       "key": "fflag_feat_all_dia_1576_prompts_easy_breezy_onboarding_long",
       "on": false,
@@ -2013,6 +2040,33 @@
       "version": 4,
       "deleted": false
     },
+    "fflag_feat_fit_449_datamanager_filter_members_short": {
+      "key": "fflag_feat_fit_449_datamanager_filter_members_short",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "535a9963d6e342eaa088a0405c41d4e9",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
+      "deleted": false
+    },
     "fflag_feat_fit_52_label_studio_enterprise_embed": {
       "key": "fflag_feat_fit_52_label_studio_enterprise_embed",
       "on": false,
@@ -2250,6 +2304,33 @@
       },
       "clientSide": false,
       "salt": "ea8b324ddf9f4b94be35cc4ae4f41cc1",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 3,
+      "deleted": false
+    },
+    "fflag_feat_front_fit_418_tooltip_enhancements_short": {
+      "key": "fflag_feat_front_fit_418_tooltip_enhancements_short",
+      "on": true,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "4576b854c4784e73b69a848023022edb",
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
@@ -3878,7 +3959,7 @@
     },
     "fflag_fix_back_plt_816_recalculate_stats_batch_15072025_short": {
       "key": "fflag_fix_back_plt_816_recalculate_stats_batch_15072025_short",
-      "on": false,
+      "on": true,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
@@ -3900,7 +3981,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 2,
+      "version": 3,
       "deleted": false
     },
     "fflag_fix_back_plt_819_per_org_rate_limiter_09072025_short": {
@@ -3955,6 +4036,33 @@
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
       "version": 2,
+      "deleted": false
+    },
+    "fflag_fix_back_plt_840_redis_last_activity_29072025_short": {
+      "key": "fflag_fix_back_plt_840_redis_last_activity_29072025_short",
+      "on": true,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "df3aa47605a6499eadd337996c5338be",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 3,
       "deleted": false
     },
     "fflag_fix_bros_95_drafts_from_other_users": {
