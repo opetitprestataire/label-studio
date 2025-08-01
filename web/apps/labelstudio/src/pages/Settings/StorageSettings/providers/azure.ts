@@ -54,15 +54,10 @@ export const azureProvider: ProviderConfig = {
     },
   ],
   layout: [
-    {
-      fields: ["container"],
-    },
-    {
-      fields: ["account_name", "account_key"],
-    },
-    {
-      fields: ["presign", "presign_ttl"],
-    },
+    { fields: ["container"] },
+    { fields: ["account_name"] },
+    { fields: ["account_key"] },
+    { fields: ["presign", "presign_ttl"] },
   ],
 };
 

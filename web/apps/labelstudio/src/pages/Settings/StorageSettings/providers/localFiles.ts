@@ -17,11 +17,7 @@ export const localFilesProvider: ProviderConfig = {
       schema: z.string().min(1, "Path is required"),
     },
   ],
-  layout: [
-    {
-      fields: ["path"],
-    },
-  ],
+  layout: [{ fields: ["path"] }],
 };
 
 export default localFilesProvider;

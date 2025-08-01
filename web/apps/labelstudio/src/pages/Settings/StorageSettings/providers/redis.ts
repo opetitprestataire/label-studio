@@ -38,11 +38,7 @@ export const redisProvider: ProviderConfig = {
       schema: z.string().default("6379"),
     },
   ],
-  layout: [
-    {
-      fields: ["host", "port", "db", "password"],
-    },
-  ],
+  layout: [{ fields: ["host", "port", "db", "password"] }],
 };
 
 export default redisProvider;

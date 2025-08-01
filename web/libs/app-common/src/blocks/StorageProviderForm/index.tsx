@@ -199,7 +199,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
 
         <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isEditMode={isEditMode} />
 
-        <div className="max-h-[60vh] overflow-y-auto px-wide py-base">
+        <div className="px-wide py-base">
           {(() => {
             const actualStep = isEditMode ? currentStep + 1 : currentStep;
 

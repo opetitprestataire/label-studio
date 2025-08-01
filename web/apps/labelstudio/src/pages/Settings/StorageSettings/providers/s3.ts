@@ -77,17 +77,12 @@ export const s3Provider: ProviderConfig = {
     },
   ],
   layout: [
-    {
-      fields: ["bucket"],
-    },
-    {
-      fields: ["region_name", "s3_endpoint"],
-    },
-    {
-      fields: ["aws_access_key_id", "aws_secret_access_key", "aws_session_token"],
-    },
-    {
-      fields: ["presign", "presign_ttl"],
-    },
+    { fields: ["bucket"] },
+    { fields: ["region_name"] },
+    { fields: ["s3_endpoint"] },
+    { fields: ["aws_access_key_id"] },
+    { fields: ["aws_secret_access_key"] },
+    { fields: ["aws_session_token"] },
+    { fields: ["presign", "presign_ttl"] },
   ],
 };

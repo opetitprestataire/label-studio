@@ -51,18 +51,10 @@ export const gcsProvider: ProviderConfig = {
     },
   ],
   layout: [
-    {
-      fields: ["bucket"],
-    },
-    {
-      fields: ["google_application_credentials"],
-    },
-    {
-      fields: ["google_project_id"],
-    },
-    {
-      fields: ["presign", "presign_ttl"],
-    },
+    { fields: ["bucket"] },
+    { fields: ["google_application_credentials"] },
+    { fields: ["google_project_id"] },
+    { fields: ["presign", "presign_ttl"] },
   ],
 };
 
