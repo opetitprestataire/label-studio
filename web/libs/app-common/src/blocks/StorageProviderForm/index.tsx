@@ -57,19 +57,17 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
       ? [
           { title: "Configure Connection", schema: getProviderSchema(type || "s3", isEditMode, effectiveTarget) },
           // Only include preview and review steps for import storages
-          ...(effectiveTarget === "import" ? [
-            { title: "Import Settings & Preview" },
-            { title: "Review & Confirm" },
-          ] : []),
+          ...(effectiveTarget === "import"
+            ? [{ title: "Import Settings & Preview" }, { title: "Review & Confirm" }]
+            : []),
         ]
       : [
           { title: "Select Provider", schema: step1Schema },
           { title: "Configure Connection", schema: getProviderSchema(type || "s3", isEditMode, effectiveTarget) },
           // Only include preview and review steps for import storages
-          ...(effectiveTarget === "import" ? [
-            { title: "Import Settings & Preview" },
-            { title: "Review & Confirm" },
-          ] : []),
+          ...(effectiveTarget === "import"
+            ? [{ title: "Import Settings & Preview" }, { title: "Review & Confirm" }]
+            : []),
         ];
 
     // Initialize form state management
