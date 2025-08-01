@@ -65,6 +65,7 @@ export const s3Provider: ProviderConfig = {
       description:
         "When pre-signed URLs are enabled, all data bypasses the platform and user browsers directly read data from storage",
       schema: z.boolean().default(true),
+      target: "import",
     },
     {
       name: "presign_ttl",
@@ -74,6 +75,7 @@ export const s3Provider: ProviderConfig = {
       max: 10080,
       step: 1,
       schema: z.number().min(1).max(10080).default(15),
+      target: "import",
     },
   ],
   layout: [
