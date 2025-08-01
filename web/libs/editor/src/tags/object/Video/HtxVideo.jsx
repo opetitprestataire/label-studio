@@ -116,14 +116,11 @@ function useZoom(videoDimensions, canvasDimentions, shouldClampPan) {
 
 const VideoConfig = observer(({ item }) => {
   const [isConfigModalActive, setIsConfigModalActive] = useState(false);
-  const toggleConfigModal = useCallback((e) => {
-    e.preventDefault();
-    setIsConfigModalActive((prev) => !prev);
-  }, []);
+
   return (
     <VideoConfigControl
       configModal={isConfigModalActive}
-      onSetModal={toggleConfigModal}
+      onSetModal={setIsConfigModalActive}
       speed={item.speed}
       onSpeedChange={item.handleSpeed}
       loopTimelineRegion={item.loopTimelineRegion}
