@@ -20,14 +20,14 @@ export const s3Provider: ProviderConfig = {
       name: "region_name",
       type: "text",
       label: "Region Name",
-      placeholder: "us-east-1",
+      placeholder: "us-east-1 (default)",
       schema: z.string().optional().default(""),
     },
     {
       name: "s3_endpoint",
       type: "text",
       label: "S3 Endpoint",
-      placeholder: "https://s3.amazonaws.com",
+      placeholder: "https://s3.amazonaws.com (default)",
       schema: z.string().optional().default(""),
     },
     {

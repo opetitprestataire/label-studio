@@ -109,6 +109,41 @@ export const PreviewStep = ({
             autoComplete="off"
           >
             <div className="space-y-8">
+              {/* Import Method */}
+              <div className="space-y-2">
+                <Label text="Import Method" />
+                <p className="text-sm text-muted-foreground">Choose how to interpret your data from storage</p>
+                <Select
+                  name="use_blob_urls"
+                  value={formData.use_blob_urls ? "Files" : "Tasks"}
+                  onChange={(value) => {
+                    const isFiles = value === "Files";
+                    setFormState((prevState) => ({
+                      ...prevState,
+                      formData: {
+                        ...prevState.formData,
+                        use_blob_urls: isFiles,
+                      },
+                    }));
+                    // Reset validation state when import method changes
+                    onImportSettingsChange?.();
+                  }}
+                  options={
+                    [
+                      {
+                        value: "Files",
+                        label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)",
+                      },
+                      {
+                        value: "Tasks",
+                        label: "Tasks - Treat each JSON, JSONL, or Parquet as one or more task definitions per file",
+                      },
+                    ] as any
+                  }
+                  placeholder="Select import method"
+                />
+              </div>
+
               {/* Path/Bucket Prefix Section - Hide for localfiles since it has its own path field */}
               {type !== "localfiles" && (
                 <div className="space-y-2">
@@ -194,41 +229,6 @@ export const PreviewStep = ({
                       );
                     })}
                 </div>
-              </div>
-
-              {/* Import Method */}
-              <div className="space-y-2">
-                <Label text="Import Method" />
-                <p className="text-sm text-muted-foreground">Choose how to interpret your data from storage</p>
-                <Select
-                  name="use_blob_urls"
-                  value={formData.use_blob_urls ? "Files" : "Tasks"}
-                  onChange={(value) => {
-                    const isFiles = value === "Files";
-                    setFormState((prevState) => ({
-                      ...prevState,
-                      formData: {
-                        ...prevState.formData,
-                        use_blob_urls: isFiles,
-                      },
-                    }));
-                    // Reset validation state when import method changes
-                    onImportSettingsChange?.();
-                  }}
-                  options={
-                    [
-                      {
-                        value: "Files",
-                        label: "Files - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT)",
-                      },
-                      {
-                        value: "Tasks",
-                        label: "Tasks - Treat each JSON, JSONL, or Parquet as one or more task definitions per file",
-                      },
-                    ] as any
-                  }
-                  placeholder="Select import method"
-                />
               </div>
 
               {/* Scan All Subfolders */}
