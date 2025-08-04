@@ -25,10 +25,7 @@ export const localFilesProvider: ProviderConfig = {
       target: "export",
     },
   ],
-  layout: [
-    { fields: ["path"] },
-    { fields: ["prefix"] },
-  ],
+  layout: [{ fields: ["path"] }, { fields: ["prefix"] }],
 };
 
 export default localFilesProvider;

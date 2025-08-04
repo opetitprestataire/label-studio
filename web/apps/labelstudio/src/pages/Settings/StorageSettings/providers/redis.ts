@@ -47,10 +47,7 @@ export const redisProvider: ProviderConfig = {
       target: "export",
     },
   ],
-  layout: [
-    { fields: ["host", "port", "db", "password"] },
-    { fields: ["prefix"] },
-  ],
+  layout: [{ fields: ["host", "port", "db", "password"] }, { fields: ["prefix"] }],
 };
 
 export default redisProvider;

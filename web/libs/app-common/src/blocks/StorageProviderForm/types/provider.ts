@@ -10,40 +10,40 @@ export function isFieldRequired(field: FieldDefinition, isEditMode = false): boo
   if (field.accessKey && isEditMode) {
     return false;
   }
-  
+
   // Check if the field is explicitly marked as required
   if (field.required === true) {
     return true;
   }
-  
+
   // Check if the schema indicates the field is required
   // A schema is considered required if it doesn't have .optional() or .default()
   const schemaAny = field.schema as any;
-  
+
   // Check if the schema has .optional() modifier
-  if (schemaAny._def?.typeName === 'ZodOptional') {
+  if (schemaAny._def?.typeName === "ZodOptional") {
     return false;
   }
-  
+
   // Check if the schema has .default() modifier
-  if (schemaAny._def?.typeName === 'ZodDefault') {
+  if (schemaAny._def?.typeName === "ZodDefault") {
     return false;
   }
-  
+
   // Check if the inner type of a default schema is optional
-  if (schemaAny._def?.innerType?._def?.typeName === 'ZodOptional') {
+  if (schemaAny._def?.innerType?._def?.typeName === "ZodOptional") {
     return false;
   }
-  
+
   // For string fields, check if they have min(1) validation (indicating required)
   if (field.schema instanceof z.ZodString) {
     const stringSchema = field.schema as z.ZodString;
     // Check if the schema has min(1) validation
-    if (stringSchema._def?.checks?.some((check: any) => check.kind === 'min' && check.value === 1)) {
+    if (stringSchema._def?.checks?.some((check: any) => check.kind === "min" && check.value === 1)) {
       return true;
     }
   }
-  
+
   // Default to not required
   return false;
 }
@@ -52,23 +52,23 @@ export function isFieldRequired(field: FieldDefinition, isEditMode = false): boo
 export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z.ZodObject<any> {
   const schemaObject: Record<string, z.ZodTypeAny> = {};
 
-  console.log('🔧 assembleSchema called with:', {
+  console.log("🔧 assembleSchema called with:", {
     fieldsCount: fields.length,
     isEditMode,
-    fields: fields.map(f => ({
+    fields: fields.map((f) => ({
       name: f.name,
       type: f.type,
       required: f.required,
       label: f.label,
       schemaType: f.schema.constructor.name,
-      schemaDef: (f.schema as any)._def?.typeName || 'unknown'
-    }))
+      schemaDef: (f.schema as any)._def?.typeName || "unknown",
+    })),
   });
 
   fields.forEach((field) => {
     let fieldSchema = field.schema;
     const originalSchemaType = fieldSchema.constructor.name;
-    const originalSchemaDef = (fieldSchema as any)._def?.typeName || 'unknown';
+    const originalSchemaDef = (fieldSchema as any)._def?.typeName || "unknown";
     const isRequired = isFieldRequired(field, isEditMode);
 
     console.log(`📝 Processing field "${field.name}":`, {
@@ -77,7 +77,7 @@ export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z
       isRequired,
       label: field.label,
       originalSchemaType,
-      originalSchemaDef
+      originalSchemaDef,
     });
 
     // For access keys in edit mode, make them optional and skip validation
@@ -125,19 +125,19 @@ export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z
     }
 
     const finalSchemaType = fieldSchema.constructor.name;
-    const finalSchemaDef = (fieldSchema as any)._def?.typeName || 'unknown';
-    
+    const finalSchemaDef = (fieldSchema as any)._def?.typeName || "unknown";
+
     console.log(`  📋 Final schema for "${field.name}":`, {
       originalType: originalSchemaType,
       finalType: finalSchemaType,
       originalDef: originalSchemaDef,
-      finalDef: finalSchemaDef
+      finalDef: finalSchemaDef,
     });
 
     schemaObject[field.name] = fieldSchema;
   });
 
-  console.log('🏗️ Final schema object keys:', Object.keys(schemaObject));
+  console.log("🏗 Final schema object keys:", Object.keys(schemaObject));
   return z.object(schemaObject);
 }
 
@@ -231,15 +231,18 @@ export function getFieldsForRow(
   rowFields: string[],
   target?: "import" | "export",
 ): (FieldDefinition | MessageDefinition)[] {
-  const filteredFields = rowFields.map((fieldName) => getFieldByName(fields, fieldName)).filter(Boolean) as (FieldDefinition | MessageDefinition)[];
-  
+  const filteredFields = rowFields.map((fieldName) => getFieldByName(fields, fieldName)).filter(Boolean) as (
+    | FieldDefinition
+    | MessageDefinition
+  )[];
+
   // Filter fields based on target if specified
   if (target) {
-    return filteredFields.filter(field => {
+    return filteredFields.filter((field) => {
       if (field.type === "message") return true; // Always show messages
       return !field.target || field.target === target;
     });
   }
-  
+
   return filteredFields;
 }

@@ -197,14 +197,17 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       console.log(`🔍 Validating field "${fieldName}":`, {
         value,
         valueType: typeof value,
-        isEmpty: value === "" || value === null || value === undefined
+        isEmpty: value === "" || value === null || value === undefined,
       });
 
       try {
         const fieldSchema = z.object({ [fieldName]: (currentSchema as any).shape[fieldName] });
-        console.log(`  📋 Field schema type:`, (currentSchema as any).shape[fieldName]?._def?.typeName || 'unknown');
-        console.log(`  📋 Field schema def:`, (currentSchema as any).shape[fieldName]?._def?.innerType?._def?.typeName || 'unknown');
-        
+        console.log(`  📋 Field schema type:`, (currentSchema as any).shape[fieldName]?._def?.typeName || "unknown");
+        console.log(
+          `  📋 Field schema def:`,
+          (currentSchema as any).shape[fieldName]?._def?.innerType?._def?.typeName || "unknown",
+        );
+
         fieldSchema.parse({ [fieldName]: value });
         console.log(`  ✅ Field validation passed`);
 
@@ -238,10 +241,13 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       currentStep,
       formData,
       schemaKeys: Object.keys((currentSchema as any).shape || {}),
-      schemaShape: Object.keys((currentSchema as any).shape || {}).reduce((acc, key) => {
-        acc[key] = (currentSchema as any).shape[key]?._def?.typeName || 'unknown';
-        return acc;
-      }, {} as Record<string, string>)
+      schemaShape: Object.keys((currentSchema as any).shape || {}).reduce(
+        (acc, key) => {
+          acc[key] = (currentSchema as any).shape[key]?._def?.typeName || "unknown";
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
     });
 
     try {
@@ -297,11 +303,12 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       // Check if this field should reset the connection
       const currentProvider = newFormData.provider || "s3";
       const providerConfig = getProviderConfig(currentProvider);
-      const field = providerConfig?.fields.find(f => f.name === name);
-      
+      const field = providerConfig?.fields.find((f) => f.name === name);
+
       // Only reset connection if field doesn't explicitly set resetConnection: false
-      const shouldResetConnection = field && 'type' in field ? (field as FieldDefinition).resetConnection !== false : true;
-      
+      const shouldResetConnection =
+        field && "type" in field ? (field as FieldDefinition).resetConnection !== false : true;
+
       if (shouldResetConnection) {
         onConnectionChange?.();
       }

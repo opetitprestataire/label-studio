@@ -27,15 +27,18 @@ export const getProviderSchema = (provider: string, isEditMode = false, target?:
   ];
 
   // Add export-specific common fields
-  const exportFields: FieldDefinition[] = target === "export" ? [
-    {
-      name: "can_delete_objects",
-      type: "toggle",
-      label: "Can delete objects from storage",
-      description: "If unchecked, annotations will not be deleted from storage",
-      schema: z.boolean().default(false),
-    },
-  ] : [];
+  const exportFields: FieldDefinition[] =
+    target === "export"
+      ? [
+          {
+            name: "can_delete_objects",
+            type: "toggle",
+            label: "Can delete objects from storage",
+            description: "If unchecked, annotations will not be deleted from storage",
+            schema: z.boolean().default(false),
+          },
+        ]
+      : [];
 
   // Filter out message fields and combine with common fields
   const providerFields = providerConfig.fields.filter(
@@ -43,8 +46,8 @@ export const getProviderSchema = (provider: string, isEditMode = false, target?:
   );
 
   // Filter fields based on target if specified
-  const filteredProviderFields = target 
-    ? providerFields.filter(field => !field.target || field.target === target)
+  const filteredProviderFields = target
+    ? providerFields.filter((field) => !field.target || field.target === target)
     : providerFields;
 
   const allFields = [...commonFields, ...exportFields, ...filteredProviderFields];

@@ -98,12 +98,15 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
         setType(formData.provider);
       }
     }, [isEditMode, formData.provider, type]);
-    
+
     useEffect(() => {
       const effectiveTarget = target || "import";
       const newSteps = isEditMode
         ? [
-            { title: "Configure Connection", schema: getProviderSchema(formData.provider || type || "s3", isEditMode, effectiveTarget) },
+            {
+              title: "Configure Connection",
+              schema: getProviderSchema(formData.provider || type || "s3", isEditMode, effectiveTarget),
+            },
             // Only include preview and review steps for import storages
             ...(effectiveTarget === "import"
               ? [{ title: "Import Settings & Preview" }, { title: "Review & Confirm" }]
@@ -111,7 +114,10 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
           ]
         : [
             { title: "Select Provider", schema: step1Schema },
-            { title: "Configure Connection", schema: getProviderSchema(formData.provider || type || "s3", isEditMode, effectiveTarget) },
+            {
+              title: "Configure Connection",
+              schema: getProviderSchema(formData.provider || type || "s3", isEditMode, effectiveTarget),
+            },
             // Only include preview and review steps for import storages
             ...(effectiveTarget === "import"
               ? [{ title: "Import Settings & Preview" }, { title: "Review & Confirm" }]
@@ -137,20 +143,21 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
     }, [onHide, resetForm]);
 
     // Initialize API hooks
-    const { testConnectionMutation, createStorageMutation, saveStorageMutation, loadFilesPreviewMutation, action } = useStorageApi({
-      target,
-      storage,
-      project,
-      onSubmit,
-      onClose: () => {
-        resetForm();
-        setFilesPreview(null);
-        setConnectionChecked(false);
-        setType("s3");
-        onClose();
-        modal?.hide();
-      },
-    });
+    const { testConnectionMutation, createStorageMutation, saveStorageMutation, loadFilesPreviewMutation, action } =
+      useStorageApi({
+        target,
+        storage,
+        project,
+        onSubmit,
+        onClose: () => {
+          resetForm();
+          setFilesPreview(null);
+          setConnectionChecked(false);
+          setType("s3");
+          onClose();
+          modal?.hide();
+        },
+      });
 
     // Handle provider selection
     const handleSelectChange = (name: string, value: string) => {
