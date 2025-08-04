@@ -206,7 +206,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
         });
         return true;
       } catch (error) {
-        console.log(`  ❌ Field validation failed:`, error);
+        console.log("Field validation failed:", error);
         if (error instanceof z.ZodError) {
           const formattedErrors = formatValidationErrors(error);
           setErrors((prev) => ({
@@ -230,7 +230,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       setErrors({});
       return true;
     } catch (error) {
-      console.log(`  ❌ Form validation failed:`, error);
+      console.log("Form validation failed:", error);
       if (error instanceof z.ZodError) {
         const formattedErrors = formatValidationErrors(error);
         setErrors(formattedErrors);
