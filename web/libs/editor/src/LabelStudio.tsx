@@ -99,7 +99,7 @@ export class LabelStudio {
 
     // @todo whole approach to hotkeys should be rewritten,
     // @todo but for now we need a way to export Hotkey to different app
-    window.Htx.Hotkey = Hotkey;
+    if (window.Htx) window.Htx.Hotkey = Hotkey;
 
     this.supportLegacyEvents();
 
