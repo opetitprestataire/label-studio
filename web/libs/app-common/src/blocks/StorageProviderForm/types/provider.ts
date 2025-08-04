@@ -52,66 +52,35 @@ export function isFieldRequired(field: FieldDefinition, isEditMode = false): boo
 export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z.ZodObject<any> {
   const schemaObject: Record<string, z.ZodTypeAny> = {};
 
-  console.log("🔧 assembleSchema called with:", {
-    fieldsCount: fields.length,
-    isEditMode,
-    fields: fields.map((f) => ({
-      name: f.name,
-      type: f.type,
-      required: f.required,
-      label: f.label,
-      schemaType: f.schema.constructor.name,
-      schemaDef: (f.schema as any)._def?.typeName || "unknown",
-    })),
-  });
-
   fields.forEach((field) => {
     let fieldSchema = field.schema;
-    const originalSchemaType = fieldSchema.constructor.name;
-    const originalSchemaDef = (fieldSchema as any)._def?.typeName || "unknown";
     const isRequired = isFieldRequired(field, isEditMode);
-
-    console.log(`📝 Processing field "${field.name}":`, {
-      type: field.type,
-      required: field.required,
-      isRequired,
-      label: field.label,
-      originalSchemaType,
-      originalSchemaDef,
-    });
 
     // For access keys in edit mode, make them optional and skip validation
     if (field.accessKey && isEditMode) {
       fieldSchema = fieldSchema.optional();
-      console.log(`  🔑 Access key in edit mode - made optional`);
     } else if (isRequired) {
-      console.log(`  ✅ Field is required - adding validation`);
       // For required fields, ensure they have proper validation
       if (fieldSchema instanceof z.ZodString) {
         fieldSchema = fieldSchema.min(1, `${field.label} is required`);
-        console.log(`  📝 String field - added min(1) validation`);
       } else if (fieldSchema instanceof z.ZodNumber) {
         // For numbers, we might want to add additional validation if needed
         // For now, just ensure it's not optional
         fieldSchema = fieldSchema.refine((val) => val !== undefined && val !== null, {
           message: `${field.label} is required`,
         });
-        console.log(`  🔢 Number field - added refine validation`);
       } else if (fieldSchema instanceof z.ZodBoolean) {
         // For booleans, ensure they're not optional
         fieldSchema = fieldSchema.refine((val) => val !== undefined && val !== null, {
           message: `${field.label} is required`,
         });
-        console.log(`  🔘 Boolean field - added refine validation`);
       } else {
         // For other types, ensure they're not optional
         fieldSchema = fieldSchema.refine((val) => val !== undefined && val !== null, {
           message: `${field.label} is required`,
         });
-        console.log(`  ❓ Other type field (${originalSchemaType}) - added refine validation`);
       }
     } else {
-      console.log(`  ⚪ Field is optional - making nullable and optional`);
       // For optional fields, make them nullable to handle null values from server
       if (fieldSchema instanceof z.ZodString) {
         fieldSchema = fieldSchema.nullable().optional();
@@ -124,20 +93,9 @@ export function assembleSchema(fields: FieldDefinition[], isEditMode = false): z
       }
     }
 
-    const finalSchemaType = fieldSchema.constructor.name;
-    const finalSchemaDef = (fieldSchema as any)._def?.typeName || "unknown";
-
-    console.log(`  📋 Final schema for "${field.name}":`, {
-      originalType: originalSchemaType,
-      finalType: finalSchemaType,
-      originalDef: originalSchemaDef,
-      finalDef: finalSchemaDef,
-    });
-
     schemaObject[field.name] = fieldSchema;
   });
 
-  console.log("🏗 Final schema object keys:", Object.keys(schemaObject));
   return z.object(schemaObject);
 }
 
