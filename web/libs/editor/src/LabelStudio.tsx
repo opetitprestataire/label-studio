@@ -97,6 +97,10 @@ export class LabelStudio {
       this.createAppV17();
     }
 
+    // @todo whole approach to hotkeys should be rewritten,
+    // @todo but for now we need a way to export Hotkey to different app
+    window.Htx.Hotkey = Hotkey;
+
     this.supportLegacyEvents();
 
     if (options.instanceOptions?.reactVersion !== "v18") {

@@ -2,9 +2,6 @@ import { ToastType, useToast } from "@humansignal/ui";
 // @ts-ignore
 import { confirm } from "apps/labelstudio/src/components/Modal/Modal";
 import { useAPI } from "apps/labelstudio/src/providers/ApiProvider";
-// Import Hotkey from editor for updating keymap
-// @ts-ignore
-import { Hotkey as EditorHotkey } from "libs/editor/src/core/Hotkey";
 import { useCallback, useEffect, useState } from "react";
 import {
   type ApiResponse,
@@ -64,6 +61,12 @@ export const useHotkeys = () => {
       // Update APP_SETTINGS.user.customHotkeys (for Help modal and fallback)
       if (window.APP_SETTINGS?.user) {
         window.APP_SETTINGS.user.customHotkeys = customHotkeys;
+      }
+
+      const EditorHotkey = Htx.Hotkey;
+
+      if (!EditorHotkey) {
+        return;
       }
 
       // Transform custom hotkeys to editor format (same logic as base.html)
