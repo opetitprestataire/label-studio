@@ -63,7 +63,7 @@ export const useHotkeys = () => {
         window.APP_SETTINGS.user.customHotkeys = customHotkeys;
       }
 
-      const EditorHotkey = Htx.Hotkey;
+      const EditorHotkey = window.Htx?.Hotkey;
 
       if (!EditorHotkey) {
         return;
