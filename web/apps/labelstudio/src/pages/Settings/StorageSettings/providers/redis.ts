@@ -27,8 +27,9 @@ export const redisProvider: ProviderConfig = {
       name: "host",
       type: "text",
       label: "Host",
+      required: true,
       placeholder: "redis://example.com",
-      schema: z.string(),
+      schema: z.string().min(1, "Host is required"),
     },
     {
       name: "port",

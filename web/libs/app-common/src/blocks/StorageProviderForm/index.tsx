@@ -70,6 +70,9 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
             : []),
         ];
 
+    // Update steps when provider changes to ensure schema is current
+    const [currentSteps, setCurrentSteps] = useState(steps);
+
     // Initialize form state management
     const {
       formState,
@@ -83,7 +86,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
     } = useStorageForm({
       project,
       isEditMode,
-      steps,
+      steps: currentSteps,
       storage,
     });
 
@@ -95,6 +98,27 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
         setType(formData.provider);
       }
     }, [isEditMode, formData.provider, type]);
+    
+    useEffect(() => {
+      const effectiveTarget = target || "import";
+      const newSteps = isEditMode
+        ? [
+            { title: "Configure Connection", schema: getProviderSchema(formData.provider || type || "s3", isEditMode, effectiveTarget) },
+            // Only include preview and review steps for import storages
+            ...(effectiveTarget === "import"
+              ? [{ title: "Import Settings & Preview" }, { title: "Review & Confirm" }]
+              : []),
+          ]
+        : [
+            { title: "Select Provider", schema: step1Schema },
+            { title: "Configure Connection", schema: getProviderSchema(formData.provider || type || "s3", isEditMode, effectiveTarget) },
+            // Only include preview and review steps for import storages
+            ...(effectiveTarget === "import"
+              ? [{ title: "Import Settings & Preview" }, { title: "Review & Confirm" }]
+              : []),
+          ];
+      setCurrentSteps(newSteps);
+    }, [formData.provider, type, isEditMode, target]);
 
     // Handle modal hide (including Escape key)
     useEffect(() => {

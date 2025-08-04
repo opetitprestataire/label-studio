@@ -31,7 +31,7 @@ export const azureProvider: ProviderConfig = {
       autoComplete: "off",
       accessKey: true,
       placeholder: "mystorageaccount",
-      schema: z.string().min(1, "Account Name is required"),
+      schema: z.string().optional().default(""),
     },
     {
       name: "account_key",
@@ -40,7 +40,7 @@ export const azureProvider: ProviderConfig = {
       autoComplete: "new-password",
       accessKey: true,
       placeholder: "Your storage account key",
-      schema: z.string().min(1, "Account Key is required"),
+      schema: z.string().optional().default(""),
     },
     {
       name: "presign",
