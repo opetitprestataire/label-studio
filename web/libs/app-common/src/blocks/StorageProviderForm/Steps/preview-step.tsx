@@ -1,4 +1,4 @@
-import { Label, Toggle, Select, Tooltip } from "@humansignal/ui";
+import { Label, Toggle, Select, Tooltip, cn } from "@humansignal/ui";
 import { Form, Input } from "apps/labelstudio/src/components/Form";
 import { IconDocument, IconSearch } from "@humansignal/icons";
 import { formatDistanceToNow } from "date-fns";
@@ -295,10 +295,19 @@ export const PreviewStep = ({
                   {filesPreview.map((file, index) => (
                     <div
                       key={index}
-                      className="flex justify-between py-0.5 px-2 bg-gray-50 hover:bg-gray-100 border-b last:border-b-0 rounded-md"
+                      className={cn(
+                        "flex justify-between py-0.5 px-2 bg-neutral-surface border-b last:border-b-0 rounded-small",
+                        {
+                          "hover:bg-neutral-surface-hover": file.key !== null,
+                        },
+                      )}
                     >
-                      <Tooltip title={file.key || "..."}>
-                        <div className="max-w-[260px] cursor-help overflow-hidden">
+                      <Tooltip title={file.key || "..."} disabled={file.key === null}>
+                        <div
+                          className={cn("max-w-[260px] overflow-hidden", {
+                            "cursor-help": file.key !== null,
+                          })}
+                        >
                           {file.key ? (
                             file.key.length > 28 ? (
                               <span>
