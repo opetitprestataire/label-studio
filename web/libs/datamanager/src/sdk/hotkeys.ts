@@ -9,7 +9,11 @@ export type Hotkey = {
   other?: string;
 };
 
-const readableShortcut = (shortcut: string) => {
+const readableShortcut = (shortcut: string | null | undefined) => {
+  if (! shortcut || typeof shortcut !== 'string') {
+	  return "";
+  }
+    
   return shortcut
     .split("+")
     .map((str) => toStudlyCaps(str))
@@ -26,7 +30,13 @@ export const useShortcut = (
   const isMacos = /mac/i.test(navigator.platform);
 
   let shortcut = action.shortcut ?? ((isMacos ? action.macos : action.other) as string);
-  shortcut = window.APP_SETTINGS?.lookupHotkey?.(`data_manager:${actionName}`)?.key || shortcut;
+  
+  // Check for custom shortcut in app settings
+  const customMapping = window.APP_SETTINGS?.lookupHotkey?.(`data_manager:${actionName}`);
+  if (customMapping !== undefined) {
+    // Explicitly use the custom key even if it's null
+    shortcut = customMapping.key;
+  }
 
   useHotkeys(
     shortcut,
