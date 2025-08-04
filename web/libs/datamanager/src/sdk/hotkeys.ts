@@ -27,7 +27,7 @@ export const useShortcut = (
 
   let shortcut = action.shortcut ?? ((isMacos ? action.macos : action.other) as string);
   shortcut = window.APP_SETTINGS?.lookupHotkey?.(`data_manager:${actionName}`)?.key || shortcut;
-  
+
   useHotkeys(
     shortcut,
     () => {
