@@ -50,6 +50,7 @@ export const azureProvider: ProviderConfig = {
         "When pre-signed URLs are enabled, all data bypasses the platform and user browsers directly read data from storage",
       schema: z.boolean().default(true),
       target: "import",
+      resetConnection: false,
     },
     {
       name: "presign_ttl",
@@ -60,6 +61,7 @@ export const azureProvider: ProviderConfig = {
       step: 1,
       schema: z.number().min(1).max(10080).default(15),
       target: "import",
+      resetConnection: false,
     },
   ],
   layout: [

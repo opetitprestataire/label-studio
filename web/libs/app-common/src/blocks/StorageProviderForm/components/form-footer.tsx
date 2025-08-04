@@ -76,6 +76,7 @@ export const FormFooter = ({
           waiting={currentStep === totalSteps - 1 && createStorage.isLoading}
           disabled={!isEditMode && currentStep === 1 && !connectionChecked}
           look={currentStep === totalSteps - 1 && target !== "export" ? "outlined" : undefined}
+          tooltip={currentStep === 1 && !connectionChecked ? "Test connection before continuing" : undefined}
         >
           {currentStep < totalSteps - 1 ? "Next" : target === "export" ? "Save" : "Save & Sync"}
         </Button>

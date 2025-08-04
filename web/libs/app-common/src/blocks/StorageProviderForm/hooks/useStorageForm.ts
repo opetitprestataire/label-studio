@@ -4,6 +4,7 @@ import { formatValidationErrors } from "../schemas";
 import { getProviderConfig, providerRegistry } from "../providers";
 import { extractDefaultValues } from "../types/provider";
 import type { FormState } from "../atoms";
+import type { FieldDefinition } from "../types/common";
 import { isDefined } from "@humansignal/core/lib/utils/helpers";
 
 interface UseStorageFormProps {
@@ -293,8 +294,17 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
         return newErrors;
       });
 
-      // Reset validation state when any field changes
-      onConnectionChange?.();
+      // Check if this field should reset the connection
+      const currentProvider = newFormData.provider || "s3";
+      const providerConfig = getProviderConfig(currentProvider);
+      const field = providerConfig?.fields.find(f => f.name === name);
+      
+      // Only reset connection if field doesn't explicitly set resetConnection: false
+      const shouldResetConnection = field && 'type' in field ? (field as FieldDefinition).resetConnection !== false : true;
+      
+      if (shouldResetConnection) {
+        onConnectionChange?.();
+      }
     },
     [formData, setFormState, isEditMode],
   );
