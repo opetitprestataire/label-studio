@@ -200,7 +200,6 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
     // Handle API operations
     const testStorageConnection = async () => {
       if (!validateEntireForm()) return;
-      console.log("validation successful");
       testConnectionMutation.mutate(formData, {
         onSuccess: (response) => {
           const isSuccess = response?.$meta?.ok || response?.$meta?.status === 200;

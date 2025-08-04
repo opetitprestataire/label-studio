@@ -194,22 +194,10 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       const currentSchema = steps[currentStep]?.schema;
       if (!currentSchema) return true;
 
-      console.log(`🔍 Validating field "${fieldName}":`, {
-        value,
-        valueType: typeof value,
-        isEmpty: value === "" || value === null || value === undefined,
-      });
-
       try {
         const fieldSchema = z.object({ [fieldName]: (currentSchema as any).shape[fieldName] });
-        console.log(`  📋 Field schema type:`, (currentSchema as any).shape[fieldName]?._def?.typeName || "unknown");
-        console.log(
-          `  📋 Field schema def:`,
-          (currentSchema as any).shape[fieldName]?._def?.innerType?._def?.typeName || "unknown",
-        );
 
         fieldSchema.parse({ [fieldName]: value });
-        console.log(`  ✅ Field validation passed`);
 
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -237,29 +225,14 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
     const currentSchema = steps[currentStep]?.schema;
     if (!currentSchema) return true;
 
-    console.log(`🔍 Validating entire form:`, {
-      currentStep,
-      formData,
-      schemaKeys: Object.keys((currentSchema as any).shape || {}),
-      schemaShape: Object.keys((currentSchema as any).shape || {}).reduce(
-        (acc, key) => {
-          acc[key] = (currentSchema as any).shape[key]?._def?.typeName || "unknown";
-          return acc;
-        },
-        {} as Record<string, string>,
-      ),
-    });
-
     try {
       currentSchema.parse(formData);
-      console.log(`  ✅ Form validation passed`);
       setErrors({});
       return true;
     } catch (error) {
       console.log(`  ❌ Form validation failed:`, error);
       if (error instanceof z.ZodError) {
         const formattedErrors = formatValidationErrors(error);
-        console.log(`  📋 Formatted errors:`, formattedErrors);
         setErrors(formattedErrors);
         return false;
       }
