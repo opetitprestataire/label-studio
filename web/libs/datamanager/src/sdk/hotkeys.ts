@@ -24,8 +24,10 @@ export const useShortcut = (
 ) => {
   const action = keymap[actionName] as Hotkey;
   const isMacos = /mac/i.test(navigator.platform);
-  const shortcut = action.shortcut ?? ((isMacos ? action.macos : action.other) as string);
 
+  let shortcut = action.shortcut ?? ((isMacos ? action.macos : action.other) as string);
+  shortcut = window.APP_SETTINGS?.lookupHotkey?.(`data_manager:${actionName}`)?.key || shortcut;
+  
   useHotkeys(
     shortcut,
     () => {
