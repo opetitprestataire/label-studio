@@ -31,6 +31,14 @@ export const s3Provider: ProviderConfig = {
       schema: z.string().optional().default(""),
     },
     {
+      name: "prefix",
+      type: "text",
+      label: "Bucket prefix",
+      placeholder: "path/to/files",
+      schema: z.string().optional().default(""),
+      target: "export",
+    },
+    {
       name: "aws_access_key_id",
       type: "password",
       label: "Access Key ID",
@@ -82,6 +90,7 @@ export const s3Provider: ProviderConfig = {
     { fields: ["bucket"] },
     { fields: ["region_name"] },
     { fields: ["s3_endpoint"] },
+    { fields: ["prefix"] },
     { fields: ["aws_access_key_id"] },
     { fields: ["aws_secret_access_key"] },
     { fields: ["aws_session_token"] },

@@ -37,8 +37,19 @@ export const redisProvider: ProviderConfig = {
       placeholder: "6379",
       schema: z.string().default("6379"),
     },
+    {
+      name: "prefix",
+      type: "text",
+      label: "Bucket prefix",
+      placeholder: "path/to/files",
+      schema: z.string().optional().default(""),
+      target: "export",
+    },
   ],
-  layout: [{ fields: ["host", "port", "db", "password"] }],
+  layout: [
+    { fields: ["host", "port", "db", "password"] },
+    { fields: ["prefix"] },
+  ],
 };
 
 export default redisProvider;

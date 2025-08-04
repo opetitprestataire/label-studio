@@ -16,6 +16,14 @@ export const gcsProvider: ProviderConfig = {
       schema: z.string().min(1, "Bucket name is required"),
     },
     {
+      name: "prefix",
+      type: "text",
+      label: "Bucket prefix",
+      placeholder: "path/to/files",
+      schema: z.string().optional().default(""),
+      target: "export",
+    },
+    {
       name: "google_application_credentials",
       type: "password",
       label: "Google Application Credentials",
@@ -54,6 +62,7 @@ export const gcsProvider: ProviderConfig = {
   ],
   layout: [
     { fields: ["bucket"] },
+    { fields: ["prefix"] },
     { fields: ["google_application_credentials"] },
     { fields: ["google_project_id"] },
     { fields: ["presign", "presign_ttl"] },

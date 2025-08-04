@@ -113,7 +113,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
     }, [onHide, resetForm]);
 
     // Initialize API hooks
-    const { testConnectionMutation, createStorageMutation, loadFilesPreviewMutation, action } = useStorageApi({
+    const { testConnectionMutation, createStorageMutation, saveStorageMutation, loadFilesPreviewMutation, action } = useStorageApi({
       target,
       storage,
       project,
@@ -151,6 +151,12 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
         } else {
           createStorageMutation.mutate(formData);
         }
+      }
+    };
+
+    const saveOnly = () => {
+      if (validateEntireForm()) {
+        saveStorageMutation.mutate(formData);
       }
     };
 
@@ -282,6 +288,7 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
           totalSteps={steps.length}
           onPrevious={prevStep}
           onNext={nextStep}
+          onSave={saveOnly}
           isEditMode={isEditMode}
           connectionChecked={connectionChecked}
           filesPreview={filesPreview}
@@ -295,6 +302,9 @@ export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>
           }}
           createStorage={{
             isLoading: createStorageMutation.isLoading,
+          }}
+          saveStorage={{
+            isLoading: saveStorageMutation.isLoading,
           }}
           target={effectiveTarget}
         />

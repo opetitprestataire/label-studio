@@ -161,7 +161,7 @@ const Button = forwardRef(
     const contentClassName = "inline-flex flex-1 whitespace-pre items-center px-tight";
     const clickHandler = waiting && waitingClickable ? (secondaryOnClick ?? onClick) : onClick;
 
-    const isDisabled = buttonProps.disabled ?? (!waitingClickable && waiting);
+    const isDisabled = buttonProps.disabled || (!waitingClickable && waiting);
 
     const buttonBody = (
       <button

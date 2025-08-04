@@ -72,7 +72,7 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
     },
   });
 
-  // Create/Update storage mutation
+  // Create/Update storage mutation (with sync)
   const createStorageMutation = useMutation({
     mutationFn: async (storageData: any) => {
       if (!api) throw new Error("API context not available");
@@ -116,6 +116,34 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
     },
   });
 
+  // Save storage mutation (without sync)
+  const saveStorageMutation = useMutation({
+    mutationFn: async (storageData: any) => {
+      if (!api) throw new Error("API context not available");
+
+      const cleanedData = cleanFormDataForSubmission(storageData);
+      const body = { ...cleanedData };
+
+      if (isDefined(storage?.id)) {
+        body.id = storage.id;
+      }
+
+      // Only save the storage, don't sync
+      const result = await api.callApi(action, {
+        params: { target, type: storageData.provider, project, pk: storage?.id },
+        body,
+      });
+
+      return result;
+    },
+    onSuccess: (response) => {
+      if (response?.$meta?.ok) {
+        onSubmit();
+        onClose();
+      }
+    },
+  });
+
   // Load files preview mutation
   const loadFilesPreviewMutation = useMutation({
     mutationFn: async (previewData: any) => {
@@ -142,6 +170,7 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
   return {
     testConnectionMutation,
     createStorageMutation,
+    saveStorageMutation,
     loadFilesPreviewMutation,
     syncStorageMutation,
     isEditMode,

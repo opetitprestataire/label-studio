@@ -298,8 +298,18 @@ export const PreviewStep = ({
                       className="flex justify-between py-0.5 px-2 bg-gray-50 hover:bg-gray-100 border-b last:border-b-0 rounded-md"
                     >
                       <Tooltip title={file.key || "..."}>
-                        <div className="truncate max-w-[260px] cursor-help">
-                          {file.key ? file.key : <span className="italic">... preview limit reached ...</span>}
+                        <div className="max-w-[260px] cursor-help overflow-hidden">
+                          {file.key ? (
+                            file.key.length > 28 ? (
+                              <span>
+                                {file.key.slice(0, 12)}...{file.key.slice(-13)}
+                              </span>
+                            ) : (
+                              file.key
+                            )
+                          ) : (
+                            <span className="italic">... preview limit reached ...</span>
+                          )}
                         </div>
                       </Tooltip>
                       <div className="flex items-center space-x-1 text-muted-foreground whitespace-nowrap">
