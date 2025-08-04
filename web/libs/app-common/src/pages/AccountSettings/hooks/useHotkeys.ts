@@ -65,10 +65,6 @@ export const useHotkeys = () => {
 
       const EditorHotkey = window.Htx?.Hotkey;
 
-      if (!EditorHotkey) {
-        return;
-      }
-
       // Transform custom hotkeys to editor format (same logic as base.html)
       const editorCustomHotkeys: Record<string, any> = {};
       const prefixRegex = /^(annotation|timeseries|audio|regions|video|image_gallery|tools):(.*)/;
@@ -88,7 +84,7 @@ export const useHotkeys = () => {
       }
 
       // Get current keymap and merge with custom hotkeys
-      const currentKeymap = EditorHotkey.keymap ? { ...EditorHotkey.keymap } : {};
+      const currentKeymap = EditorHotkey?.keymap ? { ...EditorHotkey.keymap } : {};
       const mergedKeymap = Object.assign({}, currentKeymap, editorCustomHotkeys);
 
       // Update APP_SETTINGS.editor_keymap (for DataManager/Explorer)
@@ -98,7 +94,7 @@ export const useHotkeys = () => {
 
       // Call Hotkey.setKeymap() - the main propagation path
       try {
-        EditorHotkey.setKeymap(mergedKeymap as any);
+        EditorHotkey?.setKeymap(mergedKeymap as any);
       } catch (error) {
         console.warn("Failed to update hotkeys:", error);
       }
