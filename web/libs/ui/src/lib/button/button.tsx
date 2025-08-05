@@ -1,8 +1,11 @@
+import { ff } from "@humansignal/core";
 import { cn } from "../../utils/utils";
 import { forwardRef, type MouseEvent, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from "react";
 import styles from "./button.module.scss";
 import { setRef } from "@humansignal/core/lib/utils/unwrapRef";
 import { Tooltip } from "../Tooltip/Tooltip";
+
+const isEnhancedTooltip = ff.isActive(ff.FF_TOOLTIP_ENHANCEMENT);
 
 const variants = {
   primary: styles["variant-primary"],
@@ -161,7 +164,7 @@ const Button = forwardRef(
     const contentClassName = "inline-flex flex-1 whitespace-pre items-center px-tight";
     const clickHandler = waiting && waitingClickable ? (secondaryOnClick ?? onClick) : onClick;
 
-    const isDisabled = buttonProps.disabled ?? (!waitingClickable && waiting);
+    const isDisabled = buttonProps.disabled || (!waitingClickable && waiting);
 
     const buttonBody = (
       <button
@@ -183,7 +186,7 @@ const Button = forwardRef(
 
     if (tooltip) {
       // For disabled buttons, wrap in a container that can receive hover events
-      if (isDisabled) {
+      if (!isEnhancedTooltip && isDisabled) {
         return (
           <Tooltip title={tooltip}>
             <span style={{ display: "inline-flex" }}>{buttonBody}</span>
