@@ -1,4 +1,7 @@
-
+---
+description: How to add a new storage or data connector for Label Studio
+alwaysApply: false
+---
 # Cursor Rule: Implementing New Storage Providers in Label Studio
 
 ## Overview
@@ -12,6 +15,17 @@ Label Studio supports 2 types of cloud storages:
 1. **Import Storages** (Source Cloud Storages) - for importing tasks/data
 2. **Export Storages** (Target Cloud Storages) - for exporting annotations
 
+### Key Differences Between Storage Types
+
+| Aspect | Import Storage | Export Storage |
+|--------|----------------|----------------|
+| **Purpose** | Import tasks FROM cloud storage | Export annotations TO cloud storage |
+| **Triggering** | Manual sync via API/UI | Automatic via Django signals |
+| **Data Flow** | Storage → Label Studio | Label Studio → Storage |
+| **Validation** | Must check prefix exists | No prefix check (auto-created) |
+| **Primary Methods** | `iter_objects()`, `get_data()` | `save_annotation()`, `save_annotations()` |
+| **Threading** | Single-threaded iteration | Multi-threaded export (max_workers) |
+
 Each storage type follows this inheritance hierarchy:
 ```mermaid
 graph TD
@@ -20,6 +34,9 @@ graph TD
     
     ProjectStorageMixin-->NewImportStorage
     ImportStorage-->NewImportStorageBase
+    
+    NewStorageMixin-->NewExportStorage
+    ExportStorage-->NewExportStorage
 
     NewImportStorageBase-->NewImportStorage
     
@@ -27,8 +44,42 @@ graph TD
         NewImportStorage
         NewImportStorageBase
         NewExportStorage
+        NewStorageMixin[NewProviderStorageMixin]
     end
 ```
+
+## Key Export Storage Insights
+
+Based on the implementation patterns in the codebase, here are the critical aspects specific to export storages (target storages):
+
+### 1. **Automatic vs Manual Operation**
+- **Import storages**: Require manual sync via API calls
+- **Export storages**: Automatically triggered by Django signals when annotations are created/updated
+
+### 2. **Connection Validation Differences**
+- **Import storages**: Must validate that prefix contains files during `validate_connection()`
+- **Export storages**: Only validate bucket access, NOT prefix (prefixes are created automatically)
+
+### 3. **Data Serialization**
+Export storages use `_get_serialized_data()` which returns different formats based on feature flags:
+- **Default**: Only annotation data (backward compatibility)
+- **With `fflag_feat_optic_650_target_storage_task_format_long`**: Full task + annotations data
+
+### 4. **Built-in Threading**
+- Export storages inherit `save_annotations()` with built-in parallel processing
+- Uses ThreadPoolExecutor with configurable `max_workers` (default: min(8, cpu_count * 4))
+- Includes progress tracking and automatic batch processing
+
+### 5. **Storage Links & Key Generation**
+- **Import links**: Track task imports with custom keys
+- **Export links**: Track annotation exports with keys based on feature flags:
+  - Default: `annotation.id`
+  - With feature flag: `task.id` + optional `.json` extension
+
+### 6. **Optional Deletion Support**
+- Export storages can implement `delete_annotation()` 
+- Controlled by `can_delete_objects` field
+- Automatically called when annotations are deleted from Label Studio
 
 ## Backend Implementation
 
@@ -60,13 +111,23 @@ logger = logging.getLogger(__name__)
 class YourProviderStorageMixin(models.Model):
     """Base mixin containing common fields for your provider"""
     
-    # Common fields
+    # Common storage fields
     bucket = models.TextField(_('bucket'), null=True, blank=True, help_text='Bucket name')
     prefix = models.TextField(_('prefix'), null=True, blank=True, help_text='Bucket prefix')
     regex_filter = models.TextField(_('regex_filter'), null=True, blank=True, 
                                    help_text='Cloud storage regex for filtering objects')
     use_blob_urls = models.BooleanField(_('use_blob_urls'), default=False,
                                        help_text='Interpret objects as BLOBs and generate URLs')
+    
+    # Export storage specific fields (will be inherited by export storage)
+    # Note: These are inherited from ExportStorage base class but shown here for reference
+    # can_delete_objects = models.BooleanField(default=False, help_text='Enable deletion from storage')
+    
+    # URL resolution settings
+    presign = models.BooleanField(_('presign'), default=True,
+                                 help_text='Generate pre-signed URLs for direct access')
+    presign_ttl = models.PositiveIntegerField(_('presign_ttl'), default=1,
+                                            help_text='Pre-signed URL TTL in minutes')
     
     # Provider-specific credentials
     api_key = models.TextField(_('api_key'), null=True, blank=True, help_text='API Key')
@@ -80,10 +141,30 @@ class YourProviderStorageMixin(models.Model):
         pass
     
     def validate_connection(self, client=None):
-        """Validate storage connection and credentials"""
-        # Required method - implement provider-specific validation
-        # Should raise appropriate exceptions for different error types
-        pass
+        """Validate storage connection and credentials
+        
+        For export storages: Only validates bucket access, does NOT check prefix
+        because target storage prefixes are created automatically when annotations are written.
+        
+        For import storages: Must check that at least one file exists with the specified prefix.
+        """
+        if client is None:
+            client = self.get_client()
+        
+        try:
+            # 1. Validate client connection
+            # 2. Validate bucket exists and is accessible
+            # 3. For import storages only: check that prefix contains files
+            # 4. For export storages: skip prefix check (created automatically)
+            
+            # Example implementation:
+            # if hasattr(self, 'iter_objects'):  # Import storage
+            #     list(self.iter_objects())  # Check prefix has files
+            # else:  # Export storage  
+            #     check_bucket_access(client, self.bucket)  # Only check bucket
+            pass
+        except Exception as e:
+            raise ValidationError(f"Connection validation failed: {str(e)}")
         
     class Meta:
         abstract = True
@@ -131,29 +212,82 @@ class YourProviderImportStorage(ProjectStorageMixin, YourProviderImportStorageBa
         abstract = False
 
 class YourProviderExportStorage(YourProviderStorageMixin, ExportStorage):
-    """Export storage implementation"""
+    """Export storage implementation
+    
+    Export storages automatically save annotations to cloud storage when they are
+    created/updated via Django signals. They also support manual sync operations
+    and parallel processing for bulk exports.
+    """
     
     def save_annotation(self, annotation):
-        """Save annotation to storage"""
-        # Serialize annotation data
+        """Save single annotation to storage
+        
+        This method is called automatically when annotations are created/updated
+        via Django signals, and also during manual sync operations.
+        
+        The serialized data format depends on feature flags:
+        - Default: Only annotation data (backward compatibility)
+        - With fflag_feat_optic_650_target_storage_task_format_long: Full task + annotations
+        """
+        client = self.get_client()
+        logger.debug(f'Creating new object on {self.__class__.__name__} Storage {self} for annotation {annotation}')
+        
+        # Serialize annotation data using base class method
+        # This handles both annotation-only and task+annotation formats based on feature flags
         ser_annotation = self._get_serialized_data(annotation)
         
-        # Generate storage key
+        # Generate storage key - format depends on feature flags
+        # Default: annotation.id, With feature flag: task.id + optional .json extension
         key = YourProviderExportStorageLink.get_key(annotation)
         if self.prefix:
             key = f"{self.prefix}/{key}"
         
-        # Save to storage
-        # Handle provider-specific upload logic
+        try:
+            # Provider-specific upload logic
+            # Example: upload_data(client, self.bucket, key, json.dumps(ser_annotation))
+            # Add any provider-specific parameters (encryption, metadata, etc.)
+            pass
+        except Exception as e:
+            logger.error(f'Failed to save annotation {annotation.id} to {self}: {e}')
+            raise
         
-        # Create storage link
+        # Create storage link to track successful export
         YourProviderExportStorageLink.create(annotation, self)
     
     def delete_annotation(self, annotation):
-        """Delete annotation from storage"""
-        # Delete from storage
-        # Remove storage link
-        pass
+        """Delete annotation from storage
+        
+        Called when can_delete_objects=True and annotation is deleted from Label Studio.
+        This is optional functionality controlled by the can_delete_objects field.
+        """
+        if not self.can_delete_objects:
+            logger.debug(f'Deletion disabled for storage {self}')
+            return
+            
+        client = self.get_client()
+        logger.debug(f'Deleting object on {self.__class__.__name__} Storage {self} for annotation {annotation}')
+        
+        # Use the same key that was used during save
+        key = YourProviderExportStorageLink.get_key(annotation)
+        if self.prefix:
+            key = f"{self.prefix}/{key}"
+        
+        try:
+            # Provider-specific deletion logic
+            # Example: delete_object(client, self.bucket, key)
+            pass
+        except Exception as e:
+            logger.error(f'Failed to delete annotation {annotation.id} from {self}: {e}')
+            # Consider whether to raise or continue - depends on provider
+            raise
+        
+        # Remove storage link after successful deletion
+        YourProviderExportStorageLink.objects.filter(storage=self, annotation=annotation).delete()
+
+    # Note: save_annotations() and save_all_annotations() are inherited from ExportStorage
+    # These methods handle bulk export with parallel processing using ThreadPoolExecutor
+    # max_workers is automatically set based on CPU cores (max 8 threads)
+    # Progress tracking and error handling are built into the base class
 
 # Storage link models
 class YourProviderImportStorageLink(ImportStorageLink):
@@ -166,16 +300,38 @@ class YourProviderExportStorageLink(ExportStorageLink):
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from tasks.models import Annotation
+from label_studio.core.utils.common import start_job_async_or_sync
+
+def async_export_annotation_to_yourprovider_storages(annotation):
+    """Async function to export annotation to all YourProvider export storages"""
+    project = annotation.project
+    if hasattr(project, 'io_storages_yourproviderexportstorages'):
+        for storage in project.io_storages_yourproviderexportstorages.all():
+            logger.debug(f'Export {annotation} to YourProvider storage {storage}')
+            try:
+                storage.save_annotation(annotation)
+            except Exception as e:
+                logger.error(f'Failed to export annotation {annotation.id} to storage {storage.id}: {e}')
 
 @receiver(post_save, sender=Annotation)
 def export_annotation_to_yourprovider_storages(sender, instance, **kwargs):
-    # Auto-export logic
-    pass
+    """Auto-export annotations to YourProvider storages when created/updated"""
+    storages = getattr(instance.project, 'io_storages_yourproviderexportstorages', None)
+    if storages and storages.exists():  # avoid excess jobs in rq
+        start_job_async_or_sync(async_export_annotation_to_yourprovider_storages, instance)
 
 @receiver(pre_delete, sender=Annotation)  
 def delete_annotation_from_yourprovider_storages(sender, instance, **kwargs):
-    # Auto-delete logic
-    pass
+    """Auto-delete annotations from YourProvider storages when deleted from Label Studio"""
+    project = instance.project
+    if hasattr(project, 'io_storages_yourproviderexportstorages'):
+        for storage in project.io_storages_yourproviderexportstorages.all():
+            if storage.can_delete_objects:
+                logger.debug(f'Delete {instance} from YourProvider storage {storage}')
+                try:
+                    storage.delete_annotation(instance)
+                except Exception as e:
+                    logger.error(f'Failed to delete annotation {instance.id} from storage {storage.id}: {e}')
 ```
 
 ### 2. Create Serializers
@@ -349,6 +505,7 @@ urlpatterns = [
    - Use the `layout` array to group fields into rows.
    - Each row is an object with a `fields` array listing the field names in order.
    - Omit fields like `title`, `regex_filter`, and `use_blob_urls` from the provider schema; these are handled globally or in the preview step.
+   - Note the steps for adding new storage: select a provider, configure and test the connection, set import settings, load preview files (objects), review, and add. Place fields like access key and tokens on the Configure connection tab; fields like regex filter and recursive scan should be on the Import settings tab.
 
 4. **Validation**
    - Use Zod for all field validation.
@@ -417,20 +574,35 @@ class TestYourProviderStorage(TestCase):
 
 ### Backend Implementation
 - [ ] Create provider directory structure
-- [ ] Implement storage mixin with common fields
+- [ ] Implement storage mixin with common fields:
+  - [ ] Basic fields: bucket, prefix, regex_filter, use_blob_urls
+  - [ ] URL resolution: presign, presign_ttl 
+  - [ ] Provider credentials: api_key, secret_key, endpoint_url
+  - [ ] Common methods: get_client(), validate_connection()
 - [ ] Create import storage base class with required methods:
   - [ ] `iter_objects()` - iterate over storage objects
   - [ ] `get_data()` - load task data from objects
   - [ ] `generate_http_url()` - create HTTP URLs
   - [ ] `can_resolve_url()` - check URL resolution capability
-  - [ ] `validate_connection()` - validate credentials and connectivity
+  - [ ] `validate_connection()` - validate credentials and prefix has files
+- [ ] Create export storage class with required methods:
+  - [ ] `save_annotation()` - save single annotation to storage
+  - [ ] `delete_annotation()` - delete annotation from storage (optional)
+  - [ ] `validate_connection()` - validate credentials and bucket access (NO prefix check)
 - [ ] Create concrete import/export storage classes
-- [ ] Implement storage link models
+- [ ] Implement storage link models:
+  - [ ] ImportStorageLink for tracking task imports
+  - [ ] ExportStorageLink for tracking annotation exports
+- [ ] **CRITICAL: Add `app_label = 'io_storages'` to Meta classes** - All concrete storage models (ImportStorage, ExportStorage, and StorageLink classes) must include `app_label = 'io_storages'` in their Meta class to avoid Django app registration errors. This is required because storage providers are in subdirectories of `io_storages` but need to be registered under the main `io_storages` app.
 - [ ] Create serializers with validation logic
 - [ ] Implement API views following existing patterns
 - [ ] Register URLs in storage URL configuration
-- [ ] Add signal handlers for auto-export functionality
+- [ ] Add signal handlers for auto-export functionality:
+  - [ ] post_save signal for automatic annotation export
+  - [ ] pre_delete signal for automatic annotation deletion
+  - [ ] Async export functions with error handling
 - [ ] Create database migrations
+- [ ] Add basic pytests for newly added API calls
 
 ### Frontend Implementation  
 - [ ] Create provider configuration file with:
@@ -451,7 +623,7 @@ class TestYourProviderStorage(TestCase):
 - [ ] Test frontend form functionality
 - [ ] Test both create and edit modes
 - [ ] Update API documentation
-- [ ] Add provider to storage documentation
+- [ ] Add provider to storage documentation (docs/source/guide/storage.md)
 
 ### Integration & Deployment
 - [ ] Test end-to-end storage workflow
@@ -460,5 +632,82 @@ class TestYourProviderStorage(TestCase):
 - [ ] Test with both presigned URLs and proxy mode
 - [ ] Verify error handling and user feedback
 - [ ] Test storage sync and status reporting
+
+## Common Issues & Solutions
+
+### Django App Label Error
+**Error**: `RuntimeError: Model class doesn't declare an explicit app_label and isn't in an application in INSTALLED_APPS`
+
+**Cause**: Storage provider models in subdirectories (e.g., `io_storages.databricks`) are not automatically recognized as belonging to the `io_storages` app.
+
+**Solution**: Add explicit `app_label = 'io_storages'` to all concrete model Meta classes:
+
+```python
+class YourProviderImportStorage(ProjectStorageMixin, YourProviderImportStorageBase):
+    class Meta:
+        abstract = False
+        app_label = 'io_storages'  # Required!
+
+class YourProviderExportStorage(YourProviderMixin, ExportStorage):
+    # ... fields ...
+    
+    class Meta:
+        app_label = 'io_storages'  # Required!
+
+class YourProviderImportStorageLink(ImportStorageLink):
+    storage = models.ForeignKey(YourProviderImportStorage, ...)
+    
+    class Meta:
+        app_label = 'io_storages'  # Required!
+```
+
+**Note**: This is required for ALL concrete models (not abstract ones) including storage classes and link models.
+
+### Django Model Conflict Error
+**Error**: `RuntimeError: Conflicting 'providernameimportstorage' models in application 'io_storages'`
+
+**Cause**: Django is registering the same model through two different import paths:
+- `io_storages.provider.models.ProviderImportStorage` (short path)
+- `label_studio.io_storages.provider.models.ProviderImportStorage` (full path)
+
+This happens when:
+1. The project directory is in Python's sys.path (which allows `io_storages` to be imported as a top-level module)
+2. Django's URL includes use short module names like `'io_storages.urls'`
+3. Internal imports mix absolute and relative patterns
+
+**Solutions**:
+
+**Option 1: Use Full Module Paths in URL Includes**
+```python
+# In label_studio/core/urls.py
+re_path(r'^', include('label_studio.io_storages.urls')),  # Full path
+```
+
+**Option 2: Ensure Consistent Relative Imports**
+All imports within `io_storages` must use relative imports:
+```python
+# In models.py, api.py, serializers.py, etc.
+from ..base_models import ImportStorage  # Relative
+from ..utils import StorageObject       # Relative
+from .models import YourProviderStorage  # Relative within provider
+```
+
+**Option 3: Avoid Central Model Imports (Temporary)**
+If conflicts persist, temporarily comment out model imports in `io_storages/models.py`:
+```python
+# Temporary workaround for import conflicts
+# from .yourprovider.models import (
+#     YourProviderImportStorage,
+#     YourProviderExportStorage,
+# )
+```
+
+**Critical Requirements**:
+1. **NO** absolute imports using `from io_storages.` within the `io_storages` package
+2. **ALL** imports within `io_storages` must be relative (using `.` or `..`)
+3. URL includes in Django must use full module paths
+4. Models must have explicit `app_label = 'io_storages'`
+
+This is a complex Django module loading issue that requires careful attention to import patterns.
 
 When in doubt, use this checklist. Proactive implementation following these patterns ensures complete requirements coverage and maintains consistency with existing storage providers.
