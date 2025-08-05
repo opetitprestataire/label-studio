@@ -457,6 +457,7 @@ Hotkey.Tooltip = inject("store")(
       const hotkeys: JSX.Element[] = [];
 
       if (enabled && isDefined(shortcut)) {
+        // shortcut is null when disabled
         shortcut.split(",").forEach((combination: string) => {
           const keys = combination.split("+").map((key: string) =>
             createElement(
