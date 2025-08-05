@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@huma
 import { useMemo, isValidElement } from "react";
 import { Redirect, Route, Switch, useHistory, useParams, useRouteMatch } from "react-router-dom";
 import styles from "./AccountSettings.module.scss";
-import { accountSettingsSections, type SectionType } from "./sections";
+import { accountSettingsSections } from "./sections";
 import { HotkeysHeaderButtons } from "./sections/Hotkeys";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
@@ -22,7 +22,7 @@ const AccountSettingsSection = () => {
   });
 
   const resolvedSections = useMemo(() => {
-    return settings.data && !('error' in settings.data) ? accountSettingsSections(settings.data) : [];
+    return settings.data && !("error" in settings.data) ? accountSettingsSections(settings.data) : [];
   }, [settings.data]);
 
   const currentSection = useMemo(
@@ -41,28 +41,28 @@ const AccountSettingsSection = () => {
           <div className="flex flex-col gap-tight">
             <div className="flex justify-between items-center">
               <CardTitle>{currentSection.title}</CardTitle>
-                {currentSection.id === "hotkeys" && (
-                  <div className="flex-shrink-0">
-                    <HotkeysHeaderButtons />
-                  </div>
-                )}
-              </div>
-              {currentSection.description && (
-                <CardDescription>
-                  {isValidElement(currentSection.description) ? (
-                    currentSection.description
-                  ) : (
-                    <currentSection.description />
-                  )}
-                </CardDescription>
+              {currentSection.id === "hotkeys" && (
+                <div className="flex-shrink-0">
+                  <HotkeysHeaderButtons />
+                </div>
               )}
             </div>
-          </CardHeader>
-          <CardContent>
-            <currentSection.component />
-          </CardContent>
-        </Card>
-      </div>
+            {currentSection.description && (
+              <CardDescription>
+                {isValidElement(currentSection.description) ? (
+                  currentSection.description
+                ) : (
+                  <currentSection.description />
+                )}
+              </CardDescription>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <currentSection.component />
+        </CardContent>
+      </Card>
+    </div>
   ) : null;
 };
 
@@ -73,7 +73,7 @@ const AccountSettingsPage = () => {
   const { sectionId } = useParams<{ sectionId: string }>();
 
   const resolvedSections = useMemo(() => {
-    return settings.data && !('error' in settings.data) ? accountSettingsSections(settings.data) : [];
+    return settings.data && !("error" in settings.data) ? accountSettingsSections(settings.data) : [];
   }, [settings.data]);
 
   const menuItems = useMemo(
