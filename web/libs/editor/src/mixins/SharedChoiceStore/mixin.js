@@ -79,6 +79,7 @@ export const SharedStoreMixin = types
         const store = Stores.get(self.storeId);
         const annotationStore = Types.getParentOfTypeString(self, "AnnotationStore");
 
+        if (!annotationStore) return; // It means that an element is not connected to the store tree, most probably as it is a temporal clone of the model
         annotationStore.addSharedStore(store);
         StoreIds.add(self.storeId);
         self.store = self.storeId;
