@@ -34,7 +34,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
     const dependsOnValue = field.dependsOn.value;
 
     // If dependsOn.value is a function, call it with the dependency value and form data
-    if (typeof dependsOnValue === 'function') {
+    if (typeof dependsOnValue === "function") {
       const shouldEnable = dependsOnValue(dependencyValue, formData);
       return !shouldEnable;
     }
@@ -173,7 +173,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
 
     case "toggle":
       const isDisabled = isFieldDisabled();
-      console.log(`Toggle ${field.name} disabled state:`, isDisabled);
       return (
         <div className="flex items-start space-x-4">
           <Toggle
@@ -190,7 +189,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
     case "counter": {
       const counterValue = value !== undefined && value !== null ? value : field.min || 0;
       const isDisabled = isFieldDisabled();
-      console.log(`Counter ${field.name} disabled state:`, isDisabled, `value:`, counterValue);
       return (
         <Counter
           name={field.name}
