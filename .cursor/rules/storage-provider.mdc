@@ -323,7 +323,7 @@ const yourProviderProvider: ProviderConfig = {
 - [ ] Implement storage link models:
   - [ ] ImportStorageLink for tracking task imports
   - [ ] ExportStorageLink for tracking annotation exports
-- [ ] **CRITICAL: Add `app_label = 'io_storages'` to Meta classes** - All concrete storage models (ImportStorage, ExportStorage, and StorageLink classes) must include `app_label = 'io_storages'` in their Meta class to avoid Django app registration errors. This is required because storage providers are in subdirectories of `io_storages` but need to be registered under the main `io_storages` app.
+- [ ] **CRITICAL: Add `app_label = 'io_storages'` to Meta classes** - All concrete storage models (ImportStorage, ExportStorage, and StorageLink classes) must include `app_label = 'io_storages'` in their Meta class to avoid Django app registration errors. This is required because storage providers are in subdirectories of `io_storages` but need to be registered under the main `io_storages` app. **Note**: Enterprise providers do NOT need app_label - see enterprise guide.
 - [ ] Create serializers with validation logic
 - [ ] Implement API views following existing patterns
 - [ ] Register URLs in storage URL configuration
