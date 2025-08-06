@@ -3,6 +3,7 @@
  */
 class _Registry {
   tags: any[] = [];
+  customTags: any[] = [];
   models: Record<string, any> = {};
   views: Record<string, any> = {};
   regions: any[] = [];
@@ -110,6 +111,13 @@ class _Registry {
 
   getPerRegionView(tag: string | number, mode: string | number) {
     return this.perRegionViews[tag]?.[mode];
+  }
+
+  addCustomTag(tag: string, definition: any) {
+    this.addTag(tag.toLowerCase(), definition.model, definition.view);
+    this.addObjectType(definition.model);
+    this.addRegionType(definition.region, definition.model.name, definition.detector);
+    this.customTags.push(definition);
   }
 }
 

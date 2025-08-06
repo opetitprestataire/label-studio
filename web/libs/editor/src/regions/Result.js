@@ -32,7 +32,7 @@ const Result = types
     // object tag
     to_name: types.late(() => types.reference(types.union(...Registry.objectTypes()))),
     // @todo some general type, maybe just a `string`
-    type: types.enumeration([
+    type: types.late(() => types.enumeration([
       "labels",
       "hypertextlabels",
       "paragraphlabels",
@@ -60,9 +60,10 @@ const Result = types
       "pairwise",
       "videorectangle",
       "ranker",
-    ]),
+      ...Registry.customTags.map((t) => t.resultName),
+    ])),
     // @todo much better to have just a value, not a hash with empty fields
-    value: types.model({
+    value: types.late(() => types.model({
       ranker: types.union(types.array(types.string), types.frozen(), types.null),
       datetime: types.maybe(types.string),
       number: types.maybe(types.number),
@@ -87,7 +88,8 @@ const Result = types
       bitmasklabels: types.maybe(types.array(types.string)),
       taxonomy: types.frozen(), // array of arrays of strings
       sequence: types.frozen(),
-    }),
+      ...Object.fromEntries(Registry.customTags.map((t) => [t.resultName, types.maybe(t.result)])),
+    })),
     // info about object and region
     meta: types.frozen(),
   })
