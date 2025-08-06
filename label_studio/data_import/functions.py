@@ -136,7 +136,7 @@ def _async_reimport_background_streaming(reimport, project, organization_id, use
     """Streaming version of reimport that processes tasks in batches to reduce memory usage"""
     try:
         # Get batch size from settings or use default
-        batch_size = int(getattr(settings, 'REIMPORT_BATCH_SIZE', 5000))
+        batch_size = settings.REIMPORT_BATCH_SIZE
 
         # Initialize counters
         total_task_count = 0

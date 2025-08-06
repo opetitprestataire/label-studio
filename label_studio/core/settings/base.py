@@ -556,7 +556,7 @@ MAX_TASK_BATCH_SIZE = int(get_env('MAX_TASK_BATCH_SIZE', 1000))
 # For example: if task data is 10MB, batch will be ~5 tasks to stay under 50MB limit
 TASK_DATA_PER_BATCH = int(get_env('TASK_DATA_PER_BATCH', 50 * 1024 * 1024))  # 50 MB in bytes
 # Batch size for streaming reimport operations to reduce memory usage
-REIMPORT_BATCH_SIZE = int(get_env('REIMPORT_BATCH_SIZE', 5000))
+REIMPORT_BATCH_SIZE = int(get_env('REIMPORT_BATCH_SIZE', 1000))
 PROJECT_TITLE_MIN_LEN = 3
 PROJECT_TITLE_MAX_LEN = 50
 LOGIN_REDIRECT_URL = '/'
