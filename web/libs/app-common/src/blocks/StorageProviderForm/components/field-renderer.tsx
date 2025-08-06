@@ -12,6 +12,7 @@ interface FieldRendererProps {
   onBlur?: (name: string, value: any) => void;
   error?: string;
   isEditMode?: boolean;
+  formData?: Record<string, any>; // Add formData to check dependencies
 }
 
 export const FieldRenderer: React.FC<FieldRendererProps> = ({
@@ -21,8 +22,36 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
   onBlur,
   error,
   isEditMode = false,
+  formData = {},
 }) => {
+  // Check if field should be disabled based on dependencies
+  const isDisabledByDependency = () => {
+    if (!field.dependsOn || !formData) {
+      return false;
+    }
+
+    const dependencyValue = formData[field.dependsOn.field];
+    const dependsOnValue = field.dependsOn.value;
+
+    // If dependsOn.value is a function, call it with the dependency value and form data
+    if (typeof dependsOnValue === 'function') {
+      const shouldEnable = dependsOnValue(dependencyValue, formData);
+      return !shouldEnable;
+    }
+
+    // Otherwise, do a simple equality check
+    return dependencyValue !== dependsOnValue;
+  };
+
+  // Check if field should be disabled (either read-only or by dependency)
+  const isFieldDisabled = () => {
+    return field.readOnly || isDisabledByDependency();
+  };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // Don't allow changes if field is disabled
+    if (isFieldDisabled()) {
+      return;
+    }
     const { name, value: inputValue, type } = e.target;
     const parsedValue = type === "number" ? Number(inputValue) : inputValue;
     onChange(name, parsedValue);
@@ -37,14 +66,26 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
   };
 
   const handleToggleChange = (checked: boolean) => {
+    // Don't allow changes if field is disabled
+    if (isFieldDisabled()) {
+      return;
+    }
     onChange(field.name, checked);
   };
 
   const handleSelectChange = (value: string) => {
+    // Don't allow changes if field is disabled
+    if (isFieldDisabled()) {
+      return;
+    }
     onChange(field.name, value);
   };
 
   const handleCounterChange = (e: any) => {
+    // Don't allow changes if field is disabled
+    if (isFieldDisabled()) {
+      return;
+    }
     onChange(field.name, Number(e.target.value));
   };
 
@@ -63,6 +104,8 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
     className: error ? "border-negative-content" : "",
     placeholder: field.placeholder,
     autoComplete: field.autoComplete,
+    readOnly: field.readOnly || false,
+    disabled: isFieldDisabled(),
   });
 
   // Enhanced description for access key fields in edit mode
@@ -122,12 +165,15 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
             onChange={(selectedValue) => handleSelectChange(selectedValue)}
             options={field.options || []}
             placeholder={field.placeholder}
+            disabled={isFieldDisabled()}
           />
           {error && <p className="text-sm text-negative-content">{error}</p>}
         </div>
       );
 
     case "toggle":
+      const isDisabled = isFieldDisabled();
+      console.log(`Toggle ${field.name} disabled state:`, isDisabled);
       return (
         <div className="flex items-start space-x-4">
           <Toggle
@@ -136,12 +182,15 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
             aria-label={field.label}
             label={field.label}
             description={field.description}
+            disabled={isDisabled}
           />
         </div>
       );
 
     case "counter": {
       const counterValue = value !== undefined && value !== null ? value : field.min || 0;
+      const isDisabled = isFieldDisabled();
+      console.log(`Counter ${field.name} disabled state:`, isDisabled, `value:`, counterValue);
       return (
         <Counter
           name={field.name}
@@ -156,6 +205,8 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           required={isFieldRequired(field, isEditMode)}
           skip={false}
           labelProps={{}}
+          disabled={isDisabled}
+          key={`${field.name}-${isDisabled}`} // Force re-render when disabled state changes
         />
       );
     }

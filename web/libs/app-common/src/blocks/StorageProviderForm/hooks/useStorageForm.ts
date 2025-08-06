@@ -12,9 +12,10 @@ interface UseStorageFormProps {
   isEditMode: boolean;
   steps: Array<{ title: string; schema?: z.ZodSchema }>;
   storage?: any;
+  defaultValues?: Record<string, Record<string, any>>;
 }
 
-export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStorageFormProps) => {
+export const useStorageForm = ({ project, isEditMode, steps, storage, defaultValues }: UseStorageFormProps) => {
   const [formState, setFormState] = useState<FormState>({
     currentStep: 0,
     formData: {
@@ -36,17 +37,27 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
     if (formData.provider && !isEditMode) {
       const providerConfig = getProviderConfig(formData.provider);
       if (providerConfig) {
-        const defaultValues = extractDefaultValues(providerConfig.fields);
+        const schemaDefaults = extractDefaultValues(providerConfig.fields);
+
+        // Get custom defaults for this provider if available
+        const customDefaults = defaultValues?.[formData.provider] || {};
+
+        // Merge schema defaults with custom defaults (custom defaults take precedence)
+        const mergedDefaults = {
+          ...schemaDefaults,
+          ...customDefaults,
+        };
+
         setFormState((prevState) => ({
           ...prevState,
           formData: {
             ...prevState.formData,
-            ...defaultValues,
+            ...mergedDefaults,
           },
         }));
       }
     }
-  }, [formData.provider, setFormState, isEditMode]);
+  }, [formData.provider, setFormState, isEditMode, defaultValues]);
 
   // Initialize form data with existing storage data in edit mode (only once)
   useEffect(() => {
@@ -247,12 +258,22 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
       if (name === "provider" && !isEditMode) {
         const providerConfig = getProviderConfig(value);
         if (providerConfig) {
-          const defaultValues = extractDefaultValues(providerConfig.fields);
+          const schemaDefaults = extractDefaultValues(providerConfig.fields);
+
+          // Get custom defaults for this provider if available
+          const customDefaults = defaultValues?.[value] || {};
+
+          // Merge schema defaults with custom defaults (custom defaults take precedence)
+          const mergedDefaults = {
+            ...schemaDefaults,
+            ...customDefaults,
+          };
+
           setFormState((prev) => ({
             ...prev,
             formData: {
               ...prev.formData,
-              ...defaultValues,
+              ...mergedDefaults,
               [name]: value,
             },
           }));
@@ -286,7 +307,7 @@ export const useStorageForm = ({ project, isEditMode, steps, storage }: UseStora
         onConnectionChange?.();
       }
     },
-    [formData, setFormState, isEditMode],
+    [formData, setFormState, isEditMode, defaultValues],
   );
 
   // Handle field blur

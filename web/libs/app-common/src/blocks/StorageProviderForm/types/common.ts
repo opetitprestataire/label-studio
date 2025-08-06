@@ -23,6 +23,11 @@ export interface FieldDefinition {
   accessKey?: boolean; // Whether this field is an access key/credential that should be handled specially in edit mode
   target?: "import" | "export"; // Only show this field for the specified storage type (undefined = show for both)
   resetConnection?: boolean; // Whether changing this field should reset the connection check (default: true)
+  readOnly?: boolean; // Whether this field should be read-only (not editable by user)
+  dependsOn?: {
+    field: string; // Name of the field this depends on
+    value: any | ((dependencyValue: any, formData: Record<string, any>) => boolean); // The value or function to check if field should be enabled
+  };
 }
 
 export interface MessageDefinition {
