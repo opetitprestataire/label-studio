@@ -16,6 +16,159 @@
     background-color: var(--color-neutral-surface-active);
     border-top: 1px solid var(--color-neutral-border);
   }
+
+  &__formats {
+    margin-bottom: 20px;
+
+    &-info {
+      margin-bottom: 15px;
+      color: #666;
+    }
+
+    &-list {
+      .export-page__formats-item {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+
+        &--active {
+          border-color: #1890ff;
+          background-color: #f0f8ff;
+        }
+
+        &--selected {
+          border-color: #1890ff;
+          background-color: #e6f7ff;
+        }
+
+        &--disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      &-name {
+        font-weight: 500;
+        margin-bottom: 5px;
+      }
+
+      &-description {
+        color: #666;
+        font-size: 12px;
+        margin-top: 5px;
+      }
+
+      &-tag {
+        background-color: #f0f0f0;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 10px;
+        margin-right: 5px;
+      }
+    }
+
+    &-feedback {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #666;
+
+      a {
+        color: #1890ff;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+
+    &-recent {
+      font-size: 12px;
+      color: #666;
+    }
+
+    &-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+
+  // GCS Results Styles
+  &__gcs-result {
+    margin: 15px 0;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #d9d9d9;
+  }
+
+  .gcs-success {
+    background-color: #f6ffed;
+    border-color: #b7eb8f;
+
+    &__title {
+      font-weight: 600;
+      color: #52c41a;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    &__summary {
+      margin-bottom: 15px;
+      
+      div {
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+    }
+
+    &__files {
+      margin-bottom: 15px;
+      
+      div {
+        margin-bottom: 3px;
+        font-size: 13px;
+        word-break: break-all;
+      }
+    }
+  }
+
+  .gcs-error {
+    background-color: #fff2f0;
+    border-color: #ffccc7;
+
+    &__title {
+      font-weight: 600;
+      color: #ff4d4f;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    &__error {
+      color: #ff4d4f;
+      font-size: 14px;
+      word-break: break-all;
+    }
+  }
 }
 
 .formats {

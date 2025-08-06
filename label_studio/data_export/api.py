@@ -21,8 +21,10 @@ from drf_yasg.utils import swagger_auto_schema
 from projects.models import Project
 from ranged_fileresponse import RangedFileResponse
 from rest_framework import generics, status
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 from tasks.models import Task
 
@@ -202,10 +204,37 @@ class ExportAPI(generics.RetrieveAPIView):
                 context={'interpolate_key_frames': interpolate_key_frames},
             ).data
         logger.debug('Prepare export files')
+        logger.info(f"[ExportAPI] Export type: {export_type}, download_resources: {download_resources}, tasks count: {len(tasks)}")
 
+        # Handle special GCS export format
+        if export_type == 'YOLO_WITH_IMAGES_TO_GCS':
+            logger.info(f"[ExportAPI] Using GCS export path for {export_type}")
+            try:
+                result = DataExport.generate_export_to_gcs(
+                    project, tasks, 'YOLO_WITH_IMAGES', download_resources, request.GET, 
+                    hostname=request.build_absolute_uri('/')
+                )
+                logger.info(f"[ExportAPI] GCS export completed successfully")
+                return Response(result, status=status.HTTP_200_OK)
+            except ValueError as e:
+                logger.error(f"[ExportAPI] GCS export ValueError: {str(e)}")
+                return Response(
+                    {'error': str(e)}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            except Exception as e:
+                logger.error(f'[ExportAPI] Error exporting to GCS: {e}', exc_info=True)
+                return Response(
+                    {'error': f'Failed to export to GCS: {str(e)}'}, 
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+        # Regular file export
+        logger.info(f"[ExportAPI] Using regular file export path for {export_type}")
         export_file, content_type, filename = DataExport.generate_export_file(
             project, tasks, export_type, download_resources, request.GET, hostname=request.build_absolute_uri('/')
         )
+        logger.info(f"[ExportAPI] Regular export completed: {filename}, content_type: {content_type}")
 
         r = FileResponse(export_file, as_attachment=True, content_type=content_type, filename=filename)
         r['filename'] = filename

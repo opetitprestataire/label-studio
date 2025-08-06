@@ -38,12 +38,20 @@ export const ExportPage = () => {
   const [downloadingMessage, setDownloadingMessage] = useState(false);
   const [availableFormats, setAvailableFormats] = useState([]);
   const [currentFormat, setCurrentFormat] = useState("JSON");
+  const [gcsResult, setGcsResult] = useState(null);
+  const [gcsError, setGcsError] = useState(null);
 
   /** @type {import('react').RefObject<Form>} */
   const form = useRef();
 
+  const clearGcsResult = () => {
+    setGcsResult(null);
+    setGcsError(null);
+  };
+
   const proceedExport = async () => {
     setDownloading(true);
+    clearGcsResult();
 
     const message = setTimeout(() => {
       setDownloadingMessage(true);
@@ -55,24 +63,45 @@ export const ExportPage = () => {
       booleansAsNumbers: true,
     });
 
-    const response = await api.callApi("exportRaw", {
-      params: {
-        pk: pageParams.id,
-        ...params,
-      },
-    });
+    try {
+      const response = await api.callApi("exportRaw", {
+        params: {
+          pk: pageParams.id,
+          ...params,
+        },
+      });
 
-    if (response.ok) {
-      const blob = await response.blob();
-
-      downloadFile(blob, response.headers.get("filename"));
-    } else {
-      api.handleError(response);
+      if (response.ok) {
+        // Handle GCS export differently
+        if (currentFormat === 'YOLO_WITH_IMAGES_TO_GCS') {
+          const result = await response.json();
+          setGcsResult(result);
+        } else {
+          // Regular file download
+          const blob = await response.blob();
+          downloadFile(blob, response.headers.get("filename"));
+        }
+      } else {
+        // Handle error response
+        if (currentFormat === 'YOLO_WITH_IMAGES_TO_GCS') {
+          const errorData = await response.json();
+          setGcsError(errorData.error || 'Unknown error');
+        } else {
+          api.handleError(response);
+        }
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      if (currentFormat === 'YOLO_WITH_IMAGES_TO_GCS') {
+        setGcsError(error.message);
+      } else {
+        api.handleError(error);
+      }
+    } finally {
+      setDownloading(false);
+      setDownloadingMessage(false);
+      clearTimeout(message);
     }
-
-    setDownloading(false);
-    setDownloadingMessage(false);
-    clearTimeout(message);
   };
 
   useEffect(() => {
@@ -125,6 +154,58 @@ export const ExportPage = () => {
         <Form ref={form}>
           <Input type="hidden" name="exportType" value={currentFormat} />
         </Form>
+
+        {/* GCS Export Results */}
+        {gcsResult && (
+          <Elem name="gcs-result">
+            <Block name="gcs-success">
+              <Elem name="title">Export to GCS Completed Successfully!</Elem>
+              <Elem name="summary">
+                <div><strong>Storage:</strong> {gcsResult.storage_name}</div>
+                <div><strong>Bucket:</strong> {gcsResult.bucket}</div>
+                <div><strong>Prefix:</strong> {gcsResult.prefix || 'None'}</div>
+                <div><strong>Total Files:</strong> {gcsResult.total_files}</div>
+                <div><strong>Successfully Uploaded:</strong> {gcsResult.successful_uploads}</div>
+                <div><strong>Failed Uploads:</strong> {gcsResult.failed_uploads}</div>
+              </Elem>
+              <Elem name="files">
+                <div><strong>Files uploaded to:</strong></div>
+                {gcsResult.upload_results.map((result, index) => (
+                  <div key={index} style={{ 
+                    color: result.status === 'success' ? 'green' : 'red',
+                    marginLeft: '10px',
+                    fontSize: '12px'
+                  }}>
+                    {result.status === 'success' ? '✅' : '❌'} {result.gcs_path}
+                    {result.status === 'success' && result.size && (
+                      <span style={{ color: 'gray' }}> ({Math.round(result.size / 1024)}KB)</span>
+                    )}
+                    {result.status === 'error' && result.error && (
+                      <div style={{ color: 'red', marginLeft: '20px', fontSize: '11px' }}>
+                        Error: {result.error}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </Elem>
+              <Button onClick={clearGcsResult} style={{ marginTop: '10px' }}>
+                Clear Results
+              </Button>
+            </Block>
+          </Elem>
+        )}
+
+        {gcsError && (
+          <Elem name="gcs-error">
+            <Block name="gcs-error">
+              <Elem name="title">Export to GCS Failed</Elem>
+              <Elem name="error">{gcsError}</Elem>
+              <Button onClick={clearGcsResult} style={{ marginTop: '10px' }}>
+                Clear Error
+              </Button>
+            </Block>
+          </Elem>
+        )}
 
         <Elem name="footer">
           <Space style={{ width: "100%" }} spread>
