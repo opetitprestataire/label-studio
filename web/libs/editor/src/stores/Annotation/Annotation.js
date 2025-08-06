@@ -575,16 +575,6 @@ const _Annotation = types
       }
     },
 
-    unloadRegionState(region) {
-      region.states &&
-        region.states.forEach((s) => {
-          const mainViewTag = self.names.get(s.name);
-
-          mainViewTag.unselectAll && mainViewTag.unselectAll();
-          mainViewTag.perRegionCleanup && mainViewTag.perRegionCleanup();
-        });
-    },
-
     validate() {
       let ok = true;
 
