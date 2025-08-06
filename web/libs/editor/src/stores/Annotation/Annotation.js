@@ -81,12 +81,13 @@ const hotkeys = Hotkey("Annotations", "Annotations");
  * @returns {Object} new object without value fields
  */
 function omitValueFields(value) {
-  const newValue = { ...value };
+  // @todo describe that we only omit `text` from TextArea
+  if (Array.isArray(value.text)) {
+    const { text: _, ...newValue } = value;
+    return newValue;
+  }
 
-  Result.properties.value.propertyNames.forEach((propName) => {
-    delete newValue[propName];
-  });
-  return newValue;
+  return value;
 }
 
 const TrackedState = types.model("TrackedState", {
