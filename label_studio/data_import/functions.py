@@ -3,6 +3,7 @@ import time
 import traceback
 from typing import Callable, Optional
 
+from core.feature_flags import flag_set
 from core.utils.common import load_func
 from django.conf import settings
 from django.db import transaction
@@ -131,6 +132,117 @@ def reformat_predictions(tasks, preannotated_from_fields):
 post_process_reimport = load_func(settings.POST_PROCESS_REIMPORT)
 
 
+def _async_reimport_background_streaming(reimport, project, organization_id, user):
+    """Streaming version of reimport that processes tasks in batches to reduce memory usage"""
+    try:
+        # Get batch size from settings or use default
+        batch_size = int(getattr(settings, 'REIMPORT_BATCH_SIZE', 5000))
+
+        # Initialize counters
+        total_task_count = 0
+        total_annotation_count = 0
+        total_prediction_count = 0
+        all_found_formats = {}
+        all_data_columns = set()
+        all_created_task_ids = []
+
+        # Remove old tasks once before starting
+        with transaction.atomic():
+            project.remove_tasks_by_file_uploads(reimport.file_upload_ids)
+
+        # Process tasks in batches
+        batch_number = 0
+        for batch_tasks, batch_formats, batch_columns in FileUpload.load_tasks_from_uploaded_files_streaming(
+            project, reimport.file_upload_ids, files_as_tasks_list=reimport.files_as_tasks_list, batch_size=batch_size
+        ):
+            if not batch_tasks:
+                logger.info(f'Empty batch received for reimport {reimport.id}')
+                continue
+
+            batch_number += 1
+            logger.info(f'Processing batch {batch_number} with {len(batch_tasks)} tasks for reimport {reimport.id}')
+
+            # Process batch in transaction
+            with transaction.atomic():
+                # Lock summary for update to avoid race conditions
+                summary = ProjectSummary.objects.select_for_update().get(project=project)
+
+                # Serialize and save batch
+                serializer = ImportApiSerializer(
+                    data=batch_tasks, many=True, context={'project': project, 'user': user}
+                )
+                serializer.is_valid(raise_exception=True)
+                batch_db_tasks = serializer.save(project_id=project.id)
+
+                # Emit webhooks for this batch
+                emit_webhooks_for_instance(organization_id, project, WebhookAction.TASKS_CREATED, batch_db_tasks)
+
+                # Collect task IDs for later use
+                all_created_task_ids.extend([t.id for t in batch_db_tasks])
+
+                # Update batch counters
+                batch_task_count = len(batch_db_tasks)
+                batch_annotation_count = len(serializer.db_annotations)
+                batch_prediction_count = len(serializer.db_predictions)
+
+                total_task_count += batch_task_count
+                total_annotation_count += batch_annotation_count
+                total_prediction_count += batch_prediction_count
+
+                # Update formats and columns
+                all_found_formats.update(batch_formats)
+                if batch_columns:
+                    if not all_data_columns:
+                        all_data_columns = batch_columns
+                    else:
+                        all_data_columns &= batch_columns
+
+                # Update task states for this batch
+                recalculate_stats_counts = {
+                    'task_count': batch_task_count,
+                    'annotation_count': batch_annotation_count,
+                    'prediction_count': batch_prediction_count,
+                }
+
+                project.update_tasks_counters_and_task_states(
+                    tasks_queryset=batch_db_tasks,
+                    maximum_annotations_changed=False,
+                    overlap_cohort_percentage_changed=False,
+                    tasks_number_changed=True,
+                    recalculate_stats_counts=recalculate_stats_counts,
+                )
+
+                # Update data columns
+                summary.update_data_columns(batch_db_tasks)
+
+            logger.info(
+                f'Batch {batch_number} processed successfully: {batch_task_count} tasks, '
+                f'{batch_annotation_count} annotations, {batch_prediction_count} predictions'
+            )
+
+        # Update reimport with final statistics
+        reimport.task_count = total_task_count
+        reimport.annotation_count = total_annotation_count
+        reimport.prediction_count = total_prediction_count
+        reimport.found_formats = all_found_formats
+        reimport.data_columns = list(all_data_columns)
+        reimport.status = ProjectReimport.Status.COMPLETED
+        reimport.save()
+
+        logger.info(f'Streaming reimport {reimport.id} completed: {total_task_count} tasks imported')
+
+        # Run post-processing
+        post_process_reimport(reimport)
+
+    except Exception as e:
+        logger.error(f'Error in streaming reimport {reimport.id}: {str(e)}', exc_info=True)
+        reimport.status = ProjectReimport.Status.FAILED
+        reimport.traceback = traceback.format_exc()
+        reimport.error = str(e)
+        reimport.save()
+        raise
+
+
 def async_reimport_background(reimport_id, organization_id, user, **kwargs):
 
     with transaction.atomic():
@@ -147,50 +259,56 @@ def async_reimport_background(reimport_id, organization_id, user, **kwargs):
 
     project = reimport.project
 
-    tasks, found_formats, data_columns = FileUpload.load_tasks_from_uploaded_files(
-        reimport.project, reimport.file_upload_ids, files_as_tasks_list=reimport.files_as_tasks_list
-    )
-
-    with transaction.atomic():
-        # Lock summary for update to avoid race conditions
-        summary = ProjectSummary.objects.select_for_update().get(project=project)
-
-        project.remove_tasks_by_file_uploads(reimport.file_upload_ids)
-        serializer = ImportApiSerializer(data=tasks, many=True, context={'project': project, 'user': user})
-        serializer.is_valid(raise_exception=True)
-        tasks = serializer.save(project_id=project.id)
-        emit_webhooks_for_instance(organization_id, project, WebhookAction.TASKS_CREATED, tasks)
-
-        task_count = len(tasks)
-        annotation_count = len(serializer.db_annotations)
-        prediction_count = len(serializer.db_predictions)
-
-        recalculate_stats_counts = {
-            'task_count': task_count,
-            'annotation_count': annotation_count,
-            'prediction_count': prediction_count,
-        }
-
-        # Update counters (like total_annotations) for new tasks and after bulk update tasks stats. It should be a
-        # single operation as counters affect bulk is_labeled update
-        project.update_tasks_counters_and_task_states(
-            tasks_queryset=tasks,
-            maximum_annotations_changed=False,
-            overlap_cohort_percentage_changed=False,
-            tasks_number_changed=True,
-            recalculate_stats_counts=recalculate_stats_counts,
+    # Check feature flag for memory improvement
+    if flag_set('fflag_fix_back_plt_838_reimport_memory_improvement_05082025_short', user='auto'):
+        logger.info(f'Using streaming reimport for project {project.id}')
+        _async_reimport_background_streaming(reimport, project, organization_id, user)
+    else:
+        # Original implementation
+        tasks, found_formats, data_columns = FileUpload.load_tasks_from_uploaded_files(
+            reimport.project, reimport.file_upload_ids, files_as_tasks_list=reimport.files_as_tasks_list
         )
-        logger.info('Tasks bulk_update finished (async reimport)')
 
-        summary.update_data_columns(tasks)
-        # TODO: summary.update_created_annotations_and_labels
+        with transaction.atomic():
+            # Lock summary for update to avoid race conditions
+            summary = ProjectSummary.objects.select_for_update().get(project=project)
 
-    reimport.task_count = task_count
-    reimport.annotation_count = annotation_count
-    reimport.prediction_count = prediction_count
-    reimport.found_formats = found_formats
-    reimport.data_columns = list(data_columns)
-    reimport.status = ProjectReimport.Status.COMPLETED
-    reimport.save()
+            project.remove_tasks_by_file_uploads(reimport.file_upload_ids)
+            serializer = ImportApiSerializer(data=tasks, many=True, context={'project': project, 'user': user})
+            serializer.is_valid(raise_exception=True)
+            tasks = serializer.save(project_id=project.id)
+            emit_webhooks_for_instance(organization_id, project, WebhookAction.TASKS_CREATED, tasks)
 
-    post_process_reimport(reimport)
+            task_count = len(tasks)
+            annotation_count = len(serializer.db_annotations)
+            prediction_count = len(serializer.db_predictions)
+
+            recalculate_stats_counts = {
+                'task_count': task_count,
+                'annotation_count': annotation_count,
+                'prediction_count': prediction_count,
+            }
+
+            # Update counters (like total_annotations) for new tasks and after bulk update tasks stats. It should be a
+            # single operation as counters affect bulk is_labeled update
+            project.update_tasks_counters_and_task_states(
+                tasks_queryset=tasks,
+                maximum_annotations_changed=False,
+                overlap_cohort_percentage_changed=False,
+                tasks_number_changed=True,
+                recalculate_stats_counts=recalculate_stats_counts,
+            )
+            logger.info('Tasks bulk_update finished (async reimport)')
+
+            summary.update_data_columns(tasks)
+            # TODO: summary.update_created_annotations_and_labels
+
+        reimport.task_count = task_count
+        reimport.annotation_count = annotation_count
+        reimport.prediction_count = prediction_count
+        reimport.found_formats = found_formats
+        reimport.data_columns = list(data_columns)
+        reimport.status = ProjectReimport.Status.COMPLETED
+        reimport.save()
+
+        post_process_reimport(reimport)
