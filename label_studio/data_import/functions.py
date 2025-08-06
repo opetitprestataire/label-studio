@@ -8,6 +8,7 @@ from core.utils.common import load_func
 from django.conf import settings
 from django.db import transaction
 from projects.models import ProjectImport, ProjectReimport, ProjectSummary
+from tasks.models import Task
 from users.models import User
 from webhooks.models import WebhookAction
 from webhooks.utils import emit_webhooks_for_instance
@@ -174,9 +175,6 @@ def _async_reimport_background_streaming(reimport, project, organization_id, use
                 serializer.is_valid(raise_exception=True)
                 batch_db_tasks = serializer.save(project_id=project.id)
 
-                # Emit webhooks for this batch
-                emit_webhooks_for_instance(organization_id, project, WebhookAction.TASKS_CREATED, batch_db_tasks)
-
                 # Collect task IDs for later use
                 all_created_task_ids.extend([t.id for t in batch_db_tasks])
 
@@ -197,28 +195,39 @@ def _async_reimport_background_streaming(reimport, project, organization_id, use
                     else:
                         all_data_columns &= batch_columns
 
-                # Update task states for this batch
-                recalculate_stats_counts = {
-                    'task_count': batch_task_count,
-                    'annotation_count': batch_annotation_count,
-                    'prediction_count': batch_prediction_count,
-                }
-
-                project.update_tasks_counters_and_task_states(
-                    tasks_queryset=batch_db_tasks,
-                    maximum_annotations_changed=False,
-                    overlap_cohort_percentage_changed=False,
-                    tasks_number_changed=True,
-                    recalculate_stats_counts=recalculate_stats_counts,
-                )
-
-                # Update data columns
+                # Update data columns in summary
                 summary.update_data_columns(batch_db_tasks)
 
             logger.info(
                 f'Batch {batch_number} processed successfully: {batch_task_count} tasks, '
                 f'{batch_annotation_count} annotations, {batch_prediction_count} predictions'
             )
+
+        # After all batches are processed, emit webhooks and update task states once
+        if all_created_task_ids:
+            logger.info(
+                f'Finalizing reimport: emitting webhooks and updating task states for {len(all_created_task_ids)} tasks'
+            )
+
+            # Emit webhooks for all tasks at once (passing list of IDs)
+            emit_webhooks_for_instance(organization_id, project, WebhookAction.TASKS_CREATED, all_created_task_ids)
+
+            # Update task states for all tasks at once
+            all_tasks_queryset = Task.objects.filter(id__in=all_created_task_ids)
+            recalculate_stats_counts = {
+                'task_count': total_task_count,
+                'annotation_count': total_annotation_count,
+                'prediction_count': total_prediction_count,
+            }
+
+            project.update_tasks_counters_and_task_states(
+                tasks_queryset=all_tasks_queryset,
+                maximum_annotations_changed=False,
+                overlap_cohort_percentage_changed=False,
+                tasks_number_changed=True,
+                recalculate_stats_counts=recalculate_stats_counts,
+            )
+            logger.info('Tasks bulk_update finished (async streaming reimport)')
 
         # Update reimport with final statistics
         reimport.task_count = total_task_count
