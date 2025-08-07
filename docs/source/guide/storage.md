@@ -1177,6 +1177,133 @@ You can also create a storage connection using the Label Studio API.
 - See [Create new import storage](/api#operation/api_storages_azure_create) then [sync the import storage](/api#operation/api_storages_azure_sync_create). 
 - See [Create export storage](/api#operation/api_storages_export_azure_create) and after annotating, [sync the export storage](/api#operation/api_storages_export_azure_sync_create).
 
+<div class="enterprise-only">
+
+### Azure Blob Storage with Service Principal authentication
+
+You can use Azure Service Principal authentication to securely connect Label Studio Enterprise to Azure Blob Storage without using storage account keys. Service Principal authentication provides enhanced security through Azure Active Directory (Azure AD) identity and access management, allowing for fine-grained permissions and audit capabilities.
+
+Service Principal authentication is a secure method that uses Azure AD identity to authenticate applications. Unlike storage account keys that provide full access to the storage account, Service Principal authentication allows you to grant specific permissions and can be easily revoked or rotated.
+
+#### Prerequisites
+
+Before setting up Service Principal authentication, ensure you have:
+- An Azure subscription with appropriate permissions
+- An existing Azure Storage Account and container
+- Permission to create Azure App Registrations (Service Principals)
+- Access to assign IAM roles to the storage account
+
+#### Set up a Service Principal in Azure
+
+1. **Create an App Registration (Service Principal)**
+
+   In the Azure Portal:
+   - Navigate to **Azure Active Directory > App registrations**
+   - Click **New registration**
+   - Provide a name (e.g., "LabelStudio-ServicePrincipal")
+   - Select **Accounts in this organizational directory only**
+   - Click **Register**
+
+2. **Note the Application Details**
+
+   After registration, copy and save these values from the app's **Overview** page:
+   - **Application (client) ID** - This will be your `client_id`
+   - **Directory (tenant) ID** - This will be your `tenant_id`
+
+3. **Create a Client Secret**
+
+   - In your App Registration, go to **Certificates & secrets**
+   - Click **New client secret**
+   - Add a description and set expiration (24 months recommended)
+   - Click **Add**
+   - **Important**: Copy the client secret **Value** immediately - this will be your `client_secret`
+
+4. **Assign Storage Permissions**
+
+   Navigate to your Azure Storage Account:
+   - Go to **Access control (IAM)**
+   - Click **Add > Add role assignment**
+   - Select the **Storage Blob Data Contributor** role
+   - In the **Members** tab, select **User, group, or service principal**
+   - Search for and select your App Registration
+   - Click **Review + assign**
+
+#### Set up connection in the Label Studio UI
+
+In the Label Studio UI, do the following to set up the connection:
+
+1. Open Label Studio in your web browser.
+2. For a specific project, open **Settings > Cloud Storage**.
+3. Click **Add Source Storage**.
+4. In the dialog box that appears, select **Azure Blob Storage with Service Principal** as the storage type.
+5. In the **Storage Name** field, type a name for the storage to appear in the Label Studio UI.
+6. Specify the name of the Azure Storage Account in the **Storage Name** field.
+7. Specify the name of the Azure Blob container, and if relevant, the container prefix to specify an internal folder.
+8. Configure the Service Principal authentication:
+   - In the **Tenant ID** field, specify the Directory (tenant) ID from your App Registration.
+   - In the **Client ID** field, specify the Application (client) ID from your App Registration.
+   - In the **Client Secret** field, specify the client secret value you created.
+9. Adjust the remaining optional parameters:
+   - In the **File Filter Regex** field, specify a regular expression to filter bucket objects. Use `.*` to collect all objects.
+   - In the **Import method** dropdown, choose how to import your data:
+     - **Files** - Automatically creates a task for each storage object (e.g. JPG, MP3, TXT). Use this if your container contains BLOB storage files such as JPG, MP3, or similar file types.
+     - **Tasks** - Treat each JSON, JSONL, or Parquet as a task definition (one or more tasks per file). Use this if you have multiple JSON files in the container with one task per JSON file.
+   - In the **Use pre-signed URLs (On) / Proxy through Label Studio (Off)** toggle, choose how media is loaded:
+     - **ON** (Pre-signed URLs) - All data bypasses the platform and user browsers directly read data from storage.
+     - **OFF** (Proxy) - The platform proxies media using its own backend.
+   - Set the **Expire pre-signed URLs (minutes)** counter to control how long pre-signed URLs remain valid.
+10. Click **Add Storage**.
+
+After adding the storage, click **Sync** to collect tasks from the container, or make an API call to sync import storage.
+
+#### Create a target storage connection in the Label Studio UI
+
+In the Label Studio UI, do the following to set up a target storage connection to save annotations in an Azure container with Service Principal authentication:
+
+1. Open Label Studio in your web browser.
+2. For a specific project, open **Settings > Cloud Storage**.
+3. Click **Add Target Storage**.
+4. In the dialog box that appears, select **Azure Blob Storage with Service Principal** as the storage type.
+5. In the **Storage Name** field, type a name for the storage to appear in the Label Studio UI.
+6. Specify the name of the Azure Storage Account in the **Storage Name** field.
+7. Specify the name of the Azure Blob container, and if relevant, the container prefix to specify an internal folder.
+8. Configure the Service Principal authentication:
+   - In the **Tenant ID** field, specify the Directory (tenant) ID from your App Registration.
+   - In the **Client ID** field, specify the Application (client) ID from your App Registration.
+   - In the **Client Secret** field, specify the client secret value you created.
+9. (Optional) Enable **Can delete objects from storage** if you want to delete annotations stored in the Azure container when they are deleted in Label Studio. The Service Principal must have appropriate delete permissions on the storage account.
+10. Click **Add Storage**.
+
+After adding the storage, click **Sync** to collect tasks from the container, or make an API call to sync export storage.
+
+#### Security best practices
+
+When using Service Principal authentication:
+
+- **Rotate secrets regularly** - Set up a schedule to rotate client secrets every 12-24 months
+- **Use principle of least privilege** - Only grant the minimum required permissions (Storage Blob Data Contributor for full access, or more specific roles like Storage Blob Data Reader for read-only access)
+- **Monitor access** - Use Azure Activity Logs to monitor Service Principal activity
+- **Separate environments** - Use different Service Principals for development, staging, and production environments
+- **Store secrets securely** - Never commit client secrets to code repositories
+
+#### Required permissions
+
+For Service Principal authentication, the following Azure permissions are required:
+
+**For Source Storage:**
+- `Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read`
+- `Microsoft.Storage/storageAccounts/blobServices/containers/read`
+
+**For Target Storage:**
+- `Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read`
+- `Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write`
+- `Microsoft.Storage/storageAccounts/blobServices/containers/read`
+- `Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete` (optional, for annotation deletion)
+
+These permissions are included in the **Storage Blob Data Contributor** role, but you can create custom roles with more specific permissions if needed.
+
+</div>
+
 ## Redis database
 
 You can also store your tasks and annotations in a [Redis database](https://redis.io/). You must store the tasks and annotations in different databases. You might want to use a Redis database if you find that relying on a file-based cloud storage connection is slow for your datasets. 
