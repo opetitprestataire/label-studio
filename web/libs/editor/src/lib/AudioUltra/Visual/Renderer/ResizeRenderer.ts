@@ -1,7 +1,6 @@
 import type { Layer } from "../Layer";
 import type { Renderer, RenderContext } from "./Renderer";
 import type { Interactive } from "../../Interaction/Interactive";
-import { getCurrentTheme } from "@humansignal/ui";
 
 export interface ResizeRendererConfig {
   borderColor?: string;
@@ -113,10 +112,9 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
       const badgeY = (height - badgeHeight) / 2;
 
       // Detect dark mode and set appropriate colors
-      const isDarkMode = getCurrentTheme() === "dark";
-      const badgeBgColor = isDarkMode ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.8)";
-      const badgeBorderColor = isDarkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.3)";
-      const textColor = isDarkMode ? "#000000" : "#ffffff";
+      const badgeBgColor = "rgba(0, 0, 0, 0.8)";
+      const badgeBorderColor = "rgba(255, 255, 255, 0.3)";
+      const textColor = "#ffffff";
 
       // Badge background
       ctx.fillStyle = badgeBgColor;
@@ -242,7 +240,7 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
     // Handle mouse move during drag
     if (this.isDragging && this.onHeightChange) {
       const deltaY = event.clientY - this.dragStartY;
-      const newHeight = Math.max(20, this.dragStartHeight + deltaY); // Minimum height of 20px
+      const newHeight = Math.max(50, this.dragStartHeight + deltaY); // Minimum height of 50px (matches Visualizer)
 
       // Direct height change - no debouncing needed since we're just updating layer heights
       this.onHeightChange(this.componentName, newHeight);
@@ -259,15 +257,12 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
     // Add global mouse event listeners to handle drag outside component
     document.addEventListener("mousemove", this.handleGlobalMouseMove);
     document.addEventListener("mouseup", this.handleGlobalMouseUp);
-
-    console.log(`Started resizing ${this.componentName} from height ${this.dragStartHeight}`);
   }
 
   onMouseUp?(event: MouseEvent): void {
     if (this.isDragging) {
       this.isDragging = false;
       this.removeGlobalMouseListeners();
-      console.log(`Finished resizing ${this.componentName} (global)`);
     }
   }
 
@@ -275,7 +270,7 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
   private handleGlobalMouseMove = (event: MouseEvent): void => {
     if (this.isDragging && this.onHeightChange) {
       const deltaY = event.clientY - this.dragStartY;
-      const newHeight = Math.max(20, this.dragStartHeight + deltaY); // Minimum height of 20px
+      const newHeight = Math.max(50, this.dragStartHeight + deltaY); // Minimum height of 50px (matches Visualizer)
 
       // Direct height change - no debouncing needed since we're just updating layer heights
       this.onHeightChange(this.componentName, newHeight);
@@ -286,7 +281,6 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
     if (this.isDragging) {
       this.isDragging = false;
       this.removeGlobalMouseListeners();
-      console.log(`Finished resizing ${this.componentName} (global)`);
     }
   };
 
