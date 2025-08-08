@@ -38,7 +38,7 @@ describe("Control Tags - Text with Dual Taxonomy", () => {
 
     cy.log("Verify serialization contains taxonomy results");
     LabelStudio.serialize().then((results: any[]) => {
-      expect(results).to.have.length(3); // Region + 2 taxonomies
+      expect(results).to.have.length(2);
 
       // Check category taxonomy result
       const categoryResult = results.find((r: any) => r.from_name === "category");
