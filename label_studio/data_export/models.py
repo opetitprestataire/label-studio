@@ -144,20 +144,142 @@ class DataExport(object):
                 logger.info(f"[get_export_formats] Format {format.name} is disabled (not supported)")
             formats.append(format_info)
         
-        # Add custom GCS export format
-        gcs_format = {
-            'name': 'YOLO_WITH_IMAGES_TO_GCS',
-            'title': 'YOLO with Images To GCS',
-            'description': 'Export YOLO format with images directly to Google Cloud Storage using project target storage configuration.',
-            'link': 'https://labelstud.io/guide/export.html#YOLO',
-            'tags': ['image segmentation', 'object detection', 'keypoints', 'cloud storage'],
-            'disabled': False
-        }
-        formats.append(gcs_format)
-        logger.info(f"[get_export_formats] Added custom GCS format: {gcs_format['name']}")
         
         result = sorted(formats, key=lambda f: f.get('disabled', False))
         logger.info(f"[get_export_formats] Total formats returned: {len(result)}")
+        return result
+
+    @staticmethod
+    def generate_export_to_storage(project, tasks, output_format, download_resources, get_args, hostname=None):
+        """
+        Export files and upload them to the first target storage of the project
+        """
+        from django.db import connection
+        
+        logger.info(f"[generate_export_to_storage] Starting export to storage for project {project.id}")
+        
+        # Ensure database connection is active
+        connection.ensure_connection()
+        
+        # First, generate the export file using the regular method
+        export_file, content_type, filename = DataExport.generate_export_file(
+            project, tasks, output_format, download_resources, get_args, hostname
+        )
+        
+        # Get the first target storage for the project
+        from io_storages.all_api import _common_storage_list
+        target_storages = []
+        
+        # Ensure database connection is still active before querying storages
+        connection.ensure_connection()
+        
+        for storage_info in _common_storage_list:
+            storage_class = storage_info['export_list_api'].serializer_class.Meta.model
+            storages = storage_class.objects.filter(project=project)
+            if storages.exists():
+                target_storages.extend(list(storages))
+        
+        if not target_storages:
+            raise ValueError("No target storage configured for this project")
+        
+        # Use the first available target storage
+        target_storage = target_storages[0]
+        logger.info(f"[generate_export_to_storage] Using storage: {target_storage.title}")
+        
+        # Initialize tracking variables
+        successful_uploads = 0
+        failed_uploads = 0
+        uploaded_files = []
+        error_details = []
+        
+        # Upload the file to the target storage
+        try:
+            # Read the export file content
+            export_file.seek(0)
+            file_content = export_file.read()
+            export_file.seek(0)
+            
+            # Different storage types have different save methods
+            storage_class_name = target_storage.__class__.__name__
+            logger.info(f"[generate_export_to_storage] Storage class: {storage_class_name}")
+            
+            # Handle different storage types specifically
+            if storage_class_name == 'LocalFilesExportStorage':
+                # For local files, save directly to filesystem
+                full_path = os.path.join(target_storage.path, filename)
+                os.makedirs(os.path.dirname(full_path), exist_ok=True)
+                
+                with open(full_path, 'wb') as f:
+                    f.write(file_content)
+                upload_result = {'path': full_path}
+                
+            elif storage_class_name == 'GCSExportStorage':
+                # For GCS, upload directly to bucket
+                bucket = target_storage.get_bucket()
+                key = str(target_storage.prefix) + '/' + filename if target_storage.prefix else filename
+                blob = bucket.blob(key)
+                blob.upload_from_string(file_content)
+                upload_result = {'bucket': target_storage.bucket, 'key': key, 'size': len(file_content)}
+                
+            elif storage_class_name == 'S3ExportStorage':
+                # For S3, upload directly to bucket
+                s3 = target_storage.get_client()
+                key = str(target_storage.prefix) + '/' + filename if target_storage.prefix else filename
+                s3.put_object(
+                    Bucket=target_storage.bucket,
+                    Key=key,
+                    Body=file_content,
+                    ContentType=content_type
+                )
+                upload_result = {'bucket': target_storage.bucket, 'key': key, 'size': len(file_content)}
+                
+            elif storage_class_name == 'AzureExportStorage':
+                # For Azure, upload to container
+                container_client = target_storage.get_container_client()
+                blob_name = str(target_storage.prefix) + '/' + filename if target_storage.prefix else filename
+                container_client.upload_blob(
+                    name=blob_name,
+                    data=file_content,
+                    content_type=content_type,
+                    overwrite=True
+                )
+                upload_result = {'container': target_storage.container, 'blob': blob_name, 'size': len(file_content)}
+                
+            else:
+                # For unknown storage types, try generic approach
+                logger.warning(f"[generate_export_to_storage] Unknown storage type {storage_class_name}, trying generic save")
+                if hasattr(target_storage, 'save'):
+                    upload_result = target_storage.save(filename, file_content)
+                else:
+                    raise Exception(f"Storage {storage_class_name} doesn't have a supported save method")
+                
+            successful_uploads = 1
+            uploaded_files.append(filename)
+            logger.info(f"[generate_export_to_storage] Successfully uploaded {filename}")
+                
+        except Exception as upload_error:
+            failed_uploads = 1
+            error_details.append(f"Failed to upload {filename}: {str(upload_error)}")
+            logger.error(f"[generate_export_to_storage] Upload failed for {filename}: {str(upload_error)}")
+        
+        # Prepare final result
+        result = {
+            'storage_name': target_storage.title,
+            'storage_type': target_storage.__class__.__name__,
+            'bucket': getattr(target_storage, 'bucket', None) or getattr(target_storage, 'container', None) or getattr(target_storage, 'path', 'N/A'),
+            'prefix': getattr(target_storage, 'prefix', None),
+            'total_files': 1,
+            'successful_uploads': successful_uploads,
+            'failed_uploads': failed_uploads,
+            'uploaded_files': uploaded_files,
+            'error_details': error_details
+        }
+        
+        if successful_uploads > 0:
+            logger.info(f"[generate_export_to_storage] Export to storage completed successfully")
+        else:
+            logger.error(f"[generate_export_to_storage] Export to storage failed")
+            
         return result
 
     @staticmethod

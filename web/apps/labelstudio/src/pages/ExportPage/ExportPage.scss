@@ -113,15 +113,38 @@
     }
   }
 
-  // GCS Results Styles
-  &__gcs-result {
+  // Storage Option Styles
+  &__storage-option {
+    margin: 15px 0;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e8e8e8;
+    background-color: #fafafa;
+  }
+
+  .storage-checkbox {
+    label {
+      display: flex;
+      align-items: flex-start;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    input[type="checkbox"] {
+      margin-top: 2px;
+    }
+  }
+
+  // Export Results Styles
+  &__export-result {
     margin: 15px 0;
     padding: 15px;
     border-radius: 6px;
     border: 1px solid #d9d9d9;
   }
 
-  .gcs-success {
+  .export-success {
     background-color: #f6ffed;
     border-color: #b7eb8f;
 
@@ -152,7 +175,7 @@
     }
   }
 
-  .gcs-error {
+  .export-error {
     background-color: #fff2f0;
     border-color: #ffccc7;
 

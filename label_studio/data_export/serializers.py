@@ -202,6 +202,9 @@ class ExportParamSerializer(serializers.Serializer):
     download_all_tasks = serializers.BooleanField(
         default=False, help_text='Download all tasks or only finished.', required=False
     )
+    export_to_storage = serializers.BooleanField(
+        default=False, help_text='Export files to target cloud storage.', required=False
+    )
 
 
 class BaseExportDataSerializerForInteractive(InteractiveMixin, BaseExportDataSerializer):

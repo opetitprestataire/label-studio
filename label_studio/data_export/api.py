@@ -121,6 +121,14 @@ class ExportFormatsListAPI(generics.RetrieveAPIView):
                           """,
             ),
             openapi.Parameter(
+                name='export_to_storage',
+                type=openapi.TYPE_BOOLEAN,
+                in_=openapi.IN_QUERY,
+                description="""
+                          If true, export files to the project's target cloud storage instead of downloading.
+                          """,
+            ),
+            openapi.Parameter(
                 name='id',
                 type=openapi.TYPE_INTEGER,
                 in_=openapi.IN_PATH,
@@ -206,26 +214,37 @@ class ExportAPI(generics.RetrieveAPIView):
         logger.debug('Prepare export files')
         logger.info(f"[ExportAPI] Export type: {export_type}, download_resources: {download_resources}, tasks count: {len(tasks)}")
 
-        # Handle special GCS export format
-        if export_type == 'YOLO_WITH_IMAGES_TO_GCS':
-            logger.info(f"[ExportAPI] Using GCS export path for {export_type}")
+        # Check if export to storage is requested
+        export_to_storage = query_serializer.validated_data.get('export_to_storage', False)
+        if export_to_storage:
+            logger.info(f"[ExportAPI] Export to storage requested for {export_type}")
             try:
-                result = DataExport.generate_export_to_gcs(
-                    project, tasks, 'YOLO_WITH_IMAGES', download_resources, request.GET, 
+                from django.db import connection
+                # Ensure database connection is active
+                connection.ensure_connection()
+                
+                result = DataExport.generate_export_to_storage(
+                    project, tasks, export_type, download_resources, request.GET, 
                     hostname=request.build_absolute_uri('/')
                 )
-                logger.info(f"[ExportAPI] GCS export completed successfully")
+                logger.info(f"[ExportAPI] Export to storage completed successfully")
                 return Response(result, status=status.HTTP_200_OK)
             except ValueError as e:
-                logger.error(f"[ExportAPI] GCS export ValueError: {str(e)}")
+                logger.error(f"[ExportAPI] Export to storage ValueError: {str(e)}")
                 return Response(
                     {'error': str(e)}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
             except Exception as e:
-                logger.error(f'[ExportAPI] Error exporting to GCS: {e}', exc_info=True)
+                logger.error(f'[ExportAPI] Error exporting to storage: {e}', exc_info=True)
+                # Try to close and reconnect database connection
+                try:
+                    connection.close()
+                    connection.ensure_connection()
+                except:
+                    pass
                 return Response(
-                    {'error': f'Failed to export to GCS: {str(e)}'}, 
+                    {'error': f'Failed to export to storage: {str(e)}'}, 
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
 

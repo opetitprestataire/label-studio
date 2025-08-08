@@ -38,20 +38,22 @@ export const ExportPage = () => {
   const [downloadingMessage, setDownloadingMessage] = useState(false);
   const [availableFormats, setAvailableFormats] = useState([]);
   const [currentFormat, setCurrentFormat] = useState("JSON");
-  const [gcsResult, setGcsResult] = useState(null);
-  const [gcsError, setGcsError] = useState(null);
+  const [exportToStorage, setExportToStorage] = useState(false);
+  const [targetStorages, setTargetStorages] = useState([]);
+  const [exportResult, setExportResult] = useState(null);
+  const [exportError, setExportError] = useState(null);
 
   /** @type {import('react').RefObject<Form>} */
   const form = useRef();
 
-  const clearGcsResult = () => {
-    setGcsResult(null);
-    setGcsError(null);
+  const clearExportResult = () => {
+    setExportResult(null);
+    setExportError(null);
   };
 
   const proceedExport = async () => {
     setDownloading(true);
-    clearGcsResult();
+    clearExportResult();
 
     const message = setTimeout(() => {
       setDownloadingMessage(true);
@@ -63,6 +65,11 @@ export const ExportPage = () => {
       booleansAsNumbers: true,
     });
 
+    // Add export to storage parameter
+    if (exportToStorage) {
+      params.export_to_storage = true;
+    }
+
     try {
       const response = await api.callApi("exportRaw", {
         params: {
@@ -72,10 +79,10 @@ export const ExportPage = () => {
       });
 
       if (response.ok) {
-        // Handle GCS export differently
-        if (currentFormat === 'YOLO_WITH_IMAGES_TO_GCS') {
+        if (exportToStorage) {
+          // Handle async export to storage
           const result = await response.json();
-          setGcsResult(result);
+          setExportResult(result);
         } else {
           // Regular file download
           const blob = await response.blob();
@@ -83,17 +90,17 @@ export const ExportPage = () => {
         }
       } else {
         // Handle error response
-        if (currentFormat === 'YOLO_WITH_IMAGES_TO_GCS') {
+        if (exportToStorage) {
           const errorData = await response.json();
-          setGcsError(errorData.error || 'Unknown error');
+          setExportError(errorData.error || 'Export to storage failed');
         } else {
           api.handleError(response);
         }
       }
     } catch (error) {
       console.error('Export error:', error);
-      if (currentFormat === 'YOLO_WITH_IMAGES_TO_GCS') {
-        setGcsError(error.message);
+      if (exportToStorage) {
+        setExportError(error.message);
       } else {
         api.handleError(error);
       }
@@ -106,6 +113,7 @@ export const ExportPage = () => {
 
   useEffect(() => {
     if (isDefined(pageParams.id)) {
+      // Load previous exports
       api
         .callApi("previousExports", {
           params: {
@@ -116,6 +124,7 @@ export const ExportPage = () => {
           setPreviousExports(export_files.slice(0, 1));
         });
 
+      // Load available formats
       api
         .callApi("exportFormats", {
           params: {
@@ -123,8 +132,25 @@ export const ExportPage = () => {
           },
         })
         .then((formats) => {
-          setAvailableFormats(formats);
-          setCurrentFormat(formats[0]?.name);
+          // Filter out disabled formats
+          const enabledFormats = formats.filter(format => !format.disabled);
+          setAvailableFormats(enabledFormats);
+          setCurrentFormat(enabledFormats[0]?.name);
+        });
+
+      // Load target storages
+      api
+        .callApi("listStorages", {
+          params: {
+            target: "export",
+            project: pageParams.id,
+          },
+        })
+        .then((storages) => {
+          setTargetStorages(storages || []);
+        })
+        .catch(() => {
+          setTargetStorages([]);
         });
     }
   }, [pageParams]);
@@ -155,52 +181,74 @@ export const ExportPage = () => {
           <Input type="hidden" name="exportType" value={currentFormat} />
         </Form>
 
-        {/* GCS Export Results */}
-        {gcsResult && (
-          <Elem name="gcs-result">
-            <Block name="gcs-success">
-              <Elem name="title">Export to GCS Completed Successfully!</Elem>
+        {/* Export to Storage Option */}
+        {targetStorages.length > 0 && (
+          <Elem name="storage-option">
+            <Block name="storage-checkbox">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={exportToStorage}
+                  onChange={(e) => setExportToStorage(e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                Export to Target Cloud Storage
+              </label>
+              <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                Files will be exported to: {targetStorages[0]?.title || 'Target Storage'}
+              </div>
+            </Block>
+          </Elem>
+        )}
+
+        {/* Export Results */}
+        {exportResult && (
+          <Elem name="export-result">
+            <Block name="export-success">
+              <Elem name="title">Export to Storage Completed Successfully!</Elem>
               <Elem name="summary">
-                <div><strong>Storage:</strong> {gcsResult.storage_name}</div>
-                <div><strong>Bucket:</strong> {gcsResult.bucket}</div>
-                <div><strong>Prefix:</strong> {gcsResult.prefix || 'None'}</div>
-                <div><strong>Total Files:</strong> {gcsResult.total_files}</div>
-                <div><strong>Successfully Uploaded:</strong> {gcsResult.successful_uploads}</div>
-                <div><strong>Failed Uploads:</strong> {gcsResult.failed_uploads}</div>
+                <div><strong>Storage:</strong> {exportResult.storage_name}</div>
+                <div><strong>Location:</strong> {exportResult.bucket || exportResult.container || exportResult.path}</div>
+                <div><strong>Prefix:</strong> {exportResult.prefix || 'None'}</div>
+                <div><strong>Total Files:</strong> {exportResult.total_files}</div>
+                <div><strong>Successfully Uploaded:</strong> {exportResult.successful_uploads}</div>
+                <div><strong>Failed Uploads:</strong> {exportResult.failed_uploads}</div>
               </Elem>
-              <Elem name="files">
-                <div><strong>Files uploaded to:</strong></div>
-                {gcsResult.upload_results.map((result, index) => (
-                  <div key={index} style={{ 
-                    color: result.status === 'success' ? 'green' : 'red',
-                    marginLeft: '10px',
-                    fontSize: '12px'
-                  }}>
-                    {result.status === 'success' ? '✅' : '❌'} {result.gcs_path}
-                    {result.status === 'success' && result.size && (
-                      <span style={{ color: 'gray' }}> ({Math.round(result.size / 1024)}KB)</span>
-                    )}
-                    {result.status === 'error' && result.error && (
-                      <div style={{ color: 'red', marginLeft: '20px', fontSize: '11px' }}>
-                        Error: {result.error}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </Elem>
-              <Button onClick={clearGcsResult} style={{ marginTop: '10px' }}>
+              {exportResult.upload_results && (
+                <Elem name="files">
+                  <div><strong>Files uploaded to:</strong></div>
+                  {exportResult.upload_results.map((result, index) => (
+                    <div key={index} style={{ 
+                      color: result.status === 'success' ? 'green' : 'red',
+                      marginLeft: '10px',
+                      fontSize: '12px'
+                    }}>
+                      {result.status === 'success' ? '✅' : '❌'} {result.path || result.gcs_path || result.key}
+                      {result.status === 'success' && result.size && (
+                        <span style={{ color: 'gray' }}> ({Math.round(result.size / 1024)}KB)</span>
+                      )}
+                      {result.status === 'error' && result.error && (
+                        <div style={{ color: 'red', marginLeft: '20px', fontSize: '11px' }}>
+                          Error: {result.error}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </Elem>
+              )}
+              <Button onClick={clearExportResult} style={{ marginTop: '10px' }}>
                 Clear Results
               </Button>
             </Block>
           </Elem>
         )}
 
-        {gcsError && (
-          <Elem name="gcs-error">
-            <Block name="gcs-error">
-              <Elem name="title">Export to GCS Failed</Elem>
-              <Elem name="error">{gcsError}</Elem>
-              <Button onClick={clearGcsResult} style={{ marginTop: '10px' }}>
+        {exportError && (
+          <Elem name="export-error">
+            <Block name="export-error">
+              <Elem name="title">Export to Storage Failed</Elem>
+              <Elem name="error">{exportError}</Elem>
+              <Button onClick={clearExportResult} style={{ marginTop: '10px' }}>
                 Clear Error
               </Button>
             </Block>
