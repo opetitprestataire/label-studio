@@ -1,4 +1,4 @@
-import { observer } from "mobx-react";
+//import { observer } from "mobx-react";
 import { getRoot } from "mobx-state-tree";
 import { useCallback, useMemo } from "react";
 import { Elem } from "../../../utils/bem";
@@ -68,7 +68,7 @@ export const FilterOperation = observer(({ filter, field, operator, value, disab
     if (filter.filter.field.isAnnotationResultsFilterColumn) {
       if (filter.schema?.multiple ?? false) {
         if (key === "equal") label = "includes all";
-        if (key === "not_equal") label = "does not include a;;";
+        if (key === "not_equal") label = "does not include all";
       } else {
         if (key === "equal") label = "is";
         if (key === "not_equal") label = "is not";
