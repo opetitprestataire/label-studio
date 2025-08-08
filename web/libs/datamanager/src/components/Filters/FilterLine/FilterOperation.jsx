@@ -89,6 +89,7 @@ export const FilterOperation = observer(({ filter, field, operator, value, disab
           key={`${filter.filter.id}-${filter.filter.currentType}`}
           schema={filter.schema}
           filter={filter}
+          multiple={filter.schema?.multiple ?? false}
           value={value}
           onChange={onChange}
           size="small"
