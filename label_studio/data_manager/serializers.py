@@ -26,7 +26,6 @@ class ChildFilterSerializer(serializers.ModelSerializer):
         model = Filter
         fields = '__all__'
 
-
     def to_representation(self, value):
         parent = self.parent  # the owning FilterSerializer instance
         serializer = parent.__class__(instance=value, context=self.context)
@@ -277,7 +276,6 @@ class ViewSerializer(serializers.ModelSerializer):
                     filter_group = FilterGroup.objects.create(**filter_group_data)
                     instance.filter_group = filter_group
                     instance.save(update_fields=['filter_group'])
-
 
                 conjunction = filter_group_data.get('conjunction')
                 if conjunction and filter_group.conjunction != conjunction:
