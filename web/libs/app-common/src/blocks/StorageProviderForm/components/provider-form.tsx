@@ -51,7 +51,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
                       onBlur={onBlur}
                       error={errors[field.name]}
                       isEditMode={isEditMode}
-                        formData={formData}
+                      formData={formData}
                     />
                   )}
                 </div>

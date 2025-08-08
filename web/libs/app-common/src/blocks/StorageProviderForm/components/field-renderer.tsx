@@ -171,7 +171,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         </div>
       );
 
-    case "toggle":
+    case "toggle": {
       const isDisabled = isFieldDisabled();
       return (
         <div className="flex items-start space-x-4">
@@ -185,7 +185,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           />
         </div>
       );
-
+    }
     case "counter": {
       const counterValue = value !== undefined && value !== null ? value : field.min || 0;
       const isDisabled = isFieldDisabled();

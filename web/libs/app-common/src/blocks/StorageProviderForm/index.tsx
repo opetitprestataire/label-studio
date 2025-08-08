@@ -27,7 +27,10 @@ interface StorageProviderFormProps {
 }
 
 export const StorageProviderForm = forwardRef<unknown, StorageProviderFormProps>(
-  ({ onSubmit, target, project, storage, title, storageTypes, providers, defaultValues, onClose = () => { }, onHide }, ref) => {
+  (
+    { onSubmit, target, project, storage, title, storageTypes, providers, defaultValues, onClose = () => {}, onHide },
+    ref,
+  ) => {
     const modal = useModalControls();
     const [type, setType] = useState<string | undefined>(storage?.type || storage?.provider || "s3");
     const [filesPreview, setFilesPreview] = useState<any[] | null>(null);
