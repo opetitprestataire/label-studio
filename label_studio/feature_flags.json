@@ -916,7 +916,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 2,
+      "version": 4,
       "deleted": false
     },
     "fflag_feat_all_dia_1576_prompts_easy_breezy_onboarding_long": {
@@ -2064,7 +2064,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 2,
+      "version": 4,
       "deleted": false
     },
     "fflag_feat_fit_52_label_studio_enterprise_embed": {
@@ -2123,7 +2123,7 @@
     },
     "fflag_feat_front_bros_199_enable_select_all_in_ner_phrase_short": {
       "key": "fflag_feat_front_bros_199_enable_select_all_in_ner_phrase_short",
-      "on": false,
+      "on": true,
       "prerequisites": [],
       "targets": [],
       "contextTargets": [],
@@ -2145,7 +2145,7 @@
       "trackEvents": false,
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
-      "version": 2,
+      "version": 4,
       "deleted": false
     },
     "fflag_feat_front_dev-2536_comment_notifications_short": {
@@ -3525,6 +3525,33 @@
       "version": 4,
       "deleted": false
     },
+    "fflag_fix_back_4620_memory_efficient_predictions_import_08012025_short": {
+      "key": "fflag_fix_back_4620_memory_efficient_predictions_import_08012025_short",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "43e3fb5be5084d848c08a2d9759d0b86",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
+      "deleted": false
+    },
     "fflag_fix_back_bros_182_api_task_optimizations": {
       "key": "fflag_fix_back_bros_182_api_task_optimizations",
       "on": true,
@@ -4036,6 +4063,33 @@
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
       "version": 2,
+      "deleted": false
+    },
+    "fflag_fix_back_plt_838_reimport_memory_improvement_05082025_short": {
+      "key": "fflag_fix_back_plt_838_reimport_memory_improvement_05082025_short",
+      "on": true,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "656e75d316e84294b3385bc6820f4669",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 3,
       "deleted": false
     },
     "fflag_fix_back_plt_840_redis_last_activity_29072025_short": {

@@ -192,7 +192,7 @@ export const FilterLine = observer(({ filter, availableFilters, index, view, sid
       {!childFilter && (
         <Elem name="remove">
           <Button
-            look="danger"
+            look="string"
             size="small"
             style={{ border: "none" }}
             onClick={(e) => {
@@ -235,7 +235,7 @@ export const FilterLine = observer(({ filter, availableFilters, index, view, sid
           {/* Show remove button on child filter row - removes the entire filter group */}
           <Elem name="remove">
             <Button
-              look="danger"
+              look="string"
               size="small"
               style={{ border: "none" }}
               onClick={(e) => {

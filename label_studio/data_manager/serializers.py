@@ -21,7 +21,12 @@ from users.models import User
 from label_studio.core.utils.common import round_floats
 
 
-class ChildFilterSerializer(serializers.Serializer):
+class ChildFilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Filter
+        fields = '__all__'
+
+
     def to_representation(self, value):
         parent = self.parent  # the owning FilterSerializer instance
         serializer = parent.__class__(instance=value, context=self.context)
@@ -271,7 +276,8 @@ class ViewSerializer(serializers.ModelSerializer):
                 if filter_group is None:
                     filter_group = FilterGroup.objects.create(**filter_group_data)
                     instance.filter_group = filter_group
-                    instance.save()
+                    instance.save(update_fields=['filter_group'])
+
 
                 conjunction = filter_group_data.get('conjunction')
                 if conjunction and filter_group.conjunction != conjunction:

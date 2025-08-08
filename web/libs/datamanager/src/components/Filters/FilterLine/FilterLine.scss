@@ -4,15 +4,15 @@
   
   // Apply the same grid layout as the parent filters container
   display: grid;
-  grid-template-columns: 65px minmax(120px, max-content) minmax(100px, max-content) 1fr 24px;
+  grid-template-columns: 80px minmax(120px, max-content) minmax(100px, max-content) 1fr 24px;
   grid-gap: var(--spacing-tightest);
   align-items: start;
 
   &__remove {
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: -4px;
 
     .button-dm {
       height: 24px;
