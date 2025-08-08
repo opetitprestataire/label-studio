@@ -86,6 +86,7 @@ def backwards(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ("tasks", "0055_task_proj_octlen_idx_async"),
