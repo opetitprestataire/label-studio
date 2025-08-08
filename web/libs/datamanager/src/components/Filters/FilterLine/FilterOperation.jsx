@@ -1,4 +1,4 @@
-//import { observer } from "mobx-react";
+import { observer } from "mobx-react";
 import { getRoot } from "mobx-state-tree";
 import { useCallback, useMemo } from "react";
 import { Elem } from "../../../utils/bem";
