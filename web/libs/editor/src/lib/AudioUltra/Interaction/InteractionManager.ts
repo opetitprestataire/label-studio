@@ -117,8 +117,8 @@ export class InteractionManager {
   private getRelativeCoordinates(event: MouseEvent): { x: number; y: number } {
     const rect = this.container.getBoundingClientRect();
     return {
-      x: (event.clientX - rect.left) * this.pixelRatio,
-      y: (event.clientY - rect.top) * this.pixelRatio,
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
     };
   }
 

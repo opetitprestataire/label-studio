@@ -71,7 +71,8 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
     if (!ctx) return;
 
     const { width } = context;
-    const height = this.layer.height;
+    const height = this.layer.height / this.layer.pixelRatio; // Layer height in CSS pixels
+    const pr = this.layer.pixelRatio; // Pixel ratio for scaling
 
     // Clear the layer first
     this.layer.clear();
@@ -85,23 +86,23 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
       const currentOpacity = this.isHovered ? this.config.hoverOpacity : this.config.opacity;
       ctx.globalAlpha = currentOpacity ?? 0.2;
       ctx.strokeStyle = this.config.borderColor ?? "#666";
-      ctx.lineWidth = (this.config.borderWidth ?? 1) * 2; // Make border more pronounced
+      ctx.lineWidth = (this.config.borderWidth ?? 1) * 2 * pr; // Make border more pronounced and scale
 
-      // Set line dash pattern based on border style
+      // Set line dash pattern based on border style (scale by pixel ratio)
       switch (this.config.borderStyle) {
         case "dashed":
-          ctx.setLineDash([5, 5]);
+          ctx.setLineDash([5 * pr, 5 * pr]);
           break;
         case "dotted":
-          ctx.setLineDash([2, 2]);
+          ctx.setLineDash([2 * pr, 2 * pr]);
           break;
         default:
           ctx.setLineDash([]);
           break;
       }
 
-      // Draw border rectangle - only when hovering
-      ctx.strokeRect(0.5, 0.5, width - 1, height - 1);
+      // Draw border rectangle - only when hovering (scale for pixel ratio)
+      ctx.strokeRect(0.5 * pr, 0.5 * pr, (width - 1) * pr, (height - 1) * pr);
     }
 
     // Draw size badge in the center of the resize area - only when dragging
@@ -120,22 +121,22 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
       // Badge background
       ctx.fillStyle = badgeBgColor;
       ctx.globalAlpha = 0.9;
-      this.drawRoundedRect(ctx, badgeX, badgeY, badgeWidth, badgeHeight, 4);
+      this.drawRoundedRect(ctx, badgeX * pr, badgeY * pr, badgeWidth * pr, badgeHeight * pr, 4 * pr);
 
       // Badge border
       ctx.strokeStyle = badgeBorderColor;
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 1 * pr;
       ctx.globalAlpha = 0.8;
-      this.drawRoundedRect(ctx, badgeX, badgeY, badgeWidth, badgeHeight, 4, true);
+      this.drawRoundedRect(ctx, badgeX * pr, badgeY * pr, badgeWidth * pr, badgeHeight * pr, 4 * pr, true);
 
       // Size text
       const sizeText = `${Math.round(width)}×${Math.round(height)}`;
       ctx.fillStyle = textColor;
-      ctx.font = "bold 13px Arial"; // Increased from 11px
+      ctx.font = `bold ${13 * pr}px Arial`; // Scale font size
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.globalAlpha = 1.0;
-      ctx.fillText(sizeText, width / 2, height / 2);
+      ctx.fillText(sizeText, (width / 2) * pr, (height / 2) * pr);
     }
 
     // Always show resize handle, but with different opacity based on hover state
@@ -151,23 +152,23 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
     const currentHandleOpacity = this.isHovered ? this.config.handleHoverOpacity : this.config.handleOpacity;
     ctx.globalAlpha = currentHandleOpacity ?? 0.4;
 
-    // Apply shadow for better visibility
+    // Apply shadow for better visibility (scale shadow by pixel ratio)
     ctx.shadowColor = this.config.shadowColor ?? "rgba(0, 0, 0, 0.3)";
-    ctx.shadowBlur = this.config.shadowBlur ?? 4;
-    ctx.shadowOffsetX = this.config.shadowOffsetX ?? 0;
-    ctx.shadowOffsetY = this.config.shadowOffsetY ?? 2;
+    ctx.shadowBlur = (this.config.shadowBlur ?? 4) * pr;
+    ctx.shadowOffsetX = (this.config.shadowOffsetX ?? 0) * pr;
+    ctx.shadowOffsetY = (this.config.shadowOffsetY ?? 2) * pr;
 
-    this.drawRoundedRect(ctx, handleX, handleY, handleWidth, handleHeight, borderRadius);
+    this.drawRoundedRect(ctx, handleX * pr, handleY * pr, handleWidth * pr, handleHeight * pr, borderRadius * pr);
 
     // Add a subtle border for better definition - always visible
     ctx.strokeStyle = this.isHovered ? "#ffffff" : "#cccccc";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1 * pr;
     ctx.globalAlpha = 0.8;
 
     // Clear shadow for border to avoid double shadow
     ctx.shadowColor = "transparent";
 
-    this.drawRoundedRect(ctx, handleX, handleY, handleWidth, handleHeight, borderRadius, true);
+    this.drawRoundedRect(ctx, handleX * pr, handleY * pr, handleWidth * pr, handleHeight * pr, borderRadius * pr, true);
 
     ctx.restore();
 
@@ -195,13 +196,13 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
     if (!this.layer.isVisible || this.isDestroyed || !this.lastRenderContext) return false;
 
     const width = this.lastRenderContext.width;
-    const height = this.layer.height;
+    const height = this.layer.height / this.layer.pixelRatio; // Convert to CSS pixels
 
     // Basic bounds check
     if (x < 0 || x > width || y < 0 || y > height) return false;
 
     // Only hit test the resize handle area for precise interaction
-    // Resize handle dimensions
+    // Resize handle dimensions (in CSS pixels)
     const handleWidth = 60; // Reduced from 80
     const handleHeight = 6; // Reduced from 8
     const handleX = (width - handleWidth) / 2; // Center the handle
@@ -251,7 +252,7 @@ export class ResizeRenderer implements Renderer<ResizeRendererConfig>, Interacti
   onMouseDown?(event: MouseEvent): void {
     this.isDragging = true;
     this.dragStartY = event.clientY;
-    this.dragStartHeight = this.layer.height;
+    this.dragStartHeight = this.layer.height / this.layer.pixelRatio; // Store in CSS pixels
     event.preventDefault();
     event.stopPropagation();
 
