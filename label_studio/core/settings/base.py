@@ -555,6 +555,10 @@ MAX_TASK_BATCH_SIZE = int(get_env('MAX_TASK_BATCH_SIZE', 1000))
 # Total size of task data (in bytes) to process per batch - used to calculate dynamic batch sizes
 # For example: if task data is 10MB, batch will be ~5 tasks to stay under 50MB limit
 TASK_DATA_PER_BATCH = int(get_env('TASK_DATA_PER_BATCH', 50 * 1024 * 1024))  # 50 MB in bytes
+# Batch size for streaming reimport operations to reduce memory usage
+REIMPORT_BATCH_SIZE = int(get_env('REIMPORT_BATCH_SIZE', 1000))
+# Batch size for processing prediction imports to avoid memory issues with large datasets
+PREDICTION_IMPORT_BATCH_SIZE = int(get_env('PREDICTION_IMPORT_BATCH_SIZE', 500))
 PROJECT_TITLE_MIN_LEN = 3
 PROJECT_TITLE_MAX_LEN = 50
 LOGIN_REDIRECT_URL = '/'
@@ -776,7 +780,10 @@ PUBLIC_API_DOCS = get_bool_env('PUBLIC_API_DOCS', False)
 # By default, we disallow filters with foreign keys in data manager for security reasons.
 # Add to this list (either here in code, or via the env) to allow specific filters that rely on foreign keys.
 DATA_MANAGER_FILTER_ALLOWLIST = list(
-    set(get_env_list('DATA_MANAGER_FILTER_ALLOWLIST') + ['updated_by__active_organization'])
+    set(
+        get_env_list('DATA_MANAGER_FILTER_ALLOWLIST')
+        + ['updated_by__active_organization', 'annotations__completed_by']
+    )
 )
 
 if ENABLE_CSP := get_bool_env('ENABLE_CSP', True):
