@@ -50,7 +50,14 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
 
       // Remove empty values only for access key fields in edit mode
       Object.keys(cleanedData).forEach((key) => {
-        if (cleanedData[key] === "" || cleanedData[key] === undefined || cleanedData[key] === "••••••••••••••••") {
+        const field = providerConfig?.fields.find((f) => f.name === key);
+        const isAccessKey = field && "type" in field && (field as any).accessKey;
+
+        // Only remove empty values for access key fields
+        if (
+          isAccessKey &&
+          (cleanedData[key] === "" || cleanedData[key] === undefined || cleanedData[key] === "••••••••••••••••")
+        ) {
           delete cleanedData[key];
         }
       });
