@@ -83,8 +83,27 @@ export const useStorageForm = ({ project, isEditMode, steps, storage, defaultVal
         return;
       }
 
-      // Prepare form data with placeholder values for access keys
-      const formDataWithPlaceholders = { ...storage };
+      // Get valid field names for the current provider
+      const validFieldNames = new Set([
+        'project', // Always include project
+        'provider', // Always include provider
+        'title', // Always include title
+        'prefix', // Common field for bucket prefix
+        'path', // Common field for file path (used by redis)
+        'use_blob_urls', // Common field for import method
+        'regex_filter', // Common field for file filtering
+        'recursive_scan', // Common field for recursive scanning
+        'can_delete_objects', // Common field for export
+        ...(providerConfig.fields.map(field => field.name) || [])
+      ]);
+
+      // Filter storage data to only include valid fields for the current provider
+      const formDataWithPlaceholders = Object.keys(storage).reduce((acc, key) => {
+        if (validFieldNames.has(key)) {
+          acc[key] = storage[key];
+        }
+        return acc;
+      }, {} as Record<string, any>);
 
       // Process provider-specific fields
       if (providerConfig) {
@@ -256,12 +275,18 @@ export const useStorageForm = ({ project, isEditMode, steps, storage, defaultVal
     (name: string, value: any, onConnectionChange?: () => void) => {
       // If changing provider, get new defaults first (only in create mode)
       if (name === "provider" && !isEditMode) {
+        console.log("Provider change detected:", { name, value, isEditMode });
+
         const providerConfig = getProviderConfig(value);
+        console.log("Provider config found:", !!providerConfig, { value, availableProviders: Object.keys(providerRegistry) });
+
         if (providerConfig) {
           const schemaDefaults = extractDefaultValues(providerConfig.fields);
+          console.log("Schema defaults:", schemaDefaults);
 
           // Get custom defaults for this provider if available
           const customDefaults = defaultValues?.[value] || {};
+          console.log("Custom defaults:", customDefaults);
 
           // Merge schema defaults with custom defaults (custom defaults take precedence)
           const mergedDefaults = {
@@ -269,12 +294,61 @@ export const useStorageForm = ({ project, isEditMode, steps, storage, defaultVal
             ...customDefaults,
           };
 
+          // Get valid field names for the new provider
+          const validFieldNames = new Set([
+            'project', // Always include project
+            'provider', // Always include provider
+            'title', // Always include title
+            'prefix', // Common field for bucket prefix
+            'path', // Common field for file path (used by redis)
+            'use_blob_urls', // Common field for import method
+            'regex_filter', // Common field for file filtering
+            'recursive_scan', // Common field for recursive scanning
+            'can_delete_objects', // Common field for export
+            ...(providerConfig.fields.map(field => field.name) || [])
+          ]);
+
+          setFormState((prev) => {
+            console.log("Previous form data:", prev.formData);
+
+            // Filter existing form data to only include valid fields for the new provider
+            const filteredFormData = Object.keys(prev.formData).reduce((acc, key) => {
+              if (validFieldNames.has(key)) {
+                acc[key] = prev.formData[key];
+              }
+              return acc;
+            }, {} as Record<string, any>);
+
+            console.log("Filtered form data:", filteredFormData);
+            console.log("Merged defaults:", mergedDefaults);
+
+            const newFormData = {
+              project: prev.formData.project,
+              title: prev.formData.title || "",
+              use_blob_urls: prev.formData.use_blob_urls || false,
+              recursive_scan: prev.formData.recursive_scan !== undefined ? prev.formData.recursive_scan : true,
+              regex_filter: prev.formData.regex_filter || "",
+              ...filteredFormData,
+              ...mergedDefaults,
+              provider: value, // Set provider last to ensure it's not overridden
+            };
+
+            console.log("New form data:", newFormData);
+
+            return {
+              ...prev,
+              formData: newFormData,
+            };
+          });
+          return;
+        } else {
+          console.warn("Provider config not found for:", value);
+          // Fallback: just update the provider field
           setFormState((prev) => ({
             ...prev,
             formData: {
               ...prev.formData,
-              ...mergedDefaults,
-              [name]: value,
+              provider: value,
             },
           }));
           return;
