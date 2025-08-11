@@ -115,14 +115,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
 
   switch (field.type) {
     case "hidden":
-      return (
-        <input
-          type="hidden"
-          name={field.name}
-          value={value || ""}
-          onChange={handleInputChange}
-        />
-      );
+      return <input type="hidden" name={field.name} value={value || ""} onChange={handleInputChange} />;
 
     case "text":
     case "password":
