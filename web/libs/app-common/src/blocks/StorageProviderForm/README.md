@@ -92,6 +92,7 @@ export const providerRegistry: Record<string, ProviderConfig> = {
 - `toggle`: Boolean toggle switch
 - `counter`: Numeric counter with min/max
 - `textarea`: Multi-line text input
+- `hidden`: Hidden input field (no visual styling or layout)
 
 ### Field Properties
 
@@ -211,6 +212,30 @@ Read-only fields are useful for:
 - System-generated values
 - Fields that are set by environment variables
 - Default configurations that should remain fixed
+
+## Hidden Fields
+
+Hidden fields are rendered as `<input type="hidden">` elements with no visual styling or layout. They're useful for storing values that shouldn't be visible to users but need to be included in form submissions:
+
+```typescript
+{
+  name: "api_version",
+  type: "hidden",
+  schema: z.string().default("v1"),
+},
+{
+  name: "client_id",
+  type: "hidden",
+  schema: z.string().default("my-client"),
+},
+```
+
+Hidden fields:
+- Are not included in the layout grid
+- Have no visual styling (no padding, margins, borders)
+- Are still included in form validation and submission
+- Can have dependencies and default values
+- Are useful for storing configuration values, API versions, client IDs, etc.
 
 ## Field Dependencies
 

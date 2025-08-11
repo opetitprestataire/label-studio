@@ -3,7 +3,7 @@ import type { FC } from "react";
 import type { z } from "zod";
 
 // Field types that can be rendered
-export type FieldType = "text" | "password" | "number" | "select" | "toggle" | "counter" | "textarea";
+export type FieldType = "text" | "password" | "number" | "select" | "toggle" | "counter" | "textarea" | "hidden";
 
 // Field definition interface
 export interface FieldDefinition {
