@@ -33,7 +33,10 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
         const isAccessKey = field && "type" in field && (field as any).accessKey;
 
         // Only remove empty values for access key fields
-        if (isAccessKey && (cleanedData[key] === "" || cleanedData[key] === undefined || cleanedData[key] === "••••••••••••••••")) {
+        if (
+          isAccessKey &&
+          (cleanedData[key] === "" || cleanedData[key] === undefined || cleanedData[key] === "••••••••••••••••")
+        ) {
           delete cleanedData[key];
         }
       });
