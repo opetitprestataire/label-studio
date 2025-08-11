@@ -1187,6 +1187,8 @@ You can use Azure Service Principal authentication to securely connect Label Stu
 
 Service Principal authentication is a secure method that uses Azure AD identity to authenticate applications. Unlike storage account keys that provide full access to the storage account, Service Principal authentication allows you to grant specific permissions and can be easily revoked or rotated.
 
+For more information, see [Microsoft - Application and service principal objects in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity-platform/app-objects-and-service-principals).
+
 #### Prerequisites
 
 - Azure subscription and Storage Account
