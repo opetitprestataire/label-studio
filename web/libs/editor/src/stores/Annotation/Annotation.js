@@ -397,7 +397,7 @@ const _Annotation = types
         // skipped annotations can't be reviewed
         !self.skipped &&
         // annotation was submitted already
-        !Number.isNaN(self.pk)
+        !isNaN(self.pk)
       );
     },
   }))
