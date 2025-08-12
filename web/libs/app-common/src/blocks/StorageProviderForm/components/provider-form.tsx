@@ -57,6 +57,12 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
                 if (field.type === "hidden") {
                   return null;
                 }
+                const Message =
+                  field.type === "message"
+                    ? field.content instanceof Function
+                      ? field.content
+                      : ((() => field.content) as FC)
+                    : null;
 
                 return (
                   <div
@@ -65,8 +71,10 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
                       gridColumn: field.gridCols ?? "initial",
                     }}
                   >
-                    {field.type === "message" ? (
-                      <div>{field.content}</div>
+                    {Message ? (
+                      <div>
+                        <Message />
+                      </div>
                     ) : (
                       <FieldRenderer
                         field={field}

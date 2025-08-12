@@ -33,7 +33,7 @@ export interface FieldDefinition {
 export interface MessageDefinition {
   name: string;
   type: "message";
-  content: JSX.Element;
+  content: JSX.Element | FC;
   gridCols?: number;
   variant?: CalloutVariant;
 }

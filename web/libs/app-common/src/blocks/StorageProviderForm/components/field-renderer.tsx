@@ -116,7 +116,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
   switch (field.type) {
     case "hidden":
       return <input type="hidden" name={field.name} value={value || ""} onChange={handleInputChange} />;
-
     case "text":
     case "password":
       return (
@@ -130,7 +129,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           description={getEnhancedDescription()}
         />
       );
-
     case "number":
       return (
         <Input
@@ -145,7 +143,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           {...getInputProps()}
         />
       );
-
     case "textarea":
       return (
         <Input
@@ -157,7 +154,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           description={getEnhancedDescription()}
         />
       );
-
     case "select":
       return (
         <div className="space-y-2">
@@ -173,7 +169,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           {error && <p className="text-sm text-negative-content">{error}</p>}
         </div>
       );
-
     case "toggle": {
       const isDisabled = isFieldDisabled();
       return (
