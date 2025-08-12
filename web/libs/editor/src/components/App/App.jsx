@@ -9,7 +9,6 @@ import { observer, Provider } from "mobx-react";
 /**
  * Core
  */
-import Tree from "../../core/Tree";
 import { CommentsOverlay } from "../InteractiveOverlays/CommentsOverlay";
 import { TreeValidation } from "../TreeValidation/TreeValidation";
 
