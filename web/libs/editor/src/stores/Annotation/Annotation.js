@@ -1231,9 +1231,10 @@ const _Annotation = types
         self.cleanClassificationAreas();
 
         if (!hidden) {
-          const filteredResults = self.results.filter((r) => r.area.classification); 
-          for (const r of filteredResults) {
-            r.from_name.updateFromResult?.(r.mainValue);
+          for (const r of self.results) {
+            if (r.area.classification) {
+              r.from_name.updateFromResult?.(r.mainValue);
+            }
           }
         }
 
@@ -1445,12 +1446,8 @@ const _Annotation = types
     },
 
     resetReady() {
-      for (const object of self.objects) {
-        object.setReady?.(false);
-      }
-      for (const area of self.areas.values()) {
-        area.setReady?.(false);
-      }
+      self.objects.forEach((object) => object.setReady?.(false));
+      self.areas.forEach((area) => area.setReady?.(false));
     },
   }));
 
