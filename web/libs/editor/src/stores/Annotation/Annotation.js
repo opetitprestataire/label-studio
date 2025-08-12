@@ -1239,7 +1239,8 @@ const _Annotation = types
         self.cleanClassificationAreas();
 
         if (!hidden) {
-          for (const r of self.results.filter((r) => r.area.classification)) {
+          const filteredResults = self.results.filter((r) => r.area.classification); 
+          for (const r of filteredResults) {
             r.from_name.updateFromResult?.(r.mainValue);
           }
         }
