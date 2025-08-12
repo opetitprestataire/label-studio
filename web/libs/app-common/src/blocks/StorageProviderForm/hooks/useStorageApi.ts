@@ -2,6 +2,7 @@ import { useContext, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { ApiContext } from "apps/labelstudio/src/providers/ApiProvider";
 import { isDefined } from "apps/labelstudio/src/utils/helpers";
+import { getProviderConfig } from "../providers";
 
 interface UseStorageApiProps {
   target?: "import" | "export";
@@ -22,9 +23,20 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
       if (!isEditMode) return data;
 
       const cleanedData = { ...data };
-      // Remove empty access key fields in edit mode
+
+      // Get the current provider config to identify access key fields
+      const providerConfig = getProviderConfig(data.provider);
+
+      // Remove empty values only for access key fields in edit mode
       Object.keys(cleanedData).forEach((key) => {
-        if (cleanedData[key] === "" || cleanedData[key] === undefined || cleanedData[key] === "••••••••••••••••") {
+        const field = providerConfig?.fields.find((f) => f.name === key);
+        const isAccessKey = field && "type" in field && (field as any).accessKey;
+
+        // Only remove empty values for access key fields
+        if (
+          isAccessKey &&
+          (cleanedData[key] === "" || cleanedData[key] === undefined || cleanedData[key] === "••••••••••••••••")
+        ) {
           delete cleanedData[key];
         }
       });
@@ -53,12 +65,26 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
         },
         body,
       });
-      console.log(result);
       return result;
     },
   });
 
-  // Create/Update storage mutation
+  // Sync storage mutation
+  const syncStorageMutation = useMutation({
+    mutationFn: async (storageData: any) => {
+      if (!api) throw new Error("API context not available");
+
+      return api.callApi("syncStorage", {
+        params: {
+          target,
+          type: storageData.provider,
+          pk: storageData.id,
+        },
+      });
+    },
+  });
+
+  // Create/Update storage mutation (with sync)
   const createStorageMutation = useMutation({
     mutationFn: async (storageData: any) => {
       if (!api) throw new Error("API context not available");
@@ -70,10 +96,57 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
         body.id = storage.id;
       }
 
-      return api.callApi(action, {
+      // First, save the storage
+      const result = await api.callApi(action, {
         params: { target, type: storageData.provider, project, pk: storage?.id },
         body,
       });
+
+      // Only if storage save was successful, then trigger sync for import storages
+      if (result?.$meta?.ok && target !== "export" && result?.id) {
+        try {
+          await api.callApi("syncStorage", {
+            params: {
+              target,
+              type: storageData.provider,
+              pk: result.id,
+            },
+          });
+        } catch (error) {
+          console.error("Failed to auto-sync storage:", error);
+          // Don't fail the entire operation if sync fails
+        }
+      }
+
+      return result;
+    },
+    onSuccess: (response) => {
+      if (response?.$meta?.ok) {
+        onSubmit();
+        onClose();
+      }
+    },
+  });
+
+  // Save storage mutation (without sync)
+  const saveStorageMutation = useMutation({
+    mutationFn: async (storageData: any) => {
+      if (!api) throw new Error("API context not available");
+
+      const cleanedData = cleanFormDataForSubmission(storageData);
+      const body = { ...cleanedData };
+
+      if (isDefined(storage?.id)) {
+        body.id = storage.id;
+      }
+
+      // Only save the storage, don't sync
+      const result = await api.callApi(action, {
+        params: { target, type: storageData.provider, project, pk: storage?.id },
+        body,
+      });
+
+      return result;
     },
     onSuccess: (response) => {
       if (response?.$meta?.ok) {
@@ -109,7 +182,9 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
   return {
     testConnectionMutation,
     createStorageMutation,
+    saveStorageMutation,
     loadFilesPreviewMutation,
+    syncStorageMutation,
     isEditMode,
     action,
   };
