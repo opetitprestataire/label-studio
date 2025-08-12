@@ -7,7 +7,15 @@ interface CustomTag {
   model: ObjectTag;
   view: JSX.Element;
   detector?: (value: object) => boolean;
-  region: any;
+  region: {
+    name: string,
+    nodeView: {
+      name: string,
+      icon: any,
+      getContent?: (node: any) => JSX.Element | null,
+      fullContent?: (node: any) => JSX.Element | null,
+    },
+  };
 }
 
 /**
