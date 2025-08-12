@@ -1,9 +1,21 @@
+interface ObjectTag {
+  name: string;
+}
+
+interface CustomTag {
+  tag: string;
+  model: ObjectTag;
+  view: JSX.Element;
+  detector?: (value: object) => boolean;
+  region: any;
+}
+
 /**
  * Class for register View
  */
 class _Registry {
   tags: any[] = [];
-  customTags: any[] = [];
+  customTags: CustomTag[] = [];
   models: Record<string, any> = {};
   views: Record<string, any> = {};
   regions: any[] = [];
@@ -17,7 +29,7 @@ class _Registry {
 
   perRegionViews: Record<string, any> = {};
 
-  addTag(tag: string | number, model: { name: string | number }, view: any) {
+  addTag(tag: string | number, model: { name: string | number }, view: JSX.Element) {
     this.tags.push(tag);
     this.models[tag] = model;
     this.views[tag] = view;
@@ -113,7 +125,7 @@ class _Registry {
     return this.perRegionViews[tag]?.[mode];
   }
 
-  addCustomTag(tag: string, definition: any) {
+  addCustomTag(tag: string, definition: CustomTag) {
     this.addTag(tag.toLowerCase(), definition.model, definition.view);
     this.addObjectType(definition.model);
     this.addRegionType(definition.region, definition.model.name, definition.detector);
