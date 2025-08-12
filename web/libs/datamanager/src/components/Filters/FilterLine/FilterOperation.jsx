@@ -17,7 +17,7 @@ import { Common } from "../types/Common";
  *
  * @param {{field: FieldConfig}} param0
  */
-export const FilterOperation = observer(({ filter, field, operator, value }) => {
+export const FilterOperation = observer(({ filter, field, operator, value, disabled }) => {
   const cellView = filter.cellView;
   const types = cellView?.customOperators ?? [
     ...(FilterInputs[filter.filter.currentType] ?? FilterInputs.String),
@@ -66,8 +66,13 @@ export const FilterOperation = observer(({ filter, field, operator, value }) => 
   }
   const operators = operatorList.map(({ key, label }) => {
     if (filter.filter.field.isAnnotationResultsFilterColumn) {
-      if (key === "contains") label = "includes all";
-      if (key === "not_contains") label = "does not include all";
+      if (filter.schema?.multiple ?? false) {
+        if (key === "contains") label = "includes all";
+        if (key === "not_contains") label = "does not include all";
+      } else {
+        if (key === "contains") label = "is";
+        if (key === "not_contains") label = "is not";
+      }
     }
     return { value: key, label };
   });
@@ -78,7 +83,7 @@ export const FilterOperation = observer(({ filter, field, operator, value }) => 
         <FilterDropdown
           placeholder="Condition"
           value={filter.operator}
-          disabled={types.length === 1}
+          disabled={types.length === 1 || disabled}
           items={availableOperators ? operators.filter((op) => availableOperators.includes(op.value)) : operators}
           onChange={onOperatorSelected}
         />
@@ -89,9 +94,11 @@ export const FilterOperation = observer(({ filter, field, operator, value }) => 
           key={`${filter.filter.id}-${filter.filter.currentType}`}
           schema={filter.schema}
           filter={filter}
+          multiple={filter.schema?.multiple ?? false}
           value={value}
           onChange={onChange}
           size="small"
+          disabled={disabled}
         />
       </Elem>
     </>

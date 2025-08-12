@@ -15,10 +15,10 @@ import {
 import { IconPropertyAngle } from "@humansignal/icons";
 import { Checkbox, Select } from "@humansignal/ui";
 import { Block, Elem, useBEM } from "../../../utils/bem";
-import { FF_DEV_2715, isFF } from "../../../utils/feature-flags";
 import { TimeDurationControl } from "../../TimeDurationControl/TimeDurationControl";
 import { TimelineRegionEditor } from "./TimelineRegionEditor";
 import "./RegionEditor.scss";
+import type { MSTRegion } from "../../../stores/types";
 
 interface RegionEditorProps {
   region: MSTRegion;
@@ -52,7 +52,7 @@ const IconMapping = {
 };
 
 const RegionEditorComponent: FC<RegionEditorProps> = ({ region }) => {
-  const isAudioRegion = isFF(FF_DEV_2715) && region.type === "audioregion";
+  const isAudioRegion = region.type === "audioregion";
   const isTimelineRegion = region.type === "timelineregion";
   const Component = isTimelineRegion ? TimelineRegionEditor : isAudioRegion ? AudioRegionProperties : RegionProperties;
 
@@ -83,7 +83,7 @@ const RegionProperties = ({ region }: RegionEditorProps) => {
   );
 };
 
-const AudioRegionProperties = ({ region }: { region: any }) => {
+const AudioRegionProperties = observer(({ region }: { region: any }) => {
   const changeStartTimeHandler = (value: number) => {
     region.setProperty("start", value);
   };
@@ -107,7 +107,7 @@ const AudioRegionProperties = ({ region }: { region: any }) => {
       />
     </Elem>
   );
-};
+});
 
 interface RegionPropertyProps {
   property: string;

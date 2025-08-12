@@ -16,6 +16,7 @@ async function initLabelStudio({
   settings = {},
   additionalInterfaces = [],
   params = {},
+  taskId = undefined,
 }) {
   if (window.Konva && window.Konva.stages.length) window.Konva.stages.forEach((stage) => stage.destroy());
 
@@ -37,7 +38,7 @@ async function initLabelStudio({
     "edit-history",
     ...additionalInterfaces,
   ];
-  const task = { data, annotations, predictions };
+  const task = { id: taskId, data, annotations, predictions };
 
   window.LabelStudio.destroyAll();
   window.labelStudio = new window.LabelStudio("label-studio", { interfaces, config, task, settings, ...params });
@@ -682,8 +683,10 @@ const getRegionAbsoultePosition = async (shapeId) => {
   };
 };
 
-const switchRegionTreeView = (viewName) => {
+const switchRegionTreeView = async (viewName) => {
   Htx.annotationStore.selected.regionStore.setGrouping(viewName);
+  // Wait a bit for the view to update
+  await new Promise((resolve) => setTimeout(resolve, 100));
 };
 
 const serialize = () => window.Htx.annotationStore.selected.serializeAnnotation();
