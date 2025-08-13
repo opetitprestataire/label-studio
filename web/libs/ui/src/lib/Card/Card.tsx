@@ -18,7 +18,7 @@ export const Card = ({ header, extra, headerLine, noMargin, children, style }: C
       {(header || extra) && (
         <div className={headerClass}>
           <Tooltip title={header}>
-            <div className={`${styles.headerContent} line-clamp-1`}>{header}</div>
+            <div className="line-clamp-1">{header}</div>
           </Tooltip>
 
           {extra && <div className={styles.headerExtra}>{extra}</div>}
