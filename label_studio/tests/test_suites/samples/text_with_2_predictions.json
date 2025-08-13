@@ -4,21 +4,21 @@
   },
   "predictions": [{
     "result": [{
-      "from_name": "label",
+      "from_name": "text_class",
       "to_name": "text",
       "type": "choices",
       "value": {
-        "choices": ["pos"]
+        "choices": ["class_A"]
       }
     }],
     "model_version": "model_version_A"
   }, {
     "result": [{
-      "from_name": "label",
+      "from_name": "text_class",
       "to_name": "text",
       "type": "choices",
       "value": {
-        "choices": ["neg"]
+        "choices": ["class_B"]
       }
     }],
     "model_version": "model_version_B"

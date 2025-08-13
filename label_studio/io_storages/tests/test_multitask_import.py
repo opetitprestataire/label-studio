@@ -206,17 +206,7 @@ def test_storagelink_fields(project, common_task_data):
 
 @pytest.fixture
 def storage():
-    project = ProjectFactory(
-        label_config="""
-        <View>
-          <Text name="text" value="$text"/>
-          <Labels name="label" toName="text">
-            <Label value="FIELD" background="red"/>
-            <Label value="ACTION" background="blue"/>
-          </Labels>
-        </View>
-        """
-    )
+    project = ProjectFactory()
     storage = S3ImportStorage(
         project=project,
         bucket='example',
@@ -279,7 +269,7 @@ annots_preds_task_list = [
             }
         ],
     },
-    {'data': {'text': 'Prosper annotation helps improve model accuracy.'}},
+    {'data': {'text': 'Prosper annotation helps improve model accuracy.'}, 'predictions': [{'result': []}]},
 ]
 
 

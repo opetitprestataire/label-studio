@@ -8,12 +8,12 @@
       {
         "result": [
           {
-            "from_name": "label",
+            "from_name": "text_class",
             "to_name": "text",
             "type": "choices",
             "value": {
               "choices": [
-                "pos"
+                "class_A"
               ]
             }
           }

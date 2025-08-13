@@ -138,16 +138,6 @@ export const CreateProject = ({ onClose }) => {
   );
 
   const onCreate = React.useCallback(async () => {
-    // First, persist project with label_config so import/reimport validates against it
-    const response = await api.callApi("updateProject", {
-      params: {
-        pk: project.id,
-      },
-      body: projectBody,
-    });
-
-    if (response === null) return;
-
     const imported = await finishUpload();
 
     if (!imported) return;
@@ -157,10 +147,18 @@ export const CreateProject = ({ onClose }) => {
     if (sample) await uploadSample(sample);
 
     __lsa("create_project.create", { sample: sample?.url });
+    const response = await api.callApi("updateProject", {
+      params: {
+        pk: project.id,
+      },
+      body: projectBody,
+    });
 
     setWaitingStatus(false);
 
-    history.push(`/projects/${response.id}/data`);
+    if (response !== null) {
+      history.push(`/projects/${response.id}/data`);
+    }
   }, [project, projectBody, finishUpload]);
 
   const onSaveName = async () => {
