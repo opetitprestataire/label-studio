@@ -1,5 +1,6 @@
 import throttle from "lodash.throttle";
 import { destroy, detach, flow, getEnv, getParent, getRoot, isAlive, onSnapshot, types } from "mobx-state-tree";
+import { ff } from "@humansignal/core";
 import { errorBuilder } from "../../core/DataValidator/ConfigValidator";
 import { guidGenerator } from "../../core/Helpers";
 import { Hotkey } from "../../core/Hotkey";
@@ -80,7 +81,7 @@ const hotkeys = Hotkey("Annotations", "Annotations");
  * @param value {Object} object to fix
  * @returns {Object} new object without value fields
  */
-function omitValueFields(value) {
+const omitValueFields = ff.isActive(ff.FF_CUSTOM_TAGS) ? (value) => {
   // @todo describe that we only omit `text` from TextArea
   if (Array.isArray(value.text)) {
     const { text: _, ...newValue } = value;
@@ -88,7 +89,13 @@ function omitValueFields(value) {
   }
 
   return value;
-}
+} : (value) => {
+  const newValue = { ...value };
+  Result.properties.value.propertyNames.forEach((propName) => {
+    delete newValue[propName];
+  });
+  return newValue;
+};
 
 const TrackedState = types.model("TrackedState", {
   areas: types.map(Area),
