@@ -601,7 +601,7 @@ const _Annotation = types
      */
     beforeSend() {
       self.traverseTree((node) => {
-        node.beforeSend?.();
+        node?.beforeSend?.();
       });
 
       self.stopLinkingMode();
