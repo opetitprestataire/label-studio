@@ -47,6 +47,8 @@ export const Filters = injector(({ views, currentView, filters }) => {
     [currentView.availableFilters],
   );
 
+  console.trace("Filters", filters);
+
   return (
     <Block name="filters" mod={{ sidebar: sidebarEnabled }}>
       <Elem name="list" mod={{ withFilters: !!filters.length }}>
