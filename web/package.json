@@ -17,7 +17,7 @@
     "lsf:e2e": "cd libs/editor/tests/e2e && yarn test",
     "lsf:e2e:parallel": "cd libs/editor/tests/e2e && yarn test:parallel",
     "lsf:e2e:ci": "cd libs/editor/tests/e2e && yarn test:ci",
-    "lsf:integration": "nx run editor:integration --spec=\"**/video/regions.cy.ts\"",
+    "lsf:integration": "nx run editor:integration",
     "lsf:integration:watch": "nx run editor:integration --watch",
     "lsf:unit": "nx run editor:unit",
     "dm:watch": "nx run datamanager:build:development --watch",
