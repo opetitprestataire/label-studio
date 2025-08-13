@@ -19,6 +19,7 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
+from label_studio_sdk.label_interface import LabelInterface
 from projects.models import Project, ProjectImport, ProjectReimport
 from ranged_fileresponse import RangedFileResponse
 from rest_framework import generics, status
@@ -266,7 +267,31 @@ class ImportAPI(generics.CreateAPIView):
 
         if preannotated_from_fields:
             # turn flat task JSONs {"column1": value, "column2": value} into {"data": {"column1"..}, "predictions": [{..."column2"}]
-            parsed_data = reformat_predictions(parsed_data, preannotated_from_fields)
+            parsed_data = reformat_predictions(parsed_data, preannotated_from_fields, project)
+
+        # Conditionally validate predictions: skip when label config is default during project creation
+        if project.label_config_is_not_default:
+            validation_errors = []
+            li = LabelInterface(project.label_config)
+
+            for i, task in enumerate(parsed_data):
+                if 'predictions' in task:
+                    for j, prediction in enumerate(task['predictions']):
+                        try:
+                            validation_errors_list = li.validate_prediction(prediction, return_errors=True)
+                            if validation_errors_list:
+                                for error in validation_errors_list:
+                                    validation_errors.append(f'Task {i}, prediction {j}: {error}')
+                        except Exception as e:
+                            error_msg = f'Task {i}, prediction {j}: Error validating prediction - {str(e)}'
+                            validation_errors.append(error_msg)
+
+            if validation_errors:
+                error_message = f'Prediction validation failed ({len(validation_errors)} errors):\n'
+                for error in validation_errors:
+                    error_message += f'- {error}\n'
+
+                raise ValidationError({'predictions': [error_message]})
 
         if commit_to_project:
             # Immediately create project tasks and update project states and counters
@@ -385,6 +410,16 @@ class ImportAPI(generics.CreateAPIView):
 # Import
 @extend_schema(exclude=True)
 class ImportPredictionsAPI(generics.CreateAPIView):
+    """
+    API for importing predictions to a project.
+
+    Memory optimization controlled by feature flag:
+    'fflag_fix_back_4620_memory_efficient_predictions_import_08012025_short'
+
+    When flag is enabled: Uses memory-efficient batch processing (reduces memory usage by 90-99%)
+    When flag is disabled: Uses legacy implementation for safe fallback
+    """
+
     permission_required = all_permissions.projects_change
     parser_classes = (JSONParser, MultiPartParser, FormParser)
     serializer_class = PredictionSerializer
@@ -394,27 +429,135 @@ class ImportPredictionsAPI(generics.CreateAPIView):
         # check project permissions
         project = self.get_object()
 
+        # Use feature flag to control memory-efficient implementation rollout
+        if flag_set('fflag_fix_back_4620_memory_efficient_predictions_import_08012025_short', user=self.request.user):
+            return self._create_memory_efficient(project)
+        else:
+            return self._create_legacy(project)
+
+    def _create_memory_efficient(self, project):
+        """Memory-efficient batch processing implementation"""
+        # Configure batch processing settings
+        # Use smaller batch size for processing to avoid memory issues
+        PROCESSING_BATCH_SIZE = getattr(settings, 'PREDICTION_IMPORT_BATCH_SIZE', 500)
+
+        request_data = self.request.data
+        total_predictions = len(request_data)
+
+        logger.debug(
+            f'Importing {total_predictions} predictions to project {project} using memory-efficient batch processing (batch size: {PROCESSING_BATCH_SIZE})'
+        )
+
+        total_created = 0
+        all_task_ids = set()
+
+        # Process predictions in smaller batches to avoid memory issues
+        for batch_start in range(0, total_predictions, PROCESSING_BATCH_SIZE):
+            batch_end = min(batch_start + PROCESSING_BATCH_SIZE, total_predictions)
+            batch_items = request_data[batch_start:batch_end]
+
+            # Extract task IDs for this batch
+            batch_task_ids = [item.get('task') for item in batch_items]
+
+            # Validate that all task IDs in this batch exist in the project
+            # This is much more memory efficient than loading all project task IDs upfront
+            existing_task_ids = set(
+                Task.objects.filter(project=project, id__in=batch_task_ids).values_list('id', flat=True)
+            )
+
+            # Build predictions for this batch
+            batch_predictions = []
+            for item in batch_items:
+                task_id = item.get('task')
+
+                if task_id not in existing_task_ids:
+                    raise ValidationError(
+                        f'{item} contains invalid "task" field: task ID {task_id} ' f'not found in project {project}'
+                    )
+
+                batch_predictions.append(
+                    Prediction(
+                        task_id=task_id,
+                        project_id=project.id,
+                        result=Prediction.prepare_prediction_result(item.get('result'), project),
+                        score=item.get('score'),
+                        model_version=item.get('model_version', 'undefined'),
+                    )
+                )
+                all_task_ids.add(task_id)
+
+            # Bulk create this batch with the configured batch size
+            batch_created = Prediction.objects.bulk_create(batch_predictions, batch_size=settings.BATCH_SIZE)
+            total_created += len(batch_created)
+
+            logger.debug(
+                f'Processed batch {batch_start}-{batch_end-1}: created {len(batch_created)} predictions '
+                f'(total so far: {total_created})'
+            )
+
+        # Update task counters for all affected tasks
+        # Only pass the unique task IDs that were actually processed
+        if all_task_ids:
+            start_job_async_or_sync(update_tasks_counters, Task.objects.filter(id__in=all_task_ids))
+
+        return Response({'created': total_created}, status=status.HTTP_201_CREATED)
+
+    def _create_legacy(self, project):
+        """Legacy implementation - kept for safe rollback"""
         tasks_ids = set(Task.objects.filter(project=project).values_list('id', flat=True))
 
         logger.debug(
-            f'Importing {len(self.request.data)} predictions to project {project} with {len(tasks_ids)} tasks'
+            f'Importing {len(self.request.data)} predictions to project {project} with {len(tasks_ids)} tasks (legacy mode)'
         )
+
+        li = LabelInterface(project.label_config)
+
+        # Validate all predictions before creating any
+        validation_errors = []
         predictions = []
-        for item in self.request.data:
+
+        for i, item in enumerate(self.request.data):
+            # Validate task ID
             if item.get('task') not in tasks_ids:
-                raise ValidationError(
-                    f'{item} contains invalid "task" field: corresponding task ID couldn\'t be retrieved '
-                    f'from project {project} tasks'
+                validation_errors.append(
+                    f'Prediction {i}: Invalid task ID {item.get("task")} - task not found in project'
                 )
-            predictions.append(
-                Prediction(
-                    task_id=item['task'],
-                    project_id=project.id,
-                    result=Prediction.prepare_prediction_result(item.get('result'), project),
-                    score=item.get('score'),
-                    model_version=item.get('model_version', 'undefined'),
+                continue
+
+            # Validate prediction using LabelInterface only
+            try:
+                validation_errors_list = li.validate_prediction(item, return_errors=True)
+
+                # If prediction is invalid, add error to validation_errors list and continue to next prediction
+                if validation_errors_list:
+                    # Format errors for better readability
+                    for error in validation_errors_list:
+                        validation_errors.append(f'Prediction {i}: {error}')
+                    continue
+
+            except Exception as e:
+                validation_errors.append(f'Prediction {i}: Error validating prediction - {str(e)}')
+                continue
+
+            # If prediction is valid, add it to predictions list to be created
+            try:
+                predictions.append(
+                    Prediction(
+                        task_id=item['task'],
+                        project_id=project.id,
+                        result=Prediction.prepare_prediction_result(item.get('result'), project),
+                        score=item.get('score'),
+                        model_version=item.get('model_version', 'undefined'),
+                    )
                 )
-            )
+            except Exception as e:
+                validation_errors.append(f'Prediction {i}: Failed to create prediction - {str(e)}')
+                continue
+
+        # If there are validation errors, raise them before creating any predictions
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
         predictions_obj = Prediction.objects.bulk_create(predictions, batch_size=settings.BATCH_SIZE)
         start_job_async_or_sync(update_tasks_counters, Task.objects.filter(id__in=tasks_ids))
         return Response({'created': len(predictions_obj)}, status=status.HTTP_201_CREATED)

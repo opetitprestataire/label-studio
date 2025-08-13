@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG NODE_VERSION=22
 ARG PYTHON_VERSION=3.12
-ARG POETRY_VERSION=2.1.3
+ARG POETRY_VERSION=2.1.4
 ARG VERSION_OVERRIDE
 ARG BRANCH_OVERRIDE
 
@@ -52,7 +52,7 @@ RUN --mount=type=cache,target=${YARN_CACHE_FOLDER},sharing=locked \
     yarn version:libs
 
 ################################ Stage: venv-builder (prepare the virtualenv)
-FROM python:${PYTHON_VERSION}-slim AS venv-builder
+FROM python:${PYTHON_VERSION}-slim-bookworm AS venv-builder
 ARG POETRY_VERSION
 
 ENV PYTHONUNBUFFERED=1 \
@@ -116,7 +116,7 @@ RUN --mount=type=bind,source=.git,target=./.git \
     VERSION_OVERRIDE=${VERSION_OVERRIDE} BRANCH_OVERRIDE=${BRANCH_OVERRIDE} poetry run python label_studio/core/version.py
 
 ################################### Stage: prod
-FROM python:${PYTHON_VERSION}-slim AS production
+FROM python:${PYTHON_VERSION}-slim-bookworm AS production
 
 ENV LS_DIR=/label-studio \
     HOME=/label-studio \
