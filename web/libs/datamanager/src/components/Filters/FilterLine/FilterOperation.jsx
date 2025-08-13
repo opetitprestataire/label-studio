@@ -66,7 +66,7 @@ export const FilterOperation = observer(({ filter, field, operator, value, disab
   }
   const operators = operatorList.map(({ key, label }) => {
     if (filter.filter.field.isAnnotationResultsFilterColumn) {
-      if (filter.schema?.multiple ?? true) {
+      if (filter.schema?.multiple ?? false) {
         if (key === "contains") label = "includes all";
         if (key === "not_contains") label = "does not include all";
       } else {
@@ -94,7 +94,7 @@ export const FilterOperation = observer(({ filter, field, operator, value, disab
           key={`${filter.filter.id}-${filter.filter.currentType}`}
           schema={filter.schema}
           filter={filter}
-          multiple={filter.schema?.multiple ?? true}
+          multiple={filter.schema?.multiple ?? false}
           value={value}
           onChange={onChange}
           size="small"
