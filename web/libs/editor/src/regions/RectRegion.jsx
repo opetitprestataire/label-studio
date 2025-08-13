@@ -55,6 +55,7 @@ const RectRegionAbsoluteCoordsDEV3793 = types
       self.updateAppearenceFromState();
     },
     setPosition(x, y, width, height, rotation) {
+      [x, y, width, height, rotation] = self.beforeSetPosition(x, y, width, height, rotation);
       self.x = x;
       self.y = y;
       self.width = width;
@@ -334,15 +335,8 @@ const Model = types
       self.rotation = (rotation + 360) % 360;
     },
 
-    /**
-     * Bounding Box set position on canvas
-     * @param {number} x
-     * @param {number} y
-     * @param {number} width
-     * @param {number} height
-     * @param {number} rotation
-     */
-    setPosition(x, y, width, height, rotation) {
+    beforeSetPosition(x, y, width, height, rotation) {
+      // Konva flipping fix
       if (height < 0) {
         let flippedBack;
         // If height is negative, it means it was flipped. We need to correct it
@@ -366,7 +360,19 @@ const Model = types
           flippedBack.rotation,
         ];
       }
+      return [x, y, width, height, rotation];
+    },
 
+    /**
+     * Bounding Box set position on canvas
+     * @param {number} x
+     * @param {number} y
+     * @param {number} width
+     * @param {number} height
+     * @param {number} rotation
+     */
+    setPosition(x, y, width, height, rotation) {
+      [x, y, width, height, rotation] = self.beforeSetPosition(x, y, width, height, rotation);
       const internalX = self.parent.canvasToInternalX(x);
       const internalY = self.parent.canvasToInternalY(y);
       const internalWidth = self.parent.canvasToInternalX(width);
