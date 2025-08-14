@@ -24,7 +24,7 @@ export const FilterItemType = types.union({
 export const FilterValueList = types
   .model("FilterValueList", {
     items: types.array(FilterItemType),
-    multiple: types.maybeNull(types.boolean),
+    multiple: types.optional(types.boolean, true),
   })
   .views((self) => ({
     get value() {
