@@ -247,14 +247,11 @@ export const ImportPage = ({
     const currentUploadedIds = new Set(files.uploaded.map((f) => f.id));
     const previousUploadedIds = prevUploadedRef.current;
 
-    // On first render, just initialize the ref without triggering animation
-    if (previousUploadedIds.size === 0) {
-      prevUploadedRef.current = currentUploadedIds;
-      return;
-    }
-
     // Find files that were just uploaded (in current but not in previous)
     const justUploaded = new Set([...currentUploadedIds].filter((id) => !previousUploadedIds.has(id)));
+
+    // Update the ref immediately after comparison to ensure it's available for next run
+    prevUploadedRef.current = new Set(currentUploadedIds);
 
     // Clean up animation state for files that are no longer in the uploaded list
     setNewlyUploadedFiles((prev) => {
@@ -262,10 +259,12 @@ export const ImportPage = ({
       return filtered;
     });
 
+    // Animate newly uploaded files (including first upload)
     if (justUploaded.size > 0) {
+      // Apply animation class immediately for better responsiveness
       setNewlyUploadedFiles((prev) => new Set([...prev, ...justUploaded]));
 
-      // Remove flash animation after 2 seconds
+      // Remove animation class after animation completes (CSS handles the animation timing)
       const timeoutId = setTimeout(() => {
         setNewlyUploadedFiles((prev) => {
           const updated = new Set(prev);
@@ -277,9 +276,6 @@ export const ImportPage = ({
       // Cleanup timeout on unmount or dependency change
       return () => clearTimeout(timeoutId);
     }
-
-    // Update the ref with current uploaded IDs for next comparison
-    prevUploadedRef.current = currentUploadedIds;
   }, [files.uploaded]);
 
   const importFilesImmediately = useCallback(
