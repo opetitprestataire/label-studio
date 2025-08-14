@@ -30,7 +30,7 @@ body {
   right: 0;
   width: 179px;
   height: 239px;
-  background: url('../images/login-bg.svg') no-repeat center center;
+  background: url('../images/login-bg.png') no-repeat center center;
   background-size: contain;
 }
 
