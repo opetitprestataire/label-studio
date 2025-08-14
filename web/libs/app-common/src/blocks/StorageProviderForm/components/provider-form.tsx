@@ -1,7 +1,8 @@
 import type React from "react";
 import { FieldRenderer } from "./field-renderer";
 import { type ProviderConfig, getFieldsForRow } from "../types/provider";
-import type { FieldDefinition } from "../types/common";
+import type { FieldDefinition, MessageDefinition } from "../types/common";
+import type { FC } from "react";
 
 interface ProviderFormProps {
   provider: ProviderConfig;
@@ -22,23 +23,24 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
   isEditMode = false,
   target,
 }) => {
+  const getHiddenFields = (field: FieldDefinition | MessageDefinition) =>
+    field.type === "hidden" && (!target || !field.target || field.target === target);
+
   return (
     <div className="space-y-6">
       {/* Render hidden fields first, outside of layout */}
-      {provider.fields
-        .filter((field) => field.type === "hidden" && (!target || !field.target || field.target === target))
-        .map((field) => (
-          <FieldRenderer
-            key={field.name}
-            field={field as FieldDefinition}
-            value={formData[field.name]}
-            onChange={onChange}
-            onBlur={onBlur}
-            error={errors[field.name]}
-            isEditMode={isEditMode}
-            formData={formData}
-          />
-        ))}
+      {provider.fields.filter(getHiddenFields).map((field) => (
+        <FieldRenderer
+          key={field.name}
+          field={field as FieldDefinition}
+          value={formData[field.name]}
+          onChange={onChange}
+          onBlur={onBlur}
+          error={errors[field.name]}
+          isEditMode={isEditMode}
+          formData={formData}
+        />
+      ))}
 
       {/* Render visible fields in layout */}
       {provider.layout.map((row, rowIndex) => {
@@ -77,7 +79,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({
                       </div>
                     ) : (
                       <FieldRenderer
-                        field={field}
+                        field={field as FieldDefinition}
                         value={formData[field.name]}
                         onChange={onChange}
                         onBlur={onBlur}

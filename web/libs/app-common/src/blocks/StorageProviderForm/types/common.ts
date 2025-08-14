@@ -14,6 +14,7 @@ export interface FieldDefinition {
   placeholder?: string;
   required?: boolean;
   schema: z.ZodType;
+  hidden?: boolean;
   options?: Array<{ value: string | boolean | number; label: string }>; // For select fields
   min?: number; // For number/counter fields
   max?: number; // For number/counter fields
