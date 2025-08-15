@@ -48,7 +48,7 @@ def async_import_background(
 
     if project_import.preannotated_from_fields:
         # turn flat task JSONs {"column1": value, "column2": value} into {"data": {"column1"..}, "predictions": [{..."column2"}]
-        raise_errors = flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=user)
+        raise_errors = flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=project.organization.created_by)
         tasks = reformat_predictions(tasks, project_import.preannotated_from_fields, project, raise_errors)
 
     # Always validate predictions regardless of commit_to_project setting
