@@ -76,8 +76,7 @@ class PredictionSerializer(ModelSerializer):
 
     def validate(self, data):
         """Validate prediction using LabelInterface against project configuration"""
-        request = self.context.get('request')
-        if request and not flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=request.user):
+        if not flag_set('fflag_feat_utc_210_prediction_validation_15082025', user='auto'):
             # Skip validation if feature flag is not set
             return super().validate(data)
 
@@ -429,8 +428,7 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
             prediction_errors = self.add_predictions(task_predictions)
 
             raise_prediction_errors = True
-            request = self.context.get('request')
-            if request and not flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=request.user):
+            if not flag_set('fflag_feat_utc_210_prediction_validation_15082025', user='auto'):
                 raise_prediction_errors = False
 
             # If there are prediction validation errors, raise them

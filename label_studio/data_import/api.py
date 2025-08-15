@@ -267,7 +267,7 @@ class ImportAPI(generics.CreateAPIView):
 
         if preannotated_from_fields:
             # turn flat task JSONs {"column1": value, "column2": value} into {"data": {"column1"..}, "predictions": [{..."column2"}]
-            raise_errors = flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=self.request.user)
+            raise_errors = flag_set('fflag_feat_utc_210_prediction_validation_15082025', user='auto')
             parsed_data = reformat_predictions(parsed_data, preannotated_from_fields, project, raise_errors)
 
         # Conditionally validate predictions: skip when label config is default during project creation
@@ -292,7 +292,7 @@ class ImportAPI(generics.CreateAPIView):
                 for error in validation_errors:
                     error_message += f'- {error}\n'
 
-                if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=self.request.user):
+                if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user='auto'):
                     raise ValidationError({'predictions': [error_message]})
                 else:
                     logger.error(f'Prediction validation failed ({len(validation_errors)} errors):\n{error_message}')
@@ -523,7 +523,7 @@ class ImportPredictionsAPI(generics.CreateAPIView):
         for i, item in enumerate(self.request.data):
             # Validate task ID
             if item.get('task') not in tasks_ids:
-                if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=self.request.user):
+                if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user='auto'):
                     validation_errors.append(
                         f'Prediction {i}: Invalid task ID {item.get("task")} - task not found in project'
                     )
@@ -567,7 +567,7 @@ class ImportPredictionsAPI(generics.CreateAPIView):
 
         # If there are validation errors, raise them before creating any predictions
         if validation_errors:
-            if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=self.request.user):
+            if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user='auto'):
                 raise ValidationError(validation_errors)
             else:
                 logger.error(f'Prediction validation failed ({len(validation_errors)} errors):\n{validation_errors}')
