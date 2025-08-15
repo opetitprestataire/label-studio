@@ -48,7 +48,8 @@ def async_import_background(
 
     if project_import.preannotated_from_fields:
         # turn flat task JSONs {"column1": value, "column2": value} into {"data": {"column1"..}, "predictions": [{..."column2"}]
-        tasks = reformat_predictions(tasks, project_import.preannotated_from_fields, project)
+        raise_errors = flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=user)
+        tasks = reformat_predictions(tasks, project_import.preannotated_from_fields, project, raise_errors)
 
     # Always validate predictions regardless of commit_to_project setting
     if project.label_config_is_not_default:
@@ -73,10 +74,13 @@ def async_import_background(
             for error in validation_errors:
                 error_message += f'- {error}\n'
 
-            project_import.error = error_message
-            project_import.status = ProjectImport.Status.FAILED
-            project_import.save()
-            return
+            if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=user):
+                project_import.error = error_message
+                project_import.status = ProjectImport.Status.FAILED
+                project_import.save()
+                return
+            else:
+                logger.error(f'Prediction validation failed ({len(validation_errors)} errors):\n{error_message}')
 
     if project_import.commit_to_project:
         with transaction.atomic():
@@ -159,7 +163,7 @@ def set_reimport_background_failure(job, connection, type, value, _):
     )
 
 
-def reformat_predictions(tasks, preannotated_from_fields, project=None):
+def reformat_predictions(tasks, preannotated_from_fields, project=None, raise_errors=False):
     """
     Transform flat task JSON objects into proper format with separate data and predictions fields.
     Also validates the predictions to ensure they are properly formatted using LabelInterface.
@@ -253,7 +257,7 @@ def reformat_predictions(tasks, preannotated_from_fields, project=None):
         new_tasks.append(new_task)
 
     # If there are validation errors, raise them
-    if validation_errors:
+    if validation_errors and raise_errors:
         raise ValidationError({'preannotated_fields': validation_errors})
 
     return new_tasks
