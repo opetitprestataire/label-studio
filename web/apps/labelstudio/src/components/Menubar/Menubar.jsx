@@ -35,6 +35,7 @@ import { ff } from "@humansignal/core";
 import { openHotkeyHelp } from "@humansignal/app-common/pages/AccountSettings/sections/Hotkeys/Help";
 
 export const MenubarContext = createContext();
+const isIconMenu = ff.isActive(ff.FF_ICON_MENU);
 
 const LeftContextMenu = ({ className }) => (
   <StaticContent id="context-menu-left" className={className}>
@@ -62,7 +63,7 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
 
   const config = useConfig();
   const [sidebarOpened, setSidebarOpened] = useState(defaultOpened ?? false);
-  const [sidebarPinned, setSidebarPinned] = useState(defaultPinned ?? false);
+  const [sidebarPinned, setSidebarPinned] = useState(isIconMenu || (defaultPinned ?? false));
   const [PageContext, setPageContext] = useState({
     Component: null,
     props: {},
@@ -139,8 +140,8 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
         <div className={menubarClass}>
           <Dropdown.Trigger dropdown={menuDropdownRef} closeOnClickOutside={!sidebarPinned}>
             <div className={`${menubarClass.elem("trigger")} main-menu-trigger`}>
-              <LSLogo className={`${menubarClass.elem("logo")}`} alt="Label Studio Logo" />
               <Hamburger opened={sidebarOpened} />
+              <LSLogo className={`${menubarClass.elem("logo")}`} alt="Label Studio Logo" />
             </div>
           </Dropdown.Trigger>
 
@@ -216,13 +217,12 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
               onToggle={sidebarToggle}
               onVisibilityChanged={() => window.dispatchEvent(new Event("resize"))}
               visible={sidebarOpened}
-              className={[sidebarClass, sidebarClass.mod({ floating: !sidebarPinned })].join(" ")}
-              style={{ width: 240 }}
+              className={[sidebarClass, sidebarClass.mod({ floating: !sidebarPinned, iconMenu: isIconMenu })].join(" ")}
             >
               <Menu>
-                {isFF(FF_HOMEPAGE) && <Menu.Item label="Home" to="/" icon={<IconHome />} data-external exact />}
-                <Menu.Item label="Projects" to="/projects" icon={<IconFolder />} data-external exact />
-                <Menu.Item label="Organization" to="/organization" icon={<IconPersonInCircle />} data-external exact />
+                {isFF(FF_HOMEPAGE) && <Menu.Item label="Home" isIconMenuItem={isIconMenu} to="/" icon={<IconHome />} data-external exact />}
+                <Menu.Item label="Projects" isIconMenuItem={isIconMenu} to="/projects" icon={<IconFolder />} data-external exact />
+                <Menu.Item label="Organization" isIconMenuItem={isIconMenu} to="/organization" icon={<IconPersonInCircle />} data-external exact />
 
                 <Menu.Spacer />
 
@@ -230,12 +230,14 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
 
                 <Menu.Item
                   label="API"
+                  isIconMenuItem={isIconMenu}
                   href="https://api.labelstud.io/api-reference/introduction/getting-started"
                   icon={<IconTerminal />}
                   target="_blank"
                 />
-                <Menu.Item label="Docs" href="https://labelstud.io/guide" icon={<IconBook />} target="_blank" />
+                <Menu.Item label="Docs" isIconMenuItem={isIconMenu} href="https://labelstud.io/guide" icon={<IconBook />} target="_blank" />
                 <Menu.Item
+                  isIconMenuItem={isIconMenu}
                   label="GitHub"
                   href="https://github.com/HumanSignal/label-studio"
                   icon={<IconGithub />}
@@ -243,6 +245,7 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
                   rel="noreferrer"
                 />
                 <Menu.Item
+                  isIconMenuItem={isIconMenu}
                   label="Slack Community"
                   href="https://slack.labelstud.io/?source=product-menu"
                   icon={<IconSlack />}
@@ -252,16 +255,19 @@ export const Menubar = ({ enabled, defaultOpened, defaultPinned, children, onSid
 
                 <VersionNotifier showCurrentVersion />
 
-                <Menu.Divider />
+                {!isIconMenu && <Menu.Divider />}
 
-                <Menu.Item
-                  icon={<IconPin />}
-                  className={sidebarClass.elem("pin")}
-                  onClick={sidebarPin}
-                  active={sidebarPinned}
-                >
-                  {sidebarPinned ? "Unpin menu" : "Pin menu"}
-                </Menu.Item>
+                {!isIconMenu &&(
+                  <Menu.Item
+                    isIconMenuItem={isIconMenu}
+                    icon={<IconPin />}
+                    className={sidebarClass.elem("pin")}
+                    onClick={sidebarPin}
+                    active={sidebarPinned}
+                  >
+                    {sidebarPinned ? "Unpin menu" : "Pin menu"}
+                  </Menu.Item>
+                )}
               </Menu>
             </Dropdown>
           )}

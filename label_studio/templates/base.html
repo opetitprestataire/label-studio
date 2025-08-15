@@ -73,7 +73,11 @@
 
 </head>
 
-<body>
+<body 
+{% if feature_flags.fflag_feat_fit_528_icon_menu_short %}
+  class="iconMenuSupport"
+{% endif %}
+>
 
 <div class="app-wrapper"></div>
 

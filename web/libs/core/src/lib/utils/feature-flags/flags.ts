@@ -105,3 +105,9 @@ export const FF_NEW_STORAGES = "fflag_feat_bros_193_new_cloud_storage_providers_
  * Datamanager filter members
  */
 export const FF_DM_FILTER_MEMBERS = "fflag_feat_fit_449_datamanager_filter_members_short";
+
+/**
+ * Icon menu
+ * @link https://app.launchdarkly.com/projects/default/flags/fflag_feat_fit_528_icon_menu_short/targeting?env=test&env=production&env=onpremise&selected-env=test
+ */
+export const FF_ICON_MENU = "fflag_feat_fit_528_icon_menu_short";

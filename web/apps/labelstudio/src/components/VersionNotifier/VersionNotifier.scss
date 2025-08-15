@@ -73,3 +73,11 @@
     color: var(--primary_link);
   }
 }
+
+:global(.iconMenuSupport) {
+  .current-version {
+    padding: 0;
+    margin-left: 0;
+    font-size: 8px;
+  }
+}

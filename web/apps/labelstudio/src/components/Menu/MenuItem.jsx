@@ -1,6 +1,8 @@
 import { NavLink } from "react-router-dom";
 import { cn } from "../../utils/bem";
 import { absoluteURL } from "../../utils/helpers";
+import { Tooltip } from "@humansignal/ui";
+import { useMemo } from "react";
 
 export const MenuItem = ({
   children,
@@ -14,6 +16,7 @@ export const MenuItem = ({
   active = false,
   isDangerous = false,
   onClick,
+  isIconMenuItem = false,
   ...rest
 }) => {
   const rootClass = cn("main-menu", { elem: "item" });
@@ -34,7 +37,11 @@ export const MenuItem = ({
 
   if (className) classList.push(className);
 
-  const linkContent = (
+  const linkContent = isIconMenuItem ? (
+    <span className={rootClass.elem("item-icon")}>
+      {icon}
+    </span>
+  ) : (
     <>
       {icon && <span className={rootClass.elem("item-icon")}>{icon}</span>}
       {children ?? label}
@@ -55,7 +62,7 @@ export const MenuItem = ({
   }
 
   return (
-    <li>
+    <li className={isIconMenuItem ? "flex flex-col items-center gap-1" : ""}>
       {to ? (
         <NavLink to={finalHref} {...linkAttributes} exact={exact} activeClassName={activeClassName} data-external>
           {linkContent}
@@ -67,6 +74,7 @@ export const MenuItem = ({
       ) : (
         <span {...linkAttributes}>{linkContent}</span>
       )}
+      {isIconMenuItem && <div className="text-center text-[10px] font-medium text-neutral-surface-subtle pointer">{children ?? label}</div>}
     </li>
   );
 };
