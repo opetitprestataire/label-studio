@@ -85,6 +85,7 @@ def user_signup(request):
                 'token': token,
                 'found_us_options': forms.FOUND_US_OPTIONS,
                 'elaborate': forms.FOUND_US_ELABORATE,
+                'user_type_options': forms.USER_TYPE_OPTIONS,
             },
         )
 

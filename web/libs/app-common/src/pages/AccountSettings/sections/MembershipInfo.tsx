@@ -124,10 +124,10 @@ export const MembershipInfo = () => {
         </div>
       )}
 
-      {membership.data?.role && (
+      {user?.user_type && (
         <div className="flex gap-2 w-full justify-between">
           <div>My role</div>
-          <div>{membership.data.role}</div>
+          <div>{user?.user_type}</div>
         </div>
       )}
 
