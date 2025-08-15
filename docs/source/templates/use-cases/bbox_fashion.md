@@ -8,6 +8,8 @@ order: 1103
 meta_description: Template for using Label Studio to perform object detection with rectangular bounding boxes for fashion retail.
 ---
 
+![Screenshot of labeling interface](/images/templates-misc/fashion.png)
+
 Object Detection with Bounding Boxes is essential for AI in fashion retail, enabling models to accurately identify and categorize various clothing items within images. By successfully detecting items, AI can significantly enhance tasks such as inventory management, visual search, and personalized recommendations, driving sales and improving customer experiences.
 
 However, the data labeling process for fashion retail is fraught with challenges, including time-intensive labeling tasks, consistency issues across large datasets, and the necessity for domain expertise in fashion terminology and styles. Label Studio effectively addresses these challenges through its hybrid AI-assisted pre-labeling feature, which accelerates the initial labeling process and improves consistency. The platform also incorporates expert validation, ensuring that high-quality annotations are maintained. With collaboration tools that facilitate seamless teamwork between annotators and reviewers, and customizable templates specifically designed for fashion applications, Label Studio increases labeling efficiency and allows for scalable workflows, ultimately delivering higher model performance and faster time-to-market for fashion AI solutions.
