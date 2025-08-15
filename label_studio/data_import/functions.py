@@ -77,7 +77,7 @@ def async_import_background(
             if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=user):
                 project_import.error = error_message
                 project_import.status = ProjectImport.Status.FAILED
-                project_import.save()
+                project_import.save(update_fields=['error', 'status'])
                 return
             else:
                 logger.error(f'Prediction validation failed ({len(validation_errors)} errors):\n{error_message}')
@@ -123,7 +123,7 @@ def async_import_background(
                 error_message = f'Error creating tasks: {str(e)}'
                 project_import.error = error_message
                 project_import.status = ProjectImport.Status.FAILED
-                project_import.save()
+                project_import.save(update_fields=['error', 'status'])
                 return
     else:
         # Do nothing - just output file upload ids for further use
