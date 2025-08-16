@@ -393,8 +393,14 @@ const Model = types
         });
 
         // Calculate snapped dimensions
-        const snappedWidth = bottomRightPoint.x - topLeftPoint.x;
-        const snappedHeight = bottomRightPoint.y - topLeftPoint.y;
+        let snappedWidth = bottomRightPoint.x - topLeftPoint.x;
+        let snappedHeight = bottomRightPoint.y - topLeftPoint.y;
+
+        // Ensure at least 1 pixel in size after snapping
+        const minPixelWidth = self.parent?.zoomedPixelSize?.x ?? 0;
+        const minPixelHeight = self.parent?.zoomedPixelSize?.y ?? 0;
+        if (snappedWidth < minPixelWidth) snappedWidth = minPixelWidth;
+        if (snappedHeight < minPixelHeight) snappedHeight = minPixelHeight;
 
         self.setPositionInternal(topLeftPoint.x, topLeftPoint.y, snappedWidth, snappedHeight, rotation);
       } else {
