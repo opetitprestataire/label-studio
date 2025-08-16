@@ -1,6 +1,7 @@
 import { SidebarMenu } from "../../components/SidebarMenu/SidebarMenu";
 import { WebhookPage } from "../WebhookPage/WebhookPage";
 import { DangerZone } from "./DangerZone";
+import { Contributors } from "./Contributors";
 import { GeneralSettings } from "./GeneralSettings";
 import { AnnotationSettings } from "./AnnotationSettings";
 import { LabelingSettings } from "./LabelingSettings";
@@ -24,6 +25,7 @@ export const MenuLayout = ({ children, ...routeProps }) => {
         isAllowCloudStorage && StorageSettings,
         WebhookPage,
         DangerZone,
+        Contributors,
       ].filter(Boolean)}
       path={routeProps.match.url}
       children={children}
@@ -38,6 +40,7 @@ const pages = {
   PredictionsSettings,
   WebhookPage,
   DangerZone,
+  Contributors,
 };
 
 isAllowCloudStorage && (pages.StorageSettings = StorageSettings);

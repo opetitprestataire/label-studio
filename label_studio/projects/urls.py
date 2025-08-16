@@ -45,6 +45,8 @@ _api_urlpatterns = [
     path('<int:pk>/sample-task/', api.ProjectSampleTask.as_view(), name='project-sample-task'),
     # List available model versions
     path('<int:pk>/model-versions/', api.ProjectModelVersions.as_view(), name='project-model-versions'),
+    # List project contributors
+    path('<int:pk>/contributors/', api.ProjectContributorListAPI.as_view(), name='project-contributors-list'),
 ]
 
 _api_urlpatterns_templates = [

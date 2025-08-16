@@ -6,6 +6,7 @@ import { Oneof } from "../../components/Oneof/Oneof";
 import { Spinner } from "../../components/Spinner/Spinner";
 import { ApiContext } from "../../providers/ApiProvider";
 import { useContextProps } from "../../providers/RoutesProvider";
+import { useCurrentUser } from "../../providers/CurrentUser";
 import { Block, Elem } from "../../utils/bem";
 import { CreateProject } from "../CreateProject/CreateProject";
 import { DataManagerPage } from "../DataManager/DataManager";
@@ -22,6 +23,7 @@ const getCurrentPage = () => {
 
 export const ProjectsPage = () => {
   const api = React.useContext(ApiContext);
+  const { user } = useCurrentUser();
   const abortController = useAbortController();
   const [projectsList, setProjectsList] = React.useState([]);
   const [networkState, setNetworkState] = React.useState(null);
@@ -110,7 +112,11 @@ export const ProjectsPage = () => {
   React.useEffect(() => {
     // there is a nice page with Create button when list is empty
     // so don't show the context button in that case
-    setContextProps({ openModal, showButton: projectsList.length > 0 });
+    if (user?.user_type === "Contributor") {
+      setContextProps({ openModal, showButton: false });
+    } else {
+      setContextProps({ openModal, showButton: projectsList.length > 0 });
+    }
   }, [projectsList.length]);
 
   return (

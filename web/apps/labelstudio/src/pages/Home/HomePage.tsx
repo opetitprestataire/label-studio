@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { HeidiTips } from "../../components/HeidiTips/HeidiTips";
 import { useAPI } from "../../providers/ApiProvider";
+import { useCurrentUser } from "../../providers/CurrentUser";
 import { CreateProject } from "../CreateProject/CreateProject";
 import { InviteLink } from "../Organization/PeoplePage/InviteLink";
 import type { Page } from "../types/Page";
@@ -51,6 +52,7 @@ type Action = (typeof actions)[number]["type"];
 
 export const HomePage: Page = () => {
   const api = useAPI();
+  const { user } = useCurrentUser();
   const [creationDialogOpen, setCreationDialogOpen] = useState(false);
   const [invitationOpen, setInvitationOpen] = useState(false);
   const { data, isFetching, isSuccess, isError } = useQuery({
@@ -81,7 +83,7 @@ export const HomePage: Page = () => {
         <section className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
             <Typography variant="headline" size="small">
-              Welcome 👋
+              Welcome👋
             </Typography>
             <Typography size="small" className="text-neutral-content-subtler">
               Let's get you started.
@@ -89,6 +91,10 @@ export const HomePage: Page = () => {
           </div>
           <div className="flex justify-start gap-4">
             {actions.map((action) => {
+              if (action.type === "createProject" && user?.user_type === "Contributor") {
+                return null;
+              }
+
               return (
                 <Button
                   key={action.title}
