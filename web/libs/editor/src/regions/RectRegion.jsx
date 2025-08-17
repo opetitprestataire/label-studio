@@ -397,8 +397,8 @@ const Model = types
         let snappedHeight = bottomRightPoint.y - topLeftPoint.y;
 
         // Ensure at least 1 pixel in size after snapping
-        const minPixelWidth = self.parent?.zoomedPixelSize?.x ?? 0;
-        const minPixelHeight = self.parent?.zoomedPixelSize?.y ?? 0;
+        const minPixelWidth = self.parent?.zoomedPixelSize?.x ?? 1;
+        const minPixelHeight = self.parent?.zoomedPixelSize?.y ?? 1;
         if (snappedWidth < minPixelWidth) snappedWidth = minPixelWidth;
         if (snappedHeight < minPixelHeight) snappedHeight = minPixelHeight;
 
