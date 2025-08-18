@@ -168,9 +168,11 @@ const DrawingTool = types
       createRegion(opts, skipAfterCreate = false) {
         const control = self.control;
         const resultValue = control.getResultValue();
+        const activeStates = self.obj.activeStates();
+        // Remove the main control from additional states to avoid duplication
+        const additionalStates = activeStates.filter(state => state !== control);
 
-        self.currentArea = self.annotation.createResult(opts, resultValue, control, self.obj, skipAfterCreate);
-        self.applyActiveStates(self.currentArea);
+        self.currentArea = self.annotation.createResult(opts, resultValue, control, self.obj, skipAfterCreate, additionalStates);
         return self.currentArea;
       },
       deleteRegion() {

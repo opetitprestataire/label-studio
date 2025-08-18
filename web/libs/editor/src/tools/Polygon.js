@@ -120,7 +120,6 @@ const _Tool = types
         self.mode = "drawing";
         self.currentArea = self.createRegion(self.createRegionOptions({ x: point.x, y: point.y }), true);
         self.setDrawing(true);
-        self.applyActiveStates(self.currentArea);
       },
 
       _finishDrawing() {

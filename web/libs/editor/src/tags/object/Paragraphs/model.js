@@ -587,11 +587,11 @@ const ParagraphsLoadingModel = types.model().actions((self) => ({
 
     if (states.length === 0) return;
 
-    const control = states[0];
+    const [control, ...rest] = states;
     const labels = { [control.valueType]: control.selectedValues() };
 
     for (const range of ranges) {
-      const area = self.annotation.createResult(range, labels, control, self);
+      const area = self.annotation.createResult(range, labels, control, self, false, rest);
 
       area.setText(range.text);
 
@@ -611,9 +611,9 @@ const ParagraphsLoadingModel = types.model().actions((self) => ({
 
     if (states.length === 0) return;
 
-    const control = states[0];
+    const [control, ...rest] = states;
     const labels = { [control.valueType]: control.selectedValues() };
-    const area = self.annotation.createResult(range, labels, control, self);
+    const area = self.annotation.createResult(range, labels, control, self, false, rest);
 
     area.setText(range.text);
 

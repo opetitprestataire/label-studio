@@ -626,21 +626,20 @@ const Model = types
       const states = self.getAvailableStates();
 
       if (states.length === 0) return;
-      const control = states[0];
+      const [control, ...rest] = states;
       const labels = { [control.valueType]: control.selectedValues() };
 
-      // const r = self.createRegion(start, end, clonedStates);
-      const r = self.annotation.createResult({ start, end, instant: start === end }, labels, control, self);
+      const r = self.annotation.createResult({ start, end, instant: start === end }, labels, control, self, false, rest);
 
       return r;
     },
 
-    regionChanged(timerange, i, activeStates) {
+    regionChanged(timerange, i) {
       const r = self.regs[i];
       let needUpdate = false;
 
       if (!r) {
-        const newRegion = self.addRegion(timerange.start, timerange.end, activeStates);
+        const newRegion = self.addRegion(timerange.start, timerange.end);
 
         needUpdate = true;
         newRegion.notifyDrawingFinished();

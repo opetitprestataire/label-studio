@@ -416,9 +416,10 @@ export const AudioModel = types.compose(
             return;
           }
 
-          const control = self.activeState;
+          const activeStates = self.activeStates();
+          const [control, ...rest] = activeStates;
           const labels = { [control.valueType]: control.selectedValues() };
-          const r = self.annotation.createResult(wsRegion, labels, control, self);
+          const r = self.annotation.createResult(wsRegion, labels, control, self, false, rest);
           const updatedRegion = wsRegion.convertToRegion(labels.labels);
 
           r.setWSRegion(updatedRegion);

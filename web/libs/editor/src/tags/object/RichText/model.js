@@ -4,7 +4,6 @@ import { createRef } from "react";
 import Constants from "../../../core/Constants";
 import { customTypes } from "../../../core/CustomTypes";
 import { errorBuilder } from "../../../core/DataValidator/ConfigValidator";
-import { cloneNode } from "../../../core/Helpers";
 import { AnnotationMixin } from "../../../mixins/AnnotationMixin";
 import { STATE_CLASS_MODS } from "../../../mixins/HighlightMixin";
 import IsReadyMixin from "../../../mixins/IsReadyMixin";
@@ -390,17 +389,10 @@ const Model = types
         const [control, ...rest] = states;
         const values = doubleClickLabel?.value ?? control.selectedValues();
         const labels = { [control.valueType]: values };
-        // Clone labels nodes to avoid unselecting them on creating result
-        const restSelectedStates = rest.map((state) => cloneNode(state));
 
-        const area = self.annotation.createResult(range, labels, control, self);
+        // Create area with primary control and pass additional states
+        const area = self.annotation.createResult(range, labels, control, self, false, rest);
         const root = self.getRootNode();
-
-        //when user is using two different labels tag to draw a region, the other labels will be added to the region
-        restSelectedStates.forEach((state) => {
-          area.setValue(state);
-          destroyNode(state);
-        });
 
         area._range = range._range;
 

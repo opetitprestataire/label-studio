@@ -302,12 +302,8 @@ const Model = types
           },
         ];
 
-        const area = self.annotation.createResult({ sequence }, {}, control, self);
-
-        // add labels
-        for (const tag of self.activeStates()) {
-          area.setValue(tag);
-        }
+        const activeStates = self.activeStates();
+        const area = self.annotation.createResult({ sequence }, {}, control, self, false, activeStates);
 
         return area;
       },
@@ -324,13 +320,13 @@ const Model = types
         const value = {
           ranges: [{ start: frame, end: frame }],
         };
-        // @todo only one attached labeling tag is supported right now :(
-        const labels = self.activeStates()?.[0];
+        const activeStates = self.activeStates();
+        const additionalStates = activeStates.filter(state => state !== control);
         const labeling = {
-          [labels.valueType]: labels.selectedValues(),
+          [control.valueType]: control.selectedValues(),
         };
 
-        return self.annotation.createResult(value, labeling, control, self);
+        return self.annotation.createResult(value, labeling, control, self, false, additionalStates);
       },
 
       deleteRegion(id) {
