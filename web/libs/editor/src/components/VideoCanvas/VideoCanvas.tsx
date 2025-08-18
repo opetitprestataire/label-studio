@@ -481,7 +481,10 @@ export const VideoCanvas = memo(
       pause() {
         videoRef.current?.pause();
         if (isFF(FF_VIDEO_FRAME_SEEK_PRECISION)) {
-          this.currentTime = clamp(this.frameSteppedTime(), 0, this.duration);
+          // If duration is not finite,
+          // then we are trying to pause (most probably caused by buffering) before video is loaded
+          // so we need to correct the duration to 0 to avoid NaN currentTime
+          this.currentTime = clamp(this.frameSteppedTime(), 0, this.duration || 0);
         }
       },
       seek(time) {
