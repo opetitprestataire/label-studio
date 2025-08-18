@@ -29,11 +29,11 @@ However, the process of labeling wildlife images can be fraught with challenges,
   <Image name="image" value="$image" zoom="true"/>
   <PolygonLabels name="label" toName="image"
                  strokeWidth="3" pointSize="small"
-                 opacity="0.9">
+                 opacity="0.5">
     <Label value="Elephant" background="green"/>
     <Label value="Lion" background="orange"/>
     <Label value="Rhinoceros" background="gray"/>
-    <Label value="Zebra" background="black"/>
+    <Label value="Zebra" background="blue"/>
     <Label value="Giraffe" background="yellow"/>
   </PolygonLabels>
 </View>
