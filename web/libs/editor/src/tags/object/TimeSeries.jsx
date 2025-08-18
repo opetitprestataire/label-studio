@@ -315,7 +315,7 @@ const Model = types
             // Pad fractional seconds to exactly 3 digits for consistent parsing
             if (typeof value === "string" && value.includes(".")) {
               // Match timestamp with decimal point and capture fractional part
-              value = value.replace(/\.(\d{0,3})\b/, (match, fractional) => {
+              value = value.replace(/\.(\d{0,3})\b/, (_match, fractional) => {
                 // Pad fractional seconds to exactly 3 digits
                 return `.${fractional.padEnd(3, "0")}`;
               });
@@ -629,7 +629,14 @@ const Model = types
       const [control, ...rest] = states;
       const labels = { [control.valueType]: control.selectedValues() };
 
-      const r = self.annotation.createResult({ start, end, instant: start === end }, labels, control, self, false, rest);
+      const r = self.annotation.createResult(
+        { start, end, instant: start === end },
+        labels,
+        control,
+        self,
+        false,
+        rest,
+      );
 
       return r;
     },

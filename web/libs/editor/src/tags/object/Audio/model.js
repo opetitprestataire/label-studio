@@ -524,7 +524,7 @@ export const AudioModel = types.compose(
               self._ws.destroy();
               self._ws = null;
             }
-          } catch (err) {
+          } catch (_err) {
             self._ws = null;
             console.warn("Already destroyed");
           }

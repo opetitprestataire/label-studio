@@ -1,5 +1,5 @@
 import * as ff from "@humansignal/core/lib/utils/feature-flags/ff";
-import { destroy as destroyNode, flow, types } from "mobx-state-tree";
+import { flow, types } from "mobx-state-tree";
 import { createRef } from "react";
 import Constants from "../../../core/Constants";
 import { customTypes } from "../../../core/CustomTypes";

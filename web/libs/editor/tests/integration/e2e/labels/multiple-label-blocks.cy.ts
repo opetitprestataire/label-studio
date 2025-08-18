@@ -325,9 +325,6 @@ describe("Multiple Label Blocks - All Object Tags", () => {
 
       cy.log("Verify separate results for each label block");
       LabelStudio.serialize().then((results) => {
-        cy.window().then((win) => {
-          win.console.log(`!> results`, results);
-        });
         expect(results).to.have.length(2);
 
         const eventsResult = results.find((r: any) => r.from_name === "events");

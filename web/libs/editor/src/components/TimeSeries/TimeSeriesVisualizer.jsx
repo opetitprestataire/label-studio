@@ -713,10 +713,6 @@ class TimeSeriesVisualizerD3 extends React.Component {
       channel.optimizedSeries = series;
     }
 
-    const times = series.map((x) => {
-      return x[time];
-    });
-
     const values = series.map((x) => {
       return x[column];
     });

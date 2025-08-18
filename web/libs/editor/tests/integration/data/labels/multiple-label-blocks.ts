@@ -139,36 +139,38 @@ export const hyperTextLabelsConfig = `
 
 // Test data
 export const testImageData = {
-  image: "https://htx-pub.s3.us-east-1.amazonaws.com/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg"
+  image:
+    "https://htx-pub.s3.us-east-1.amazonaws.com/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg",
 };
 
 export const testTextData = {
-  text: "The quick brown fox jumps over the lazy dog. This sentence contains many different letters."
+  text: "The quick brown fox jumps over the lazy dog. This sentence contains many different letters.",
 };
 
 export const testHyperTextData = {
-  hypertext: "<article><h2>Sample Article</h2><p>The quick <strong>brown fox</strong> jumps over the lazy dog. This sentence contains many different letters.</p></article>"
+  hypertext:
+    "<article><h2>Sample Article</h2><p>The quick <strong>brown fox</strong> jumps over the lazy dog. This sentence contains many different letters.</p></article>",
 };
 
 export const testParagraphsData = {
   paragraphs: [
     {
       author: "Speaker A",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
     {
-      author: "Speaker B", 
-      text: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      author: "Speaker B",
+      text: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
     {
       author: "Speaker A",
-      text: "Ut enim ad minim veniam, quis nostrud exercitation ullamco."
-    }
-  ]
+      text: "Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+    },
+  ],
 };
 
 export const testAudioData = {
-  audio: "/public/files/barradeen-emotional.mp3"
+  audio: "/public/files/barradeen-emotional.mp3",
 };
 
 const timeseriesTime = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -177,9 +179,9 @@ export const testTimeseriesData = {
     time: timeseriesTime,
     events: timeseriesTime.map((t) => 100 * Math.sin(t / 2)),
     patterns: timeseriesTime.map((t) => 100 * Math.cos(t / 3)),
-  }
+  },
 };
 
 export const testVideoData = {
-  video: "/public/files/opossum_intro.webm"
-}; 
+  video: "/public/files/opossum_intro.webm",
+};

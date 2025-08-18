@@ -321,7 +321,7 @@ const Model = types
           ranges: [{ start: frame, end: frame }],
         };
         const activeStates = self.activeStates();
-        const additionalStates = activeStates.filter(state => state !== control);
+        const additionalStates = activeStates.filter((state) => state !== control);
         const labeling = {
           [control.valueType]: control.selectedValues(),
         };
