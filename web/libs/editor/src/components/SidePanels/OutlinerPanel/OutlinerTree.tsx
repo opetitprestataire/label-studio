@@ -424,7 +424,7 @@ const RootTitle: FC<any> = observer(
               </Elem>
             )}
           </Elem>
-          {item.hideable && (
+          {item?.hideable !== false && (
             <RegionControls
               item={item}
               entity={props.entity}
