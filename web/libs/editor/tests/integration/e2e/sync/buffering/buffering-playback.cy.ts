@@ -28,21 +28,53 @@ describe("Sync buffering playback", () => {
       Paragraphs.mediaElement.should("exist");
 
       cy.window().then((win) => {
-        win._wasBuffered = false;
+        (win as any)._wasBuffered = false;
+        (win as any)._playedPhrases = new Set();
+        (win as any)._totalPhrases = fullOpossumSnowData.text.length;
+
         AudioView.root.then(($audioRoot) => {
-          let observer: MutationObserver | null = null;
+          let bufferingObserver: MutationObserver | null = null;
+          let buttonObserver: MutationObserver | null = null;
+
           const checkBuffering = () => {
             const bufferingIndicators = win.document.querySelectorAll(AudioView._bufferingIndicatorSelector);
             const isBuffering = bufferingIndicators.length > 0;
             if (isBuffering) {
-              win._wasBuffered = true;
-              observer?.disconnect();
+              (win as any)._wasBuffered = true;
+              bufferingObserver?.disconnect();
             }
           };
-          const config = { childList: true, subtree: true };
-          observer = new MutationObserver(checkBuffering);
 
-          observer.observe($audioRoot[0], config);
+          const checkAttributeChanges = (mutations: MutationRecord[]) => {
+            mutations.forEach((mutation) => {
+              const button = mutation.target as HTMLButtonElement;
+              if (button.getAttribute("aria-label") === "pause") {
+                const phraseElement = button.parentElement.querySelector('[data-testid^="phrase:"]');
+                if (phraseElement) {
+                  const phraseId = phraseElement.getAttribute("data-testid")?.replace("phrase:", "");
+                  if (phraseId) {
+                    (win as any)._playedPhrases.add(Number.parseInt(phraseId));
+                  }
+                }
+              }
+            });
+          };
+
+          // Get all phrase buttons once and observe them specifically
+          const phraseButtons = win.document.querySelectorAll('[class^="phraseContainer--"] button[aria-label]');
+
+          const bufferingConfig = { childList: true, subtree: true };
+          const attributeConfig = { attributes: true, attributeFilter: ["aria-label"] };
+
+          bufferingObserver = new MutationObserver(checkBuffering);
+          buttonObserver = new MutationObserver(checkAttributeChanges);
+
+          bufferingObserver.observe($audioRoot[0], bufferingConfig);
+
+          // Observe each phrase button individually for attribute changes
+          phraseButtons.forEach((button) => {
+            buttonObserver.observe(button, attributeConfig);
+          });
         });
       });
 
@@ -54,13 +86,30 @@ describe("Sync buffering playback", () => {
 
       AudioView.playButton.click();
 
-      for (let i = 0; i < fullOpossumSnowData.text.length - 1; i++) {
-        Paragraphs.hasPhrasePlaying(i, 40000);
-      }
+      // Wait for audio playback to complete
+      AudioView.mediaElement.should(($media) => {
+        const mediaElement = $media[0] as HTMLMediaElement;
+
+        return new Cypress.Promise((resolve) => {
+          const checkIfEnded = () => {
+            if (mediaElement.currentTime > 41 || mediaElement.ended) {
+              resolve();
+            } else {
+              setTimeout(checkIfEnded, 1000);
+            }
+          };
+          checkIfEnded();
+        });
+      });
+
+      // Check that all phrases were played
+      cy.window().then((win) => {
+        expect((win as any)._playedPhrases.size).to.equal((win as any)._totalPhrases);
+      });
     };
     testScenario();
     cy.window().then((win) => {
-      if (!win._wasBuffered && attempts-- > 1) {
+      if (!(win as any)._wasBuffered && attempts-- > 1) {
         testScenario();
       }
     });
