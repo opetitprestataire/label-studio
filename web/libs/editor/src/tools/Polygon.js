@@ -72,12 +72,6 @@ const _Tool = types
     };
   })
   .actions((self) => {
-    const Super = {
-      startDrawing: self.startDrawing,
-      _finishDrawing: self._finishDrawing,
-      deleteRegion: self.deleteRegion,
-    };
-
     let disposer;
     let closed;
 
