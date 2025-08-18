@@ -2,6 +2,13 @@ import { AudioView, LabelStudio, Paragraphs } from "@humansignal/frontend-test/h
 import { Network } from "@humansignal/frontend-test/helpers/utils";
 import { fullOpossumSnowData, videoAudioParagraphsConfig } from "../../../data/sync/video-audio-paragraphs";
 
+// Local type extensions for this test
+type TestWindow = Cypress.AUTWindow & {
+  _wasBuffered?: boolean;
+  _playedPhrases?: Set<number>;
+  _totalPhrases?: number;
+};
+
 describe("Sync buffering playback", () => {
   beforeEach(() => {
     LabelStudio.addFeatureFlagsOnPageLoad({
@@ -27,10 +34,11 @@ describe("Sync buffering playback", () => {
       AudioView.isReady();
       Paragraphs.mediaElement.should("exist");
 
-      cy.window().then((win) => {
-        (win as any)._wasBuffered = false;
-        (win as any)._playedPhrases = new Set();
-        (win as any)._totalPhrases = fullOpossumSnowData.text.length;
+      cy.window().then((win: TestWindow) => {
+        const testWin = win as TestWindow;
+        testWin._wasBuffered = false;
+        testWin._playedPhrases = new Set();
+        testWin._totalPhrases = fullOpossumSnowData.text.length;
 
         AudioView.root.then(($audioRoot) => {
           let bufferingObserver: MutationObserver | null = null;
@@ -40,7 +48,7 @@ describe("Sync buffering playback", () => {
             const bufferingIndicators = win.document.querySelectorAll(AudioView._bufferingIndicatorSelector);
             const isBuffering = bufferingIndicators.length > 0;
             if (isBuffering) {
-              (win as any)._wasBuffered = true;
+              testWin._wasBuffered = true;
               bufferingObserver?.disconnect();
             }
           };
@@ -49,11 +57,11 @@ describe("Sync buffering playback", () => {
             mutations.forEach((mutation) => {
               const button = mutation.target as HTMLButtonElement;
               if (button.getAttribute("aria-label") === "pause") {
-                const phraseElement = button.parentElement.querySelector('[data-testid^="phrase:"]');
+                const phraseElement = button.parentElement?.querySelector('[data-testid^="phrase:"]');
                 if (phraseElement) {
                   const phraseId = phraseElement.getAttribute("data-testid")?.replace("phrase:", "");
                   if (phraseId) {
-                    (win as any)._playedPhrases.add(Number.parseInt(phraseId));
+                    testWin._playedPhrases!.add(Number.parseInt(phraseId));
                   }
                 }
               }
@@ -104,12 +112,14 @@ describe("Sync buffering playback", () => {
 
       // Check that all phrases were played
       cy.window().then((win) => {
-        expect((win as any)._playedPhrases.size).to.equal((win as any)._totalPhrases);
+        const testWin = win as TestWindow;
+        expect(testWin._playedPhrases!.size).to.equal(testWin._totalPhrases);
       });
     };
     testScenario();
     cy.window().then((win) => {
-      if (!(win as any)._wasBuffered && attempts-- > 1) {
+      const testWin = win as TestWindow;
+      if (!testWin._wasBuffered && attempts-- > 1) {
         testScenario();
       }
     });
