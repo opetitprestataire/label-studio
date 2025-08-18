@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG NODE_VERSION=22
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION=3.13
 ARG POETRY_VERSION=2.1.4
 ARG VERSION_OVERRIDE
 ARG BRANCH_OVERRIDE
@@ -64,6 +64,7 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_CACHE_DIR="/.poetry-cache" \
     POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON=true \
     PATH="/opt/poetry/bin:$PATH"
 
 ADD https://install.python-poetry.org /tmp/install-poetry.py
