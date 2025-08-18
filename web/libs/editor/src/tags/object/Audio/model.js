@@ -8,6 +8,7 @@ import ProcessAttrsMixin from "../../../mixins/ProcessAttrs";
 import { SyncableMixin } from "../../../mixins/Syncable";
 import { AudioRegionModel } from "../../../regions/AudioRegion";
 import { FF_LSDV_E_278, isFF } from "../../../utils/feature-flags";
+import { ff } from "@humansignal/core";
 import { isDefined } from "../../../utils/utilities";
 import ObjectBase from "../Base";
 import { WS_SPEED, WS_VOLUME, WS_ZOOM_X } from "./constants";
@@ -419,7 +420,9 @@ export const AudioModel = types.compose(
           const activeStates = self.activeStates();
           const [control, ...rest] = activeStates;
           const labels = { [control.valueType]: control.selectedValues() };
-          const r = self.annotation.createResult(wsRegion, labels, control, self, false, rest);
+          const r = ff.isActive(ff.FF_MULTIPLE_LABELS_REGIONS)
+            ? self.annotation.createResult(wsRegion, labels, control, self, false, rest)
+            : self.annotation.createResult(wsRegion, labels, control, self, false);
           const updatedRegion = wsRegion.convertToRegion(labels.labels);
 
           r.setWSRegion(updatedRegion);

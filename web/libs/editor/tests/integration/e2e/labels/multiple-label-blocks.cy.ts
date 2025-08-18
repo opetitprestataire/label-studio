@@ -31,6 +31,12 @@ import {
 } from "../../data/labels/multiple-label-blocks";
 
 describe("Multiple Label Blocks - All Object Tags", () => {
+  beforeEach(() => {
+    LabelStudio.addFeatureFlagsOnPageLoad({
+      fflag_fix_front_dev_3391_interactive_view_all: true,
+      fflag_feat_front_bros_327_multiple_labels_regions_short: true,
+    });
+  });
   describe("Image Object Tag", () => {
     it("should create separate results for each label block - RectangleLabels", () => {
       cy.log("Initialize LSF with Image and multiple RectangleLabels blocks");

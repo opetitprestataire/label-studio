@@ -629,14 +629,9 @@ const Model = types
       const [control, ...rest] = states;
       const labels = { [control.valueType]: control.selectedValues() };
 
-      const r = self.annotation.createResult(
-        { start, end, instant: start === end },
-        labels,
-        control,
-        self,
-        false,
-        rest,
-      );
+      const r = ff.isActive(ff.FF_MULTIPLE_LABELS_REGIONS)
+        ? self.annotation.createResult({ start, end, instant: start === end }, labels, control, self, false, rest)
+        : self.annotation.createResult({ start, end, instant: start === end }, labels, control, self, false);
 
       return r;
     },
