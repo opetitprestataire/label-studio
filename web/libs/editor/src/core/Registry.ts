@@ -2,10 +2,10 @@ interface ObjectTag {
   name: string;
 }
 
-interface CustomTag {
+interface CustomTag<ViewTag = unknown> {
   tag: string;
   model: ObjectTag;
-  view: JSX.Element;
+  view: React.ComponentType<ViewTag>;
   detector?: (value: object) => boolean;
   region: {
     name: string;
@@ -133,7 +133,7 @@ class _Registry {
     return this.perRegionViews[tag]?.[mode];
   }
 
-  addCustomTag(tag: string, definition: CustomTag) {
+  addCustomTag<ViewTag = unknown>(tag: string, definition: CustomTag<ViewTag>) {
     this.addTag(tag.toLowerCase(), definition.model, definition.view);
     this.addObjectType(definition.model);
     this.addRegionType(definition.region, definition.model.name, definition.detector);
