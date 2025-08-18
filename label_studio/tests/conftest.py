@@ -761,6 +761,19 @@ def fflag_feat_utc_46_session_timeout_policy_on():
         yield
 
 
+@pytest.fixture(name='fflag_feat_utc_210_prediction_validation_15082025_on', autouse=True)
+def fflag_feat_utc_210_prediction_validation_15082025_on():
+    from core.feature_flags import flag_set
+
+    def fake_flag_set(*args, **kwargs):
+        if args[0] == 'fflag_feat_utc_210_prediction_validation_15082025':
+            return True
+        return flag_set(*args, **kwargs)
+
+    with mock.patch('data_import.api.flag_set', wraps=fake_flag_set):
+        yield
+
+
 @pytest.fixture(name='local_files_storage')
 def local_files_storage(settings):
     settings.LOCAL_FILES_SERVING_ENABLED = True
