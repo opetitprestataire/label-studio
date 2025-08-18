@@ -23,28 +23,102 @@ import { FF_DEV_3793, isFF } from "../utils/feature-flags";
 import { fixMobxObserve } from "../utils/utilities";
 import { RELATIVE_STAGE_HEIGHT, RELATIVE_STAGE_WIDTH } from "../components/ImageView/Image";
 
+// Type definitions
+interface Point {
+  id?: string;
+  x: number;
+  y: number;
+  canvasX?: number;
+  canvasY?: number;
+  relativeX?: number;
+  relativeY?: number;
+  size?: string;
+  style?: string;
+  index?: number;
+  selected?: boolean;
+  _setPos?: (x: number, y: number) => void;
+}
+
+interface PolylineRegionResult {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotation_angle: string;
+  image_rotation: number;
+  value: {
+    points: number[][];
+    closed: boolean;
+  };
+}
+
+interface AnchorPointParams {
+  flattenedPoints: number[];
+  cursorX: number;
+  cursorY: number;
+}
+
+interface HoverAnchorParams {
+  point: [number, number];
+  group: any;
+  layer: any;
+  zoom?: number;
+}
+
+interface MouseMoveParams {
+  e: any;
+  flattenedPoints: number[];
+}
+
+interface MouseLeaveParams {
+  e: any;
+}
+
+interface PolyProps {
+  item: any;
+  colors: {
+    strokeColor: string;
+    fillColor: string;
+  };
+  dragProps: any;
+  draggable: boolean;
+}
+
+interface EdgesProps {
+  item: any;
+  regionStyles: {
+    strokeColor: string;
+  };
+}
+
+interface HtxPolylineViewProps {
+  item: any;
+  suggestion?: boolean;
+  setShapeRef: (ref: any) => void;
+}
+
 const PolylineRegionAbsoluteCoordsDEV3793 = types
   .model({
     coordstype: types.optional(types.enumeration(["px", "perc"]), "perc"),
   })
-  .actions((self) => ({
-    updateImageSize(wp, hp, sw, sh) {
+  .actions((self: any) => ({
+    updateImageSize(wp: number, hp: number, sw: number, sh: number) {
       if (self.coordstype === "px") {
-        self.points.forEach((p) => {
-          const x = (sw * p.relativeX) / RELATIVE_STAGE_WIDTH;
-          const y = (sh * p.relativeY) / RELATIVE_STAGE_HEIGHT;
+        self.points.forEach((p: Point) => {
+          const x = (sw * (p.relativeX || 0)) / RELATIVE_STAGE_WIDTH;
+          const y = (sh * (p.relativeY || 0)) / RELATIVE_STAGE_HEIGHT;
 
-          p._setPos(x, y);
+          p._setPos?.(x, y);
         });
       }
 
       if (!self.annotation.sentUserGenerate && self.coordstype === "perc") {
-        self.points.forEach((p) => {
+        self.points.forEach((p: Point) => {
           const x = (sw * p.x) / RELATIVE_STAGE_WIDTH;
           const y = (sh * p.y) / RELATIVE_STAGE_HEIGHT;
 
           self.coordstype = "px";
-          p._setPos(x, y);
+          p._setPos?.(x, y);
         });
       }
     },
@@ -71,7 +145,7 @@ const Model = types
   })
   .volatile(() => ({
     mouseOverStartPoint: false,
-    selectedPoint: null,
+    selectedPoint: null as Point | null,
     hideable: true,
     _supportsTransform: true,
     useTransformer: true,
@@ -80,7 +154,7 @@ const Model = types
     supportsScale: true,
     isDrawing: false,
   }))
-  .views((self) => ({
+  .views((self: any) => ({
     get store() {
       return getRoot(self);
     },
@@ -88,7 +162,7 @@ const Model = types
       if (!self.points?.length || !isAlive(self)) return {};
 
       const bbox = self.points.reduce(
-        (bboxCoords, point) => ({
+        (bboxCoords: any, point: Point) => ({
           left: Math.min(bboxCoords.left, point.x),
           top: Math.min(bboxCoords.top, point.y),
           right: Math.max(bboxCoords.right, point.x),
@@ -110,15 +184,15 @@ const Model = types
       return bbox;
     },
     get flattenedPoints() {
-      return getFlattenedPoints(this.points);
+      return getFlattenedPoints(self.points);
     },
   }))
-  .actions((self) => {
+  .actions((self: any) => {
     return {
       afterCreate() {
         if (!self.points.length) return;
         if (!self.points[0].id) {
-          self.points = self.points.map(([x, y], index) => ({
+          self.points = self.points.map(([x, y]: [number, number], index: number) => ({
             id: guidGenerator(),
             x,
             y,
@@ -135,12 +209,12 @@ const Model = types
        * Handler for mouse on start point of Polyline
        * @param {boolean} val
        */
-      setMouseOverStartPoint(value) {
+      setMouseOverStartPoint(value: boolean) {
         self.mouseOverStartPoint = value;
       },
 
       // @todo not used
-      setSelectedPoint(point) {
+      setSelectedPoint(point: Point) {
         if (self.selectedPoint) {
           self.selectedPoint.selected = false;
         }
@@ -149,7 +223,7 @@ const Model = types
         self.selectedPoint = point;
       },
 
-      handleMouseMove({ e, flattenedPoints }) {
+      handleMouseMove({ e, flattenedPoints }: MouseMoveParams) {
         const { offsetX, offsetY } = e.evt;
         const [cursorX, cursorY] = self.parent.fixZoomedCoords([offsetX, offsetY]);
         const [x, y] = getAnchorPoint({ flattenedPoints, cursorX, cursorY });
@@ -161,7 +235,7 @@ const Model = types
         moveHoverAnchor({ point: [x, y], group, layer, zoom });
       },
 
-      handleMouseLeave({ e }) {
+      handleMouseLeave({ e }: MouseLeaveParams) {
         const layer = e.currentTarget.getLayer();
 
         removeHoverAnchor({ layer });
@@ -179,7 +253,7 @@ const Model = types
        * @property {number[][]} value.points list of (x, y) coordinates of the polyline by percentage of the image size (0-100)
        */
 
-      addPoint(x, y) {
+      addPoint(x: number, y: number) {
         if (self.closed) return;
 
         const point = self.control?.getSnappedPoint({ x, y });
@@ -187,7 +261,7 @@ const Model = types
         self._addPoint(point.x, point.y);
       },
 
-      _addPoint(x, y) {
+      _addPoint(x: number, y: number) {
         self.points.push({
           id: guidGenerator(),
           x,
@@ -203,7 +277,7 @@ const Model = types
         self.closed = true;
       },
 
-      setDrawing(drawing) {
+      setDrawing(drawing: boolean) {
         self.isDrawing = drawing;
       },
 
@@ -231,14 +305,14 @@ const Model = types
         }
       },
 
-      onClickRegion(e) {
+      onClickRegion(e: any) {
         // Handle click on the region
         if (self.annotation) {
           self.annotation.selectArea(self);
         }
       },
 
-      setHighlight(val) {
+      setHighlight(val: boolean) {
         self._highlighted = val;
       },
 
@@ -271,11 +345,11 @@ const Model = types
       /**
        * @return {PolylineRegionResult}
        */
-      serialize() {
+      serialize(): PolylineRegionResult {
         const value = {
           points: isFF(FF_DEV_3793)
-            ? self.points.map((p) => [p.x, p.y])
-            : self.points.map((p) => [self.convertXToPerc(p.x), self.convertYToPerc(p.y)]),
+            ? self.points.map((p: Point) => [p.x, p.y])
+            : self.points.map((p: Point) => [self.convertXToPerc(p.x), self.convertYToPerc(p.y)]),
           closed: self.closed,
         };
 
@@ -300,7 +374,7 @@ const PolylineRegionModel = types.compose(
  * @param {number} cursorX coordinates of cursor X
  * @param {number} cursorY coordinates of cursor Y
  */
-function getAnchorPoint({ flattenedPoints, cursorX, cursorY }) {
+function getAnchorPoint({ flattenedPoints, cursorX, cursorY }: AnchorPointParams): [number, number] {
   const [point1X, point1Y, point2X, point2Y] = flattenedPoints;
   const y =
     ((point2X - point1X) * (point2X * point1Y - point1X * point2Y) +
@@ -316,20 +390,20 @@ function getAnchorPoint({ flattenedPoints, cursorX, cursorY }) {
   return [x, y];
 }
 
-function getFlattenedPoints(points) {
-  const p = points.map((p) => [p.canvasX, p.canvasY]);
+function getFlattenedPoints(points: Point[]): number[] {
+  const p = points.map((p) => [p.canvasX || 0, p.canvasY || 0]);
 
-  return p.reduce((flattenedPoints, point) => flattenedPoints.concat(point), []);
+  return p.reduce((flattenedPoints: number[], point: number[]) => flattenedPoints.concat(point), []);
 }
 
-function getHoverAnchor({ layer }) {
+function getHoverAnchor({ layer }: { layer: any }): any {
   return layer.findOne(".hoverAnchor");
 }
 
 /**
  * Create new anchor for current polyline
  */
-function createHoverAnchor({ point, group, layer, zoom }) {
+function createHoverAnchor({ point, group, layer, zoom }: HoverAnchorParams): any {
   const hoverAnchor = new Konva.Circle({
     name: "hoverAnchor",
     x: point[0],
@@ -348,13 +422,13 @@ function createHoverAnchor({ point, group, layer, zoom }) {
   return hoverAnchor;
 }
 
-function moveHoverAnchor({ point, group, layer, zoom }) {
+function moveHoverAnchor({ point, group, layer, zoom }: HoverAnchorParams): void {
   const hoverAnchor = getHoverAnchor({ layer }) || createHoverAnchor({ point, group, layer, zoom });
 
   hoverAnchor.to({ x: point[0], y: point[1], duration: 0 });
 }
 
-function removeHoverAnchor({ layer }) {
+function removeHoverAnchor({ layer }: { layer: any }): void {
   const hoverAnchor = getHoverAnchor({ layer });
 
   if (!hoverAnchor) return;
@@ -362,10 +436,10 @@ function removeHoverAnchor({ layer }) {
   layer.draw();
 }
 
-const Poly = observer(({ item, colors, dragProps, draggable }) => {
+const Poly = observer(({ item, colors, dragProps, draggable }: PolyProps) => {
   console.log(item, item.points);
   const { stageRef } = useContext(ImageViewContext);
-  const [shapeRef, setShapeRef] = useState(null);
+  const [shapeRef, setShapeRef] = useState<any>(null);
 
   const flattenedPoints = useMemo(() => {
     return getFlattenedPoints(item.points);
@@ -402,7 +476,7 @@ const Poly = observer(({ item, colors, dragProps, draggable }) => {
   );
 });
 
-const Edges = observer(({ item, regionStyles }) => {
+const Edges = observer(({ item, regionStyles }: EdgesProps) => {
   const flattenedPoints = useMemo(() => {
     return getFlattenedPoints(item.points);
   }, [item.points]);
@@ -426,11 +500,11 @@ const Edges = observer(({ item, regionStyles }) => {
   return <Group>{edges}</Group>;
 });
 
-const renderCircles = (points) => {
+const renderCircles = (points: Point[]) => {
   return points.map((point, index) => <PolygonPointView key={point.id || index} item={point} />);
 };
 
-const HtxPolylineView = ({ item, suggestion, setShapeRef }) => {
+const HtxPolylineView = ({ item, suggestion, setShapeRef }: HtxPolylineViewProps) => {
   const { store } = item;
   const regionStyles = useRegionStyles(item);
   const dragProps = useMemo(() => {
@@ -497,10 +571,10 @@ const HtxPolylineView = ({ item, suggestion, setShapeRef }) => {
 const HtxPolyline = AliveRegion(HtxPolylineView);
 
 Registry.addTag("polylineregion", PolylineRegionModel, HtxPolyline);
-Registry.addRegionType(PolylineRegionModel, "image", (value) => {
+Registry.addRegionType(PolylineRegionModel, "image", (value: any) => {
   if (!value.points) return false;
   // If it has polylinelabels results, it's definitely a polyline
-  if (value.results?.some?.((r) => r.type === "polylinelabels")) return true;
+  if (value.results?.some?.((r: any) => r.type === "polylinelabels")) return true;
   // If it's explicitly closed=false, it's a polyline
   if (value.closed === false) return true;
   // If it's not closed and has no results yet, prefer polyline for drawing
