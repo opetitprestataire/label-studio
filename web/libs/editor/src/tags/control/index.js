@@ -25,7 +25,9 @@ import { KeyPointLabelsModel } from "./KeyPointLabels";
 import { KeyPointModel } from "./KeyPoint";
 import { MagicWandModel } from "./MagicWand";
 import { PolygonLabelsModel } from "./PolygonLabels";
+import { PolylineLabelsModel } from "./PolylineLabels";
 import { PolygonModel } from "./Polygon";
+import { PolylineModel } from "./Polyline";
 import { RectangleLabelsModel } from "./RectangleLabels";
 import { RectangleModel } from "./Rectangle";
 
@@ -58,7 +60,9 @@ export {
   KeyPointModel,
   MagicWandModel,
   PolygonLabelsModel,
+  PolylineLabelsModel,
   PolygonModel,
+  PolylineModel,
   RectangleLabelsModel,
   RectangleModel,
   RelationsModel,

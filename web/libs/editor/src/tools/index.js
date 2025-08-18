@@ -7,6 +7,7 @@ import { Erase } from "./Erase";
 import { BitmaskErase } from "./BitmaskErase";
 import { KeyPoint } from "./KeyPoint";
 import { Polygon } from "./Polygon";
+import { Polyline } from "./Polyline";
 import { Rect, Rect3Point } from "./Rect";
 import { Ellipse } from "./Ellipse";
 import { Zoom } from "./Zoom";
@@ -23,6 +24,7 @@ export {
   BitmaskErase,
   KeyPoint,
   Polygon,
+  Polyline,
   Rect,
   Rect3Point,
   Ellipse,

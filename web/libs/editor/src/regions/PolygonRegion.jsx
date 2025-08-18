@@ -673,6 +673,17 @@ const HtxPolygonView = ({ item, setShapeRef }) => {
 const HtxPolygon = AliveRegion(HtxPolygonView);
 
 Registry.addTag("polygonregion", PolygonRegionModel, HtxPolygon);
-Registry.addRegionType(PolygonRegionModel, "image", (value) => !!value.points);
+Registry.addRegionType(
+  PolygonRegionModel,
+  "image",
+  (value) => {
+    if (!value.points) return false;
+    // If it has polygonlabels results, it's definitely a polygon
+    if (value.results?.some?.((r) => r.type === "polygonlabels")) return true;
+    // If it's explicitly closed=true, it's a polygon
+    if (value.closed === true) return true;
+    return false;
+  },
+);
 
 export { PolygonRegionModel, HtxPolygon };
