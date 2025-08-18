@@ -770,7 +770,7 @@ def fflag_feat_utc_210_prediction_validation_15082025_on():
             return True
         return flag_set(*args, **kwargs)
 
-    with mock.patch('data_import.api.flag_set', wraps=fake_flag_set):
+    with mock.patch('core.middleware.flag_set', wraps=fake_flag_set):
         yield
 
 
