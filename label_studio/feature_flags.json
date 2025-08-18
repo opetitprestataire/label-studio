@@ -1635,6 +1635,33 @@
       "version": 3,
       "deleted": false
     },
+    "fflag_feat_all_utc_179_custom_function_logs": {
+      "key": "fflag_feat_all_utc_179_custom_function_logs",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "46211fe6c7124fd4b8e731efc8bb8572",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
+      "deleted": false
+    },
     "fflag_feat_all_utc_222_prompts_api_keys_enterprise_only": {
       "key": "fflag_feat_all_utc_222_prompts_api_keys_enterprise_only",
       "on": false,
@@ -2092,6 +2119,33 @@
       "trackEventsFallthrough": false,
       "debugEventsUntilDate": null,
       "version": 4,
+      "deleted": false
+    },
+    "fflag_feat_fit_528_icon_menu_short": {
+      "key": "fflag_feat_fit_528_icon_menu_short",
+      "on": false,
+      "prerequisites": [],
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+        "variation": 0
+      },
+      "offVariation": 1,
+      "variations": [
+        true,
+        false
+      ],
+      "clientSideAvailability": {
+        "usingMobileKey": false,
+        "usingEnvironmentId": false
+      },
+      "clientSide": false,
+      "salt": "2ca9a6f250e8410dbf942fdfc052d736",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "debugEventsUntilDate": null,
+      "version": 2,
       "deleted": false
     },
     "fflag_feat_fit_52_label_studio_enterprise_embed": {
