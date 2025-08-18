@@ -114,7 +114,7 @@ def emit_webhooks_for_instance_sync(organization, project, action, instance=None
     action_meta = WebhookAction.ACTIONS[action]
 
     # Convert list of IDs to queryset
-    if instance and isinstance(instance, list) and instance and isinstance(instance[0], int):
+    if instance and isinstance(instance, list) and isinstance(instance[0], int):
         instance = action_meta['model'].objects.filter(id__in=instance)
 
     # Check if batching is needed
