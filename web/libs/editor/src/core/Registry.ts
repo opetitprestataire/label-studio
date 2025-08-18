@@ -8,13 +8,13 @@ interface CustomTag {
   view: JSX.Element;
   detector?: (value: object) => boolean;
   region: {
-    name: string,
+    name: string;
     nodeView: {
-      name: string,
-      icon: any,
-      getContent?: (node: any) => JSX.Element | null,
-      fullContent?: (node: any) => JSX.Element | null,
-    },
+      name: string;
+      icon: any;
+      getContent?: (node: any) => JSX.Element | null;
+      fullContent?: (node: any) => JSX.Element | null;
+    };
   };
 }
 
