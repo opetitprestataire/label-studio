@@ -76,11 +76,12 @@ class PredictionSerializer(ModelSerializer):
 
     def validate(self, data):
         """Validate prediction using LabelInterface against project configuration"""
-        project = self.project or data.get('project') or data.get('task', {}).get('project')
+        project = data.get('project') or data.get('task', {}).get('project')
         ff_user = project.organization.created_by if project else 'auto'
 
         if not flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=ff_user):
             # Skip validation if feature flag is not set
+            logger.info(f'Skipping prediction validation in PredictionSerializer for user {ff_user}')
             return super().validate(data)
 
         # Only validate if we're updating the result field
