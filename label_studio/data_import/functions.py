@@ -83,7 +83,9 @@ def async_import_background(
                 project_import.save(update_fields=['error', 'status'])
                 return
             else:
-                logger.error(f'Prediction validation failed, not raising error - ({len(validation_errors)} errors):\n{error_message}')
+                logger.error(
+                    f'Prediction validation failed, not raising error - ({len(validation_errors)} errors):\n{error_message}'
+                )
 
     if project_import.commit_to_project:
         with transaction.atomic():

@@ -296,7 +296,9 @@ class ImportAPI(generics.CreateAPIView):
                 if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user='auto'):
                     raise ValidationError({'predictions': [error_message]})
                 else:
-                    logger.error(f'Prediction validation failed, not raising error - ({len(validation_errors)} errors):\n{error_message}')
+                    logger.error(
+                        f'Prediction validation failed, not raising error - ({len(validation_errors)} errors):\n{error_message}'
+                    )
 
         if commit_to_project:
             # Immediately create project tasks and update project states and counters
