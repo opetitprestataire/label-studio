@@ -36,6 +36,10 @@ export const userDisplayName = (user: Record<string, string> = {}) => {
     : username || email;
 };
 
+export const copyText = async (text: string) => {
+  await navigator.clipboard.writeText(text);
+};
+
 export { cn } from "@humansignal/ui/shad/utils/index";
 
 export const formatFileSize = (bytes: number): string => {
