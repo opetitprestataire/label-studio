@@ -76,7 +76,11 @@ class PredictionSerializer(ModelSerializer):
 
     def validate(self, data):
         """Validate prediction using LabelInterface against project configuration"""
-        project = data.get('project') or data.get('task', {}).project
+        project = None
+        if 'task' in data:
+            project = data['task'].project
+        elif 'project' in data:
+            project = data['project']
         ff_user = project.organization.created_by if project else 'auto'
 
         if not flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=ff_user):
