@@ -32,8 +32,8 @@ interface RelationsListProps {
 const RelationsList: FC<RelationsListProps> = observer(({ relations }) => {
   return (
     <>
-      {relations.map((relation) => {
-        return <RelationItem key={relation.id} relation={relation} />;
+      {relations.map((rel) => {
+        return <RelationItem key={rel.id} relation={rel} />;
       })}
     </>
   );

@@ -386,6 +386,12 @@ SPECTACULAR_SETTINGS = {
     'AUTHENTICATION_WHITELIST': [
         'jwt_auth.auth.TokenAuthenticationPhaseout',
     ],
+    'SERVERS': [
+        {
+            'url': HOSTNAME,
+            'description': 'Label Studio',
+        },
+    ],
     'CONTACT': {'url': 'https://labelstud.io'},
     'X_LOGO': {'url': '../../static/icons/logo-black.svg'},
 }
@@ -644,7 +650,7 @@ USER_AUTH = user_auth
 COLLECT_VERSIONS = collect_versions_dummy
 
 WEBHOOK_TIMEOUT = float(get_env('WEBHOOK_TIMEOUT', 1.0))
-WEBHOOK_BATCH_SIZE = int(get_env('WEBHOOK_BATCH_SIZE', 100))
+WEBHOOK_BATCH_SIZE = int(get_env('WEBHOOK_BATCH_SIZE', 5000))
 WEBHOOK_SERIALIZERS = {
     'project': 'webhooks.serializers_for_hooks.ProjectWebhookSerializer',
     'task': 'webhooks.serializers_for_hooks.TaskWebhookSerializer',
