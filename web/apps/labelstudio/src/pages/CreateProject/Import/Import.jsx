@@ -559,7 +559,7 @@ export const ImportPage = ({
                           >
                             <td className={importClass.elem("file-name")}>
                               <Tooltip title={file.file}>
-                                <Typography variant="body" size="small">
+                                <Typography variant="body" size="small" className="truncate">
                                   {truncatedFilename}
                                 </Typography>
                               </Tooltip>
@@ -590,7 +590,7 @@ export const ImportPage = ({
                           <tr key={`${idx}-${file.name}`}>
                             <td className={importClass.elem("file-name")}>
                               <Tooltip title={file.name}>
-                                <Typography variant="body" size="small">
+                                <Typography variant="body" size="small" className="truncate">
                                   {truncatedFilename}
                                 </Typography>
                               </Tooltip>
