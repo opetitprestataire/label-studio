@@ -27,7 +27,7 @@ class FileUploadSerializer(serializers.ModelSerializer):
         model = FileUpload
         fields = ['id', 'file', 'size']
 
-    def get_size(self, obj):
+    def get_size(self, obj) -> int | None:
         try:
             return obj.file.size
         except (ValueError, OSError):
