@@ -262,6 +262,11 @@ def skipped_queue(next_task, prepared_tasks, project, user, assigned_flag, queue
         if skipped_tasks.exists():
             preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(skipped_tasks)])
             skipped_tasks = prepared_tasks.filter(pk__in=skipped_tasks).order_by(preserved_order)
+            
+            # for assigned annotators locks don't make sense, moreover,
+            # _get_first_unlocked breaks label stream for manual mode because 
+            # it evaluates locks based on auto-mode logic and returns None
+            # when there are no more tasks to label in auto-mode
             if assigned_flag:
                 next_task = fast_first(skipped_tasks)
             else:
@@ -278,6 +283,11 @@ def postponed_queue(next_task, prepared_tasks, project, user, assigned_flag, que
         if postponed_tasks.exists():
             preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(postponed_tasks)])
             postponed_tasks = prepared_tasks.filter(pk__in=postponed_tasks).order_by(preserved_order)
+            
+            # for assigned annotators locks don't make sense, moreover,
+            # _get_first_unlocked breaks label stream for manual mode because 
+            # it evaluates locks based on auto-mode logic and returns None
+            # when there are no more tasks to label in auto-mode
             if assigned_flag:
                 next_task = fast_first(postponed_tasks)
             else:
