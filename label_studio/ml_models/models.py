@@ -7,6 +7,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from ml_model_providers.models import ModelProviderConnection, ModelProviders
 from projects.models import Project
+from django.db.models import Q
 from rest_framework.exceptions import ValidationError
 from tasks.models import Annotation, FailedPrediction, Prediction, PredictionMeta
 
@@ -201,12 +202,16 @@ class ModelRun(models.Model):
         # to delete all dependencies where predictions are foreign keys.
         Annotation.objects.filter(parent_prediction__in=prediction_ids).update(parent_prediction=None)
         try:
-            from stats.models import PredictionStats
+            from stats.models import PredictionStats, PredictionPairStats
 
             prediction_stats_to_be_deleted = PredictionStats.objects.filter(prediction_to__in=prediction_ids)
             prediction_stats_to_be_deleted.delete()
+            prediction_pair_stats_to_be_deleted = PredictionPairStats.objects.filter(
+                Q(prediction_to_id__in=prediction_ids) | Q(prediction_from_id__in=prediction_ids)
+            )
+            prediction_pair_stats_to_be_deleted.delete()
         except Exception as e:
-            logger.info(f'PredictionStats model does not exist , exception:{e}')
+            logger.info(f'PredictionStats or PredictionPairStats model does not exist , exception:{e}')
 
         # Delete failed predictions. Currently no other model references this, no fk relationships to remove
         failed_predictions = FailedPrediction.objects.filter(model_run=self.id)
