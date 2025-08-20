@@ -4,10 +4,10 @@ from typing import List, Tuple, Union
 
 from core.feature_flags import flag_set
 from core.utils.common import conditional_atomic, db_is_not_sqlite, load_func
+from core.utils.db import fast_first
 from django.conf import settings
 from django.db.models import BooleanField, Case, Count, Exists, F, Max, OuterRef, Q, QuerySet, Value, When
 from django.db.models.fields import DecimalField
-from core.utils.db import fast_first
 from projects.functions.stream_history import add_stream_history
 from projects.models import Project
 from tasks.models import Annotation, Task
@@ -262,9 +262,9 @@ def skipped_queue(next_task, prepared_tasks, project, user, assigned_flag, queue
         if skipped_tasks.exists():
             preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(skipped_tasks)])
             skipped_tasks = prepared_tasks.filter(pk__in=skipped_tasks).order_by(preserved_order)
-            
+
             # for assigned annotators locks don't make sense, moreover,
-            # _get_first_unlocked breaks label stream for manual mode because 
+            # _get_first_unlocked breaks label stream for manual mode because
             # it evaluates locks based on auto-mode logic and returns None
             # when there are no more tasks to label in auto-mode
             if assigned_flag:
@@ -283,9 +283,9 @@ def postponed_queue(next_task, prepared_tasks, project, user, assigned_flag, que
         if postponed_tasks.exists():
             preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(postponed_tasks)])
             postponed_tasks = prepared_tasks.filter(pk__in=postponed_tasks).order_by(preserved_order)
-            
+
             # for assigned annotators locks don't make sense, moreover,
-            # _get_first_unlocked breaks label stream for manual mode because 
+            # _get_first_unlocked breaks label stream for manual mode because
             # it evaluates locks based on auto-mode logic and returns None
             # when there are no more tasks to label in auto-mode
             if assigned_flag:
