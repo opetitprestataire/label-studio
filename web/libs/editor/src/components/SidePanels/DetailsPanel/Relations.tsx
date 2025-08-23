@@ -9,7 +9,7 @@ import {
 } from "@humansignal/icons";
 import { Button, Select } from "@humansignal/ui";
 import { observer } from "mobx-react";
-import { type FC, useCallback, useMemo, useState } from "react";
+import { type FC, type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { Block, Elem } from "../../../utils/bem";
 import { wrapArray } from "../../../utils/utilities";
 import { RegionItem } from "./RegionItem";
@@ -87,10 +87,10 @@ const RelationItem: FC<{ relation: any }> = observer(({ relation }) => {
         </Elem>
         <Elem name="actions">
           <Elem name="action">
-            {(hovered || relation.showMeta) && relation.hasRelations && (
+            {(hovered || relation.showMeta) && (
               <Button
                 primary={relation.showMeta}
-                aria-label={`${relation.showMeta ? "Hide" : "Show"} Relation Labels`}
+                aria-label={`${relation.showMeta ? "Hide" : "Show"} Relation Details`}
                 type={relation.showMeta ? undefined : "text"}
                 onClick={relation.toggleMeta}
                 style={{ padding: 0 }}
@@ -150,14 +150,21 @@ const RelationMeta: FC<any> = observer(({ relation }) => {
     return choice === "multiple";
   }, [choice]);
 
-  const onChange = useCallback(
+  const onLabelsChange = useCallback(
     (val: any) => {
       const values: any[] = wrapArray(val);
-
       relation.setRelations(values);
     },
     [relation],
   );
+
+  const onNoteChange = useCallback(
+    (e: ChangeEvent<HTMLTextAreaElement>) => {
+      relation.setNote(e.target.value);
+    },
+    [relation],
+  );
+
   const options = useMemo(
     () =>
       children.map((c: any) => ({
@@ -174,9 +181,28 @@ const RelationMeta: FC<any> = observer(({ relation }) => {
         style={{ width: "100%" }}
         placeholder="Select labels"
         value={selectedValues}
-        onChange={onChange}
+        onChange={onLabelsChange}
         options={options}
       />
+      <Elem name="note" style={{ marginTop: 8, width: "100%" }}>
+        <textarea
+          aria-label="Relation note"
+          placeholder="Add note"
+          value={relation.note ?? ""}
+          onChange={onNoteChange}
+          style={{
+            width: "100%",
+            minHeight: 64,
+            resize: "vertical",
+            padding: 8,
+            boxSizing: "border-box",
+            borderRadius: 6,
+            border: "1px solid var(--ls-border-color, #d9d9d9)",
+            fontFamily: "inherit",
+            fontSize: 12,
+          }}
+        />
+      </Elem>
     </Block>
   );
 });
