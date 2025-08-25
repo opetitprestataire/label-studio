@@ -1,5 +1,5 @@
 ---
-title: Embed Label Studio 
+title: Embed Label Studio - Beta 🧪
 short: Embed Label Studio 
 type: guide
 tier: enterprise
