@@ -12,6 +12,9 @@ section: "Integrate & Extend"
 
 Label Studio Embeds allow you to seamlessly integrate annotation and review functionality into your own applications. 
 
+!!! note
+    This feature is not available to all customers. Contact your [HumanSignal account manager](mailto:sales@humansignal.com) to enable.
+
 Before you begin, ensure you have:
 * Label Studio:
     * Admin or Owner permissions in Label Studio
