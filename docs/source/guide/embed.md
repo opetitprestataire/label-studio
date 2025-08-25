@@ -205,6 +205,7 @@ Here is an example:
 * Verification of the external JWT failed to verify one or more of the claims provided (invalid JWT).  
 * Active organization of the user was different than specified in the JWT claims.  
 * Your org has not enabled legacy API tokens or personal [access tokens](https://docs.humansignal.com/guide/access_tokens) (need at least one). 
+* User with the provided `user_email` does not exist on `LabelStudioEnterprise`
 
 **HTTP errors in SDK**
 
