@@ -21,6 +21,8 @@ Before you begin, ensure you have:
     * Access to your server backend (to generate signed tokens).
     * The URL where your embed will be hosted.
 
+![Screenshot of an embed demo](/images/embed-demo.png)
+
 ## Authorization
 
 At a high level, the embed process is a secure handshake between your app and Label Studio:
