@@ -86,14 +86,6 @@
     button {
       margin-left: -1px;
       border-radius: 0 var(--corner-radius-smaller) var(--corner-radius-smaller) 0;
-      background: var(--color-primary-surface);
-      color: var(--color-primary-surface-content);
-      cursor: pointer;
-      transition: all 150ms ease-out;
-
-      &:hover {
-        background: var(--color-primary-surface-hover);
-      }
     }
 
     &+span {
@@ -119,8 +111,23 @@
   }
 
   table {
+    table-layout: fixed;
+    
+    tr {
+      border-bottom: 2px solid var(--color-neutral-background);
+      background-color: transparent;
+
+      td:nth-child(2) {
+        width: 136px;
+      }
+    }
+
+    tr:nth-child(odd) {
+      background: var(--color-neutral-emphasis-subtle);
+    }
+
     td {
-      padding: 8px 32px 8px 0;
+      padding: var(--spacing-tight) var(--spacing-tight);
     }
   }
 
@@ -128,7 +135,7 @@
     background: var(--color-positive-surface);
     border: 1px solid var(--color-positive-surface);
     border-radius: 4px;
-    width: 160px;
+    width: 120px;
     height: 6px;
     display: block;
 
@@ -144,6 +151,18 @@
           rgb(255 255 255 / 20%) 7px,
           rgb(255 255 255 / 20%) 12px);
     }
+  }
+
+  &__file-name {
+    width: 100%;
+  }
+
+  &__file-size {
+    width: 100px;
+  }
+
+  &__upload-flash {
+    animation: upload-flash 2s ease-in-out;
   }
 
   &__spinner {
@@ -371,5 +390,19 @@
 
   100% {
     background-position: 37px 0;
+  }
+}
+
+@keyframes upload-flash {
+  0% {
+    background-color: var(--color-positive-emphasis);
+  }
+  
+  20% {
+    background-color: var(--color-positive-emphasis);
+  }
+
+  100% {
+    background-color: transparent;
   }
 }

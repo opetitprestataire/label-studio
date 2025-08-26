@@ -165,9 +165,16 @@ class ViewAPI(viewsets.ModelViewSet):
     @extend_schema(
         tags=['Data Manager'],
         summary='Delete all project views',
-        description='Delete all views for a specific project. Request body example: `{"project": 1}`.',
-        # Note: OpenAPI3 does not support request body for DELETE requests
-        # see https://github.com/tfranzel/drf-spectacular/issues/431#issuecomment-862738643
+        description='Delete all views for a specific project.',
+        parameters=[
+            OpenApiParameter(
+                name='project',
+                type=OpenApiTypes.INT,
+                location='query',
+                description='Project ID',
+                required=True,
+            ),
+        ],
         extensions={
             'x-fern-sdk-group-name': 'views',
             'x-fern-sdk-method-name': 'delete_all',
@@ -176,7 +183,12 @@ class ViewAPI(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['delete'])
     def reset(self, request):
-        serializer = ViewResetSerializer(data=request.data)
+        # Note: OpenAPI 3.0 does not support request body for DELETE requests
+        # see https://github.com/tfranzel/drf-spectacular/issues/431#issuecomment-862738643
+        # as a hack for the SDK, fallback to query params if request body is empty
+        serializer = ViewResetSerializer(
+            data=request.data if 'project' in request.data else {'project': request.query_params.get('project')}
+        )
         serializer.is_valid(raise_exception=True)
         project = generics.get_object_or_404(
             Project.objects.for_user(request.user), pk=serializer.validated_data['project'].id
@@ -190,6 +202,7 @@ class ViewAPI(viewsets.ModelViewSet):
         summary='Update order of views',
         description='Update the order field of views based on the provided list of view IDs',
         request=ViewOrderSerializer,
+        responses={200: OpenApiResponse(description='View order updated successfully')},
         extensions={
             'x-fern-sdk-group-name': 'views',
             'x-fern-sdk-method-name': 'update_order',
@@ -259,6 +272,30 @@ class TaskPagination(PageNumberPagination):
             return self.paginate_totals_queryset(queryset, request, view)
         return self.sync_paginate_queryset(queryset, request, view)
 
+    def get_paginated_response_schema(self, schema):
+        return {
+            'type': 'object',
+            'properties': {
+                'tasks': schema,
+                'total': {
+                    'type': 'integer',
+                    'description': 'Total number of tasks',
+                    'example': 123,
+                },
+                'total_annotations': {
+                    'type': 'integer',
+                    'description': 'Total number of annotations',
+                    'example': 456,
+                },
+                'total_predictions': {
+                    'type': 'integer',
+                    'description': 'Total number of predictions',
+                    'example': 78,
+                },
+            },
+            'required': ['tasks', 'total', 'total_annotations', 'total_predictions'],
+        }
+
     def get_paginated_response(self, data):
         return Response(
             {
@@ -281,8 +318,7 @@ class TaskListAPI(generics.ListCreateAPIView):
     )
     pagination_class = TaskPagination
 
-    @staticmethod
-    def get_task_serializer_context(request, project):
+    def get_task_serializer_context(self, request, project, queryset):
         all_fields = request.GET.get('fields', None) == 'all'  # false by default
 
         return {
@@ -328,7 +364,6 @@ class TaskListAPI(generics.ListCreateAPIView):
         # get prepare params (from view or from payload directly)
         prepare_params = get_prepare_params(request, project)
         queryset = self.get_task_queryset(request, prepare_params)
-        context = self.get_task_serializer_context(self.request, project)
 
         # paginated tasks
         page = self.paginate_queryset(queryset)
@@ -343,16 +378,15 @@ class TaskListAPI(generics.ListCreateAPIView):
             all_fields = None
         if page is not None:
             ids = [task.id for task in page]  # page is a list already
-            tasks = list(
-                self.prefetch(
-                    Task.prepared.annotate_queryset(
-                        Task.objects.filter(id__in=ids),
-                        fields_for_evaluation=fields_for_evaluation,
-                        all_fields=all_fields,
-                        request=request,
-                    )
+            tasks = self.prefetch(
+                Task.prepared.annotate_queryset(
+                    Task.objects.filter(id__in=ids),
+                    fields_for_evaluation=fields_for_evaluation,
+                    all_fields=all_fields,
+                    request=request,
                 )
             )
+
             tasks_by_ids = {task.id: task for task in tasks}
             # keep ids ordering
             page = [tasks_by_ids[_id] for _id in ids]
@@ -367,6 +401,7 @@ class TaskListAPI(generics.ListCreateAPIView):
                 evaluate_predictions(tasks_for_predictions)
                 [tasks_by_ids[_id].refresh_from_db() for _id in ids]
 
+            context = self.get_task_serializer_context(self.request, project, tasks)
             serializer = self.task_serializer_class(page, many=True, context=context)
             return self.get_paginated_response(serializer.data)
         # all tasks
@@ -375,6 +410,7 @@ class TaskListAPI(generics.ListCreateAPIView):
         queryset = Task.prepared.annotate_queryset(
             queryset, fields_for_evaluation=fields_for_evaluation, all_fields=all_fields, request=request
         )
+        context = self.get_task_serializer_context(self.request, project, queryset)
         serializer = self.task_serializer_class(queryset, many=True, context=context)
         return Response(serializer.data)
 
@@ -491,6 +527,72 @@ class ProjectStateAPI(APIView):
         tags=['Data Manager'],
         summary='Get actions',
         description='Retrieve all the registered actions with descriptions that data manager can use.',
+        parameters=[
+            OpenApiParameter(
+                name='project',
+                type=OpenApiTypes.INT,
+                location='query',
+                description='Project ID',
+                required=True,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description='Actions retrieved successfully',
+                response={
+                    'type': 'array',
+                    'title': 'Action list',
+                    'description': 'List of available actions',
+                    'items': {
+                        'type': 'object',
+                        'title': 'Action',
+                        'properties': {
+                            'id': {'type': 'string', 'title': 'Action ID'},
+                            'title': {'type': 'string', 'title': 'Title'},
+                            'order': {'type': 'integer', 'title': 'Order'},
+                            'permission': {'type': 'string', 'title': 'Permission'},
+                            'experimental': {'type': 'boolean', 'title': 'Experimental'},
+                            'dialog': {
+                                'type': 'object',
+                                'title': 'Dialog',
+                                'properties': {
+                                    'title': {'type': 'string', 'title': 'Title', 'nullable': True},
+                                    'text': {'type': 'string', 'title': 'Text', 'nullable': True},
+                                    'type': {'type': 'string', 'title': 'Type', 'nullable': True},
+                                    'form': {
+                                        'type': 'array',
+                                        'title': 'Form',
+                                        'items': {'type': 'object'},
+                                        'nullable': True,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                examples=[
+                    OpenApiExample(
+                        name='response',
+                        value=[
+                            {
+                                'id': 'predictions_to_annotations',
+                                'title': 'Create Annotations From Predictions',
+                                'order': 91,
+                                'permission': 'tasks.change',
+                                'experimental': False,
+                                'dialog': {
+                                    'title': 'Create Annotations From Predictions',
+                                    'text': 'Create annotations from predictions using selected predictions set for each selected task. Your account will be assigned as an owner to those annotations.',
+                                    'type': 'confirm',
+                                    'form': None,
+                                },
+                            }
+                        ],
+                        media_type='application/json',
+                    ),
+                ],
+            )
+        },
         extensions={
             'x-fern-sdk-group-name': 'actions',
             'x-fern-sdk-method-name': 'list',

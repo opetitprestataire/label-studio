@@ -75,6 +75,8 @@ export const TabColumn = types
     target: types.enumeration(["tasks", "annotations"]),
     orderable: types.optional(types.boolean, true),
     help: types.maybeNull(types.string),
+    // Column alias whose filter should be joined automatically when a filter is created for this column
+    child_filter: types.maybeNull(types.string),
     disabled: types.optional(types.boolean, false),
   })
   .views((self) => ({
@@ -198,7 +200,8 @@ export const TabColumn = types
 
     get isAnnotationResultsFilterColumn() {
       // these columns are not visible in the column selector, but are used for filtering
-      return self.id.includes("annotations_results_json.") || self.id.endsWith(":annotations_results_json");
+      const hidden_column_ids = ["annotations_results_json", "predictions_results_json"];
+      return hidden_column_ids.some((id) => self.id.includes(`${id}.`) || self.id.endsWith(`:${id}`));
     },
   }))
   .actions((self) => ({
