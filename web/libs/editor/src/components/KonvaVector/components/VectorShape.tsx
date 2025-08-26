@@ -10,6 +10,9 @@ interface VectorShapeProps {
   fill?: string;
   transform?: { zoom: number; offsetX: number; offsetY: number };
   fitScale?: number;
+  onClick?: (e: any) => void;
+  onMouseEnter?: (e: any) => void;
+  onMouseLeave?: (e: any) => void;
 }
 
 export const VectorShape: React.FC<VectorShapeProps> = ({
@@ -20,6 +23,9 @@ export const VectorShape: React.FC<VectorShapeProps> = ({
   fill = "rgba(239, 68, 68, 0.3)",
   transform = { zoom: 1, offsetX: 0, offsetY: 0 },
   fitScale = 1,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
 }) => {
   if (segments.length === 0) return null;
 
@@ -30,6 +36,9 @@ export const VectorShape: React.FC<VectorShapeProps> = ({
       strokeScaleEnabled={false}
       fill={allowClose && isPathClosed ? fill : undefined}
       draggrable
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       sceneFunc={(ctx) => {
         // Set stroke style explicitly for custom drawing
         ctx.strokeStyle = stroke;

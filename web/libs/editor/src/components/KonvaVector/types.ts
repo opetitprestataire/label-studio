@@ -124,6 +124,10 @@ export interface KonvaVectorProps {
   onMouseUp?: (e?: KonvaEventObject<MouseEvent>) => void;
   /** Click event handler */
   onClick?: (e: KonvaEventObject<MouseEvent>) => void;
+  /** Mouse enter event handler */
+  onMouseEnter?: (e: KonvaEventObject<MouseEvent>) => void;
+  /** Mouse leave event handler */
+  onMouseLeave?: (e: KonvaEventObject<MouseEvent>) => void;
 	/** Disable all interactions when true */
 	disabled?: boolean;
   /** Ref to access component methods */

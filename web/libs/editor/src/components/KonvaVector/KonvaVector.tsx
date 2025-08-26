@@ -1,6 +1,6 @@
 import type Konva from "konva";
 import { useState, useRef, forwardRef, useImperativeHandle, useEffect } from "react";
-import { Layer, Shape } from "react-konva";
+import { Group, Shape } from "react-konva";
 import {
   ControlPoints,
   GhostLine,
@@ -13,7 +13,7 @@ import {
 import { createEventHandlers } from "./eventHandlers";
 import { convertPoint } from "./pointManagement";
 import { normalizePoints, convertBezierToSimplePoints } from "./utils";
-import { distanceToLineSegment, findClosestPointOnPath, getDistance } from "./eventHandlers/utils";
+import { findClosestPointOnPath, getDistance } from "./eventHandlers/utils";
 import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, KonvaVectorRef } from "./types";
 
 /**
@@ -139,6 +139,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     onMouseMove,
     onMouseUp,
     onClick,
+    onMouseEnter,
+    onMouseLeave,
     allowClose = false,
     allowBezier = true,
     minPoints,
@@ -313,12 +315,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       const segmentHitRadius = 8 / scale; // Slightly larger than point hit radius
 
       // Use the same logic as findClosestPointOnPath for consistent Bezier curve detection
-      const closestPathPoint = findClosestPointOnPath(
-        cursorPosition,
-        initialPoints,
-        allowClose,
-        isPathClosed,
-      );
+      const closestPathPoint = findClosestPointOnPath(cursorPosition, initialPoints, allowClose, isPathClosed);
 
       if (closestPathPoint && getDistance(cursorPosition, closestPathPoint.point) <= segmentHitRadius) {
         return true; // Disable drawing when hovering over segments
@@ -720,7 +717,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   });
 
   return (
-    <Layer
+    <Group
       ref={stageRef}
       scaleX={scaleX}
       scaleY={scaleY}
@@ -731,7 +728,6 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       onMouseMove={disabled ? undefined : eventHandlers.handleLayerMouseMove}
       onMouseUp={disabled ? undefined : eventHandlers.handleLayerMouseUp}
       onClick={disabled ? undefined : eventHandlers.handleLayerClick}
-      onDblClick={disabled ? undefined : eventHandlers.handleLayerDblClick}
     >
       {/* Invisible rectangle - always render to capture mouse events for cursor position updates */}
       {!disabled && (
@@ -754,6 +750,9 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         fill={fill}
         transform={transform}
         fitScale={fitScale}
+        onClick={disabled ? undefined : onClick}
+        onMouseEnter={disabled ? undefined : onMouseEnter}
+        onMouseLeave={disabled ? undefined : onMouseLeave}
         key={`vector-shape-${initialPoints.length}-${initialPoints.map((p) => p.id).join("-")}`}
       />
 
@@ -840,6 +839,6 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         initialPointsLength={initialPoints.length}
         isDragging={isDragging.current}
       />
-    </Layer>
+    </Group>
   );
 });

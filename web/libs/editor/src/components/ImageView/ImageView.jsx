@@ -1444,7 +1444,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
       {isFF(FF_LSDV_4930) ? <TransformerBack item={item} /> : null}
 
       {renderableRegions.map(([groupName, list]) => {
-        const useLayers = groupName.match(/brush|vector/i) === null;
+        const useLayers = groupName.match(/brush/i) === null;
         const isSuggestion = groupName.match("suggested") !== null;
 
         return list.length > 0 ? (

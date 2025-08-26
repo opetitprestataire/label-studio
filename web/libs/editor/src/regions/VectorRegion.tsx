@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { getRoot, isAlive, types } from "mobx-state-tree";
 import NormalizationMixin from "../mixins/Normalization";
 import RegionsMixin from "../mixins/Regions";
@@ -14,6 +14,8 @@ import { RELATIVE_STAGE_HEIGHT, RELATIVE_STAGE_WIDTH } from "../components/Image
 import { KonvaVector } from "../components/KonvaVector/KonvaVector";
 import type { KonvaVectorRef } from "../components/KonvaVector/types";
 import { observer } from "mobx-react";
+import { Group } from "react-konva";
+import Constants from "../core/Constants";
 
 // Type definitions
 interface Point {
@@ -295,72 +297,13 @@ const VectorRegionModel = types.compose(
   ...(isFF(FF_DEV_3793) ? [] : [VectorRegionAbsoluteCoordsDEV3793]),
 );
 
-/**
- * Get coordinates of anchor point
- * @param {array} flattenedPoints
- * @param {number} cursorX coordinates of cursor X
- * @param {number} cursorY coordinates of cursor Y
- */
-function getAnchorPoint({ flattenedPoints, cursorX, cursorY }: any): [number, number] {
-  const [point1X, point1Y, point2X, point2Y] = flattenedPoints;
-  const y =
-    ((point2X - point1X) * (point2X * point1Y - point1X * point2Y) +
-      (point2X - point1X) * (point2Y - point1Y) * cursorX +
-      (point2Y - point1Y) * (point2Y - point1Y) * cursorY) /
-    ((point2Y - point1Y) * (point2Y - point1Y) + (point2X - point1X) * (point2X - point1X));
-  const x =
-    cursorX -
-    ((point2Y - point1Y) *
-      (point2X * point1Y - point1X * point2Y + cursorX * (point2Y - point1Y) - cursorY * (point2X - point1X))) /
-      ((point2Y - point1Y) * (point2Y - point1Y) + (point2X - point1X) * (point2X - point1X));
-
-  return [x, y];
-}
-
-function getFlattenedPoints(points: any[]): number[] {
-  console.log("getFlattenedPoints called with points:", points);
-
-  const p = points.map((p) => {
-    // For any point format, we use their x and y coordinates
-    let x, y;
-
-    if (p.x !== undefined && p.y !== undefined) {
-      // If we have x/y coordinates, we need to convert them to canvas coordinates
-      // Access stage through the parent relationship
-      const stage = (p as any).stage || (p as any).parent?.parent;
-      if (stage && stage.internalToCanvasX) {
-        x = stage.internalToCanvasX(p.x);
-        y = stage.internalToCanvasY(p.y);
-      } else {
-        x = p.x;
-        y = p.y;
-      }
-    } else {
-      console.warn("Point has no coordinates:", p);
-      x = 0;
-      y = 0;
-    }
-
-    console.log(`Point ${p.id || "unknown"}: x=${x}, y=${y}`);
-    return [x, y];
-  });
-
-  const result = p.reduce((flattenedPoints: number[], point: number[]) => flattenedPoints.concat(point), []);
-  console.log("Flattened points result:", result);
-  return result;
-}
-
 const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
-  // console.log("🔍 HtxVectorView rendered for item:", item.id, "isDrawing:", item.isDrawing);
   const { store } = item;
   const regionStyles = useRegionStyles(item);
   const konvaVectorRef = useRef<KonvaVectorRef>(null);
 
-  useEffect(() => {
-    console.log("🔍 HtxVectorView mounted for item:", item.id);
-  }, [item.id]);
-
   // Get stage dimensions and scaling from the parent image view
+  const stage = item.parent?.stageRef;
   const image = item.parent.currentImageEntity;
   const stageWidth = image.naturalWidth;
   const stageHeight = image.naturalHeight;
@@ -369,48 +312,74 @@ const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
   const stageScaleX = item.parent?.stageScaleX || 1;
   const stageScaleY = item.parent?.stageScaleY || 1;
 
-  // console.log("🔍 Rendering KonvaVector with points:", item.points);
-  console.log("🔍 Stage dimensions:", {
-    stageWidth,
-    stageHeight,
-    offsetX,
-    offsetY,
-    stageZoom,
-    stageScaleX,
-    stageScaleY,
-  });
-
   // Wait for stage to be properly initialized
   if (!item.parent?.stageWidth || !item.parent?.stageHeight) {
-    console.log("🔍 Stage not ready yet, waiting...");
     return null;
   }
 
   return (
-    <KonvaVector
-      ref={konvaVectorRef}
-      initialPoints={Array.from(item.points)}
-      onPointsChange={(points) => {
-        item.updatePointsFromKonvaVector(points);
+    <Group
+      key={item.id ? item.id : guidGenerator(5)}
+      name={item.id}
+      // ref={(el) => setShapeRef(el)}
+      onMouseOver={() => {
+        if (store.annotationStore.selected.isLinkingMode) {
+          item.setHighlight(true);
+        }
+        item.updateCursor(true);
       }}
-      onPathClosedChange={(isClosed) => {
-        item.onPathClosedChange(isClosed);
+      onMouseOut={() => {
+        if (store.annotationStore.selected.isLinkingMode) {
+          item.setHighlight(false);
+        }
+        item.updateCursor();
       }}
-      width={stageWidth}
-      height={stageHeight}
-      scaleX={item.parent.stageZoom}
-      scaleY={item.parent.stageZoom}
-      x={0}
-      y={0}
-      transform={{ zoom: item.parent.stageZoom, offsetX, offsetY }}
-      fitScale={item.parent.zoomScale}
-      allowClose={true}
-      allowBezier={true}
-      stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
-      fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
-      pixelSnapping={false}
-      disabled={!item.selected && !item.isDrawing}
-    />
+      onClick={(e) => {
+        // create regions over another regions with Cmd/Ctrl pressed
+        if (item.parent.getSkipInteractions()) return;
+        if (item.isDrawing) return;
+
+        e.cancelBubble = true;
+
+        if (!item.closed) return;
+
+        if (store.annotationStore.selected.isLinkingMode) {
+          stage.container().style.cursor = Constants.DEFAULT_CURSOR;
+        }
+
+        item.setHighlight(false);
+        item.onClickRegion(e);
+      }}
+      listening={!suggestion}
+    >
+      <KonvaVector
+        ref={konvaVectorRef}
+        initialPoints={Array.from(item.points)}
+        onPointsChange={(points) => {
+          item.updatePointsFromKonvaVector(points);
+        }}
+        onPathClosedChange={(isClosed) => {
+          item.onPathClosedChange(isClosed);
+        }}
+        onClick={() => {
+          console.log("shape clicked");
+        }}
+        width={stageWidth}
+        height={stageHeight}
+        scaleX={item.parent.stageZoom}
+        scaleY={item.parent.stageZoom}
+        x={0}
+        y={0}
+        transform={{ zoom: item.parent.stageZoom, offsetX, offsetY }}
+        fitScale={item.parent.zoomScale}
+        allowClose={true}
+        allowBezier={true}
+        stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
+        fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
+        pixelSnapping={false}
+        disabled={!item.selected && !item.isDrawing}
+      />
+    </Group>
   );
 });
 
