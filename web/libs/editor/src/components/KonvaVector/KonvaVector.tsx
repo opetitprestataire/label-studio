@@ -873,6 +873,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           initialPoints={getAllPoints()}
           transformerRef={transformerRef}
           proxyRefs={proxyRefs}
+          constrainToBounds={constrainToBounds}
+          bounds={{ width, height }}
           onPointsChange={(newPoints) => {
             // Update main path points
             onPointsChange?.(newPoints);

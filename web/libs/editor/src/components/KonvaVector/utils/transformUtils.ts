@@ -1,5 +1,6 @@
 import type Konva from "konva";
 import type { BezierPoint } from "../types";
+import { constrainPointToBounds } from "./boundsChecking";
 
 export interface TransformResult {
   newPoints: BezierPoint[];
@@ -21,6 +22,8 @@ export function applyTransformationToPoints(
   updateControlPoints = true,
   originalPositions?: { [key: number]: { x: number; y: number; controlPoint1?: { x: number; y: number }; controlPoint2?: { x: number; y: number } } },
   transformerCenter?: { x: number; y: number },
+  constrainToBounds = false,
+  bounds?: { width: number; height: number },
 ): TransformResult {
 
   const nodes = transformer.nodes();
@@ -29,6 +32,33 @@ export function applyTransformationToPoints(
   // Safety check - ensure we have valid nodes
   if (!nodes || nodes.length === 0) {
     return { newPoints, transformer };
+  }
+
+  // If bounds checking is enabled and we have multiple selected points, 
+  // we need to check if ALL anchor points can fit within bounds before applying any transformation
+  if (constrainToBounds && bounds && nodes.length > 1) {
+    // For collective bounds checking, we only check anchor points (main points)
+    // Control points are allowed to extend outside bounds
+    for (const node of nodes) {
+      if (!node || !node.name()) continue;
+
+      const pointIndex = Number.parseInt(node.name().split("-")[1]);
+      const point = initialPoints[pointIndex];
+
+      if (point) {
+        const transformedX = node.x();
+        const transformedY = node.y();
+
+        // Check if this anchor point would be outside bounds
+        if (transformedX < 0 || transformedX > bounds.width || transformedY < 0 || transformedY > bounds.height) {
+          // If any anchor point would be outside bounds, reject the entire transformation
+          return { newPoints: initialPoints, transformer };
+        }
+      }
+    }
+
+    // If we get here, all anchor points can fit within bounds
+    // so proceed with the actual transformation
   }
 
   // Calculate incremental rotation change
@@ -57,8 +87,18 @@ export function applyTransformationToPoints(
       const originalPos = originalPositions?.[pointIndex] || originalPoint;
 
       // Update the point position - trust what the transformer says
-      point.x = transformedX;
-      point.y = transformedY;
+      let finalX = transformedX;
+      let finalY = transformedY;
+
+      // Apply bounds checking if enabled
+      if (constrainToBounds && bounds) {
+        const constrainedPos = constrainPointToBounds({ x: finalX, y: finalY }, bounds);
+        finalX = constrainedPos.x;
+        finalY = constrainedPos.y;
+      }
+
+      point.x = finalX;
+      point.y = finalY;
 
       // Don't update proxy node position - let transformer manage it
       // This prevents the update loop
@@ -138,13 +178,22 @@ export function applyTransformationToPoints(
         }
 
         // Apply the vectors to the new anchor point position (this includes both translation and rotation)
+        let finalCP1PosX = point.x + finalCP1X;
+        let finalCP1PosY = point.y + finalCP1Y;
+        let finalCP2PosX = point.x + finalCP2X;
+        let finalCP2PosY = point.y + finalCP2Y;
+
+        // Note: We don't apply bounds checking to control points
+        // Only anchor points are constrained to image bounds
+        // Control points can extend outside bounds as they are visual guides
+
         point.controlPoint1 = {
-          x: point.x + finalCP1X,
-          y: point.y + finalCP1Y,
+          x: finalCP1PosX,
+          y: finalCP1PosY,
         };
         point.controlPoint2 = {
-          x: point.x + finalCP2X,
-          y: point.y + finalCP2Y,
+          x: finalCP2PosX,
+          y: finalCP2PosY,
         };
       }
     }
