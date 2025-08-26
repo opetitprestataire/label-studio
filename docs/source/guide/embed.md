@@ -17,7 +17,8 @@ Label Studio Embeds allow you to seamlessly integrate annotation and review func
 
 Before you begin, ensure you have:
 * Label Studio:
-    * Admin or Owner permissions in Label Studio
+    * You must have the Owner role in Label Studio.
+    * From **Organization > Access Token Settings**, ensure that at least one option is enabled.
 
 
 * Your external application:
