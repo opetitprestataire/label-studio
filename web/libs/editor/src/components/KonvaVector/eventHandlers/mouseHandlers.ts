@@ -15,6 +15,7 @@ import {
   snapToPixel,
   stageToImageCoordinates,
 } from "./utils";
+import { constrainPointToBounds } from "../utils/boundsChecking";
 
 export function createMouseDownHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
   return (e: KonvaEventObject<MouseEvent>) => {
@@ -471,11 +472,16 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
       // Snap to pixel grid if enabled
       const snappedPos = snapToPixel(imagePos, props.pixelSnapping);
 
+      // Apply bounds checking if enabled
+      const finalPos = props.constrainToBounds
+        ? constrainPointToBounds(snappedPos, { width: props.width, height: props.height })
+        : snappedPos;
+
       // Update the point position
       newPoints[props.draggedPointIndex] = {
         ...draggedPoint,
-        x: snappedPos.x,
-        y: snappedPos.y,
+        x: finalPos.x,
+        y: finalPos.y,
       };
 
       // If it's a bezier point, move the control points with it
@@ -531,6 +537,11 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
         // Snap to pixel grid if enabled
         const snappedPos = snapToPixel(imagePos, props.pixelSnapping);
 
+        // Apply bounds checking if enabled
+        const finalPos = props.constrainToBounds
+          ? constrainPointToBounds(snappedPos, { width: props.width, height: props.height })
+          : snappedPos;
+
         // If Alt key is held, disconnect the control points
         if (e.evt.altKey) {
           point.disconnected = true;
@@ -540,7 +551,7 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
           // Create a new point object with updated control points
           const updatedPoint = {
             ...point,
-            controlPoint1: { x: snappedPos.x, y: snappedPos.y },
+            controlPoint1: { x: finalPos.x, y: finalPos.y },
           };
 
           // If controls are synchronized (not disconnected), update the other control point symmetrically
@@ -563,7 +574,7 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
           // Create a new point object with updated control points
           const updatedPoint = {
             ...point,
-            controlPoint2: { x: snappedPos.x, y: snappedPos.y },
+            controlPoint2: { x: finalPos.x, y: finalPos.y },
           };
 
           // If controls are synchronized (not disconnected), update the other control point symmetrically

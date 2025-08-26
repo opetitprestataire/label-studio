@@ -73,6 +73,7 @@ const Model = types
     supportsRotate: false,
     supportsScale: true,
     isDrawing: false,
+    vectorRef: null,
   }))
   .views((self: any) => ({
     get store() {
@@ -81,6 +82,7 @@ const Model = types
     get bboxCoords() {
       if (!self.shape?.length || !isAlive(self)) return {};
 
+      // Calculate bounding box from shape points
       const bbox = self.shape.reduce(
         (bboxCoords: any, point: any) => ({
           left: Math.min(bboxCoords.left, point.x),
@@ -96,12 +98,25 @@ const Model = types
         },
       );
 
+      // Ensure we have valid coordinates
+      if (bbox.left === undefined || bbox.top === undefined) {
+        return {};
+      }
+
       if (!isFF(FF_DEV_3793)) {
         // recalc on resize
         fixMobxObserve(self.parent.stageWidth, self.parent.stageHeight);
       }
 
       return bbox;
+    },
+    get minPoints() {
+      const min = self.control?.minpoints;
+      return min ? Number.parseInt(min) : undefined;
+    },
+    get maxPoints() {
+      const max = self.control?.maxpoints;
+      return max ? Number.parseInt(max) : undefined;
     },
   }))
   .actions((self: any) => {
@@ -156,7 +171,49 @@ const Model = types
       onClickRegion(e: any) {
         // Handle click on the region
         if (self.annotation) {
-          self.annotation.selectArea(self);
+          // Use the proper selection method from Regions mixin
+          self._selectArea(e?.evt?.ctrlKey || e?.evt?.metaKey);
+        }
+      },
+
+      onSelection(type: "start" | "move" | "end" | "reset") {
+        if (type === "reset") {
+          self.vectorRef.clearSelection();
+          return;
+        }
+
+        const selection = self.parent.selectionArea;
+        const bbox = selection.onCanvasBbox;
+
+        if (!bbox) return;
+
+        const selectedPoints = self.shape
+          .filter((p: { x: number; y: number }) => {
+            const x = p.x;
+            const y = p.y;
+            const matchX = bbox.left <= x && x <= bbox.right;
+            const matchY = bbox.top <= y && y <= bbox.bottom;
+            return matchX && matchY;
+          })
+          .map((p: { id: string }) => p.id);
+
+        self.vectorRef?.selectPointsByIds(selectedPoints);
+      },
+
+      _selectArea(additiveMode = false) {
+        const annotation = self.annotation;
+        if (!annotation) return;
+
+        if (additiveMode) {
+          annotation.toggleRegionSelection(self);
+        } else {
+          const wasNotSelected = !self.selected;
+
+          if (wasNotSelected) {
+            annotation.selectArea(self);
+          } else {
+            annotation.unselectAll();
+          }
         }
       },
 
@@ -233,6 +290,16 @@ const Model = types
       onPathClosedChange(isClosed: boolean) {
         self.closed = isClosed;
       },
+
+      // Method to handle selection changes from the Selection tool
+      onSelectionChange(isSelected: boolean) {
+        // This method can be called when the Selection tool changes selection state
+        // We can add any custom logic here if needed
+      },
+
+      setKonvaVectorRef(ref: KonvaVectorRef) {
+        self.vectorRef = ref;
+      },
     };
   });
 
@@ -247,7 +314,9 @@ const VectorRegionModel = types.compose(
 
 const HtxVectorView = observer(({ item, suggestion }: any) => {
   const { store } = item;
-  const regionStyles = useRegionStyles(item);
+  const regionStyles = useRegionStyles(item, {
+    useStrokeAsFill: true,
+  });
   const konvaVectorRef = useRef<KonvaVectorRef>(null);
 
   // Get stage dimensions and scaling from the parent image view
@@ -256,8 +325,6 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
   const stageWidth = image?.naturalWidth ?? 0;
   const stageHeight = image?.naturalHeight ?? 0;
   const { x: offsetX, y: offsetY } = item.parent?.layerZoomScalePosition ?? { x: 0, y: 0 };
-  const enableSnap = item.parent.snap === "pixel";
-  console.log({ enableSnap, parent: item.parent });
 
   // Wait for stage to be properly initialized
   if (!item.parent?.stageWidth || !item.parent?.stageHeight) {
@@ -266,7 +333,7 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
 
   return (
     <KonvaVector
-      ref={konvaVectorRef}
+      ref={(kv) => item.setKonvaVectorRef(kv)}
       initialPoints={Array.from(item.shape)}
       onPointsChange={(shape) => {
         item.updateShapeFromKonvaVector(shape);
@@ -275,14 +342,14 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
         item.onPathClosedChange(isClosed);
       }}
       onClick={(e) => {
-        // create regions over another regions with Cmd/Ctrl pressed
+        // Handle region selection
         if (item.parent.getSkipInteractions()) return;
         if (item.isDrawing) return;
 
         e.cancelBubble = true;
 
-        if (!item.closed) return;
-
+        // Allow selection regardless of whether the path is closed
+        // The Selection tool will handle multi-selection logic
         if (store.annotationStore.selected.isLinkingMode) {
           stage.container().style.cursor = Constants.DEFAULT_CURSOR;
         }
@@ -313,11 +380,12 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
       fitScale={item.parent.zoomScale}
       allowClose={item.control?.closable ?? false}
       allowBezier={item.control?.curves ?? false}
-      minPoints={item.control?.minpoints ?? undefined}
-      maxPoints={item.control?.maxpoints ?? undefined}
+      minPoints={item.minPoints}
+      maxPoints={item.maxPoints}
       stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
       fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
       pixelSnapping={item.control?.snap === "pixel"}
+      constrainToBounds={item.control?.constrainToBounds ?? true}
       disabled={(!item.selected && !item.isDrawing) || suggestion}
     />
   );

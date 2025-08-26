@@ -25,8 +25,8 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
     return false;
   }
 
-  // Check if we're within canvas bounds
-  if (!isPointInCanvasBounds({ x: options.x, y: options.y }, props.width, props.height)) {
+  // Check if we're within canvas bounds (only if bounds checking is enabled)
+  if (props.constrainToBounds && !isPointInCanvasBounds({ x: options.x, y: options.y }, props.width, props.height)) {
     return false;
   }
 
@@ -107,8 +107,8 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
 
   const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
 
-  // Check if we're within canvas bounds
-  if (!isPointInCanvasBounds(imagePos, props.width, props.height)) {
+  // Check if we're within canvas bounds (only if bounds checking is enabled)
+  if (props.constrainToBounds && !isPointInCanvasBounds(imagePos, props.width, props.height)) {
     return false;
   }
 
@@ -401,8 +401,8 @@ export function insertPointBetween(
   // Snap to pixel grid if enabled
   const snappedCoords = snapToPixel({ x, y }, props.pixelSnapping);
 
-  // Check if we're within canvas bounds
-  if (!isPointInCanvasBounds(snappedCoords, props.width, props.height)) {
+  // Check if we're within canvas bounds (only if bounds checking is enabled)
+  if (props.constrainToBounds && !isPointInCanvasBounds(snappedCoords, props.width, props.height)) {
     return { success: false };
   }
 

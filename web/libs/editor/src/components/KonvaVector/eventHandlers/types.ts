@@ -99,6 +99,7 @@ export interface EventHandlerProps {
   setActivePointId?: (id: string | null) => void;
   setLastAddedPointId?: (pointId: string | null) => void;
   isTransforming?: boolean;
+  constrainToBounds?: boolean;
 }
 
 export interface EventHandlers {

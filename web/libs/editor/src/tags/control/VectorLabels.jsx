@@ -42,6 +42,7 @@ import ControlBase from "./Base";
  * @params {boolean} [curves=false]                 - Allow Bezier curves
  * @params {number|none} [minPoints=none]           - Minimum allowed number of points
  * @params {number|none} [maxPoints=none]           - Maximum allowed number of points
+ * @params {boolean} [constrainToBounds=false]      - Whether to keep shapes inside image bounds
  */
 
 const Validation = types.model({
@@ -50,10 +51,11 @@ const Validation = types.model({
 
 const ModelAttrs = types.model("VectorLabelsModel", {
   type: "vectorlabels",
-  closable: types.maybeNull(types.optional(types.boolean, false)),
-  curves: types.maybeNull(types.optional(types.boolean, false)),
-  minpoints: types.maybeNull(types.optional(types.number(), null)),
-  maxpoints: types.maybeNull(types.optional(types.number(), null)),
+  closable: types.optional(types.maybeNull(types.boolean), false),
+  curves: types.optional(types.maybeNull(types.boolean), false),
+  minpoints: types.optional(types.maybeNull(types.string), null),
+  maxpoints: types.optional(types.maybeNull(types.string), null),
+  constraintobounds: types.optional(types.maybeNull(types.boolean), false),
   children: Types.unionArray(["label", "vectorlabel", "header", "view", "hypertext"]),
 });
 

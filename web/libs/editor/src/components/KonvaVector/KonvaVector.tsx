@@ -14,6 +14,7 @@ import { createEventHandlers } from "./eventHandlers";
 import { convertPoint } from "./pointManagement";
 import { normalizePoints, convertBezierToSimplePoints } from "./utils";
 import { findClosestPointOnPath, getDistance } from "./eventHandlers/utils";
+import { constrainPointToBounds } from "./utils/boundsChecking";
 import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, KonvaVectorRef } from "./types";
 
 /**
@@ -152,6 +153,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     fill = "rgba(239, 68, 68, 0.3)",
     pixelSnapping = false,
     disabled = false,
+    constrainToBounds = false,
   } = props;
 
   // Normalize input points to BezierPoint format
@@ -236,9 +238,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
   // Use external closed prop when allowClose is active, otherwise use internal state
   const isPathClosed = allowClose && closed !== undefined ? closed : internalIsPathClosed;
-  const setIsPathClosed = allowClose && closed !== undefined
-    ? (closed: boolean) => onPathClosedChange?.(closed)
-    : setInternalIsPathClosed;
+  const setIsPathClosed =
+    allowClose && closed !== undefined ? (closed: boolean) => onPathClosedChange?.(closed) : setInternalIsPathClosed;
   const [activePointId, setActivePointId] = useState<string | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
 
@@ -497,8 +498,6 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
       // Check if the first point already has a prevPointId that connects to the last point
       const isAlreadyConnected = firstPoint.prevPointId === lastPoint.id;
-
-
 
       if (!isAlreadyConnected) {
         segments.push({ from: lastPoint, to: firstPoint });
@@ -773,6 +772,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     activePointId,
     setActivePointId,
     isTransforming,
+    constrainToBounds,
   });
 
   return (
