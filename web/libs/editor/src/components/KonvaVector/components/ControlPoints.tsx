@@ -21,7 +21,6 @@ export const ControlPoints: React.FC<ControlPointsProps> = ({
   transform,
   fitScale,
 }) => {
-
   return (
     <>
       {initialPoints.map((point, index) => {
@@ -40,25 +39,17 @@ export const ControlPoints: React.FC<ControlPointsProps> = ({
         const scaledRadius = 4 / scale;
 
         return (
-          <React.Fragment key={`control-group-${index}-${point.x.toFixed(2)}-${point.y.toFixed(2)}-${point.controlPoint1?.x.toFixed(2) || 'null'}-${point.controlPoint1?.y.toFixed(2) || 'null'}-${point.controlPoint2?.x.toFixed(2) || 'null'}-${point.controlPoint2?.y.toFixed(2) || 'null'}`}>
+          <React.Fragment
+            key={`control-group-${index}-${point.x.toFixed(2)}-${point.y.toFixed(2)}-${point.controlPoint1?.x.toFixed(2) || "null"}-${point.controlPoint1?.y.toFixed(2) || "null"}-${point.controlPoint2?.x.toFixed(2) || "null"}-${point.controlPoint2?.y.toFixed(2) || "null"}`}
+          >
             {/* Control point lines - render first so they appear under the points */}
             {point.controlPoint1 && (
               <>
                 {/* White solid background line */}
                 <Line
                   points={[point.x, point.y, point.controlPoint1.x, point.controlPoint1.y]}
-                  stroke="#ffffff"
-                  strokeWidth={1}
-                  opacity={0.9}
-                  strokeScaleEnabled={false}
-                />
-                {/* Blue dashed line on top */}
-                <Line
-                  points={[point.x, point.y, point.controlPoint1.x, point.controlPoint1.y]}
                   stroke="#3b82f6"
                   strokeWidth={1}
-                  dash={[4, 4]}
-                  opacity={1}
                   strokeScaleEnabled={false}
                 />
               </>
@@ -68,18 +59,9 @@ export const ControlPoints: React.FC<ControlPointsProps> = ({
                 {/* White solid background line */}
                 <Line
                   points={[point.x, point.y, point.controlPoint2.x, point.controlPoint2.y]}
-                  stroke="#ffffff"
-                  strokeWidth={1}
-                  opacity={0.9}
-                  strokeScaleEnabled={false}
-                />
-                {/* Blue dashed line on top */}
-                <Line
-                  points={[point.x, point.y, point.controlPoint2.x, point.controlPoint2.y]}
                   stroke="#3b82f6"
                   strokeWidth={1}
-                  dash={[4, 4]}
-                  opacity={1}
+                  opacity={0.9}
                   strokeScaleEnabled={false}
                 />
               </>

@@ -13,7 +13,7 @@ import {
 import { createEventHandlers } from "./eventHandlers";
 import { convertPoint } from "./pointManagement";
 import { normalizePoints, convertBezierToSimplePoints } from "./utils";
-import { distanceToLineSegment } from "./eventHandlers/utils";
+import { distanceToLineSegment, findClosestPointOnPath, getDistance } from "./eventHandlers/utils";
 import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, KonvaVectorRef } from "./types";
 
 /**
@@ -312,21 +312,16 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       const scale = transform.zoom * fitScale;
       const segmentHitRadius = 8 / scale; // Slightly larger than point hit radius
 
-      for (let i = 0; i < initialPoints.length; i++) {
-        const currentPoint = initialPoints[i];
-        const nextPoint = initialPoints[(i + 1) % initialPoints.length];
+      // Use the same logic as findClosestPointOnPath for consistent Bezier curve detection
+      const closestPathPoint = findClosestPointOnPath(
+        cursorPosition,
+        initialPoints,
+        allowClose,
+        isPathClosed,
+      );
 
-        // Skip the last segment if path is not closed
-        if (i === initialPoints.length - 1 && !isPathClosed) {
-          continue;
-        }
-
-        // Calculate distance from cursor to line segment
-        const distance = distanceToLineSegment(cursorPosition, currentPoint, nextPoint);
-
-        if (distance <= segmentHitRadius) {
-          return true; // Disable drawing when hovering over segments
-        }
+      if (closestPathPoint && getDistance(cursorPosition, closestPathPoint.point) <= segmentHitRadius) {
+        return true; // Disable drawing when hovering over segments
       }
     }
 
@@ -346,6 +341,22 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       setVisibleControlPoints(new Set());
     }
   }, [drawingDisabled]);
+
+  // Clear selection when component is disabled
+  useEffect(() => {
+    if (disabled) {
+      setSelectedPointIndex(null);
+      setSelectedPoints(new Set());
+      setVisibleControlPoints(new Set());
+      setDraggedControlPoint(null);
+      setGhostPoint(null);
+      setGhostPointDragInfo(null);
+      setIsDraggingNewBezier(false);
+      setNewPointDragIndex(null);
+      // Hide all Bezier control points when disabled
+      setVisibleControlPoints(new Set());
+    }
+  }, [disabled]);
   const lastPos = useRef<{ x: number; y: number } | null>(null);
 
   // Set up Transformer nodes once when selection changes
@@ -730,7 +741,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             ctx.rect(0, 0, width, height);
             ctx.fillShape(shape);
           }}
-          fill="tansparent"
+          fill="rgba(255,255,255,0.001)"
         />
       )}
 
@@ -768,16 +779,18 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       />
 
       {/* Control points - render first so lines appear under main points */}
-      <ControlPoints
-        initialPoints={getAllPoints()}
-        selectedPointIndex={selectedPointIndex}
-        isDraggingNewBezier={isDraggingNewBezier}
-        draggedControlPoint={draggedControlPoint}
-        visibleControlPoints={visibleControlPoints}
-        transform={transform}
-        fitScale={fitScale}
-        key={`control-points-${initialPoints.length}-${initialPoints.map((p, i) => `${i}-${p.x.toFixed(1)}-${p.y.toFixed(1)}-${p.controlPoint1?.x?.toFixed(1) || 'null'}-${p.controlPoint1?.y?.toFixed(1) || 'null'}-${p.controlPoint2?.x?.toFixed(1) || 'null'}-${p.controlPoint2?.y?.toFixed(1) || 'null'}`).join('-')}`}
-      />
+      {!disabled && (
+        <ControlPoints
+          initialPoints={getAllPoints()}
+          selectedPointIndex={selectedPointIndex}
+          isDraggingNewBezier={isDraggingNewBezier}
+          draggedControlPoint={draggedControlPoint}
+          visibleControlPoints={visibleControlPoints}
+          transform={transform}
+          fitScale={fitScale}
+          key={`control-points-${initialPoints.length}-${initialPoints.map((p, i) => `${i}-${p.x.toFixed(1)}-${p.y.toFixed(1)}-${p.controlPoint1?.x?.toFixed(1) || "null"}-${p.controlPoint1?.y?.toFixed(1) || "null"}-${p.controlPoint2?.x?.toFixed(1) || "null"}-${p.controlPoint2?.y?.toFixed(1) || "null"}`).join("-")}`}
+        />
+      )}
 
       {/* All vector points */}
       <VectorPoints

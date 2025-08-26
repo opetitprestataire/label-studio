@@ -152,9 +152,15 @@ const Model = types
         self.mouseOverStartPoint = value;
       },
 
-      addPoint() {
-        // KonvaVector is self contained and handles points internally
-        // This method is for compatibility only
+      addPoint(x?: number, y?: number) {
+        // This method is called by the Vector tool to add the first point
+        // The actual point addition is handled by KonvaVector through the ref
+        if (self.isDrawing && self.points.length === 0 && x !== undefined && y !== undefined) {
+          // The coordinates from startDrawing are already in the correct coordinate system
+          // Create a simple point that KonvaVector will normalize
+          const firstPoint = [x, y];
+          self.points.replace([firstPoint]);
+        }
       },
 
       // Notify that a point has been moved
@@ -358,8 +364,7 @@ const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
   const image = item.parent.currentImageEntity;
   const stageWidth = image.naturalWidth;
   const stageHeight = image.naturalHeight;
-  const offsetX = item.parent?.offsetX || 0;
-  const offsetY = item.parent?.offsetY || 0;
+  const { x: offsetX, y: offsetY } = item.parent.layerZoomScalePosition;
   const stageZoom = item.parent?.stageZoom || 1;
   const stageScaleX = item.parent?.stageScaleX || 1;
   const stageScaleY = item.parent?.stageScaleY || 1;
@@ -395,8 +400,8 @@ const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
       height={stageHeight}
       scaleX={item.parent.stageZoom}
       scaleY={item.parent.stageZoom}
-      x={-offsetX * item.parent.zoomScale * item.parent.stageZoom}
-      y={-offsetY * item.parent.zoomScale * item.parent.stageZoom}
+      x={0}
+      y={0}
       transform={{ zoom: item.parent.stageZoom, offsetX, offsetY }}
       fitScale={item.parent.zoomScale}
       allowClose={true}

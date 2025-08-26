@@ -518,29 +518,41 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
         }
 
         if (controlIndex === 1 && point.controlPoint1) {
-          point.controlPoint1 = { x: snappedPos.x, y: snappedPos.y };
+          // Create a new point object with updated control points
+          const updatedPoint = {
+            ...point,
+            controlPoint1: { x: snappedPos.x, y: snappedPos.y },
+          };
 
           // If controls are synchronized (not disconnected), update the other control point symmetrically
           if (!point.disconnected && point.controlPoint2) {
             const deltaX = imagePos.x - point.x;
             const deltaY = imagePos.y - point.y;
-            point.controlPoint2 = {
+            updatedPoint.controlPoint2 = {
               x: point.x - deltaX,
               y: point.y - deltaY,
             };
           }
+
+          newPoints[pointIndex] = updatedPoint;
         } else if (controlIndex === 2 && point.controlPoint2) {
-          point.controlPoint2 = { x: snappedPos.x, y: snappedPos.y };
+          // Create a new point object with updated control points
+          const updatedPoint = {
+            ...point,
+            controlPoint2: { x: snappedPos.x, y: snappedPos.y },
+          };
 
           // If controls are synchronized (not disconnected), update the other control point symmetrically
           if (!point.disconnected && point.controlPoint1) {
             const deltaX = imagePos.x - point.x;
             const deltaY = imagePos.y - point.y;
-            point.controlPoint1 = {
+            updatedPoint.controlPoint1 = {
               x: point.x - deltaX,
               y: point.y - deltaY,
             };
           }
+
+          newPoints[pointIndex] = updatedPoint;
         }
 
         props.onPointsChange?.(newPoints);

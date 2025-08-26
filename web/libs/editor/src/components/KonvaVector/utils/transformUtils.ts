@@ -56,10 +56,6 @@ export function applyTransformationToPoints(
       // Use stored original positions if available, otherwise use current positions
       const originalPos = originalPositions?.[pointIndex] || originalPoint;
 
-      // Calculate the transformation offset from the original position
-      const dx = transformedX - originalPos.x;
-      const dy = transformedY - originalPos.y;
-
       // Update the point position - trust what the transformer says
       point.x = transformedX;
       point.y = transformedY;

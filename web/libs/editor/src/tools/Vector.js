@@ -115,7 +115,12 @@ const _Tool = types
       },
 
       startDrawing(x, y) {
+        // Use the raw canvas coordinates for snapping
+        // KonvaVector will handle the coordinate conversion internally
         const point = self.control?.getSnappedPoint({ x, y });
+
+        console.log("Canvas coords:", { x, y });
+        console.log("Snapped point:", point);
 
         self.mode = "drawing";
         self.currentArea = self.createRegion(self.createRegionOptions({ x: point.x, y: point.y }), true);

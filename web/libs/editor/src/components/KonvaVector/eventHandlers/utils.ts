@@ -13,8 +13,8 @@ export function stageToImageCoordinates(
 ): { x: number; y: number } {
   const scale = transform.zoom * fitScale;
   return {
-    x: (stagePos.x - x) / scale,
-    y: (stagePos.y - y) / scale,
+    x: (stagePos.x - x - transform.offsetX) / scale,
+    y: (stagePos.y - y - transform.offsetY) / scale,
   };
 }
 
