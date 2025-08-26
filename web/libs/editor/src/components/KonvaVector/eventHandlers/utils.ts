@@ -285,21 +285,22 @@ export function continueBezierDrag(props: EventHandlerProps): void {
       const normalizedDragX = dragVectorX / controlDistance;
       const normalizedDragY = dragVectorY / controlDistance;
 
-      // Update control point 1 to follow the cursor at the calculated distance
-      bezierPoint.controlPoint1 = {
-        x: bezierPoint.x + normalizedDragX * controlDistance,
-        y: bezierPoint.y + normalizedDragY * controlDistance,
-      };
-
-      // Update control point 2 to be opposite to control point 1 at the same distance
-      bezierPoint.controlPoint2 = {
-        x: bezierPoint.x - normalizedDragX * controlDistance,
-        y: bezierPoint.y - normalizedDragY * controlDistance,
+      // Create a new point object with updated control points
+      newPoints[bezierPointIndex] = {
+        ...bezierPoint,
+        controlPoint1: {
+          x: bezierPoint.x + normalizedDragX * controlDistance,
+          y: bezierPoint.y + normalizedDragY * controlDistance,
+        },
+        controlPoint2: {
+          x: bezierPoint.x - normalizedDragX * controlDistance,
+          y: bezierPoint.y - normalizedDragY * controlDistance,
+        },
       };
 
       // Update the points
       props.onPointsChange?.(newPoints);
-      props.onPointEdited?.(bezierPoint, bezierPointIndex);
+      props.onPointEdited?.(newPoints[bezierPointIndex], bezierPointIndex);
     }
   }
 }

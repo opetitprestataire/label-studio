@@ -269,10 +269,8 @@ const Model = types
 
       // New methods for KonvaVector integration
       updatePointsFromKonvaVector(points: any[]) {
-        console.log("🔍 updatePointsFromKonvaVector called with points:", points);
         // Store whatever format KonvaVector gives us
         self.points.replace(points);
-        console.log("🔍 points updated, new length:", self.points.length);
       },
 
       onPathClosedChange(isClosed: boolean) {
@@ -347,7 +345,7 @@ function getFlattenedPoints(points: any[]): number[] {
 }
 
 const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
-  console.log("🔍 HtxVectorView rendered for item:", item.id, "isDrawing:", item.isDrawing);
+  // console.log("🔍 HtxVectorView rendered for item:", item.id, "isDrawing:", item.isDrawing);
   const { store } = item;
   const regionStyles = useRegionStyles(item);
   const konvaVectorRef = useRef<KonvaVectorRef>(null);
@@ -366,7 +364,7 @@ const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
   const stageScaleX = item.parent?.stageScaleX || 1;
   const stageScaleY = item.parent?.stageScaleY || 1;
 
-  console.log("🔍 Rendering KonvaVector with points:", item.points);
+  // console.log("🔍 Rendering KonvaVector with points:", item.points);
   console.log("🔍 Stage dimensions:", {
     stageWidth,
     stageHeight,

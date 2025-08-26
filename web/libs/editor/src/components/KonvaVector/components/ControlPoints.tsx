@@ -21,6 +21,7 @@ export const ControlPoints: React.FC<ControlPointsProps> = ({
   transform,
   fitScale,
 }) => {
+
   return (
     <>
       {initialPoints.map((point, index) => {
@@ -39,7 +40,7 @@ export const ControlPoints: React.FC<ControlPointsProps> = ({
         const scaledRadius = 4 / scale;
 
         return (
-          <React.Fragment key={`control-group-${index}-${point.x.toFixed(2)}-${point.y.toFixed(2)}`}>
+          <React.Fragment key={`control-group-${index}-${point.x.toFixed(2)}-${point.y.toFixed(2)}-${point.controlPoint1?.x.toFixed(2) || 'null'}-${point.controlPoint1?.y.toFixed(2) || 'null'}-${point.controlPoint2?.x.toFixed(2) || 'null'}-${point.controlPoint2?.y.toFixed(2) || 'null'}`}>
             {/* Control point lines - render first so they appear under the points */}
             {point.controlPoint1 && (
               <>

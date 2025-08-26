@@ -231,6 +231,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   const [visibleControlPoints, setVisibleControlPoints] = useState<Set<number>>(new Set());
   const [isPathClosed, setIsPathClosed] = useState(false);
   const [activePointId, setActivePointId] = useState<string | null>(null);
+  const [isTransforming, setIsTransforming] = useState(false);
 
   const isDragging = useRef(false);
 
@@ -704,6 +705,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     setLastAddedPointId,
     activePointId,
     setActivePointId,
+    isTransforming,
   });
 
   return (
@@ -774,7 +776,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         visibleControlPoints={visibleControlPoints}
         transform={transform}
         fitScale={fitScale}
-        key={`control-points-${JSON.stringify(getAllPoints().map((p) => ({ x: p.x, y: p.y, cp1: p.controlPoint1, cp2: p.controlPoint2 })))}`}
+        key={`control-points-${initialPoints.length}-${initialPoints.map((p, i) => `${i}-${p.x.toFixed(1)}-${p.y.toFixed(1)}-${p.controlPoint1?.x?.toFixed(1) || 'null'}-${p.controlPoint1?.y?.toFixed(1) || 'null'}-${p.controlPoint2?.x?.toFixed(1) || 'null'}-${p.controlPoint2?.y?.toFixed(1) || 'null'}`).join('-')}`}
       />
 
       {/* All vector points */}
@@ -805,6 +807,12 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           }}
           onTransformStateChange={(state) => {
             transformerStateRef.current = state;
+          }}
+          onTransformationStart={() => {
+            setIsTransforming(true);
+          }}
+          onTransformationEnd={() => {
+            setIsTransforming(false);
           }}
         />
       )}

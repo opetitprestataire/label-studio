@@ -99,6 +99,20 @@ export const GhostLine: React.FC<GhostLineProps> = ({
     activePoint &&
     !isNearFirstPoint(); // Hide ghost line when near first point
 
+  console.log("🔍 GhostLine debug:", {
+    drawingDisabled,
+    hasCursorPosition: !!cursorPosition,
+    draggedControlPoint: !!draggedControlPoint,
+    draggedPointIndex,
+    isDraggingNewBezier,
+    isPathClosed,
+    maxPoints,
+    initialPointsLength: initialPoints.length,
+    hasActivePoint: !!activePoint,
+    isNearFirst: isNearFirstPoint(),
+    shouldShow: shouldShowGhostLine
+  });
+
   // Always render if we have the necessary conditions for ghost line or closing indicator
   const shouldRender = !drawingDisabled && cursorPosition && !isPathClosed;
 

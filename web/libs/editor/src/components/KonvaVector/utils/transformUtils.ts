@@ -10,15 +10,19 @@ export interface TransformResult {
  * Applies transformation from proxy nodes to real points
  * This function handles both position and rotation transformations
  */
-// Track previous rotation to calculate incremental changes
-let previousRotation = 0;
+export function resetTransformState() {
+  // No longer needed, but keeping for backward compatibility
+}
 
 export function applyTransformationToPoints(
   transformer: Konva.Transformer,
   initialPoints: BezierPoint[],
   proxyRefs?: React.MutableRefObject<{ [key: number]: Konva.Rect | null }>,
   updateControlPoints = true,
+  originalPositions?: { [key: number]: { x: number; y: number; controlPoint1?: { x: number; y: number }; controlPoint2?: { x: number; y: number } } },
+  transformerCenter?: { x: number; y: number },
 ): TransformResult {
+
   const nodes = transformer.nodes();
   const newPoints = [...initialPoints];
 
@@ -29,14 +33,10 @@ export function applyTransformationToPoints(
 
   // Calculate incremental rotation change
   const currentRotation = transformer.rotation();
-  const rotationDelta = currentRotation - previousRotation;
 
-  // Normalize rotation to stay within -360 to 360 degrees
-  const normalizedRotationDelta = ((rotationDelta + 180) % 360) - 180;
-
-  previousRotation = currentRotation;
-
-  const rotationRadians = normalizedRotationDelta * (Math.PI / 180);
+  // Use the current rotation directly - the transformer handles the rotation correctly
+  // We just need to apply this rotation to the control points relative to their anchor points
+  const rotationRadians = currentRotation * (Math.PI / 180);
   const scaleX = transformer.scaleX();
   const scaleY = transformer.scaleY();
 
@@ -49,26 +49,23 @@ export function applyTransformationToPoints(
     const originalPoint = initialPoints[pointIndex];
 
     if (point && originalPoint) {
-      // Get the node's transformed position
+      // Get the node's transformed position - trust the transformer
       const transformedX = node.x();
       const transformedY = node.y();
 
-      // Calculate the transformation offset
-      const dx = transformedX - originalPoint.x;
-      const dy = transformedY - originalPoint.y;
+      // Use stored original positions if available, otherwise use current positions
+      const originalPos = originalPositions?.[pointIndex] || originalPoint;
 
-      // Update the point position
+      // Calculate the transformation offset from the original position
+      const dx = transformedX - originalPos.x;
+      const dy = transformedY - originalPos.y;
+
+      // Update the point position - trust what the transformer says
       point.x = transformedX;
       point.y = transformedY;
 
-      // Update the proxy node position if available
-      if (proxyRefs?.current[pointIndex]) {
-        const proxyNode = proxyRefs.current[pointIndex];
-        if (proxyNode) {
-          proxyNode.x(transformedX);
-          proxyNode.y(transformedY);
-        }
-      }
+      // Don't update proxy node position - let transformer manage it
+      // This prevents the update loop
 
       // Apply the same transformation to control points if it's a Bezier point
       if (
@@ -79,69 +76,83 @@ export function applyTransformationToPoints(
         originalPoint.controlPoint1 &&
         originalPoint.controlPoint2
       ) {
-        // Always apply translation first
-        point.controlPoint1.x = originalPoint.controlPoint1.x + dx;
-        point.controlPoint1.y = originalPoint.controlPoint1.y + dy;
-        point.controlPoint2.x = originalPoint.controlPoint2.x + dx;
-        point.controlPoint2.y = originalPoint.controlPoint2.y + dy;
+        // Use stored original control point positions if available
+        const originalCP1 = originalPositions?.[pointIndex]?.controlPoint1 || originalPoint.controlPoint1;
+        const originalCP2 = originalPositions?.[pointIndex]?.controlPoint2 || originalPoint.controlPoint2;
 
-        // Then apply rotation if there's actual rotation change
-        if (Math.abs(normalizedRotationDelta) > 0.1) {
-          // Rotate control points around their anchor point
-          const cp1Transformed = transformPoint(
-            point.controlPoint1.x,
-            point.controlPoint1.y,
-            point.x,
-            point.y,
-            scaleX,
-            scaleY,
-            rotationRadians,
-          );
-          const cp2Transformed = transformPoint(
-            point.controlPoint2.x,
-            point.controlPoint2.y,
-            point.x,
-            point.y,
-            scaleX,
-            scaleY,
-            rotationRadians,
-          );
+        // Calculate the relative vectors from anchor point to control points (in original state)
+        const originalAnchorX = originalPos.x;
+        const originalAnchorY = originalPos.y;
 
-          point.controlPoint1.x = cp1Transformed[0];
-          point.controlPoint1.y = cp1Transformed[1];
-          point.controlPoint2.x = cp2Transformed[0];
-          point.controlPoint2.y = cp2Transformed[1];
+        const cp1VectorX = originalCP1.x - originalAnchorX;
+        const cp1VectorY = originalCP1.y - originalAnchorY;
+        const cp2VectorX = originalCP2.x - originalAnchorX;
+        const cp2VectorY = originalCP2.y - originalAnchorY;
+
+        // Apply rotation to the control point vectors if there's rotation
+        let finalCP1X = cp1VectorX;
+        let finalCP1Y = cp1VectorY;
+        let finalCP2X = cp2VectorX;
+        let finalCP2Y = cp2VectorY;
+
+        // Apply scaling to the control point vectors
+        if (Math.abs(scaleX - 1) > 0.01 || Math.abs(scaleY - 1) > 0.01) {
+          // Scale control points relative to transformer center, not anchor point
+          if (transformerCenter) {
+            // Calculate control points relative to transformer center
+            const cp1FromCenterX = originalCP1.x - transformerCenter.x;
+            const cp1FromCenterY = originalCP1.y - transformerCenter.y;
+            const cp2FromCenterX = originalCP2.x - transformerCenter.x;
+            const cp2FromCenterY = originalCP2.y - transformerCenter.y;
+
+            // Scale relative to transformer center
+            const scaledCP1FromCenterX = cp1FromCenterX * scaleX;
+            const scaledCP1FromCenterY = cp1FromCenterY * scaleY;
+            const scaledCP2FromCenterX = cp2FromCenterX * scaleX;
+            const scaledCP2FromCenterY = cp2FromCenterY * scaleY;
+
+            // Calculate final control point positions
+            finalCP1X = scaledCP1FromCenterX + transformerCenter.x - point.x;
+            finalCP1Y = scaledCP1FromCenterY + transformerCenter.y - point.y;
+            finalCP2X = scaledCP2FromCenterX + transformerCenter.x - point.x;
+            finalCP2Y = scaledCP2FromCenterY + transformerCenter.y - point.y;
+          } else {
+            // Fallback to anchor-relative scaling
+            finalCP1X = cp1VectorX * scaleX;
+            finalCP1Y = cp1VectorY * scaleY;
+            finalCP2X = cp2VectorX * scaleX;
+            finalCP2Y = cp2VectorY * scaleY;
+          }
         }
+
+        if (Math.abs(currentRotation) > 0.1) {
+          const cos = Math.cos(rotationRadians);
+          const sin = Math.sin(rotationRadians);
+
+          // Rotate the control point vectors (maintain relative angle to anchor)
+          const rotatedCP1X = finalCP1X * cos - finalCP1Y * sin;
+          const rotatedCP1Y = finalCP1X * sin + finalCP1Y * cos;
+          const rotatedCP2X = finalCP2X * cos - finalCP2Y * sin;
+          const rotatedCP2Y = finalCP2X * sin + finalCP2Y * cos;
+
+          finalCP1X = rotatedCP1X;
+          finalCP1Y = rotatedCP1Y;
+          finalCP2X = rotatedCP2X;
+          finalCP2Y = rotatedCP2Y;
+        }
+
+        // Apply the vectors to the new anchor point position (this includes both translation and rotation)
+        point.controlPoint1 = {
+          x: point.x + finalCP1X,
+          y: point.y + finalCP1Y,
+        };
+        point.controlPoint2 = {
+          x: point.x + finalCP2X,
+          y: point.y + finalCP2Y,
+        };
       }
     }
   }
 
   return { newPoints, transformer };
-}
-
-function transformPoint(
-  x: number,
-  y: number,
-  centerX: number,
-  centerY: number,
-  scaleX: number,
-  scaleY: number,
-  rotation: number,
-) {
-  // First translate to origin relative to center
-  const dx = x - centerX;
-  const dy = y - centerY;
-
-  // Apply scaling
-  const scaledX = dx * scaleX;
-  const scaledY = dy * scaleY;
-
-  // Apply rotation around origin
-  const cos = Math.cos(rotation);
-  const sin = Math.sin(rotation);
-  const rotatedX = scaledX * cos - scaledY * sin;
-  const rotatedY = scaledX * sin + scaledY * cos;
-
-  // Translate back to center
-  return [rotatedX + centerX, rotatedY + centerY];
 }

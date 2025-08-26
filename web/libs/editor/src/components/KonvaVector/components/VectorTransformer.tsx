@@ -2,7 +2,7 @@ import React from "react";
 import { Transformer } from "react-konva";
 import type Konva from "konva";
 import type { BezierPoint } from "../types";
-import { applyTransformationToPoints } from "../utils/transformUtils";
+import { applyTransformationToPoints, resetTransformState } from "../utils/transformUtils";
 
 interface VectorTransformerProps {
   selectedPoints: Set<number>;
@@ -17,6 +17,8 @@ interface VectorTransformerProps {
     centerX: number;
     centerY: number;
   }) => void;
+  onTransformationStart?: () => void;
+  onTransformationEnd?: () => void;
 }
 
 export const VectorTransformer: React.FC<VectorTransformerProps> = ({
@@ -26,6 +28,8 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
   proxyRefs,
   onPointsChange,
   onTransformStateChange,
+  onTransformationStart,
+  onTransformationEnd,
 }) => {
   const transformerStateRef = React.useRef<{
     rotation: number;
@@ -40,6 +44,9 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
     centerX: 0,
     centerY: 0,
   });
+
+  // Store original positions when drag/transform starts
+  const originalPositionsRef = React.useRef<{ [key: number]: { x: number; y: number; controlPoint1?: { x: number; y: number }; controlPoint2?: { x: number; y: number } } }>({});
 
   if (selectedPoints.size <= 1 || initialPoints.length === 0) return null;
 
@@ -66,7 +73,11 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
         const transformer = transformerRef.current;
         if (transformer) {
           try {
-            const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true);
+            const transformerCenter = {
+              x: transformer.x() + transformer.width() / 2,
+              y: transformer.y() + transformer.height() / 2,
+            };
+            const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true, originalPositionsRef.current, transformerCenter);
             onPointsChange?.(newPoints);
           } catch (error) {
             console.warn("Transform error:", error);
@@ -74,6 +85,9 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
         }
       }}
       onTransformStart={(_e) => {
+        // Notify that transformation has started
+        onTransformationStart?.();
+
         // Store the initial state when transformation starts
         const transformer = transformerRef.current;
         if (transformer) {
@@ -85,13 +99,49 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
             centerY: transformer.y() + transformer.height() / 2,
           };
         }
+
+        // Store original positions of selected points
+        originalPositionsRef.current = {};
+        Array.from(selectedPoints).forEach((index) => {
+          const point = initialPoints[index];
+          if (point) {
+            originalPositionsRef.current[index] = {
+              x: point.x,
+              y: point.y,
+              controlPoint1: point.controlPoint1 ? { ...point.controlPoint1 } : undefined,
+              controlPoint2: point.controlPoint2 ? { ...point.controlPoint2 } : undefined,
+            };
+          }
+        });
+
+        // Reset the first transform flag to ensure proper rotation tracking
+        resetTransformState();
+      }}
+      onDragStart={(_e) => {
+        // Store original positions when dragging starts (for pure drag operations)
+        originalPositionsRef.current = {};
+        Array.from(selectedPoints).forEach((index) => {
+          const point = initialPoints[index];
+          if (point) {
+            originalPositionsRef.current[index] = {
+              x: point.x,
+              y: point.y,
+              controlPoint1: point.controlPoint1 ? { ...point.controlPoint1 } : undefined,
+              controlPoint2: point.controlPoint2 ? { ...point.controlPoint2 } : undefined,
+            };
+          }
+        });
       }}
       onDragMove={(_e) => {
         // Apply drag movement to real points in real-time
         const transformer = transformerRef.current;
         if (transformer) {
           try {
-            const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true);
+            const transformerCenter = {
+              x: transformer.x() + transformer.width() / 2,
+              y: transformer.y() + transformer.height() / 2,
+            };
+            const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true, originalPositionsRef.current, transformerCenter);
             onPointsChange?.(newPoints);
           } catch (error) {
             console.warn("Drag move error:", error);
@@ -107,7 +157,11 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
 
         try {
           // Apply final drag position to real points
-          const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true);
+          const transformerCenter = {
+            x: transformer.x() + transformer.width() / 2,
+            y: transformer.y() + transformer.height() / 2,
+          };
+          const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true, originalPositionsRef.current, transformerCenter);
           onPointsChange?.(newPoints);
 
           // Store the transformer state for future updates
@@ -134,7 +188,11 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
 
         try {
           // Apply final transformation to real points
-          const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true);
+          const transformerCenter = {
+            x: transformer.x() + transformer.width() / 2,
+            y: transformer.y() + transformer.height() / 2,
+          };
+          const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true, originalPositionsRef.current, transformerCenter);
           onPointsChange?.(newPoints);
 
           // Store the transformer state for future updates
@@ -152,6 +210,9 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
         } catch (error) {
           console.warn("Transform end error:", error);
         }
+
+        // Notify that transformation has ended
+        onTransformationEnd?.();
       }}
     />
   );

@@ -103,6 +103,46 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
       // Don't return here - let the handler continue to set up drawing state
     }
 
+    // Check if transformer is active first - this blocks most point interactions
+    if (props.selectedPoints.size > 1) {
+      const pos = e.target.getStage()?.getPointerPosition();
+      if (pos) {
+        const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
+        const scale = props.transform.zoom * props.fitScale;
+        const hitRadius = 10 / scale;
+
+        // Check if we're clicking on a point
+        for (let i = 0; i < props.initialPoints.length; i++) {
+          const point = props.initialPoints[i];
+          const distance = Math.sqrt((imagePos.x - point.x) ** 2 + (imagePos.y - point.y) ** 2);
+
+          if (distance <= hitRadius) {
+            // If cmd-click, handle multi-selection management
+            if (e.evt.ctrlKey || e.evt.metaKey) {
+              // Try deselection first
+              if (handlePointDeselection(e, props)) {
+                handledSelectionInMouseDown.current = true;
+                return;
+              }
+              // If not deselection, try selection (adding to multi-selection)
+              if (handlePointSelection(e, props)) {
+                handledSelectionInMouseDown.current = true;
+                return;
+              }
+            } else {
+              // Regular click on point when transformer is active - do nothing
+              // This prevents the click from falling through to deselection logic
+              return;
+            }
+          }
+        }
+      }
+
+      // If we get here, we're not clicking on a point
+      // Allow deselection by clicking outside the shape
+      return;
+    }
+
     // Handle point interactions (selection, dragging) regardless of drawing mode
     // This allows point interaction even when drawing is disabled due to hovering
     const pos = e.target.getStage()?.getPointerPosition();
@@ -112,7 +152,7 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
       const scale = props.transform.zoom * props.fitScale;
       const hitRadius = 10 / scale;
 
-      // Check if we're clicking on a point to select or drag it
+      // Check if we're clicking on a point to select or drag it (only when transformer is not active)
       for (let i = 0; i < props.initialPoints.length; i++) {
         const point = props.initialPoints[i];
         const distance = Math.sqrt((imagePos.x - point.x) ** 2 + (imagePos.y - point.y) ** 2);
@@ -147,7 +187,7 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
         }
       }
 
-      // Check if we're clicking on a control point
+      // Check if we're clicking on a control point (only when transformer is not active)
       for (let i = 0; i < props.initialPoints.length; i++) {
         const point = props.initialPoints[i];
         if (point.isBezier) {
@@ -196,20 +236,6 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
       }
     }
 
-    // Allow certain interactions even when transformer is active (multiselection)
-    // But block most interactions to prevent conflicts with transformer
-    if (props.selectedPoints.size > 1) {
-      // Allow normal point selection (without Cmd) to clear multi-selection and select single point
-      if (!e.evt.ctrlKey && !e.evt.metaKey) {
-        if (handlePointSelection(e, props)) {
-          return;
-        }
-      }
-
-      // Block other interactions when transformer is active
-      return;
-    }
-
     // Handle point selection (for non-cmd clicks that weren't handled above)
     if (!e.evt.ctrlKey && !e.evt.metaKey && handlePointSelection(e, props)) {
       return;
@@ -224,19 +250,26 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
     }
 
     // If we get here, we're not clicking on anything specific
-    // Clear selection if clicking on empty space
-    // But preserve selected point in skeleton mode when drawing
+    // Handle deselection based on transformer state
     if (!e.evt.ctrlKey && !e.evt.metaKey) {
-      props.setSelectedPoints(new Set());
-      // Don't clear selected point if we're in skeleton mode and drawing mode
-      // This allows drawing to start from the selected point
-      if (!(props.skeletonEnabled && props.isDrawingMode)) {
+      if (props.selectedPoints.size > 1) {
+        // When transformer is active, clicking outside deselects everything
+        props.setSelectedPoints(new Set());
         props.setSelectedPointIndex(null);
         props.onPointSelected?.(null);
-        // Reset active point to the last physically added point when deselecting
-        if (props.skeletonEnabled && props.initialPoints.length > 0) {
-          const lastPoint = props.initialPoints[props.initialPoints.length - 1];
-          props.setLastAddedPointId?.(lastPoint.id);
+      } else {
+      // When transformer is not active, normal deselection behavior
+        props.setSelectedPoints(new Set());
+        // Don't clear selected point if we're in skeleton mode and drawing mode
+        // This allows drawing to start from the selected point
+        if (!(props.skeletonEnabled && props.isDrawingMode)) {
+          props.setSelectedPointIndex(null);
+          props.onPointSelected?.(null);
+          // Reset active point to the last physically added point when deselecting
+          if (props.skeletonEnabled && props.initialPoints.length > 0) {
+            const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+            props.setLastAddedPointId?.(lastPoint.id);
+          }
         }
       }
     }
@@ -364,21 +397,22 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
 
         if (bezierPoint && bezierPoint.isBezier && props.cursorPosition) {
           // Keep the bezier point at its original position (where the ghost point was)
-          // Update control point 1 to follow the cursor
-          bezierPoint.controlPoint1 = {
-            x: props.cursorPosition?.x,
-            y: props.cursorPosition?.y,
-          };
-
-          // Update control point 2 to be opposite to control point 1 (symmetric around anchor)
-          bezierPoint.controlPoint2 = {
-            x: bezierPoint.x - (props.cursorPosition?.x - bezierPoint.x),
-            y: bezierPoint.y - (props.cursorPosition?.y - bezierPoint.y),
+          // Create a new point object with updated control points
+          newPoints[bezierPointIndex] = {
+            ...bezierPoint,
+            controlPoint1: {
+              x: props.cursorPosition?.x,
+              y: props.cursorPosition?.y,
+            },
+            controlPoint2: {
+              x: bezierPoint.x - (props.cursorPosition?.x - bezierPoint.x),
+              y: bezierPoint.y - (props.cursorPosition?.y - bezierPoint.y),
+            },
           };
 
           // Update the points
           props.onPointsChange?.(newPoints);
-          props.onPointEdited?.(bezierPoint, bezierPointIndex);
+          props.onPointEdited?.(newPoints[bezierPointIndex], bezierPointIndex);
         }
       }
 
@@ -395,6 +429,11 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
 
     // Handle point dragging
     if (props.draggedPointIndex !== null && props.lastPos.current) {
+      // Completely disable point dragging when transformer is active
+      if (props.selectedPoints.size > 1) {
+        return;
+      }
+
       // Check if we should start dragging (mouse moved beyond threshold)
       const dragThreshold = 5; // pixels
       const mouseDeltaX = Math.abs(e.evt.clientX - props.lastPos.current?.x);
@@ -458,6 +497,11 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
 
     // Handle control point dragging (but not during new bezier creation)
     if (props.draggedControlPoint && !props.isDraggingNewBezier) {
+      // Completely disable control point dragging when transformer is active
+      if (props.selectedPoints.size > 1) {
+        return;
+      }
+
       const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
 
       const { pointIndex, controlIndex } = props.draggedControlPoint;
@@ -514,11 +558,16 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
       if (!props.isDraggingNewBezier) {
         // Start Bezier curve creation if we've moved enough
         if (dragDistance > 5) {
-          handleBezierDragCreation(
-            props,
-            { x: props.lastPos.current.x, y: props.lastPos.current.y },
-            handledSelectionInMouseDown,
-          );
+          // Convert client coordinates to stage coordinates
+          const stage = e.target.getStage();
+          const stagePos = stage?.getPointerPosition();
+          if (stagePos) {
+            handleBezierDragCreation(
+              props,
+              stagePos, // ✅ Use stage coordinates instead of client coordinates
+              handledSelectionInMouseDown,
+            );
+          }
         }
       } else {
         // Continue Bezier curve creation - update control points to follow cursor
@@ -636,6 +685,7 @@ export function createMouseUpHandler(props: EventHandlerProps) {
     }
 
     // Handle point selection if we clicked but didn't drag
+    // Note: cmd-clicks are handled in mousedown and return early, so draggedPointIndex is never set for them
     if (props.draggedPointIndex !== null && !props.isDragging.current) {
       // This was a click on a point, not a drag - select the point
       handlePointSelectionFromIndex(props.draggedPointIndex, props);
