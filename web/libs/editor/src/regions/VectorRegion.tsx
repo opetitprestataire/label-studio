@@ -40,52 +40,23 @@ interface VectorRegionResult {
   rotation_angle: string;
   image_rotation: number;
   value: {
-    points: any[]; // Can be either number[][] (simple format) or full KonvaVector format with Bezier curves
+    shape: any[]; // Can be either number[][] (simple format) or full KonvaVector format with Bezier curves
     closed: boolean;
   };
 }
-
-const VectorRegionAbsoluteCoordsDEV3793 = types
-  .model({
-    coordstype: types.optional(types.enumeration(["px", "perc"]), "perc"),
-  })
-  .actions((self: any) => ({
-    updateImageSize(wp: number, hp: number, sw: number, sh: number) {
-      if (self.coordstype === "px") {
-        self.points.forEach((p: Point) => {
-          const x = (sw * (p.relativeX || 0)) / RELATIVE_STAGE_WIDTH;
-          const y = (sh * (p.relativeY || 0)) / RELATIVE_STAGE_HEIGHT;
-
-          p._setPos?.(x, y);
-        });
-      }
-
-      if (!self.annotation.sentUserGenerate && self.coordstype === "perc") {
-        self.points.forEach((p: Point) => {
-          const x = (sw * p.x) / RELATIVE_STAGE_WIDTH;
-          const y = (sh * p.y) / RELATIVE_STAGE_HEIGHT;
-
-          self.coordstype = "px";
-          p._setPos?.(x, y);
-        });
-      }
-    },
-  }));
 
 const Model = types
   .model({
     id: types.optional(types.identifier, guidGenerator),
     pid: types.optional(types.string, guidGenerator),
     type: "vectorregion",
-    object: types.late(() => types.reference(ImageModel)),
+    object: types.late((): any => {
+      return types.reference(ImageModel as any);
+    }) as any,
 
-    points: types.array(types.frozen(), []), // Store whatever format KonvaVector gives us
+    shape: types.array(types.frozen()), // Store whatever format KonvaVector gives us
     closed: false, // Vectors are not closed by default
     isPolygon: false,
-
-    // Point styling properties
-    pointSize: types.optional(types.string, "small"),
-    pointStyle: types.optional(types.string, "circle"),
 
     // Styling properties
     strokeWidth: types.optional(types.string, "2"),
@@ -108,9 +79,9 @@ const Model = types
       return getRoot(self);
     },
     get bboxCoords() {
-      if (!self.points?.length || !isAlive(self)) return {};
+      if (!self.shape?.length || !isAlive(self)) return {};
 
-      const bbox = self.points.reduce(
+      const bbox = self.shape.reduce(
         (bboxCoords: any, point: any) => ({
           left: Math.min(bboxCoords.left, point.x),
           top: Math.min(bboxCoords.top, point.y),
@@ -118,10 +89,10 @@ const Model = types
           bottom: Math.max(bboxCoords.bottom, point.y),
         }),
         {
-          left: self.points[0].x,
-          top: self.points[0].y,
-          right: self.points[0].x,
-          bottom: self.points[0].y,
+          left: self.shape[0].x,
+          top: self.shape[0].y,
+          right: self.shape[0].x,
+          bottom: self.shape[0].y,
         },
       );
 
@@ -132,15 +103,11 @@ const Model = types
 
       return bbox;
     },
-    // Removed flattenedPoints view to preserve full KonvaVector point structure
-    // get flattenedPoints() {
-    //   return getFlattenedPoints(self.points);
-    // },
   }))
   .actions((self: any) => {
     return {
       afterCreate() {
-        if (!self.points.length) return;
+        if (!self.shape.length) return;
         self.checkSizes();
       },
 
@@ -154,25 +121,8 @@ const Model = types
       },
 
       addPoint(x?: number, y?: number) {
-        // This method is called by the Vector tool to add the first point
-        // The actual point addition is handled by KonvaVector through the ref
-        if (self.isDrawing && self.points.length === 0 && x !== undefined && y !== undefined) {
-          // The coordinates from startDrawing are already in the correct coordinate system
-          // Create a simple point that KonvaVector will normalize
-          const firstPoint = [x, y];
-          self.points.replace([firstPoint]);
-        }
-      },
-
-      // Notify that a point has been moved
-      onPointMoved() {
-        // This will trigger a re-render of the vector
-        self.updatePoints();
-      },
-
-      closePoly() {
-        if (self.closed || self.points.length < 2) return;
-        self.closed = true;
+        // KonvaVector managing shape internally.
+        // This method is just a fallback for compatibility
       },
 
       setDrawing(drawing: boolean) {
@@ -246,7 +196,7 @@ const Model = types
       serialize(): VectorRegionResult {
         // Preserve the full KonvaVector format to maintain Bezier curves and point relationships
         const value = {
-          points: self.points, // Keep the full point objects with all properties
+          shape: self.shape, // Keep the full point objects with all properties
           closed: self.closed,
         };
 
@@ -255,7 +205,7 @@ const Model = types
 
       updateImageSize(wp: number, hp: number, sw: number, sh: number) {
         if (self.coordstype === "px") {
-          self.points.forEach((p: Point) => {
+          self.shape.forEach((p: Point) => {
             const x = (sw * (p.relativeX || 0)) / RELATIVE_STAGE_WIDTH;
             const y = (sh * (p.relativeY || 0)) / RELATIVE_STAGE_HEIGHT;
 
@@ -264,7 +214,7 @@ const Model = types
         }
 
         if (!self.annotation.sentUserGenerate && self.coordstype === "perc") {
-          self.points.forEach((p: Point) => {
+          self.shape.forEach((p: Point) => {
             const x = (sw * p.x) / RELATIVE_STAGE_WIDTH;
             const y = (sh * p.y) / RELATIVE_STAGE_HEIGHT;
 
@@ -275,9 +225,9 @@ const Model = types
       },
 
       // New methods for KonvaVector integration
-      updatePointsFromKonvaVector(points: any[]) {
+      updateShapeFromKonvaVector(shape: any[]) {
         // Store whatever format KonvaVector gives us
-        self.points.replace(points);
+        self.shape.replace(shape);
       },
 
       onPathClosedChange(isClosed: boolean) {
@@ -302,10 +252,12 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
 
   // Get stage dimensions and scaling from the parent image view
   const stage = item.parent?.stageRef;
-  const image = item.parent.currentImageEntity;
-  const stageWidth = image.naturalWidth;
-  const stageHeight = image.naturalHeight;
-  const { x: offsetX, y: offsetY } = item.parent.layerZoomScalePosition;
+  const image = item.parent?.currentImageEntity ?? {};
+  const stageWidth = image?.naturalWidth ?? 0;
+  const stageHeight = image?.naturalHeight ?? 0;
+  const { x: offsetX, y: offsetY } = item.parent?.layerZoomScalePosition ?? { x: 0, y: 0 };
+  const enableSnap = item.parent.snap === "pixel";
+  console.log({ enableSnap, parent: item.parent });
 
   // Wait for stage to be properly initialized
   if (!item.parent?.stageWidth || !item.parent?.stageHeight) {
@@ -315,9 +267,9 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
   return (
     <KonvaVector
       ref={konvaVectorRef}
-      initialPoints={Array.from(item.points)}
-      onPointsChange={(points) => {
-        item.updatePointsFromKonvaVector(points);
+      initialPoints={Array.from(item.shape)}
+      onPointsChange={(shape) => {
+        item.updateShapeFromKonvaVector(shape);
       }}
       onPathClosedChange={(isClosed) => {
         item.onPathClosedChange(isClosed);
@@ -350,6 +302,7 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
         }
         item.updateCursor();
       }}
+      closed={item.closed}
       width={stageWidth}
       height={stageHeight}
       scaleX={item.parent.stageZoom}
@@ -358,26 +311,23 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
       y={0}
       transform={{ zoom: item.parent.stageZoom, offsetX, offsetY }}
       fitScale={item.parent.zoomScale}
-      allowClose={true}
-      allowBezier={true}
+      allowClose={item.control?.closable ?? false}
+      allowBezier={item.control?.curves ?? false}
+      minPoints={item.control?.minpoints ?? undefined}
+      maxPoints={item.control?.maxpoints ?? undefined}
       stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
       fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
-      pixelSnapping={false}
+      pixelSnapping={item.control?.snap === "pixel"}
       disabled={(!item.selected && !item.isDrawing) || suggestion}
     />
   );
 });
 
 Registry.addTag("vectorregion", VectorRegionModel, HtxVectorView);
-Registry.addRegionType(VectorRegionModel, "image", (value: any) => {
-  if (!value.points) return false;
-  // If it has vectorlabels results, it's definitely a vector
-  if (value.results?.some?.((r: any) => r.type === "vectorlabels")) return true;
-  // If it's explicitly closed=false, it's a vector
-  if (value.closed === false) return true;
-  // If it's not closed and has no results yet, prefer vector for drawing
-  if (!value.closed && !value.results?.length) return true;
-  return false;
+Registry.addRegionType(VectorRegionModel, "image", (value) => {
+  if (!value.shape) return false;
+
+  return true;
 });
 
 export { VectorRegionModel, HtxVectorView as HtxVector };

@@ -50,8 +50,7 @@ const _Tool = types
 
       createRegionOptions({ x, y }) {
         return Super.createRegionOptions({
-          points: [],
-          width: 10,
+          shape: [],
           closed: false,
         });
       },
@@ -87,7 +86,7 @@ const _Tool = types
         if (self.getCurrentArea()?.isDrawing && tool.toolName !== "ZoomPanTool") {
           const shape = self.getCurrentArea()?.toJSON();
 
-          if (shape?.points?.length > 2) self.finishDrawing();
+          if (shape?.shape?.length > 2) self.finishDrawing();
           else self.cleanupUncloseableShape();
         }
       },
@@ -166,7 +165,7 @@ const _Tool = types
       // Finish drawing the current vector
       finishDrawing() {
         const currentArea = self.getCurrentArea();
-        if (currentArea && currentArea.points.length >= 2) {
+        if (currentArea && currentArea.shape.length >= 2) {
           self._finishDrawing();
         }
       },
@@ -174,7 +173,7 @@ const _Tool = types
       // Clean up uncloseable shape
       cleanupUncloseableShape() {
         const currentArea = self.getCurrentArea();
-        if (currentArea && currentArea.points.length < 2) {
+        if (currentArea && currentArea.shape.length < 2) {
           self.deleteRegion();
         }
       },

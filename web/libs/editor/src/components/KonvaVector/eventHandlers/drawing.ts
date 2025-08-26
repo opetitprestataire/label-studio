@@ -59,14 +59,22 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
 
   if (options.type === "bezier") {
     newPointOptions.isBezier = true;
-    newPointOptions.controlPoint1 = options.controlPoint1 || {
+
+    // Snap control points to pixel grid if enabled
+    const controlPoint1 = options.controlPoint1 || {
       x: options.x - 20,
       y: options.y - 20,
     };
-    newPointOptions.controlPoint2 = options.controlPoint2 || {
+    const controlPoint2 = options.controlPoint2 || {
       x: options.x + 20,
       y: options.y + 20,
     };
+
+    const snappedControlPoint1 = snapToPixel(controlPoint1, props.pixelSnapping);
+    const snappedControlPoint2 = snapToPixel(controlPoint2, props.pixelSnapping);
+
+    newPointOptions.controlPoint1 = snappedControlPoint1;
+    newPointOptions.controlPoint2 = snappedControlPoint2;
     newPointOptions.disconnected = options.isDisconnected || false;
   }
 
@@ -296,12 +304,16 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
         y: pointToConvert.y - 150,
       };
 
+      // Snap control points to pixel grid if enabled
+      const snappedControlPoint1 = snapToPixel(controlPoint1, props.pixelSnapping);
+      const snappedControlPoint2 = snapToPixel(controlPoint2, props.pixelSnapping);
+
       // Convert in place, following the same concept as addBezierPoint
       newPoints[closestPointIndex] = {
         ...pointToConvert,
         isBezier: true,
-        controlPoint1,
-        controlPoint2,
+        controlPoint1: snappedControlPoint1,
+        controlPoint2: snappedControlPoint2,
         disconnected: false, // Same as addBezierPoint with isDisconnected = false
       };
 
@@ -338,17 +350,24 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
       const dx = pointToConvert.controlPoint2.x - pointToConvert.x;
       const dy = pointToConvert.controlPoint2.y - pointToConvert.y;
 
+      // Snap control points to pixel grid if enabled
+      const symmetricControlPoint1 = {
+        x: pointToConvert.x - dx,
+        y: pointToConvert.y - dy,
+      };
+      const symmetricControlPoint2 = {
+        x: pointToConvert.x + dx,
+        y: pointToConvert.y + dy,
+      };
+
+      const snappedControlPoint1 = snapToPixel(symmetricControlPoint1, props.pixelSnapping);
+      const snappedControlPoint2 = snapToPixel(symmetricControlPoint2, props.pixelSnapping);
+
       newPoints[closestPointIndex] = {
         ...pointToConvert,
         disconnected: false,
-        controlPoint1: {
-          x: pointToConvert.x - dx,
-          y: pointToConvert.y - dy,
-        },
-        controlPoint2: {
-          x: pointToConvert.x + dx,
-          y: pointToConvert.y + dy,
-        },
+        controlPoint1: snappedControlPoint1,
+        controlPoint2: snappedControlPoint2,
       };
 
       props.onPointsChange?.(newPoints);
@@ -379,8 +398,11 @@ export function insertPointBetween(
     return { success: false };
   }
 
+  // Snap to pixel grid if enabled
+  const snappedCoords = snapToPixel({ x, y }, props.pixelSnapping);
+
   // Check if we're within canvas bounds
-  if (!isPointInCanvasBounds({ x, y }, props.width, props.height)) {
+  if (!isPointInCanvasBounds(snappedCoords, props.width, props.height)) {
     return { success: false };
   }
 
@@ -394,18 +416,26 @@ export function insertPointBetween(
 
   if (type === "bezier") {
     newPointOptions.isBezier = true;
-    newPointOptions.controlPoint1 = controlPoint1 || { x: x - 20, y: y - 20 };
-    newPointOptions.controlPoint2 = controlPoint2 || { x: x + 20, y: y + 20 };
+
+    // Snap control points to pixel grid if enabled
+    const controlPoint1Pos = controlPoint1 || { x: x - 20, y: y - 20 };
+    const controlPoint2Pos = controlPoint2 || { x: x + 20, y: y + 20 };
+
+    const snappedControlPoint1 = snapToPixel(controlPoint1Pos, props.pixelSnapping);
+    const snappedControlPoint2 = snapToPixel(controlPoint2Pos, props.pixelSnapping);
+
+    newPointOptions.controlPoint1 = snappedControlPoint1;
+    newPointOptions.controlPoint2 = snappedControlPoint2;
   }
 
-  const newPoint = createPoint(x, y, prevPointId, newPointOptions);
+  const newPoint = createPoint(snappedCoords.x, snappedCoords.y, prevPointId, newPointOptions);
 
   // Use the existing insertPointBetween function from pointManagement
   const newPoints = insertPointBetweenUtil(props.initialPoints, prevPointId, nextPointId, newPoint);
 
   // Find the index of the newly inserted point
   const newPointIndex = newPoints.findIndex(
-    (p: BezierPoint) => p.x === x && p.y === y && p.isBezier === (type === "bezier"),
+    (p: BezierPoint) => p.x === snappedCoords.x && p.y === snappedCoords.y && p.isBezier === (type === "bezier"),
   );
 
   // Call callbacks

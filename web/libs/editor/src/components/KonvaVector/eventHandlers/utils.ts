@@ -47,8 +47,7 @@ export function isPointInHitRadius(
   return getDistance(point, target) <= hitRadius;
 }
 
-// Throttle logging for findClosestPointOnPath
-let lastFindClosestLogTime = 0;
+
 
 // Find the closest point on the path to a given cursor position
 export function findClosestPointOnPath(
@@ -57,12 +56,7 @@ export function findClosestPointOnPath(
   allowClose?: boolean,
   isPathClosed?: boolean,
 ): { point: { x: number; y: number }; segmentIndex: number } | null {
-  // Throttle logging
-  const now = Date.now();
-  if (now - lastFindClosestLogTime > 1000) {
-    console.log("🔍 findClosestPointOnPath called with cursorPos:", cursorPos, "points length:", points.length);
-    lastFindClosestLogTime = now;
-  }
+
   if (points.length < 2) return null;
 
   let closestPoint = { x: 0, y: 0 };
@@ -127,17 +121,12 @@ export function findClosestPointOnPath(
     }
 
     const distance = getDistance(cursorPos, segmentClosestPoint);
-    // Throttle segment logging
-    if (now - lastFindClosestLogTime > 1000) {
-      console.log("🔍 Segment", i, "distance:", distance, "closestDistance:", closestDistance);
-    }
+
     if (distance < closestDistance) {
       closestDistance = distance;
       closestPoint = segmentClosestPoint;
       closestSegmentIndex = i;
-      if (now - lastFindClosestLogTime > 1000) {
-        console.log("🔍 New closest segment:", i, "at distance:", distance);
-      }
+
     }
   }
 
@@ -199,16 +188,13 @@ export function findClosestPointOnPath(
 
   // Only return if we're within a reasonable distance (e.g., 50 pixels)
   const maxSnapDistance = 50;
-  console.log("🔍 Final closestDistance:", closestDistance, "maxSnapDistance:", maxSnapDistance);
   if (closestDistance <= maxSnapDistance) {
-    console.log("🔍 Returning closest point:", closestPoint, "segmentIndex:", closestSegmentIndex);
     return {
       point: closestPoint,
       segmentIndex: closestSegmentIndex,
     };
   }
 
-  console.log("🔍 No point found within maxSnapDistance");
   return null;
 }
 
@@ -304,16 +290,29 @@ export function continueBezierDrag(props: EventHandlerProps): void {
       const normalizedDragX = dragVectorX / controlDistance;
       const normalizedDragY = dragVectorY / controlDistance;
 
+      // Create control points with pixel snapping
+      const controlPoint1Pos = {
+        x: bezierPoint.x + normalizedDragX * controlDistance,
+        y: bezierPoint.y + normalizedDragY * controlDistance,
+      };
+      const controlPoint2Pos = {
+        x: bezierPoint.x - normalizedDragX * controlDistance,
+        y: bezierPoint.y - normalizedDragY * controlDistance,
+      };
+
+      const snappedControlPoint1 = snapToPixel(controlPoint1Pos, props.pixelSnapping);
+      const snappedControlPoint2 = snapToPixel(controlPoint2Pos, props.pixelSnapping);
+
       // Create a new point object with updated control points
       newPoints[bezierPointIndex] = {
         ...bezierPoint,
         controlPoint1: {
-          x: bezierPoint.x + normalizedDragX * controlDistance,
-          y: bezierPoint.y + normalizedDragY * controlDistance,
+          x: snappedControlPoint1.x,
+          y: snappedControlPoint1.y,
         },
         controlPoint2: {
-          x: bezierPoint.x - normalizedDragX * controlDistance,
-          y: bezierPoint.y - normalizedDragY * controlDistance,
+          x: snappedControlPoint2.x,
+          y: snappedControlPoint2.y,
         },
       };
 

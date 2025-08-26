@@ -23,6 +23,9 @@ export type PointInput = BezierPoint | SimplePoint;
 
 export interface KonvaVectorRef {
   convertPoint: (pointIndex: number) => void;
+  selectPointsByIds: (pointIds: string[]) => void;
+  clearSelection: () => void;
+  getSelectedPointIds: () => string[];
   exportShape: () => {
     type: "polygon" | "polyline";
     isClosed: boolean;
@@ -100,6 +103,8 @@ export interface KonvaVectorProps {
 
   /** Allow path to be closed */
   allowClose?: boolean;
+  /** External state for path closure (used when allowClose is true) */
+  closed?: boolean;
   /** Allow bezier curve creation */
   allowBezier?: boolean;
   /** Minimum number of points required */

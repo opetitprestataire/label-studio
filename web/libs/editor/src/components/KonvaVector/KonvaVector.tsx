@@ -81,7 +81,7 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  *   onPointsChange={setPoints}
  *   format="simple"
  *   onTransformationComplete={(data) => {
- *     console.log(`Exported ${data.type}:`, data.points);
+
  *   }}
  * />
  * ```
@@ -142,6 +142,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     onMouseEnter,
     onMouseLeave,
     allowClose = false,
+    closed,
     allowBezier = true,
     minPoints,
     maxPoints,
@@ -231,7 +232,13 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   } | null>(null);
   const lastCallbackTime = useRef<number>(0);
   const [visibleControlPoints, setVisibleControlPoints] = useState<Set<number>>(new Set());
-  const [isPathClosed, setIsPathClosed] = useState(false);
+  const [internalIsPathClosed, setInternalIsPathClosed] = useState(false);
+
+  // Use external closed prop when allowClose is active, otherwise use internal state
+  const isPathClosed = allowClose && closed !== undefined ? closed : internalIsPathClosed;
+  const setIsPathClosed = allowClose && closed !== undefined
+    ? (closed: boolean) => onPathClosedChange?.(closed)
+    : setInternalIsPathClosed;
   const [activePointId, setActivePointId] = useState<string | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
 
@@ -327,10 +334,12 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
   const drawingDisabled = isDrawingDisabled();
 
-  // Notify parent when path closure state changes
+  // Notify parent when path closure state changes (only when not using external state)
   useEffect(() => {
-    onPathClosedChange?.(isPathClosed);
-  }, [isPathClosed, onPathClosedChange]);
+    if (!(allowClose && closed !== undefined)) {
+      onPathClosedChange?.(isPathClosed);
+    }
+  }, [isPathClosed, onPathClosedChange, allowClose, closed]);
 
   // Handle drawing mode changes
   useEffect(() => {
@@ -489,7 +498,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       // Check if the first point already has a prevPointId that connects to the last point
       const isAlreadyConnected = firstPoint.prevPointId === lastPoint.id;
 
-      console.log("🔍 getAllLineSegments - isAlreadyConnected:", isAlreadyConnected, "firstPoint.prevPointId:", firstPoint.prevPointId, "lastPoint.id:", lastPoint.id);
+
 
       if (!isAlreadyConnected) {
         segments.push({ from: lastPoint, to: firstPoint });
@@ -580,9 +589,51 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     notifyTransformationComplete();
   };
 
-  // Expose convertPoint function through ref
+  // Expose methods through ref
   useImperativeHandle(ref, () => ({
     convertPoint: convertPointHandler,
+    selectPointsByIds: (pointIds: string[]) => {
+      // Find the indices of the points with the given IDs
+      const selectedIndices = new Set<number>();
+      let primarySelectedIndex: number | null = null;
+
+      for (let i = 0; i < initialPoints.length; i++) {
+        if (pointIds.includes(initialPoints[i].id)) {
+          selectedIndices.add(i);
+          // Set the first found point as the primary selected point
+          if (primarySelectedIndex === null) {
+            primarySelectedIndex = i;
+          }
+        }
+      }
+
+      // Update the selection state
+      setSelectedPoints(selectedIndices);
+      setSelectedPointIndex(primarySelectedIndex);
+
+      // Call the onPointSelected callback if provided
+      if (onPointSelected) {
+        onPointSelected(primarySelectedIndex);
+      }
+    },
+    clearSelection: () => {
+      setSelectedPoints(new Set());
+      setSelectedPointIndex(null);
+
+      // Call the onPointSelected callback if provided
+      if (onPointSelected) {
+        onPointSelected(null);
+      }
+    },
+    getSelectedPointIds: () => {
+      const selectedIds: string[] = [];
+      for (const index of selectedPoints) {
+        if (index < initialPoints.length) {
+          selectedIds.push(initialPoints[index].id);
+        }
+      }
+      return selectedIds;
+    },
     exportShape: () => {
       const exportedPoints = initialPoints.map((point) => {
         const controlPoints: Array<{ x: number; y: number }> = [];

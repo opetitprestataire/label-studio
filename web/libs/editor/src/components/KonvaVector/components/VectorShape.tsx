@@ -82,9 +82,7 @@ export const VectorShape: React.FC<VectorShapeProps> = ({
   const pathData = segmentsToPathData(segments, allowClose, isPathClosed);
   const effectiveZoom = transform.zoom * fitScale;
 
-  // Debug: Log path data to see if there are any issues
-  console.log("🔍 VectorShape pathData:", pathData);
-  console.log("🔍 VectorShape segments:", segments.length);
+
 
   return (
     <Path

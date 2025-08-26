@@ -18,13 +18,11 @@ import {
 
 export function createMouseDownHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
   return (e: KonvaEventObject<MouseEvent>) => {
-    console.log("🔍 MouseDown - Alt key:", e.evt.altKey, "cursorPosition:", props.cursorPosition, "points length:", props.initialPoints.length);
 
     let altClickHandled = false;
 
     // Only run Alt+click logic if Alt key is actually held
     if (e.evt.altKey === true && props.cursorPosition && props.initialPoints.length >= 2) {
-      console.log("🔍 Alt+click detected in MouseDown");
       // Check if cursor is over an existing point
       const scale = props.transform.zoom * props.fitScale;
       const hitRadius = 10 / scale;
@@ -91,8 +89,8 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
       return;
     }
 
-    // Handle drawing mode setup
-    if (props.isDrawingMode) {
+    // Handle drawing mode setup (only when path is not closed)
+    if (props.isDrawingMode && !props.isPathClosed) {
       // Handle Shift+panning even in drawing mode
       if (e.evt.shiftKey) {
         props.isDragging.current = true;
@@ -287,8 +285,6 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
 }
 
 export function createMouseMoveHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
-  // Throttle logging
-  const lastLogTime = { current: 0 };
 
   return (e: KonvaEventObject<MouseEvent>) => {
     const pos = e.target.getStage()?.getPointerPosition();
@@ -307,12 +303,6 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
       !props.isDraggingNewBezier &&
       !props.ghostPointDragInfo?.isDragging
     ) {
-      // Throttle logging to every 500ms
-      const now = Date.now();
-      if (now - lastLogTime.current > 500) {
-        console.log("🔍 Alt key held, checking for ghost point");
-        lastLogTime.current = now;
-      }
       // Check if cursor is over an existing point
       const scale = props.transform.zoom * props.fitScale;
       const hitRadius = 10 / scale;
@@ -340,12 +330,6 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
         );
 
         if (closestPathPoint) {
-          // Throttle logging to every 500ms
-          const now = Date.now();
-          if (now - lastLogTime.current > 500) {
-            console.log("🔍 Found closest path point, creating ghost point");
-            lastLogTime.current = now;
-          }
           // Snap ghost point to pixel grid if enabled
           const snappedGhostPoint = snapToPixel(closestPathPoint.point, props.pixelSnapping);
 
@@ -500,17 +484,27 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
 
         // Move control point 1 if it exists - use stored original position + delta
         if (props.lastPos.current?.originalControlPoint1) {
-          updatedPoint.controlPoint1 = {
+          const controlPoint1Pos = {
             x: props.lastPos.current.originalControlPoint1.x + deltaX,
             y: props.lastPos.current.originalControlPoint1.y + deltaY,
+          };
+          const snappedControlPoint1 = snapToPixel(controlPoint1Pos, props.pixelSnapping);
+          updatedPoint.controlPoint1 = {
+            x: snappedControlPoint1.x,
+            y: snappedControlPoint1.y,
           };
         }
 
         // Move control point 2 if it exists - use stored original position + delta
         if (props.lastPos.current?.originalControlPoint2) {
-          updatedPoint.controlPoint2 = {
+          const controlPoint2Pos = {
             x: props.lastPos.current.originalControlPoint2.x + deltaX,
             y: props.lastPos.current.originalControlPoint2.y + deltaY,
+          };
+          const snappedControlPoint2 = snapToPixel(controlPoint2Pos, props.pixelSnapping);
+          updatedPoint.controlPoint2 = {
+            x: snappedControlPoint2.x,
+            y: snappedControlPoint2.y,
           };
         }
       }
@@ -553,9 +547,14 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
           if (!point.disconnected && point.controlPoint2) {
             const deltaX = imagePos.x - point.x;
             const deltaY = imagePos.y - point.y;
-            updatedPoint.controlPoint2 = {
+            const symmetricControlPoint = {
               x: point.x - deltaX,
               y: point.y - deltaY,
+            };
+            const snappedSymmetricControlPoint = snapToPixel(symmetricControlPoint, props.pixelSnapping);
+            updatedPoint.controlPoint2 = {
+              x: snappedSymmetricControlPoint.x,
+              y: snappedSymmetricControlPoint.y,
             };
           }
 
@@ -571,9 +570,14 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
           if (!point.disconnected && point.controlPoint1) {
             const deltaX = imagePos.x - point.x;
             const deltaY = imagePos.y - point.y;
-            updatedPoint.controlPoint1 = {
+            const symmetricControlPoint = {
               x: point.x - deltaX,
               y: point.y - deltaY,
+            };
+            const snappedSymmetricControlPoint = snapToPixel(symmetricControlPoint, props.pixelSnapping);
+            updatedPoint.controlPoint1 = {
+              x: snappedSymmetricControlPoint.x,
+              y: snappedSymmetricControlPoint.y,
             };
           }
 
@@ -586,8 +590,8 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
       return;
     }
 
-    // Handle Bezier curve creation in drawing mode (click-drag without alt key)
-    if (props.isDrawingMode && props.lastPos.current && !e.evt.altKey && props.allowBezier) {
+    // Handle Bezier curve creation in drawing mode (click-drag without alt key) - only when path is not closed
+    if (props.isDrawingMode && !props.isPathClosed && props.lastPos.current && !e.evt.altKey && props.allowBezier) {
       const dragDistance = Math.sqrt(
         (e.evt.clientX - props.lastPos.current.x) ** 2 + (e.evt.clientY - props.lastPos.current.y) ** 2,
       );
@@ -777,7 +781,6 @@ export function createMouseUpHandler(props: EventHandlerProps) {
 
 export function createClickHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
   return (e: KonvaEventObject<MouseEvent>) => {
-    console.log("🔍 Click handler - Alt key:", e.evt.altKey, "Shift key:", e.evt.shiftKey);
 
     // Handle Shift+click functionality FIRST (before other checks)
     if (e.evt.shiftKey && !e.evt.altKey) {
@@ -788,11 +791,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
 
     // Handle Alt+click functionality (before other checks)
     if (e.evt.altKey && !e.evt.shiftKey) {
-      console.log("🔍 Alt+click detected in click handler");
-      console.log("🔍 Cursor position:", props.cursorPosition);
-      console.log("🔍 isDraggingNewBezier:", props.isDraggingNewBezier);
-      console.log("🔍 ghostPointDragInfo?.isDragging:", props.ghostPointDragInfo?.isDragging);
-      console.log("🔍 isDragging.current:", props.isDragging.current);
 
       // First, check if we're near a ghost point to add a point
       if (
@@ -803,7 +801,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
       ) {
         // Check if we have a ghost point (this should be the persistent one from mouse move)
         const ghostPoint = props.ghostPoint;
-        console.log("🔍 Ghost point:", ghostPoint);
 
         if (ghostPoint) {
           // Check if we're clicking near the ghost point
@@ -811,10 +808,8 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
             (props.cursorPosition.x - ghostPoint.x) ** 2 + (props.cursorPosition.y - ghostPoint.y) ** 2,
           );
           const clickRadius = 15 / (props.transform.zoom * props.fitScale);
-          console.log("🔍 Distance to ghost point:", distance, "clickRadius:", clickRadius);
 
           if (distance <= clickRadius) {
-            console.log("🔍 Clicking near ghost point, inserting point");
             // Insert a regular point between the two points that form the segment
             const insertResult = insertPointBetween(
               props,
@@ -824,7 +819,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
               ghostPoint.nextPointId,
             );
             if (insertResult.success) {
-              console.log("🔍 Successfully inserted point");
               return; // Successfully added point
             }
           }
@@ -894,8 +888,8 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
       }
     }
 
-    // Handle drawing mode clicks
-    if (props.isDrawingMode) {
+    // Handle drawing mode clicks (only when path is not closed)
+    if (props.isDrawingMode && !props.isPathClosed) {
       // Check if we just created a Bezier point - if so, skip regular point creation
       if (handledSelectionInMouseDown.current) {
         handledSelectionInMouseDown.current = false;
@@ -918,7 +912,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
 
 export function createDblClickHandler(props: EventHandlerProps) {
   return (e: KonvaEventObject<MouseEvent>) => {
-    console.log("🔍 Double-click handler triggered");
     // Handle double-click to select all points
     const pos = e.target.getStage()?.getPointerPosition();
     if (!pos) return;
@@ -934,7 +927,6 @@ export function createDblClickHandler(props: EventHandlerProps) {
       props.allowClose,
       props.isPathClosed,
     );
-    console.log("🔍 Double-click closest path point:", closestPathPoint);
 
     if (closestPathPoint) {
       // Check if we're close enough to the segment

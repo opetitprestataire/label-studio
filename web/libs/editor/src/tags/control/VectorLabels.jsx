@@ -38,6 +38,10 @@ import ControlBase from "./Base";
  * @param {small|medium|large} [pointSize=medium]   - Size of vector handle points
  * @param {rectangle|circle} [pointStyle=rectangle] - Style of points
  * @param {pixel|none} [snap=none]                  - Snap vector to image pixels
+ * @params {boolean} [closable=false]               - Allow closed shapes
+ * @params {boolean} [curves=false]                 - Allow Bezier curves
+ * @params {number|none} [minPoints=none]           - Minimum allowed number of points
+ * @params {number|none} [maxPoints=none]           - Maximum allowed number of points
  */
 
 const Validation = types.model({
@@ -46,6 +50,10 @@ const Validation = types.model({
 
 const ModelAttrs = types.model("VectorLabelsModel", {
   type: "vectorlabels",
+  closable: types.maybeNull(types.optional(types.boolean, false)),
+  curves: types.maybeNull(types.optional(types.boolean, false)),
+  minpoints: types.maybeNull(types.optional(types.number(), null)),
+  maxpoints: types.maybeNull(types.optional(types.number(), null)),
   children: Types.unionArray(["label", "vectorlabel", "header", "view", "hypertext"]),
 });
 

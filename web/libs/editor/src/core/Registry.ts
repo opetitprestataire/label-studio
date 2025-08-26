@@ -44,7 +44,7 @@ class _Registry {
     this.views_models[model.name] = view;
   }
 
-  addRegionType(type: { detectByValue: any }, object: any, detector: any) {
+  addRegionType(type: Record<string, any> & { detectByValue: any }, object: any, detector: any) {
     this.regions.push(type);
     if (detector) type.detectByValue = detector;
     const areas = this.areas.get(object);
@@ -86,9 +86,12 @@ class _Registry {
 
     if (!available) return [];
     if (value) {
-      for (const model of available) {
-        if (model.detectByValue && model.detectByValue(value)) return [model];
-      }
+      return available
+        .filter((model: any) => {
+          if (model.detectByValue) console.log(model.detectByValue, model.detectByValue?.(value), value);
+          return Boolean(model.detectByValue?.(value));
+        })
+        .slice(0, 1);
     }
     return available.filter((a: { detectByValue: any }) => !a.detectByValue);
   }
