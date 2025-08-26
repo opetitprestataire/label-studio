@@ -481,11 +481,19 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       }
     }
 
-    // Add closing segment if path is closed
+    // Only add closing segment if the path is closed but not already connected through prevPointId
     if (allowClose && isPathClosed && allPoints.length >= 3) {
       const lastPoint = allPoints[allPoints.length - 1];
       const firstPoint = allPoints[0];
-      segments.push({ from: lastPoint, to: firstPoint });
+
+      // Check if the first point already has a prevPointId that connects to the last point
+      const isAlreadyConnected = firstPoint.prevPointId === lastPoint.id;
+
+      console.log("🔍 getAllLineSegments - isAlreadyConnected:", isAlreadyConnected, "firstPoint.prevPointId:", firstPoint.prevPointId, "lastPoint.id:", lastPoint.id);
+
+      if (!isAlreadyConnected) {
+        segments.push({ from: lastPoint, to: firstPoint });
+      }
     }
 
     return segments;
@@ -728,6 +736,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       onMouseMove={disabled ? undefined : eventHandlers.handleLayerMouseMove}
       onMouseUp={disabled ? undefined : eventHandlers.handleLayerMouseUp}
       onClick={disabled ? undefined : eventHandlers.handleLayerClick}
+      onDblClick={disabled ? undefined : eventHandlers.handleLayerDblClick}
     >
       {/* Invisible rectangle - always render to capture mouse events for cursor position updates */}
       {!disabled && (
@@ -750,9 +759,9 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         fill={fill}
         transform={transform}
         fitScale={fitScale}
-        onClick={disabled ? undefined : onClick}
-        onMouseEnter={disabled ? undefined : onMouseEnter}
-        onMouseLeave={disabled ? undefined : onMouseLeave}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         key={`vector-shape-${initialPoints.length}-${initialPoints.map((p) => p.id).join("-")}`}
       />
 

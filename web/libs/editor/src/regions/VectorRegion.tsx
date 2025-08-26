@@ -14,7 +14,6 @@ import { RELATIVE_STAGE_HEIGHT, RELATIVE_STAGE_WIDTH } from "../components/Image
 import { KonvaVector } from "../components/KonvaVector/KonvaVector";
 import type { KonvaVectorRef } from "../components/KonvaVector/types";
 import { observer } from "mobx-react";
-import { Group } from "react-konva";
 import Constants from "../core/Constants";
 
 // Type definitions
@@ -294,10 +293,9 @@ const VectorRegionModel = types.compose(
   NormalizationMixin,
   KonvaRegionMixin,
   Model,
-  ...(isFF(FF_DEV_3793) ? [] : [VectorRegionAbsoluteCoordsDEV3793]),
 );
 
-const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
+const HtxVectorView = observer(({ item, suggestion }: any) => {
   const { store } = item;
   const regionStyles = useRegionStyles(item);
   const konvaVectorRef = useRef<KonvaVectorRef>(null);
@@ -308,9 +306,6 @@ const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
   const stageWidth = image.naturalWidth;
   const stageHeight = image.naturalHeight;
   const { x: offsetX, y: offsetY } = item.parent.layerZoomScalePosition;
-  const stageZoom = item.parent?.stageZoom || 1;
-  const stageScaleX = item.parent?.stageScaleX || 1;
-  const stageScaleY = item.parent?.stageScaleY || 1;
 
   // Wait for stage to be properly initialized
   if (!item.parent?.stageWidth || !item.parent?.stageHeight) {
@@ -318,21 +313,14 @@ const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
   }
 
   return (
-    <Group
-      key={item.id ? item.id : guidGenerator(5)}
-      name={item.id}
-      // ref={(el) => setShapeRef(el)}
-      onMouseOver={() => {
-        if (store.annotationStore.selected.isLinkingMode) {
-          item.setHighlight(true);
-        }
-        item.updateCursor(true);
+    <KonvaVector
+      ref={konvaVectorRef}
+      initialPoints={Array.from(item.points)}
+      onPointsChange={(points) => {
+        item.updatePointsFromKonvaVector(points);
       }}
-      onMouseOut={() => {
-        if (store.annotationStore.selected.isLinkingMode) {
-          item.setHighlight(false);
-        }
-        item.updateCursor();
+      onPathClosedChange={(isClosed) => {
+        item.onPathClosedChange(isClosed);
       }}
       onClick={(e) => {
         // create regions over another regions with Cmd/Ctrl pressed
@@ -350,36 +338,33 @@ const HtxVectorView = observer(({ item, suggestion, setShapeRef }: any) => {
         item.setHighlight(false);
         item.onClickRegion(e);
       }}
-      listening={!suggestion}
-    >
-      <KonvaVector
-        ref={konvaVectorRef}
-        initialPoints={Array.from(item.points)}
-        onPointsChange={(points) => {
-          item.updatePointsFromKonvaVector(points);
-        }}
-        onPathClosedChange={(isClosed) => {
-          item.onPathClosedChange(isClosed);
-        }}
-        onClick={() => {
-          console.log("shape clicked");
-        }}
-        width={stageWidth}
-        height={stageHeight}
-        scaleX={item.parent.stageZoom}
-        scaleY={item.parent.stageZoom}
-        x={0}
-        y={0}
-        transform={{ zoom: item.parent.stageZoom, offsetX, offsetY }}
-        fitScale={item.parent.zoomScale}
-        allowClose={true}
-        allowBezier={true}
-        stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
-        fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
-        pixelSnapping={false}
-        disabled={!item.selected && !item.isDrawing}
-      />
-    </Group>
+      onMouseEnter={() => {
+        if (store.annotationStore.selected.isLinkingMode) {
+          item.setHighlight(true);
+        }
+        item.updateCursor(true);
+      }}
+      onMouseLeave={() => {
+        if (store.annotationStore.selected.isLinkingMode) {
+          item.setHighlight(false);
+        }
+        item.updateCursor();
+      }}
+      width={stageWidth}
+      height={stageHeight}
+      scaleX={item.parent.stageZoom}
+      scaleY={item.parent.stageZoom}
+      x={0}
+      y={0}
+      transform={{ zoom: item.parent.stageZoom, offsetX, offsetY }}
+      fitScale={item.parent.zoomScale}
+      allowClose={true}
+      allowBezier={true}
+      stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
+      fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
+      pixelSnapping={false}
+      disabled={(!item.selected && !item.isDrawing) || suggestion}
+    />
   );
 });
 

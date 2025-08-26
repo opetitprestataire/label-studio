@@ -1,5 +1,5 @@
 import type React from "react";
-import { Shape } from "react-konva";
+import { Path } from "react-konva";
 import type { BezierPoint } from "../types";
 
 interface VectorShapeProps {
@@ -13,6 +13,56 @@ interface VectorShapeProps {
   onClick?: (e: any) => void;
   onMouseEnter?: (e: any) => void;
   onMouseLeave?: (e: any) => void;
+}
+
+// Convert Bezier segments to SVG path data
+function segmentsToPathData(
+  segments: Array<{ from: BezierPoint; to: BezierPoint }>,
+  allowClose: boolean,
+  isPathClosed: boolean,
+): string {
+  if (segments.length === 0) return "";
+
+  let pathData = "";
+
+  // Start with the first point
+  const firstSegment = segments[0];
+  pathData += `M ${firstSegment.from.x} ${firstSegment.from.y}`;
+
+  // Add each segment
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i];
+    const { from, to } = segment;
+
+    if (from.isBezier && from.controlPoint2 && to.isBezier && to.controlPoint1) {
+      // Full Bezier curve
+      pathData += ` C ${from.controlPoint2.x} ${from.controlPoint2.y}, ${to.controlPoint1.x} ${to.controlPoint1.y}, ${to.x} ${to.y}`;
+    } else if (from.isBezier && from.controlPoint2) {
+      // Partial Bezier curve - only from point has control point
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const controlX = to.x - dx * 0.3;
+      const controlY = to.y - dy * 0.3;
+      pathData += ` C ${from.controlPoint2.x} ${from.controlPoint2.y}, ${controlX} ${controlY}, ${to.x} ${to.y}`;
+    } else if (to.isBezier && to.controlPoint1) {
+      // Partial Bezier curve - only to point has control point
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const controlX = from.x + dx * 0.3;
+      const controlY = from.y + dy * 0.3;
+      pathData += ` C ${controlX} ${controlY}, ${to.controlPoint1.x} ${to.controlPoint1.y}, ${to.x} ${to.y}`;
+    } else {
+      // Straight line
+      pathData += ` L ${to.x} ${to.y}`;
+    }
+  }
+
+  // Close the path if needed
+  if (allowClose && isPathClosed && segments.length > 0) {
+    pathData += " Z";
+  }
+
+  return pathData;
 }
 
 export const VectorShape: React.FC<VectorShapeProps> = ({
@@ -29,119 +79,24 @@ export const VectorShape: React.FC<VectorShapeProps> = ({
 }) => {
   if (segments.length === 0) return null;
 
+  const pathData = segmentsToPathData(segments, allowClose, isPathClosed);
+  const effectiveZoom = transform.zoom * fitScale;
+
+  // Debug: Log path data to see if there are any issues
+  console.log("🔍 VectorShape pathData:", pathData);
+  console.log("🔍 VectorShape segments:", segments.length);
+
   return (
-    <Shape
+    <Path
+      data={pathData}
       stroke={stroke}
       strokeWidth={2}
       strokeScaleEnabled={false}
       fill={allowClose && isPathClosed ? fill : undefined}
-      draggrable
+      hitStrokeWidth={20} // Larger hit area for better interaction
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      sceneFunc={(ctx) => {
-        // Set stroke style explicitly for custom drawing
-        ctx.strokeStyle = stroke;
-        // Adjust line width for zoom to keep it constant
-        const effectiveZoom = transform.zoom * fitScale;
-        ctx.lineWidth = 2 / effectiveZoom;
-
-        // Draw each segment as a separate path to handle branches correctly
-        for (let i = 0; i < segments.length; i++) {
-          const segment = segments[i];
-          const { from, to } = segment;
-
-          // Start a new path for each segment
-          ctx.beginPath();
-          ctx.moveTo(from.x, from.y);
-
-          // Draw line to the second point
-          if (from.isBezier && from.controlPoint2 && to.isBezier && to.controlPoint1) {
-            // Bezier curve
-            ctx.bezierCurveTo(
-              from.controlPoint2.x,
-              from.controlPoint2.y,
-              to.controlPoint1.x,
-              to.controlPoint1.y,
-              to.x,
-              to.y,
-            );
-          } else if (from.isBezier && from.controlPoint2) {
-            // Partial Bezier curve
-            const dx = to.x - from.x;
-            const dy = to.y - from.y;
-            const controlX = to.x - dx * 0.3;
-            const controlY = to.y - dy * 0.3;
-            ctx.bezierCurveTo(from.controlPoint2.x, from.controlPoint2.y, controlX, controlY, to.x, to.y);
-          } else if (to.isBezier && to.controlPoint1) {
-            // Partial Bezier curve
-            const dx = to.x - from.x;
-            const dy = to.y - from.y;
-            const controlX = from.x + dx * 0.3;
-            const controlY = from.y + dy * 0.3;
-            ctx.bezierCurveTo(controlX, controlY, to.controlPoint1.x, to.controlPoint1.y, to.x, to.y);
-          } else {
-            // Straight line
-            ctx.lineTo(to.x, to.y);
-          }
-
-          // Stroke each segment individually
-          ctx.stroke();
-        }
-
-        // Fill the shape if needed (for closed paths)
-        if (allowClose && isPathClosed) {
-          // Set fill style for closed path
-          ctx.fillStyle = fill;
-
-          // For closed paths, we need to draw the entire path as one shape for filling
-          ctx.beginPath();
-          // Find the main path (the longest continuous path)
-          // For now, just use the first segment as the starting point
-          if (segments.length > 0) {
-            const firstSegment = segments[0];
-            ctx.moveTo(firstSegment.from.x, firstSegment.from.y);
-
-            // Draw the main path with proper Bezier curves
-            for (let i = 0; i < segments.length; i++) {
-              const segment = segments[i];
-              const { from, to } = segment;
-
-              // Use the same Bezier curve logic as the stroke
-              if (from.isBezier && from.controlPoint2 && to.isBezier && to.controlPoint1) {
-                // Bezier curve
-                ctx.bezierCurveTo(
-                  from.controlPoint2.x,
-                  from.controlPoint2.y,
-                  to.controlPoint1.x,
-                  to.controlPoint1.y,
-                  to.x,
-                  to.y,
-                );
-              } else if (from.isBezier && from.controlPoint2) {
-                // Partial Bezier curve
-                const dx = to.x - from.x;
-                const dy = to.y - from.y;
-                const controlX = to.x - dx * 0.3;
-                const controlY = to.y - dy * 0.3;
-                ctx.bezierCurveTo(from.controlPoint2.x, from.controlPoint2.y, controlX, controlY, to.x, to.y);
-              } else if (to.isBezier && to.controlPoint1) {
-                // Partial Bezier curve
-                const dx = to.x - from.x;
-                const dy = to.y - from.y;
-                const controlX = from.x + dx * 0.3;
-                const controlY = from.y + dy * 0.3;
-                ctx.bezierCurveTo(controlX, controlY, to.controlPoint1.x, to.controlPoint1.y, to.x, to.y);
-              } else {
-                // Straight line
-                ctx.lineTo(to.x, to.y);
-              }
-            }
-
-            ctx.fill();
-          }
-        }
-      }}
     />
   );
 };
