@@ -11,7 +11,7 @@ import { BrushRegionModel } from "../../../regions/BrushRegion";
 import { EllipseRegionModel } from "../../../regions/EllipseRegion";
 import { KeyPointRegionModel } from "../../../regions/KeyPointRegion";
 import { PolygonRegionModel } from "../../../regions/PolygonRegion";
-import { PolylineRegionModel } from "../../../regions/PolylineRegion";
+import { VectorRegionModel } from "../../../regions/VectorRegion";
 import { RectRegionModel } from "../../../regions/RectRegion";
 import * as Tools from "../../../tools";
 import ToolsManager from "../../../tools/Manager";
@@ -143,7 +143,7 @@ const IMAGE_CONSTANTS = {
   rectanglelabels: "rectanglelabels",
   keypointlabels: "keypointlabels",
   polygonlabels: "polygonlabels",
-  polylinelabels: "polylinelabels",
+  vectorlabels: "vectorlabels",
   brushlabels: "brushlabels",
   bitmaskModel: "BitmaskModel",
   bitmasklabels: "bitmasklabels",
@@ -177,7 +177,14 @@ const Model = types
     mode: types.optional(types.enumeration(["drawing", "viewing", "brush", "eraser"]), "viewing"),
 
     regions: types.array(
-      types.union(BrushRegionModel, RectRegionModel, EllipseRegionModel, PolygonRegionModel, PolylineRegionModel, KeyPointRegionModel),
+      types.union(
+        BrushRegionModel,
+        RectRegionModel,
+        EllipseRegionModel,
+        PolygonRegionModel,
+        VectorRegionModel,
+        KeyPointRegionModel,
+      ),
       [],
     ),
 
@@ -1137,10 +1144,10 @@ const Model = types
       self.annotation.history.freeze();
 
       self.regions.forEach((shape) => {
-        shape.updateImageSize(width / naturalWidth, height / naturalHeight, width, height, userResize);
+        shape.updateImageSize?.(width / naturalWidth, height / naturalHeight, width, height, userResize);
       });
       self.regs.forEach((shape) => {
-        shape.updateImageSize(width / naturalWidth, height / naturalHeight, width, height, userResize);
+        shape.updateImageSize?.(width / naturalWidth, height / naturalHeight, width, height, userResize);
       });
       self.drawingRegion?.updateImageSize(width / naturalWidth, height / naturalHeight, width, height, userResize);
 

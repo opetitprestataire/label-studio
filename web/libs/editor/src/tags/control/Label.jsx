@@ -77,7 +77,7 @@ const Model = types
       "EllipseLabels",
       "RectangleLabels",
       "PolygonLabels",
-      "PolylineLabels",
+      "VectorLabels",
       "KeyPointLabels",
       "BrushLabels",
       "HyperTextLabels",
@@ -328,7 +328,7 @@ const HtxLabelView = inject("store")(
 );
 
 Registry.addTag("label", LabelModel, HtxLabelView);
-// Alias singular label for polyline labels for convenience
-Registry.addTag("polylinelabel", LabelModel, HtxLabelView);
+  // Alias singular label for vector labels for convenience
+  Registry.addTag("vectorlabel", LabelModel, HtxLabelView);
 
 export { HtxLabelView, LabelModel };

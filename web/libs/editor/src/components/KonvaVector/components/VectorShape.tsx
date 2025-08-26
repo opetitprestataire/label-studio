@@ -29,6 +29,7 @@ export const VectorShape: React.FC<VectorShapeProps> = ({
       strokeWidth={2}
       strokeScaleEnabled={false}
       fill={allowClose && isPathClosed ? fill : undefined}
+      draggrable
       sceneFunc={(ctx) => {
         // Set stroke style explicitly for custom drawing
         ctx.strokeStyle = stroke;

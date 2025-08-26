@@ -55,7 +55,7 @@ const PanelModel = types
       "bitmasklabels",
       "ellipselabels",
       "polygonlabels",
-      "polylinelabels",
+      "vectorlabels",
       "keypointlabels",
       "brushlabels",
       "hypertextlabels",

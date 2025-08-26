@@ -98,8 +98,8 @@ const NodeViews: Record<string, NodeViewProps> = {
     altIcon: IconPolygonToolSmart,
   },
 
-  PolylineRegionModel: {
-    name: "Polyline",
+  VectorRegionModel: {
+          name: "Vector",
     icon: IconPolygonTool,
     altIcon: IconPolygonToolSmart,
   },

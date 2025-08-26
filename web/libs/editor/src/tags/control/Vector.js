@@ -9,32 +9,32 @@ import { AnnotationMixin } from "../../mixins/AnnotationMixin";
 import SeparatedControlMixin from "../../mixins/SeparatedControlMixin";
 import { ToolManagerMixin } from "../../mixins/ToolManagerMixin";
 
-const hotkeys = Hotkey("Polylines");
+const hotkeys = Hotkey("Vectors");
 
 /**
- * The `Polyline` tag is used to add polylines to an image without selecting a label. This can be useful when you have only one label to assign to the polyline. Use for image segmentation tasks.
+ * The `Vector` tag is used to add vectors to an image without selecting a label. This can be useful when you have only one label to assign to the vector. Use for image segmentation tasks.
  *
  * Use with the following data types: image.
  * @example
- * <!--Basic labeling configuration for polyline image segmentation -->
+ * <!--Basic labeling configuration for vector image segmentation -->
  * <View>
- *   <Polyline name="line-1" toName="img-1" />
+ *   <Vector name="line-1" toName="img-1" />
  *   <Image name="img-1" value="$img" />
  * </View>
- * @name Polyline
- * @meta_title Polyline Tag for Adding Polylines to Images
- * @meta_description Customize Label Studio with the Polyline tag by adding polylines to images for segmentation machine learning and data science projects.
+ * @name Vector
+ * @meta_title Vector Tag for Adding Vectors to Images
+ * @meta_description Customize Label Studio with the Vector tag by adding vectors to images for segmentation machine learning and data science projects.
  * @param {string} name                           - Name of tag
  * @param {string} toname                         - Name of image to label
- * @param {number} [opacity=0.6]                  - Opacity of polyline
- * @param {string} [fillColor=transparent]        - Polyline fill color in hexadecimal or HTML color name
+ * @param {number} [opacity=0.6]                  - Opacity of vector
+ * @param {string} [fillColor=transparent]        - Vector fill color in hexadecimal or HTML color name
  * @param {string} [strokeColor=#f48a42]          - Stroke color in hexadecimal
  * @param {number} [strokeWidth=3]                - Width of stroke
- * @param {small|medium|large} [pointSize=small]  - Size of polyline handle points
+ * @param {small|medium|large} [pointSize=small]  - Size of vector handle points
  * @param {rectangle|circle} [pointStyle=circle]  - Style of points
  * @param {boolean} [smart]                       - Show smart tool for interactive pre-annotations
  * @param {boolean} [smartOnly]                   - Only show smart tool for interactive pre-annotations
- * @param {pixel|none} [snap=none]                - Snap polyline to image pixels
+ * @param {pixel|none} [snap=none]                - Snap vector to image pixels
  */
 const TagAttrs = types.model({
   toname: types.maybeNull(types.string),
@@ -57,28 +57,28 @@ const Validation = types.model({
 
 const Model = types
   .model({
-    type: "polyline",
+    type: "vector",
 
     // regions: types.array(RectRegionModel),
     _value: types.optional(types.string, ""),
   })
   .volatile(() => ({
-    toolNames: ["Polyline"],
+    toolNames: ["Vector"],
   }))
   .actions((self) => {
     return {
       initializeHotkeys() {
-        hotkeys.addNamed("polyline:undo", () => {
+        hotkeys.addNamed("vector:undo", () => {
           if (self.annotation?.selected && self.annotation.isDrawing) self.annotation.undo();
         });
-        hotkeys.addNamed("polyline:redo", () => {
+        hotkeys.addNamed("vector:redo", () => {
           if (self.annotation?.selected && self.annotation.isDrawing) self.annotation.redo();
         });
       },
 
       disposeHotkeys() {
-        hotkeys.removeNamed("polyline:undo");
-        hotkeys.removeNamed("polyline:redo");
+        hotkeys.removeNamed("vector:undo");
+        hotkeys.removeNamed("vector:redo");
       },
 
       afterCreate() {
@@ -91,8 +91,8 @@ const Model = types
     };
   });
 
-const PolylineModel = types.compose(
-  "PolylineModel",
+const VectorModel = types.compose(
+  "VectorModel",
   ControlBase,
   AnnotationMixin,
   SeparatedControlMixin,
@@ -104,6 +104,6 @@ const PolylineModel = types.compose(
 
 const HtxView = () => null;
 
-Registry.addTag("polyline", PolylineModel, HtxView);
+Registry.addTag("vector", VectorModel, HtxView);
 
-export { HtxView, PolylineModel };
+export { HtxView, VectorModel };

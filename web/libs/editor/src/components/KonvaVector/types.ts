@@ -124,6 +124,8 @@ export interface KonvaVectorProps {
   onMouseUp?: (e?: KonvaEventObject<MouseEvent>) => void;
   /** Click event handler */
   onClick?: (e: KonvaEventObject<MouseEvent>) => void;
+	/** Disable all interactions when true */
+	disabled?: boolean;
   /** Ref to access component methods */
   ref?: React.RefObject<KonvaVectorRef>;
 }

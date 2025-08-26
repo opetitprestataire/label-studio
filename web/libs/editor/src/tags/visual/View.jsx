@@ -99,7 +99,7 @@ const Model = types
       "rectanglelabels",
       "ellipselabels",
       "polygonlabels",
-      "polylinelabels",
+      "vectorlabels",
       "keypointlabels",
       "brushlabels",
       "hypertextlabels",

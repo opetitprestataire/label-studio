@@ -76,12 +76,12 @@
     "description": "Redo"
   },
 
-  "polyline:undo": {
+  "vector:undo": {
     "key": "ctrl+z",
     "mac": "command+z",
     "description": "Undo"
   },
-  "polyline:redo": {
+  "vector:redo": {
     "key": "ctrl+shift+z",
     "mac": "command+shift+z",
     "description": "Redo"

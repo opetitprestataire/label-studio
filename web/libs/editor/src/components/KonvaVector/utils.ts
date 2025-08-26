@@ -99,25 +99,31 @@ export const isBezierPoint = (point: PointInput): point is BezierPoint => {
  * @throws Error if point format is invalid
  */
 export const normalizePoints = (points: PointInput[]): BezierPoint[] => {
+  let lastPointId: string | undefined = undefined;
+
   return points.map((point, index) => {
     if (isSimplePoint(point)) {
       // Convert simple point to BezierPoint
-      return {
+      const newPoint = {
         id: generatePointId(),
-        prevPointId: index > 0 ? `point-${index - 1}` : undefined,
+        prevPointId: index > 0 ? lastPointId : undefined,
         x: point[0],
         y: point[1],
         isBezier: false,
         disconnected: false,
         isBranching: false,
       };
+      lastPointId = newPoint.id;
+      return newPoint;
     }
     if (isBezierPoint(point)) {
       // Already in BezierPoint format, ensure it has proper prevPointId
-      return {
+      const newPoint = {
         ...point,
-        prevPointId: point.prevPointId || (index > 0 ? `point-${index - 1}` : undefined),
+        prevPointId: point.prevPointId || (index > 0 ? lastPointId : undefined),
       };
+      lastPointId = newPoint.id;
+      return newPoint;
     }
     // Fallback for any other format
     throw new Error(`Invalid point format at index ${index}`);

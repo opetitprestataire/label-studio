@@ -7,9 +7,9 @@ import { NodeViews } from "../components/Node/Node";
 import { observe } from "mobx";
 
 const _Tool = types
-  .model("PolylineTool", {
+  .model("VectorTool", {
     group: "segmentation",
-    shortcut: "tool:polyline",
+    shortcut: "tool:vector",
   })
   .views((self) => {
     const Super = {
@@ -19,38 +19,38 @@ const _Tool = types
     };
 
     return {
-      get getActivePolyline() {
+      get getActiveVector() {
         const poly = self.currentArea;
 
         if (poly && !isAlive(poly)) return null;
         if (poly && poly.closed) return null;
         if (poly === undefined) return null;
-        if (poly && poly.type !== "polylineregion") return null;
+        if (poly && poly.type !== "vectorregion") return null;
 
         return poly;
       },
 
       get tagTypes() {
         return {
-          stateTypes: "polylinelabels",
-          controlTagTypes: ["polylinelabels", "polyline"],
+          stateTypes: "vectorlabels",
+          controlTagTypes: ["vectorlabels", "vector"],
         };
       },
 
       get viewTooltip() {
-        return "Polyline region";
+        return "Vector region";
       },
       get iconComponent() {
-        return self.dynamic ? NodeViews.PolylineRegionModel.altIcon : NodeViews.PolylineRegionModel.icon;
+        return self.dynamic ? NodeViews.VectorRegionModel.altIcon : NodeViews.VectorRegionModel.icon;
       },
 
       get defaultDimensions() {
-        return DEFAULT_DIMENSIONS.polyline;
+        return DEFAULT_DIMENSIONS.vector;
       },
 
       createRegionOptions({ x, y }) {
         return Super.createRegionOptions({
-          points: [[x, y]],
+          points: [],
           width: 10,
           closed: false,
         });
@@ -67,7 +67,7 @@ const _Tool = types
       },
 
       current() {
-        return self.getActivePolyline;
+        return self.getActiveVector;
       },
     };
   })
@@ -121,6 +121,9 @@ const _Tool = types
         self.currentArea = self.createRegion(self.createRegionOptions({ x: point.x, y: point.y }), true);
         self.setDrawing(true);
         self.applyActiveStates(self.currentArea);
+
+        // Start listening for path closure
+        self.listenForClose();
       },
 
       _finishDrawing() {
@@ -130,6 +133,7 @@ const _Tool = types
         self.setDrawing(false);
         self.currentArea = null;
         self.mode = "viewing";
+        self.stopListening();
         self.annotation.afterCreateResult(currentArea, control);
       },
 
@@ -143,13 +147,35 @@ const _Tool = types
 
         self.setDrawing(false);
         self.currentArea = null;
+        self.stopListening();
         if (currentArea) {
           currentArea.deleteRegion();
+        }
+      },
+
+      // Add point to current vector
+      addPoint(x, y) {
+        // KonvaVector handles point addition itself
+      },
+
+      // Finish drawing the current vector
+      finishDrawing() {
+        const currentArea = self.getCurrentArea();
+        if (currentArea && currentArea.points.length >= 2) {
+          self._finishDrawing();
+        }
+      },
+
+      // Clean up uncloseable shape
+      cleanupUncloseableShape() {
+        const currentArea = self.getCurrentArea();
+        if (currentArea && currentArea.points.length < 2) {
+          self.deleteRegion();
         }
       },
     };
   });
 
-const Polyline = types.compose(_Tool.name, ToolMixin, BaseTool, MultipleClicksDrawingTool, _Tool);
+const Vector = types.compose(_Tool.name, ToolMixin, BaseTool, MultipleClicksDrawingTool, _Tool);
 
-export { Polyline };
+export { Vector };

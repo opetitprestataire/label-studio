@@ -58,7 +58,7 @@ export const renderers: Record<string, RendererType> = {
   labels: LabelsRenderer,
   ellipselabels: LabelsRenderer,
   polygonlabels: LabelsRenderer,
-  polylinelabels: LabelsRenderer,
+  vectorlabels: LabelsRenderer,
   rectanglelabels: LabelsRenderer,
   keypointlabels: LabelsRenderer,
   brushlabels: LabelsRenderer,
