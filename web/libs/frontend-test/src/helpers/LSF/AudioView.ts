@@ -4,7 +4,6 @@ import ClickOptions = Cypress.ClickOptions;
 import { withMedia } from "@humansignal/frontend-test/helpers/utils/media/MediaMixin";
 import { LabelStudio } from "@humansignal/frontend-test/helpers/LSF/LabelStudio";
 import type { ViewWithMedia } from "@humansignal/frontend-test/helpers/utils/media/types";
-import { TWO_FRAMES_TIMEOUT } from "../../../../editor/tests/integration/e2e/utils/constants";
 
 type MouseInteractionOptions = Partial<TriggerOptions & ObjectLike & MouseEvent>;
 
@@ -119,11 +118,11 @@ class AudioViewHelper extends withMedia(
       LabelStudio.waitForObjectsReady();
       this.loadingBar.should("not.exist");
       /**
-       * There is a time gap between setting `isReady` to `true` and getting the last initial draw at the canvas,
-       * which for now we are going to compensate by waiting approximately 2 frames of render (16 * 2 = 32 milliseconds)
-       * @todo: remove wait when `isReady` in audio become more precise
+       * Enhanced audio ready state checking with canvas stabilization
+       * Replaces the previous fixed 32ms wait with actual canvas rendering verification
+       * This ensures the canvas is fully rendered before proceeding with tests
        */
-      cy.wait(TWO_FRAMES_TIMEOUT);
+      this.waitForCanvasStable();
     }
 
     _playButtonSelector = '[data-testid="playback-button:play"]';
@@ -312,14 +311,24 @@ class AudioViewHelper extends withMedia(
       return this.drawingArea.then(async (canvas) => {
         const ctx = canvas[0].getContext("2d");
         const pixelRatio = window.devicePixelRatio;
-        const pixel = ctx.getImageData(Math.round(x) * pixelRatio, Math.round(y) * pixelRatio, 1, 1);
 
-        const displayColor = `rbga(${pixel.data[0]}, ${pixel.data[1]}, ${pixel.data[2]}, ${pixel.data[3]})`;
+        // Ensure coordinates are within canvas bounds
+        const canvasEl = canvas[0] as HTMLCanvasElement;
+        const adjustedX = Math.max(0, Math.min(Math.round(x) * pixelRatio, canvasEl.width - 1));
+        const adjustedY = Math.max(0, Math.min(Math.round(y) * pixelRatio, canvasEl.height - 1));
+
+        const pixel = ctx.getImageData(adjustedX, adjustedY, 1, 1);
+
+        const displayColor = `rgba(${pixel.data[0]}, ${pixel.data[1]}, ${pixel.data[2]}, ${pixel.data[3]})`;
         cy.log(
-          `Color: #${pixel.data[0].toString(16)}${pixel.data[1].toString(16)}${pixel.data[2].toString(16)}${
-            pixel.data[3] !== 255 ? pixel.data[3].toString(16) : ""
-          } or ${displayColor}`,
+          `🎨 Pixel at (${x}, ${y}) -> canvas(${adjustedX}, ${adjustedY}): ${displayColor} | Canvas: ${canvasEl.width}x${canvasEl.height} | Ratio: ${pixelRatio}`,
         );
+
+        // Log warning if we get transparent pixels
+        if (pixel.data[0] === 0 && pixel.data[1] === 0 && pixel.data[2] === 0 && pixel.data[3] === 0) {
+          cy.log(`⚠️ WARNING: Transparent pixel detected at (${x}, ${y}) - canvas may not be ready`);
+        }
+
         return await pixel.data;
       });
     }
@@ -332,6 +341,155 @@ class AudioViewHelper extends withMedia(
 
         return this.getPixelColor(realX, realY);
       });
+    }
+
+    /**
+     * Gets pixel color with retry logic for more stable color sampling
+     * @param x relative x coordinate (0-1)
+     * @param y relative y coordinate (0-1)
+     * @param retries number of retries if colors are inconsistent
+     */
+    getStablePixelColorRelative(x: number, y: number, retries = 3) {
+      let attempts = 0;
+      let lastColor: Uint8ClampedArray | null = null;
+
+      const sampleColor = () => {
+        return this.getPixelColorRelative(x, y).then((color) => {
+          attempts++;
+
+          // If we have a previous color, check if they match
+          if (lastColor && this.colorsEqual(lastColor, color)) {
+            return color;
+          }
+
+          lastColor = color;
+
+          // If we haven't reached max retries, wait and try again
+          if (attempts < retries) {
+            cy.wait(16); // Wait one frame
+            return sampleColor();
+          }
+
+          // Return the last sampled color
+          return color;
+        });
+      };
+
+      return sampleColor();
+    }
+
+    /**
+     * Compares two color arrays for equality
+     * @param color1 first color array
+     * @param color2 second color array
+     */
+    colorsEqual(color1: Uint8ClampedArray, color2: Uint8ClampedArray): boolean {
+      if (color1.length !== color2.length) return false;
+      for (let i = 0; i < color1.length; i++) {
+        if (color1[i] !== color2[i]) return false;
+      }
+      return true;
+    }
+
+    /**
+     * Waits for canvas rendering to stabilize by checking that pixel colors remain consistent
+     * @param x relative x coordinate to monitor
+     * @param y relative y coordinate to monitor
+     * @param stabilityChecks number of consecutive stable checks required
+     * @param timeout maximum time to wait in milliseconds
+     */
+    waitForCanvasStable(x = 0.36, y = 0.9, stabilityChecks = 3, timeout = 5000) {
+      let stableCount = 0;
+      let lastColor: Uint8ClampedArray | null = null;
+      const startTime = Date.now();
+
+      const checkStability = (): Cypress.Chainable => {
+        if (Date.now() - startTime > timeout) {
+          cy.log(`⏰ Canvas stabilization timeout after ${timeout}ms`);
+          return cy.wrap(null);
+        }
+
+        return this.getPixelColorRelative(x, y).then((currentColor) => {
+          // Check if we're getting transparent pixels (indicates canvas not ready)
+          const isTransparent =
+            currentColor[0] === 0 && currentColor[1] === 0 && currentColor[2] === 0 && currentColor[3] === 0;
+
+          if (isTransparent) {
+            cy.log("🔍 Canvas not ready - transparent pixel detected, continuing to wait...");
+            stableCount = 0;
+            lastColor = null;
+            cy.wait(50); // Wait longer if canvas isn't ready
+            return checkStability();
+          }
+
+          if (lastColor && this.colorsEqual(lastColor, currentColor)) {
+            stableCount++;
+            cy.log(`✅ Canvas stable check ${stableCount}/${stabilityChecks}`);
+            if (stableCount >= stabilityChecks) {
+              cy.log(`🎯 Canvas stabilized after ${stableCount} consecutive checks`);
+              return cy.wrap(null);
+            }
+          } else {
+            stableCount = 0;
+            cy.log("🔄 Canvas changed, resetting stability counter");
+          }
+
+          lastColor = currentColor;
+          cy.wait(16); // Wait one frame
+          return checkStability();
+        });
+      };
+
+      cy.log(`🏁 Starting canvas stabilization check at (${x}, ${y})`);
+      return checkStability();
+    }
+
+    /**
+     * Waits for canvas to have actual content (non-transparent pixels)
+     * @param timeout maximum time to wait in milliseconds
+     */
+    waitForCanvasContent(timeout = 10000) {
+      const startTime = Date.now();
+
+      const checkForContent = (): Cypress.Chainable => {
+        if (Date.now() - startTime > timeout) {
+          cy.log(`⏰ Canvas content timeout after ${timeout}ms`);
+          return cy.wrap(null);
+        }
+
+        return this.drawingArea.then((canvas) => {
+          const ctx = (canvas[0] as HTMLCanvasElement).getContext("2d");
+          const canvasEl = canvas[0] as HTMLCanvasElement;
+
+          // Sample multiple points to check for content
+          const samplePoints = [
+            { x: canvasEl.width * 0.25, y: canvasEl.height * 0.5 },
+            { x: canvasEl.width * 0.5, y: canvasEl.height * 0.5 },
+            { x: canvasEl.width * 0.75, y: canvasEl.height * 0.5 },
+          ];
+
+          let hasContent = false;
+          for (const point of samplePoints) {
+            const pixel = ctx.getImageData(Math.floor(point.x), Math.floor(point.y), 1, 1);
+            // Check if pixel has any non-transparent content
+            if (pixel.data[3] > 0 || pixel.data[0] > 0 || pixel.data[1] > 0 || pixel.data[2] > 0) {
+              hasContent = true;
+              break;
+            }
+          }
+
+          if (hasContent) {
+            cy.log("🎨 Canvas has content!");
+            return cy.wrap(null);
+          } 
+          cy.log("🔍 Canvas empty, waiting for content...");
+          cy.wait(100);
+          return checkForContent();
+        });
+      };
+
+      cy.log("🏁 Waiting for canvas content...");
+      return checkForContent();
     }
 
     zoomIn({ times = 1, speed = 4 }) {
