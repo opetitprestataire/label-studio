@@ -1,7 +1,7 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { EventHandlerProps } from "./types";
 import { isPointInHitRadius, stageToImageCoordinates } from "./utils";
-import { closePath } from "./drawing";
+import { closePath, closePathBetweenFirstAndLast } from "./drawing";
 
 export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: EventHandlerProps): boolean {
   const pos = e.target.getStage()?.getPointerPosition();
@@ -17,12 +17,33 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
     const point = props.initialPoints[i];
 
     if (isPointInHitRadius(imagePos, point, hitRadius)) {
-      // Check if we're clicking on the first point to close the path
+      // Check if we're clicking on the first or last point to close the path
+      // But only if the active point is also the first or last point
       // But don't close if Shift is held (to allow Shift+click functionality)
       // This should take priority over normal point selection
-      if (i === 0 && props.allowClose && !props.isPathClosed && !e.evt.shiftKey) {
-        // Use the new closePath function to properly set point references
-        return closePath(props);
+      if ((i === 0 || i === props.initialPoints.length - 1) && props.allowClose && !props.isPathClosed && !e.evt.shiftKey) {
+        // Get the active point to check if it's the first or last point
+        const activePoint = props.skeletonEnabled && props.activePointId
+          ? props.initialPoints.find(p => p.id === props.activePointId)
+          : props.initialPoints[props.initialPoints.length - 1]; // Fallback to last point
+
+        if (activePoint) {
+          const firstPoint = props.initialPoints[0];
+          const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+
+          // Only allow closing if the active point is the first or last point
+          const isActivePointFirst = activePoint.id === firstPoint.id;
+          const isActivePointLast = activePoint.id === lastPoint.id;
+
+          if (isActivePointFirst || isActivePointLast) {
+            // Determine which point to close to
+            const fromPointIndex = i;
+            const toPointIndex = i === 0 ? props.initialPoints.length - 1 : 0;
+
+            // Use the bidirectional closePath function
+            return closePathBetweenFirstAndLast(props, fromPointIndex, toPointIndex);
+          }
+        }
       }
 
       // If Cmd/Ctrl is held, add to selection (multi-selection) - this takes priority

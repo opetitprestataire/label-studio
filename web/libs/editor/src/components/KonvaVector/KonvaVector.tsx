@@ -34,6 +34,7 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  * - **Edit Points**: Drag to reposition, Alt+click to convert regular ↔ bezier
  * - **Delete Points**: Alt+click on existing points
  * - **Multi-Selection**: Select multiple points for batch transformations
+ * - **Break Closed Path**: Alt+click on any segment of a closed path to break it at that specific segment (array is shifted so breaking point becomes first, point before breaking becomes active)
  *
  * ### Bezier Curves
  * - **Create**: Drag while adding points or convert existing points
@@ -86,8 +87,25 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  * />
  * ```
  *
+ * ### With Path Breaking
+ * ```tsx
+ * <KonvaVector
+ *   initialPoints={closedPolygonPoints}
+ *   onPointsChange={setPoints}
+ *   allowClose={true}
+ *   closed={true}
+ *   // Alt+click on any segment to break the closed path at that specific segment
+ *   // The points array is shifted so the breaking point becomes the first element, point before breaking becomes active
+ *   onPathClosedChange={(isClosed) => {
+ *     console.log('Path closed state:', isClosed);
+ *   }}
+ * />
+ * ```
+ *
  * ## Keyboard Shortcuts
  * - **Alt + Click**: Convert point between regular ↔ bezier or delete existing point
+ * - **Alt + Click on segment**: Break closed path at segment (when path is closed)
+ * - **Click on first/last point**: Close path bidirectionally (first→last or last→first)
  * - **Shift + Click**: Add point on path segment
  * - **Shift + Drag**: Create bezier point with control handles
  *
@@ -348,6 +366,12 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           // (so you can continue drawing from it)
           if (i === initialPoints.length - 1) {
             continue; // Don't disable drawing for the last point
+          }
+
+          // Don't disable drawing when hovering over the first point if path closing is possible
+          // (so you can see the closing indicator)
+          if (i === 0 && allowClose && !finalIsPathClosed) {
+            continue; // Don't disable drawing for the first point when closing is possible
           }
 
           return true; // Disable drawing when hovering over other points

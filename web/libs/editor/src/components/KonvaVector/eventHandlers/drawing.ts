@@ -19,6 +19,14 @@ export interface AddPointOptions {
  * This creates a circular reference that indicates the path is closed
  */
 export function closePath(props: EventHandlerProps): boolean {
+  return closePathBetweenFirstAndLast(props, 0, props.initialPoints.length - 1);
+}
+
+/**
+ * Close the path between first and last points bidirectionally
+ * This allows closing from first to last OR last to first
+ */
+export function closePathBetweenFirstAndLast(props: EventHandlerProps, fromPointIndex: number, toPointIndex: number): boolean {
   if (!props.allowClose || props.initialPoints.length < 2) {
     return false;
   }
@@ -51,23 +59,33 @@ export function closePath(props: EventHandlerProps): boolean {
     return false;
   }
 
-  const firstPoint = props.initialPoints[0];
-  const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+  // Only allow closing between first and last points
+  const firstPointIndex = 0;
+  const lastPointIndex = props.initialPoints.length - 1;
 
-  // Check if path is already closed
-  if (firstPoint.prevPointId === lastPoint.id) {
-    console.log(`ℹ️ Path is already closed`);
+  if ((fromPointIndex !== firstPointIndex && fromPointIndex !== lastPointIndex) ||
+    (toPointIndex !== firstPointIndex && toPointIndex !== lastPointIndex)) {
+    console.log(`⚠️ Can only close path between first (${firstPointIndex}) and last (${lastPointIndex}) points`);
+    return false;
+  }
+
+  const fromPoint = props.initialPoints[fromPointIndex];
+  const toPoint = props.initialPoints[toPointIndex];
+
+  // Check if path is already closed between these points
+  if (fromPoint.prevPointId === toPoint.id) {
+    console.log(`ℹ️ Path is already closed between points ${fromPointIndex} and ${toPointIndex}`);
     return true;
   }
 
-  // Close the path by setting the first point's prevPointId to the last point's ID
+  // Close the path by setting the fromPoint's prevPointId to the toPoint's ID
   const updatedPoints = [...props.initialPoints];
-  updatedPoints[0] = {
-    ...firstPoint,
-    prevPointId: lastPoint.id,
+  updatedPoints[fromPointIndex] = {
+    ...fromPoint,
+    prevPointId: toPoint.id,
   };
 
-  console.log(`✅ Closing path by setting first point's prevPointId to last point's ID: ${lastPoint.id}`);
+  console.log(`✅ Closing path by setting point ${fromPointIndex}'s prevPointId to point ${toPointIndex}'s ID: ${toPoint.id}`);
 
   // Update the points and notify parent
   props.onPointsChange?.(updatedPoints);
@@ -645,4 +663,133 @@ export function insertPointBetween(
   props.setVisibleControlPoints(new Set());
 
   return { success: true, newPointIndex };
+}
+
+/**
+ * Break a closed path at a specific segment by removing the prevPointId reference
+ * that creates the connection between the two points of that segment
+ */
+export function breakPathAtSegment(props: EventHandlerProps, segmentIndex?: number): boolean {
+  if (!props.allowClose || props.initialPoints.length < 3) {
+    return false;
+  }
+
+  const firstPoint = props.initialPoints[0];
+  const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+
+  // Check if path is actually closed
+  if (firstPoint.prevPointId !== lastPoint.id) {
+    console.log(`ℹ️ Path is not closed, cannot break`);
+    return false;
+  }
+
+  // If no segment index is provided, break at the closure point (first point)
+  if (segmentIndex === undefined) {
+    const updatedPoints = [...props.initialPoints];
+    updatedPoints[0] = {
+      ...firstPoint,
+      prevPointId: undefined,
+    };
+
+    console.log(`✅ Breaking closed path by removing first point's prevPointId reference`);
+
+    // Update the points and notify parent
+    props.onPointsChange?.(updatedPoints);
+
+    // Update the internal path closed state
+    props.setIsPathClosed(false);
+
+    return true;
+  }
+
+  // Handle breaking at a specific segment
+  let updatedPoints = [...props.initialPoints];
+
+  if (segmentIndex === props.initialPoints.length) {
+    // This is the closing segment (last point to first point)
+    // Break by removing the first point's prevPointId reference to the last point
+    updatedPoints[0] = {
+      ...firstPoint,
+      prevPointId: undefined,
+    };
+
+    console.log(`✅ Breaking closed path at closing segment (last to first point)`);
+  } else if (segmentIndex >= 0 && segmentIndex < props.initialPoints.length) {
+    // This could be either a regular segment or the closing segment
+    const currentPoint = updatedPoints[segmentIndex];
+
+    // Check if this is actually the closing segment (first point with prevPointId to last point)
+    if (segmentIndex === 0 && currentPoint.prevPointId === lastPoint.id) {
+      // This is the closing segment - break by removing the first point's prevPointId
+      updatedPoints[0] = {
+        ...currentPoint,
+        prevPointId: undefined,
+      };
+      console.log(`✅ Breaking closed path at closing segment (first point no longer connects to last point)`);
+    } else {
+      // This is a regular segment - break by removing the current point's prevPointId reference
+      updatedPoints[segmentIndex] = {
+        ...currentPoint,
+        prevPointId: undefined,
+      };
+      console.log(`✅ Breaking closed path at segment ${segmentIndex} (point ${segmentIndex} no longer connects to previous point)`);
+    }
+
+    // Only shift the array if we're not breaking at the closing segment (segmentIndex = 0)
+    if (segmentIndex !== 0 || currentPoint.prevPointId !== lastPoint.id) {
+      // Shift the array so that the breaking point becomes the first element
+      // Example: [a, b, c, d] break at b-c -> [c, d, a, b]
+      const breakingPointIndex = segmentIndex;
+      const shiftedPoints = [
+        ...updatedPoints.slice(breakingPointIndex), // [c, d]
+        ...updatedPoints.slice(0, breakingPointIndex), // [a, b]
+      ];
+
+      // Update the prevPointId references for the shifted points
+      const finalPoints = shiftedPoints.map((point, index) => {
+        if (index === 0) {
+          // First point should have no prevPointId
+          return {
+            ...point,
+            prevPointId: undefined,
+          };
+        } else {
+          // Other points should reference the previous point in the new order
+          return {
+            ...point,
+            prevPointId: shiftedPoints[index - 1].id,
+          };
+        }
+      });
+
+      updatedPoints = finalPoints;
+      console.log(`🔄 Shifted points array: breaking point ${breakingPointIndex} is now at index 0`);
+      console.log(`📊 Original order: ${props.initialPoints.map((p, i) => `${i}:${p.id.slice(0, 4)}`).join(' → ')}`);
+      console.log(`📊 New order: ${updatedPoints.map((p, i) => `${i}:${p.id.slice(0, 4)}`).join(' → ')}`);
+
+      // Set the point that comes BEFORE the breaking point as the active point
+      // In the shifted array, this is the last point (the one that was before the breaking point)
+      const activePoint = updatedPoints[updatedPoints.length - 1];
+      props.setActivePointId?.(activePoint.id);
+      props.setLastAddedPointId?.(activePoint.id);
+      console.log(`🎯 Set active point to point before breaking: ${activePoint.id.slice(0, 4)} (was before ${updatedPoints[0].id.slice(0, 4)})`);
+    } else {
+      // When breaking at the closing segment, set the last point as active (since it was connected to the first point)
+      const lastPointInArray = updatedPoints[updatedPoints.length - 1];
+      props.setActivePointId?.(lastPointInArray.id);
+      props.setLastAddedPointId?.(lastPointInArray.id);
+      console.log(`🎯 Set active point to last point (was connected to first point): ${lastPointInArray.id.slice(0, 4)}`);
+    }
+  } else {
+    console.log(`⚠️ Invalid segment index: ${segmentIndex}`);
+    return false;
+  }
+
+  // Update the points and notify parent
+  props.onPointsChange?.(updatedPoints);
+
+  // Update the internal path closed state
+  props.setIsPathClosed(false);
+
+  return true;
 }

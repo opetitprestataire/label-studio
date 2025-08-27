@@ -4,6 +4,7 @@ import {
   handleDrawingModeClick,
   handleShiftClickPointConversion,
   insertPointBetween,
+  breakPathAtSegment,
 } from "./drawing";
 import { deletePoint } from "../pointManagement";
 import { handlePointDeselection, handlePointSelection } from "./pointSelection";
@@ -11,8 +12,8 @@ import type { EventHandlerProps } from "./types";
 import {
   continueBezierDrag,
   findClosestPointOnPath,
+  getDistance,
   handleBezierDragCreation,
-  isPointInsidePolygon,
   snapToPixel,
   stageToImageCoordinates,
 } from "./utils";
@@ -834,9 +835,8 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
       }
     }
 
-    // Handle Alt+click functionality (point deletion)
+    // Handle Alt+click functionality (point deletion and path breaking)
     if (e.evt.altKey && !e.evt.shiftKey) {
-    // Check if we're clicking on a point to delete it
       const pos = e.target.getStage()?.getPointerPosition();
       if (pos) {
         const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
@@ -863,6 +863,27 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
               props.lastAddedPointId,
             );
             return;
+          }
+        }
+
+        // If we didn't click on a point, check if we clicked on a segment to break the path
+        if (props.isPathClosed && props.allowClose) {
+          const segmentHitRadius = 15 / scale; // Slightly larger than point hit radius
+
+          // Find the closest point on the path
+          const closestPathPoint = findClosestPointOnPath(
+            imagePos,
+            props.initialPoints,
+            props.allowClose,
+            props.isPathClosed,
+          );
+
+          if (closestPathPoint && getDistance(imagePos, closestPathPoint.point) <= segmentHitRadius) {
+            // We clicked on a segment, break the closed path
+            console.log(`🔧 Alt+click detected on segment ${closestPathPoint.segmentIndex} at position (${closestPathPoint.point.x.toFixed(1)}, ${closestPathPoint.point.y.toFixed(1)})`);
+            if (breakPathAtSegment(props, closestPathPoint.segmentIndex)) {
+              return;
+            }
           }
         }
       }
