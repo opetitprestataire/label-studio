@@ -189,9 +189,6 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       // Only set activePointId if skeleton mode is enabled
       if (skeletonEnabled) {
         setActivePointId(lastPoint.id);
-        console.log(`🔧 Initialized with existing points (skeleton mode): lastAddedPointId = ${lastPoint.id}, activePointId = ${lastPoint.id}`);
-      } else {
-        console.log(`🔧 Initialized with existing points (normal mode): lastAddedPointId = ${lastPoint.id}`);
       }
     }
   }, [initialPoints.length, skeletonEnabled]); // Only run when the number of points changes or skeleton mode changes
@@ -289,34 +286,32 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     return true;
   }, [allowClose, initialPoints]);
 
-
-
   // Use external closed prop when provided, otherwise use computed value
   const finalIsPathClosed = allowClose && closed !== undefined ? closed : isPathClosed;
 
   // Debug logging for path closure state
   useEffect(() => {
     if (allowClose && initialPoints.length >= 2) {
-      console.log(`🔍 Main component path closure check: ${initialPoints.length} points`);
       for (let i = 0; i < initialPoints.length; i++) {
         const point = initialPoints[i];
-        console.log(`  Point ${i}: ${point.id.slice(0, 4)} -> prevPointId: ${point.prevPointId?.slice(0, 4) || 'undefined'}`);
       }
-      console.log(`  isPathClosed: ${isPathClosed}, finalIsPathClosed: ${finalIsPathClosed}`);
     }
   }, [allowClose, initialPoints, isPathClosed, finalIsPathClosed]);
 
   // Setter for path closed state - only used when not using external state
-  const setIsPathClosed = useCallback((closed: boolean) => {
-    if (allowClose && closed !== undefined) {
-      // External state is being used, notify parent
-      onPathClosedChange?.(closed);
-    } else {
-      // Internal state - this should not be called directly anymore
-      // The path closed state is now computed from point references
-      console.warn('setIsPathClosed called but path closed state is now computed from point references');
-    }
-  }, [allowClose, closed, onPathClosedChange]);
+  const setIsPathClosed = useCallback(
+    (closed: boolean) => {
+      if (allowClose && closed !== undefined) {
+        // External state is being used, notify parent
+        onPathClosedChange?.(closed);
+      } else {
+        // Internal state - this should not be called directly anymore
+        // The path closed state is now computed from point references
+        console.warn("setIsPathClosed called but path closed state is now computed from point references");
+      }
+    },
+    [allowClose, closed, onPathClosedChange],
+  );
 
   const isDragging = useRef(false);
 

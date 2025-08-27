@@ -5,6 +5,7 @@ import ToolMixin from "../mixins/Tool";
 import { MultipleClicksDrawingTool } from "../mixins/DrawingTool";
 import { NodeViews } from "../components/Node/Node";
 import { observe } from "mobx";
+import { nanoid } from "nanoid";
 
 const _Tool = types
   .model("VectorTool", {
@@ -51,7 +52,15 @@ const _Tool = types
 
       createRegionOptions({ x, y }) {
         return Super.createRegionOptions({
-          shape: [],
+          shape: [
+            {
+              id: nanoid(),
+              x,
+              y,
+              controlPoints: [],
+            },
+          ],
+          // shape: [],
           closed: false,
         });
       },
@@ -92,11 +101,6 @@ const _Tool = types
         }
       },
 
-      onSelected() {
-        self.cleanupUncloseableShape();
-        self.initEmptyRegion(0, 0);
-      },
-
       listenForClose() {
         const area = self.getCurrentArea();
         if (!area) return;
@@ -124,23 +128,24 @@ const _Tool = types
         self.getCurrentArea().closePoly();
       },
 
-      initEmptyRegion(x, y) {
+      startDrawing(x, y) {
         // Use the raw canvas coordinates for snapping
         // KonvaVector will handle the coordinate conversion internally
 
-        const point = self.control?.getSnappedPoint({ x, y });
+        const image = self.obj.currentImageEntity;
+        const width = image.naturalWidth;
+        const height = image.naturalHeight;
+
+        const realX = (x / 100) * width;
+        const realY = (y / 100) * height;
 
         self.mode = "drawing";
-        self.currentArea = self.createRegion(self.createRegionOptions({ x: point.x, y: point.y }), true);
+        self.currentArea = self.createRegion(self.createRegionOptions({ x: realX, y: realY }), true);
         self.setDrawing(true);
         self.applyActiveStates(self.currentArea);
 
         // Start listening for path closure
         self.listenForClose();
-      },
-
-      startDrawing() {
-        self.mode = "drawing";
       },
 
       _finishDrawing() {
@@ -178,7 +183,7 @@ const _Tool = types
       // Finish drawing the current vector
       finishDrawing() {
         const currentArea = self.getCurrentArea();
-        if (currentArea && currentArea.shape.length >= 2) {
+        if (currentArea && currentArea.incomplete) {
           self._finishDrawing();
         }
       },
