@@ -670,18 +670,33 @@ export function insertPointBetween(
  * that creates the connection between the two points of that segment
  */
 export function breakPathAtSegment(props: EventHandlerProps, segmentIndex?: number): boolean {
+  console.log(`🔧 breakPathAtSegment called with segmentIndex: ${segmentIndex}, points length: ${props.initialPoints.length}`);
+
   if (!props.allowClose || props.initialPoints.length < 3) {
+    console.log(`❌ Cannot break: allowClose=${props.allowClose}, points length=${props.initialPoints.length}`);
     return false;
+  }
+
+  // Trust the isPathClosed prop that was passed from the main component
+  // This ensures consistency between the UI state and the breaking logic
+  console.log(`🔍 Path closure check: isPathClosed prop = ${props.isPathClosed}`);
+
+  if (!props.isPathClosed) {
+    console.log(`ℹ️ Path is not closed according to props, cannot break`);
+    return false;
+  }
+
+  console.log(`✅ Path is closed according to props, proceeding with break`);
+
+  // Log the current point references for debugging
+  console.log(`🔍 Current point references:`);
+  for (let i = 0; i < props.initialPoints.length; i++) {
+    const point = props.initialPoints[i];
+    console.log(`  Point ${i}: ${point.id.slice(0, 4)} -> prevPointId: ${point.prevPointId?.slice(0, 4) || 'undefined'}`);
   }
 
   const firstPoint = props.initialPoints[0];
   const lastPoint = props.initialPoints[props.initialPoints.length - 1];
-
-  // Check if path is actually closed
-  if (firstPoint.prevPointId !== lastPoint.id) {
-    console.log(`ℹ️ Path is not closed, cannot break`);
-    return false;
-  }
 
   // If no segment index is provided, break at the closure point (first point)
   if (segmentIndex === undefined) {

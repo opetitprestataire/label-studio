@@ -271,21 +271,40 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   const [isTransforming, setIsTransforming] = useState(false);
 
   // Compute if path is closed based on point references
-  // A path is closed if the first point has a prevPointId that references the last point
+  // A path is closed if every point has a prevPointId reference, creating a complete circular path
   const isPathClosed = useMemo(() => {
     if (!allowClose || initialPoints.length < 2) {
       return false;
     }
 
-    const firstPoint = initialPoints[0];
-    const lastPoint = initialPoints[initialPoints.length - 1];
+    // Check if every point has a prevPointId reference
+    for (let i = 0; i < initialPoints.length; i++) {
+      const point = initialPoints[i];
+      if (!point.prevPointId) {
+        return false; // Found a point without prevPointId, path is not closed
+      }
+    }
 
-    // Check if first point has a prevPointId that references the last point
-    return firstPoint.prevPointId === lastPoint.id;
+    // All points have prevPointId references, path is closed
+    return true;
   }, [allowClose, initialPoints]);
+
+
 
   // Use external closed prop when provided, otherwise use computed value
   const finalIsPathClosed = allowClose && closed !== undefined ? closed : isPathClosed;
+
+  // Debug logging for path closure state
+  useEffect(() => {
+    if (allowClose && initialPoints.length >= 2) {
+      console.log(`🔍 Main component path closure check: ${initialPoints.length} points`);
+      for (let i = 0; i < initialPoints.length; i++) {
+        const point = initialPoints[i];
+        console.log(`  Point ${i}: ${point.id.slice(0, 4)} -> prevPointId: ${point.prevPointId?.slice(0, 4) || 'undefined'}`);
+      }
+      console.log(`  isPathClosed: ${isPathClosed}, finalIsPathClosed: ${finalIsPathClosed}`);
+    }
+  }, [allowClose, initialPoints, isPathClosed, finalIsPathClosed]);
 
   // Setter for path closed state - only used when not using external state
   const setIsPathClosed = useCallback((closed: boolean) => {

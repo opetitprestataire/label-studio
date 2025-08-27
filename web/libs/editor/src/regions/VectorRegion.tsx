@@ -119,7 +119,7 @@ const Model = types
       return max ? Number.parseInt(max) : undefined;
     },
     get incomplete() {
-      const notClosed = self.control.allowclose === true && self.closed === false;
+      const notClosed = self.control?.allowclose === true && self.closed === false;
       const notFinised = self.minPoints !== undefined && self.shape.length < self.minPoints;
       return notClosed || notFinised;
     },
