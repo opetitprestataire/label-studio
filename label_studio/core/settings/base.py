@@ -369,6 +369,9 @@ RQ_QUEUES = {
     },
 }
 
+# How long to keep failed RQ jobs (in seconds); default is 30 days
+RQ_FAILED_JOB_TTL = int(get_env('RQ_FAILED_JOB_TTL', 30 * 24 * 60 * 60))
+
 # drf-spectacular settings for OpenAPI 3.0 schema generation
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Label Studio API',
@@ -596,6 +599,7 @@ CREATE_ORGANIZATION = 'organizations.functions.create_organization'
 SAVE_USER = 'users.functions.save_user'
 POST_PROCESS_REIMPORT = 'core.utils.common.empty'
 USER_SERIALIZER = 'users.serializers.BaseUserSerializer'
+WHOAMI_USER_SERIALIZER = USER_SERIALIZER
 USER_SERIALIZER_UPDATE = 'users.serializers.BaseUserSerializerUpdate'
 TASK_SERIALIZER = 'tasks.serializers.BaseTaskSerializer'
 EXPORT_DATA_SERIALIZER = 'data_export.serializers.BaseExportDataSerializer'
