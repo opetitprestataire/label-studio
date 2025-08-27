@@ -20,12 +20,18 @@ export function applyTransformationToPoints(
   initialPoints: BezierPoint[],
   proxyRefs?: React.MutableRefObject<{ [key: number]: Konva.Rect | null }>,
   updateControlPoints = true,
-  originalPositions?: { [key: number]: { x: number; y: number; controlPoint1?: { x: number; y: number }; controlPoint2?: { x: number; y: number } } },
+  originalPositions?: {
+    [key: number]: {
+      x: number;
+      y: number;
+      controlPoint1?: { x: number; y: number };
+      controlPoint2?: { x: number; y: number };
+    };
+  },
   transformerCenter?: { x: number; y: number },
   constrainToBounds = false,
   bounds?: { width: number; height: number },
 ): TransformResult {
-
   const nodes = transformer.nodes();
   const newPoints = [...initialPoints];
 
@@ -34,7 +40,7 @@ export function applyTransformationToPoints(
     return { newPoints, transformer };
   }
 
-  // If bounds checking is enabled and we have multiple selected points, 
+  // If bounds checking is enabled and we have multiple selected points,
   // we need to check if ALL anchor points can fit within bounds before applying any transformation
   if (constrainToBounds && bounds && nodes.length > 1) {
     // For collective bounds checking, we only check anchor points (main points)
@@ -178,10 +184,10 @@ export function applyTransformationToPoints(
         }
 
         // Apply the vectors to the new anchor point position (this includes both translation and rotation)
-        let finalCP1PosX = point.x + finalCP1X;
-        let finalCP1PosY = point.y + finalCP1Y;
-        let finalCP2PosX = point.x + finalCP2X;
-        let finalCP2PosY = point.y + finalCP2Y;
+        const finalCP1PosX = point.x + finalCP1X;
+        const finalCP1PosY = point.y + finalCP1Y;
+        const finalCP2PosX = point.x + finalCP2X;
+        const finalCP2PosY = point.y + finalCP2Y;
 
         // Note: We don't apply bounds checking to control points
         // Only anchor points are constrained to image bounds

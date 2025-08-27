@@ -99,7 +99,7 @@ const NodeViews: Record<string, NodeViewProps> = {
   },
 
   VectorRegionModel: {
-          name: "Vector",
+    name: "Vector",
     icon: IconPolygonTool,
     altIcon: IconPolygonToolSmart,
   },

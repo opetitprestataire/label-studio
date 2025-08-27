@@ -35,7 +35,6 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
   constrainToBounds,
   bounds,
 }) => {
-
   // Helper function to constrain transformer to bounds
   const constrainTransformerToBounds = (transformer: Konva.Transformer) => {
     if (!constrainToBounds || !bounds) return;
@@ -85,7 +84,14 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
   });
 
   // Store original positions when drag/transform starts
-  const originalPositionsRef = React.useRef<{ [key: number]: { x: number; y: number; controlPoint1?: { x: number; y: number }; controlPoint2?: { x: number; y: number } } }>({});
+  const originalPositionsRef = React.useRef<{
+    [key: number]: {
+      x: number;
+      y: number;
+      controlPoint1?: { x: number; y: number };
+      controlPoint2?: { x: number; y: number };
+    };
+  }>({});
 
   if (selectedPoints.size <= 1 || initialPoints.length === 0) return null;
 
@@ -194,7 +200,16 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
               x: transformer.x() + transformer.width() / 2,
               y: transformer.y() + transformer.height() / 2,
             };
-            const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true, originalPositionsRef.current, transformerCenter, constrainToBounds, bounds);
+            const { newPoints } = applyTransformationToPoints(
+              transformer,
+              initialPoints,
+              proxyRefs,
+              true,
+              originalPositionsRef.current,
+              transformerCenter,
+              constrainToBounds,
+              bounds,
+            );
             onPointsChange?.(newPoints);
           } catch (error) {
             console.warn("Transform error:", error);
@@ -261,7 +276,16 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
               x: transformer.x() + transformer.width() / 2,
               y: transformer.y() + transformer.height() / 2,
             };
-            const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true, originalPositionsRef.current, transformerCenter, constrainToBounds, bounds);
+            const { newPoints } = applyTransformationToPoints(
+              transformer,
+              initialPoints,
+              proxyRefs,
+              true,
+              originalPositionsRef.current,
+              transformerCenter,
+              constrainToBounds,
+              bounds,
+            );
             onPointsChange?.(newPoints);
           } catch (error) {
             console.warn("Drag move error:", error);
@@ -281,7 +305,16 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
             x: transformer.x() + transformer.width() / 2,
             y: transformer.y() + transformer.height() / 2,
           };
-          const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true, originalPositionsRef.current, transformerCenter, constrainToBounds, bounds);
+          const { newPoints } = applyTransformationToPoints(
+            transformer,
+            initialPoints,
+            proxyRefs,
+            true,
+            originalPositionsRef.current,
+            transformerCenter,
+            constrainToBounds,
+            bounds,
+          );
           onPointsChange?.(newPoints);
 
           // Store the transformer state for future updates
@@ -312,7 +345,16 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
             x: transformer.x() + transformer.width() / 2,
             y: transformer.y() + transformer.height() / 2,
           };
-          const { newPoints } = applyTransformationToPoints(transformer, initialPoints, proxyRefs, true, originalPositionsRef.current, transformerCenter, constrainToBounds, bounds);
+          const { newPoints } = applyTransformationToPoints(
+            transformer,
+            initialPoints,
+            proxyRefs,
+            true,
+            originalPositionsRef.current,
+            transformerCenter,
+            constrainToBounds,
+            bounds,
+          );
           onPointsChange?.(newPoints);
 
           // Store the transformer state for future updates

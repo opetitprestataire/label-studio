@@ -133,8 +133,8 @@ export interface KonvaVectorProps {
   onMouseEnter?: (e: KonvaEventObject<MouseEvent>) => void;
   /** Mouse leave event handler */
   onMouseLeave?: (e: KonvaEventObject<MouseEvent>) => void;
-	/** Disable all interactions when true */
-	disabled?: boolean;
+  /** Disable all interactions when true */
+  disabled?: boolean;
   /** Constrain points to stay within image bounds */
   constrainToBounds?: boolean;
   /** Ref to access component methods */

@@ -19,7 +19,6 @@ import { constrainPointToBounds } from "../utils/boundsChecking";
 
 export function createMouseDownHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
   return (e: KonvaEventObject<MouseEvent>) => {
-
     let altClickHandled = false;
 
     // Only run Alt+click logic if Alt key is actually held
@@ -286,7 +285,6 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
 }
 
 export function createMouseMoveHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
-
   return (e: KonvaEventObject<MouseEvent>) => {
     const pos = e.target.getStage()?.getPointerPosition();
     if (!pos) return;
@@ -792,7 +790,6 @@ export function createMouseUpHandler(props: EventHandlerProps) {
 
 export function createClickHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
   return (e: KonvaEventObject<MouseEvent>) => {
-
     // Handle Shift+click functionality FIRST (before other checks)
     if (e.evt.shiftKey && !e.evt.altKey) {
       if (handleShiftClickPointConversion(e, props)) {
@@ -802,7 +799,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
 
     // Handle Alt+click functionality (before other checks)
     if (e.evt.altKey && !e.evt.shiftKey) {
-
       // First, check if we're near a ghost point to add a point
       if (
         props.cursorPosition &&

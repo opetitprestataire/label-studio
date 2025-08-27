@@ -6,7 +6,7 @@
  */
 export function constrainPointToBounds(
   point: { x: number; y: number },
-  bounds: { width: number; height: number }
+  bounds: { width: number; height: number },
 ): { x: number; y: number } {
   return {
     x: Math.max(0, Math.min(bounds.width, point.x)),
@@ -22,9 +22,9 @@ export function constrainPointToBounds(
  */
 export function constrainPointsToBounds(
   points: Array<{ x: number; y: number }>,
-  bounds: { width: number; height: number }
+  bounds: { width: number; height: number },
 ): Array<{ x: number; y: number }> {
-  return points.map(point => constrainPointToBounds(point, bounds));
+  return points.map((point) => constrainPointToBounds(point, bounds));
 }
 
 /**
@@ -35,7 +35,7 @@ export function constrainPointsToBounds(
  */
 export function isPointWithinBounds(
   point: { x: number; y: number },
-  bounds: { width: number; height: number }
+  bounds: { width: number; height: number },
 ): boolean {
   return point.x >= 0 && point.x <= bounds.width && point.y >= 0 && point.y <= bounds.height;
 }

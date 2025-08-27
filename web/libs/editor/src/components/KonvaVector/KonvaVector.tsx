@@ -14,7 +14,6 @@ import { createEventHandlers } from "./eventHandlers";
 import { convertPoint } from "./pointManagement";
 import { normalizePoints, convertBezierToSimplePoints } from "./utils";
 import { findClosestPointOnPath, getDistance } from "./eventHandlers/utils";
-import { constrainPointToBounds } from "./utils/boundsChecking";
 import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, KonvaVectorRef } from "./types";
 
 /**

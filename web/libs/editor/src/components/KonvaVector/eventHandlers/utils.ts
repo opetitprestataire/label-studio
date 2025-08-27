@@ -47,8 +47,6 @@ export function isPointInHitRadius(
   return getDistance(point, target) <= hitRadius;
 }
 
-
-
 // Find the closest point on the path to a given cursor position
 export function findClosestPointOnPath(
   cursorPos: { x: number; y: number },
@@ -56,7 +54,6 @@ export function findClosestPointOnPath(
   allowClose?: boolean,
   isPathClosed?: boolean,
 ): { point: { x: number; y: number }; segmentIndex: number } | null {
-
   if (points.length < 2) return null;
 
   let closestPoint = { x: 0, y: 0 };
@@ -126,7 +123,6 @@ export function findClosestPointOnPath(
       closestDistance = distance;
       closestPoint = segmentClosestPoint;
       closestSegmentIndex = i;
-
     }
   }
 

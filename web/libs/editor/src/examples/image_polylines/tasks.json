@@ -1,41 +1,26 @@
 [
-    {
+  {
+    "id": 1,
+    "data": {
+      "img": "https://htx-misc.s3.amazonaws.com/opensource/label-studio/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg"
+    },
+    "annotations": [
+      {
         "id": 1,
-        "data": {
-            "img": "https://htx-misc.s3.amazonaws.com/opensource/label-studio/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg"
-        },
-        "annotations": [
-            {
-                "id": 1,
-                "completed_by": 1,
-                "result": [
-                    {
-                        "id": "result1",
-                        "from_name": "tag",
-                        "to_name": "img",
-                        "type": "polylinelabels",
-                        "value": {
-                            "points": [
-                                [
-                                    10,
-                                    10
-                                ],
-                                [
-                                    20,
-                                    20
-                                ],
-                                [
-                                    30,
-                                    10
-                                ]
-                            ],
-                            "polylinelabels": [
-                                "Road"
-                            ]
-                        }
-                    }
-                ]
+        "completed_by": 1,
+        "result": [
+          {
+            "id": "result1",
+            "from_name": "tag",
+            "to_name": "img",
+            "type": "polylinelabels",
+            "value": {
+              "points": [[10, 10], [20, 20], [30, 10]],
+              "polylinelabels": ["Road"]
             }
+          }
         ]
-    }
+      }
+    ]
+  }
 ]
