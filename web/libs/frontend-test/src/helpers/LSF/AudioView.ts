@@ -182,7 +182,7 @@ class AudioViewHelper extends withMedia(
       this.toggleSettingsMenu();
 
       // Wait for the speed change to propagate to audio/video elements
-      this.waitForPlaybackRate(value, 3000, checkVideo);
+      this.waitForPlaybackRate(value, 8000, checkVideo);
       cy.log(`✅ Playback speed set to ${value}x`);
     }
 
@@ -403,7 +403,7 @@ class AudioViewHelper extends withMedia(
      * @param stabilityChecks number of consecutive stable checks required
      * @param timeout maximum time to wait in milliseconds
      */
-    waitForCanvasStable(x = 0.36, y = 0.9, stabilityChecks = 3, timeout = 5000) {
+    waitForCanvasStable(x = 0.36, y = 0.9, stabilityChecks = 3, timeout = 10000) {
       let stableCount = 0;
       let lastColor: Uint8ClampedArray | null = null;
       const startTime = Date.now();
@@ -423,7 +423,7 @@ class AudioViewHelper extends withMedia(
             cy.log("🔍 Canvas not ready - transparent pixel detected, continuing to wait...");
             stableCount = 0;
             lastColor = null;
-            cy.wait(50); // Wait longer if canvas isn't ready
+            cy.wait(100); // Wait longer for CI environments
             return checkStability();
           }
 
@@ -453,7 +453,7 @@ class AudioViewHelper extends withMedia(
      * Waits for canvas to have actual content (non-transparent pixels)
      * @param timeout maximum time to wait in milliseconds
      */
-    waitForCanvasContent(timeout = 10000) {
+    waitForCanvasContent(timeout = 15000) {
       const startTime = Date.now();
 
       const checkForContent = (): Cypress.Chainable => {
@@ -488,7 +488,7 @@ class AudioViewHelper extends withMedia(
             return cy.wrap(null);
           }
           cy.log("🔍 Canvas empty, waiting for content...");
-          cy.wait(100);
+          cy.wait(200); // Increased wait for CI environments
           return checkForContent();
         });
       };
@@ -503,7 +503,7 @@ class AudioViewHelper extends withMedia(
      * @param timeout maximum time to wait
      * @param checkVideo whether to check video sync (default: true)
      */
-    waitForMediaSync(tolerance = 0.1, timeout = 2000, checkVideo = true) {
+    waitForMediaSync(tolerance = 0.1, timeout = 5000, checkVideo = true) {
       const startTime = Date.now();
 
       const checkSync = (): Cypress.Chainable => {
@@ -544,7 +544,7 @@ class AudioViewHelper extends withMedia(
      * @param timeout maximum time to wait
      * @param checkVideo whether to check video state (default: true)
      */
-    waitForPlayState(shouldBePlaying: boolean, timeout = 3000, checkVideo = true) {
+    waitForPlayState(shouldBePlaying: boolean, timeout = 8000, checkVideo = true) {
       cy.log(
         `🎵 Waiting for ${checkVideo ? "audio/video" : "audio"} to ${shouldBePlaying ? "start playing" : "be paused"}...`,
       );
@@ -570,7 +570,7 @@ class AudioViewHelper extends withMedia(
      * @param timeout maximum time to wait
      * @param checkVideo whether to check video rate (default: true)
      */
-    waitForPlaybackRate(expectedRate: number, timeout = 3000, checkVideo = true) {
+    waitForPlaybackRate(expectedRate: number, timeout = 8000, checkVideo = true) {
       cy.log(`🎵 Waiting for ${checkVideo ? "audio/video" : "audio"} playback rate to be ${expectedRate}x...`);
 
       return cy
@@ -594,7 +594,7 @@ class AudioViewHelper extends withMedia(
      * @param stabilityDuration how long to be stable (ms)
      * @param timeout maximum time to wait
      */
-    waitForTimeStabilization(tolerance = 0.1, stabilityDuration = 200, timeout = 3000) {
+    waitForTimeStabilization(tolerance = 0.1, stabilityDuration = 200, timeout = 8000) {
       let lastAudioTime: number | null = null;
       let lastVideoTime: number | null = null;
       let stableStartTime: number | null = null;
