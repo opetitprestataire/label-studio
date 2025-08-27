@@ -19,9 +19,39 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       // Check if we're clicking on the first point to close the path
       // But don't close if Alt is held (to allow Alt+click functionality)
       // This should take priority over normal point selection
-      if (i === 0 && props.allowClose && props.initialPoints.length > 2 && !props.isPathClosed && !e.evt.altKey) {
-        props.setIsPathClosed(true);
-        return true;
+      if (i === 0 && props.allowClose && !props.isPathClosed && !e.evt.altKey) {
+        // Check if we can close the path based on point count or bezier points
+        const canClosePath = () => {
+          // Allow closing if we have more than 2 points
+          if (props.initialPoints.length > 2) {
+            return true;
+          }
+
+          // Allow closing if we have at least one bezier point
+          const hasBezierPoint = props.initialPoints.some(point => point.isBezier);
+          if (hasBezierPoint) {
+            return true;
+          }
+
+          return false;
+        };
+
+        if (!canClosePath()) {
+          console.log(`⚠️ Cannot close path: need either >2 points or at least one bezier point, but have ${props.initialPoints.length} points and no bezier points`);
+          // Continue with normal point selection instead
+        } else {
+          // Additional validation: ensure we meet the minimum points requirement
+          const minPoints = props.minPoints;
+          if (minPoints && props.initialPoints.length < minPoints) {
+            // Don't allow closing if we haven't reached the minimum number of points
+            console.log(`⚠️ Cannot close path: need at least ${minPoints} points, but only have ${props.initialPoints.length}`);
+            // Continue with normal point selection instead
+          } else {
+            console.log(`✅ Closing path with ${props.initialPoints.length} points`);
+            props.setIsPathClosed(true);
+            return true;
+          }
+        }
       }
 
       // If Cmd/Ctrl is held, add to selection (multi-selection) - this takes priority
@@ -38,7 +68,10 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       if (props.skeletonEnabled) {
         props.setSelectedPoints(new Set([i]));
         props.setSelectedPointIndex(i);
-        props.setLastAddedPointId?.(point.id);
+        // Don't set lastAddedPointId when selecting a point - it should remain the last physically added point
+        // Set the selected point as the active point for drawing
+        props.setActivePointId?.(point.id);
+        console.log(`🔧 Skeleton mode: selected point ${i} (${point.id}) as active point`);
         props.onPointSelected?.(i);
         return true;
       }
@@ -81,6 +114,9 @@ export function handlePointDeselection(e: KonvaEventObject<MouseEvent>, props: E
             if (props.skeletonEnabled && props.initialPoints.length > 0) {
               const lastPoint = props.initialPoints[props.initialPoints.length - 1];
               props.setLastAddedPointId?.(lastPoint.id);
+              // Also reset the active point to the last added point
+              props.setActivePointId?.(lastPoint.id);
+              console.log(`🔧 Skeleton mode: reset active point to last added point ${lastPoint.id}`);
             }
           }
           return newSet;

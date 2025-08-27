@@ -162,6 +162,16 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   useEffect(() => {
     setInitialPoints(normalizePoints(rawInitialPoints));
   }, [rawInitialPoints]);
+
+  // Initialize lastAddedPointId and activePointId when component loads with existing points
+  useEffect(() => {
+    if (initialPoints.length > 0) {
+      const lastPoint = initialPoints[initialPoints.length - 1];
+      setLastAddedPointId(lastPoint.id);
+      setActivePointId(lastPoint.id);
+    }
+  }, [initialPoints.length]); // Only run when the number of points changes, not on every initialPoints change
+
   // Use initialPoints directly - this will update when the parent re-renders
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
   const [selectedPoints, setSelectedPoints] = useState<Set<number>>(new Set());
@@ -474,32 +484,96 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     const segments: Array<{ from: BezierPoint; to: BezierPoint }> = [];
     const allPoints = getAllPoints();
 
-    // Create a map for quick point lookup
-    const pointMap = new Map<string, BezierPoint>();
-    for (const point of allPoints) {
-      pointMap.set(point.id, point);
-    }
+    // In skeleton mode, we need to handle segments differently
+    if (skeletonEnabled) {
+      // Create a map for quick point lookup
+      const pointMap = new Map<string, BezierPoint>();
+      for (const point of allPoints) {
+        pointMap.set(point.id, point);
+      }
 
-    // Find all id-prevPointId pairs and create line segments
-    for (const point of allPoints) {
-      if (point.prevPointId) {
-        const prevPoint = pointMap.get(point.prevPointId);
-        if (prevPoint) {
-          segments.push({ from: prevPoint, to: point });
+      // First, add all segments that have explicit prevPointId relationships
+      for (const point of allPoints) {
+        if (point.prevPointId) {
+          const prevPoint = pointMap.get(point.prevPointId);
+          if (prevPoint) {
+            segments.push({ from: prevPoint, to: point });
+          }
+        }
+      }
+
+      // Then, handle points that don't have prevPointId but should be connected
+      // These are points that were added but not yet connected to the active point
+      const connectedPointIds = new Set<string>();
+      segments.forEach((segment) => {
+        connectedPointIds.add(segment.from.id);
+        connectedPointIds.add(segment.to.id);
+      });
+
+      // Find points that aren't connected yet
+      const unconnectedPoints = allPoints.filter((point) => !connectedPointIds.has(point.id));
+
+      if (unconnectedPoints.length > 0 && activePointId) {
+        const activePoint = pointMap.get(activePointId);
+        if (activePoint) {
+          // Connect unconnected points to the active point
+          for (const unconnectedPoint of unconnectedPoints) {
+            segments.push({ from: activePoint, to: unconnectedPoint });
+          }
+        }
+      }
+    } else {
+      // Non-skeleton mode: use the original prevPointId logic
+      // Create a map for quick point lookup
+      const pointMap = new Map<string, BezierPoint>();
+      for (const point of allPoints) {
+        pointMap.set(point.id, point);
+      }
+
+      // Find all id-prevPointId pairs and create line segments
+      for (const point of allPoints) {
+        if (point.prevPointId) {
+          const prevPoint = pointMap.get(point.prevPointId);
+          if (prevPoint) {
+            segments.push({ from: prevPoint, to: point });
+          }
         }
       }
     }
 
     // Only add closing segment if the path is closed but not already connected through prevPointId
-    if (allowClose && isPathClosed && allPoints.length >= 3) {
-      const lastPoint = allPoints[allPoints.length - 1];
-      const firstPoint = allPoints[0];
+    if (allowClose && isPathClosed) {
+      // Allow closing if we have more than 2 points or at least one bezier point
+      const canClosePath = () => {
+        // Allow closing if we have more than 2 points
+        if (allPoints.length > 2) {
+          return true;
+        }
+        
+        // Allow closing if we have at least one bezier point
+        const hasBezierPoint = allPoints.some(point => point.isBezier);
+        if (hasBezierPoint) {
+          return true;
+        }
+        
+        return false;
+      };
 
-      // Check if the first point already has a prevPointId that connects to the last point
-      const isAlreadyConnected = firstPoint.prevPointId === lastPoint.id;
+      if (canClosePath()) {
+        const lastPoint = allPoints[allPoints.length - 1];
+        const firstPoint = allPoints[0];
 
-      if (!isAlreadyConnected) {
-        segments.push({ from: lastPoint, to: firstPoint });
+        // Check if the first point already has a prevPointId that connects to the last point
+        const isAlreadyConnected = firstPoint.prevPointId === lastPoint.id;
+
+        if (!isAlreadyConnected) {
+          // Create a proper closing segment that respects bezier properties
+          const closingSegment = { from: lastPoint, to: firstPoint };
+          segments.push(closingSegment);
+          if (skeletonEnabled) {
+            console.log(`🔗 Added closing segment: ${lastPoint.id} -> ${firstPoint.id}`);
+          }
+        }
       }
     }
 
@@ -762,6 +836,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     notifyTransformationComplete,
     canAddMorePoints,
     maxPoints,
+    minPoints, // Add minPoints to event handlers
     skeletonEnabled,
     getAllPoints,
     getPointInfo,
@@ -827,6 +902,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         transform={transform}
         fitScale={fitScale}
         maxPoints={maxPoints}
+        minPoints={minPoints}
         skeletonEnabled={skeletonEnabled}
         selectedPointIndex={selectedPointIndex}
         lastAddedPointId={lastAddedPointId}
@@ -874,6 +950,9 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           proxyRefs={proxyRefs}
           constrainToBounds={constrainToBounds}
           bounds={{ width, height }}
+          transform={transform}
+          scaleX={scaleX}
+          scaleY={scaleY}
           onPointsChange={(newPoints) => {
             // Update main path points
             onPointsChange?.(newPoints);

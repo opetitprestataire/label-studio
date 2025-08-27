@@ -88,7 +88,6 @@ class _Registry {
     if (value) {
       return available
         .filter((model: any) => {
-          if (model.detectByValue) console.log(model.detectByValue, model.detectByValue?.(value), value);
           return Boolean(model.detectByValue?.(value));
         })
         .slice(0, 1);

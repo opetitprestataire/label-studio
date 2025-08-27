@@ -40,6 +40,7 @@ const _Tool = types
       get viewTooltip() {
         return "Vector region";
       },
+
       get iconComponent() {
         return self.dynamic ? NodeViews.VectorRegionModel.altIcon : NodeViews.VectorRegionModel.icon;
       },
@@ -90,10 +91,18 @@ const _Tool = types
           else self.cleanupUncloseableShape();
         }
       },
+
+      onSelected() {
+        self.cleanupUncloseableShape();
+        self.initEmptyRegion(0, 0);
+      },
+
       listenForClose() {
+        const area = self.getCurrentArea();
+        if (!area) return;
         closed = false;
         disposer = observe(
-          self.getCurrentArea(),
+          area,
           "closed",
           () => {
             if (self.getCurrentArea()?.closed && !closed) {
@@ -103,9 +112,11 @@ const _Tool = types
           true,
         );
       },
+
       stopListening() {
-        if (disposer) disposer();
+        disposer?.();
       },
+
       closeCurrent() {
         self.stopListening();
         if (closed) return;
@@ -113,13 +124,11 @@ const _Tool = types
         self.getCurrentArea().closePoly();
       },
 
-      startDrawing(x, y) {
+      initEmptyRegion(x, y) {
         // Use the raw canvas coordinates for snapping
         // KonvaVector will handle the coordinate conversion internally
-        const point = self.control?.getSnappedPoint({ x, y });
 
-        console.log("Canvas coords:", { x, y });
-        console.log("Snapped point:", point);
+        const point = self.control?.getSnappedPoint({ x, y });
 
         self.mode = "drawing";
         self.currentArea = self.createRegion(self.createRegionOptions({ x: point.x, y: point.y }), true);
@@ -128,6 +137,10 @@ const _Tool = types
 
         // Start listening for path closure
         self.listenForClose();
+      },
+
+      startDrawing() {
+        self.mode = "drawing";
       },
 
       _finishDrawing() {
@@ -173,7 +186,7 @@ const _Tool = types
       // Clean up uncloseable shape
       cleanupUncloseableShape() {
         const currentArea = self.getCurrentArea();
-        if (currentArea && currentArea.shape.length < 2) {
+        if (currentArea && currentArea.incomplete) {
           self.deleteRegion();
         }
       },

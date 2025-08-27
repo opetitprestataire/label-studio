@@ -40,6 +40,7 @@ import ControlBase from "./Base";
  * @param {pixel|none} [snap=none]                  - Snap vector to image pixels
  * @params {boolean} [closable=false]               - Allow closed shapes
  * @params {boolean} [curves=false]                 - Allow Bezier curves
+ * @params {boolean} [skeleton=false]               - Enables skeleton mode to allow branch paths
  * @params {number|none} [minPoints=none]           - Minimum allowed number of points
  * @params {number|none} [maxPoints=none]           - Maximum allowed number of points
  * @params {boolean} [constrainToBounds=false]      - Whether to keep shapes inside image bounds
@@ -56,6 +57,7 @@ const ModelAttrs = types.model("VectorLabelsModel", {
   minpoints: types.optional(types.maybeNull(types.string), null),
   maxpoints: types.optional(types.maybeNull(types.string), null),
   constraintobounds: types.optional(types.maybeNull(types.boolean), false),
+  skeleton: types.optional(types.maybeNull(types.boolean), false),
   children: Types.unionArray(["label", "vectorlabel", "header", "view", "hypertext"]),
 });
 

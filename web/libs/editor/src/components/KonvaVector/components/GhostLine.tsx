@@ -13,6 +13,7 @@ interface GhostLineProps {
   transform: { zoom: number; offsetX: number; offsetY: number };
   fitScale: number;
   maxPoints?: number;
+  minPoints?: number; // Add minPoints prop
   skeletonEnabled?: boolean;
   selectedPointIndex?: number | null;
   lastAddedPointId?: string | null;
@@ -33,6 +34,7 @@ export const GhostLine: React.FC<GhostLineProps> = ({
   transform,
   fitScale,
   maxPoints,
+  minPoints,
   skeletonEnabled,
   lastAddedPointId,
   activePointId = null,
@@ -69,7 +71,8 @@ export const GhostLine: React.FC<GhostLineProps> = ({
 
     // Final fallback: use the last point in the array
     if (initialPoints.length > 0) {
-      return initialPoints[initialPoints.length - 1];
+      const lastPoint = initialPoints[initialPoints.length - 1];
+      return lastPoint;
     }
     return null;
   };
@@ -78,9 +81,35 @@ export const GhostLine: React.FC<GhostLineProps> = ({
 
   // Check if we're near the first point (for closing indicator)
   const isNearFirstPoint = () => {
-    if (!allowClose || initialPoints.length <= 2 || !cursorPosition || !activePoint) {
+    if (!allowClose || !cursorPosition || !activePoint) {
       return false;
     }
+
+    // Check if we can close the path based on point count or bezier points
+    const canClosePath = () => {
+      // Allow closing if we have more than 2 points
+      if (initialPoints.length > 2) {
+        return true;
+      }
+
+      // Allow closing if we have at least one bezier point
+      const hasBezierPoint = initialPoints.some(point => point.isBezier);
+      if (hasBezierPoint) {
+        return true;
+      }
+
+      return false;
+    };
+
+    if (!canClosePath()) {
+      return false;
+    }
+
+    // Additional validation: ensure we meet the minimum points requirement
+    if (minPoints && initialPoints.length < minPoints) {
+      return false;
+    }
+
     const firstPoint = initialPoints[0];
     const distanceToFirst = Math.sqrt((cursorPosition.x - firstPoint.x) ** 2 + (cursorPosition.y - firstPoint.y) ** 2);
     const closeRadius = 15 / (transform.zoom * fitScale);

@@ -19,6 +19,15 @@ export interface AddPointOptions {
  * Supports all types of point addition: click, click-drag, alt-click with ghost point
  */
 export function addPoint(props: EventHandlerProps, options: AddPointOptions): boolean {
+  // Debug logging for skeleton mode
+  if (props.skeletonEnabled) {
+    console.log(`🔧 addPoint called in skeleton mode:`, {
+      activePointId: props.activePointId,
+      lastAddedPointId: props.lastAddedPointId,
+      initialPointsLength: props.initialPoints.length
+    });
+  }
+
   // Check if we can add more points
   // Allow adding points even when path is closed (for Alt+click functionality)
   if (!props.canAddMorePoints?.()) {
@@ -45,14 +54,32 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
     if (props.skeletonEnabled && props.activePointId) {
       // In skeleton mode: always connect to the active point
       prevPointId = props.activePointId;
+      console.log(`🔧 Skeleton mode: connecting to active point ${prevPointId}`);
     } else if (props.skeletonEnabled && props.lastAddedPointId) {
       // Fallback to lastAddedPointId for backward compatibility
       prevPointId = props.lastAddedPointId;
+      console.log(`🔧 Skeleton mode: fallback to lastAddedPointId ${prevPointId}`);
     } else if (props.initialPoints.length > 0) {
       // Normal mode: use last point in array
       prevPointId = props.initialPoints[props.initialPoints.length - 1].id;
+      console.log(`🔧 Normal mode: connecting to last point ${prevPointId}`);
     }
+  } else {
+    console.log(`🔧 Using provided prevPointId: ${prevPointId}`);
   }
+
+  // Additional debugging to check for stale values
+  if (props.skeletonEnabled) {
+    console.log(`🔧 addPoint prevPointId determination:`, {
+      providedPrevPointId: options.prevPointId,
+      finalPrevPointId: prevPointId,
+      activePointId: props.activePointId,
+      lastAddedPointId: props.lastAddedPointId,
+      lastPointInArray: props.initialPoints.length > 0 ? props.initialPoints[props.initialPoints.length - 1].id : 'none'
+    });
+  }
+
+  console.log(`🔧 addPoint: prevPointId = ${prevPointId}, skeletonEnabled = ${props.skeletonEnabled}, activePointId = ${props.activePointId}, lastAddedPointId = ${props.lastAddedPointId}`);
 
   // Create the new point
   const newPointOptions: Partial<BezierPoint> = {};
@@ -90,8 +117,17 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
   // Set this as the last added point
   props.setLastAddedPointId?.(newPoint.id);
 
-  // Always set the new point as the active point so the path continues from it
-  props.setActivePointId?.(newPoint.id);
+  // Active point management:
+  // - In skeleton mode with manual selection: maintain the selected point for branching
+  // - Otherwise: always set new point as active (default behavior)
+  if (props.skeletonEnabled && props.activePointId) {
+    // In skeleton mode: always maintain the manually selected point for branching
+    console.log(`🔧 Skeleton mode: maintaining manually selected point ${props.activePointId} for branching`);
+  } else {
+    // Default behavior: set the new point as active
+    props.setActivePointId?.(newPoint.id);
+    console.log(`🔧 Setting new point ${newPoint.id} as active`);
+  }
 
   props.onPointsChange?.(newPoints);
 
@@ -116,12 +152,42 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
   const snappedPos = snapToPixel(imagePos, props.pixelSnapping);
 
   // Check if we're clicking near the first point to close the path
-  if (props.allowClose && props.initialPoints.length > 2 && !props.isPathClosed) {
+  if (props.allowClose && !props.isPathClosed) {
+    // Check if we can close the path based on point count or bezier points
+    const canClosePath = () => {
+      // Allow closing if we have more than 2 points
+      if (props.initialPoints.length > 2) {
+        return true;
+      }
+
+      // Allow closing if we have at least one bezier point
+      const hasBezierPoint = props.initialPoints.some(point => point.isBezier);
+      if (hasBezierPoint) {
+        return true;
+      }
+
+      return false;
+    };
+
+    if (!canClosePath()) {
+      console.log(`⚠️ Cannot close path: need either >2 points or at least one bezier point, but have ${props.initialPoints.length} points and no bezier points`);
+      return false;
+    }
+
+    // Additional validation: ensure we meet the minimum points requirement
+    const minPoints = props.minPoints;
+    if (minPoints && props.initialPoints.length < minPoints) {
+      // Don't allow closing if we haven't reached the minimum number of points
+      console.log(`⚠️ Cannot close path: need at least ${minPoints} points, but only have ${props.initialPoints.length}`);
+      return false;
+    }
+
     const firstPoint = props.initialPoints[0];
     const distanceToFirst = getDistance(imagePos, firstPoint);
     const closeRadius = 15 / (props.transform.zoom * props.fitScale);
 
     if (distanceToFirst <= closeRadius) {
+      console.log(`✅ Closing path with ${props.initialPoints.length} points`);
       props.setIsPathClosed(true);
       return true;
     }
@@ -129,12 +195,30 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
 
   // Only add new points if path is not closed and we haven't reached max points
   if (!props.isPathClosed && props.canAddMorePoints?.()) {
-    // Use the unified addPoint function
-    return addPoint(props, {
+    // Debug logging for skeleton mode
+    if (props.skeletonEnabled) {
+      console.log(`🔧 handleDrawingModeClick in skeleton mode:`, {
+        activePointId: props.activePointId,
+        lastAddedPointId: props.lastAddedPointId,
+        initialPointsLength: props.initialPoints.length
+      });
+    }
+
+    // In skeleton mode, explicitly pass the activePointId as prevPointId
+    // to ensure the new point connects to the selected point
+    const addPointOptions: any = {
       x: snappedPos.x,
       y: snappedPos.y,
       type: "regular",
-    });
+    };
+
+    if (props.skeletonEnabled && props.activePointId) {
+      addPointOptions.prevPointId = props.activePointId;
+      console.log(`🔧 Explicitly setting prevPointId to activePointId: ${props.activePointId}`);
+    }
+
+    // Use the unified addPoint function
+    return addPoint(props, addPointOptions);
   }
 
   return false;
@@ -168,18 +252,39 @@ export function addPointFromGhostDrag(
   };
 
   // Insert the point between the two points that form the segment
-  const result = insertPointBetween(
-    props,
-    ghostPoint.x,
-    ghostPoint.y,
-    prevPoint.id,
-    nextPoint.id,
-    "bezier",
+  const newPoint = createPoint(ghostPoint.x, ghostPoint.y, prevPoint.id, {
+    isBezier: true,
     controlPoint1,
     controlPoint2,
+  });
+
+  // Insert the point between the two points that form the segment
+  const result = insertPointBetweenUtil(
+    props.initialPoints,
+    prevPoint.id,
+    nextPoint.id,
+    newPoint,
   );
 
-  return result.success;
+  // Update the points array
+  props.onPointsChange?.(result);
+
+  // Set this as the last added point
+  props.setLastAddedPointId?.(newPoint.id);
+
+  // Active point management:
+  // - In skeleton mode with manual selection: maintain the selected point for branching
+  // - Otherwise: always set new point as active (default behavior)
+  if (props.skeletonEnabled && props.activePointId) {
+    // In skeleton mode: always maintain the manually selected point for branching
+    console.log(`🔧 Skeleton mode: maintaining manually selected point ${props.activePointId} for branching`);
+  } else {
+    // Default behavior: set the new point as active
+    props.setActivePointId?.(newPoint.id);
+    console.log(`🔧 Setting new point ${newPoint.id} as active`);
+  }
+
+  return true;
 }
 
 /**

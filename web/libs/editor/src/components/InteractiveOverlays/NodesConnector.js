@@ -36,8 +36,9 @@ const obtainWatcher = (node) => {
     case "ellipseregion":
       return createPropertyWatcher(["x", "y", "radiusX", "radiusY", "rotation", "hidden", parentImagePropsWatch]);
     case "polygonregion":
-    case "vectorregion":
       return createPropertyWatcher(["hidden", { points: ["x", "y"] }, parentImagePropsWatch]);
+    case "vectorregion":
+      return createPropertyWatcher(["hidden", { shape: ["x", "y"] }, parentImagePropsWatch]);
     case "keypointregion":
       return createPropertyWatcher(["x", "y", "hidden", parentImagePropsWatch]);
     case "brushregion":

@@ -127,7 +127,23 @@ export function findClosestPointOnPath(
   }
 
   // Check closing segment if path is closed
-  if (allowClose && isPathClosed && points.length >= 3) {
+  // Allow closing if we have more than 2 points or at least one bezier point
+  const canClosePath = () => {
+    // Allow closing if we have more than 2 points
+    if (points.length > 2) {
+      return true;
+    }
+
+    // Allow closing if we have at least one bezier point
+    const hasBezierPoint = points.some(point => point.isBezier);
+    if (hasBezierPoint) {
+      return true;
+    }
+
+    return false;
+  };
+
+  if (allowClose && isPathClosed && canClosePath()) {
     const lastPoint = points[points.length - 1];
     const firstPoint = points[0];
 

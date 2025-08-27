@@ -85,6 +85,7 @@ export interface EventHandlerProps {
   notifyTransformationComplete?: () => void;
   canAddMorePoints?: () => boolean;
   maxPoints?: number;
+  minPoints?: number; // Add minPoints property
   skeletonEnabled?: boolean;
   getAllPoints?: () => BezierPoint[];
   getPointInfo?: (globalIndex: number) => {

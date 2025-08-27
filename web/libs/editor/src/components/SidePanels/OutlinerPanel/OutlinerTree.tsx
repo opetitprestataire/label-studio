@@ -203,7 +203,7 @@ const useDataTree = ({ regions, rootClass, footer }: any) => {
     const { id, type, hidden, isDrawing, locked } = item ?? {};
     const style = item?.background ?? item?.getOneColor?.();
     const color = chroma(style ?? "#666").alpha(1);
-    const mods: Record<string, any> = { hidden, type, isDrawing };
+    const mods: Record<string, any> = { hidden, type, isDrawing: isDrawing || item.incomplete };
 
     const label = <RegionLabel item={item} />;
 
@@ -416,7 +416,7 @@ const RootTitle: FC<any> = observer(
           <Elem name="title">
             {label}
             {item?.text && <Elem name="text">{item.text.replace(/\\n/g, "\n")}</Elem>}
-            {item?.isDrawing && (
+            {(item?.isDrawing || item.incomplete) && (
               <Elem tag="span" name="incomplete">
                 <Tooltip title={`Incomplete ${item.type?.replace("region", "") ?? "region"}`}>
                   <IconWarning />

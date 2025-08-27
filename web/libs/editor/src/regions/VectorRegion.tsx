@@ -118,6 +118,11 @@ const Model = types
       const max = self.control?.maxpoints;
       return max ? Number.parseInt(max) : undefined;
     },
+    get incomplete() {
+      const notClosed = self.control.allowclose === true && self.closed === false;
+      const notFinised = self.minPoints !== undefined && self.shape.length < self.minPoints;
+      return notClosed || notFinised;
+    },
   }))
   .actions((self: any) => {
     return {
@@ -382,6 +387,7 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
       allowBezier={item.control?.curves ?? false}
       minPoints={item.minPoints}
       maxPoints={item.maxPoints}
+      skeletonEnabled={item.control?.skeleton ?? false}
       stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
       fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
       pixelSnapping={item.control?.snap === "pixel"}
