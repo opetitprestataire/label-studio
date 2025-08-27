@@ -1,5 +1,5 @@
 import type Konva from "konva";
-import { useState, useRef, forwardRef, useImperativeHandle, useEffect } from "react";
+import { useState, useRef, forwardRef, useImperativeHandle, useEffect, useMemo, useCallback } from "react";
 import { Group, Shape } from "react-konva";
 import {
   ControlPoints,
@@ -249,14 +249,37 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   } | null>(null);
   const lastCallbackTime = useRef<number>(0);
   const [visibleControlPoints, setVisibleControlPoints] = useState<Set<number>>(new Set());
-  const [internalIsPathClosed, setInternalIsPathClosed] = useState(false);
-
-  // Use external closed prop when allowClose is active, otherwise use internal state
-  const isPathClosed = allowClose && closed !== undefined ? closed : internalIsPathClosed;
-  const setIsPathClosed =
-    allowClose && closed !== undefined ? (closed: boolean) => onPathClosedChange?.(closed) : setInternalIsPathClosed;
   const [activePointId, setActivePointId] = useState<string | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
+
+  // Compute if path is closed based on point references
+  // A path is closed if the first point has a prevPointId that references the last point
+  const isPathClosed = useMemo(() => {
+    if (!allowClose || initialPoints.length < 2) {
+      return false;
+    }
+
+    const firstPoint = initialPoints[0];
+    const lastPoint = initialPoints[initialPoints.length - 1];
+
+    // Check if first point has a prevPointId that references the last point
+    return firstPoint.prevPointId === lastPoint.id;
+  }, [allowClose, initialPoints]);
+
+  // Use external closed prop when provided, otherwise use computed value
+  const finalIsPathClosed = allowClose && closed !== undefined ? closed : isPathClosed;
+
+  // Setter for path closed state - only used when not using external state
+  const setIsPathClosed = useCallback((closed: boolean) => {
+    if (allowClose && closed !== undefined) {
+      // External state is being used, notify parent
+      onPathClosedChange?.(closed);
+    } else {
+      // Internal state - this should not be called directly anymore
+      // The path closed state is now computed from point references
+      console.warn('setIsPathClosed called but path closed state is now computed from point references');
+    }
+  }, [allowClose, closed, onPathClosedChange]);
 
   const isDragging = useRef(false);
 
@@ -338,7 +361,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       const segmentHitRadius = 8 / scale; // Slightly larger than point hit radius
 
       // Use the same logic as findClosestPointOnPath for consistent Bezier curve detection
-      const closestPathPoint = findClosestPointOnPath(cursorPosition, initialPoints, allowClose, isPathClosed);
+      const closestPathPoint = findClosestPointOnPath(cursorPosition, initialPoints, allowClose, finalIsPathClosed);
 
       if (closestPathPoint && getDistance(cursorPosition, closestPathPoint.point) <= segmentHitRadius) {
         return true; // Disable drawing when hovering over segments
@@ -353,9 +376,9 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   // Notify parent when path closure state changes (only when not using external state)
   useEffect(() => {
     if (!(allowClose && closed !== undefined)) {
-      onPathClosedChange?.(isPathClosed);
+      onPathClosedChange?.(finalIsPathClosed);
     }
-  }, [isPathClosed, onPathClosedChange, allowClose, closed]);
+  }, [finalIsPathClosed, closed, allowClose, onPathClosedChange]);
 
   // Handle drawing mode changes
   useEffect(() => {
@@ -466,7 +489,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
       const shapeData = {
         type: (allowClose ? "polygon" : "polyline") as "polygon" | "polyline",
-        isClosed: isPathClosed,
+        isClosed: finalIsPathClosed,
         points: exportedPoints,
         incomplete,
       };
@@ -547,41 +570,10 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       }
     }
 
-    // Only add closing segment if the path is closed but not already connected through prevPointId
-    if (allowClose && isPathClosed) {
-      // Allow closing if we have more than 2 points or at least one bezier point
-      const canClosePath = () => {
-        // Allow closing if we have more than 2 points
-        if (allPoints.length > 2) {
-          return true;
-        }
-        
-        // Allow closing if we have at least one bezier point
-        const hasBezierPoint = allPoints.some(point => point.isBezier);
-        if (hasBezierPoint) {
-          return true;
-        }
-        
-        return false;
-      };
-
-      if (canClosePath()) {
-        const lastPoint = allPoints[allPoints.length - 1];
-        const firstPoint = allPoints[0];
-
-        // Check if the first point already has a prevPointId that connects to the last point
-        const isAlreadyConnected = firstPoint.prevPointId === lastPoint.id;
-
-        if (!isAlreadyConnected) {
-          // Create a proper closing segment that respects bezier properties
-          const closingSegment = { from: lastPoint, to: firstPoint };
-          segments.push(closingSegment);
-          if (skeletonEnabled) {
-            console.log(`🔗 Added closing segment: ${lastPoint.id} -> ${firstPoint.id}`);
-          }
-        }
-      }
-    }
+    // The path closure is now determined by point references
+    // If the first point has a prevPointId that references the last point,
+    // the closing segment will be created automatically through the prevPointId logic above
+    // No need to add an additional closing segment
 
     return segments;
   };
@@ -744,7 +736,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
       return {
         type: allowClose ? "polygon" : "polyline",
-        isClosed: isPathClosed,
+        isClosed: finalIsPathClosed,
         points: exportedPoints,
         incomplete,
       };
@@ -757,7 +749,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
       return {
         type: allowClose ? "polygon" : "polyline",
-        isClosed: isPathClosed,
+        isClosed: finalIsPathClosed,
         points: simplePoints,
         incomplete,
       };
@@ -813,7 +805,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     isDrawingMode: !drawingDisabled, // Use dynamic drawing detection
     allowClose,
     allowBezier,
-    isPathClosed,
+    isPathClosed: finalIsPathClosed,
     transform,
     fitScale,
     x,
@@ -885,7 +877,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       <VectorShape
         segments={getAllLineSegments()}
         allowClose={allowClose}
-        isPathClosed={isPathClosed}
+        isPathClosed={finalIsPathClosed}
         stroke={stroke}
         fill={fill}
         transform={transform}
@@ -903,7 +895,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         draggedControlPoint={draggedControlPoint}
         draggedPointIndex={draggedPointIndex}
         isDraggingNewBezier={isDraggingNewBezier}
-        isPathClosed={isPathClosed}
+        isPathClosed={finalIsPathClosed}
         allowClose={allowClose}
         transform={transform}
         fitScale={fitScale}

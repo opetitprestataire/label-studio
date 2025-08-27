@@ -1,6 +1,7 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { EventHandlerProps } from "./types";
-import { stageToImageCoordinates, isPointInHitRadius } from "./utils";
+import { isPointInHitRadius, stageToImageCoordinates } from "./utils";
+import { closePath } from "./drawing";
 
 export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: EventHandlerProps): boolean {
   const pos = e.target.getStage()?.getPointerPosition();
@@ -20,38 +21,8 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       // But don't close if Shift is held (to allow Shift+click functionality)
       // This should take priority over normal point selection
       if (i === 0 && props.allowClose && !props.isPathClosed && !e.evt.shiftKey) {
-        // Check if we can close the path based on point count or bezier points
-        const canClosePath = () => {
-          // Allow closing if we have more than 2 points
-          if (props.initialPoints.length > 2) {
-            return true;
-          }
-
-          // Allow closing if we have at least one bezier point
-          const hasBezierPoint = props.initialPoints.some(point => point.isBezier);
-          if (hasBezierPoint) {
-            return true;
-          }
-
-          return false;
-        };
-
-        if (!canClosePath()) {
-          console.log(`⚠️ Cannot close path: need either >2 points or at least one bezier point, but have ${props.initialPoints.length} points and no bezier points`);
-          // Continue with normal point selection instead
-        } else {
-          // Additional validation: ensure we meet the minimum points requirement
-          const minPoints = props.minPoints;
-          if (minPoints && props.initialPoints.length < minPoints) {
-            // Don't allow closing if we haven't reached the minimum number of points
-            console.log(`⚠️ Cannot close path: need at least ${minPoints} points, but only have ${props.initialPoints.length}`);
-            // Continue with normal point selection instead
-          } else {
-            console.log(`✅ Closing path with ${props.initialPoints.length} points`);
-            props.setIsPathClosed(true);
-            return true;
-          }
-        }
+        // Use the new closePath function to properly set point references
+        return closePath(props);
       }
 
       // If Cmd/Ctrl is held, add to selection (multi-selection) - this takes priority

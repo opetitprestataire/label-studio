@@ -15,6 +15,106 @@ export interface AddPointOptions {
 }
 
 /**
+ * Close the path by setting the first point's prevPointId to the last point's ID
+ * This creates a circular reference that indicates the path is closed
+ */
+export function closePath(props: EventHandlerProps): boolean {
+  if (!props.allowClose || props.initialPoints.length < 2) {
+    return false;
+  }
+
+  // Check if we can close the path based on point count or bezier points
+  const canClosePath = () => {
+    // Allow closing if we have more than 2 points
+    if (props.initialPoints.length > 2) {
+      return true;
+    }
+
+    // Allow closing if we have at least one bezier point
+    const hasBezierPoint = props.initialPoints.some(point => point.isBezier);
+    if (hasBezierPoint) {
+      return true;
+    }
+
+    return false;
+  };
+
+  if (!canClosePath()) {
+    console.log(`⚠️ Cannot close path: need either >2 points or at least one bezier point, but have ${props.initialPoints.length} points and no bezier points`);
+    return false;
+  }
+
+  // Additional validation: ensure we meet the minimum points requirement
+  const minPoints = props.minPoints;
+  if (minPoints && props.initialPoints.length < minPoints) {
+    console.log(`⚠️ Cannot close path: need at least ${minPoints} points, but only have ${props.initialPoints.length}`);
+    return false;
+  }
+
+  const firstPoint = props.initialPoints[0];
+  const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+
+  // Check if path is already closed
+  if (firstPoint.prevPointId === lastPoint.id) {
+    console.log(`ℹ️ Path is already closed`);
+    return true;
+  }
+
+  // Close the path by setting the first point's prevPointId to the last point's ID
+  const updatedPoints = [...props.initialPoints];
+  updatedPoints[0] = {
+    ...firstPoint,
+    prevPointId: lastPoint.id,
+  };
+
+  console.log(`✅ Closing path by setting first point's prevPointId to last point's ID: ${lastPoint.id}`);
+
+  // Update the points and notify parent
+  props.onPointsChange?.(updatedPoints);
+
+  // Update the internal path closed state and notify parent
+  props.setIsPathClosed(true);
+
+  return true;
+}
+
+/**
+ * Open the path by removing the first point's prevPointId reference to the last point
+ * This removes the circular reference and makes the path open again
+ */
+export function openPath(props: EventHandlerProps): boolean {
+  if (!props.allowClose || props.initialPoints.length < 2) {
+    return false;
+  }
+
+  const firstPoint = props.initialPoints[0];
+  const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+
+  // Check if path is already open
+  if (firstPoint.prevPointId !== lastPoint.id) {
+    console.log(`ℹ️ Path is already open`);
+    return true;
+  }
+
+  // Open the path by removing the first point's prevPointId
+  const updatedPoints = [...props.initialPoints];
+  updatedPoints[0] = {
+    ...firstPoint,
+    prevPointId: undefined,
+  };
+
+  console.log(`✅ Opening path by removing first point's prevPointId`);
+
+  // Update the points and notify parent
+  props.onPointsChange?.(updatedPoints);
+
+  // Update the internal path closed state
+  props.setIsPathClosed(false);
+
+  return true;
+}
+
+/**
  * Unified function to add points to the polyline
  * Supports all types of point addition: click, click-drag, shift-click with ghost point
  */
@@ -170,38 +270,8 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
 
     // Only proceed with closing logic if we're actually near the first point
     if (distanceToFirst <= closeRadius) {
-      // Check if we can close the path based on point count or bezier points
-      const canClosePath = () => {
-        // Allow closing if we have more than 2 points
-        if (props.initialPoints.length > 2) {
-          return true;
-        }
-
-        // Allow closing if we have at least one bezier point
-        const hasBezierPoint = props.initialPoints.some(point => point.isBezier);
-        if (hasBezierPoint) {
-          return true;
-        }
-
-        return false;
-      };
-
-      if (!canClosePath()) {
-        console.log(`⚠️ Cannot close path: need either >2 points or at least one bezier point, but have ${props.initialPoints.length} points and no bezier points`);
-        return false;
-      }
-
-      // Additional validation: ensure we meet the minimum points requirement
-      const minPoints = props.minPoints;
-      if (minPoints && props.initialPoints.length < minPoints) {
-        // Don't allow closing if we haven't reached the minimum number of points
-        console.log(`⚠️ Cannot close path: need at least ${minPoints} points, but only have ${props.initialPoints.length}`);
-        return false;
-      }
-
-      console.log(`✅ Closing path with ${props.initialPoints.length} points`);
-      props.setIsPathClosed(true);
-      return true;
+      // Use the new closePath function to properly set point references
+      return closePath(props);
     }
   }
 
