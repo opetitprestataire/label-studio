@@ -5,7 +5,6 @@ import ToolMixin from "../mixins/Tool";
 import { MultipleClicksDrawingTool } from "../mixins/DrawingTool";
 import { NodeViews } from "../components/Node/Node";
 import { observe } from "mobx";
-import { nanoid } from "nanoid";
 
 const _Tool = types
   .model("VectorTool", {
@@ -50,16 +49,9 @@ const _Tool = types
         return DEFAULT_DIMENSIONS.vector;
       },
 
-      createRegionOptions({ x, y }) {
+      createRegionOptions() {
         return Super.createRegionOptions({
-          shape: [
-            {
-              id: nanoid(),
-              x,
-              y,
-              controlPoints: [],
-            },
-          ],
+          shape: [],
           // shape: [],
           closed: false,
         });
@@ -88,7 +80,9 @@ const _Tool = types
     };
 
     let disposer;
-    const clickBlocker = false;
+    let clickBlocker = false;
+    let down = false;
+    let initialCursorPosition = null;
 
     return {
       handleToolSwitch(tool) {
@@ -126,7 +120,12 @@ const _Tool = types
         area.closePoly();
       },
 
-      clickEv(e, [x, y]) {
+      clickEv() {
+        // override parent method
+        return;
+      },
+
+      mousedownEv(e, [x, y]) {
         if (clickBlocker) {
           // skip one click to prevent start drawing on polygon close
           clickBlocker = false;
@@ -135,22 +134,26 @@ const _Tool = types
         if (self.mode === "drawing") {
           return;
         }
+        down = true;
         self.startDrawing(x, y);
       },
 
-      startDrawing(x, y) {
-        // Use the raw canvas coordinates for snapping
-        // KonvaVector will handle the coordinate conversion internally
-
+      realCoordsFromCursor(x, y) {
         const image = self.obj.currentImageEntity;
         const width = image.naturalWidth;
         const height = image.naturalHeight;
 
         const realX = (x / 100) * width;
         const realY = (y / 100) * height;
+        return { x: realX, y: realY };
+      },
 
-        self.currentArea = self.createRegion(self.createRegionOptions({ x: realX, y: realY }), true);
-
+      startDrawing(x, y) {
+        if (self.mode === "drawing") return;
+        console.log("stating to draw");
+        const { x: rx, y: ry } = self.realCoordsFromCursor(x, y);
+        initialCursorPosition = { x: rx, y: ry };
+        self.currentArea = self.createRegion(self.createRegionOptions(), true);
         self.mode = "drawing";
         self.setDrawing(true);
 
@@ -158,6 +161,32 @@ const _Tool = types
 
         // Start listening for path closure
         self.listenForClose();
+
+        // we must skip one frame before starting a line
+        // to make sure KonvaVector was fully initialized
+        setTimeout(() => {
+          self.currentArea.startPoint(rx, ry);
+        }, 16);
+      },
+
+      mousemoveEv(_, [x, y]) {
+        const { x: rx, y: ry } = self.realCoordsFromCursor(x, y);
+        if (down && self.checkDistance(rx, ry)) {
+          self.currentArea?.updatePoint(rx, ry);
+        }
+      },
+
+      mouseupEv(_, [x, y]) {
+        const { x: rx, y: ry } = self.realCoordsFromCursor(x, y);
+        self.currentArea?.commitPoint(rx, ry);
+        down = false;
+      },
+
+      checkDistance(x, y) {
+        const distX = x - initialCursorPosition.x;
+        const distY = y - initialCursorPosition.y;
+
+        return Math.abs(distX) >= 5 || Math.abs(distY) >= 5;
       },
 
       _finishDrawing() {

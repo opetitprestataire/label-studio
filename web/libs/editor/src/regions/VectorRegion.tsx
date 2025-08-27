@@ -315,6 +315,31 @@ const Model = types
       setKonvaVectorRef(ref: KonvaVectorRef) {
         self.vectorRef = ref;
       },
+
+      // Uses KonvaVector startPoint to start drawing
+      // This will only initiate point drawing, but won't create actual point
+      startPoint(x: number, y: number) {
+        console.log("starting point");
+        self.vectorRef.startPoint(x, y);
+      },
+
+      // Will start drawing interaction
+      // Only creates a point if [x,y] was changed from the initial position
+      // by at least 5px (drag detection)
+      //
+      // This method is designed to create Bezier curve
+      updatePoint(x: number, y: number) {
+        console.log("updating point");
+        self.vectorRef.updatePoint(x, y);
+      },
+
+      // Commits previously created point and resets the state
+      //
+      // Will create a new point if it was started but never updated (regular click)
+      commitPoint(x: number, y: number) {
+        console.log("commiting point");
+        self.vectorRef.commitPoint(x, y);
+      },
     };
   });
 

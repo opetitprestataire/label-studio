@@ -602,7 +602,8 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
     }
 
     // Handle Bezier curve creation in drawing mode (click-drag without shift key) - only when path is not closed
-    if (props.isDrawingMode && !props.isPathClosed && props.lastPos.current && !e.evt.shiftKey && props.allowBezier) {
+    // Skip if PointCreationManager is currently creating a point
+    if (props.isDrawingMode && !props.isPathClosed && props.lastPos.current && !e.evt.shiftKey && props.allowBezier && !props.pointCreationManager?.isCreating()) {
       const dragDistance = Math.sqrt(
         (e.evt.clientX - props.lastPos.current.x) ** 2 + (e.evt.clientY - props.lastPos.current.y) ** 2,
       );
@@ -923,7 +924,8 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
     }
 
     // Handle drawing mode clicks (only when path is not closed)
-    if (props.isDrawingMode && !props.isPathClosed) {
+    // Skip if PointCreationManager is currently creating a point
+    if (props.isDrawingMode && !props.isPathClosed && !props.pointCreationManager?.isCreating()) {
       // Check if we just created a Bezier point - if so, skip regular point creation
       if (handledSelectionInMouseDown.current) {
         handledSelectionInMouseDown.current = false;

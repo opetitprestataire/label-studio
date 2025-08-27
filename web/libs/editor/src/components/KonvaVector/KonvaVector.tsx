@@ -14,6 +14,7 @@ import { createEventHandlers } from "./eventHandlers";
 import { convertPoint } from "./pointManagement";
 import { normalizePoints, convertBezierToSimplePoints } from "./utils";
 import { findClosestPointOnPath, getDistance } from "./eventHandlers/utils";
+import { PointCreationManager } from "./pointCreationManager";
 import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, KonvaVectorRef } from "./types";
 
 /**
@@ -266,6 +267,9 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   const [visibleControlPoints, setVisibleControlPoints] = useState<Set<number>>(new Set());
   const [activePointId, setActivePointId] = useState<string | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
+
+  // Initialize PointCreationManager singleton
+  const pointCreationManager = useMemo(() => PointCreationManager.getInstance(), []);
 
   // Compute if path is closed based on point references
   // A path is closed if every point has a prevPointId reference, creating a complete circular path
@@ -536,6 +540,50 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   const canAddMorePoints = () => {
     return maxPoints === undefined || initialPoints.length < maxPoints;
   };
+
+  // Update PointCreationManager props when relevant props change
+  useEffect(() => {
+    pointCreationManager.setProps({
+      initialPoints,
+      allowBezier,
+      pixelSnapping,
+      constrainToBounds,
+      width,
+      height,
+      onPointsChange,
+      onPointAdded,
+      onPointEdited,
+      canAddMorePoints,
+      skeletonEnabled,
+      lastAddedPointId,
+      activePointId,
+      setLastAddedPointId,
+      setActivePointId,
+      setVisibleControlPoints,
+      setNewPointDragIndex,
+      setIsDraggingNewBezier,
+    });
+  }, [
+    pointCreationManager,
+    initialPoints,
+    allowBezier,
+    pixelSnapping,
+    constrainToBounds,
+    width,
+    height,
+    onPointsChange,
+    onPointAdded,
+    onPointEdited,
+    canAddMorePoints,
+    skeletonEnabled,
+    lastAddedPointId,
+    activePointId,
+    setLastAddedPointId,
+    setActivePointId,
+    setVisibleControlPoints,
+    setNewPointDragIndex,
+    setIsDraggingNewBezier,
+  ]);
 
   // Helper function to get all points for rendering and interactions
   const getAllPoints = () => {
@@ -841,6 +889,10 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         incomplete,
       };
     },
+    // Programmatic point creation methods
+    startPoint: (x: number, y: number) => pointCreationManager.startPoint(x, y),
+    updatePoint: (x: number, y: number) => pointCreationManager.updatePoint(x, y),
+    commitPoint: (x: number, y: number) => pointCreationManager.commitPoint(x, y),
   }));
 
   // Handle Shift key for disconnected mode
@@ -932,6 +984,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     setActivePointId,
     isTransforming,
     constrainToBounds,
+    pointCreationManager,
   });
 
   return (

@@ -44,6 +44,10 @@ export interface KonvaVectorRef {
     points: SimplePoint[];
     incomplete: boolean;
   };
+  // Programmatic point creation methods
+  startPoint: (x: number, y: number) => boolean;
+  updatePoint: (x: number, y: number) => boolean;
+  commitPoint: (x: number, y: number) => boolean;
 }
 
 /**

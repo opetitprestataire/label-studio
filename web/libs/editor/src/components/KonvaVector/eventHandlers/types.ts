@@ -101,6 +101,9 @@ export interface EventHandlerProps {
   setLastAddedPointId?: (pointId: string | null) => void;
   isTransforming?: boolean;
   constrainToBounds?: boolean;
+  pointCreationManager?: {
+    isCreating: () => boolean;
+  };
 }
 
 export interface EventHandlers {
