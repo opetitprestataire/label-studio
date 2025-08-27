@@ -88,7 +88,7 @@ const _Tool = types
     };
 
     let disposer;
-    let closed;
+    const clickBlocker = false;
 
     return {
       handleToolSwitch(tool) {
@@ -103,15 +103,13 @@ const _Tool = types
 
       listenForClose() {
         const area = self.getCurrentArea();
-        if (!area) return;
-        closed = false;
+        if (!area || !area.closable) return;
+
         disposer = observe(
           area,
           "closed",
-          () => {
-            if (self.getCurrentArea()?.closed && !closed) {
-              self.finishDrawing();
-            }
+          ({ newValue }) => {
+            if (newValue.storedValue) self.finishDrawing();
           },
           true,
         );
@@ -122,10 +120,22 @@ const _Tool = types
       },
 
       closeCurrent() {
+        const area = self.getCurrentArea();
         self.stopListening();
-        if (closed) return;
-        closed = true;
-        self.getCurrentArea().closePoly();
+        if (area.closed) return;
+        area.closePoly();
+      },
+
+      clickEv(e, [x, y]) {
+        if (clickBlocker) {
+          // skip one click to prevent start drawing on polygon close
+          clickBlocker = false;
+          return;
+        }
+        if (self.mode === "drawing") {
+          return;
+        }
+        self.startDrawing(x, y);
       },
 
       startDrawing(x, y) {
@@ -139,9 +149,11 @@ const _Tool = types
         const realX = (x / 100) * width;
         const realY = (y / 100) * height;
 
-        self.mode = "drawing";
         self.currentArea = self.createRegion(self.createRegionOptions({ x: realX, y: realY }), true);
+
+        self.mode = "drawing";
         self.setDrawing(true);
+
         self.applyActiveStates(self.currentArea);
 
         // Start listening for path closure
@@ -153,8 +165,8 @@ const _Tool = types
 
         self.currentArea.notifyDrawingFinished();
         self.setDrawing(false);
-        self.currentArea = null;
         self.mode = "viewing";
+        self.currentArea = null;
         self.stopListening();
         self.annotation.afterCreateResult(currentArea, control);
       },
@@ -182,9 +194,11 @@ const _Tool = types
 
       // Finish drawing the current vector
       finishDrawing() {
-        const currentArea = self.getCurrentArea();
-        if (currentArea && currentArea.incomplete) {
+        const { currentArea } = self;
+        console.log(currentArea.incomplete);
+        if (currentArea && !currentArea.incomplete) {
           self._finishDrawing();
+          clickBlocker = true;
         }
       },
 

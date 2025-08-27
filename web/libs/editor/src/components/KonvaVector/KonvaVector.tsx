@@ -298,19 +298,15 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     }
   }, [allowClose, initialPoints, isPathClosed, finalIsPathClosed]);
 
-  // Setter for path closed state - only used when not using external state
+  // Setter for path closed state - used when path is closed/opened programmatically
   const setIsPathClosed = useCallback(
     (closed: boolean) => {
-      if (allowClose && closed !== undefined) {
-        // External state is being used, notify parent
+      if (allowClose) {
+      // Always notify parent when path closure state changes programmatically
         onPathClosedChange?.(closed);
-      } else {
-        // Internal state - this should not be called directly anymore
-        // The path closed state is now computed from point references
-        console.warn("setIsPathClosed called but path closed state is now computed from point references");
       }
     },
-    [allowClose, closed, onPathClosedChange],
+    [allowClose, onPathClosedChange],
   );
 
   const isDragging = useRef(false);
@@ -700,6 +696,59 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   // Expose methods through ref
   useImperativeHandle(ref, () => ({
     convertPoint: convertPointHandler,
+    close: () => {
+      if (!allowClose || initialPoints.length < 2) {
+        return false;
+      }
+
+      // Check if we can close the path based on point count or bezier points
+      const canClosePath = () => {
+        // Allow closing if we have more than 2 points
+        if (initialPoints.length > 2) {
+          return true;
+        }
+
+        // Allow closing if we have at least one bezier point
+        const hasBezierPoint = initialPoints.some((point) => point.isBezier);
+        if (hasBezierPoint) {
+          return true;
+        }
+
+        return false;
+      };
+
+      if (!canClosePath()) {
+        return false;
+      }
+
+      // Additional validation: ensure we meet the minimum points requirement
+      if (minPoints && initialPoints.length < minPoints) {
+        return false;
+      }
+
+      // Check if path is already closed
+      if (finalIsPathClosed) {
+        return true;
+      }
+
+      // Close the path by setting the first point's prevPointId to the last point's ID
+      const firstPoint = initialPoints[0];
+      const lastPoint = initialPoints[initialPoints.length - 1];
+
+      const updatedPoints = [...initialPoints];
+      updatedPoints[0] = {
+        ...firstPoint,
+        prevPointId: lastPoint.id,
+      };
+
+      // Update the points and notify parent
+      onPointsChange?.(updatedPoints);
+
+      // Update the internal path closed state and notify parent
+      setIsPathClosed(true);
+
+      return true;
+    },
     selectPointsByIds: (pointIds: string[]) => {
       // Find the indices of the points with the given IDs
       const selectedIndices = new Set<number>();

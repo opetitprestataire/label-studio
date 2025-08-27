@@ -26,7 +26,11 @@ export function closePath(props: EventHandlerProps): boolean {
  * Close the path between first and last points bidirectionally
  * This allows closing from first to last OR last to first
  */
-export function closePathBetweenFirstAndLast(props: EventHandlerProps, fromPointIndex: number, toPointIndex: number): boolean {
+export function closePathBetweenFirstAndLast(
+  props: EventHandlerProps,
+  fromPointIndex: number,
+  toPointIndex: number,
+): boolean {
   if (!props.allowClose || props.initialPoints.length < 2) {
     return false;
   }
@@ -39,7 +43,7 @@ export function closePathBetweenFirstAndLast(props: EventHandlerProps, fromPoint
     }
 
     // Allow closing if we have at least one bezier point
-    const hasBezierPoint = props.initialPoints.some(point => point.isBezier);
+    const hasBezierPoint = props.initialPoints.some((point) => point.isBezier);
     if (hasBezierPoint) {
       return true;
     }
@@ -48,14 +52,12 @@ export function closePathBetweenFirstAndLast(props: EventHandlerProps, fromPoint
   };
 
   if (!canClosePath()) {
-    console.log(`⚠️ Cannot close path: need either >2 points or at least one bezier point, but have ${props.initialPoints.length} points and no bezier points`);
     return false;
   }
 
   // Additional validation: ensure we meet the minimum points requirement
   const minPoints = props.minPoints;
   if (minPoints && props.initialPoints.length < minPoints) {
-    console.log(`⚠️ Cannot close path: need at least ${minPoints} points, but only have ${props.initialPoints.length}`);
     return false;
   }
 
@@ -63,9 +65,10 @@ export function closePathBetweenFirstAndLast(props: EventHandlerProps, fromPoint
   const firstPointIndex = 0;
   const lastPointIndex = props.initialPoints.length - 1;
 
-  if ((fromPointIndex !== firstPointIndex && fromPointIndex !== lastPointIndex) ||
-    (toPointIndex !== firstPointIndex && toPointIndex !== lastPointIndex)) {
-    console.log(`⚠️ Can only close path between first (${firstPointIndex}) and last (${lastPointIndex}) points`);
+  if (
+    (fromPointIndex !== firstPointIndex && fromPointIndex !== lastPointIndex) ||
+    (toPointIndex !== firstPointIndex && toPointIndex !== lastPointIndex)
+  ) {
     return false;
   }
 
@@ -74,7 +77,6 @@ export function closePathBetweenFirstAndLast(props: EventHandlerProps, fromPoint
 
   // Check if path is already closed between these points
   if (fromPoint.prevPointId === toPoint.id) {
-    console.log(`ℹ️ Path is already closed between points ${fromPointIndex} and ${toPointIndex}`);
     return true;
   }
 
@@ -84,8 +86,6 @@ export function closePathBetweenFirstAndLast(props: EventHandlerProps, fromPoint
     ...fromPoint,
     prevPointId: toPoint.id,
   };
-
-  console.log(`✅ Closing path by setting point ${fromPointIndex}'s prevPointId to point ${toPointIndex}'s ID: ${toPoint.id}`);
 
   // Update the points and notify parent
   props.onPointsChange?.(updatedPoints);
@@ -110,7 +110,6 @@ export function openPath(props: EventHandlerProps): boolean {
 
   // Check if path is already open
   if (firstPoint.prevPointId !== lastPoint.id) {
-    console.log(`ℹ️ Path is already open`);
     return true;
   }
 
@@ -120,8 +119,6 @@ export function openPath(props: EventHandlerProps): boolean {
     ...firstPoint,
     prevPointId: undefined,
   };
-
-  console.log(`✅ Opening path by removing first point's prevPointId`);
 
   // Update the points and notify parent
   props.onPointsChange?.(updatedPoints);
@@ -137,17 +134,6 @@ export function openPath(props: EventHandlerProps): boolean {
  * Supports all types of point addition: click, click-drag, shift-click with ghost point
  */
 export function addPoint(props: EventHandlerProps, options: AddPointOptions): boolean {
-  console.log(`🔍 addPoint called with options:`, options);
-
-  // Debug logging for skeleton mode
-  if (props.skeletonEnabled) {
-    console.log(`🔧 addPoint called in skeleton mode:`, {
-      activePointId: props.activePointId,
-      lastAddedPointId: props.lastAddedPointId,
-      initialPointsLength: props.initialPoints.length
-    });
-  }
-
   // Check if we can add more points
   // Allow adding points even when path is closed (for Shift+click functionality)
   if (!props.canAddMorePoints?.()) {
@@ -174,32 +160,14 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
     if (props.skeletonEnabled && props.activePointId) {
       // In skeleton mode: always connect to the active point
       prevPointId = props.activePointId;
-      console.log(`🔧 Skeleton mode: connecting to active point ${prevPointId}`);
     } else if (props.skeletonEnabled && props.lastAddedPointId) {
       // Fallback to lastAddedPointId for backward compatibility
       prevPointId = props.lastAddedPointId;
-      console.log(`🔧 Skeleton mode: fallback to lastAddedPointId ${prevPointId}`);
     } else if (props.initialPoints.length > 0) {
       // Normal mode: use last point in array (ignore activePointId for non-skeleton mode)
       prevPointId = props.initialPoints[props.initialPoints.length - 1].id;
-      console.log(`🔧 Normal mode: connecting to last point ${prevPointId}`);
     }
-  } else {
-    console.log(`🔧 Using provided prevPointId: ${prevPointId}`);
   }
-
-  // Additional debugging to check for stale values
-  if (props.skeletonEnabled) {
-    console.log(`🔧 addPoint prevPointId determination:`, {
-      providedPrevPointId: options.prevPointId,
-      finalPrevPointId: prevPointId,
-      activePointId: props.activePointId,
-      lastAddedPointId: props.lastAddedPointId,
-      lastPointInArray: props.initialPoints.length > 0 ? props.initialPoints[props.initialPoints.length - 1].id : 'none'
-    });
-  }
-
-  console.log(`🔧 addPoint: prevPointId = ${prevPointId}, skeletonEnabled = ${props.skeletonEnabled}, activePointId = ${props.activePointId}, lastAddedPointId = ${props.lastAddedPointId}`);
 
   // Create the new point
   const newPointOptions: Partial<BezierPoint> = {};
@@ -242,11 +210,9 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
   // - Otherwise: always set new point as active (default behavior)
   if (props.skeletonEnabled && props.activePointId) {
     // In skeleton mode: always maintain the manually selected point for branching
-    console.log(`🔧 Skeleton mode: maintaining manually selected point ${props.activePointId} for branching`);
   } else {
     // Default behavior: set the new point as active
     props.setActivePointId?.(newPoint.id);
-    console.log(`🔧 Setting new point ${newPoint.id} as active`);
   }
 
   props.onPointsChange?.(newPoints);
@@ -277,15 +243,6 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
     const distanceToFirst = getDistance(imagePos, firstPoint);
     const closeRadius = 15 / (props.transform.zoom * props.fitScale);
 
-    console.log(`🔍 Path closing check:`, {
-      distanceToFirst,
-      closeRadius,
-      zoom: props.transform.zoom,
-      fitScale: props.fitScale,
-      imagePos,
-      firstPoint: { x: firstPoint.x, y: firstPoint.y }
-    });
-
     // Only proceed with closing logic if we're actually near the first point
     if (distanceToFirst <= closeRadius) {
       // Use the new closePath function to properly set point references
@@ -294,23 +251,8 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
   }
 
   // Only add new points if path is not closed and we haven't reached max points
-  console.log(`🔍 handleDrawingModeClick debug:`, {
-    isPathClosed: props.isPathClosed,
-    canAddMorePoints: props.canAddMorePoints?.(),
-    initialPointsLength: props.initialPoints.length,
-    maxPoints: props.maxPoints
-  });
 
   if (!props.isPathClosed && props.canAddMorePoints?.()) {
-    // Debug logging for skeleton mode
-    if (props.skeletonEnabled) {
-      console.log(`🔧 handleDrawingModeClick in skeleton mode:`, {
-        activePointId: props.activePointId,
-        lastAddedPointId: props.lastAddedPointId,
-        initialPointsLength: props.initialPoints.length
-      });
-    }
-
     // In skeleton mode, explicitly pass the activePointId as prevPointId
     // to ensure the new point connects to the selected point
     const addPointOptions: any = {
@@ -321,7 +263,6 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
 
     if (props.skeletonEnabled && props.activePointId) {
       addPointOptions.prevPointId = props.activePointId;
-      console.log(`🔧 Explicitly setting prevPointId to activePointId: ${props.activePointId}`);
     }
 
     // Use the unified addPoint function
@@ -366,12 +307,7 @@ export function addPointFromGhostDrag(
   });
 
   // Insert the point between the two points that form the segment
-  const result = insertPointBetweenUtil(
-    props.initialPoints,
-    prevPoint.id,
-    nextPoint.id,
-    newPoint,
-  );
+  const result = insertPointBetweenUtil(props.initialPoints, prevPoint.id, nextPoint.id, newPoint);
 
   // Update the points array
   props.onPointsChange?.(result);
@@ -382,13 +318,9 @@ export function addPointFromGhostDrag(
   // Active point management:
   // - In skeleton mode with manual selection: maintain the selected point for branching
   // - Otherwise: always set new point as active (default behavior)
-  if (props.skeletonEnabled && props.activePointId) {
-    // In skeleton mode: always maintain the manually selected point for branching
-    console.log(`🔧 Skeleton mode: maintaining manually selected point ${props.activePointId} for branching`);
-  } else {
+  if (!props.skeletonEnabled || !props.activePointId) {
     // Default behavior: set the new point as active
     props.setActivePointId?.(newPoint.id);
-    console.log(`🔧 Setting new point ${newPoint.id} as active`);
   }
 
   return true;
@@ -670,29 +602,20 @@ export function insertPointBetween(
  * that creates the connection between the two points of that segment
  */
 export function breakPathAtSegment(props: EventHandlerProps, segmentIndex?: number): boolean {
-  console.log(`🔧 breakPathAtSegment called with segmentIndex: ${segmentIndex}, points length: ${props.initialPoints.length}`);
-
   if (!props.allowClose || props.initialPoints.length < 3) {
-    console.log(`❌ Cannot break: allowClose=${props.allowClose}, points length=${props.initialPoints.length}`);
     return false;
   }
 
   // Trust the isPathClosed prop that was passed from the main component
   // This ensures consistency between the UI state and the breaking logic
-  console.log(`🔍 Path closure check: isPathClosed prop = ${props.isPathClosed}`);
 
   if (!props.isPathClosed) {
-    console.log(`ℹ️ Path is not closed according to props, cannot break`);
     return false;
   }
 
-  console.log(`✅ Path is closed according to props, proceeding with break`);
-
   // Log the current point references for debugging
-  console.log(`🔍 Current point references:`);
   for (let i = 0; i < props.initialPoints.length; i++) {
     const point = props.initialPoints[i];
-    console.log(`  Point ${i}: ${point.id.slice(0, 4)} -> prevPointId: ${point.prevPointId?.slice(0, 4) || 'undefined'}`);
   }
 
   const firstPoint = props.initialPoints[0];
@@ -705,8 +628,6 @@ export function breakPathAtSegment(props: EventHandlerProps, segmentIndex?: numb
       ...firstPoint,
       prevPointId: undefined,
     };
-
-    console.log(`✅ Breaking closed path by removing first point's prevPointId reference`);
 
     // Update the points and notify parent
     props.onPointsChange?.(updatedPoints);
@@ -727,8 +648,6 @@ export function breakPathAtSegment(props: EventHandlerProps, segmentIndex?: numb
       ...firstPoint,
       prevPointId: undefined,
     };
-
-    console.log(`✅ Breaking closed path at closing segment (last to first point)`);
   } else if (segmentIndex >= 0 && segmentIndex < props.initialPoints.length) {
     // This could be either a regular segment or the closing segment
     const currentPoint = updatedPoints[segmentIndex];
@@ -740,14 +659,12 @@ export function breakPathAtSegment(props: EventHandlerProps, segmentIndex?: numb
         ...currentPoint,
         prevPointId: undefined,
       };
-      console.log(`✅ Breaking closed path at closing segment (first point no longer connects to last point)`);
     } else {
       // This is a regular segment - break by removing the current point's prevPointId reference
       updatedPoints[segmentIndex] = {
         ...currentPoint,
         prevPointId: undefined,
       };
-      console.log(`✅ Breaking closed path at segment ${segmentIndex} (point ${segmentIndex} no longer connects to previous point)`);
     }
 
     // Only shift the array if we're not breaking at the closing segment (segmentIndex = 0)
@@ -768,35 +685,27 @@ export function breakPathAtSegment(props: EventHandlerProps, segmentIndex?: numb
             ...point,
             prevPointId: undefined,
           };
-        } else {
-          // Other points should reference the previous point in the new order
-          return {
-            ...point,
-            prevPointId: shiftedPoints[index - 1].id,
-          };
-        }
+        } // Other points should reference the previous point in the new order
+        return {
+          ...point,
+          prevPointId: shiftedPoints[index - 1].id,
+        };
       });
 
       updatedPoints = finalPoints;
-      console.log(`🔄 Shifted points array: breaking point ${breakingPointIndex} is now at index 0`);
-      console.log(`📊 Original order: ${props.initialPoints.map((p, i) => `${i}:${p.id.slice(0, 4)}`).join(' → ')}`);
-      console.log(`📊 New order: ${updatedPoints.map((p, i) => `${i}:${p.id.slice(0, 4)}`).join(' → ')}`);
 
       // Set the point that comes BEFORE the breaking point as the active point
       // In the shifted array, this is the last point (the one that was before the breaking point)
       const activePoint = updatedPoints[updatedPoints.length - 1];
       props.setActivePointId?.(activePoint.id);
       props.setLastAddedPointId?.(activePoint.id);
-      console.log(`🎯 Set active point to point before breaking: ${activePoint.id.slice(0, 4)} (was before ${updatedPoints[0].id.slice(0, 4)})`);
     } else {
       // When breaking at the closing segment, set the last point as active (since it was connected to the first point)
       const lastPointInArray = updatedPoints[updatedPoints.length - 1];
       props.setActivePointId?.(lastPointInArray.id);
       props.setLastAddedPointId?.(lastPointInArray.id);
-      console.log(`🎯 Set active point to last point (was connected to first point): ${lastPointInArray.id.slice(0, 4)}`);
     }
   } else {
-    console.log(`⚠️ Invalid segment index: ${segmentIndex}`);
     return false;
   }
 

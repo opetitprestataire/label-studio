@@ -110,6 +110,9 @@ const Model = types
 
       return bbox;
     },
+    get closable() {
+      return self.control?.allowclose ?? false;
+    },
     get minPoints() {
       const min = self.control?.minpoints;
       return min ? Number.parseInt(min) : undefined;
@@ -120,8 +123,9 @@ const Model = types
     },
     get incomplete() {
       const notClosed = self.control?.allowclose === true && self.closed === false;
-      const notFinised = self.minPoints !== undefined && self.shape.length < self.minPoints;
-      return notClosed || notFinised;
+      const notFinished = self.minPoints !== undefined && self.shape.length < self.minPoints;
+      console.log(notClosed, notFinished);
+      return notClosed || notFinished;
     },
   }))
   .actions((self: any) => {
@@ -152,6 +156,12 @@ const Model = types
       checkSizes() {
         // This method is called after creation to ensure proper sizing
         // For vector regions, we don't need to do anything special here
+      },
+
+      closePoly() {
+        if (!self.closable) return;
+        self.vectorRef.close();
+        console.log("close poly");
       },
 
       notifyDrawingFinished() {
@@ -344,6 +354,7 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
         item.updateShapeFromKonvaVector(shape);
       }}
       onPathClosedChange={(isClosed) => {
+        console.log(isClosed);
         item.onPathClosedChange(isClosed);
       }}
       onClick={(e) => {

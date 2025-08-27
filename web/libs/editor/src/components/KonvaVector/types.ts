@@ -26,6 +26,7 @@ export interface KonvaVectorRef {
   selectPointsByIds: (pointIds: string[]) => void;
   clearSelection: () => void;
   getSelectedPointIds: () => string[];
+  close: () => boolean;
   exportShape: () => {
     type: "polygon" | "polyline";
     isClosed: boolean;
