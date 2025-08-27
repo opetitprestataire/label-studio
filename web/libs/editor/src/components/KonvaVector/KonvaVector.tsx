@@ -30,8 +30,8 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  * ## Key Features
  *
  * ### Point Management
- * - **Add Points**: Click in drawing mode, Alt+click on path segments
- * - **Edit Points**: Drag to reposition, Shift+click to convert regular ↔ bezier
+ * - **Add Points**: Click in drawing mode, Shift+click on path segments
+ * - **Edit Points**: Drag to reposition, Alt+click to convert regular ↔ bezier
  * - **Delete Points**: Alt+click on existing points
  * - **Multi-Selection**: Select multiple points for batch transformations
  *
@@ -87,9 +87,9 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  * ```
  *
  * ## Keyboard Shortcuts
- * - **Shift + Click**: Convert point between regular ↔ bezier
- * - **Alt + Click**: Add point on path segment or delete existing point
- * - **Alt + Drag**: Create bezier point with control handles
+ * - **Alt + Click**: Convert point between regular ↔ bezier or delete existing point
+ * - **Shift + Click**: Add point on path segment
+ * - **Shift + Drag**: Create bezier point with control handles
  *
  * ## Props Overview
  * - `initialPoints`: Points in simple or complex format
@@ -202,18 +202,18 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     centerY: 0,
   });
 
-  // Handle Alt key state
+  // Handle Shift key state
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Alt") {
-        setIsAltKeyHeld(true);
+      if (e.key === "Shift") {
+        setIsShiftKeyHeld(true);
         setIsDisconnectedMode(true);
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Alt") {
-        setIsAltKeyHeld(false);
+      if (e.key === "Shift") {
+        setIsShiftKeyHeld(false);
         setIsDisconnectedMode(false);
       }
     };
@@ -228,7 +228,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   }, []);
 
   const [draggedPointIndex, setDraggedPointIndex] = useState<number | null>(null);
-  const [isAltKeyHeld, setIsAltKeyHeld] = useState(false);
+  const [isShiftKeyHeld, setIsShiftKeyHeld] = useState(false);
   const [draggedControlPoint, setDraggedControlPoint] = useState<{
     pointIndex: number;
     controlIndex: number;
@@ -267,8 +267,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       return true;
     }
 
-    // Disable drawing when Alt is held (for Alt+click functionality)
-    if (isAltKeyHeld) {
+    // Disable drawing when Shift is held (for Shift+click functionality)
+    if (isShiftKeyHeld) {
       return true;
     }
 
@@ -764,16 +764,16 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     },
   }));
 
-  // Handle Alt key for disconnected mode
+  // Handle Shift key for disconnected mode
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Alt") {
+      if (e.key === "Shift") {
         setIsDisconnectedMode(true);
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Alt") {
+      if (e.key === "Shift") {
         setIsDisconnectedMode(false);
       }
     };
@@ -980,7 +980,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         ghostPoint={ghostPoint}
         transform={transform}
         fitScale={fitScale}
-        isAltKeyHeld={isAltKeyHeld}
+        isShiftKeyHeld={isShiftKeyHeld}
         maxPoints={maxPoints}
         initialPointsLength={initialPoints.length}
         isDragging={isDragging.current}

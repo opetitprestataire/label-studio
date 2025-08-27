@@ -16,7 +16,7 @@ export interface AddPointOptions {
 
 /**
  * Unified function to add points to the polyline
- * Supports all types of point addition: click, click-drag, alt-click with ghost point
+ * Supports all types of point addition: click, click-drag, shift-click with ghost point
  */
 export function addPoint(props: EventHandlerProps, options: AddPointOptions): boolean {
   console.log(`🔍 addPoint called with options:`, options);
@@ -31,7 +31,7 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
   }
 
   // Check if we can add more points
-  // Allow adding points even when path is closed (for Alt+click functionality)
+  // Allow adding points even when path is closed (for Shift+click functionality)
   if (!props.canAddMorePoints?.()) {
     return false;
   }
@@ -517,7 +517,7 @@ export function insertPointBetween(
   controlPoint2?: { x: number; y: number },
 ): { success: boolean; newPointIndex?: number } {
   // Check if we can add more points
-  // Allow adding points even when path is closed (for Alt+click functionality)
+  // Allow adding points even when path is closed (for Shift+click functionality)
   if (!props.canAddMorePoints?.()) {
     return { success: false };
   }

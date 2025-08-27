@@ -19,10 +19,10 @@ import { constrainPointToBounds } from "../utils/boundsChecking";
 
 export function createMouseDownHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
   return (e: KonvaEventObject<MouseEvent>) => {
-    let altClickHandled = false;
+    let shiftClickHandled = false;
 
-    // Only run Alt+click logic if Alt key is actually held
-    if (e.evt.altKey === true && props.cursorPosition && props.initialPoints.length >= 2) {
+    // Only run Shift+click logic if Shift key is actually held
+    if (e.evt.shiftKey === true && props.cursorPosition && props.initialPoints.length >= 2) {
       // Check if cursor is over an existing point
       const scale = props.transform.zoom * props.fitScale;
       const hitRadius = 10 / scale;
@@ -78,14 +78,14 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
             isDragging: false,
             dragDistance: 0,
           });
-          altClickHandled = true; // Mark that Alt+click was handled
+          shiftClickHandled = true; // Mark that Shift+click was handled
         }
       }
-      // If we're over a point while holding Alt, allow normal point interactions to continue
+      // If we're over a point while holding Shift, allow normal point interactions to continue
     }
 
-    // Skip the rest of mouse down logic if Alt+click was handled
-    if (altClickHandled) {
+    // Skip the rest of mouse down logic if Shift+click was handled
+    if (shiftClickHandled) {
       return;
     }
 
@@ -102,8 +102,8 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
       // For drawing mode, we'll wait to see if this becomes a drag
       props.lastPos.current = { x: e.evt.clientX, y: e.evt.clientY };
 
-      // Set up for potential Bezier curve creation (only if not in alt-click mode)
-      if (!e.evt.altKey) {
+      // Set up for potential Bezier curve creation (only if not in shift-click mode)
+      if (!e.evt.shiftKey) {
         props.setIsDraggingNewBezier(false);
         props.setNewPointDragIndex(null);
       }
@@ -293,9 +293,9 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
     const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
     props.setCursorPosition(imagePos);
 
-    // Set ghost point when Alt is held - snap to path (but not when dragging or creating bezier points)
+    // Set ghost point when Shift is held - snap to path (but not when dragging or creating bezier points)
     if (
-      e.evt.altKey &&
+      e.evt.shiftKey &&
       props.cursorPosition &&
       props.initialPoints.length >= 2 &&
       !props.isDragging.current &&
@@ -367,8 +367,8 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
           props.setGhostPoint(null);
         }
       }
-    } else if (!e.evt.altKey) {
-      // Clear ghost point when Alt is not held
+    } else if (!e.evt.shiftKey) {
+      // Clear ghost point when Shift is not held
       props.setGhostPoint(null);
     }
 
@@ -393,9 +393,9 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
       return;
     }
 
-    // Handle alt-click-drag bezier creation FIRST (before other dragging logic)
+    // Handle shift-click-drag bezier creation FIRST (before other dragging logic)
     if (props.ghostPointDragInfo?.isDragging && props.isDraggingNewBezier) {
-      // Continue alt-click-drag bezier point creation - update control points to follow cursor
+      // Continue shift-click-drag bezier point creation - update control points to follow cursor
       const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
 
       if (props.newPointDragIndex !== null && props.cursorPosition) {
@@ -599,8 +599,8 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
       return;
     }
 
-    // Handle Bezier curve creation in drawing mode (click-drag without alt key) - only when path is not closed
-    if (props.isDrawingMode && !props.isPathClosed && props.lastPos.current && !e.evt.altKey && props.allowBezier) {
+    // Handle Bezier curve creation in drawing mode (click-drag without shift key) - only when path is not closed
+    if (props.isDrawingMode && !props.isPathClosed && props.lastPos.current && !e.evt.shiftKey && props.allowBezier) {
       const dragDistance = Math.sqrt(
         (e.evt.clientX - props.lastPos.current.x) ** 2 + (e.evt.clientY - props.lastPos.current.y) ** 2,
       );
@@ -625,8 +625,8 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
       }
     }
 
-    // Handle alt-click-drag bezier creation (start dragging detection) - only when alt key is held
-    if (props.ghostPointDragInfo && !props.ghostPointDragInfo.isDragging && e.evt.altKey && props.allowBezier) {
+    // Handle shift-click-drag bezier creation (start dragging detection) - only when shift key is held
+    if (props.ghostPointDragInfo && !props.ghostPointDragInfo.isDragging && e.evt.shiftKey && props.allowBezier) {
       // Check if we should start dragging (mouse moved enough)
       const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
 
@@ -688,7 +688,7 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
         props.setGhostPoint(null);
       }
     } else if (props.ghostPointDragInfo?.isDragging && props.isDraggingNewBezier) {
-      // Continue alt-click-drag bezier point creation - update control points to follow cursor
+      // Continue shift-click-drag bezier point creation - update control points to follow cursor
       const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
 
       // Use the shared utility for continuing bezier drag
@@ -725,7 +725,7 @@ export function createMouseUpHandler(props: EventHandlerProps) {
     const wasGhostDrag = props.ghostPointDragInfo?.isDragging;
     const hadNewPointDragIndex = props.newPointDragIndex !== null;
 
-    // Handle Alt+click-drag completion (BEFORE resetting state)
+    // Handle Shift+click-drag completion (BEFORE resetting state)
     if (wasGhostDrag && hadNewPointDragIndex) {
       // The bezier point was already created during the drag, just finalize it
       // Make the control points visible for the newly created bezier point
@@ -797,8 +797,8 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
       }
     }
 
-    // Handle Alt+click functionality (before other checks)
-    if (e.evt.altKey && !e.evt.shiftKey) {
+    // Handle Shift+click functionality (before other checks)
+    if (e.evt.shiftKey && !e.evt.altKey) {
       // First, check if we're near a ghost point to add a point
       if (
         props.cursorPosition &&
@@ -831,8 +831,11 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
           }
         }
       }
+    }
 
-      // If not near a ghost point, check if we're clicking on a point to delete it
+    // Handle Alt+click functionality (point deletion)
+    if (e.evt.altKey && !e.evt.shiftKey) {
+    // Check if we're clicking on a point to delete it
       const pos = e.target.getStage()?.getPointerPosition();
       if (pos) {
         const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);

@@ -17,9 +17,9 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
 
     if (isPointInHitRadius(imagePos, point, hitRadius)) {
       // Check if we're clicking on the first point to close the path
-      // But don't close if Alt is held (to allow Alt+click functionality)
+      // But don't close if Shift is held (to allow Shift+click functionality)
       // This should take priority over normal point selection
-      if (i === 0 && props.allowClose && !props.isPathClosed && !e.evt.altKey) {
+      if (i === 0 && props.allowClose && !props.isPathClosed && !e.evt.shiftKey) {
         // Check if we can close the path based on point count or bezier points
         const canClosePath = () => {
           // Allow closing if we have more than 2 points

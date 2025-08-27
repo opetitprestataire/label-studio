@@ -6,7 +6,7 @@ interface GhostPointProps {
   ghostPoint: GhostPointType | null;
   transform: { zoom: number; offsetX: number; offsetY: number };
   fitScale: number;
-  isAltKeyHeld: boolean;
+  isShiftKeyHeld: boolean;
   maxPoints?: number;
   initialPointsLength: number;
   isDragging?: boolean;
@@ -16,16 +16,16 @@ export const GhostPoint: React.FC<GhostPointProps> = ({
   ghostPoint,
   transform,
   fitScale,
-  isAltKeyHeld,
+  isShiftKeyHeld,
   maxPoints,
   initialPointsLength,
   isDragging = false,
 }) => {
-  // Only show the visual ghost point when Alt is held, but don't clear the ghostPoint state
+  // Only show the visual ghost point when Shift is held, but don't clear the ghostPoint state
   if (!ghostPoint) return null;
 
-  // Only render the visual element when Alt is held
-  if (!isAltKeyHeld) return null;
+  // Only render the visual element when Shift is held
+  if (!isShiftKeyHeld) return null;
 
   // Hide ghost point when max points reached
   if (maxPoints !== undefined && initialPointsLength >= maxPoints) return null;
