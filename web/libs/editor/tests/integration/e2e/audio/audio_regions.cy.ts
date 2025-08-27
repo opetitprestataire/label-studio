@@ -1,6 +1,5 @@
 import { AudioView, Labels, LabelStudio, Relations } from "@humansignal/frontend-test/helpers/LSF";
 import { audioOneRegionResult, audioWithLabelsConfig, audioWithLabelsData } from "../../data/audio/audio_regions";
-import { CANVAS_STABILIZATION_TIMEOUT, AUDIO_STATE_TRANSITION_TIMEOUT } from "../utils/constants";
 
 // Audio regions test suite with improved stability through canvas synchronization
 // Reduced retries from 3 to 1 due to improved timing and pixel sampling reliability
@@ -29,7 +28,6 @@ describe("Audio regions", suiteConfig, () => {
 
     // Click to select region and wait for state transition
     AudioView.clickAtRelative(0.38, 0.5);
-    cy.wait(AUDIO_STATE_TRANSITION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const selectedRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 
@@ -39,7 +37,6 @@ describe("Audio regions", suiteConfig, () => {
 
     // Unselecting with ESC key
     cy.get("body").type("{esc}");
-    cy.wait(AUDIO_STATE_TRANSITION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const unselectedRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 
@@ -66,7 +63,6 @@ describe("Audio regions", suiteConfig, () => {
     // Moving the cursor to activate region
     AudioView.seekCurrentTimebox(38);
     // Allow time for active state rendering to complete
-    cy.wait(CANVAS_STABILIZATION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const activeRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 
@@ -77,7 +73,6 @@ describe("Audio regions", suiteConfig, () => {
     // Deactivating by moving cursor away
     AudioView.seekCurrentTimebox(0);
     // Wait for inactive state to be fully rendered
-    cy.wait(CANVAS_STABILIZATION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const inactiveRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 
@@ -109,7 +104,6 @@ describe("Audio regions", suiteConfig, () => {
 
     // Hover to highlight region
     AudioView.hoverAtRelative(0.4, 0.5);
-    cy.wait(AUDIO_STATE_TRANSITION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const highlightedRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 
@@ -119,7 +113,6 @@ describe("Audio regions", suiteConfig, () => {
 
     // Unhighlighting by mouse leave
     AudioView.container.trigger("mouseleave");
-    cy.wait(AUDIO_STATE_TRANSITION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const unhighlightedRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 
@@ -151,7 +144,6 @@ describe("Audio regions", suiteConfig, () => {
 
     // Hover to highlight region
     AudioView.hoverAtRelative(0.4, 0.5);
-    cy.wait(AUDIO_STATE_TRANSITION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const highlightedRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 
@@ -161,7 +153,6 @@ describe("Audio regions", suiteConfig, () => {
 
     // Moving the cursor to activate region (while still highlighted)
     AudioView.seekCurrentTimebox(38);
-    cy.wait(CANVAS_STABILIZATION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const activeRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 
@@ -172,7 +163,6 @@ describe("Audio regions", suiteConfig, () => {
 
     // Deactivating cursor (should still be highlighted)
     AudioView.seekCurrentTimebox(0);
-    cy.wait(CANVAS_STABILIZATION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const inactiveRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 
@@ -184,7 +174,6 @@ describe("Audio regions", suiteConfig, () => {
 
     // Unhighlighting by mouse leave
     AudioView.container.trigger("mouseleave");
-    cy.wait(AUDIO_STATE_TRANSITION_TIMEOUT);
     AudioView.waitForCanvasStable();
     const unhighlightedRegionColor = AudioView.getStablePixelColorRelative(0.36, 0.9);
 

@@ -175,10 +175,15 @@ class AudioViewHelper extends withMedia(
     }
 
     setPlaybackSpeedInput(value: number) {
+      cy.log(`🎵 Setting playback speed to ${value}x`);
       this.toggleSettingsMenu();
       this.playbackSpeedInput.dblclick().clear().type(value.toString());
       this.playbackSpeedInput.should("have.value", value.toString());
       this.toggleSettingsMenu();
+
+      // Wait for the speed change to propagate to audio/video elements
+      this.waitForPlaybackRate(value);
+      cy.log(`✅ Playback speed set to ${value}x`);
     }
 
     setAmplitudeInput(value: number) {
@@ -481,7 +486,7 @@ class AudioViewHelper extends withMedia(
           if (hasContent) {
             cy.log("🎨 Canvas has content!");
             return cy.wrap(null);
-          } 
+          }
           cy.log("🔍 Canvas empty, waiting for content...");
           cy.wait(100);
           return checkForContent();
@@ -490,6 +495,132 @@ class AudioViewHelper extends withMedia(
 
       cy.log("🏁 Waiting for canvas content...");
       return checkForContent();
+    }
+
+    /**
+     * Waits for audio and video elements to be synchronized
+     * @param tolerance tolerance for time/rate differences
+     * @param timeout maximum time to wait
+     */
+    waitForMediaSync(tolerance = 0.1, timeout = 2000) {
+      const startTime = Date.now();
+
+      const checkSync = (): Cypress.Chainable => {
+        if (Date.now() - startTime > timeout) {
+          cy.log(`⏰ Media sync timeout after ${timeout}ms`);
+          return cy.wrap(null);
+        }
+
+        return cy.get("audio").then(([audio]) => {
+          return cy.get("video").then(([video]) => {
+            const timeDiff = Math.abs(audio.currentTime - video.currentTime);
+            const rateDiff = Math.abs(audio.playbackRate - video.playbackRate);
+
+            if (timeDiff <= tolerance && rateDiff <= tolerance) {
+              cy.log(`🎯 Media sync achieved! Time diff: ${timeDiff.toFixed(3)}s, Rate diff: ${rateDiff.toFixed(3)}`);
+              return cy.wrap(null);
+            }
+            cy.log(`🔄 Media syncing... Time diff: ${timeDiff.toFixed(3)}s, Rate diff: ${rateDiff.toFixed(3)}`);
+            cy.wait(50);
+            return checkSync();
+          });
+        });
+      };
+
+      cy.log("🏁 Waiting for audio/video synchronization...");
+      return checkSync();
+    }
+
+    /**
+     * Waits for audio/video to be in a specific play state
+     * @param shouldBePlaying expected play state
+     * @param timeout maximum time to wait
+     */
+    waitForPlayState(shouldBePlaying: boolean, timeout = 3000) {
+      cy.log(`🎵 Waiting for media to ${shouldBePlaying ? "start playing" : "be paused"}...`);
+
+      return cy
+        .get("audio", { timeout })
+        .should(([audio]) => {
+          expect(audio.paused).to.equal(!shouldBePlaying);
+        })
+        .then(() => {
+          return cy.get("video").should(([video]) => {
+            expect(video.paused).to.equal(!shouldBePlaying);
+          });
+        });
+    }
+
+    /**
+     * Waits for audio/video playback rate to reach expected value
+     * @param expectedRate expected playback rate
+     * @param timeout maximum time to wait
+     */
+    waitForPlaybackRate(expectedRate: number, timeout = 3000) {
+      cy.log(`🎵 Waiting for playback rate to be ${expectedRate}x...`);
+
+      return cy
+        .get("audio", { timeout })
+        .should(([audio]) => {
+          expect(audio.playbackRate).to.equal(expectedRate);
+        })
+        .then(() => {
+          return cy.get("video").should(([video]) => {
+            expect(video.playbackRate).to.equal(expectedRate);
+          });
+        });
+    }
+
+    /**
+     * Waits for audio/video current time to stabilize (not changing)
+     * @param tolerance tolerance for time changes
+     * @param stabilityDuration how long to be stable (ms)
+     * @param timeout maximum time to wait
+     */
+    waitForTimeStabilization(tolerance = 0.1, stabilityDuration = 200, timeout = 3000) {
+      let lastAudioTime: number | null = null;
+      let lastVideoTime: number | null = null;
+      let stableStartTime: number | null = null;
+
+      const checkStability = (): Cypress.Chainable => {
+        return cy.get("audio").then(([audio]) => {
+          return cy.get("video").then(([video]) => {
+            const currentTime = Date.now();
+            const audioTimeDiff = lastAudioTime
+              ? Math.abs(audio.currentTime - lastAudioTime)
+              : Number.POSITIVE_INFINITY;
+            const videoTimeDiff = lastVideoTime
+              ? Math.abs(video.currentTime - lastVideoTime)
+              : Number.POSITIVE_INFINITY;
+
+            if (audioTimeDiff <= tolerance && videoTimeDiff <= tolerance) {
+              if (!stableStartTime) {
+                stableStartTime = currentTime;
+                cy.log("🔄 Media time starting to stabilize...");
+              } else if (currentTime - stableStartTime >= stabilityDuration) {
+                cy.log("✅ Media time stabilized!");
+                return cy.wrap(null);
+              }
+            } else {
+              stableStartTime = null;
+            }
+
+            lastAudioTime = audio.currentTime;
+            lastVideoTime = video.currentTime;
+
+            if (currentTime - (stableStartTime || currentTime) > timeout) {
+              cy.log("⏰ Time stabilization timeout");
+              return cy.wrap(null);
+            }
+
+            cy.wait(16); // One frame
+            return checkStability();
+          });
+        });
+      };
+
+      cy.log("🏁 Waiting for media time to stabilize...");
+      return checkStability();
     }
 
     zoomIn({ times = 1, speed = 4 }) {

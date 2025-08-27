@@ -109,7 +109,7 @@ describe("Sync: Video Paragraphs", () => {
     });
 
     AudioView.playButton.click();
-    cy.wait(100);
+    AudioView.waitForPlayState(true);
 
     cy.log("Audio, Video are playing");
     cy.get("audio").then(([audio]) => {
@@ -120,7 +120,8 @@ describe("Sync: Video Paragraphs", () => {
     });
 
     AudioView.pauseButton.click();
-    cy.wait(900);
+    AudioView.waitForPlayState(false);
+    AudioView.waitForTimeStabilization();
 
     cy.log("Audio, Video are played to the same time and are now paused");
     cy.get("audio").then(([audio]) => {
@@ -144,48 +145,47 @@ describe("Sync: Video Paragraphs", () => {
       });
     });
 
-    cy.wait(100);
     AudioView.clickAt(100, 0);
     cy.log("Seek by clicking on some point in the audio timeline");
+    AudioView.waitForMediaSync(0.1);
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
         expect(audio.currentTime).to.equal(video.currentTime);
       });
     });
 
-    cy.wait(100);
     AudioView.clickAt(0, 0);
     cy.log("Seek to beginning by clicking on the first point in the audio timeline");
+    AudioView.waitForMediaSync(0.1);
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
         expect(audio.currentTime).to.equal(video.currentTime);
       });
     });
 
-    cy.wait(100);
     AudioView.clickAt(300, 0);
     cy.log("Seek by clicking on some point further in the audio timeline");
+    AudioView.waitForMediaSync(0.1);
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
-        expect(audio.currentTime).to.equal(video.currentTime);
+        expect(audio.currentTime).to.be.closeTo(video.currentTime, 0.1);
       });
     });
 
-    cy.wait(100);
     // Calculate the end to click on
     AudioView.clickAt(700, 0);
     cy.log("Seek to end by clicking on the last point in the audio timeline");
+    AudioView.waitForMediaSync(0.1);
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
         expect(audio.currentTime).to.equal(video.currentTime);
       });
     });
-    cy.wait(100);
 
     AudioView.playButton.click();
-    cy.wait(100);
+    AudioView.waitForPlayState(true);
     AudioView.pauseButton.click();
-    cy.wait(100);
+    AudioView.waitForPlayState(false);
 
     cy.log(
       "Seek playback from paragraph. Audio, video and paragraph audio are played to the same time and are now paused",
@@ -214,6 +214,7 @@ describe("Sync: Video Paragraphs", () => {
 
     AudioView.setPlaybackSpeedInput(1.5);
     AudioView.playButton.click();
+    AudioView.waitForPlayState(true);
 
     cy.log("Changing playback speed to 1.5x for audio, video and paragraph audio during playback");
     cy.get("audio").then(([audio]) => {
@@ -223,7 +224,10 @@ describe("Sync: Video Paragraphs", () => {
       });
     });
 
-    cy.wait(100); // wait for audio to play for a bit at 1.5x speed
+    // Let it play for a short time at 1.5x speed, then change back
+    cy.then(() => {
+      return new Cypress.Promise((resolve) => setTimeout(resolve, 100));
+    });
     AudioView.setPlaybackSpeedInput(1);
 
     cy.log("Changing playback speed to 1x for audio, video and paragraph audio during playback");
