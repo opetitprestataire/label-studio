@@ -882,7 +882,20 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         fill={fill}
         transform={transform}
         fitScale={fitScale}
-        onClick={onClick}
+        onClick={(e) => {
+          // Handle cmd-click to select all points
+          if ((e.evt.ctrlKey || e.evt.metaKey) && !e.evt.altKey && !e.evt.shiftKey) {
+            // Select all points in the path
+            const allPointIndices = Array.from({ length: initialPoints.length }, (_, i) => i);
+            setSelectedPoints(new Set(allPointIndices));
+            setSelectedPointIndex(0);
+            onPointSelected?.(0);
+            return;
+          }
+
+          // Call the original onClick handler
+          onClick?.(e);
+        }}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         key={`vector-shape-${initialPoints.length}-${initialPoints.map((p) => p.id).join("-")}`}

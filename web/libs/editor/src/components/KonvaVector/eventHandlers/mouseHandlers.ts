@@ -12,6 +12,7 @@ import {
   continueBezierDrag,
   findClosestPointOnPath,
   handleBezierDragCreation,
+  isPointInsidePolygon,
   snapToPixel,
   stageToImageCoordinates,
 } from "./utils";
@@ -867,6 +868,8 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
       }
     }
 
+
+
     // Skip if we already handled selection in mousedown (for cmd-click and other interactions)
     if (handledSelectionInMouseDown.current) {
       handledSelectionInMouseDown.current = false;
@@ -922,41 +925,7 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
 
 export function createDblClickHandler(props: EventHandlerProps) {
   return (e: KonvaEventObject<MouseEvent>) => {
-    // Handle double-click to select all points
-    const pos = e.target.getStage()?.getPointerPosition();
-    if (!pos) return;
-
-    // Use the click position directly if cursorPosition is not available
-    const clickPos =
-      props.cursorPosition || stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
-
-    // Find the closest segment to the double-click position
-    const closestPathPoint = findClosestPointOnPath(
-      clickPos,
-      props.initialPoints,
-      props.allowClose,
-      props.isPathClosed,
-    );
-
-    if (closestPathPoint) {
-      // Check if we're close enough to the segment
-      const distance = Math.sqrt(
-        (clickPos.x - closestPathPoint.point.x) ** 2 + (clickPos.y - closestPathPoint.point.y) ** 2,
-      );
-      const clickRadius = 30 / (props.transform.zoom * props.fitScale); // Slightly larger radius for double-click
-
-      if (distance <= clickRadius) {
-        // Select all points in the path
-        const allPointIndices = Array.from({ length: props.initialPoints.length }, (_, i) => i);
-        props.setSelectedPoints(new Set(allPointIndices));
-
-        // Set the first point as the primary selected point
-        props.setSelectedPointIndex(0);
-        props.onPointSelected?.(0);
-
-        return;
-      }
-    }
+    // Double-click functionality removed - now handled by cmd-click in click handler
   };
 }
 
