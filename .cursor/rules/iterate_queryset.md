@@ -13,3 +13,5 @@ for obj in iterate_queryset(queryset):
 for obj in queryset.iterator():
     process(obj)
 ```
+
+**Note:** `iterate_queryset()` doesn't preserve ordering - if order matters, don't use it.
