@@ -350,6 +350,7 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
         // Handle region selection
         if (item.parent.getSkipInteractions()) return;
         if (item.isDrawing) return;
+        if (e.evt.altKey || e.evt.ctrlKey || e.evt.shiftKey || e.evt.metaKey) return;
 
         e.cancelBubble = true;
 

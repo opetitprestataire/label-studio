@@ -19,6 +19,8 @@ export interface AddPointOptions {
  * Supports all types of point addition: click, click-drag, alt-click with ghost point
  */
 export function addPoint(props: EventHandlerProps, options: AddPointOptions): boolean {
+  console.log(`🔍 addPoint called with options:`, options);
+
   // Debug logging for skeleton mode
   if (props.skeletonEnabled) {
     console.log(`🔧 addPoint called in skeleton mode:`, {
@@ -60,7 +62,7 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
       prevPointId = props.lastAddedPointId;
       console.log(`🔧 Skeleton mode: fallback to lastAddedPointId ${prevPointId}`);
     } else if (props.initialPoints.length > 0) {
-      // Normal mode: use last point in array
+      // Normal mode: use last point in array (ignore activePointId for non-skeleton mode)
       prevPointId = props.initialPoints[props.initialPoints.length - 1].id;
       console.log(`🔧 Normal mode: connecting to last point ${prevPointId}`);
     }
@@ -152,41 +154,51 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
   const snappedPos = snapToPixel(imagePos, props.pixelSnapping);
 
   // Check if we're clicking near the first point to close the path
-  if (props.allowClose && !props.isPathClosed) {
-    // Check if we can close the path based on point count or bezier points
-    const canClosePath = () => {
-      // Allow closing if we have more than 2 points
-      if (props.initialPoints.length > 2) {
-        return true;
-      }
-
-      // Allow closing if we have at least one bezier point
-      const hasBezierPoint = props.initialPoints.some(point => point.isBezier);
-      if (hasBezierPoint) {
-        return true;
-      }
-
-      return false;
-    };
-
-    if (!canClosePath()) {
-      console.log(`⚠️ Cannot close path: need either >2 points or at least one bezier point, but have ${props.initialPoints.length} points and no bezier points`);
-      return false;
-    }
-
-    // Additional validation: ensure we meet the minimum points requirement
-    const minPoints = props.minPoints;
-    if (minPoints && props.initialPoints.length < minPoints) {
-      // Don't allow closing if we haven't reached the minimum number of points
-      console.log(`⚠️ Cannot close path: need at least ${minPoints} points, but only have ${props.initialPoints.length}`);
-      return false;
-    }
-
+  if (props.allowClose && !props.isPathClosed && props.initialPoints.length > 0) {
     const firstPoint = props.initialPoints[0];
     const distanceToFirst = getDistance(imagePos, firstPoint);
     const closeRadius = 15 / (props.transform.zoom * props.fitScale);
 
+    console.log(`🔍 Path closing check:`, {
+      distanceToFirst,
+      closeRadius,
+      zoom: props.transform.zoom,
+      fitScale: props.fitScale,
+      imagePos,
+      firstPoint: { x: firstPoint.x, y: firstPoint.y }
+    });
+
+    // Only proceed with closing logic if we're actually near the first point
     if (distanceToFirst <= closeRadius) {
+      // Check if we can close the path based on point count or bezier points
+      const canClosePath = () => {
+        // Allow closing if we have more than 2 points
+        if (props.initialPoints.length > 2) {
+          return true;
+        }
+
+        // Allow closing if we have at least one bezier point
+        const hasBezierPoint = props.initialPoints.some(point => point.isBezier);
+        if (hasBezierPoint) {
+          return true;
+        }
+
+        return false;
+      };
+
+      if (!canClosePath()) {
+        console.log(`⚠️ Cannot close path: need either >2 points or at least one bezier point, but have ${props.initialPoints.length} points and no bezier points`);
+        return false;
+      }
+
+      // Additional validation: ensure we meet the minimum points requirement
+      const minPoints = props.minPoints;
+      if (minPoints && props.initialPoints.length < minPoints) {
+        // Don't allow closing if we haven't reached the minimum number of points
+        console.log(`⚠️ Cannot close path: need at least ${minPoints} points, but only have ${props.initialPoints.length}`);
+        return false;
+      }
+
       console.log(`✅ Closing path with ${props.initialPoints.length} points`);
       props.setIsPathClosed(true);
       return true;
@@ -194,6 +206,13 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
   }
 
   // Only add new points if path is not closed and we haven't reached max points
+  console.log(`🔍 handleDrawingModeClick debug:`, {
+    isPathClosed: props.isPathClosed,
+    canAddMorePoints: props.canAddMorePoints?.(),
+    initialPointsLength: props.initialPoints.length,
+    maxPoints: props.maxPoints
+  });
+
   if (!props.isPathClosed && props.canAddMorePoints?.()) {
     // Debug logging for skeleton mode
     if (props.skeletonEnabled) {

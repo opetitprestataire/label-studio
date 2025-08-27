@@ -168,9 +168,15 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     if (initialPoints.length > 0) {
       const lastPoint = initialPoints[initialPoints.length - 1];
       setLastAddedPointId(lastPoint.id);
-      setActivePointId(lastPoint.id);
+      // Only set activePointId if skeleton mode is enabled
+      if (skeletonEnabled) {
+        setActivePointId(lastPoint.id);
+        console.log(`🔧 Initialized with existing points (skeleton mode): lastAddedPointId = ${lastPoint.id}, activePointId = ${lastPoint.id}`);
+      } else {
+        console.log(`🔧 Initialized with existing points (normal mode): lastAddedPointId = ${lastPoint.id}`);
+      }
     }
-  }, [initialPoints.length]); // Only run when the number of points changes, not on every initialPoints change
+  }, [initialPoints.length, skeletonEnabled]); // Only run when the number of points changes or skeleton mode changes
 
   // Use initialPoints directly - this will update when the parent re-renders
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
