@@ -77,7 +77,6 @@ const Model = types
       "EllipseLabels",
       "RectangleLabels",
       "PolygonLabels",
-      "VectorLabels",
       "KeyPointLabels",
       "BrushLabels",
       "HyperTextLabels",
@@ -190,12 +189,12 @@ const Model = types
 
       if (sameObjectSelectedRegions.length > 0 && applicableRegions.length === 0) return;
 
-      const manager = ToolsManager.getInstance({ name: self.parent.toname });
-      const tool = Object.values(self.parent?.tools || {})[0];
-
       // if we are going to select label and it would be the first in this labels group
-      // unselect other tools if they exist and selected
       if (!labels.selectedLabels.length && !self.selected) {
+        // unselect other tools if they exist and selected
+        const manager = ToolsManager.getInstance({ name: self.parent.toname });
+        const tool = Object.values(self.parent?.tools || {})[0];
+
         const selectedTool = manager.findSelectedTool();
         const sameType = tool && selectedTool ? getType(selectedTool).name === getType(tool).name : false;
         const sameLabel = selectedTool ? tool?.control?.name === selectedTool?.control?.name : false;
@@ -253,7 +252,6 @@ const Model = types
           region.updateSpans?.();
         }
       });
-      if (self.selected) tool.onSelected?.();
     },
 
     setVisible(val) {
@@ -329,7 +327,5 @@ const HtxLabelView = inject("store")(
 );
 
 Registry.addTag("label", LabelModel, HtxLabelView);
-// Alias singular label for vector labels for convenience
-Registry.addTag("vectorlabel", LabelModel, HtxLabelView);
 
 export { HtxLabelView, LabelModel };
