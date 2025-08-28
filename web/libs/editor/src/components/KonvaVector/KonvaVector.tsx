@@ -18,6 +18,7 @@ import { PointCreationManager } from "./pointCreationManager";
 import { VectorSelectionTracker, type VectorInstance } from "./VectorSelectionTracker";
 import { calculateShapeBoundingBox } from "./utils/bezierBoundingBox";
 import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, KonvaVectorRef } from "./types";
+import { ShapeType, ExportFormat, PathType } from "./types";
 import {
   INSTANCE_ID_PREFIX,
   INSTANCE_ID_LENGTH,
@@ -79,7 +80,7 @@ import {
  * ### Export & Import
  * - **Simple Format**: `[[x,y], [x,y], ...]` - Easy to work with
  * - **Complex Format**: `[{x,y,isBezier,controlPoint1,controlPoint2}, ...]` - Full feature support
- * - **Auto Type Detection**: Exports include `type: "polygon" | "polyline"` based on `allowClose`
+ * - **Auto Type Detection**: Exports include `type: ShapeType.POLYGON | ShapeType.POLYLINE` based on `allowClose`
  *
  * ## Usage Examples
  *
@@ -110,7 +111,7 @@ import {
  * <KonvaVector
  *   initialPoints={points}
  *   onPointsChange={setPoints}
- *   format="simple"
+ *   format={ExportFormat.SIMPLE}
  *   onTransformationComplete={(data) => {
 
  *   }}
@@ -174,7 +175,7 @@ import {
  * - `allowClose`: Allow path to be closed into polygon
  * - `isDrawingMode`: Enable point addition mode
  * - `skeletonEnabled`: Connect new points to active point
- * - `format`: Export format ("simple" | "regular")
+ * - `format`: Export format (`ExportFormat.SIMPLE` | `ExportFormat.REGULAR`)
  * - `minPoints`/`maxPoints`: Point count constraints
  * - `stroke`/`fill`: Path styling colors
  * - `pointRadius`: Configurable point sizes for enabled/disabled states
@@ -231,7 +232,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     minPoints,
     maxPoints,
     skeletonEnabled = false,
-    format = "regular",
+    format = ExportFormat.REGULAR,
     stroke = DEFAULT_STROKE_COLOR,
     fill = DEFAULT_FILL_COLOR,
     pixelSnapping = false,
@@ -606,7 +607,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     // Get all points
     const allPoints = getAllPoints();
 
-    if (format === "simple") {
+    if (format === ExportFormat.SIMPLE) {
       // Export in simple format
       // For simple format, we need to call a different callback or handle differently
       // since onTransformationComplete expects the complex format
@@ -642,7 +643,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       const incomplete = minPoints !== undefined && allPoints.length < minPoints;
 
       const shapeData = {
-        type: (allowClose ? "polygon" : "polyline") as "polygon" | "polyline",
+        type: allowClose ? ShapeType.POLYGON : ShapeType.POLYLINE,
         isClosed: finalIsPathClosed,
         points: exportedPoints,
         incomplete,
@@ -780,7 +781,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   const getPointInfo = (globalIndex: number) => {
     if (globalIndex < initialPoints.length) {
       return {
-        pathType: "main" as const,
+        pathType: PathType.MAIN,
         pathIndex: globalIndex,
         point: initialPoints[globalIndex],
       };
@@ -980,7 +981,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       const incomplete = minPoints !== undefined && initialPoints.length < minPoints;
 
       return {
-        type: allowClose ? "polygon" : "polyline",
+        type: allowClose ? ShapeType.POLYGON : ShapeType.POLYLINE,
         isClosed: finalIsPathClosed,
         points: exportedPoints,
         incomplete,
@@ -993,7 +994,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       const incomplete = minPoints !== undefined && initialPoints.length < minPoints;
 
       return {
-        type: allowClose ? "polygon" : "polyline",
+        type: allowClose ? ShapeType.POLYGON : ShapeType.POLYLINE,
         isClosed: finalIsPathClosed,
         points: simplePoints,
         incomplete,

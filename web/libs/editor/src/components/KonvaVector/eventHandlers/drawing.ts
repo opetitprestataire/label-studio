@@ -1,11 +1,12 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { EventHandlerProps } from "./types";
+import { PointType } from "../types";
 import { getDistance, isPointInCanvasBounds, snapToPixel, stageToImageCoordinates } from "./utils";
 
 export interface AddPointOptions {
   x: number;
   y: number;
-  type?: "regular" | "bezier" | "ghost";
+  type?: PointType;
   prevPointId?: string;
   controlPoint1?: { x: number; y: number };
   controlPoint2?: { x: number; y: number };
@@ -144,7 +145,7 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
     return false;
   }
 
-  if (options.type === "bezier") {
+  if (options.type === PointType.BEZIER) {
     return props.pointCreationManager.createBezierPointAt(
       options.x,
       options.y,
@@ -192,7 +193,7 @@ export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: E
     const addPointOptions: any = {
       x: snappedPos.x,
       y: snappedPos.y,
-      type: "regular",
+      type: PointType.REGULAR,
     };
 
     if (props.skeletonEnabled && props.activePointId) {
@@ -512,7 +513,7 @@ export function insertPointBetween(
   y: number,
   prevPointId: string,
   nextPointId: string,
-  type: "regular" | "bezier" = "regular",
+  type: PointType = PointType.REGULAR,
   controlPoint1?: { x: number; y: number },
   controlPoint2?: { x: number; y: number },
 ): { success: boolean; newPointIndex?: number } {

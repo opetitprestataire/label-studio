@@ -1,4 +1,5 @@
 import type { BezierPoint } from "./types";
+import { PointType } from "./types";
 import { snapToPixel } from "./eventHandlers/utils";
 import { generatePointId } from "./utils";
 
@@ -277,7 +278,7 @@ export class PointCreationManager {
     y: number,
     prevPointId: string,
     nextPointId: string,
-    type: "regular" | "bezier" = "regular",
+    type: PointType = PointType.REGULAR,
     controlPoint1?: { x: number; y: number },
     controlPoint2?: { x: number; y: number },
   ): { success: boolean; newPointIndex?: number } {
@@ -304,7 +305,7 @@ export class PointCreationManager {
     }
 
     // Check if bezier is allowed
-    if (type === "bezier" && !this.props.allowBezier) {
+    if (type === PointType.BEZIER && !this.props.allowBezier) {
       return { success: false };
     }
 
@@ -354,7 +355,7 @@ export class PointCreationManager {
       ghostPoint.y,
       prevPoint.id,
       nextPoint.id,
-      "bezier",
+      PointType.BEZIER,
       controlPoint1,
       controlPoint2,
     );
@@ -566,7 +567,7 @@ export class PointCreationManager {
     y: number,
     prevPointId: string,
     nextPointId: string,
-    type: "regular" | "bezier" = "regular",
+    type: PointType = PointType.REGULAR,
     controlPoint1?: { x: number; y: number },
     controlPoint2?: { x: number; y: number },
   ): { success: boolean; newPointIndex?: number } {
@@ -575,7 +576,7 @@ export class PointCreationManager {
     // Create the new point
     const newPointOptions: Partial<BezierPoint> = {};
 
-    if (type === "bezier") {
+    if (type === PointType.BEZIER) {
       newPointOptions.isBezier = true;
 
       // Snap control points to pixel grid if enabled
@@ -602,7 +603,7 @@ export class PointCreationManager {
 
     // Find the index of the newly inserted point
     const newPointIndex = newPoints.findIndex(
-      (p: BezierPoint) => p.x === x && p.y === y && p.isBezier === (type === "bezier"),
+      (p: BezierPoint) => p.x === x && p.y === y && p.isBezier === (type === PointType.BEZIER),
     );
 
     // Call callbacks

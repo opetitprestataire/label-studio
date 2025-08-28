@@ -1,5 +1,26 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 
+// String enums for union types
+export enum ShapeType {
+  POLYGON = "polygon",
+  POLYLINE = "polyline",
+}
+
+export enum ExportFormat {
+  SIMPLE = "simple",
+  REGULAR = "regular",
+}
+
+export enum PathType {
+  MAIN = "main",
+}
+
+export enum PointType {
+  REGULAR = "regular",
+  BEZIER = "bezier",
+  GHOST = "ghost",
+}
+
 export interface Point {
   x: number;
   y: number;
@@ -28,7 +49,7 @@ export interface KonvaVectorRef {
   getSelectedPointIds: () => string[];
   close: () => boolean;
   exportShape: () => {
-    type: "polygon" | "polyline";
+    type: ShapeType;
     isClosed: boolean;
     points: Array<{
       x: number;
@@ -39,7 +60,7 @@ export interface KonvaVectorRef {
     incomplete: boolean;
   };
   exportSimpleShape: () => {
-    type: "polygon" | "polyline";
+    type: ShapeType;
     isClosed: boolean;
     points: SimplePoint[];
     incomplete: boolean;
@@ -97,7 +118,7 @@ export interface KonvaVectorProps {
   onPathClosedChange?: (isClosed: boolean) => void;
   /** Called when transformations complete */
   onTransformationComplete?: (shapeData: {
-    type: "polygon" | "polyline";
+    type: ShapeType;
     isClosed: boolean;
     points: Array<{
       x: number;
@@ -142,7 +163,7 @@ export interface KonvaVectorProps {
   /** Enable skeleton mode for point connections */
   skeletonEnabled?: boolean;
   /** Export format: "simple" or "regular" */
-  format?: "simple" | "regular";
+  format?: ExportFormat;
   /** Stroke color for the vector path */
   stroke?: string;
   /** Fill color for closed polygons */
