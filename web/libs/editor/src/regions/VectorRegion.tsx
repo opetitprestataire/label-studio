@@ -195,17 +195,22 @@ const Model = types
           return;
         }
 
-        const selection = self.parent.selectionArea;
-        const bbox = selection.onCanvasBbox;
+        const image = self.parent;
+        const selection = image.selectionArea;
+        const bbox = selection.bbox;
 
         if (!bbox) return;
 
+        const xs = image.internalToImageX(bbox.left);
+        const xe = image.internalToImageX(bbox.right);
+
+        const ys = image.internalToImageX(bbox.top);
+        const ye = image.internalToImageX(bbox.bottom);
+
         const selectedPoints = self.shape
           .filter((p: { x: number; y: number }) => {
-            const x = p.x;
-            const y = p.y;
-            const matchX = bbox.left <= x && x <= bbox.right;
-            const matchY = bbox.top <= y && y <= bbox.bottom;
+            const matchX = xs <= p.x && p.x <= xe;
+            const matchY = ys <= p.y && p.y <= ye;
             return matchX && matchY;
           })
           .map((p: { id: string }) => p.id);

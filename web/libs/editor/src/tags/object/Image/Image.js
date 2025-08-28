@@ -1296,6 +1296,16 @@ const CoordsCalculations = types
     internalToCanvasY(n) {
       return (n / RELATIVE_STAGE_HEIGHT) * self.stageHeight;
     },
+
+    internalToImageX(n) {
+      const { naturalWidth } = self.currentImageEntity;
+      return (n / RELATIVE_STAGE_WIDTH) * naturalWidth;
+    },
+
+    internalToImageY(n) {
+      const { naturalHeight } = self.currentImageEntity;
+      return (n / RELATIVE_STAGE_HEIGHT) * naturalHeight;
+    },
   }));
 
 // mock coords calculations to transparently pass coords with FF 3793 off
