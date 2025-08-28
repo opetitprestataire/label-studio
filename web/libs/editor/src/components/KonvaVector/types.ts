@@ -52,15 +52,18 @@ export interface KonvaVectorRef {
   translatePoints: (dx: number, dy: number, pointIds?: string[]) => void;
   rotatePoints: (angle: number, centerX: number, centerY: number, pointIds?: string[]) => void;
   scalePoints: (scaleX: number, scaleY: number, centerX: number, centerY: number, pointIds?: string[]) => void;
-  transformPoints: (transformation: {
-    dx?: number;
-    dy?: number;
-    rotation?: number;
-    scaleX?: number;
-    scaleY?: number;
-    centerX?: number;
-    centerY?: number;
-  }, pointIds?: string[]) => void;
+  transformPoints: (
+    transformation: {
+      dx?: number;
+      dy?: number;
+      rotation?: number;
+      scaleX?: number;
+      scaleY?: number;
+      centerX?: number;
+      centerY?: number;
+    },
+    pointIds?: string[],
+  ) => void;
   // Shape analysis methods
   getShapeBoundingBox: () => {
     left: number;
