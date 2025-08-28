@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import { destroy, detach } from "mobx-state-tree";
-import { toCamelCase, toSnakeCase } from "strman";
+import { camelCase, snakeCase } from "lodash";
 
 /**
  * Internal helper to check if parameter is a string
@@ -219,9 +219,9 @@ export const camelizeKeys = (object: any): Record<string, unknown> => {
   return Object.fromEntries(
     Object.entries(object).map(([key, value]) => {
       if (Object.prototype.toString.call(value) === "[object Object]") {
-        return [toCamelCase(key), camelizeKeys(value)];
+        return [camelCase(key), camelizeKeys(value)];
       }
-      return [toCamelCase(key), value];
+      return [camelCase(key), value];
     }),
   );
 };
@@ -230,9 +230,9 @@ export const snakeizeKeys = (object: any): Record<string, unknown> => {
   return Object.fromEntries(
     Object.entries(object).map(([key, value]) => {
       if (Object.prototype.toString.call(value) === "[object Object]") {
-        return [toSnakeCase(key), snakeizeKeys(value)];
+        return [snakeCase(key), snakeizeKeys(value)];
       }
-      return [toSnakeCase(key), value];
+      return [snakeCase(key), value];
     }),
   );
 };
