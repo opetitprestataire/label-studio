@@ -1,0 +1,107 @@
+/**
+ * Constants for KonvaVector component
+ * 
+ * This file contains all hardcoded values used throughout the KonvaVector component
+ * to ensure consistency and maintainability.
+ */
+
+// Instance ID generation
+export const INSTANCE_ID_PREFIX = "konva-vector-";
+export const INSTANCE_ID_LENGTH = 9;
+
+// Default transform values
+export const DEFAULT_TRANSFORM = {
+  zoom: 1,
+  offsetX: 0,
+  offsetY: 0,
+} as const;
+
+export const DEFAULT_FIT_SCALE = 1;
+
+// Default transformer state
+export const DEFAULT_TRANSFORMER_STATE = {
+  rotation: 0,
+  scaleX: 1,
+  scaleY: 1,
+  centerX: 0,
+  centerY: 0,
+} as const;
+
+// Default styling colors
+export const DEFAULT_STROKE_COLOR = "#3b82f6";
+export const DEFAULT_FILL_COLOR = "rgba(239, 68, 68, 0.3)";
+
+// Default point styling
+export const DEFAULT_POINT_FILL = "#ffffff";
+export const DEFAULT_POINT_STROKE = "#3b82f6";
+export const DEFAULT_POINT_STROKE_SELECTED = "#fbbf24";
+export const DEFAULT_POINT_STROKE_WIDTH = 2;
+
+// Default point radius values
+export const DEFAULT_POINT_RADIUS = {
+  enabled: 8,
+  disabled: 3,
+} as const;
+
+// Keypoint annotation point radius values
+export const KEYPOINT_POINT_RADIUS = {
+  enabled: 6,
+  disabled: 4,
+} as const;
+
+// Hit detection radii (in pixels)
+export const HIT_RADIUS = {
+  CONTROL_POINT: 6,
+  SELECTION: 5,
+  SEGMENT: 8,
+} as const;
+
+// Timing constants
+export const TRANSFORMER_SETUP_DELAY = 0;
+export const TRANSFORMER_CLEAR_DELAY = 10;
+
+// Point count constraints
+export const MIN_POINTS_FOR_CLOSING = 2;
+export const MIN_POINTS_FOR_BEZIER_CLOSING = 2;
+
+// Invisible shape opacity for mouse event capture
+export const INVISIBLE_SHAPE_OPACITY = "rgba(255,255,255,0.001)";
+
+// Math constants
+export const DEGREES_TO_RADIANS = Math.PI / 180;
+
+// Example coordinates for documentation
+export const EXAMPLE_COORDINATES = {
+  BASIC_PATH: [[100, 100], [200, 150], [300, 100]],
+  SIMPLE_PATH: [[0, 0], [100, 50], [200, 0]],
+} as const;
+
+// Example point count constraints
+export const EXAMPLE_POINT_CONSTRAINTS = {
+  MIN_POINTS: 3,
+  MAX_POINTS: 10,
+} as const;
+
+// Default scale values
+export const DEFAULT_SCALE = 1;
+
+// Default offset values
+export const DEFAULT_OFFSET = 0;
+
+// Default callback time
+export const DEFAULT_CALLBACK_TIME = 0;
+
+// Array index constants
+export const ARRAY_INDEX = {
+  FIRST: 0,
+  LAST_OFFSET: 1,
+} as const;
+
+// Selection size constants
+export const SELECTION_SIZE = {
+  MULTI_SELECTION_MIN: 1,
+  TRANSFORMER_MIN: 2,
+} as const;
+
+// Center calculation divisor
+export const CENTER_CALCULATION_DIVISOR = 2;

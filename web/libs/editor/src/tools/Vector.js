@@ -120,14 +120,6 @@ const _Tool = types
         return;
       },
 
-      mousedownEv(e, [x, y]) {
-        if (self.mode === "drawing") {
-          return;
-        }
-        down = true;
-        self.startDrawing(x, y);
-      },
-
       realCoordsFromCursor(x, y) {
         const image = self.obj.currentImageEntity;
         const width = image.naturalWidth;
@@ -159,8 +151,17 @@ const _Tool = types
         // we must skip one frame before starting a line
         // to make sure KonvaVector was fully initialized
         setTimeout(() => {
+          self.annotation.history.freeze();
           self.currentArea.startPoint(rx, ry);
-        }, 16);
+        });
+      },
+
+      mousedownEv(e, [x, y]) {
+        if (self.mode === "drawing") {
+          return;
+        }
+        down = true;
+        self.startDrawing(x, y);
       },
 
       mousemoveEv(_, [x, y]) {
@@ -177,7 +178,10 @@ const _Tool = types
         down = false;
 
         // skipping a frame to let KonvaVector render and update properly
-        setTimeout(self.finishDrawing);
+        setTimeout(() => {
+          self.finishDrawing();
+          self.annotation.history.unfreeze();
+        });
       },
 
       checkDistance(x, y) {

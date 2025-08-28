@@ -466,10 +466,6 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
 });
 
 Registry.addTag("vectorregion", VectorRegionModel, HtxVectorView);
-Registry.addRegionType(VectorRegionModel, "image", (value) => {
-  if (!value.shape) return false;
-
-  return true;
-});
+Registry.addRegionType(VectorRegionModel, "image", (value) => !!value.shape);
 
 export { VectorRegionModel, HtxVectorView as HtxVector };

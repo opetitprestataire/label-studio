@@ -18,6 +18,32 @@ import { PointCreationManager } from "./pointCreationManager";
 import { VectorSelectionTracker, type VectorInstance } from "./VectorSelectionTracker";
 import { calculateShapeBoundingBox } from "./utils/bezierBoundingBox";
 import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, KonvaVectorRef } from "./types";
+import {
+  INSTANCE_ID_PREFIX,
+  INSTANCE_ID_LENGTH,
+  DEFAULT_TRANSFORM,
+  DEFAULT_FIT_SCALE,
+  DEFAULT_TRANSFORMER_STATE,
+  DEFAULT_STROKE_COLOR,
+  DEFAULT_FILL_COLOR,
+  DEFAULT_POINT_FILL,
+  DEFAULT_POINT_STROKE,
+  DEFAULT_POINT_STROKE_SELECTED,
+  DEFAULT_POINT_STROKE_WIDTH,
+  HIT_RADIUS,
+  TRANSFORMER_SETUP_DELAY,
+  TRANSFORMER_CLEAR_DELAY,
+  MIN_POINTS_FOR_CLOSING,
+  MIN_POINTS_FOR_BEZIER_CLOSING,
+  INVISIBLE_SHAPE_OPACITY,
+  DEGREES_TO_RADIANS,
+  DEFAULT_SCALE,
+  DEFAULT_OFFSET,
+  DEFAULT_CALLBACK_TIME,
+  ARRAY_INDEX,
+  SELECTION_SIZE,
+  CENTER_CALCULATION_DIVISOR,
+} from "./constants";
 
 /**
  * **KonvaVector Component** - Advanced vector graphics editor with bezier curve support
@@ -60,7 +86,7 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  * ### Basic Vector Path
  * ```tsx
  * <KonvaVector
- *   initialPoints={[[100, 100], [200, 150], [300, 100]]}
+ *   initialPoints={EXAMPLE_COORDINATES.BASIC_PATH}
  *   onPointsChange={setPoints}
  *   isDrawingMode={true}
  *   allowClose={false}
@@ -74,8 +100,8 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  *   onPointsChange={setPoints}
  *   allowClose={true}
  *   allowBezier={true}
- *   minPoints={3}
- *   maxPoints={10}
+ *   minPoints={EXAMPLE_POINT_CONSTRAINTS.MIN_POINTS}
+ *   maxPoints={EXAMPLE_POINT_CONSTRAINTS.MAX_POINTS}
  * />
  * ```
  *
@@ -112,14 +138,11 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  *   initialPoints={points}
  *   onPointsChange={setPoints}
  *   // Customize point appearance
- *   pointRadius={{
- *     enabled: 8, // Larger points when enabled
- *     disabled: 3, // Smaller points when disabled
- *   }}
- *   pointFill="#ffffff"
- *   pointStroke="#3b82f6"
- *   pointStrokeSelected="#fbbf24"
- *   pointStrokeWidth={2}
+ *   pointRadius={DEFAULT_POINT_RADIUS}
+ *   pointFill={DEFAULT_POINT_FILL}
+ *   pointStroke={DEFAULT_POINT_STROKE}
+ *   pointStrokeSelected={DEFAULT_POINT_STROKE_SELECTED}
+ *   pointStrokeWidth={DEFAULT_POINT_STROKE_WIDTH}
  * />
  * ```
  *
@@ -131,10 +154,7 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  *   disabled={true} // Disable editing but allow selection
  *   allowClose={false} // Keypoints don't form closed paths
  *   allowBezier={false} // Keypoints are simple points
- *   pointRadius={{
- *     enabled: 6,
- *     disabled: 4, // Smaller when disabled but still selectable
- *   }}
+ *   pointRadius={KEYPOINT_POINT_RADIUS}
  *   onPointSelected={(pointIndex) => {
  *     console.log('Selected keypoint:', pointIndex);
  *   }}
@@ -167,7 +187,7 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  * ```tsx
  * // Simple usage
  * <KonvaVector
- *   initialPoints={[[0, 0], [100, 50], [200, 0]]}
+ *   initialPoints={EXAMPLE_COORDINATES.SIMPLE_PATH}
  *   onPointsChange={handlePointsChange}
  *   allowBezier={true}
  *   allowClose={false}
@@ -176,7 +196,7 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  */
 export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, ref) => {
   // Generate unique instance ID
-  const instanceId = useMemo(() => `konva-vector-${Math.random().toString(36).substr(2, 9)}`, []);
+  const instanceId = useMemo(() => `${INSTANCE_ID_PREFIX}${Math.random().toString(36).substr(2, INSTANCE_ID_LENGTH)}`, []);
 
   const {
     initialPoints: rawInitialPoints = [],
@@ -195,8 +215,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     x,
     y,
     imageSmoothingEnabled = false,
-    transform = { zoom: 1, offsetX: 0, offsetY: 0 },
-    fitScale = 1,
+    transform = DEFAULT_TRANSFORM,
+    fitScale = DEFAULT_FIT_SCALE,
     width,
     height,
     onMouseDown,
@@ -212,16 +232,16 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     maxPoints,
     skeletonEnabled = false,
     format = "regular",
-    stroke = "#3b82f6",
-    fill = "rgba(239, 68, 68, 0.3)",
+    stroke = DEFAULT_STROKE_COLOR,
+    fill = DEFAULT_FILL_COLOR,
     pixelSnapping = false,
     disabled = false,
     constrainToBounds = false,
     pointRadius,
-    pointFill = "#ffffff",
-    pointStroke = "#3b82f6",
-    pointStrokeSelected = "#fbbf24",
-    pointStrokeWidth = 2,
+    pointFill = DEFAULT_POINT_FILL,
+    pointStroke = DEFAULT_POINT_STROKE,
+    pointStrokeSelected = DEFAULT_POINT_STROKE_SELECTED,
+    pointStrokeWidth = DEFAULT_POINT_STROKE_WIDTH,
   } = props;
 
   // Normalize input points to BezierPoint format
@@ -260,13 +280,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     scaleY: number;
     centerX: number;
     centerY: number;
-  }>({
-    rotation: 0,
-    scaleX: 1,
-    scaleY: 1,
-    centerX: 0,
-    centerY: 0,
-  });
+  }>(DEFAULT_TRANSFORMER_STATE);
 
   // Handle Shift key state
   useEffect(() => {
@@ -313,7 +327,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     x: number;
     y: number;
   } | null>(null);
-  const lastCallbackTime = useRef<number>(0);
+  const lastCallbackTime = useRef<number>(DEFAULT_CALLBACK_TIME);
   const [visibleControlPoints, setVisibleControlPoints] = useState<Set<number>>(new Set());
   const [activePointId, setActivePointId] = useState<string | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
@@ -375,14 +389,14 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     }
 
     // Disable drawing when multiple points are selected
-    if (selectedPoints.size > 1) {
+    if (selectedPoints.size > SELECTION_SIZE.MULTI_SELECTION_MIN) {
       return true;
     }
 
     // Dynamically check control point hover
     if (cursorPosition && initialPoints.length > 0) {
       const scale = transform.zoom * fitScale;
-      const controlPointHitRadius = 6 / scale;
+      const controlPointHitRadius = HIT_RADIUS.CONTROL_POINT / scale;
 
       for (let i = 0; i < initialPoints.length; i++) {
         const point = initialPoints[i];
@@ -412,26 +426,26 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     // Dynamically check point hover
     if (cursorPosition && initialPoints.length > 0) {
       const scale = transform.zoom * fitScale;
-      const selectionHitRadius = 5 / scale;
+      const selectionHitRadius = HIT_RADIUS.SELECTION / scale;
 
       for (let i = 0; i < initialPoints.length; i++) {
         const point = initialPoints[i];
         const distance = Math.sqrt((cursorPosition.x - point.x) ** 2 + (cursorPosition.y - point.y) ** 2);
         if (distance <= selectionHitRadius) {
           // If exactly one point is selected and this is that point, allow drawing
-          if (selectedPoints.size === 1 && selectedPoints.has(i)) {
+          if (selectedPoints.size === SELECTION_SIZE.MULTI_SELECTION_MIN && selectedPoints.has(i)) {
             continue; // Don't disable drawing for the selected point
           }
 
           // Don't disable drawing when hovering over the last point in the path
           // (so you can continue drawing from it)
-          if (i === initialPoints.length - 1) {
+          if (i === initialPoints.length - ARRAY_INDEX.LAST_OFFSET) {
             continue; // Don't disable drawing for the last point
           }
 
           // Don't disable drawing when hovering over the first point if path closing is possible
           // (so you can see the closing indicator)
-          if (i === 0 && allowClose && !finalIsPathClosed) {
+          if (i === ARRAY_INDEX.FIRST && allowClose && !finalIsPathClosed) {
             continue; // Don't disable drawing for the first point when closing is possible
           }
 
@@ -443,7 +457,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     // Dynamically check segment hover (to hide ghost line when hovering over path segments)
     if (cursorPosition && initialPoints.length >= 2) {
       const scale = transform.zoom * fitScale;
-      const segmentHitRadius = 8 / scale; // Slightly larger than point hit radius
+      const segmentHitRadius = HIT_RADIUS.SEGMENT / scale; // Slightly larger than point hit radius
 
       // Use the same logic as findClosestPointOnPath for consistent Bezier curve detection
       const closestPathPoint = findClosestPointOnPath(cursorPosition, initialPoints, allowClose, finalIsPathClosed);
@@ -547,7 +561,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   // Set up Transformer nodes once when selection changes
   useEffect(() => {
     if (transformerRef.current) {
-      if (selectedPoints.size > 1) {
+      if (selectedPoints.size > SELECTION_SIZE.MULTI_SELECTION_MIN) {
         // Use setTimeout to ensure proxy nodes are rendered first
         setTimeout(() => {
           if (transformerRef.current) {
@@ -570,15 +584,15 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
               transformerRef.current.getLayer()?.batchDraw();
             }
           }
-        }, 0);
+        }, TRANSFORMER_SETUP_DELAY);
       } else {
-        // Clear transformer when selection is less than 2 points
+        // Clear transformer when selection is less than minimum points for transformer
         setTimeout(() => {
           if (transformerRef.current) {
             transformerRef.current.nodes([]);
             transformerRef.current.getLayer()?.batchDraw();
           }
-        }, 10);
+        }, TRANSFORMER_CLEAR_DELAY);
       }
     }
   }, [selectedPoints]); // Only depend on selectedPoints, not initialPoints
@@ -847,14 +861,14 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   useImperativeHandle(ref, () => ({
     convertPoint: convertPointHandler,
     close: () => {
-      if (!allowClose || initialPoints.length < 2) {
+      if (!allowClose || initialPoints.length < MIN_POINTS_FOR_CLOSING) {
         return false;
       }
 
       // Check if we can close the path based on point count or bezier points
       const canClosePath = () => {
         // Allow closing if we have more than 2 points
-        if (initialPoints.length > 2) {
+        if (initialPoints.length > MIN_POINTS_FOR_BEZIER_CLOSING) {
           return true;
         }
 
@@ -1036,11 +1050,11 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       if (!pointIds) {
         // Use the accurate shape bounding box calculation
         const bbox = calculateShapeBoundingBox(initialPoints);
-        actualCenterX = (bbox.left + bbox.right) / 2;
-        actualCenterY = (bbox.top + bbox.bottom) / 2;
+        actualCenterX = (bbox.left + bbox.right) / CENTER_CALCULATION_DIVISOR;
+        actualCenterY = (bbox.top + bbox.bottom) / CENTER_CALCULATION_DIVISOR;
       }
 
-      const radians = (angle * Math.PI) / 180;
+      const radians = angle * DEGREES_TO_RADIANS;
       const cos = Math.cos(radians);
       const sin = Math.sin(radians);
 
@@ -1093,8 +1107,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       if (!pointIds) {
         // Use the accurate shape bounding box calculation
         const bbox = calculateShapeBoundingBox(initialPoints);
-        actualCenterX = (bbox.left + bbox.right) / 2;
-        actualCenterY = (bbox.top + bbox.bottom) / 2;
+        actualCenterX = (bbox.left + bbox.right) / CENTER_CALCULATION_DIVISOR;
+        actualCenterY = (bbox.top + bbox.bottom) / CENTER_CALCULATION_DIVISOR;
       }
 
       const updatedPoints = initialPoints.map((point) => {
@@ -1162,8 +1176,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       ) {
         // Use the accurate shape bounding box calculation
         const bbox = calculateShapeBoundingBox(initialPoints);
-        actualCenterX = (bbox.left + bbox.right) / 2;
-        actualCenterY = (bbox.top + bbox.bottom) / 2;
+        actualCenterX = (bbox.left + bbox.right) / CENTER_CALCULATION_DIVISOR;
+        actualCenterY = (bbox.top + bbox.bottom) / CENTER_CALCULATION_DIVISOR;
       }
 
       const updatedPoints = initialPoints.map((point) => {
@@ -1173,7 +1187,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           // Apply translation
           if (transformation.dx !== undefined) {
             updatedPoint.x += transformation.dx;
-            updatedPoint.y += transformation.dy || 0;
+            updatedPoint.y += transformation.dy || DEFAULT_OFFSET;
           }
 
           // Apply rotation and scaling (need center point)
@@ -1189,8 +1203,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
             // Apply scaling
             if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
-              const scaleX = transformation.scaleX || 1;
-              const scaleY = transformation.scaleY || 1;
+              const scaleX = transformation.scaleX || DEFAULT_SCALE;
+              const scaleY = transformation.scaleY || DEFAULT_SCALE;
               const dx = finalX - actualCenterX;
               const dy = finalY - actualCenterY;
               finalX = actualCenterX + dx * scaleX;
@@ -1199,7 +1213,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
             // Apply rotation
             if (transformation.rotation !== undefined) {
-              const radians = (transformation.rotation * Math.PI) / 180;
+              const radians = transformation.rotation * DEGREES_TO_RADIANS;
               const cos = Math.cos(radians);
               const sin = Math.sin(radians);
               const dx = finalX - actualCenterX;
@@ -1246,7 +1260,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
                 // Apply rotation
                 if (transformation.rotation !== undefined) {
-                  const radians = (transformation.rotation * Math.PI) / 180;
+                  const radians = transformation.rotation * DEGREES_TO_RADIANS;
                   const cos = Math.cos(radians);
                   const sin = Math.sin(radians);
                   const dx = finalCp1X - actualCenterX;
@@ -1294,7 +1308,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
                 // Apply rotation
                 if (transformation.rotation !== undefined) {
-                  const radians = (transformation.rotation * Math.PI) / 180;
+                  const radians = transformation.rotation * DEGREES_TO_RADIANS;
                   const cos = Math.cos(radians);
                   const sin = Math.sin(radians);
                   const dx = finalCp2X - actualCenterX;
@@ -1439,7 +1453,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             ctx.rect(0, 0, width, height);
             ctx.fillShape(shape);
           }}
-          fill="rgba(255,255,255,0.001)"
+          fill={INVISIBLE_SHAPE_OPACITY}
         />
       )}
 
