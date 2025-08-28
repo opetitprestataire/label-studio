@@ -57,9 +57,6 @@ const splitRegions = (regions) => {
       case "bitmaskregion":
         bitmaskRegions.push(region);
         break;
-      case "vectorregion":
-        vectorRegions.push(region);
-        break;
       default:
         shapeRegions.push(region);
         break;
@@ -1416,24 +1413,21 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
 
   if (paginationEnabled) wrapperClasses.push(styles.withPagination);
 
-  const { brushRegions, shapeRegions, bitmaskRegions, vectorRegions } = splitRegions(regions);
+  const { brushRegions, shapeRegions, bitmaskRegions } = splitRegions(regions);
 
   const {
     brushRegions: suggestedBrushRegions,
     shapeRegions: suggestedShapeRegions,
     bitmaskRegions: suggestedBitmaskRegions,
-    vectorRegions: suggestedVectorRegions,
   } = splitRegions(item.suggestions);
 
   const renderableRegions = Object.entries({
     brush: brushRegions,
     shape: shapeRegions,
     bitmask: bitmaskRegions,
-    vector: vectorRegions,
     suggestedBrush: suggestedBrushRegions,
     suggestedBismask: suggestedBitmaskRegions,
     suggestedShape: suggestedShapeRegions,
-    suggestedVedtor: suggestedVectorRegions,
   });
 
   return (
