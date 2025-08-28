@@ -1,6 +1,6 @@
 /**
  * Constants for KonvaVector component
- * 
+ *
  * This file contains all hardcoded values used throughout the KonvaVector component
  * to ensure consistency and maintainability.
  */
@@ -72,8 +72,16 @@ export const DEGREES_TO_RADIANS = Math.PI / 180;
 
 // Example coordinates for documentation
 export const EXAMPLE_COORDINATES = {
-  BASIC_PATH: [[100, 100], [200, 150], [300, 100]],
-  SIMPLE_PATH: [[0, 0], [100, 50], [200, 0]],
+  BASIC_PATH: [
+    [100, 100],
+    [200, 150],
+    [300, 100],
+  ],
+  SIMPLE_PATH: [
+    [0, 0],
+    [100, 50],
+    [200, 0],
+  ],
 } as const;
 
 // Example point count constraints
