@@ -18,6 +18,7 @@ import {
   stageToImageCoordinates,
 } from "./utils";
 import { constrainPointToBounds } from "../utils/boundsChecking";
+import { VectorSelectionTracker } from "../VectorSelectionTracker";
 
 export function createMouseDownHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
   return (e: KonvaEventObject<MouseEvent>) => {
@@ -262,25 +263,15 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
     // If we get here, we're not clicking on anything specific
     // Handle deselection based on transformer state
     if (!e.evt.ctrlKey && !e.evt.metaKey) {
-      if (props.selectedPoints.size > 1) {
-        // When transformer is active, clicking outside deselects everything
-        props.setSelectedPoints(new Set());
-        props.setSelectedPointIndex(null);
-        props.onPointSelected?.(null);
-      } else {
-        // When transformer is not active, normal deselection behavior
-        props.setSelectedPoints(new Set());
-        // Don't clear selected point if we're in skeleton mode and drawing mode
-        // This allows drawing to start from the selected point
-        if (!(props.skeletonEnabled && props.isDrawingMode)) {
-          props.setSelectedPointIndex(null);
-          props.onPointSelected?.(null);
-          // Reset active point to the last physically added point when deselecting
-          if (props.skeletonEnabled && props.initialPoints.length > 0) {
-            const lastPoint = props.initialPoints[props.initialPoints.length - 1];
-            props.setLastAddedPointId?.(lastPoint.id);
-          }
-        }
+      // Use tracker for global selection management
+      const tracker = VectorSelectionTracker.getInstance();
+      console.log(`🔍 Clearing selection in instance ${props.instanceId} (click outside)`);
+      tracker.selectPoints(props.instanceId || 'unknown', new Set());
+
+      // Reset active point to the last physically added point when deselecting
+      if (props.skeletonEnabled && props.initialPoints.length > 0) {
+        const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+        props.setLastAddedPointId?.(lastPoint.id);
       }
     }
   };
@@ -955,9 +946,11 @@ export function createDblClickHandler(props: EventHandlerProps) {
 function handlePointSelectionFromIndex(pointIndex: number, props: EventHandlerProps) {
   // For now, just do single selection since we don't have access to modifier keys in mouse up
   // Multi-selection will be handled by the existing point selection logic in mouse down
-  props.setSelectedPoints(new Set([pointIndex]));
-  props.setSelectedPointIndex(pointIndex);
-  props.onPointSelected?.(pointIndex);
+
+  // Use tracker for global selection management
+  const tracker = VectorSelectionTracker.getInstance();
+  console.log(`🔍 Selecting point by index in instance ${props.instanceId}:`, pointIndex);
+  tracker.selectPoints(props.instanceId || 'unknown', new Set([pointIndex]));
 
   // Update activePointId for skeleton mode - set the selected point as the active point
   if (pointIndex >= 0 && pointIndex < props.initialPoints.length) {

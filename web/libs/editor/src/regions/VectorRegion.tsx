@@ -204,8 +204,8 @@ const Model = types
         const xs = image.internalToImageX(bbox.left);
         const xe = image.internalToImageX(bbox.right);
 
-        const ys = image.internalToImageX(bbox.top);
-        const ye = image.internalToImageX(bbox.bottom);
+        const ys = image.internalToImageY(bbox.top);
+        const ye = image.internalToImageY(bbox.bottom);
 
         const selectedPoints = self.shape
           .filter((p: { x: number; y: number }) => {
@@ -215,7 +215,8 @@ const Model = types
           })
           .map((p: { id: string }) => p.id);
 
-        self.vectorRef?.selectPointsByIds(selectedPoints);
+        const vector = self.vectorRef;
+        vector?.selectPointsByIds(selectedPoints);
       },
 
       _selectArea(additiveMode = false) {

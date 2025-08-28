@@ -2,6 +2,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import type { EventHandlerProps } from "./types";
 import { isPointInHitRadius, stageToImageCoordinates } from "./utils";
 import { closePath, closePathBetweenFirstAndLast } from "./drawing";
+import { VectorSelectionTracker } from "../VectorSelectionTracker";
 
 // Helper function to check if cursor is near a closing target
 function isNearClosingTarget(cursorPos: { x: number; y: number }, props: EventHandlerProps): boolean {
@@ -64,6 +65,15 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
   const scale = props.transform.zoom * props.fitScale;
   const hitRadius = 10 / scale;
 
+  // Get the tracker instance
+  const tracker = VectorSelectionTracker.getInstance();
+
+  // Check if this instance can have selection
+  if (!tracker.canInstanceHaveSelection(props.instanceId || 'unknown')) {
+    console.log(`🔍 Blocking selection in ${props.instanceId} - ${tracker.getActiveInstanceId()} is active`);
+    return false; // Block selection in this instance
+  }
+
   // Check if we clicked on any point
   for (let i = 0; i < props.initialPoints.length; i++) {
     const point = props.initialPoints[i];
@@ -110,30 +120,32 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
 
       // If Cmd/Ctrl is held, add to selection (multi-selection) - this takes priority
       if (e.evt.ctrlKey || e.evt.metaKey) {
-        props.setSelectedPoints((prev) => {
-          const newSet = new Set(prev);
-          newSet.add(i);
-          return newSet;
-        });
+        const currentSelection = props.selectedPoints;
+        const newSelection = new Set(currentSelection);
+        newSelection.add(i);
+
+        // Use tracker for global selection management
+        console.log(`🔍 Selecting points in instance ${props.instanceId}:`, Array.from(newSelection));
+        tracker.selectPoints(props.instanceId || 'unknown', newSelection);
         return true;
       }
 
       // Handle skeleton mode point selection (when not multi-selecting)
       if (props.skeletonEnabled) {
-        props.setSelectedPoints(new Set([i]));
-        props.setSelectedPointIndex(i);
+        // Use tracker for global selection management
+        console.log(`🔍 Selecting single point in instance ${props.instanceId}:`, i);
+        tracker.selectPoints(props.instanceId || 'unknown', new Set([i]));
         // Don't set lastAddedPointId when selecting a point - it should remain the last physically added point
         // Set the selected point as the active point for drawing
         props.setActivePointId?.(point.id);
         console.log(`🔧 Skeleton mode: selected point ${i} (${point.id}) as active point`);
-        props.onPointSelected?.(i);
         return true;
       }
 
       // If no Cmd/Ctrl and not skeleton mode, clear multi-selection and select only this point
-      props.setSelectedPoints(new Set([i]));
-      props.setSelectedPointIndex(i);
-      props.onPointSelected?.(i);
+      // Use tracker for global selection management
+      console.log(`🔍 Selecting single point in instance ${props.instanceId}:`, i);
+      tracker.selectPoints(props.instanceId || 'unknown', new Set([i]));
       // Return true to indicate we handled the selection
       return true;
     }
@@ -151,30 +163,36 @@ export function handlePointDeselection(e: KonvaEventObject<MouseEvent>, props: E
   const scale = props.transform.zoom * props.fitScale;
   const hitRadius = 10 / scale;
 
+  // Get the tracker instance
+  const tracker = VectorSelectionTracker.getInstance();
+
+  // Check if this instance can have selection (deselection is allowed for the active instance)
+  if (!tracker.canInstanceHaveSelection(props.instanceId || 'unknown')) {
+    console.log(`🔍 Blocking deselection in ${props.instanceId} - ${tracker.getActiveInstanceId()} is active`);
+    return false; // Block deselection in this instance
+  }
+
   // Check if we clicked on a selected point to unselect it
   for (let i = 0; i < props.initialPoints.length; i++) {
     if (props.selectedPoints.has(i)) {
       const point = props.initialPoints[i];
 
       if (isPointInHitRadius(imagePos, point, hitRadius)) {
-        props.setSelectedPoints((prev) => {
-          const newSet = new Set<number>(prev);
-          newSet.delete(i);
-          // If we're down to 1 or 0 points, clear single selection too
-          if (newSet.size <= 1) {
-            props.setSelectedPointIndex(null);
-            props.onPointSelected?.(null);
-            // Reset active point to the last physically added point when deselecting
-            if (props.skeletonEnabled && props.initialPoints.length > 0) {
-              const lastPoint = props.initialPoints[props.initialPoints.length - 1];
-              props.setLastAddedPointId?.(lastPoint.id);
-              // Also reset the active point to the last added point
-              props.setActivePointId?.(lastPoint.id);
-              console.log(`🔧 Skeleton mode: reset active point to last added point ${lastPoint.id}`);
-            }
-          }
-          return newSet;
-        });
+        const newSet = new Set<number>(props.selectedPoints);
+        newSet.delete(i);
+
+        // Use tracker for global selection management
+        console.log(`🔍 Deselecting point in instance ${props.instanceId}:`, i);
+        tracker.selectPoints(props.instanceId || 'unknown', newSet);
+
+        // Handle skeleton mode reset
+        if (newSet.size <= 1 && props.skeletonEnabled && props.initialPoints.length > 0) {
+          const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+          props.setLastAddedPointId?.(lastPoint.id);
+          props.setActivePointId?.(lastPoint.id);
+          console.log(`🔧 Skeleton mode: reset active point to last added point ${lastPoint.id}`);
+        }
+
         return true;
       }
     }
