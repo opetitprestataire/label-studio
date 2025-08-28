@@ -792,13 +792,18 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
   return (e: KonvaEventObject<MouseEvent>) => {
     // Handle Shift+click functionality FIRST (before other checks)
     if (e.evt.shiftKey && !e.evt.altKey) {
+      console.log("🔍 Click handler: Shift+click detected, trying point conversion");
+      // First, try to convert a point to bezier if clicking on a point
       if (handleShiftClickPointConversion(e, props)) {
+        console.log("🔍 Click handler: Point conversion successful, returning early");
         return;
       }
+      console.log("🔍 Click handler: Point conversion failed or not applicable");
     }
 
     // Handle Shift+click functionality (before other checks)
     if (e.evt.shiftKey && !e.evt.altKey) {
+      console.log("🔍 Click handler: Shift+click detected, checking for ghost point insertion");
       // First, check if we're near a ghost point to add a point
       if (
         props.cursorPosition &&
@@ -817,6 +822,7 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
           const clickRadius = 15 / (props.transform.zoom * props.fitScale);
 
           if (distance <= clickRadius) {
+            console.log("🔍 Click handler: Inserting point at ghost point location");
             // Insert a regular point between the two points that form the segment
             const insertResult = insertPointBetween(
               props,
@@ -826,6 +832,7 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
               ghostPoint.nextPointId,
             );
             if (insertResult.success) {
+              console.log("🔍 Click handler: Ghost point insertion successful");
               return; // Successfully added point
             }
           }

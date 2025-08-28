@@ -33,7 +33,6 @@ export const createPropertyWatcher = (props) => {
           if (Array.isArray(element)) {
             element.forEach((el) => this._watchProperties(el, propsList, disposers));
           } else {
-            console.log(element);
             res.push(observe(element, property, this.onUpdate, true));
           }
         }

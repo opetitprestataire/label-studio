@@ -252,9 +252,13 @@ export function addPointAtPosition(props: EventHandlerProps, x: number, y: numbe
 
 export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>, props: EventHandlerProps): boolean {
   const pos = e.target.getStage()?.getPointerPosition();
-  if (!pos) return false;
+  if (!pos) {
+    console.log("🔍 Shift-click: No pointer position");
+    return false;
+  }
 
   const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
+  console.log("🔍 Shift-click: Checking for point conversion at", imagePos);
 
   // Find the closest point
   let closestPointIndex = -1;
@@ -271,12 +275,16 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
     }
   }
 
+  console.log("🔍 Shift-click: Closest point index:", closestPointIndex, "distance:", closestDistance, "hit radius:", 10 / (props.transform.zoom * props.fitScale));
+
   // Handle the point if we found one
   if (closestPointIndex !== -1) {
     const point = props.initialPoints[closestPointIndex];
+    console.log("🔍 Shift-click: Found point at index", closestPointIndex, "isBezier:", point.isBezier, "allowBezier:", props.allowBezier);
 
     // If it's a bezier point and disconnected, reconnect it first
     if (point.isBezier && point.disconnected) {
+      console.log("🔍 Shift-click: Reconnecting disconnected bezier point");
       const newPoints = props.initialPoints.map((p, i) => {
         if (i === closestPointIndex) {
           // Reconnect by making control points symmetric around the anchor point
@@ -311,40 +319,119 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
     if (!pointToConvert.isBezier) {
       // Check if bezier is allowed
       if (!props.allowBezier) {
+        console.log("🔍 Shift-click: Bezier not allowed");
         return false;
       }
 
-      // Create default control points positioned 20 pixels away from the anchor point
-      // Make them symmetric around the anchor point (following addBezierPoint concept)
-      const controlPoint1 = {
-        x: pointToConvert.x - 150,
-        y: pointToConvert.y + 150,
-      };
-      const controlPoint2 = {
-        x: pointToConvert.x + 150,
-        y: pointToConvert.y - 150,
-      };
+      // Handle all points the same way - no special cases for first/last points
+      console.log("🔍 Shift-click: Converting regular point to bezier");
 
-      // Snap control points to pixel grid if enabled
-      const snappedControlPoint1 = snapToPixel(controlPoint1, props.pixelSnapping);
-      const snappedControlPoint2 = snapToPixel(controlPoint2, props.pixelSnapping);
+      // Smart control point placement based on neighboring points
+      // Use actual path connections via prevPointId references, not array bounds
+      const prevPoint = props.initialPoints.find(p => p.id === pointToConvert.prevPointId);
+      const nextPoint = props.initialPoints.find(p => p.prevPointId === pointToConvert.id);
 
-      // Convert in place, following the same concept as addBezierPoint
-      newPoints[closestPointIndex] = {
-        ...pointToConvert,
-        isBezier: true,
-        controlPoint1: snappedControlPoint1,
-        controlPoint2: snappedControlPoint2,
-        disconnected: false, // Same as addBezierPoint with isDisconnected = false
-      };
+      // Check if we have both neighboring points for smart placement
+      if (prevPoint && nextPoint) {
+        // Calculate the direction vector from previous to next point
+        const dx = nextPoint.x - prevPoint.x;
+        const dy = nextPoint.y - prevPoint.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
-      props.onPointsChange?.(newPoints);
-      props.onPointEdited?.(newPoints[closestPointIndex], closestPointIndex);
+        // Use a minimum distance to ensure handles aren't too short
+        const minOffset = 30; // Minimum handle length
+        const maxOffset = 80; // Maximum handle length
+        const baseOffset = distance * 0.3; // Base calculation
 
-      // Make the control points visible (following addBezierPoint concept)
-      props.setVisibleControlPoints(new Set([closestPointIndex]));
+        // Ensure handles are neither too short nor too long
+        const offset = Math.max(minOffset, Math.min(maxOffset, baseOffset));
 
-      return true;
+        // Calculate control points on the same line, with anchor point in the middle
+        const controlPoint1 = {
+          x: pointToConvert.x - (dx / distance) * offset,
+          y: pointToConvert.y - (dy / distance) * offset,
+        };
+        const controlPoint2 = {
+          x: pointToConvert.x + (dx / distance) * offset,
+          y: pointToConvert.y + (dy / distance) * offset,
+        };
+
+        console.log("🔍 Shift-click: Standard control point placement, offset:", offset.toFixed(1));
+
+        // Snap control points to pixel grid if enabled
+        const snappedControlPoint1 = snapToPixel(controlPoint1, props.pixelSnapping);
+        const snappedControlPoint2 = snapToPixel(controlPoint2, props.pixelSnapping);
+
+        // Convert in place, following the same concept as addBezierPoint
+        newPoints[closestPointIndex] = {
+          ...pointToConvert,
+          isBezier: true,
+          controlPoint1: snappedControlPoint1,
+          controlPoint2: snappedControlPoint2,
+          disconnected: false, // Same as addBezierPoint with isDisconnected = false
+        };
+
+        props.onPointsChange?.(newPoints);
+        props.onPointEdited?.(newPoints[closestPointIndex], closestPointIndex);
+
+        // Make the control points visible (following addBezierPoint concept)
+        props.setVisibleControlPoints(new Set([closestPointIndex]));
+
+        console.log("🔍 Shift-click: Successfully converted point to bezier");
+        return true;
+      } else if (prevPoint || nextPoint) {
+        // Handle points that have only one neighbor in the path
+        const neighborPoint = prevPoint || nextPoint;
+
+        if (!neighborPoint) {
+          console.warn("🔍 Shift-click: Unexpected null neighbor point");
+          return false;
+        }
+
+        console.log("🔍 Shift-click: Handling point with single neighbor in path");
+
+        // Create control points based on the available neighbor
+        const dx = neighborPoint.x - pointToConvert.x;
+        const dy = neighborPoint.y - pointToConvert.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Use a reasonable offset for single-neighbor points
+        const offset = Math.max(30, Math.min(60, distance * 0.4));
+
+        // Place control points along the direction to/from the neighbor
+        const controlPoint1 = {
+          x: pointToConvert.x - (dx / distance) * offset,
+          y: pointToConvert.y - (dy / distance) * offset,
+        };
+        const controlPoint2 = {
+          x: pointToConvert.x + (dx / distance) * offset,
+          y: pointToConvert.y + (dy / distance) * offset,
+        };
+
+        // Snap control points to pixel grid if enabled
+        const snappedControlPoint1 = snapToPixel(controlPoint1, props.pixelSnapping);
+        const snappedControlPoint2 = snapToPixel(controlPoint2, props.pixelSnapping);
+
+        // Convert in place
+        newPoints[closestPointIndex] = {
+          ...pointToConvert,
+          isBezier: true,
+          controlPoint1: snappedControlPoint1,
+          controlPoint2: snappedControlPoint2,
+          disconnected: false,
+        };
+
+        props.onPointsChange?.(newPoints);
+        props.onPointEdited?.(newPoints[closestPointIndex], closestPointIndex);
+        props.setVisibleControlPoints(new Set([closestPointIndex]));
+
+        console.log("🔍 Shift-click: Successfully converted point with single neighbor to bezier");
+        return true;
+      } else {
+        // Graceful error handling - only for truly corrupted data
+        console.warn("🔍 Shift-click: Cannot convert point - missing neighboring points. This should not happen in normal operation.");
+        return false;
+      }
     }
 
     // It's a bezier point - check if controls are synchronized
