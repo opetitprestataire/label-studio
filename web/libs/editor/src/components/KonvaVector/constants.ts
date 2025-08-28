@@ -131,3 +131,16 @@ export const CONNECTION_LINE_STYLING = {
   LINE_CAP: "round" as const,
   LINE_JOIN: "round" as const,
 } as const;
+
+// Ghost line styling and behavior
+export const GHOST_LINE_STYLING = {
+  STROKE_WIDTH: 2,
+  DASH: [4, 4] as const,
+  OPACITY: 0.6,
+  CLOSING_INDICATOR_STROKE: "#10b981",
+  CLOSING_INDICATOR_STROKE_WIDTH: 3,
+  CLOSING_INDICATOR_DASH: [6, 6] as const,
+  CLOSING_INDICATOR_OPACITY: 0.8,
+  CLOSE_RADIUS: 15,
+  BEZIER_CONTROL_MULTIPLIER: 0.3,
+} as const;

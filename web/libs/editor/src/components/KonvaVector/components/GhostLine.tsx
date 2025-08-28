@@ -1,6 +1,7 @@
 import type React from "react";
 import { Shape } from "react-konva";
 import type { BezierPoint } from "../types";
+import { GHOST_LINE_STYLING, DEFAULT_STROKE_COLOR } from "../constants";
 
 interface GhostLineProps {
   initialPoints: BezierPoint[];
@@ -38,7 +39,7 @@ export const GhostLine: React.FC<GhostLineProps> = ({
   skeletonEnabled,
   lastAddedPointId,
   activePointId = null,
-  stroke = "#3b82f6",
+  stroke = DEFAULT_STROKE_COLOR,
   pixelSnapping = false,
   drawingDisabled = false,
 }) => {
@@ -112,7 +113,7 @@ export const GhostLine: React.FC<GhostLineProps> = ({
 
     const firstPoint = initialPoints[0];
     const lastPoint = initialPoints[initialPoints.length - 1];
-    const closeRadius = 15 / (transform.zoom * fitScale);
+    const closeRadius = GHOST_LINE_STYLING.CLOSE_RADIUS / (transform.zoom * fitScale);
 
     // Only show closing indicator if the active point is the first or last point
     const isActivePointFirst = activePoint.id === firstPoint.id;
@@ -168,12 +169,12 @@ export const GhostLine: React.FC<GhostLineProps> = ({
       {shouldShowGhostLine && activePoint && (
         <Shape
           stroke={stroke}
-          strokeWidth={2}
+          strokeWidth={GHOST_LINE_STYLING.STROKE_WIDTH}
           strokeScaleEnabled={false}
           lineCap="round"
           lineJoin="round"
-          dash={[4, 4]}
-          opacity={0.6}
+          dash={GHOST_LINE_STYLING.DASH}
+          opacity={GHOST_LINE_STYLING.OPACITY}
           sceneFunc={(ctx, shape) => {
             ctx.beginPath();
             ctx.moveTo(activePoint.x, activePoint.y);
@@ -187,8 +188,8 @@ export const GhostLine: React.FC<GhostLineProps> = ({
               // Use the same logic as the path rendering for partial bezier curves
               const dx = snappedCursor.x - activePoint.x;
               const dy = snappedCursor.y - activePoint.y;
-              const controlX = snappedCursor.x - dx * 0.3;
-              const controlY = snappedCursor.y - dy * 0.3;
+              const controlX = snappedCursor.x - dx * GHOST_LINE_STYLING.BEZIER_CONTROL_MULTIPLIER;
+              const controlY = snappedCursor.y - dy * GHOST_LINE_STYLING.BEZIER_CONTROL_MULTIPLIER;
 
               // Draw bezier curve using the active point's controlPoint2 and calculated control point
               // controlPoint2 is the "outgoing" control point that affects the curve direction
@@ -216,13 +217,13 @@ export const GhostLine: React.FC<GhostLineProps> = ({
           closingTarget &&
           activePoint && (
             <Shape
-              stroke="#10b981"
-              strokeWidth={3}
+              stroke={GHOST_LINE_STYLING.CLOSING_INDICATOR_STROKE}
+              strokeWidth={GHOST_LINE_STYLING.CLOSING_INDICATOR_STROKE_WIDTH}
               strokeScaleEnabled={false}
               lineCap="round"
               lineJoin="round"
-              dash={[6, 6]}
-              opacity={0.8}
+              dash={GHOST_LINE_STYLING.CLOSING_INDICATOR_DASH}
+              opacity={GHOST_LINE_STYLING.CLOSING_INDICATOR_OPACITY}
               sceneFunc={(ctx, shape) => {
                 ctx.beginPath();
                 ctx.moveTo(activePoint.x, activePoint.y);
@@ -249,8 +250,8 @@ export const GhostLine: React.FC<GhostLineProps> = ({
                   // Only active point is bezier - calculate control point for target point
                   const dx = targetPoint.x - activePoint.x;
                   const dy = targetPoint.y - activePoint.y;
-                  const controlX = targetPoint.x - dx * 0.3;
-                  const controlY = targetPoint.y - dy * 0.3;
+                  const controlX = targetPoint.x - dx * GHOST_LINE_STYLING.BEZIER_CONTROL_MULTIPLIER;
+                  const controlY = targetPoint.y - dy * GHOST_LINE_STYLING.BEZIER_CONTROL_MULTIPLIER;
                   ctx.bezierCurveTo(
                     activePoint.controlPoint2.x,
                     activePoint.controlPoint2.y,
@@ -263,8 +264,8 @@ export const GhostLine: React.FC<GhostLineProps> = ({
                   // Only target point is bezier - calculate control point for active point
                   const dx = targetPoint.x - activePoint.x;
                   const dy = targetPoint.y - activePoint.y;
-                  const controlX = activePoint.x + dx * 0.3;
-                  const controlY = activePoint.y + dy * 0.3;
+                  const controlX = activePoint.x + dx * GHOST_LINE_STYLING.BEZIER_CONTROL_MULTIPLIER;
+                  const controlY = activePoint.y + dy * GHOST_LINE_STYLING.BEZIER_CONTROL_MULTIPLIER;
                   ctx.bezierCurveTo(
                     controlX,
                     controlY,
