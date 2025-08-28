@@ -168,6 +168,10 @@ export interface KonvaVectorProps {
   stroke?: string;
   /** Fill color for closed polygons */
   fill?: string;
+  /** Stroke width for the vector path */
+  strokeWidth?: number;
+  /** Opacity for the vector path */
+  opacity?: number;
   /** Enable pixel snapping for precise alignment */
   pixelSnapping?: boolean;
   /** Point styling configuration */

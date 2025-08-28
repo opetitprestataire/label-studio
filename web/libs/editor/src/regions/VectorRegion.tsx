@@ -59,9 +59,6 @@ const Model = types
     closed: false, // Vectors are not closed by default
     isPolygon: false,
 
-    // Styling properties
-    strokeWidth: types.optional(types.string, "2"),
-    opacity: types.optional(types.string, "0.2"),
     readonly: types.optional(types.boolean, false),
   })
   .volatile(() => ({
@@ -151,6 +148,20 @@ const Model = types
     get pointDisabledSize() {
       const customDisabledSize = self.control?.pointnsizedisabled;
       return customDisabledSize ? Number.parseInt(customDisabledSize) : 3;
+    },
+    // Helper function to convert pointSize to radius values
+    get pointRadiusFromSize() {
+      const size = self.control?.pointsize ?? "small";
+      switch (size) {
+        case "small":
+          return { enabled: 4, disabled: 3 };
+        case "medium":
+          return { enabled: 6, disabled: 4 };
+        case "large":
+          return { enabled: 8, disabled: 6 };
+        default:
+          return { enabled: 6, disabled: 4 };
+      }
     },
   }))
   .actions((self: any) => {
@@ -390,6 +401,8 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
     return null;
   }
 
+  console.log(Number.parseFloat(item.control?.opacity || "1"), item.control?.opacity);
+
   return (
     <RegionWrapper item={item}>
       <KonvaVector
@@ -444,23 +457,26 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
         minPoints={item.minPoints}
         maxPoints={item.maxPoints}
         skeletonEnabled={item.control?.skeleton ?? false}
-        stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
-        fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
+        stroke={item.selected ? "#ff0000" : item.control?.strokecolor}
+        fill={item.selected ? "rgba(255, 0, 0, 0.3)" : item.control?.fillcolor}
+        strokeWidth={item.control?.strokewidth ? Number.parseFloat(item.control.strokewidth) : undefined}
+        opacity={Number.parseFloat(item.control?.opacity || "1")}
         pixelSnapping={item.control?.snap === "pixel"}
         constrainToBounds={item.control?.constrainToBounds ?? true}
         disabled={(!item.selected && !item.isDrawing) || suggestion || store.annotationStore.selected.isLinkingMode}
-        // Point styling - customize point appearance
-        pointRadius={{
-          enabled: item.pointEnabledSized, // Larger points when enabled for better visibility
-          disabled: item.pointDisabledSized, // Smaller points when disabled for subtle indication
-        }}
+        // Point styling - customize point appearance based on control settings
+        pointRadius={item.pointRadiusFromSize}
         pointFill={item.selected ? "#ffffff" : "#f8fafc"}
-        pointStroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
+        pointStroke={item.selected ? "#ff0000" : item.control?.strokecolor}
         pointStrokeSelected="#ff6b35"
         pointStrokeWidth={item.selected ? 2 : 1}
       />
 
-      <LabelOnRect item={item} color={regionStyles.strokeColor} strokewidth={regionStyles.strokeWidth} />
+      <LabelOnRect
+        item={item}
+        color={item.control?.strokecolor}
+        strokewidth={item.control?.strokewidth ? Number.parseFloat(item.control.strokewidth) : undefined}
+      />
     </RegionWrapper>
   );
 });

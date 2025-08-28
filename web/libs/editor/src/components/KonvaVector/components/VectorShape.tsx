@@ -1,6 +1,7 @@
 import type React from "react";
 import { Path } from "react-konva";
 import type { BezierPoint } from "../types";
+import chroma from "chroma-js";
 
 interface VectorShapeProps {
   segments: Array<{ from: BezierPoint; to: BezierPoint }>;
@@ -8,6 +9,8 @@ interface VectorShapeProps {
   isPathClosed?: boolean;
   stroke?: string;
   fill?: string;
+  strokeWidth?: number;
+  opacity?: number;
   transform?: { zoom: number; offsetX: number; offsetY: number };
   fitScale?: number;
   onClick?: (e: any) => void;
@@ -203,6 +206,8 @@ export const VectorShape: React.FC<VectorShapeProps> = ({
   isPathClosed = false,
   stroke = "#3b82f6",
   fill = "rgba(239, 68, 68, 0.3)",
+  strokeWidth = 2,
+  opacity = 1,
   transform = { zoom: 1, offsetX: 0, offsetY: 0 },
   fitScale = 1,
   onClick,
@@ -280,14 +285,19 @@ export const VectorShape: React.FC<VectorShapeProps> = ({
       {pathGroups.map((pathSegments, index) => {
         const pathData = segmentsToPathData(pathSegments, allowClose, isPathClosed);
 
+        // Apply opacity only to fill color using chroma.js
+        const fillWithOpacity = allowClose && isPathClosed && fill ?
+          chroma(fill).alpha(opacity).css() :
+          undefined;
+
         return (
           <Path
             key={`path-${index}`}
             data={pathData}
             stroke={stroke}
-            strokeWidth={2}
+            strokeWidth={strokeWidth}
             strokeScaleEnabled={false}
-            fill={allowClose && isPathClosed ? fill : undefined}
+            fill={fillWithOpacity}
             hitStrokeWidth={20}
             onClick={onClick}
             onMouseEnter={onMouseEnter}

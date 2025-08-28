@@ -62,6 +62,7 @@ const ModelAttrs = types.model("VectorLabelsModel", {
   skeleton: types.optional(types.maybeNull(types.boolean), false),
   pointnsizeenabled: types.optional(types.maybeNull(types.string), "5"),
   pointnsizedisabled: types.optional(types.maybeNull(types.string), "3"),
+  opacity: types.optional(types.maybeNull(types.string), "1"),
   children: Types.unionArray(["label", "vectorlabel", "header", "view", "hypertext"]),
 });
 

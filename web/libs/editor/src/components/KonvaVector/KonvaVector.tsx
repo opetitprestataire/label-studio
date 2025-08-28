@@ -1461,6 +1461,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         isPathClosed={finalIsPathClosed}
         stroke={stroke}
         fill={fill}
+        strokeWidth={props.strokeWidth}
+        opacity={props.opacity}
         transform={transform}
         fitScale={fitScale}
         onClick={(e) => {
