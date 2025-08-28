@@ -1,7 +1,0 @@
-<View>
-  <PolylineLabels name="tag" toName="img" strokewidth="5" fillcolor="red" pointstyle="circle" pointsize="small">
-    <Label value="Road" background="blue"/>
-    <Label value="Boundary" background="green"/>
-  </PolylineLabels>
-  <Image name="img" value="$img"/>
-</View>
