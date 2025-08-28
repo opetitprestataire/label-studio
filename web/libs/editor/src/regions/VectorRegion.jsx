@@ -11,40 +11,10 @@ import { KonvaRegionMixin } from "../mixins/KonvaRegion";
 import { FF_DEV_3793, isFF } from "../utils/feature-flags";
 import { RELATIVE_STAGE_HEIGHT, RELATIVE_STAGE_WIDTH } from "../components/ImageView/Image";
 import { KonvaVector } from "../components/KonvaVector/KonvaVector";
-import type { KonvaVectorRef } from "../components/KonvaVector/types";
 import { observer } from "mobx-react";
 import Constants from "../core/Constants";
 import { RegionWrapper } from "./RegionWrapper";
 import { LabelOnRect } from "../components/ImageView/LabelOnRegion";
-
-// Type definitions
-interface Point {
-  id?: string;
-  x: number;
-  y: number;
-  canvasX?: number;
-  canvasY?: number;
-  relativeX?: number;
-  relativeY?: number;
-  size?: string;
-  style?: string;
-  index?: number;
-  selected?: boolean;
-  _setPos?: (x: number, y: number) => void;
-}
-
-interface VectorRegionResult {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  rotation_angle: string;
-  image_rotation: number;
-  value: {
-    shape: any[]; // Can be either number[][] (simple format) or full KonvaVector format with Bezier curves
-    closed: boolean;
-  };
-}
 
 /**
  * Vector region
@@ -54,9 +24,9 @@ const Model = types
     id: types.optional(types.identifier, guidGenerator),
     pid: types.optional(types.string, guidGenerator),
     type: "vectorregion",
-    object: types.late((): any => {
-      return types.reference(ImageModel as any);
-    }) as any,
+    object: types.late(() => {
+      return types.reference(ImageModel);
+    }),
 
     shape: types.array(types.frozen()), // Store whatever format KonvaVector gives us
     closed: false, // Vectors are not closed by default
@@ -66,7 +36,7 @@ const Model = types
   })
   .volatile(() => ({
     mouseOverStartPoint: false,
-    selectedPoint: null as Point | null,
+    selectedPoint: null,
     hideable: true,
     _supportsTransform: true,
     useTransformer: true,
@@ -76,7 +46,7 @@ const Model = types
     isDrawing: false,
     vectorRef: null,
   }))
-  .views((self: any) => ({
+  .views((self) => ({
     get store() {
       return getRoot(self);
     },
@@ -167,7 +137,7 @@ const Model = types
       }
     },
   }))
-  .actions((self: any) => {
+  .actions((self) => {
     return {
       afterCreate() {
         if (!self.shape.length) return;
@@ -179,16 +149,16 @@ const Model = types
        * Handler for mouse on start point of Vector
        * @param {boolean} val
        */
-      setMouseOverStartPoint(value: boolean) {
+      setMouseOverStartPoint(value) {
         self.mouseOverStartPoint = value;
       },
 
-      addPoint(x?: number, y?: number) {
+      addPoint() {
         // KonvaVector managing shape internally.
         // This method is just a fallback for compatibility
       },
 
-      setDrawing(drawing: boolean) {
+      setDrawing(drawing) {
         self.isDrawing = drawing;
       },
 
@@ -221,7 +191,7 @@ const Model = types
         }
       },
 
-      onSelection(type: "start" | "move" | "end" | "reset") {
+      onSelection(type) {
         if (type === "reset") {
           self.vectorRef.clearSelection();
           return;
@@ -240,12 +210,12 @@ const Model = types
         const ye = image.internalToImageY(bbox.bottom);
 
         const selectedPoints = self.shape
-          .filter((p: { x: number; y: number }) => {
+          .filter((p) => {
             const matchX = xs <= p.x && p.x <= xe;
             const matchY = ys <= p.y && p.y <= ye;
             return matchX && matchY;
           })
-          .map((p: { id: string }) => p.id);
+          .map((p) => p.id);
 
         const vector = self.vectorRef;
         vector?.selectPointsByIds(selectedPoints);
@@ -268,7 +238,7 @@ const Model = types
         }
       },
 
-      setHighlight(val: boolean) {
+      setHighlight(val) {
         self._highlighted = val;
       },
 
@@ -356,7 +326,7 @@ const Model = types
       /**
        * @return {VectorRegionResult}
        */
-      serialize(): VectorRegionResult {
+      serialize() {
         // Preserve the full KonvaVector format to maintain Bezier curves and point relationships
         const value = {
           shape: self.shape, // Keep the full point objects with all properties
@@ -366,9 +336,9 @@ const Model = types
         return self.parent.createSerializedResult(self, value);
       },
 
-      updateImageSize(wp: number, hp: number, sw: number, sh: number) {
+      updateImageSize(wp, hp, sw, sh) {
         if (self.coordstype === "px") {
-          self.shape.forEach((p: Point) => {
+          self.shape.forEach((p) => {
             const x = (sw * (p.relativeX || 0)) / RELATIVE_STAGE_WIDTH;
             const y = (sh * (p.relativeY || 0)) / RELATIVE_STAGE_HEIGHT;
 
@@ -377,7 +347,7 @@ const Model = types
         }
 
         if (!self.annotation.sentUserGenerate && self.coordstype === "perc") {
-          self.shape.forEach((p: Point) => {
+          self.shape.forEach((p) => {
             const x = (sw * p.x) / RELATIVE_STAGE_WIDTH;
             const y = (sh * p.y) / RELATIVE_STAGE_HEIGHT;
 
@@ -388,28 +358,28 @@ const Model = types
       },
 
       // New methods for KonvaVector integration
-      updateShapeFromKonvaVector(shape: any[]) {
+      updateShapeFromKonvaVector(shape) {
         // Store whatever format KonvaVector gives us
         self.shape.replace(shape);
       },
 
-      onPathClosedChange(isClosed: boolean) {
+      onPathClosedChange(isClosed) {
         self.closed = isClosed;
       },
 
       // Method to handle selection changes from the Selection tool
-      onSelectionChange(isSelected: boolean) {
+      onSelectionChange() {
         // This method can be called when the Selection tool changes selection state
         // We can add any custom logic here if needed
       },
 
-      setKonvaVectorRef(ref: KonvaVectorRef) {
+      setKonvaVectorRef(ref) {
         self.vectorRef = ref;
       },
 
       // Uses KonvaVector startPoint to start drawing
       // This will only initiate point drawing, but won't create actual point
-      startPoint(x: number, y: number) {
+      startPoint(x, y) {
         self.vectorRef.startPoint(x, y);
       },
 
@@ -418,14 +388,14 @@ const Model = types
       // by at least 5px (drag detection)
       //
       // This method is designed to create Bezier curve
-      updatePoint(x: number, y: number) {
+      updatePoint(x, y) {
         self.vectorRef.updatePoint(x, y);
       },
 
       // Commits previously created point and resets the state
       //
       // Will create a new point if it was started but never updated (regular click)
-      commitPoint(x: number, y: number) {
+      commitPoint(x, y) {
         self.vectorRef.commitPoint(x, y);
       },
     };
@@ -440,12 +410,12 @@ const VectorRegionModel = types.compose(
   Model,
 );
 
-const HtxVectorView = observer(({ item, suggestion }: any) => {
+const HtxVectorView = observer(({ item, suggestion }) => {
   const { store } = item;
   const regionStyles = useRegionStyles(item, {
     useStrokeAsFill: true,
   });
-  const konvaVectorRef = useRef<KonvaVectorRef>(null);
+  const konvaVectorRef = useRef < KonvaVectorRef > null;
 
   // Get stage dimensions and scaling from the parent image view
   const stage = item.parent?.stageRef;
