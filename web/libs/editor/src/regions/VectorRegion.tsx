@@ -127,8 +127,20 @@ const Model = types
     },
     get incomplete() {
       const notClosed = self.closable === true && self.closed === false;
-      const notFinished = self.minPoints !== undefined && self.shape.length < self.minPoints;
+      const notFinished = self.minPoints && self.shape.length < self.minPoints;
       return notClosed || notFinished;
+    },
+    get finished() {
+      // when path's closable we check if it has min points and has been closed
+      if (self.closable) return !self.incomplete;
+
+      // when not closable, check if it reached max points
+      if (self.atMaxLength) return true;
+
+      return false;
+    },
+    get atMaxLength() {
+      return self.maxPoints && self.shape.length === self.maxPoints;
     },
   }))
   .actions((self: any) => {

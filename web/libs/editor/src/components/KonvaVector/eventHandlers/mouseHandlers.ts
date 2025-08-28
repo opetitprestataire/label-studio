@@ -265,7 +265,6 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
     if (!e.evt.ctrlKey && !e.evt.metaKey) {
       // Use tracker for global selection management
       const tracker = VectorSelectionTracker.getInstance();
-      console.log(`🔍 Clearing selection in instance ${props.instanceId} (click outside)`);
       tracker.selectPoints(props.instanceId || "unknown", new Set());
 
       // Reset active point to the last physically added point when deselecting

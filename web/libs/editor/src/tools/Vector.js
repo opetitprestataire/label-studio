@@ -79,8 +79,7 @@ const _Tool = types
       deleteRegion: self.deleteRegion,
     };
 
-    let disposer;
-    let clickBlocker = false;
+    const disposers = [];
     let down = false;
     let initialCursorPosition = null;
 
@@ -99,25 +98,21 @@ const _Tool = types
         const { currentArea } = self;
         if (!currentArea || !currentArea.closable) return;
 
-        disposer = observe(
-          currentArea,
-          "closed",
-          ({ newValue }) => {
-            if (newValue.storedValue) self.finishDrawing();
-          },
-          true,
+        disposers.push(
+          observe(currentArea, "closed", ({ newValue }) => newValue.storedValue && self.finishDrawing(), true),
+        );
+        disposers.push(
+          observe(currentArea, "finished", ({ newValue }) => newValue.storedValue && self.finishDrawing(), true),
+        );
+        disposers.push(
+          observe(currentArea, "atMaxLength", ({ newValue }) => newValue.storedValue && self._finishDrawing(), true),
         );
       },
 
       stopListening() {
-        disposer?.();
-      },
-
-      closeCurrent() {
-        const area = self.getCurrentArea();
-        self.stopListening();
-        if (area.closed) return;
-        area.closePoly();
+        for (const disposer of disposers) {
+          disposer();
+        }
       },
 
       clickEv() {
@@ -127,7 +122,6 @@ const _Tool = types
 
       mousedownEv(e, [x, y]) {
         if (self.mode === "drawing") {
-          console.log("blocking: still drawing");
           return;
         }
         down = true;
@@ -181,6 +175,9 @@ const _Tool = types
         self.currentArea?.commitPoint?.(rx, ry);
         self.mode = "viewing";
         down = false;
+
+        // skipping a frame to let KonvaVector render and update properly
+        setTimeout(self.finishDrawing);
       },
 
       checkDistance(x, y) {
@@ -194,7 +191,6 @@ const _Tool = types
         const { currentArea, control } = self;
 
         down = false;
-        clickBlocker = false;
         self.currentArea.notifyDrawingFinished();
         self.setDrawing(false);
         self.mode = "viewing";
@@ -226,17 +222,14 @@ const _Tool = types
 
       // Finish drawing the current vector
       finishDrawing() {
-        const { currentArea } = self;
-        if (currentArea && !currentArea.incomplete) {
+        if (self.currentArea?.finished) {
           self._finishDrawing();
-          clickBlocker = true;
         }
       },
 
       // Clean up uncloseable shape
       cleanupUncloseableShape() {
-        const currentArea = self.getCurrentArea();
-        if (currentArea && currentArea.incomplete) {
+        if (self.currentArea?.incomplete) {
           self.deleteRegion();
         }
       },

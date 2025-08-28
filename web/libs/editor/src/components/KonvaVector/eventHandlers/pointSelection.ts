@@ -71,7 +71,6 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
 
   // Check if this instance can have selection
   if (!tracker.canInstanceHaveSelection(props.instanceId || "unknown")) {
-    console.log(`🔍 Blocking selection in ${props.instanceId} - ${tracker.getActiveInstanceId()} is active`);
     return false; // Block selection in this instance
   }
 
@@ -130,7 +129,6 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
         newSelection.add(i);
 
         // Use tracker for global selection management
-        console.log(`🔍 Selecting points in instance ${props.instanceId}:`, Array.from(newSelection));
         tracker.selectPoints(props.instanceId || "unknown", newSelection);
         return true;
       }
@@ -138,18 +136,15 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       // Handle skeleton mode point selection (when not multi-selecting)
       if (props.skeletonEnabled) {
         // Use tracker for global selection management
-        console.log(`🔍 Selecting single point in instance ${props.instanceId}:`, i);
         tracker.selectPoints(props.instanceId || "unknown", new Set([i]));
         // Don't set lastAddedPointId when selecting a point - it should remain the last physically added point
         // Set the selected point as the active point for drawing
         props.setActivePointId?.(point.id);
-        console.log(`🔧 Skeleton mode: selected point ${i} (${point.id}) as active point`);
         return true;
       }
 
       // If no Cmd/Ctrl and not skeleton mode, clear multi-selection and select only this point
       // Use tracker for global selection management
-      console.log(`🔍 Selecting single point in instance ${props.instanceId}:`, i);
       tracker.selectPoints(props.instanceId || "unknown", new Set([i]));
       // Return true to indicate we handled the selection
       return true;
@@ -173,7 +168,6 @@ export function handlePointDeselection(e: KonvaEventObject<MouseEvent>, props: E
 
   // Check if this instance can have selection (deselection is allowed for the active instance)
   if (!tracker.canInstanceHaveSelection(props.instanceId || "unknown")) {
-    console.log(`🔍 Blocking deselection in ${props.instanceId} - ${tracker.getActiveInstanceId()} is active`);
     return false; // Block deselection in this instance
   }
 
@@ -187,7 +181,6 @@ export function handlePointDeselection(e: KonvaEventObject<MouseEvent>, props: E
         newSet.delete(i);
 
         // Use tracker for global selection management
-        console.log(`🔍 Deselecting point in instance ${props.instanceId}:`, i);
         tracker.selectPoints(props.instanceId || "unknown", newSet);
 
         // Handle skeleton mode reset
@@ -195,7 +188,6 @@ export function handlePointDeselection(e: KonvaEventObject<MouseEvent>, props: E
           const lastPoint = props.initialPoints[props.initialPoints.length - 1];
           props.setLastAddedPointId?.(lastPoint.id);
           props.setActivePointId?.(lastPoint.id);
-          console.log(`🔧 Skeleton mode: reset active point to last added point ${lastPoint.id}`);
         }
 
         return true;
