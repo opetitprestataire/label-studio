@@ -1,6 +1,7 @@
 import React from "react";
 import { Line, Rect } from "react-konva";
 import type { BezierPoint } from "../types";
+import { CONTROL_POINT_DIAMOND, CONTROL_POINT_STYLING } from "../constants";
 
 interface ControlPointsProps {
   initialPoints: BezierPoint[];
@@ -48,8 +49,8 @@ export const ControlPoints: React.FC<ControlPointsProps> = ({
                 {/* White solid background line */}
                 <Line
                   points={[point.x, point.y, point.controlPoint1.x, point.controlPoint1.y]}
-                  stroke="#3b82f6"
-                  strokeWidth={1}
+                  stroke={CONTROL_POINT_STYLING.LINE_STROKE}
+                  strokeWidth={CONTROL_POINT_STYLING.LINE_STROKE_WIDTH}
                   strokeScaleEnabled={false}
                 />
               </>
@@ -59,9 +60,9 @@ export const ControlPoints: React.FC<ControlPointsProps> = ({
                 {/* White solid background line */}
                 <Line
                   points={[point.x, point.y, point.controlPoint2.x, point.controlPoint2.y]}
-                  stroke="#3b82f6"
-                  strokeWidth={1}
-                  opacity={0.9}
+                  stroke={CONTROL_POINT_STYLING.LINE_STROKE}
+                  strokeWidth={CONTROL_POINT_STYLING.LINE_STROKE_WIDTH}
+                  opacity={CONTROL_POINT_STYLING.CONTROL_POINT_2_OPACITY}
                   strokeScaleEnabled={false}
                 />
               </>
@@ -71,14 +72,14 @@ export const ControlPoints: React.FC<ControlPointsProps> = ({
               <Rect
                 x={point.controlPoint1.x}
                 y={point.controlPoint1.y}
-                width={scaledRadius * 1.6}
-                height={scaledRadius * 1.6}
-                offsetX={scaledRadius * 0.8}
-                offsetY={scaledRadius * 0.8}
-                rotation={45}
-                fill="#ffffff"
-                stroke="#3b82f6"
-                strokeWidth={2}
+                width={scaledRadius * CONTROL_POINT_DIAMOND.WIDTH_HEIGHT_MULTIPLIER}
+                height={scaledRadius * CONTROL_POINT_DIAMOND.WIDTH_HEIGHT_MULTIPLIER}
+                offsetX={scaledRadius * CONTROL_POINT_DIAMOND.OFFSET_MULTIPLIER}
+                offsetY={scaledRadius * CONTROL_POINT_DIAMOND.OFFSET_MULTIPLIER}
+                rotation={CONTROL_POINT_DIAMOND.ROTATION}
+                fill={CONTROL_POINT_STYLING.DIAMOND_FILL}
+                stroke={CONTROL_POINT_STYLING.DIAMOND_STROKE}
+                strokeWidth={CONTROL_POINT_STYLING.DIAMOND_STROKE_WIDTH}
                 strokeScaleEnabled={false}
                 listening={true}
               />
@@ -87,14 +88,14 @@ export const ControlPoints: React.FC<ControlPointsProps> = ({
               <Rect
                 x={point.controlPoint2.x}
                 y={point.controlPoint2.y}
-                width={scaledRadius * 1.6}
-                height={scaledRadius * 1.6}
-                offsetX={scaledRadius * 0.8}
-                offsetY={scaledRadius * 0.8}
-                rotation={45}
-                fill="#ffffff"
-                stroke="#3b82f6"
-                strokeWidth={2}
+                width={scaledRadius * CONTROL_POINT_DIAMOND.WIDTH_HEIGHT_MULTIPLIER}
+                height={scaledRadius * CONTROL_POINT_DIAMOND.WIDTH_HEIGHT_MULTIPLIER}
+                offsetX={scaledRadius * CONTROL_POINT_DIAMOND.OFFSET_MULTIPLIER}
+                offsetY={scaledRadius * CONTROL_POINT_DIAMOND.OFFSET_MULTIPLIER}
+                rotation={CONTROL_POINT_DIAMOND.ROTATION}
+                fill={CONTROL_POINT_STYLING.DIAMOND_FILL}
+                stroke={CONTROL_POINT_STYLING.DIAMOND_STROKE}
+                strokeWidth={CONTROL_POINT_STYLING.DIAMOND_STROKE_WIDTH}
                 strokeScaleEnabled={false}
                 listening={true}
               />

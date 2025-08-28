@@ -105,3 +105,20 @@ export const SELECTION_SIZE = {
 
 // Center calculation divisor
 export const CENTER_CALCULATION_DIVISOR = 2;
+
+// Control point diamond ratios
+export const CONTROL_POINT_DIAMOND = {
+  WIDTH_HEIGHT_MULTIPLIER: 1.6,
+  OFFSET_MULTIPLIER: 0.8,
+  ROTATION: 45,
+} as const;
+
+// Control point styling
+export const CONTROL_POINT_STYLING = {
+  LINE_STROKE: "#3b82f6",
+  LINE_STROKE_WIDTH: 1,
+  DIAMOND_FILL: "#ffffff",
+  DIAMOND_STROKE: "#3b82f6",
+  DIAMOND_STROKE_WIDTH: 2,
+  CONTROL_POINT_2_OPACITY: 0.9,
+} as const;
