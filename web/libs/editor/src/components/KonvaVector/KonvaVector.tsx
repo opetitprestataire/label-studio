@@ -197,7 +197,10 @@ import {
  */
 export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, ref) => {
   // Generate unique instance ID
-  const instanceId = useMemo(() => `${INSTANCE_ID_PREFIX}${Math.random().toString(36).substr(2, INSTANCE_ID_LENGTH)}`, []);
+  const instanceId = useMemo(
+    () => `${INSTANCE_ID_PREFIX}${Math.random().toString(36).substr(2, INSTANCE_ID_LENGTH)}`,
+    [],
+  );
 
   const {
     initialPoints: rawInitialPoints = [],
@@ -380,17 +383,9 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   // Determine if drawing should be disabled based on current interaction context
   const isDrawingDisabled = () => {
     // Disable all interactions when disabled prop is true
-    if (disabled) {
-      return true;
-    }
-
     // Disable drawing when Shift is held (for Shift+click functionality)
-    if (isShiftKeyHeld) {
-      return true;
-    }
-
     // Disable drawing when multiple points are selected
-    if (selectedPoints.size > SELECTION_SIZE.MULTI_SELECTION_MIN) {
+    if (disabled || isShiftKeyHeld || selectedPoints.size > SELECTION_SIZE.MULTI_SELECTION_MIN) {
       return true;
     }
 
