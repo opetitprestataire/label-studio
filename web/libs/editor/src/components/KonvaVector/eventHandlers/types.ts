@@ -1,6 +1,6 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { BezierPoint, Point, GhostPoint } from "../types";
-import { PointType } from "../types";
+import type { PointType } from "../types";
 
 export interface EventHandlerProps {
   instanceId?: string; // Add instanceId for tracker integration
