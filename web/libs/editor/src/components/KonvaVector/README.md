@@ -98,6 +98,65 @@ function MyComponent() {
    - Resets the creation state
    - Returns `true` if successful, `false` if not creating
 
+## Programmatic Point Transformation
+
+The component exposes four methods for programmatic point transformation:
+
+### `translatePoints(dx, dy, pointIds?)`
+Translates points by the specified delta. If `pointIds` is provided, only those points are transformed.
+
+```typescript
+// Translate all points by (50, 30)
+vectorRef.current?.translatePoints(50, 30);
+
+// Translate specific points by (20, -20)
+vectorRef.current?.translatePoints(20, -20, ["point1", "point2"]);
+```
+
+### `rotatePoints(angle, centerX, centerY, pointIds?)`
+Rotates points around the specified center point. Angle is in degrees.
+
+```typescript
+// Rotate all points 45° around the center
+vectorRef.current?.rotatePoints(45, centerX, centerY);
+
+// Rotate specific points 90° around a point
+vectorRef.current?.rotatePoints(90, 200, 150, ["point1", "point2"]);
+```
+
+### `scalePoints(scaleX, scaleY, centerX, centerY, pointIds?)`
+Scales points around the specified center point.
+
+```typescript
+// Scale all points 1.5x around the center
+vectorRef.current?.scalePoints(1.5, 1.5, centerX, centerY);
+
+// Scale specific points 0.8x around a point
+vectorRef.current?.scalePoints(0.8, 0.8, 200, 150, ["point1", "point2"]);
+```
+
+### `transformPoints(transformation, pointIds?)`
+Applies a complex transformation combining translation, rotation, and scaling.
+
+```typescript
+vectorRef.current?.transformPoints({
+  dx: 30,           // Translation X
+  dy: -20,          // Translation Y
+  rotation: 30,     // Rotation in degrees
+  scaleX: 1.2,      // Scale X
+  scaleY: 0.9,      // Scale Y
+  centerX: 200,     // Center point for rotation/scaling
+  centerY: 150,
+}, ["point1", "point2"]);
+```
+
+### Notes:
+- All transformation methods work with both regular and bezier points
+- Bezier control points are automatically transformed along with their main points
+- If `pointIds` is not provided, all points are transformed
+- Transformations are applied immediately and trigger `onPointsChange`
+- These methods work independently of the visual transformer
+
 ### Single Source of Truth
 
 The PointCreationManager is now the **single source of truth** for all point creation:

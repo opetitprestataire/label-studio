@@ -931,6 +931,290 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     startPoint: (x: number, y: number) => pointCreationManager.startPoint(x, y),
     updatePoint: (x: number, y: number) => pointCreationManager.updatePoint(x, y),
     commitPoint: (x: number, y: number) => pointCreationManager.commitPoint(x, y),
+    // Programmatic point transformation methods
+    translatePoints: (dx: number, dy: number, pointIds?: string[]) => {
+      const pointsToTransform = pointIds
+        ? initialPoints.filter(p => pointIds.includes(p.id))
+        : initialPoints;
+
+      const updatedPoints = initialPoints.map(point => {
+        if (pointsToTransform.some(p => p.id === point.id)) {
+          let updatedPoint = { ...point };
+
+          // Apply translation to main point
+          updatedPoint.x += dx;
+          updatedPoint.y += dy;
+
+          // Apply translation to control points if it's a bezier point
+          if (updatedPoint.isBezier) {
+            if (updatedPoint.controlPoint1) {
+              updatedPoint.controlPoint1 = {
+                ...updatedPoint.controlPoint1,
+                x: updatedPoint.controlPoint1.x + dx,
+                y: updatedPoint.controlPoint1.y + dy,
+              };
+            }
+            if (updatedPoint.controlPoint2) {
+              updatedPoint.controlPoint2 = {
+                ...updatedPoint.controlPoint2,
+                x: updatedPoint.controlPoint2.x + dx,
+                y: updatedPoint.controlPoint2.y + dy,
+              };
+            }
+          }
+
+          return updatedPoint;
+        }
+        return point;
+      });
+
+      onPointsChange?.(updatedPoints);
+    },
+    rotatePoints: (angle: number, centerX: number, centerY: number, pointIds?: string[]) => {
+      const pointsToTransform = pointIds
+        ? initialPoints.filter(p => pointIds.includes(p.id))
+        : initialPoints;
+
+      const radians = angle * Math.PI / 180;
+      const cos = Math.cos(radians);
+      const sin = Math.sin(radians);
+
+      const updatedPoints = initialPoints.map(point => {
+        if (pointsToTransform.some(p => p.id === point.id)) {
+          let updatedPoint = { ...point };
+
+          // Apply rotation to main point
+          const dx = updatedPoint.x - centerX;
+          const dy = updatedPoint.y - centerY;
+          updatedPoint.x = centerX + dx * cos - dy * sin;
+          updatedPoint.y = centerY + dx * sin + dy * cos;
+
+          // Apply rotation to control points if it's a bezier point
+          if (updatedPoint.isBezier) {
+            if (updatedPoint.controlPoint1) {
+              const cp1Dx = updatedPoint.controlPoint1.x - centerX;
+              const cp1Dy = updatedPoint.controlPoint1.y - centerY;
+              updatedPoint.controlPoint1 = {
+                ...updatedPoint.controlPoint1,
+                x: centerX + cp1Dx * cos - cp1Dy * sin,
+                y: centerY + cp1Dx * sin + cp1Dy * cos,
+              };
+            }
+            if (updatedPoint.controlPoint2) {
+              const cp2Dx = updatedPoint.controlPoint2.x - centerX;
+              const cp2Dy = updatedPoint.controlPoint2.y - centerY;
+              updatedPoint.controlPoint2 = {
+                ...updatedPoint.controlPoint2,
+                x: centerX + cp2Dx * cos - cp2Dy * sin,
+                y: centerY + cp2Dx * sin + cp2Dy * cos,
+              };
+            }
+          }
+
+          return updatedPoint;
+        }
+        return point;
+      });
+
+      onPointsChange?.(updatedPoints);
+    },
+    scalePoints: (scaleX: number, scaleY: number, centerX: number, centerY: number, pointIds?: string[]) => {
+      const pointsToTransform = pointIds
+        ? initialPoints.filter(p => pointIds.includes(p.id))
+        : initialPoints;
+
+      const updatedPoints = initialPoints.map(point => {
+        if (pointsToTransform.some(p => p.id === point.id)) {
+          let updatedPoint = { ...point };
+
+          // Apply scaling to main point
+          const dx = updatedPoint.x - centerX;
+          const dy = updatedPoint.y - centerY;
+          updatedPoint.x = centerX + dx * scaleX;
+          updatedPoint.y = centerY + dy * scaleY;
+
+          // Apply scaling to control points if it's a bezier point
+          if (updatedPoint.isBezier) {
+            if (updatedPoint.controlPoint1) {
+              const cp1Dx = updatedPoint.controlPoint1.x - centerX;
+              const cp1Dy = updatedPoint.controlPoint1.y - centerY;
+              updatedPoint.controlPoint1 = {
+                ...updatedPoint.controlPoint1,
+                x: centerX + cp1Dx * scaleX,
+                y: centerY + cp1Dy * scaleY,
+              };
+            }
+            if (updatedPoint.controlPoint2) {
+              const cp2Dx = updatedPoint.controlPoint2.x - centerX;
+              const cp2Dy = updatedPoint.controlPoint2.y - centerY;
+              updatedPoint.controlPoint2 = {
+                ...updatedPoint.controlPoint2,
+                x: centerX + cp2Dx * scaleX,
+                y: centerY + cp2Dy * scaleY,
+              };
+            }
+          }
+
+          return updatedPoint;
+        }
+        return point;
+      });
+
+      onPointsChange?.(updatedPoints);
+    },
+    transformPoints: (transformation: {
+      dx?: number;
+      dy?: number;
+      rotation?: number;
+      scaleX?: number;
+      scaleY?: number;
+      centerX?: number;
+      centerY?: number;
+    }, pointIds?: string[]) => {
+      const pointsToTransform = pointIds
+        ? initialPoints.filter(p => pointIds.includes(p.id))
+        : initialPoints;
+
+      const updatedPoints = initialPoints.map(point => {
+        if (pointsToTransform.some(p => p.id === point.id)) {
+          let updatedPoint = { ...point };
+
+          // Apply translation
+          if (transformation.dx !== undefined) {
+            updatedPoint.x += transformation.dx;
+            updatedPoint.y += transformation.dy || 0;
+          }
+
+          // Apply rotation and scaling (need center point)
+          if ((transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined) &&
+            transformation.centerX !== undefined && transformation.centerY !== undefined) {
+
+            let finalX = updatedPoint.x;
+            let finalY = updatedPoint.y;
+
+            // Apply scaling
+            if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
+              const scaleX = transformation.scaleX || 1;
+              const scaleY = transformation.scaleY || 1;
+              const dx = finalX - transformation.centerX;
+              const dy = finalY - transformation.centerY;
+              finalX = transformation.centerX + dx * scaleX;
+              finalY = transformation.centerY + dy * scaleY;
+            }
+
+            // Apply rotation
+            if (transformation.rotation !== undefined) {
+              const radians = transformation.rotation * Math.PI / 180;
+              const cos = Math.cos(radians);
+              const sin = Math.sin(radians);
+              const dx = finalX - transformation.centerX;
+              const dy = finalY - transformation.centerY;
+              finalX = transformation.centerX + dx * cos - dy * sin;
+              finalY = transformation.centerY + dx * sin + dy * cos;
+            }
+
+            updatedPoint.x = finalX;
+            updatedPoint.y = finalY;
+          }
+
+          // Apply transformations to control points if it's a bezier point
+          if (updatedPoint.isBezier) {
+            if (updatedPoint.controlPoint1) {
+              let cp1 = { ...updatedPoint.controlPoint1 };
+
+              // Apply translation
+              if (transformation.dx !== undefined) {
+                cp1.x += transformation.dx;
+                cp1.y += transformation.dy || 0;
+              }
+
+              // Apply rotation and scaling
+              if ((transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined) &&
+                transformation.centerX !== undefined && transformation.centerY !== undefined) {
+
+                let finalCp1X = cp1.x;
+                let finalCp1Y = cp1.y;
+
+                // Apply scaling
+                if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
+                  const scaleX = transformation.scaleX || 1;
+                  const scaleY = transformation.scaleY || 1;
+                  const dx = finalCp1X - transformation.centerX;
+                  const dy = finalCp1Y - transformation.centerY;
+                  finalCp1X = transformation.centerX + dx * scaleX;
+                  finalCp1Y = transformation.centerY + dy * scaleY;
+                }
+
+                // Apply rotation
+                if (transformation.rotation !== undefined) {
+                  const radians = transformation.rotation * Math.PI / 180;
+                  const cos = Math.cos(radians);
+                  const sin = Math.sin(radians);
+                  const dx = finalCp1X - transformation.centerX;
+                  const dy = finalCp1Y - transformation.centerY;
+                  finalCp1X = transformation.centerX + dx * cos - dy * sin;
+                  finalCp1Y = transformation.centerY + dx * sin + dy * cos;
+                }
+
+                cp1.x = finalCp1X;
+                cp1.y = finalCp1Y;
+              }
+
+              updatedPoint.controlPoint1 = cp1;
+            }
+
+            if (updatedPoint.controlPoint2) {
+              let cp2 = { ...updatedPoint.controlPoint2 };
+
+              // Apply translation
+              if (transformation.dx !== undefined) {
+                cp2.x += transformation.dx;
+                cp2.y += transformation.dy || 0;
+              }
+
+              // Apply rotation and scaling
+              if ((transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined) &&
+                transformation.centerX !== undefined && transformation.centerY !== undefined) {
+
+                let finalCp2X = cp2.x;
+                let finalCp2Y = cp2.y;
+
+                // Apply scaling
+                if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
+                  const scaleX = transformation.scaleX || 1;
+                  const scaleY = transformation.scaleY || 1;
+                  const dx = finalCp2X - transformation.centerX;
+                  const dy = finalCp2Y - transformation.centerY;
+                  finalCp2X = transformation.centerX + dx * scaleX;
+                  finalCp2Y = transformation.centerY + dy * scaleY;
+                }
+
+                // Apply rotation
+                if (transformation.rotation !== undefined) {
+                  const radians = transformation.rotation * Math.PI / 180;
+                  const cos = Math.cos(radians);
+                  const sin = Math.sin(radians);
+                  const dx = finalCp2X - transformation.centerX;
+                  const dy = finalCp2Y - transformation.centerY;
+                  finalCp2X = transformation.centerX + dx * cos - dy * sin;
+                  finalCp2Y = transformation.centerY + dx * sin + dy * cos;
+                }
+
+                cp2.x = finalCp2X;
+                cp2.y = finalCp2Y;
+              }
+
+              updatedPoint.controlPoint2 = cp2;
+            }
+          }
+
+          return updatedPoint;
+        }
+        return point;
+      });
+
+      onPointsChange?.(updatedPoints);
+    },
   }));
 
   // Handle Shift key for disconnected mode

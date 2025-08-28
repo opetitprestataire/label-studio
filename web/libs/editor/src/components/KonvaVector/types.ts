@@ -48,6 +48,19 @@ export interface KonvaVectorRef {
   startPoint: (x: number, y: number) => boolean;
   updatePoint: (x: number, y: number) => boolean;
   commitPoint: (x: number, y: number) => boolean;
+  // Programmatic point transformation methods
+  translatePoints: (dx: number, dy: number, pointIds?: string[]) => void;
+  rotatePoints: (angle: number, centerX: number, centerY: number, pointIds?: string[]) => void;
+  scalePoints: (scaleX: number, scaleY: number, centerX: number, centerY: number, pointIds?: string[]) => void;
+  transformPoints: (transformation: {
+    dx?: number;
+    dy?: number;
+    rotation?: number;
+    scaleX?: number;
+    scaleY?: number;
+    centerX?: number;
+    centerY?: number;
+  }, pointIds?: string[]) => void;
 }
 
 /**
