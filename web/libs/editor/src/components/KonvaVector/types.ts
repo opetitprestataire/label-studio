@@ -149,6 +149,21 @@ export interface KonvaVectorProps {
   fill?: string;
   /** Enable pixel snapping for precise alignment */
   pixelSnapping?: boolean;
+  /** Point styling configuration */
+  pointRadius?: {
+    /** Radius when component is enabled (default: 6) */
+    enabled?: number;
+    /** Radius when component is disabled (default: 4) */
+    disabled?: number;
+  };
+  /** Point fill color (default: "#ffffff") */
+  pointFill?: string;
+  /** Point stroke color when not selected (default: "#3b82f6") */
+  pointStroke?: string;
+  /** Point stroke color when selected (default: "#fbbf24") */
+  pointStrokeSelected?: string;
+  /** Point stroke width (default: 2) */
+  pointStrokeWidth?: number;
   /** Mouse down event handler */
   onMouseDown?: (e: KonvaEventObject<MouseEvent>) => void;
   /** Mouse move event handler */

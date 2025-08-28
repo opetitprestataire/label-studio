@@ -142,6 +142,16 @@ const Model = types
     get atMaxLength() {
       return self.maxPoints && self.shape.length === self.maxPoints;
     },
+
+    /// Visuals
+    get pointEnabledSize() {
+      const customEnabledSize = self.control?.pointnsizeenabled;
+      return customEnabledSize ? Number.parseInt(customEnabledSize) : 5;
+    },
+    get pointDisabledSize() {
+      const customDisabledSize = self.control?.pointnsizedisabled;
+      return customDisabledSize ? Number.parseInt(customDisabledSize) : 3;
+    },
   }))
   .actions((self: any) => {
     return {
@@ -439,6 +449,15 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
         pixelSnapping={item.control?.snap === "pixel"}
         constrainToBounds={item.control?.constrainToBounds ?? true}
         disabled={(!item.selected && !item.isDrawing) || suggestion || store.annotationStore.selected.isLinkingMode}
+        // Point styling - customize point appearance
+        pointRadius={{
+          enabled: item.pointEnabledSized, // Larger points when enabled for better visibility
+          disabled: item.pointDisabledSized, // Smaller points when disabled for subtle indication
+        }}
+        pointFill={item.selected ? "#ffffff" : "#f8fafc"}
+        pointStroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
+        pointStrokeSelected="#ff6b35"
+        pointStrokeWidth={item.selected ? 2 : 1}
       />
 
       <LabelOnRect item={item} color={regionStyles.strokeColor} strokewidth={regionStyles.strokeWidth} />

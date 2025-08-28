@@ -48,6 +48,7 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  * - **Drawing Mode**: `isDrawingMode={true}` - Click to add points, drag for bezier curves
  * - **Edit Mode**: `isDrawingMode={false}` - Select, drag, and transform existing points
  * - **Skeleton Mode**: `skeletonEnabled={true}` - Connect points to active point instead of last point
+ * - **Disabled Mode**: Point selection still works for keypoint annotation - click to select points, Cmd/Ctrl+click for multi-selection
  *
  * ### Export & Import
  * - **Simple Format**: `[[x,y], [x,y], ...]` - Easy to work with
@@ -105,6 +106,41 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  * />
  * ```
  *
+ * ### With Custom Point Styling
+ * ```tsx
+ * <KonvaVector
+ *   initialPoints={points}
+ *   onPointsChange={setPoints}
+ *   // Customize point appearance
+ *   pointRadius={{
+ *     enabled: 8, // Larger points when enabled
+ *     disabled: 3, // Smaller points when disabled
+ *   }}
+ *   pointFill="#ffffff"
+ *   pointStroke="#3b82f6"
+ *   pointStrokeSelected="#fbbf24"
+ *   pointStrokeWidth={2}
+ * />
+ * ```
+ *
+ * ### As Keypoint Annotation Tool
+ * ```tsx
+ * <KonvaVector
+ *   initialPoints={keypoints}
+ *   onPointsChange={setKeypoints}
+ *   disabled={true} // Disable editing but allow selection
+ *   allowClose={false} // Keypoints don't form closed paths
+ *   allowBezier={false} // Keypoints are simple points
+ *   pointRadius={{
+ *     enabled: 6,
+ *     disabled: 4, // Smaller when disabled but still selectable
+ *   }}
+ *   onPointSelected={(pointIndex) => {
+ *     console.log('Selected keypoint:', pointIndex);
+ *   }}
+ * />
+ * ```
+ *
  * ## Keyboard Shortcuts
  * - **Alt + Click**: Convert point between regular ↔ bezier or delete existing point
  * - **Alt + Click on segment**: Break closed path at segment (when path is closed)
@@ -120,6 +156,10 @@ import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, Konva
  * - `skeletonEnabled`: Connect new points to active point
  * - `format`: Export format ("simple" | "regular")
  * - `minPoints`/`maxPoints`: Point count constraints
+ * - `stroke`/`fill`: Path styling colors
+ * - `pointRadius`: Configurable point sizes for enabled/disabled states
+ * - `pointFill`/`pointStroke`/`pointStrokeSelected`: Point styling colors
+ * - `pointStrokeWidth`: Point stroke width
  * - Event handlers for all point operations
  *
  * @component
@@ -177,6 +217,11 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     pixelSnapping = false,
     disabled = false,
     constrainToBounds = false,
+    pointRadius,
+    pointFill = "#ffffff",
+    pointStroke = "#3b82f6",
+    pointStrokeSelected = "#fbbf24",
+    pointStrokeWidth = 2,
   } = props;
 
   // Normalize input points to BezierPoint format
@@ -1473,6 +1518,47 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         transform={transform}
         fitScale={fitScale}
         pointRefs={pointRefs}
+        disabled={disabled}
+        pointRadius={pointRadius}
+        pointFill={pointFill}
+        pointStroke={pointStroke}
+        pointStrokeSelected={pointStrokeSelected}
+        pointStrokeWidth={pointStrokeWidth}
+        onPointClick={(e, pointIndex) => {
+          // Handle point selection even when disabled (similar to shape clicks)
+          if (disabled) {
+            // Check if this instance can have selection
+            if (!tracker.canInstanceHaveSelection(instanceId)) {
+              return; // Block the selection
+            }
+
+            // Handle cmd-click to select all points
+            if ((e.evt.ctrlKey || e.evt.metaKey) && !e.evt.altKey && !e.evt.shiftKey) {
+              // Select all points in the path
+              const allPointIndices = Array.from({ length: initialPoints.length }, (_, i) => i);
+              tracker.selectPoints(instanceId, new Set(allPointIndices));
+              return;
+            }
+
+            // Handle regular point selection
+            if (e.evt.ctrlKey || e.evt.metaKey) {
+              // Add to multi-selection
+              const newSelection = new Set(selectedPoints);
+              newSelection.add(pointIndex);
+              tracker.selectPoints(instanceId, newSelection);
+            } else {
+              // Select only this point
+              tracker.selectPoints(instanceId, new Set([pointIndex]));
+            }
+
+            // Call the original onClick handler if provided
+            onClick?.(e);
+            return;
+          }
+
+          // When not disabled, let the normal event handlers handle it
+          // The point click will be detected by the layer-level handlers
+        }}
       />
 
       {/* Proxy nodes for Transformer (positioned at exact point centers) - only show when not in drawing mode */}
