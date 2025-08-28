@@ -275,12 +275,26 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
     }
   }
 
-  console.log("🔍 Shift-click: Closest point index:", closestPointIndex, "distance:", closestDistance, "hit radius:", 10 / (props.transform.zoom * props.fitScale));
+  console.log(
+    "🔍 Shift-click: Closest point index:",
+    closestPointIndex,
+    "distance:",
+    closestDistance,
+    "hit radius:",
+    10 / (props.transform.zoom * props.fitScale),
+  );
 
   // Handle the point if we found one
   if (closestPointIndex !== -1) {
     const point = props.initialPoints[closestPointIndex];
-    console.log("🔍 Shift-click: Found point at index", closestPointIndex, "isBezier:", point.isBezier, "allowBezier:", props.allowBezier);
+    console.log(
+      "🔍 Shift-click: Found point at index",
+      closestPointIndex,
+      "isBezier:",
+      point.isBezier,
+      "allowBezier:",
+      props.allowBezier,
+    );
 
     // If it's a bezier point and disconnected, reconnect it first
     if (point.isBezier && point.disconnected) {
@@ -328,8 +342,8 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
 
       // Smart control point placement based on neighboring points
       // Use actual path connections via prevPointId references, not array bounds
-      const prevPoint = props.initialPoints.find(p => p.id === pointToConvert.prevPointId);
-      const nextPoint = props.initialPoints.find(p => p.prevPointId === pointToConvert.id);
+      const prevPoint = props.initialPoints.find((p) => p.id === pointToConvert.prevPointId);
+      const nextPoint = props.initialPoints.find((p) => p.prevPointId === pointToConvert.id);
 
       // Check if we have both neighboring points for smart placement
       if (prevPoint && nextPoint) {
@@ -429,7 +443,9 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
         return true;
       } else {
         // Graceful error handling - only for truly corrupted data
-        console.warn("🔍 Shift-click: Cannot convert point - missing neighboring points. This should not happen in normal operation.");
+        console.warn(
+          "🔍 Shift-click: Cannot convert point - missing neighboring points. This should not happen in normal operation.",
+        );
         return false;
       }
     }
