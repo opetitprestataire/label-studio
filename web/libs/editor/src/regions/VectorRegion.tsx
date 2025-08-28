@@ -299,6 +299,52 @@ const Model = types
       },
 
       /**
+       * @example
+       * {
+       *   "original_width": 1920,
+       *   "original_height": 1280,
+       *   "image_rotation": 0,
+       *   "value": {
+       *     "shape": [
+       *       {
+       *         "id": "point-1",
+       *         "x": 2,
+       *         "y": 2,
+       *         "prevPointId": null,
+       *         "isBezier": false
+       *       },
+       *       {
+       *         "id": "point-2",
+       *         "x": 3.5,
+       *         "y": 8.1,
+       *         "prevPointId": "point-1",
+       *         "isBezier": true,
+       *         "controlPoint1": {"x": 2.5, "y": 5.0},
+       *         "controlPoint2": {"x": 3.0, "y": 6.5}
+       *       },
+       *       {
+       *         "id": "point-3",
+       *         "x": 3.5,
+       *         "y": 12.6,
+       *         "prevPointId": "point-2",
+       *         "isBezier": false
+       *       }
+       *     ],
+       *     "closed": false,
+       *     "vectorlabels": ["Road"]
+       *   }
+       * }
+       * @typedef {Object} VectorRegionResult
+       * @property {number} original_width width of the original image (px)
+       * @property {number} original_height height of the original image (px)
+       * @property {number} image_rotation rotation degree of the image (deg)
+       * @property {Object} value
+       * @property {Array<Object>} value.shape array of point objects with coordinates, bezier curve information, and point relationships
+       * @property {boolean} value.closed whether the vector is closed (polygon) or open (polyline)
+       * @property {Array<string>} value.vectorlabels array of label names assigned to this vector
+       */
+
+      /**
        * @return {VectorRegionResult}
        */
       serialize(): VectorRegionResult {
