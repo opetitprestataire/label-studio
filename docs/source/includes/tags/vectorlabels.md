@@ -31,9 +31,8 @@
 | original_height | <code>number</code>                             | height of the original image (px)                                                |
 | image_rotation  | <code>number</code>                             | rotation degree of the image (deg)                                               |
 | value           | <code>Object</code>                             |                                                                                  |
-| value.points    | <code>Array.&lt;Array.&lt;number&gt;&gt;</code> | list of (x, y) coordinates of the vector by percentage of the image size (0-100) |
+| value.points    | <code>Array.&lt;Object&gt;</code> | list of point objects with coordinates, bezier curve information, and point relationships |
 | value.closed    | <code>boolean</code>                            | whether the vector is closed (polygon) or open (polyline)                        |
-| value.curves    | <code>Array.&lt;Object&gt;</code>               | bezier curve control points (if curves are enabled)                              |
 
 ### Example JSON
 
@@ -43,9 +42,32 @@
     "original_height": 1280,
     "image_rotation": 0,
     "value": {
-        "points": [[2, 2], [3.5, 8.1], [3.5, 12.6]],
+        "points": [
+            {
+                "id": "point-1",
+                "x": 2,
+                "y": 2,
+                "prevPointId": null,
+                "isBezier": false
+            },
+            {
+                "id": "point-2", 
+                "x": 3.5,
+                "y": 8.1,
+                "prevPointId": "point-1",
+                "isBezier": true,
+                "controlPoint1": {"x": 2.5, "y": 5.0},
+                "controlPoint2": {"x": 3.0, "y": 6.5}
+            },
+            {
+                "id": "point-3",
+                "x": 3.5,
+                "y": 12.6,
+                "prevPointId": "point-2",
+                "isBezier": false
+            }
+        ],
         "closed": false,
-        "curves": [],
         "vectorlabels": ["Road"]
     }
 }
