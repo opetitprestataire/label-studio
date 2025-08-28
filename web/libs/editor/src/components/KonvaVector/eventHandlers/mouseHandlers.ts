@@ -266,7 +266,7 @@ export function createMouseDownHandler(props: EventHandlerProps, handledSelectio
       // Use tracker for global selection management
       const tracker = VectorSelectionTracker.getInstance();
       console.log(`🔍 Clearing selection in instance ${props.instanceId} (click outside)`);
-      tracker.selectPoints(props.instanceId || 'unknown', new Set());
+      tracker.selectPoints(props.instanceId || "unknown", new Set());
 
       // Reset active point to the last physically added point when deselecting
       if (props.skeletonEnabled && props.initialPoints.length > 0) {
@@ -594,7 +594,14 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
 
     // Handle Bezier curve creation in drawing mode (click-drag without shift key) - only when path is not closed
     // Skip if PointCreationManager is currently creating a point
-    if (props.isDrawingMode && !props.isPathClosed && props.lastPos.current && !e.evt.shiftKey && props.allowBezier && !props.pointCreationManager?.isCreating()) {
+    if (
+      props.isDrawingMode &&
+      !props.isPathClosed &&
+      props.lastPos.current &&
+      !e.evt.shiftKey &&
+      props.allowBezier &&
+      !props.pointCreationManager?.isCreating()
+    ) {
       const dragDistance = Math.sqrt(
         (e.evt.clientX - props.lastPos.current.x) ** 2 + (e.evt.clientY - props.lastPos.current.y) ** 2,
       );
@@ -871,7 +878,9 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
 
           if (closestPathPoint && getDistance(imagePos, closestPathPoint.point) <= segmentHitRadius) {
             // We clicked on a segment, break the closed path
-            console.log(`🔧 Alt+click detected on segment ${closestPathPoint.segmentIndex} at position (${closestPathPoint.point.x.toFixed(1)}, ${closestPathPoint.point.y.toFixed(1)})`);
+            console.log(
+              `🔧 Alt+click detected on segment ${closestPathPoint.segmentIndex} at position (${closestPathPoint.point.x.toFixed(1)}, ${closestPathPoint.point.y.toFixed(1)})`,
+            );
             if (breakPathAtSegment(props, closestPathPoint.segmentIndex)) {
               return;
             }
@@ -879,8 +888,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
         }
       }
     }
-
-
 
     // Skip if we already handled selection in mousedown (for cmd-click and other interactions)
     if (handledSelectionInMouseDown.current) {
@@ -950,7 +957,7 @@ function handlePointSelectionFromIndex(pointIndex: number, props: EventHandlerPr
   // Use tracker for global selection management
   const tracker = VectorSelectionTracker.getInstance();
   console.log(`🔍 Selecting point by index in instance ${props.instanceId}:`, pointIndex);
-  tracker.selectPoints(props.instanceId || 'unknown', new Set([pointIndex]));
+  tracker.selectPoints(props.instanceId || "unknown", new Set([pointIndex]));
 
   // Update activePointId for skeleton mode - set the selected point as the active point
   if (pointIndex >= 0 && pointIndex < props.initialPoints.length) {

@@ -1,5 +1,4 @@
 import type { KonvaEventObject } from "konva/lib/Node";
-import type { BezierPoint } from "../types";
 import type { EventHandlerProps } from "./types";
 import { getDistance, isPointInCanvasBounds, snapToPixel, stageToImageCoordinates } from "./utils";
 
@@ -94,7 +93,9 @@ export function closePathBetweenFirstAndLast(
   // Update the internal path closed state and notify parent
   props.setIsPathClosed(true);
 
-  console.log(`🔧 Path closed: first point (${updatedPoints[0].id}) now points to last point (${updatedPoints[updatedPoints.length - 1].id})`);
+  console.log(
+    `🔧 Path closed: first point (${updatedPoints[0].id}) now points to last point (${updatedPoints[updatedPoints.length - 1].id})`,
+  );
 
   return true;
 }
@@ -150,15 +151,10 @@ export function addPoint(props: EventHandlerProps, options: AddPointOptions): bo
       options.controlPoint1,
       options.controlPoint2,
       options.prevPointId,
-      options.isDisconnected
-    );
-  } else {
-    return props.pointCreationManager.createRegularPointAt(
-      options.x,
-      options.y,
-      options.prevPointId
+      options.isDisconnected,
     );
   }
+  return props.pointCreationManager.createRegularPointAt(options.x, options.y, options.prevPointId);
 }
 
 export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: EventHandlerProps): boolean {
@@ -240,14 +236,7 @@ export function addBezierPoint(
     return false;
   }
 
-  return props.pointCreationManager.createBezierPointAt(
-    x,
-    y,
-    controlPoint1,
-    controlPoint2,
-    undefined,
-    isDisconnected
-  );
+  return props.pointCreationManager.createBezierPointAt(x, y, controlPoint1, controlPoint2, undefined, isDisconnected);
 }
 
 /**
@@ -435,7 +424,7 @@ export function insertPointBetween(
     nextPointId,
     type,
     controlPoint1,
-    controlPoint2
+    controlPoint2,
   );
 }
 

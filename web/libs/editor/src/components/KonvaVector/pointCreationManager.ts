@@ -1,6 +1,5 @@
-import type { BezierPoint, Point } from "./types";
+import type { BezierPoint } from "./types";
 import { snapToPixel } from "./eventHandlers/utils";
-import type { EventHandlerProps } from "./eventHandlers/types";
 import { generatePointId } from "./utils";
 
 export interface PointCreationState {
@@ -45,8 +44,6 @@ export class PointCreationManager {
 
   private props: PointCreationManagerProps | null = null;
 
-  constructor() { }
-
   setProps(props: PointCreationManagerProps): void {
     this.props = props;
   }
@@ -68,8 +65,12 @@ export class PointCreationManager {
 
     // Check if we're within canvas bounds (only if bounds checking is enabled)
     if (this.props.constrainToBounds && this.props.width && this.props.height) {
-      if (snappedCoords.x < 0 || snappedCoords.x > this.props.width || 
-          snappedCoords.y < 0 || snappedCoords.y > this.props.height) {
+      if (
+        snappedCoords.x < 0 ||
+        snappedCoords.x > this.props.width ||
+        snappedCoords.y < 0 ||
+        snappedCoords.y > this.props.height
+      ) {
         return false;
       }
     }
@@ -97,21 +98,30 @@ export class PointCreationManager {
 
     // Check if we're within canvas bounds (only if bounds checking is enabled)
     if (this.props.constrainToBounds && this.props.width && this.props.height) {
-      if (snappedCoords.x < 0 || snappedCoords.x > this.props.width || 
-          snappedCoords.y < 0 || snappedCoords.y > this.props.height) {
+      if (
+        snappedCoords.x < 0 ||
+        snappedCoords.x > this.props.width ||
+        snappedCoords.y < 0 ||
+        snappedCoords.y > this.props.height
+      ) {
         return false;
       }
     }
 
     // Calculate drag distance from start point
     const dragDistance = Math.sqrt(
-      (snappedCoords.x - this.state.startX) ** 2 + (snappedCoords.y - this.state.startY) ** 2
+      (snappedCoords.x - this.state.startX) ** 2 + (snappedCoords.y - this.state.startY) ** 2,
     );
 
     const dragThreshold = 5; // pixels
 
     // If we haven't created a point yet and we've moved beyond threshold, create a bezier point
-    if (!this.state.hasCreatedPoint && this.state.currentPointIndex === null && dragDistance > dragThreshold && this.props.allowBezier) {
+    if (
+      !this.state.hasCreatedPoint &&
+      this.state.currentPointIndex === null &&
+      dragDistance > dragThreshold &&
+      this.props.allowBezier
+    ) {
       // Create bezier point at the start position
       const result = this.createBezierPoint(this.state.startX, this.state.startY);
       if (result !== null) {
@@ -139,8 +149,12 @@ export class PointCreationManager {
 
     // Check if we're within canvas bounds (only if bounds checking is enabled)
     if (this.props.constrainToBounds && this.props.width && this.props.height) {
-      if (snappedCoords.x < 0 || snappedCoords.x > this.props.width || 
-          snappedCoords.y < 0 || snappedCoords.y > this.props.height) {
+      if (
+        snappedCoords.x < 0 ||
+        snappedCoords.x > this.props.width ||
+        snappedCoords.y < 0 ||
+        snappedCoords.y > this.props.height
+      ) {
         return false;
       }
     }
@@ -151,7 +165,7 @@ export class PointCreationManager {
     } else if (this.state.currentPointIndex !== null && this.state.isBezier) {
       // Finalize bezier point with current control points
       this.updateBezierControlPoints(snappedCoords.x, snappedCoords.y);
-      
+
       // Make control points visible for the newly created bezier point
       if (this.props.setVisibleControlPoints && this.state.currentPointIndex !== null) {
         this.props.setVisibleControlPoints(new Set([this.state.currentPointIndex]));
@@ -197,8 +211,12 @@ export class PointCreationManager {
 
     // Check if we're within canvas bounds (only if bounds checking is enabled)
     if (this.props.constrainToBounds && this.props.width && this.props.height) {
-      if (snappedCoords.x < 0 || snappedCoords.x > this.props.width ||
-        snappedCoords.y < 0 || snappedCoords.y > this.props.height) {
+      if (
+        snappedCoords.x < 0 ||
+        snappedCoords.x > this.props.width ||
+        snappedCoords.y < 0 ||
+        snappedCoords.y > this.props.height
+      ) {
         return false;
       }
     }
@@ -216,7 +234,7 @@ export class PointCreationManager {
     controlPoint1?: { x: number; y: number },
     controlPoint2?: { x: number; y: number },
     prevPointId?: string,
-    isDisconnected = false
+    isDisconnected = false,
   ): boolean {
     if (!this.props || !this.props.allowBezier) return false;
 
@@ -230,8 +248,12 @@ export class PointCreationManager {
 
     // Check if we're within canvas bounds (only if bounds checking is enabled)
     if (this.props.constrainToBounds && this.props.width && this.props.height) {
-      if (snappedCoords.x < 0 || snappedCoords.x > this.props.width ||
-        snappedCoords.y < 0 || snappedCoords.y > this.props.height) {
+      if (
+        snappedCoords.x < 0 ||
+        snappedCoords.x > this.props.width ||
+        snappedCoords.y < 0 ||
+        snappedCoords.y > this.props.height
+      ) {
         return false;
       }
     }
@@ -242,7 +264,7 @@ export class PointCreationManager {
       controlPoint1,
       controlPoint2,
       prevPointId,
-      isDisconnected
+      isDisconnected,
     );
     return result !== null;
   }
@@ -257,7 +279,7 @@ export class PointCreationManager {
     nextPointId: string,
     type: "regular" | "bezier" = "regular",
     controlPoint1?: { x: number; y: number },
-    controlPoint2?: { x: number; y: number }
+    controlPoint2?: { x: number; y: number },
   ): { success: boolean; newPointIndex?: number } {
     if (!this.props) return { success: false };
 
@@ -271,8 +293,12 @@ export class PointCreationManager {
 
     // Check if we're within canvas bounds (only if bounds checking is enabled)
     if (this.props.constrainToBounds && this.props.width && this.props.height) {
-      if (snappedCoords.x < 0 || snappedCoords.x > this.props.width ||
-        snappedCoords.y < 0 || snappedCoords.y > this.props.height) {
+      if (
+        snappedCoords.x < 0 ||
+        snappedCoords.x > this.props.width ||
+        snappedCoords.y < 0 ||
+        snappedCoords.y > this.props.height
+      ) {
         return { success: false };
       }
     }
@@ -289,17 +315,14 @@ export class PointCreationManager {
       nextPointId,
       type,
       controlPoint1,
-      controlPoint2
+      controlPoint2,
     );
   }
 
   /**
    * Create a point from ghost point drag
    */
-  createPointFromGhostDrag(
-    ghostPoint: { x: number; y: number; segmentIndex: number },
-    dragDistance: number
-  ): boolean {
+  createPointFromGhostDrag(ghostPoint: { x: number; y: number; segmentIndex: number }, dragDistance: number): boolean {
     if (!this.props) return false;
 
     // Check if we can add more points
@@ -333,7 +356,7 @@ export class PointCreationManager {
       nextPoint.id,
       "bezier",
       controlPoint1,
-      controlPoint2
+      controlPoint2,
     );
 
     return result.success;
@@ -349,7 +372,7 @@ export class PointCreationManager {
 
     if (!finalPrevPointId) {
       if (this.props.skeletonEnabled && this.props.activePointId) {
-      // In skeleton mode: always connect to the active point
+        // In skeleton mode: always connect to the active point
         finalPrevPointId = this.props.activePointId;
       } else if (this.props.skeletonEnabled && this.props.lastAddedPointId) {
         // Fallback to lastAddedPointId for backward compatibility
@@ -466,7 +489,7 @@ export class PointCreationManager {
     controlPoint1?: { x: number; y: number },
     controlPoint2?: { x: number; y: number },
     prevPointId?: string,
-    isDisconnected = false
+    isDisconnected = false,
   ): number | null {
     if (!this.props || !this.props.allowBezier) return null;
 
@@ -545,7 +568,7 @@ export class PointCreationManager {
     nextPointId: string,
     type: "regular" | "bezier" = "regular",
     controlPoint1?: { x: number; y: number },
-    controlPoint2?: { x: number; y: number }
+    controlPoint2?: { x: number; y: number },
   ): { success: boolean; newPointIndex?: number } {
     if (!this.props) return { success: false };
 
@@ -597,7 +620,12 @@ export class PointCreationManager {
     return { success: true, newPointIndex };
   }
 
-  private insertPointBetweenHelper(points: BezierPoint[], prevPointId: string, nextPointId: string, newPoint: BezierPoint): BezierPoint[] {
+  private insertPointBetweenHelper(
+    points: BezierPoint[],
+    prevPointId: string,
+    nextPointId: string,
+    newPoint: BezierPoint,
+  ): BezierPoint[] {
     const newPoints = [...points];
 
     // Find the index of the next point to insert before it

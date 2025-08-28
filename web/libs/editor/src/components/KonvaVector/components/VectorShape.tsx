@@ -140,16 +140,15 @@ function sortSegmentsForContinuousPath(
         foundNext = true;
         break;
       }
+
       // Check if this segment connects to the beginning of our current path (reverse it)
-      else if (segment.to.id === currentSegment.from.id) {
-        // Reverse the segment to connect properly
-        const reversedSegment = { from: segment.to, to: segment.from };
-        sorted.unshift(reversedSegment);
-        remaining.delete(segment);
-        currentSegment = reversedSegment;
-        foundNext = true;
-        break;
-      }
+      // Reverse the segment to connect properly
+      const reversedSegment = { from: segment.to, to: segment.from };
+      sorted.unshift(reversedSegment);
+      remaining.delete(segment);
+      currentSegment = reversedSegment;
+      foundNext = true;
+      break;
     }
 
     // If we can't find a direct connection, look for any connection
@@ -272,31 +271,30 @@ export const VectorShape: React.FC<VectorShapeProps> = ({
         })}
       </>
     );
-  } else {
-    // Use the grouped path approach for non-skeleton mode
-    const pathGroups = groupSegmentsIntoPaths(segments);
-
-    return (
-      <>
-        {pathGroups.map((pathSegments, index) => {
-          const pathData = segmentsToPathData(pathSegments, allowClose, isPathClosed);
-
-          return (
-            <Path
-              key={`path-${index}`}
-              data={pathData}
-              stroke={stroke}
-              strokeWidth={2}
-              strokeScaleEnabled={false}
-              fill={allowClose && isPathClosed ? fill : undefined}
-              hitStrokeWidth={20}
-              onClick={onClick}
-              onMouseEnter={onMouseEnter}
-              onMouseLeave={onMouseLeave}
-            />
-          );
-        })}
-      </>
-    );
   }
+  // Use the grouped path approach for non-skeleton mode
+  const pathGroups = groupSegmentsIntoPaths(segments);
+
+  return (
+    <>
+      {pathGroups.map((pathSegments, index) => {
+        const pathData = segmentsToPathData(pathSegments, allowClose, isPathClosed);
+
+        return (
+          <Path
+            key={`path-${index}`}
+            data={pathData}
+            stroke={stroke}
+            strokeWidth={2}
+            strokeScaleEnabled={false}
+            fill={allowClose && isPathClosed ? fill : undefined}
+            hitStrokeWidth={20}
+            onClick={onClick}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+          />
+        );
+      })}
+    </>
+  );
 };

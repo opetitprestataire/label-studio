@@ -6,7 +6,7 @@ function getBezierCurveBoundingBox(
   p0: { x: number; y: number },
   p1: { x: number; y: number },
   p2: { x: number; y: number },
-  p3: { x: number; y: number }
+  p3: { x: number; y: number },
 ): { left: number; top: number; right: number; bottom: number } {
   // Start with the endpoints
   let minX = Math.min(p0.x, p3.x);
@@ -27,7 +27,8 @@ function getBezierCurveBoundingBox(
   const xExtrema = solveQuadratic(bx, 2 * ax, cx);
   for (const t of xExtrema) {
     if (t >= 0 && t <= 1) {
-      const x = p0.x + t * (3 * (p1.x - p0.x) + t * (3 * (p2.x - 2 * p1.x + p0.x) + t * (p3.x - 3 * p2.x + 3 * p1.x - p0.x)));
+      const x =
+        p0.x + t * (3 * (p1.x - p0.x) + t * (3 * (p2.x - 2 * p1.x + p0.x) + t * (p3.x - 3 * p2.x + 3 * p1.x - p0.x)));
       minX = Math.min(minX, x);
       maxX = Math.max(maxX, x);
     }
@@ -37,7 +38,8 @@ function getBezierCurveBoundingBox(
   const yExtrema = solveQuadratic(by, 2 * ay, cy);
   for (const t of yExtrema) {
     if (t >= 0 && t <= 1) {
-      const y = p0.y + t * (3 * (p1.y - p0.y) + t * (3 * (p2.y - 2 * p1.y + p0.y) + t * (p3.y - 3 * p2.y + 3 * p1.y - p0.y)));
+      const y =
+        p0.y + t * (3 * (p1.y - p0.y) + t * (3 * (p2.y - 2 * p1.y + p0.y) + t * (p3.y - 3 * p2.y + 3 * p1.y - p0.y)));
       minY = Math.min(minY, y);
       maxY = Math.max(maxY, y);
     }
@@ -80,10 +82,10 @@ export function calculateShapeBoundingBox(points: BezierPoint[]): {
     return { left: 0, top: 0, right: 0, bottom: 0 };
   }
 
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
 
   // Process each segment
   for (let i = 0; i < points.length; i++) {
@@ -102,7 +104,7 @@ export function calculateShapeBoundingBox(points: BezierPoint[]): {
         { x: currentPoint.x, y: currentPoint.y },
         { x: currentPoint.controlPoint1.x, y: currentPoint.controlPoint1.y },
         { x: currentPoint.controlPoint2.x, y: currentPoint.controlPoint2.y },
-        { x: nextPoint.x, y: nextPoint.y }
+        { x: nextPoint.x, y: nextPoint.y },
       );
 
       minX = Math.min(minX, curveBBox.left);

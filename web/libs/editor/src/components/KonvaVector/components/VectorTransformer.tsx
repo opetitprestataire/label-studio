@@ -3,7 +3,6 @@ import { Transformer as KonvaTransformer } from "react-konva";
 import type Konva from "konva";
 import type { BezierPoint } from "../types";
 import { applyTransformationToPoints, resetTransformState } from "../utils/transformUtils";
-import { VectorSelectionTracker } from "../VectorSelectionTracker";
 
 interface VectorTransformerProps {
   selectedPoints: Set<number>;
@@ -232,8 +231,6 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
             centerY: transformer.y() + transformer.height() / 2,
           };
           transformerStateRef.current = initialState;
-
-
         }
 
         // Store original positions of selected points
@@ -332,8 +329,6 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
 
           // Don't reset transformer - keep proxy points where they are
           transformer.getLayer()?.batchDraw();
-
-
         } catch (error) {
           console.warn("Drag end error:", error);
         }

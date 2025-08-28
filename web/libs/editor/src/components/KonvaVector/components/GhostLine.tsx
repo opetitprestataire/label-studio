@@ -93,7 +93,7 @@ export const GhostLine: React.FC<GhostLineProps> = ({
       }
 
       // Allow closing if we have at least one bezier point
-      const hasBezierPoint = initialPoints.some(point => point.isBezier);
+      const hasBezierPoint = initialPoints.some((point) => point.isBezier);
       if (hasBezierPoint) {
         return true;
       }
@@ -212,68 +212,76 @@ export const GhostLine: React.FC<GhostLineProps> = ({
 
       {/* Closing indicator when near first or last point - always show when appropriate */}
       {(() => {
-        return closingTarget && activePoint && (
-          <Shape
-            stroke="#10b981"
-            strokeWidth={3}
-            strokeScaleEnabled={false}
-            lineCap="round"
-            lineJoin="round"
-            dash={[6, 6]}
-            opacity={0.8}
-            sceneFunc={(ctx, shape) => {
-              ctx.beginPath();
-              ctx.moveTo(activePoint.x, activePoint.y);
+        return (
+          closingTarget &&
+          activePoint && (
+            <Shape
+              stroke="#10b981"
+              strokeWidth={3}
+              strokeScaleEnabled={false}
+              lineCap="round"
+              lineJoin="round"
+              dash={[6, 6]}
+              opacity={0.8}
+              sceneFunc={(ctx, shape) => {
+                ctx.beginPath();
+                ctx.moveTo(activePoint.x, activePoint.y);
 
-              const targetPoint = closingTarget.point;
+                const targetPoint = closingTarget.point;
 
-              // Check if either point is a bezier point and handle curves accordingly
-              if (activePoint.isBezier && activePoint.controlPoint2 && targetPoint.isBezier && targetPoint.controlPoint1) {
-                // Both points are bezier - use their control points
-                ctx.bezierCurveTo(
-                  activePoint.controlPoint2.x,
-                  activePoint.controlPoint2.y,
-                  targetPoint.controlPoint1.x,
-                  targetPoint.controlPoint1.y,
-                  targetPoint.x,
-                  targetPoint.y,
-                );
-              } else if (activePoint.isBezier && activePoint.controlPoint2) {
-                // Only active point is bezier - calculate control point for target point
-                const dx = targetPoint.x - activePoint.x;
-                const dy = targetPoint.y - activePoint.y;
-                const controlX = targetPoint.x - dx * 0.3;
-                const controlY = targetPoint.y - dy * 0.3;
-                ctx.bezierCurveTo(
-                  activePoint.controlPoint2.x,
-                  activePoint.controlPoint2.y,
-                  controlX,
-                  controlY,
-                  targetPoint.x,
-                  targetPoint.y,
-                );
-              } else if (targetPoint.isBezier && targetPoint.controlPoint1) {
-                // Only target point is bezier - calculate control point for active point
-                const dx = targetPoint.x - activePoint.x;
-                const dy = targetPoint.y - activePoint.y;
-                const controlX = activePoint.x + dx * 0.3;
-                const controlY = activePoint.y + dy * 0.3;
-                ctx.bezierCurveTo(
-                  controlX,
-                  controlY,
-                  targetPoint.controlPoint1.x,
-                  targetPoint.controlPoint1.y,
-                  targetPoint.x,
-                  targetPoint.y,
-                );
-              } else {
-                // Both points are regular - straight line
-                ctx.lineTo(targetPoint.x, targetPoint.y);
-              }
+                // Check if either point is a bezier point and handle curves accordingly
+                if (
+                  activePoint.isBezier &&
+                  activePoint.controlPoint2 &&
+                  targetPoint.isBezier &&
+                  targetPoint.controlPoint1
+                ) {
+                  // Both points are bezier - use their control points
+                  ctx.bezierCurveTo(
+                    activePoint.controlPoint2.x,
+                    activePoint.controlPoint2.y,
+                    targetPoint.controlPoint1.x,
+                    targetPoint.controlPoint1.y,
+                    targetPoint.x,
+                    targetPoint.y,
+                  );
+                } else if (activePoint.isBezier && activePoint.controlPoint2) {
+                  // Only active point is bezier - calculate control point for target point
+                  const dx = targetPoint.x - activePoint.x;
+                  const dy = targetPoint.y - activePoint.y;
+                  const controlX = targetPoint.x - dx * 0.3;
+                  const controlY = targetPoint.y - dy * 0.3;
+                  ctx.bezierCurveTo(
+                    activePoint.controlPoint2.x,
+                    activePoint.controlPoint2.y,
+                    controlX,
+                    controlY,
+                    targetPoint.x,
+                    targetPoint.y,
+                  );
+                } else if (targetPoint.isBezier && targetPoint.controlPoint1) {
+                  // Only target point is bezier - calculate control point for active point
+                  const dx = targetPoint.x - activePoint.x;
+                  const dy = targetPoint.y - activePoint.y;
+                  const controlX = activePoint.x + dx * 0.3;
+                  const controlY = activePoint.y + dy * 0.3;
+                  ctx.bezierCurveTo(
+                    controlX,
+                    controlY,
+                    targetPoint.controlPoint1.x,
+                    targetPoint.controlPoint1.y,
+                    targetPoint.x,
+                    targetPoint.y,
+                  );
+                } else {
+                  // Both points are regular - straight line
+                  ctx.lineTo(targetPoint.x, targetPoint.y);
+                }
 
-              ctx.strokeShape(shape);
-            }}
-          />
+                ctx.strokeShape(shape);
+              }}
+            />
+          )
         );
       })()}
     </>

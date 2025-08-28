@@ -1,7 +1,7 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { EventHandlerProps } from "./types";
 import { isPointInHitRadius, stageToImageCoordinates } from "./utils";
-import { closePath, closePathBetweenFirstAndLast } from "./drawing";
+import { closePathBetweenFirstAndLast } from "./drawing";
 import { VectorSelectionTracker } from "../VectorSelectionTracker";
 
 // Helper function to check if cursor is near a closing target
@@ -13,7 +13,7 @@ function isNearClosingTarget(cursorPos: { x: number; y: number }, props: EventHa
   // Check if we can close the path based on point count or bezier points
   const canClosePath = () => {
     if (props.initialPoints.length > 2) return true;
-    return props.initialPoints.some(point => point.isBezier);
+    return props.initialPoints.some((point) => point.isBezier);
   };
 
   if (!canClosePath()) return false;
@@ -28,9 +28,10 @@ function isNearClosingTarget(cursorPos: { x: number; y: number }, props: EventHa
   const closeRadius = 15 / (props.transform.zoom * props.fitScale);
 
   // Get the active point
-  const activePoint = props.skeletonEnabled && props.activePointId
-    ? props.initialPoints.find(p => p.id === props.activePointId)
-    : props.initialPoints[props.initialPoints.length - 1];
+  const activePoint =
+    props.skeletonEnabled && props.activePointId
+      ? props.initialPoints.find((p) => p.id === props.activePointId)
+      : props.initialPoints[props.initialPoints.length - 1];
 
   if (!activePoint) return false;
 
@@ -69,7 +70,7 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
   const tracker = VectorSelectionTracker.getInstance();
 
   // Check if this instance can have selection
-  if (!tracker.canInstanceHaveSelection(props.instanceId || 'unknown')) {
+  if (!tracker.canInstanceHaveSelection(props.instanceId || "unknown")) {
     console.log(`🔍 Blocking selection in ${props.instanceId} - ${tracker.getActiveInstanceId()} is active`);
     return false; // Block selection in this instance
   }
@@ -91,11 +92,17 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       // But only if the active point is also the first or last point
       // But don't close if Shift is held (to allow Shift+click functionality)
       // This should take priority over normal point selection
-      if ((i === 0 || i === props.initialPoints.length - 1) && props.allowClose && !props.isPathClosed && !e.evt.shiftKey) {
+      if (
+        (i === 0 || i === props.initialPoints.length - 1) &&
+        props.allowClose &&
+        !props.isPathClosed &&
+        !e.evt.shiftKey
+      ) {
         // Get the active point to check if it's the first or last point
-        const activePoint = props.skeletonEnabled && props.activePointId
-          ? props.initialPoints.find(p => p.id === props.activePointId)
-          : props.initialPoints[props.initialPoints.length - 1]; // Fallback to last point
+        const activePoint =
+          props.skeletonEnabled && props.activePointId
+            ? props.initialPoints.find((p) => p.id === props.activePointId)
+            : props.initialPoints[props.initialPoints.length - 1]; // Fallback to last point
 
         if (activePoint) {
           const firstPoint = props.initialPoints[0];
@@ -116,8 +123,6 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
         }
       }
 
-
-
       // If Cmd/Ctrl is held, add to selection (multi-selection) - this takes priority
       if (e.evt.ctrlKey || e.evt.metaKey) {
         const currentSelection = props.selectedPoints;
@@ -126,7 +131,7 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
 
         // Use tracker for global selection management
         console.log(`🔍 Selecting points in instance ${props.instanceId}:`, Array.from(newSelection));
-        tracker.selectPoints(props.instanceId || 'unknown', newSelection);
+        tracker.selectPoints(props.instanceId || "unknown", newSelection);
         return true;
       }
 
@@ -134,7 +139,7 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       if (props.skeletonEnabled) {
         // Use tracker for global selection management
         console.log(`🔍 Selecting single point in instance ${props.instanceId}:`, i);
-        tracker.selectPoints(props.instanceId || 'unknown', new Set([i]));
+        tracker.selectPoints(props.instanceId || "unknown", new Set([i]));
         // Don't set lastAddedPointId when selecting a point - it should remain the last physically added point
         // Set the selected point as the active point for drawing
         props.setActivePointId?.(point.id);
@@ -145,7 +150,7 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       // If no Cmd/Ctrl and not skeleton mode, clear multi-selection and select only this point
       // Use tracker for global selection management
       console.log(`🔍 Selecting single point in instance ${props.instanceId}:`, i);
-      tracker.selectPoints(props.instanceId || 'unknown', new Set([i]));
+      tracker.selectPoints(props.instanceId || "unknown", new Set([i]));
       // Return true to indicate we handled the selection
       return true;
     }
@@ -167,7 +172,7 @@ export function handlePointDeselection(e: KonvaEventObject<MouseEvent>, props: E
   const tracker = VectorSelectionTracker.getInstance();
 
   // Check if this instance can have selection (deselection is allowed for the active instance)
-  if (!tracker.canInstanceHaveSelection(props.instanceId || 'unknown')) {
+  if (!tracker.canInstanceHaveSelection(props.instanceId || "unknown")) {
     console.log(`🔍 Blocking deselection in ${props.instanceId} - ${tracker.getActiveInstanceId()} is active`);
     return false; // Block deselection in this instance
   }
@@ -183,7 +188,7 @@ export function handlePointDeselection(e: KonvaEventObject<MouseEvent>, props: E
 
         // Use tracker for global selection management
         console.log(`🔍 Deselecting point in instance ${props.instanceId}:`, i);
-        tracker.selectPoints(props.instanceId || 'unknown', newSet);
+        tracker.selectPoints(props.instanceId || "unknown", newSet);
 
         // Handle skeleton mode reset
         if (newSet.size <= 1 && props.skeletonEnabled && props.initialPoints.length > 0) {

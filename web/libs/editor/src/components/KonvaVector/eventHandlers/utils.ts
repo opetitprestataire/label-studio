@@ -135,7 +135,7 @@ export function findClosestPointOnPath(
     }
 
     // Allow closing if we have at least one bezier point
-    const hasBezierPoint = points.some(point => point.isBezier);
+    const hasBezierPoint = points.some((point) => point.isBezier);
     if (hasBezierPoint) {
       return true;
     }
@@ -334,5 +334,3 @@ export function continueBezierDrag(props: EventHandlerProps): void {
     }
   }
 }
-
-

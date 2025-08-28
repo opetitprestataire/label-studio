@@ -111,7 +111,7 @@ export interface EventHandlerProps {
       controlPoint1?: { x: number; y: number },
       controlPoint2?: { x: number; y: number },
       prevPointId?: string,
-      isDisconnected?: boolean
+      isDisconnected?: boolean,
     ) => boolean;
     insertPointBetween: (
       x: number,
@@ -120,11 +120,11 @@ export interface EventHandlerProps {
       nextPointId: string,
       type?: "regular" | "bezier",
       controlPoint1?: { x: number; y: number },
-      controlPoint2?: { x: number; y: number }
+      controlPoint2?: { x: number; y: number },
     ) => { success: boolean; newPointIndex?: number };
     createPointFromGhostDrag: (
       ghostPoint: { x: number; y: number; segmentIndex: number },
-      dragDistance: number
+      dragDistance: number,
     ) => boolean;
   };
 }
