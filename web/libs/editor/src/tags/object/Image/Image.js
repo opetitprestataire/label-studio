@@ -1306,6 +1306,16 @@ const CoordsCalculations = types
       const { naturalHeight } = self.currentImageEntity;
       return (n / RELATIVE_STAGE_HEIGHT) * naturalHeight;
     },
+
+    imageToInternalX(n) {
+      const { naturalWidth } = self.currentImageEntity;
+      return (n / naturalWidth) * RELATIVE_STAGE_WIDTH;
+    },
+
+    imageToInternalY(n) {
+      const { naturalHeight } = self.currentImageEntity;
+      return (n / naturalHeight) * RELATIVE_STAGE_HEIGHT;
+    },
   }));
 
 // mock coords calculations to transparently pass coords with FF 3793 off

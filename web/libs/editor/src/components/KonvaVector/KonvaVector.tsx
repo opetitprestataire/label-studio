@@ -16,6 +16,7 @@ import { normalizePoints, convertBezierToSimplePoints } from "./utils";
 import { findClosestPointOnPath, getDistance } from "./eventHandlers/utils";
 import { PointCreationManager } from "./pointCreationManager";
 import { VectorSelectionTracker, type VectorInstance } from "./VectorSelectionTracker";
+import { calculateShapeBoundingBox } from "./utils/bezierBoundingBox";
 import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, KonvaVectorRef } from "./types";
 
 /**
@@ -300,7 +301,6 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     if (allowClose && initialPoints.length >= 2) {
       const firstPoint = initialPoints[0];
       const lastPoint = initialPoints[initialPoints.length - 1];
-      console.log(`🔍 Path closure check: first.prevPointId=${firstPoint.prevPointId}, last.id=${lastPoint.id}, isPathClosed=${isPathClosed}`);
     }
   }, [allowClose, initialPoints, isPathClosed, finalIsPathClosed]);
 
@@ -308,7 +308,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   const setIsPathClosed = useCallback(
     (closed: boolean) => {
       if (allowClose) {
-      // Always notify parent when path closure state changes programmatically
+        // Always notify parent when path closure state changes programmatically
         onPathClosedChange?.(closed);
       }
     },
@@ -429,10 +429,13 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
   // Stabilize functions for tracker registration
   const getPoints = useCallback(() => initialPoints, [initialPoints]);
-  const updatePoints = useCallback((points: BezierPoint[]) => {
-    setInitialPoints(points);
-    onPointsChange?.(points);
-  }, [onPointsChange]);
+  const updatePoints = useCallback(
+    (points: BezierPoint[]) => {
+      setInitialPoints(points);
+      onPointsChange?.(points);
+    },
+    [onPointsChange],
+  );
   const setSelectedPointsStable = useCallback((selectedPoints: Set<number>) => {
     setSelectedPoints(selectedPoints);
   }, []);
@@ -464,7 +467,20 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     return () => {
       tracker.unregisterInstance(instanceId);
     };
-  }, [instanceId, tracker, getPoints, updatePoints, setSelectedPointsStable, setSelectedPointIndexStable, onPointSelected, onTransformationComplete, getTransformStable, getFitScaleStable, getBoundsStable, constrainToBounds]);
+  }, [
+    instanceId,
+    tracker,
+    getPoints,
+    updatePoints,
+    setSelectedPointsStable,
+    setSelectedPointIndexStable,
+    onPointSelected,
+    onTransformationComplete,
+    getTransformStable,
+    getFitScaleStable,
+    getBoundsStable,
+    constrainToBounds,
+  ]);
 
   // Clear selection when component is disabled
   useEffect(() => {
@@ -841,7 +857,6 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     selectPointsByIds: (pointIds: string[]) => {
       // Check if this instance can have selection
       if (!tracker.canInstanceHaveSelection(instanceId)) {
-        console.log(`🔍 Blocking programmatic selection in ${instanceId} - ${tracker.getActiveInstanceId()} is active`);
         return; // Block the selection
       }
 
@@ -860,12 +875,10 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       }
 
       // Use tracker for global selection management
-      console.log(`🔍 Programmatic selection in instance ${instanceId}:`, Array.from(selectedIndices));
       tracker.selectPoints(instanceId, selectedIndices);
     },
     clearSelection: () => {
       // Use tracker for global selection management
-      console.log(`🔍 Clearing selection in instance ${instanceId}`);
       tracker.selectPoints(instanceId, new Set());
     },
     getSelectedPointIds: () => {
@@ -933,13 +946,11 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     commitPoint: (x: number, y: number) => pointCreationManager.commitPoint(x, y),
     // Programmatic point transformation methods
     translatePoints: (dx: number, dy: number, pointIds?: string[]) => {
-      const pointsToTransform = pointIds
-        ? initialPoints.filter(p => pointIds.includes(p.id))
-        : initialPoints;
+      const pointsToTransform = pointIds ? initialPoints.filter((p) => pointIds.includes(p.id)) : initialPoints;
 
-      const updatedPoints = initialPoints.map(point => {
-        if (pointsToTransform.some(p => p.id === point.id)) {
-          let updatedPoint = { ...point };
+      const updatedPoints = initialPoints.map((point) => {
+        if (pointsToTransform.some((p) => p.id === point.id)) {
+          const updatedPoint = { ...point };
 
           // Apply translation to main point
           updatedPoint.x += dx;
@@ -971,53 +982,26 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       onPointsChange?.(updatedPoints);
     },
     rotatePoints: (angle: number, centerX: number, centerY: number, pointIds?: string[]) => {
-      const pointsToTransform = pointIds
-        ? initialPoints.filter(p => pointIds.includes(p.id))
-        : initialPoints;
+      const pointsToTransform = pointIds ? initialPoints.filter((p) => pointIds.includes(p.id)) : initialPoints;
 
       // If no point IDs provided, calculate center of the entire shape
       let actualCenterX = centerX;
       let actualCenterY = centerY;
 
       if (!pointIds) {
-        // Calculate bounding box of all points (including control points)
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-        initialPoints.forEach(point => {
-          // Main point
-          minX = Math.min(minX, point.x);
-          minY = Math.min(minY, point.y);
-          maxX = Math.max(maxX, point.x);
-          maxY = Math.max(maxY, point.y);
-
-          // Control points if bezier
-          if (point.isBezier) {
-            if (point.controlPoint1) {
-              minX = Math.min(minX, point.controlPoint1.x);
-              minY = Math.min(minY, point.controlPoint1.y);
-              maxX = Math.max(maxX, point.controlPoint1.x);
-              maxY = Math.max(maxY, point.controlPoint1.y);
-            }
-            if (point.controlPoint2) {
-              minX = Math.min(minX, point.controlPoint2.x);
-              minY = Math.min(minY, point.controlPoint2.y);
-              maxX = Math.max(maxX, point.controlPoint2.x);
-              maxY = Math.max(maxY, point.controlPoint2.y);
-            }
-          }
-        });
-
-        actualCenterX = (minX + maxX) / 2;
-        actualCenterY = (minY + maxY) / 2;
+        // Use the accurate shape bounding box calculation
+        const bbox = calculateShapeBoundingBox(initialPoints);
+        actualCenterX = (bbox.left + bbox.right) / 2;
+        actualCenterY = (bbox.top + bbox.bottom) / 2;
       }
 
-      const radians = angle * Math.PI / 180;
+      const radians = (angle * Math.PI) / 180;
       const cos = Math.cos(radians);
       const sin = Math.sin(radians);
 
-      const updatedPoints = initialPoints.map(point => {
-        if (pointsToTransform.some(p => p.id === point.id)) {
-          let updatedPoint = { ...point };
+      const updatedPoints = initialPoints.map((point) => {
+        if (pointsToTransform.some((p) => p.id === point.id)) {
+          const updatedPoint = { ...point };
 
           // Apply rotation to main point
           const dx = updatedPoint.x - actualCenterX;
@@ -1055,49 +1039,22 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       onPointsChange?.(updatedPoints);
     },
     scalePoints: (scaleX: number, scaleY: number, centerX: number, centerY: number, pointIds?: string[]) => {
-      const pointsToTransform = pointIds
-        ? initialPoints.filter(p => pointIds.includes(p.id))
-        : initialPoints;
+      const pointsToTransform = pointIds ? initialPoints.filter((p) => pointIds.includes(p.id)) : initialPoints;
 
       // If no point IDs provided, calculate center of the entire shape
       let actualCenterX = centerX;
       let actualCenterY = centerY;
 
       if (!pointIds) {
-        // Calculate bounding box of all points (including control points)
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-        initialPoints.forEach(point => {
-          // Main point
-          minX = Math.min(minX, point.x);
-          minY = Math.min(minY, point.y);
-          maxX = Math.max(maxX, point.x);
-          maxY = Math.max(maxY, point.y);
-
-          // Control points if bezier
-          if (point.isBezier) {
-            if (point.controlPoint1) {
-              minX = Math.min(minX, point.controlPoint1.x);
-              minY = Math.min(minY, point.controlPoint1.y);
-              maxX = Math.max(maxX, point.controlPoint1.x);
-              maxY = Math.max(maxY, point.controlPoint1.y);
-            }
-            if (point.controlPoint2) {
-              minX = Math.min(minX, point.controlPoint2.x);
-              minY = Math.min(minY, point.controlPoint2.y);
-              maxX = Math.max(maxX, point.controlPoint2.x);
-              maxY = Math.max(maxY, point.controlPoint2.y);
-            }
-          }
-        });
-
-        actualCenterX = (minX + maxX) / 2;
-        actualCenterY = (minY + maxY) / 2;
+        // Use the accurate shape bounding box calculation
+        const bbox = calculateShapeBoundingBox(initialPoints);
+        actualCenterX = (bbox.left + bbox.right) / 2;
+        actualCenterY = (bbox.top + bbox.bottom) / 2;
       }
 
-      const updatedPoints = initialPoints.map(point => {
-        if (pointsToTransform.some(p => p.id === point.id)) {
-          let updatedPoint = { ...point };
+      const updatedPoints = initialPoints.map((point) => {
+        if (pointsToTransform.some((p) => p.id === point.id)) {
+          const updatedPoint = { ...point };
 
           // Apply scaling to main point
           const dx = updatedPoint.x - actualCenterX;
@@ -1134,58 +1091,39 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
       onPointsChange?.(updatedPoints);
     },
-    transformPoints: (transformation: {
-      dx?: number;
-      dy?: number;
-      rotation?: number;
-      scaleX?: number;
-      scaleY?: number;
-      centerX?: number;
-      centerY?: number;
-    }, pointIds?: string[]) => {
-      const pointsToTransform = pointIds
-        ? initialPoints.filter(p => pointIds.includes(p.id))
-        : initialPoints;
+    transformPoints: (
+      transformation: {
+        dx?: number;
+        dy?: number;
+        rotation?: number;
+        scaleX?: number;
+        scaleY?: number;
+        centerX?: number;
+        centerY?: number;
+      },
+      pointIds?: string[],
+    ) => {
+      const pointsToTransform = pointIds ? initialPoints.filter((p) => pointIds.includes(p.id)) : initialPoints;
 
       // If no point IDs provided and we need center point, calculate center of the entire shape
       let actualCenterX = transformation.centerX;
       let actualCenterY = transformation.centerY;
 
-      if (!pointIds && (transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined)) {
-        // Calculate bounding box of all points (including control points)
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-        initialPoints.forEach(point => {
-          // Main point
-          minX = Math.min(minX, point.x);
-          minY = Math.min(minY, point.y);
-          maxX = Math.max(maxX, point.x);
-          maxY = Math.max(maxY, point.y);
-
-          // Control points if bezier
-          if (point.isBezier) {
-            if (point.controlPoint1) {
-              minX = Math.min(minX, point.controlPoint1.x);
-              minY = Math.min(minY, point.controlPoint1.y);
-              maxX = Math.max(maxX, point.controlPoint1.x);
-              maxY = Math.max(maxY, point.controlPoint1.y);
-            }
-            if (point.controlPoint2) {
-              minX = Math.min(minX, point.controlPoint2.x);
-              minY = Math.min(minY, point.controlPoint2.y);
-              maxX = Math.max(maxX, point.controlPoint2.x);
-              maxY = Math.max(maxY, point.controlPoint2.y);
-            }
-          }
-        });
-
-        actualCenterX = (minX + maxX) / 2;
-        actualCenterY = (minY + maxY) / 2;
+      if (
+        !pointIds &&
+        (transformation.rotation !== undefined ||
+          transformation.scaleX !== undefined ||
+          transformation.scaleY !== undefined)
+      ) {
+        // Use the accurate shape bounding box calculation
+        const bbox = calculateShapeBoundingBox(initialPoints);
+        actualCenterX = (bbox.left + bbox.right) / 2;
+        actualCenterY = (bbox.top + bbox.bottom) / 2;
       }
 
-      const updatedPoints = initialPoints.map(point => {
-        if (pointsToTransform.some(p => p.id === point.id)) {
-          let updatedPoint = { ...point };
+      const updatedPoints = initialPoints.map((point) => {
+        if (pointsToTransform.some((p) => p.id === point.id)) {
+          const updatedPoint = { ...point };
 
           // Apply translation
           if (transformation.dx !== undefined) {
@@ -1194,9 +1132,13 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           }
 
           // Apply rotation and scaling (need center point)
-          if ((transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined) &&
-            actualCenterX !== undefined && actualCenterY !== undefined) {
-
+          if (
+            (transformation.rotation !== undefined ||
+              transformation.scaleX !== undefined ||
+              transformation.scaleY !== undefined) &&
+            actualCenterX !== undefined &&
+            actualCenterY !== undefined
+          ) {
             let finalX = updatedPoint.x;
             let finalY = updatedPoint.y;
 
@@ -1212,7 +1154,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
             // Apply rotation
             if (transformation.rotation !== undefined) {
-              const radians = transformation.rotation * Math.PI / 180;
+              const radians = (transformation.rotation * Math.PI) / 180;
               const cos = Math.cos(radians);
               const sin = Math.sin(radians);
               const dx = finalX - actualCenterX;
@@ -1228,7 +1170,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           // Apply transformations to control points if it's a bezier point
           if (updatedPoint.isBezier) {
             if (updatedPoint.controlPoint1) {
-              let cp1 = { ...updatedPoint.controlPoint1 };
+              const cp1 = { ...updatedPoint.controlPoint1 };
 
               // Apply translation
               if (transformation.dx !== undefined) {
@@ -1237,42 +1179,46 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
               }
 
               // Apply rotation and scaling
-              if ((transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined) &&
-                  actualCenterX !== undefined && actualCenterY !== undefined) {
+              if (
+                (transformation.rotation !== undefined ||
+                  transformation.scaleX !== undefined ||
+                  transformation.scaleY !== undefined) &&
+                actualCenterX !== undefined &&
+                actualCenterY !== undefined
+              ) {
+                let finalCp1X = cp1.x;
+                let finalCp1Y = cp1.y;
 
-                  let finalCp1X = cp1.x;
-                  let finalCp1Y = cp1.y;
-
-                  // Apply scaling
-                  if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
-                    const scaleX = transformation.scaleX || 1;
-                    const scaleY = transformation.scaleY || 1;
-                    const dx = finalCp1X - actualCenterX;
-                    const dy = finalCp1Y - actualCenterY;
-                    finalCp1X = actualCenterX + dx * scaleX;
-                    finalCp1Y = actualCenterY + dy * scaleY;
-                  }
-
-                  // Apply rotation
-                  if (transformation.rotation !== undefined) {
-                    const radians = transformation.rotation * Math.PI / 180;
-                    const cos = Math.cos(radians);
-                    const sin = Math.sin(radians);
-                    const dx = finalCp1X - actualCenterX;
-                    const dy = finalCp1Y - actualCenterY;
-                    finalCp1X = actualCenterX + dx * cos - dy * sin;
-                    finalCp1Y = actualCenterY + dx * sin + dy * cos;
-                  }
-
-                  cp1.x = finalCp1X;
-                  cp1.y = finalCp1Y;
+                // Apply scaling
+                if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
+                  const scaleX = transformation.scaleX || 1;
+                  const scaleY = transformation.scaleY || 1;
+                  const dx = finalCp1X - actualCenterX;
+                  const dy = finalCp1Y - actualCenterY;
+                  finalCp1X = actualCenterX + dx * scaleX;
+                  finalCp1Y = actualCenterY + dy * scaleY;
                 }
+
+                // Apply rotation
+                if (transformation.rotation !== undefined) {
+                  const radians = (transformation.rotation * Math.PI) / 180;
+                  const cos = Math.cos(radians);
+                  const sin = Math.sin(radians);
+                  const dx = finalCp1X - actualCenterX;
+                  const dy = finalCp1Y - actualCenterY;
+                  finalCp1X = actualCenterX + dx * cos - dy * sin;
+                  finalCp1Y = actualCenterY + dx * sin + dy * cos;
+                }
+
+                cp1.x = finalCp1X;
+                cp1.y = finalCp1Y;
+              }
 
               updatedPoint.controlPoint1 = cp1;
             }
 
             if (updatedPoint.controlPoint2) {
-              let cp2 = { ...updatedPoint.controlPoint2 };
+              const cp2 = { ...updatedPoint.controlPoint2 };
 
               // Apply translation
               if (transformation.dx !== undefined) {
@@ -1281,36 +1227,40 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
               }
 
               // Apply rotation and scaling
-              if ((transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined) &&
-                  actualCenterX !== undefined && actualCenterY !== undefined) {
+              if (
+                (transformation.rotation !== undefined ||
+                  transformation.scaleX !== undefined ||
+                  transformation.scaleY !== undefined) &&
+                actualCenterX !== undefined &&
+                actualCenterY !== undefined
+              ) {
+                let finalCp2X = cp2.x;
+                let finalCp2Y = cp2.y;
 
-                  let finalCp2X = cp2.x;
-                  let finalCp2Y = cp2.y;
-
-                  // Apply scaling
-                  if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
-                    const scaleX = transformation.scaleX || 1;
-                    const scaleY = transformation.scaleY || 1;
-                    const dx = finalCp2X - actualCenterX;
-                    const dy = finalCp2Y - actualCenterY;
-                    finalCp2X = actualCenterX + dx * scaleX;
-                    finalCp2Y = actualCenterY + dy * scaleY;
-                  }
-
-                  // Apply rotation
-                  if (transformation.rotation !== undefined) {
-                    const radians = transformation.rotation * Math.PI / 180;
-                    const cos = Math.cos(radians);
-                    const sin = Math.sin(radians);
-                    const dx = finalCp2X - actualCenterX;
-                    const dy = finalCp2Y - actualCenterY;
-                    finalCp2X = actualCenterX + dx * cos - dy * sin;
-                    finalCp2Y = actualCenterY + dx * sin + dy * cos;
-                  }
-
-                  cp2.x = finalCp2X;
-                  cp2.y = finalCp2Y;
+                // Apply scaling
+                if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
+                  const scaleX = transformation.scaleX || 1;
+                  const scaleY = transformation.scaleY || 1;
+                  const dx = finalCp2X - actualCenterX;
+                  const dy = finalCp2Y - actualCenterY;
+                  finalCp2X = actualCenterX + dx * scaleX;
+                  finalCp2Y = actualCenterY + dy * scaleY;
                 }
+
+                // Apply rotation
+                if (transformation.rotation !== undefined) {
+                  const radians = (transformation.rotation * Math.PI) / 180;
+                  const cos = Math.cos(radians);
+                  const sin = Math.sin(radians);
+                  const dx = finalCp2X - actualCenterX;
+                  const dy = finalCp2Y - actualCenterY;
+                  finalCp2X = actualCenterX + dx * cos - dy * sin;
+                  finalCp2Y = actualCenterY + dx * sin + dy * cos;
+                }
+
+                cp2.x = finalCp2X;
+                cp2.y = finalCp2Y;
+              }
 
               updatedPoint.controlPoint2 = cp2;
             }
@@ -1322,6 +1272,10 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       });
 
       onPointsChange?.(updatedPoints);
+    },
+    // Shape analysis methods
+    getShapeBoundingBox: () => {
+      return calculateShapeBoundingBox(initialPoints);
     },
   }));
 
@@ -1458,13 +1412,11 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           if ((e.evt.ctrlKey || e.evt.metaKey) && !e.evt.altKey && !e.evt.shiftKey) {
             // Check if this instance can have selection
             if (!tracker.canInstanceHaveSelection(instanceId)) {
-              console.log(`🔍 Blocking cmd-click selection in ${instanceId} - ${tracker.getActiveInstanceId()} is active`);
               return; // Block the selection
             }
 
             // Select all points in the path
             const allPointIndices = Array.from({ length: initialPoints.length }, (_, i) => i);
-            console.log(`🔍 Cmd-click selecting all points in instance ${instanceId}:`, allPointIndices);
             tracker.selectPoints(instanceId, new Set(allPointIndices));
             return;
           }

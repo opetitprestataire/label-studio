@@ -61,6 +61,13 @@ export interface KonvaVectorRef {
     centerX?: number;
     centerY?: number;
   }, pointIds?: string[]) => void;
+  // Shape analysis methods
+  getShapeBoundingBox: () => {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+  };
 }
 
 /**

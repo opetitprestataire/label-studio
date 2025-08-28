@@ -170,6 +170,21 @@ vectorRef.current?.transformPoints({
 - Transformations are applied immediately and trigger `onPointsChange`
 - These methods work independently of the visual transformer
 
+## Shape Analysis
+
+### `getShapeBoundingBox()`
+Returns the bounding box of the entire shape, including bezier curves.
+
+```typescript
+const bbox = vectorRef.current?.getShapeBoundingBox();
+// Returns: { left: number, top: number, right: number, bottom: number }
+```
+
+**Features:**
+- **Accurate Bounding Box**: Calculates the true bounding box including bezier curve extrema
+- **Mathematical Precision**: Uses derivative calculations to find curve extrema points
+- **Complete Coverage**: Ensures the entire shape (including curved segments) is contained within the bounding box
+
 ### Single Source of Truth
 
 The PointCreationManager is now the **single source of truth** for all point creation:

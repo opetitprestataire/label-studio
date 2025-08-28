@@ -50,32 +50,27 @@ export class VectorSelectionTracker {
   // Instance Management
   registerInstance(instance: VectorInstance): void {
     this.instances.set(instance.id, instance);
-    console.log(`🔧 VectorSelectionTracker: Registered instance ${instance.id}`);
   }
 
   unregisterInstance(instanceId: string): void {
     this.instances.delete(instanceId);
     this.state.selectedInstances.delete(instanceId);
-    
+
     // If this was the active instance, clear it
     if (this.state.activeInstanceId === instanceId) {
       this.state.activeInstanceId = null;
     }
-    
-    console.log(`🔧 VectorSelectionTracker: Unregistered instance ${instanceId}`);
+
     this.notifyListeners();
   }
 
   // Selection Management
   selectPoints(instanceId: string, pointIndices: Set<number>): void {
-    console.log(`🔧 VectorSelectionTracker: Selecting points in ${instanceId}:`, Array.from(pointIndices));
-    
     // If trying to select points and there's already an active instance that's different
     if (pointIndices.size > 0 && this.state.activeInstanceId && this.state.activeInstanceId !== instanceId) {
-      console.log(`🔧 VectorSelectionTracker: Blocking selection in ${instanceId} - ${this.state.activeInstanceId} is active`);
       return; // Block the selection
     }
-    
+
     if (pointIndices.size === 0) {
       this.state.selectedInstances.delete(instanceId);
       // If this was the active instance and we're clearing selection, clear active instance
@@ -87,18 +82,15 @@ export class VectorSelectionTracker {
       // Set this as the active instance (first to select wins)
       this.state.activeInstanceId = instanceId;
     }
-    
+
     this.notifyListeners();
-    
+
     // Update the instance's local selection state
     const instance = this.instances.get(instanceId);
     if (instance) {
-      console.log(`🔧 VectorSelectionTracker: Updating instance ${instanceId} local state`);
       instance.setSelectedPoints(pointIndices);
       instance.setSelectedPointIndex(pointIndices.size === 1 ? Array.from(pointIndices)[0] : null);
       instance.onPointSelected?.(pointIndices.size === 1 ? Array.from(pointIndices)[0] : null);
-    } else {
-      console.warn(`🔧 VectorSelectionTracker: Instance ${instanceId} not found!`);
     }
   }
 
@@ -119,7 +111,7 @@ export class VectorSelectionTracker {
       instance.setSelectedPointIndex(null);
       instance.onPointSelected?.(null);
     }
-    
+
     this.state.selectedInstances.clear();
     this.state.activeInstanceId = null;
     this.notifyListeners();
@@ -131,7 +123,7 @@ export class VectorSelectionTracker {
 
   getSelectedPoints(): Array<{ instanceId: string; pointIndex: number; point: BezierPoint }> {
     const selectedPoints: Array<{ instanceId: string; pointIndex: number; point: BezierPoint }> = [];
-    
+
     for (const [instanceId, pointIndices] of this.state.selectedInstances) {
       const instance = this.instances.get(instanceId);
       if (instance) {
@@ -147,13 +139,9 @@ export class VectorSelectionTracker {
         }
       }
     }
-    
+
     return selectedPoints;
   }
-
-
-
-
 
   // Event Listeners
   subscribe(listener: (state: GlobalSelectionState) => void): () => void {
@@ -165,7 +153,6 @@ export class VectorSelectionTracker {
 
   private notifyListeners(): void {
     const globalState = this.getGlobalSelection();
-    console.log(`🔧 VectorSelectionTracker: Notifying listeners with state:`, globalState);
     for (const listener of this.listeners) {
       listener(globalState);
     }

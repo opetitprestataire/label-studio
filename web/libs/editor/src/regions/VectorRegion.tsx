@@ -9,12 +9,13 @@ import { AreaMixin } from "../mixins/AreaMixin";
 import { useRegionStyles } from "../hooks/useRegionColor";
 import { KonvaRegionMixin } from "../mixins/KonvaRegion";
 import { FF_DEV_3793, isFF } from "../utils/feature-flags";
-import { fixMobxObserve } from "../utils/utilities";
 import { RELATIVE_STAGE_HEIGHT, RELATIVE_STAGE_WIDTH } from "../components/ImageView/Image";
 import { KonvaVector } from "../components/KonvaVector/KonvaVector";
 import type { KonvaVectorRef } from "../components/KonvaVector/types";
 import { observer } from "mobx-react";
 import Constants from "../core/Constants";
+import { RegionWrapper } from "./RegionWrapper";
+import { LabelOnRect } from "../components/ImageView/LabelOnRegion";
 
 // Type definitions
 interface Point {
@@ -79,36 +80,39 @@ const Model = types
     get store() {
       return getRoot(self);
     },
-    get bboxCoords() {
+    get x() {
+      return self.bboxCoords.left;
+    },
+
+    get y() {
+      return self.bboxCoords.top;
+    },
+    get bbox() {
       if (!self.shape?.length || !isAlive(self)) return {};
 
       // Calculate bounding box from shape points
-      const bbox = self.shape.reduce(
-        (bboxCoords: any, point: any) => ({
-          left: Math.min(bboxCoords.left, point.x),
-          top: Math.min(bboxCoords.top, point.y),
-          right: Math.max(bboxCoords.right, point.x),
-          bottom: Math.max(bboxCoords.bottom, point.y),
-        }),
-        {
-          left: self.shape[0].x,
-          top: self.shape[0].y,
-          right: self.shape[0].x,
-          bottom: self.shape[0].y,
-        },
-      );
+      const bbox = self.vectorRef?.getShapeBoundingBox() ?? {};
 
       // Ensure we have valid coordinates
       if (bbox.left === undefined || bbox.top === undefined) {
         return {};
       }
 
-      if (!isFF(FF_DEV_3793)) {
-        // recalc on resize
-        fixMobxObserve(self.parent.stageWidth, self.parent.stageHeight);
-      }
-
       return bbox;
+    },
+
+    get bboxCoords() {
+      const bbox = self.bbox;
+
+      if (!bbox) return null;
+      if (!isFF(FF_DEV_3793)) return bbox;
+
+      return {
+        left: self.parent.imageToInternalX(bbox.left),
+        top: self.parent.imageToInternalY(bbox.top),
+        right: self.parent.imageToInternalX(bbox.right),
+        bottom: self.parent.imageToInternalY(bbox.bottom),
+      };
     },
     get closable() {
       return self.control?.closable ?? false;
@@ -178,14 +182,6 @@ const Model = types
         // Remove from annotation
         if (self.annotation) {
           self.annotation.removeArea(self);
-        }
-      },
-
-      onClickRegion(e: any) {
-        // Handle click on the region
-        if (self.annotation) {
-          // Use the proper selection method from Regions mixin
-          self._selectArea(e?.evt?.ctrlKey || e?.evt?.metaKey);
         }
       },
 
@@ -373,64 +369,68 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
   }
 
   return (
-    <KonvaVector
-      ref={(kv) => item.setKonvaVectorRef(kv)}
-      initialPoints={Array.from(item.shape)}
-      onPointsChange={(shape) => {
-        item.updateShapeFromKonvaVector(shape);
-      }}
-      onPathClosedChange={(isClosed) => {
-        item.onPathClosedChange(isClosed);
-      }}
-      onClick={(e) => {
-        // Handle region selection
-        if (item.parent.getSkipInteractions()) return;
-        if (item.isDrawing) return;
-        if (e.evt.altKey || e.evt.ctrlKey || e.evt.shiftKey || e.evt.metaKey) return;
+    <RegionWrapper item={item}>
+      <KonvaVector
+        ref={(kv) => item.setKonvaVectorRef(kv)}
+        initialPoints={Array.from(item.shape)}
+        onPointsChange={(shape) => {
+          item.updateShapeFromKonvaVector(shape);
+        }}
+        onPathClosedChange={(isClosed) => {
+          item.onPathClosedChange(isClosed);
+        }}
+        onClick={(e) => {
+          // Handle region selection
+          if (item.parent.getSkipInteractions()) return;
+          if (item.isDrawing) return;
+          if (e.evt.altKey || e.evt.ctrlKey || e.evt.shiftKey || e.evt.metaKey) return;
 
-        e.cancelBubble = true;
+          e.cancelBubble = true;
 
-        // Allow selection regardless of whether the path is closed
-        // The Selection tool will handle multi-selection logic
-        if (store.annotationStore.selected.isLinkingMode) {
-          stage.container().style.cursor = Constants.DEFAULT_CURSOR;
-        }
+          // Allow selection regardless of whether the path is closed
+          // The Selection tool will handle multi-selection logic
+          if (store.annotationStore.selected.isLinkingMode) {
+            stage.container().style.cursor = Constants.DEFAULT_CURSOR;
+          }
 
-        item.setHighlight(false);
-        item.onClickRegion(e);
-      }}
-      onMouseEnter={() => {
-        if (store.annotationStore.selected.isLinkingMode) {
-          item.setHighlight(true);
-        }
-        item.updateCursor(true);
-      }}
-      onMouseLeave={() => {
-        if (store.annotationStore.selected.isLinkingMode) {
           item.setHighlight(false);
-        }
-        item.updateCursor();
-      }}
-      closed={item.closed}
-      width={stageWidth}
-      height={stageHeight}
-      scaleX={item.parent.stageZoom}
-      scaleY={item.parent.stageZoom}
-      x={0}
-      y={0}
-      transform={{ zoom: item.parent.stageZoom, offsetX, offsetY }}
-      fitScale={item.parent.zoomScale}
-      allowClose={item.control?.closable ?? false}
-      allowBezier={item.control?.curves ?? false}
-      minPoints={item.minPoints}
-      maxPoints={item.maxPoints}
-      skeletonEnabled={item.control?.skeleton ?? false}
-      stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
-      fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
-      pixelSnapping={item.control?.snap === "pixel"}
-      constrainToBounds={item.control?.constrainToBounds ?? true}
-      disabled={(!item.selected && !item.isDrawing) || suggestion}
-    />
+          item.onClickRegion(e);
+        }}
+        onMouseEnter={() => {
+          if (store.annotationStore.selected.isLinkingMode) {
+            item.setHighlight(true);
+          }
+          item.updateCursor(true);
+        }}
+        onMouseLeave={() => {
+          if (store.annotationStore.selected.isLinkingMode) {
+            item.setHighlight(false);
+          }
+          item.updateCursor();
+        }}
+        closed={item.closed}
+        width={stageWidth}
+        height={stageHeight}
+        scaleX={item.parent.stageZoom}
+        scaleY={item.parent.stageZoom}
+        x={0}
+        y={0}
+        transform={{ zoom: item.parent.stageZoom, offsetX, offsetY }}
+        fitScale={item.parent.zoomScale}
+        allowClose={item.control?.closable ?? false}
+        allowBezier={item.control?.curves ?? false}
+        minPoints={item.minPoints}
+        maxPoints={item.maxPoints}
+        skeletonEnabled={item.control?.skeleton ?? false}
+        stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
+        fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor || "rgba(239, 68, 68, 0.3)"}
+        pixelSnapping={item.control?.snap === "pixel"}
+        constrainToBounds={item.control?.constrainToBounds ?? true}
+        disabled={(!item.selected && !item.isDrawing) || suggestion || store.annotationStore.selected.isLinkingMode}
+      />
+
+      <LabelOnRect item={item} color={regionStyles.strokeColor} strokewidth={regionStyles.strokeWidth} />
+    </RegionWrapper>
   );
 });
 
