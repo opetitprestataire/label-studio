@@ -117,10 +117,10 @@ vectorRef.current?.translatePoints(20, -20, ["point1", "point2"]);
 Rotates points around the specified center point. Angle is in degrees.
 
 ```typescript
-// Rotate all points 45° around the center
-vectorRef.current?.rotatePoints(45, centerX, centerY);
+// Rotate all points 45° around the shape's center (calculated automatically)
+vectorRef.current?.rotatePoints(45, 0, 0);
 
-// Rotate specific points 90° around a point
+// Rotate specific points 90° around a specific point
 vectorRef.current?.rotatePoints(90, 200, 150, ["point1", "point2"]);
 ```
 
@@ -128,10 +128,10 @@ vectorRef.current?.rotatePoints(90, 200, 150, ["point1", "point2"]);
 Scales points around the specified center point.
 
 ```typescript
-// Scale all points 1.5x around the center
-vectorRef.current?.scalePoints(1.5, 1.5, centerX, centerY);
+// Scale all points 1.5x around the shape's center (calculated automatically)
+vectorRef.current?.scalePoints(1.5, 1.5, 0, 0);
 
-// Scale specific points 0.8x around a point
+// Scale specific points 0.8x around a specific point
 vectorRef.current?.scalePoints(0.8, 0.8, 200, 150, ["point1", "point2"]);
 ```
 
@@ -139,12 +139,23 @@ vectorRef.current?.scalePoints(0.8, 0.8, 200, 150, ["point1", "point2"]);
 Applies a complex transformation combining translation, rotation, and scaling.
 
 ```typescript
+// Transform all points around the shape's center (calculated automatically)
 vectorRef.current?.transformPoints({
   dx: 30,           // Translation X
   dy: -20,          // Translation Y
   rotation: 30,     // Rotation in degrees
   scaleX: 1.2,      // Scale X
   scaleY: 0.9,      // Scale Y
+  // centerX and centerY are calculated automatically when not provided
+});
+
+// Transform specific points around a specific center
+vectorRef.current?.transformPoints({
+  dx: 30,
+  dy: -20,
+  rotation: 30,
+  scaleX: 1.2,
+  scaleY: 0.9,
   centerX: 200,     // Center point for rotation/scaling
   centerY: 150,
 }, ["point1", "point2"]);
@@ -153,7 +164,9 @@ vectorRef.current?.transformPoints({
 ### Notes:
 - All transformation methods work with both regular and bezier points
 - Bezier control points are automatically transformed along with their main points
-- If `pointIds` is not provided, all points are transformed
+- If `pointIds` is not provided, all points are transformed as a single shape
+- When transforming the entire shape (no `pointIds`), the center point is automatically calculated from the bounding box of all points (including control points)
+- For selective transformations, you must provide the center point for rotation/scaling operations
 - Transformations are applied immediately and trigger `onPointsChange`
 - These methods work independently of the visual transformer
 

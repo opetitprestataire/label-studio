@@ -975,6 +975,42 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         ? initialPoints.filter(p => pointIds.includes(p.id))
         : initialPoints;
 
+      // If no point IDs provided, calculate center of the entire shape
+      let actualCenterX = centerX;
+      let actualCenterY = centerY;
+
+      if (!pointIds) {
+        // Calculate bounding box of all points (including control points)
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+        initialPoints.forEach(point => {
+          // Main point
+          minX = Math.min(minX, point.x);
+          minY = Math.min(minY, point.y);
+          maxX = Math.max(maxX, point.x);
+          maxY = Math.max(maxY, point.y);
+
+          // Control points if bezier
+          if (point.isBezier) {
+            if (point.controlPoint1) {
+              minX = Math.min(minX, point.controlPoint1.x);
+              minY = Math.min(minY, point.controlPoint1.y);
+              maxX = Math.max(maxX, point.controlPoint1.x);
+              maxY = Math.max(maxY, point.controlPoint1.y);
+            }
+            if (point.controlPoint2) {
+              minX = Math.min(minX, point.controlPoint2.x);
+              minY = Math.min(minY, point.controlPoint2.y);
+              maxX = Math.max(maxX, point.controlPoint2.x);
+              maxY = Math.max(maxY, point.controlPoint2.y);
+            }
+          }
+        });
+
+        actualCenterX = (minX + maxX) / 2;
+        actualCenterY = (minY + maxY) / 2;
+      }
+
       const radians = angle * Math.PI / 180;
       const cos = Math.cos(radians);
       const sin = Math.sin(radians);
@@ -984,29 +1020,29 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           let updatedPoint = { ...point };
 
           // Apply rotation to main point
-          const dx = updatedPoint.x - centerX;
-          const dy = updatedPoint.y - centerY;
-          updatedPoint.x = centerX + dx * cos - dy * sin;
-          updatedPoint.y = centerY + dx * sin + dy * cos;
+          const dx = updatedPoint.x - actualCenterX;
+          const dy = updatedPoint.y - actualCenterY;
+          updatedPoint.x = actualCenterX + dx * cos - dy * sin;
+          updatedPoint.y = actualCenterY + dx * sin + dy * cos;
 
           // Apply rotation to control points if it's a bezier point
           if (updatedPoint.isBezier) {
             if (updatedPoint.controlPoint1) {
-              const cp1Dx = updatedPoint.controlPoint1.x - centerX;
-              const cp1Dy = updatedPoint.controlPoint1.y - centerY;
+              const cp1Dx = updatedPoint.controlPoint1.x - actualCenterX;
+              const cp1Dy = updatedPoint.controlPoint1.y - actualCenterY;
               updatedPoint.controlPoint1 = {
                 ...updatedPoint.controlPoint1,
-                x: centerX + cp1Dx * cos - cp1Dy * sin,
-                y: centerY + cp1Dx * sin + cp1Dy * cos,
+                x: actualCenterX + cp1Dx * cos - cp1Dy * sin,
+                y: actualCenterY + cp1Dx * sin + cp1Dy * cos,
               };
             }
             if (updatedPoint.controlPoint2) {
-              const cp2Dx = updatedPoint.controlPoint2.x - centerX;
-              const cp2Dy = updatedPoint.controlPoint2.y - centerY;
+              const cp2Dx = updatedPoint.controlPoint2.x - actualCenterX;
+              const cp2Dy = updatedPoint.controlPoint2.y - actualCenterY;
               updatedPoint.controlPoint2 = {
                 ...updatedPoint.controlPoint2,
-                x: centerX + cp2Dx * cos - cp2Dy * sin,
-                y: centerY + cp2Dx * sin + cp2Dy * cos,
+                x: actualCenterX + cp2Dx * cos - cp2Dy * sin,
+                y: actualCenterY + cp2Dx * sin + cp2Dy * cos,
               };
             }
           }
@@ -1023,34 +1059,70 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         ? initialPoints.filter(p => pointIds.includes(p.id))
         : initialPoints;
 
+      // If no point IDs provided, calculate center of the entire shape
+      let actualCenterX = centerX;
+      let actualCenterY = centerY;
+
+      if (!pointIds) {
+        // Calculate bounding box of all points (including control points)
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+        initialPoints.forEach(point => {
+          // Main point
+          minX = Math.min(minX, point.x);
+          minY = Math.min(minY, point.y);
+          maxX = Math.max(maxX, point.x);
+          maxY = Math.max(maxY, point.y);
+
+          // Control points if bezier
+          if (point.isBezier) {
+            if (point.controlPoint1) {
+              minX = Math.min(minX, point.controlPoint1.x);
+              minY = Math.min(minY, point.controlPoint1.y);
+              maxX = Math.max(maxX, point.controlPoint1.x);
+              maxY = Math.max(maxY, point.controlPoint1.y);
+            }
+            if (point.controlPoint2) {
+              minX = Math.min(minX, point.controlPoint2.x);
+              minY = Math.min(minY, point.controlPoint2.y);
+              maxX = Math.max(maxX, point.controlPoint2.x);
+              maxY = Math.max(maxY, point.controlPoint2.y);
+            }
+          }
+        });
+
+        actualCenterX = (minX + maxX) / 2;
+        actualCenterY = (minY + maxY) / 2;
+      }
+
       const updatedPoints = initialPoints.map(point => {
         if (pointsToTransform.some(p => p.id === point.id)) {
           let updatedPoint = { ...point };
 
           // Apply scaling to main point
-          const dx = updatedPoint.x - centerX;
-          const dy = updatedPoint.y - centerY;
-          updatedPoint.x = centerX + dx * scaleX;
-          updatedPoint.y = centerY + dy * scaleY;
+          const dx = updatedPoint.x - actualCenterX;
+          const dy = updatedPoint.y - actualCenterY;
+          updatedPoint.x = actualCenterX + dx * scaleX;
+          updatedPoint.y = actualCenterY + dy * scaleY;
 
           // Apply scaling to control points if it's a bezier point
           if (updatedPoint.isBezier) {
             if (updatedPoint.controlPoint1) {
-              const cp1Dx = updatedPoint.controlPoint1.x - centerX;
-              const cp1Dy = updatedPoint.controlPoint1.y - centerY;
+              const cp1Dx = updatedPoint.controlPoint1.x - actualCenterX;
+              const cp1Dy = updatedPoint.controlPoint1.y - actualCenterY;
               updatedPoint.controlPoint1 = {
                 ...updatedPoint.controlPoint1,
-                x: centerX + cp1Dx * scaleX,
-                y: centerY + cp1Dy * scaleY,
+                x: actualCenterX + cp1Dx * scaleX,
+                y: actualCenterY + cp1Dy * scaleY,
               };
             }
             if (updatedPoint.controlPoint2) {
-              const cp2Dx = updatedPoint.controlPoint2.x - centerX;
-              const cp2Dy = updatedPoint.controlPoint2.y - centerY;
+              const cp2Dx = updatedPoint.controlPoint2.x - actualCenterX;
+              const cp2Dy = updatedPoint.controlPoint2.y - actualCenterY;
               updatedPoint.controlPoint2 = {
                 ...updatedPoint.controlPoint2,
-                x: centerX + cp2Dx * scaleX,
-                y: centerY + cp2Dy * scaleY,
+                x: actualCenterX + cp2Dx * scaleX,
+                y: actualCenterY + cp2Dy * scaleY,
               };
             }
           }
@@ -1075,6 +1147,42 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         ? initialPoints.filter(p => pointIds.includes(p.id))
         : initialPoints;
 
+      // If no point IDs provided and we need center point, calculate center of the entire shape
+      let actualCenterX = transformation.centerX;
+      let actualCenterY = transformation.centerY;
+
+      if (!pointIds && (transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined)) {
+        // Calculate bounding box of all points (including control points)
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+        initialPoints.forEach(point => {
+          // Main point
+          minX = Math.min(minX, point.x);
+          minY = Math.min(minY, point.y);
+          maxX = Math.max(maxX, point.x);
+          maxY = Math.max(maxY, point.y);
+
+          // Control points if bezier
+          if (point.isBezier) {
+            if (point.controlPoint1) {
+              minX = Math.min(minX, point.controlPoint1.x);
+              minY = Math.min(minY, point.controlPoint1.y);
+              maxX = Math.max(maxX, point.controlPoint1.x);
+              maxY = Math.max(maxY, point.controlPoint1.y);
+            }
+            if (point.controlPoint2) {
+              minX = Math.min(minX, point.controlPoint2.x);
+              minY = Math.min(minY, point.controlPoint2.y);
+              maxX = Math.max(maxX, point.controlPoint2.x);
+              maxY = Math.max(maxY, point.controlPoint2.y);
+            }
+          }
+        });
+
+        actualCenterX = (minX + maxX) / 2;
+        actualCenterY = (minY + maxY) / 2;
+      }
+
       const updatedPoints = initialPoints.map(point => {
         if (pointsToTransform.some(p => p.id === point.id)) {
           let updatedPoint = { ...point };
@@ -1087,7 +1195,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
           // Apply rotation and scaling (need center point)
           if ((transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined) &&
-            transformation.centerX !== undefined && transformation.centerY !== undefined) {
+            actualCenterX !== undefined && actualCenterY !== undefined) {
 
             let finalX = updatedPoint.x;
             let finalY = updatedPoint.y;
@@ -1096,10 +1204,10 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
               const scaleX = transformation.scaleX || 1;
               const scaleY = transformation.scaleY || 1;
-              const dx = finalX - transformation.centerX;
-              const dy = finalY - transformation.centerY;
-              finalX = transformation.centerX + dx * scaleX;
-              finalY = transformation.centerY + dy * scaleY;
+              const dx = finalX - actualCenterX;
+              const dy = finalY - actualCenterY;
+              finalX = actualCenterX + dx * scaleX;
+              finalY = actualCenterY + dy * scaleY;
             }
 
             // Apply rotation
@@ -1107,10 +1215,10 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
               const radians = transformation.rotation * Math.PI / 180;
               const cos = Math.cos(radians);
               const sin = Math.sin(radians);
-              const dx = finalX - transformation.centerX;
-              const dy = finalY - transformation.centerY;
-              finalX = transformation.centerX + dx * cos - dy * sin;
-              finalY = transformation.centerY + dx * sin + dy * cos;
+              const dx = finalX - actualCenterX;
+              const dy = finalY - actualCenterY;
+              finalX = actualCenterX + dx * cos - dy * sin;
+              finalY = actualCenterY + dx * sin + dy * cos;
             }
 
             updatedPoint.x = finalX;
@@ -1130,35 +1238,35 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
               // Apply rotation and scaling
               if ((transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined) &&
-                transformation.centerX !== undefined && transformation.centerY !== undefined) {
+                  actualCenterX !== undefined && actualCenterY !== undefined) {
 
-                let finalCp1X = cp1.x;
-                let finalCp1Y = cp1.y;
+                  let finalCp1X = cp1.x;
+                  let finalCp1Y = cp1.y;
 
-                // Apply scaling
-                if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
-                  const scaleX = transformation.scaleX || 1;
-                  const scaleY = transformation.scaleY || 1;
-                  const dx = finalCp1X - transformation.centerX;
-                  const dy = finalCp1Y - transformation.centerY;
-                  finalCp1X = transformation.centerX + dx * scaleX;
-                  finalCp1Y = transformation.centerY + dy * scaleY;
+                  // Apply scaling
+                  if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
+                    const scaleX = transformation.scaleX || 1;
+                    const scaleY = transformation.scaleY || 1;
+                    const dx = finalCp1X - actualCenterX;
+                    const dy = finalCp1Y - actualCenterY;
+                    finalCp1X = actualCenterX + dx * scaleX;
+                    finalCp1Y = actualCenterY + dy * scaleY;
+                  }
+
+                  // Apply rotation
+                  if (transformation.rotation !== undefined) {
+                    const radians = transformation.rotation * Math.PI / 180;
+                    const cos = Math.cos(radians);
+                    const sin = Math.sin(radians);
+                    const dx = finalCp1X - actualCenterX;
+                    const dy = finalCp1Y - actualCenterY;
+                    finalCp1X = actualCenterX + dx * cos - dy * sin;
+                    finalCp1Y = actualCenterY + dx * sin + dy * cos;
+                  }
+
+                  cp1.x = finalCp1X;
+                  cp1.y = finalCp1Y;
                 }
-
-                // Apply rotation
-                if (transformation.rotation !== undefined) {
-                  const radians = transformation.rotation * Math.PI / 180;
-                  const cos = Math.cos(radians);
-                  const sin = Math.sin(radians);
-                  const dx = finalCp1X - transformation.centerX;
-                  const dy = finalCp1Y - transformation.centerY;
-                  finalCp1X = transformation.centerX + dx * cos - dy * sin;
-                  finalCp1Y = transformation.centerY + dx * sin + dy * cos;
-                }
-
-                cp1.x = finalCp1X;
-                cp1.y = finalCp1Y;
-              }
 
               updatedPoint.controlPoint1 = cp1;
             }
@@ -1174,35 +1282,35 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
               // Apply rotation and scaling
               if ((transformation.rotation !== undefined || transformation.scaleX !== undefined || transformation.scaleY !== undefined) &&
-                transformation.centerX !== undefined && transformation.centerY !== undefined) {
+                  actualCenterX !== undefined && actualCenterY !== undefined) {
 
-                let finalCp2X = cp2.x;
-                let finalCp2Y = cp2.y;
+                  let finalCp2X = cp2.x;
+                  let finalCp2Y = cp2.y;
 
-                // Apply scaling
-                if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
-                  const scaleX = transformation.scaleX || 1;
-                  const scaleY = transformation.scaleY || 1;
-                  const dx = finalCp2X - transformation.centerX;
-                  const dy = finalCp2Y - transformation.centerY;
-                  finalCp2X = transformation.centerX + dx * scaleX;
-                  finalCp2Y = transformation.centerY + dy * scaleY;
+                  // Apply scaling
+                  if (transformation.scaleX !== undefined || transformation.scaleY !== undefined) {
+                    const scaleX = transformation.scaleX || 1;
+                    const scaleY = transformation.scaleY || 1;
+                    const dx = finalCp2X - actualCenterX;
+                    const dy = finalCp2Y - actualCenterY;
+                    finalCp2X = actualCenterX + dx * scaleX;
+                    finalCp2Y = actualCenterY + dy * scaleY;
+                  }
+
+                  // Apply rotation
+                  if (transformation.rotation !== undefined) {
+                    const radians = transformation.rotation * Math.PI / 180;
+                    const cos = Math.cos(radians);
+                    const sin = Math.sin(radians);
+                    const dx = finalCp2X - actualCenterX;
+                    const dy = finalCp2Y - actualCenterY;
+                    finalCp2X = actualCenterX + dx * cos - dy * sin;
+                    finalCp2Y = actualCenterY + dx * sin + dy * cos;
+                  }
+
+                  cp2.x = finalCp2X;
+                  cp2.y = finalCp2Y;
                 }
-
-                // Apply rotation
-                if (transformation.rotation !== undefined) {
-                  const radians = transformation.rotation * Math.PI / 180;
-                  const cos = Math.cos(radians);
-                  const sin = Math.sin(radians);
-                  const dx = finalCp2X - transformation.centerX;
-                  const dy = finalCp2Y - transformation.centerY;
-                  finalCp2X = transformation.centerX + dx * cos - dy * sin;
-                  finalCp2Y = transformation.centerY + dx * sin + dy * cos;
-                }
-
-                cp2.x = finalCp2X;
-                cp2.y = finalCp2Y;
-              }
 
               updatedPoint.controlPoint2 = cp2;
             }
