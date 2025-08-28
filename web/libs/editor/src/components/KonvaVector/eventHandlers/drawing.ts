@@ -71,9 +71,6 @@ export function closePathBetweenFirstAndLast(
     return false;
   }
 
-  const fromPoint = props.initialPoints[fromPointIndex];
-  const toPoint = props.initialPoints[toPointIndex];
-
   // Check if path is already closed (first point's prevPointId points to last point)
   const firstPoint = props.initialPoints[0];
   const lastPoint = props.initialPoints[props.initialPoints.length - 1];
@@ -93,10 +90,6 @@ export function closePathBetweenFirstAndLast(
 
   // Update the internal path closed state and notify parent
   props.setIsPathClosed(true);
-
-  console.log(
-    `🔧 Path closed: first point (${updatedPoints[0].id}) now points to last point (${updatedPoints[updatedPoints.length - 1].id})`,
-  );
 
   return true;
 }
@@ -130,8 +123,6 @@ export function openPath(props: EventHandlerProps): boolean {
 
   // Update the internal path closed state
   props.setIsPathClosed(false);
-
-  console.log(`🔧 Path opened: first point (${updatedPoints[0].id}) no longer points to last point`);
 
   return true;
 }
@@ -254,12 +245,10 @@ export function addPointAtPosition(props: EventHandlerProps, x: number, y: numbe
 export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>, props: EventHandlerProps): boolean {
   const pos = e.target.getStage()?.getPointerPosition();
   if (!pos) {
-    console.log("🔍 Shift-click: No pointer position");
     return false;
   }
 
   const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
-  console.log("🔍 Shift-click: Checking for point conversion at", imagePos);
 
   // Find the closest point
   let closestPointIndex = -1;
@@ -276,30 +265,12 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
     }
   }
 
-  console.log(
-    "🔍 Shift-click: Closest point index:",
-    closestPointIndex,
-    "distance:",
-    closestDistance,
-    "hit radius:",
-    10 / (props.transform.zoom * props.fitScale),
-  );
-
   // Handle the point if we found one
   if (closestPointIndex !== -1) {
     const point = props.initialPoints[closestPointIndex];
-    console.log(
-      "🔍 Shift-click: Found point at index",
-      closestPointIndex,
-      "isBezier:",
-      point.isBezier,
-      "allowBezier:",
-      props.allowBezier,
-    );
 
     // If it's a bezier point and disconnected, reconnect it first
     if (point.isBezier && point.disconnected) {
-      console.log("🔍 Shift-click: Reconnecting disconnected bezier point");
       const newPoints = props.initialPoints.map((p, i) => {
         if (i === closestPointIndex) {
           // Reconnect by making control points symmetric around the anchor point
@@ -334,12 +305,8 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
     if (!pointToConvert.isBezier) {
       // Check if bezier is allowed
       if (!props.allowBezier) {
-        console.log("🔍 Shift-click: Bezier not allowed");
         return false;
       }
-
-      // Handle all points the same way - no special cases for first/last points
-      console.log("🔍 Shift-click: Converting regular point to bezier");
 
       // Smart control point placement based on neighboring points
       // Use actual path connections via prevPointId references, not array bounds
@@ -371,8 +338,6 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
           y: pointToConvert.y + (dy / distance) * offset,
         };
 
-        console.log("🔍 Shift-click: Standard control point placement, offset:", offset.toFixed(1));
-
         // Snap control points to pixel grid if enabled
         const snappedControlPoint1 = snapToPixel(controlPoint1, props.pixelSnapping);
         const snappedControlPoint2 = snapToPixel(controlPoint2, props.pixelSnapping);
@@ -392,18 +357,16 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
         // Make the control points visible (following addBezierPoint concept)
         props.setVisibleControlPoints(new Set([closestPointIndex]));
 
-        console.log("🔍 Shift-click: Successfully converted point to bezier");
         return true;
-      } else if (prevPoint || nextPoint) {
+      }
+
+      if (prevPoint || nextPoint) {
         // Handle points that have only one neighbor in the path
         const neighborPoint = prevPoint || nextPoint;
 
         if (!neighborPoint) {
-          console.warn("🔍 Shift-click: Unexpected null neighbor point");
           return false;
         }
-
-        console.log("🔍 Shift-click: Handling point with single neighbor in path");
 
         // Create control points based on the available neighbor
         const dx = neighborPoint.x - pointToConvert.x;
@@ -440,15 +403,13 @@ export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>,
         props.onPointEdited?.(newPoints[closestPointIndex], closestPointIndex);
         props.setVisibleControlPoints(new Set([closestPointIndex]));
 
-        console.log("🔍 Shift-click: Successfully converted point with single neighbor to bezier");
         return true;
-      } else {
-        // Graceful error handling - only for truly corrupted data
-        console.warn(
-          "🔍 Shift-click: Cannot convert point - missing neighboring points. This should not happen in normal operation.",
-        );
-        return false;
-      }
+      } // Graceful error handling - only for truly corrupted data
+
+      console.warn(
+        "🔍 Shift-click: Cannot convert point - missing neighboring points. This should not happen in normal operation.",
+      );
+      return false;
     }
 
     // It's a bezier point - check if controls are synchronized
@@ -546,11 +507,6 @@ export function breakPathAtSegment(props: EventHandlerProps, segmentIndex?: numb
 
   if (!props.isPathClosed) {
     return false;
-  }
-
-  // Log the current point references for debugging
-  for (let i = 0; i < props.initialPoints.length; i++) {
-    const point = props.initialPoints[i];
   }
 
   const firstPoint = props.initialPoints[0];
