@@ -111,7 +111,7 @@ const Model = types
       return bbox;
     },
     get closable() {
-      return self.control?.allowclose ?? false;
+      return self.control?.closable ?? false;
     },
     get minPoints() {
       const min = self.control?.minpoints;
@@ -122,9 +122,8 @@ const Model = types
       return max ? Number.parseInt(max) : undefined;
     },
     get incomplete() {
-      const notClosed = self.control?.allowclose === true && self.closed === false;
+      const notClosed = self.closable === true && self.closed === false;
       const notFinished = self.minPoints !== undefined && self.shape.length < self.minPoints;
-      console.log(notClosed, notFinished);
       return notClosed || notFinished;
     },
   }))
@@ -161,7 +160,6 @@ const Model = types
       closePoly() {
         if (!self.closable) return;
         self.vectorRef.close();
-        console.log("close poly");
       },
 
       notifyDrawingFinished() {
@@ -319,7 +317,6 @@ const Model = types
       // Uses KonvaVector startPoint to start drawing
       // This will only initiate point drawing, but won't create actual point
       startPoint(x: number, y: number) {
-        console.log("starting point");
         self.vectorRef.startPoint(x, y);
       },
 
@@ -329,7 +326,6 @@ const Model = types
       //
       // This method is designed to create Bezier curve
       updatePoint(x: number, y: number) {
-        console.log("updating point");
         self.vectorRef.updatePoint(x, y);
       },
 
@@ -337,7 +333,6 @@ const Model = types
       //
       // Will create a new point if it was started but never updated (regular click)
       commitPoint(x: number, y: number) {
-        console.log("commiting point");
         self.vectorRef.commitPoint(x, y);
       },
     };
@@ -379,7 +374,6 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
         item.updateShapeFromKonvaVector(shape);
       }}
       onPathClosedChange={(isClosed) => {
-        console.log(isClosed);
         item.onPathClosedChange(isClosed);
       }}
       onClick={(e) => {

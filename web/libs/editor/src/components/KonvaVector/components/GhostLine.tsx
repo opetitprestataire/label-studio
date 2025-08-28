@@ -148,7 +148,7 @@ export const GhostLine: React.FC<GhostLineProps> = ({
     !isPathClosed &&
     (maxPoints === undefined || initialPoints.length < maxPoints) &&
     activePoint &&
-    !getClosingTarget(); // Hide ghost line when near closing target
+    !getClosingTarget(); // Hide ghost line when green closing line is visible
 
   // Always render if we have the necessary conditions for ghost line or closing indicator
   // But allow rendering even when drawing is disabled if we're near a closing target

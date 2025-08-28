@@ -96,11 +96,11 @@ const _Tool = types
       },
 
       listenForClose() {
-        const area = self.getCurrentArea();
-        if (!area || !area.closable) return;
+        const { currentArea } = self;
+        if (!currentArea || !currentArea.closable) return;
 
         disposer = observe(
-          area,
+          currentArea,
           "closed",
           ({ newValue }) => {
             if (newValue.storedValue) self.finishDrawing();
@@ -126,12 +126,8 @@ const _Tool = types
       },
 
       mousedownEv(e, [x, y]) {
-        if (clickBlocker) {
-          // skip one click to prevent start drawing on polygon close
-          clickBlocker = false;
-          return;
-        }
         if (self.mode === "drawing") {
+          console.log("blocking: still drawing");
           return;
         }
         down = true;
@@ -150,10 +146,14 @@ const _Tool = types
 
       startDrawing(x, y) {
         if (self.mode === "drawing") return;
-        console.log("stating to draw");
         const { x: rx, y: ry } = self.realCoordsFromCursor(x, y);
+
         initialCursorPosition = { x: rx, y: ry };
-        self.currentArea = self.createRegion(self.createRegionOptions(), true);
+
+        const area = self.getCurrentArea();
+        const currentArea = area && isAlive(area) ? area : null;
+        self.currentArea = currentArea ?? self.createRegion(self.createRegionOptions(), true);
+
         self.mode = "drawing";
         self.setDrawing(true);
 
@@ -172,13 +172,14 @@ const _Tool = types
       mousemoveEv(_, [x, y]) {
         const { x: rx, y: ry } = self.realCoordsFromCursor(x, y);
         if (down && self.checkDistance(rx, ry)) {
-          self.currentArea?.updatePoint(rx, ry);
+          self.currentArea?.updatePoint?.(rx, ry);
         }
       },
 
       mouseupEv(_, [x, y]) {
         const { x: rx, y: ry } = self.realCoordsFromCursor(x, y);
-        self.currentArea?.commitPoint(rx, ry);
+        self.currentArea?.commitPoint?.(rx, ry);
+        self.mode = "viewing";
         down = false;
       },
 
@@ -192,6 +193,8 @@ const _Tool = types
       _finishDrawing() {
         const { currentArea, control } = self;
 
+        down = false;
+        clickBlocker = false;
         self.currentArea.notifyDrawingFinished();
         self.setDrawing(false);
         self.mode = "viewing";
@@ -224,7 +227,6 @@ const _Tool = types
       // Finish drawing the current vector
       finishDrawing() {
         const { currentArea } = self;
-        console.log(currentArea.incomplete);
         if (currentArea && !currentArea.incomplete) {
           self._finishDrawing();
           clickBlocker = true;

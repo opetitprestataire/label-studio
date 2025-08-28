@@ -1,5 +1,4 @@
 import type { KonvaEventObject } from "konva/lib/Node";
-import { createPoint, insertPointBetween as insertPointBetweenUtil } from "../pointManagement";
 import type { BezierPoint } from "../types";
 import type { EventHandlerProps } from "./types";
 import { getDistance, isPointInCanvasBounds, snapToPixel, stageToImageCoordinates } from "./utils";
@@ -75,16 +74,18 @@ export function closePathBetweenFirstAndLast(
   const fromPoint = props.initialPoints[fromPointIndex];
   const toPoint = props.initialPoints[toPointIndex];
 
-  // Check if path is already closed between these points
-  if (fromPoint.prevPointId === toPoint.id) {
+  // Check if path is already closed (first point's prevPointId points to last point)
+  const firstPoint = props.initialPoints[0];
+  const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+  if (firstPoint.prevPointId === lastPoint.id) {
     return true;
   }
 
-  // Close the path by setting the fromPoint's prevPointId to the toPoint's ID
+  // Close the path by setting the first point's prevPointId to the last point's ID
   const updatedPoints = [...props.initialPoints];
-  updatedPoints[fromPointIndex] = {
-    ...fromPoint,
-    prevPointId: toPoint.id,
+  updatedPoints[0] = {
+    ...updatedPoints[0],
+    prevPointId: updatedPoints[updatedPoints.length - 1].id,
   };
 
   // Update the points and notify parent
@@ -92,6 +93,8 @@ export function closePathBetweenFirstAndLast(
 
   // Update the internal path closed state and notify parent
   props.setIsPathClosed(true);
+
+  console.log(`🔧 Path closed: first point (${updatedPoints[0].id}) now points to last point (${updatedPoints[updatedPoints.length - 1].id})`);
 
   return true;
 }
@@ -108,8 +111,8 @@ export function openPath(props: EventHandlerProps): boolean {
   const firstPoint = props.initialPoints[0];
   const lastPoint = props.initialPoints[props.initialPoints.length - 1];
 
-  // Check if path is already open
-  if (firstPoint.prevPointId !== lastPoint.id) {
+  // Check if path is already open (first point has no prevPointId or it doesn't point to last point)
+  if (!firstPoint.prevPointId || firstPoint.prevPointId !== lastPoint.id) {
     return true;
   }
 
@@ -126,6 +129,8 @@ export function openPath(props: EventHandlerProps): boolean {
   // Update the internal path closed state
   props.setIsPathClosed(false);
 
+  console.log(`🔧 Path opened: first point (${updatedPoints[0].id}) no longer points to last point`);
+
   return true;
 }
 
@@ -134,93 +139,26 @@ export function openPath(props: EventHandlerProps): boolean {
  * Supports all types of point addition: click, click-drag, shift-click with ghost point
  */
 export function addPoint(props: EventHandlerProps, options: AddPointOptions): boolean {
-  // Check if we can add more points
-  // Allow adding points even when path is closed (for Shift+click functionality)
-  if (!props.canAddMorePoints?.()) {
+  if (!props.pointCreationManager) {
     return false;
   }
-
-  // Check if we're within canvas bounds (only if bounds checking is enabled)
-  if (props.constrainToBounds && !isPointInCanvasBounds({ x: options.x, y: options.y }, props.width, props.height)) {
-    return false;
-  }
-
-  // Snap to pixel grid if enabled
-  const snappedCoords = snapToPixel({ x: options.x, y: options.y }, props.pixelSnapping);
-
-  // Check if bezier is allowed
-  if (options.type === "bezier" && !props.allowBezier) {
-    return false;
-  }
-
-  // Determine the active point ID to connect from
-  let prevPointId = options.prevPointId;
-
-  if (!prevPointId) {
-    if (props.skeletonEnabled && props.activePointId) {
-      // In skeleton mode: always connect to the active point
-      prevPointId = props.activePointId;
-    } else if (props.skeletonEnabled && props.lastAddedPointId) {
-      // Fallback to lastAddedPointId for backward compatibility
-      prevPointId = props.lastAddedPointId;
-    } else if (props.initialPoints.length > 0) {
-      // Normal mode: use last point in array (ignore activePointId for non-skeleton mode)
-      prevPointId = props.initialPoints[props.initialPoints.length - 1].id;
-    }
-  }
-
-  // Create the new point
-  const newPointOptions: Partial<BezierPoint> = {};
 
   if (options.type === "bezier") {
-    newPointOptions.isBezier = true;
-
-    // Snap control points to pixel grid if enabled
-    const controlPoint1 = options.controlPoint1 || {
-      x: options.x - 20,
-      y: options.y - 20,
-    };
-    const controlPoint2 = options.controlPoint2 || {
-      x: options.x + 20,
-      y: options.y + 20,
-    };
-
-    const snappedControlPoint1 = snapToPixel(controlPoint1, props.pixelSnapping);
-    const snappedControlPoint2 = snapToPixel(controlPoint2, props.pixelSnapping);
-
-    newPointOptions.controlPoint1 = snappedControlPoint1;
-    newPointOptions.controlPoint2 = snappedControlPoint2;
-    newPointOptions.disconnected = options.isDisconnected || false;
-  }
-
-  const newPoint = createPoint(snappedCoords.x, snappedCoords.y, prevPointId, newPointOptions);
-
-  // Add to points array
-  const newIndex = props.initialPoints.length;
-  const newPoints = [...props.initialPoints, newPoint];
-
-  // Call callbacks
-  props.onPointAdded?.(newPoint, newIndex);
-
-  // Set this as the last added point
-  props.setLastAddedPointId?.(newPoint.id);
-
-  // Active point management:
-  // - In skeleton mode with manual selection: maintain the selected point for branching
-  // - Otherwise: always set new point as active (default behavior)
-  if (props.skeletonEnabled && props.activePointId) {
-    // In skeleton mode: always maintain the manually selected point for branching
+    return props.pointCreationManager.createBezierPointAt(
+      options.x,
+      options.y,
+      options.controlPoint1,
+      options.controlPoint2,
+      options.prevPointId,
+      options.isDisconnected
+    );
   } else {
-    // Default behavior: set the new point as active
-    props.setActivePointId?.(newPoint.id);
+    return props.pointCreationManager.createRegularPointAt(
+      options.x,
+      options.y,
+      options.prevPointId
+    );
   }
-
-  props.onPointsChange?.(newPoints);
-
-  // Reset control points visibility
-  props.setVisibleControlPoints(new Set());
-
-  return true;
 }
 
 export function handleDrawingModeClick(e: KonvaEventObject<MouseEvent>, props: EventHandlerProps): boolean {
@@ -280,50 +218,11 @@ export function addPointFromGhostDrag(
   ghostPoint: { x: number; y: number; segmentIndex: number },
   dragDistance: number,
 ): boolean {
-  // Get the points that form the segment
-  const segmentIndex = ghostPoint.segmentIndex;
-  const nextPoint = props.initialPoints[segmentIndex];
-  const prevPoint = segmentIndex > 0 ? props.initialPoints[segmentIndex - 1] : null;
-
-  if (!nextPoint || !prevPoint) {
+  if (!props.pointCreationManager) {
     return false;
   }
 
-  // Create a bezier point with control points based on drag distance
-  const controlPoint1 = {
-    x: ghostPoint.x - dragDistance * 0.5,
-    y: ghostPoint.y - dragDistance * 0.5,
-  };
-  const controlPoint2 = {
-    x: ghostPoint.x + dragDistance * 0.5,
-    y: ghostPoint.y + dragDistance * 0.5,
-  };
-
-  // Insert the point between the two points that form the segment
-  const newPoint = createPoint(ghostPoint.x, ghostPoint.y, prevPoint.id, {
-    isBezier: true,
-    controlPoint1,
-    controlPoint2,
-  });
-
-  // Insert the point between the two points that form the segment
-  const result = insertPointBetweenUtil(props.initialPoints, prevPoint.id, nextPoint.id, newPoint);
-
-  // Update the points array
-  props.onPointsChange?.(result);
-
-  // Set this as the last added point
-  props.setLastAddedPointId?.(newPoint.id);
-
-  // Active point management:
-  // - In skeleton mode with manual selection: maintain the selected point for branching
-  // - Otherwise: always set new point as active (default behavior)
-  if (!props.skeletonEnabled || !props.activePointId) {
-    // Default behavior: set the new point as active
-    props.setActivePointId?.(newPoint.id);
-  }
-
-  return true;
+  return props.pointCreationManager.createPointFromGhostDrag(ghostPoint, dragDistance);
 }
 
 /**
@@ -337,40 +236,29 @@ export function addBezierPoint(
   controlPoint2?: { x: number; y: number },
   isDisconnected = false,
 ): boolean {
-  const result = addPoint(props, {
-    x,
-    y,
-    type: "bezier",
-    controlPoint1,
-    controlPoint2,
-    isDisconnected,
-  });
-
-  // If the point was added successfully, make its control points visible
-  if (result && props.initialPoints.length > 0) {
-    const newPointIndex = props.initialPoints.length - 1;
-    const newPoint = props.initialPoints[newPointIndex];
-
-    if (newPoint.isBezier) {
-      // Make the control points of this Bezier point visible
-      const newVisibleControlPoints = new Set([newPointIndex]);
-      props.setVisibleControlPoints(newVisibleControlPoints);
-    }
+  if (!props.pointCreationManager) {
+    return false;
   }
 
-  return result;
+  return props.pointCreationManager.createBezierPointAt(
+    x,
+    y,
+    controlPoint1,
+    controlPoint2,
+    undefined,
+    isDisconnected
+  );
 }
 
 /**
  * Add a point at a specific position with custom reference
  */
 export function addPointAtPosition(props: EventHandlerProps, x: number, y: number, prevPointId?: string): boolean {
-  return addPoint(props, {
-    x,
-    y,
-    type: "regular",
-    prevPointId,
-  });
+  if (!props.pointCreationManager) {
+    return false;
+  }
+
+  return props.pointCreationManager.createRegularPointAt(x, y, prevPointId);
 }
 
 export function handleShiftClickPointConversion(e: KonvaEventObject<MouseEvent>, props: EventHandlerProps): boolean {
@@ -536,65 +424,19 @@ export function insertPointBetween(
   controlPoint1?: { x: number; y: number },
   controlPoint2?: { x: number; y: number },
 ): { success: boolean; newPointIndex?: number } {
-  // Check if we can add more points
-  // Allow adding points even when path is closed (for Shift+click functionality)
-  if (!props.canAddMorePoints?.()) {
+  if (!props.pointCreationManager) {
     return { success: false };
   }
 
-  // Snap to pixel grid if enabled
-  const snappedCoords = snapToPixel({ x, y }, props.pixelSnapping);
-
-  // Check if we're within canvas bounds (only if bounds checking is enabled)
-  if (props.constrainToBounds && !isPointInCanvasBounds(snappedCoords, props.width, props.height)) {
-    return { success: false };
-  }
-
-  // Check if bezier is allowed
-  if (type === "bezier" && !props.allowBezier) {
-    return { success: false };
-  }
-
-  // Create the new point
-  const newPointOptions: Partial<BezierPoint> = {};
-
-  if (type === "bezier") {
-    newPointOptions.isBezier = true;
-
-    // Snap control points to pixel grid if enabled
-    const controlPoint1Pos = controlPoint1 || { x: x - 20, y: y - 20 };
-    const controlPoint2Pos = controlPoint2 || { x: x + 20, y: y + 20 };
-
-    const snappedControlPoint1 = snapToPixel(controlPoint1Pos, props.pixelSnapping);
-    const snappedControlPoint2 = snapToPixel(controlPoint2Pos, props.pixelSnapping);
-
-    newPointOptions.controlPoint1 = snappedControlPoint1;
-    newPointOptions.controlPoint2 = snappedControlPoint2;
-  }
-
-  const newPoint = createPoint(snappedCoords.x, snappedCoords.y, prevPointId, newPointOptions);
-
-  // Use the existing insertPointBetween function from pointManagement
-  const newPoints = insertPointBetweenUtil(props.initialPoints, prevPointId, nextPointId, newPoint);
-
-  // Find the index of the newly inserted point
-  const newPointIndex = newPoints.findIndex(
-    (p: BezierPoint) => p.x === snappedCoords.x && p.y === snappedCoords.y && p.isBezier === (type === "bezier"),
+  return props.pointCreationManager.insertPointBetween(
+    x,
+    y,
+    prevPointId,
+    nextPointId,
+    type,
+    controlPoint1,
+    controlPoint2
   );
-
-  // Call callbacks
-  if (newPointIndex !== -1) {
-    props.onPointAdded?.(newPoint, newPointIndex);
-  }
-  props.onPointsChange?.(newPoints);
-
-  // Set the new point as the active point so the path continues from it
-  props.setActivePointId?.(newPoint.id);
-
-  // Reset control points visibility
-  props.setVisibleControlPoints(new Set());
-
-  return { success: true, newPointIndex };
 }
 
 /**

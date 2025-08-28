@@ -1,4 +1,5 @@
 import type { BezierPoint, SimplePoint, PointInput, Point } from "./types";
+import { nanoid } from "nanoid";
 
 // Calculate closest point on a line segment
 export const getClosestPointOnLine = (p: Point, a: Point, b: Point): Point => {
@@ -60,9 +61,9 @@ export const getClosestPointOnBezierCurve = (p: Point, p0: Point, p1: Point, p2:
   return closestPoint;
 };
 
-// Generate a unique ID for a point
+// Generate a unique ID for a point using nanoid
 export const generatePointId = (): string => {
-  return Math.random().toString(36).substr(2, 9);
+  return nanoid();
 };
 
 /**

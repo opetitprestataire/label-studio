@@ -103,6 +103,28 @@ export interface EventHandlerProps {
   constrainToBounds?: boolean;
   pointCreationManager?: {
     isCreating: () => boolean;
+    createRegularPointAt: (x: number, y: number, prevPointId?: string) => boolean;
+    createBezierPointAt: (
+      x: number,
+      y: number,
+      controlPoint1?: { x: number; y: number },
+      controlPoint2?: { x: number; y: number },
+      prevPointId?: string,
+      isDisconnected?: boolean
+    ) => boolean;
+    insertPointBetween: (
+      x: number,
+      y: number,
+      prevPointId: string,
+      nextPointId: string,
+      type?: "regular" | "bezier",
+      controlPoint1?: { x: number; y: number },
+      controlPoint2?: { x: number; y: number }
+    ) => { success: boolean; newPointIndex?: number };
+    createPointFromGhostDrag: (
+      ghostPoint: { x: number; y: number; segmentIndex: number },
+      dragDistance: number
+    ) => boolean;
   };
 }
 

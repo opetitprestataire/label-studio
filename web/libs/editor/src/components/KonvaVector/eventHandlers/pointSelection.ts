@@ -3,6 +3,58 @@ import type { EventHandlerProps } from "./types";
 import { isPointInHitRadius, stageToImageCoordinates } from "./utils";
 import { closePath, closePathBetweenFirstAndLast } from "./drawing";
 
+// Helper function to check if cursor is near a closing target
+function isNearClosingTarget(cursorPos: { x: number; y: number }, props: EventHandlerProps): boolean {
+  if (!props.allowClose || !props.cursorPosition || props.isPathClosed) {
+    return false;
+  }
+
+  // Check if we can close the path based on point count or bezier points
+  const canClosePath = () => {
+    if (props.initialPoints.length > 2) return true;
+    return props.initialPoints.some(point => point.isBezier);
+  };
+
+  if (!canClosePath()) return false;
+
+  // Additional validation: ensure we meet the minimum points requirement
+  if (props.minPoints && props.initialPoints.length < props.minPoints) {
+    return false;
+  }
+
+  const firstPoint = props.initialPoints[0];
+  const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+  const closeRadius = 15 / (props.transform.zoom * props.fitScale);
+
+  // Get the active point
+  const activePoint = props.skeletonEnabled && props.activePointId
+    ? props.initialPoints.find(p => p.id === props.activePointId)
+    : props.initialPoints[props.initialPoints.length - 1];
+
+  if (!activePoint) return false;
+
+  // Only check if the active point is the first or last point
+  const isActivePointFirst = activePoint.id === firstPoint.id;
+  const isActivePointLast = activePoint.id === lastPoint.id;
+
+  if (!isActivePointFirst && !isActivePointLast) return false;
+
+  const distanceToFirst = Math.sqrt((cursorPos.x - firstPoint.x) ** 2 + (cursorPos.y - firstPoint.y) ** 2);
+  const distanceToLast = Math.sqrt((cursorPos.x - lastPoint.x) ** 2 + (cursorPos.y - lastPoint.y) ** 2);
+
+  // If active point is first, check if near last point
+  if (isActivePointFirst && distanceToLast <= closeRadius) {
+    return true;
+  }
+
+  // If active point is last, check if near first point
+  if (isActivePointLast && distanceToFirst <= closeRadius) {
+    return true;
+  }
+
+  return false;
+}
+
 export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: EventHandlerProps): boolean {
   const pos = e.target.getStage()?.getPointerPosition();
   if (!pos) return false;
@@ -17,6 +69,14 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
     const point = props.initialPoints[i];
 
     if (isPointInHitRadius(imagePos, point, hitRadius)) {
+      // Disable point selection when near a closing target in drawing mode
+      // This prevents selection from interfering with path closure
+      if (props.isDrawingMode && !props.isPathClosed && isNearClosingTarget(imagePos, props)) {
+        // Only allow selection if Cmd/Ctrl is held (for multi-selection)
+        if (!e.evt.ctrlKey && !e.evt.metaKey) {
+          return false; // Don't select the point, let path closure handle it
+        }
+      }
       // Check if we're clicking on the first or last point to close the path
       // But only if the active point is also the first or last point
       // But don't close if Shift is held (to allow Shift+click functionality)
@@ -45,6 +105,8 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
           }
         }
       }
+
+
 
       // If Cmd/Ctrl is held, add to selection (multi-selection) - this takes priority
       if (e.evt.ctrlKey || e.evt.metaKey) {

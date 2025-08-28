@@ -268,26 +268,21 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   const [activePointId, setActivePointId] = useState<string | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
 
-  // Initialize PointCreationManager singleton
-  const pointCreationManager = useMemo(() => PointCreationManager.getInstance(), []);
+  // Initialize PointCreationManager instance
+  const pointCreationManager = useMemo(() => new PointCreationManager(), []);
 
   // Compute if path is closed based on point references
-  // A path is closed if every point has a prevPointId reference, creating a complete circular path
+  // A path is closed if the first point's prevPointId points to the last point
   const isPathClosed = useMemo(() => {
     if (!allowClose || initialPoints.length < 2) {
       return false;
     }
 
-    // Check if every point has a prevPointId reference
-    for (let i = 0; i < initialPoints.length; i++) {
-      const point = initialPoints[i];
-      if (!point.prevPointId) {
-        return false; // Found a point without prevPointId, path is not closed
-      }
-    }
+    const firstPoint = initialPoints[0];
+    const lastPoint = initialPoints[initialPoints.length - 1];
 
-    // All points have prevPointId references, path is closed
-    return true;
+    // Path is closed if the first point's prevPointId points to the last point
+    return firstPoint.prevPointId === lastPoint.id;
   }, [allowClose, initialPoints]);
 
   // Use external closed prop when provided, otherwise use computed value
@@ -296,9 +291,9 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   // Debug logging for path closure state
   useEffect(() => {
     if (allowClose && initialPoints.length >= 2) {
-      for (let i = 0; i < initialPoints.length; i++) {
-        const point = initialPoints[i];
-      }
+      const firstPoint = initialPoints[0];
+      const lastPoint = initialPoints[initialPoints.length - 1];
+      console.log(`🔍 Path closure check: first.prevPointId=${firstPoint.prevPointId}, last.id=${lastPoint.id}, isPathClosed=${isPathClosed}`);
     }
   }, [allowClose, initialPoints, isPathClosed, finalIsPathClosed]);
 

@@ -1,7 +1,7 @@
 import type { BezierPoint, Point } from "./types";
-import { addBezierPoint, addPoint } from "./eventHandlers/drawing";
 import { snapToPixel } from "./eventHandlers/utils";
 import type { EventHandlerProps } from "./eventHandlers/types";
+import { generatePointId } from "./utils";
 
 export interface PointCreationState {
   isCreating: boolean;
@@ -34,7 +34,6 @@ export interface PointCreationManagerProps {
 }
 
 export class PointCreationManager {
-  private static instance: PointCreationManager | null = null;
   private state: PointCreationState = {
     isCreating: false,
     startX: 0,
@@ -46,18 +45,13 @@ export class PointCreationManager {
 
   private props: PointCreationManagerProps | null = null;
 
-  private constructor() {}
-
-  static getInstance(): PointCreationManager {
-    if (!PointCreationManager.instance) {
-      PointCreationManager.instance = new PointCreationManager();
-    }
-    return PointCreationManager.instance;
-  }
+  constructor() { }
 
   setProps(props: PointCreationManagerProps): void {
     this.props = props;
   }
+
+  // ===== PROGRAMMATIC POINT CREATION METHODS =====
 
   startPoint(x: number, y: number): boolean {
     if (!this.props || this.state.isCreating) {
@@ -185,29 +179,193 @@ export class PointCreationManager {
     return true;
   }
 
-  private createRegularPoint(x: number, y: number): number | null {
+  // ===== DIRECT POINT CREATION METHODS =====
+
+  /**
+   * Create a regular point at the specified position
+   */
+  createRegularPointAt(x: number, y: number, prevPointId?: string): boolean {
+    if (!this.props) return false;
+
+    // Check if we can add more points
+    if (this.props.canAddMorePoints && !this.props.canAddMorePoints()) {
+      return false;
+    }
+
+    // Snap to pixel grid if enabled
+    const snappedCoords = snapToPixel({ x, y }, this.props.pixelSnapping);
+
+    // Check if we're within canvas bounds (only if bounds checking is enabled)
+    if (this.props.constrainToBounds && this.props.width && this.props.height) {
+      if (snappedCoords.x < 0 || snappedCoords.x > this.props.width ||
+        snappedCoords.y < 0 || snappedCoords.y > this.props.height) {
+        return false;
+      }
+    }
+
+    const result = this.createRegularPoint(snappedCoords.x, snappedCoords.y, prevPointId);
+    return result !== null;
+  }
+
+  /**
+   * Create a bezier point at the specified position with custom control points
+   */
+  createBezierPointAt(
+    x: number,
+    y: number,
+    controlPoint1?: { x: number; y: number },
+    controlPoint2?: { x: number; y: number },
+    prevPointId?: string,
+    isDisconnected = false
+  ): boolean {
+    if (!this.props || !this.props.allowBezier) return false;
+
+    // Check if we can add more points
+    if (this.props.canAddMorePoints && !this.props.canAddMorePoints()) {
+      return false;
+    }
+
+    // Snap to pixel grid if enabled
+    const snappedCoords = snapToPixel({ x, y }, this.props.pixelSnapping);
+
+    // Check if we're within canvas bounds (only if bounds checking is enabled)
+    if (this.props.constrainToBounds && this.props.width && this.props.height) {
+      if (snappedCoords.x < 0 || snappedCoords.x > this.props.width ||
+        snappedCoords.y < 0 || snappedCoords.y > this.props.height) {
+        return false;
+      }
+    }
+
+    const result = this.createBezierPointWithControls(
+      snappedCoords.x,
+      snappedCoords.y,
+      controlPoint1,
+      controlPoint2,
+      prevPointId,
+      isDisconnected
+    );
+    return result !== null;
+  }
+
+  /**
+   * Insert a point between two existing points
+   */
+  insertPointBetween(
+    x: number,
+    y: number,
+    prevPointId: string,
+    nextPointId: string,
+    type: "regular" | "bezier" = "regular",
+    controlPoint1?: { x: number; y: number },
+    controlPoint2?: { x: number; y: number }
+  ): { success: boolean; newPointIndex?: number } {
+    if (!this.props) return { success: false };
+
+    // Check if we can add more points
+    if (this.props.canAddMorePoints && !this.props.canAddMorePoints()) {
+      return { success: false };
+    }
+
+    // Snap to pixel grid if enabled
+    const snappedCoords = snapToPixel({ x, y }, this.props.pixelSnapping);
+
+    // Check if we're within canvas bounds (only if bounds checking is enabled)
+    if (this.props.constrainToBounds && this.props.width && this.props.height) {
+      if (snappedCoords.x < 0 || snappedCoords.x > this.props.width ||
+        snappedCoords.y < 0 || snappedCoords.y > this.props.height) {
+        return { success: false };
+      }
+    }
+
+    // Check if bezier is allowed
+    if (type === "bezier" && !this.props.allowBezier) {
+      return { success: false };
+    }
+
+    return this.insertPointBetweenUtil(
+      snappedCoords.x,
+      snappedCoords.y,
+      prevPointId,
+      nextPointId,
+      type,
+      controlPoint1,
+      controlPoint2
+    );
+  }
+
+  /**
+   * Create a point from ghost point drag
+   */
+  createPointFromGhostDrag(
+    ghostPoint: { x: number; y: number; segmentIndex: number },
+    dragDistance: number
+  ): boolean {
+    if (!this.props) return false;
+
+    // Check if we can add more points
+    if (this.props.canAddMorePoints && !this.props.canAddMorePoints()) {
+      return false;
+    }
+
+    // Get the points that form the segment
+    const segmentIndex = ghostPoint.segmentIndex;
+    const nextPoint = this.props.initialPoints[segmentIndex];
+    const prevPoint = segmentIndex > 0 ? this.props.initialPoints[segmentIndex - 1] : null;
+
+    if (!nextPoint || !prevPoint) {
+      return false;
+    }
+
+    // Create a bezier point with control points based on drag distance
+    const controlPoint1 = {
+      x: ghostPoint.x - dragDistance * 0.5,
+      y: ghostPoint.y - dragDistance * 0.5,
+    };
+    const controlPoint2 = {
+      x: ghostPoint.x + dragDistance * 0.5,
+      y: ghostPoint.y + dragDistance * 0.5,
+    };
+
+    const result = this.insertPointBetween(
+      ghostPoint.x,
+      ghostPoint.y,
+      prevPoint.id,
+      nextPoint.id,
+      "bezier",
+      controlPoint1,
+      controlPoint2
+    );
+
+    return result.success;
+  }
+
+  // ===== PRIVATE HELPER METHODS =====
+
+  private createRegularPoint(x: number, y: number, prevPointId?: string): number | null {
     if (!this.props) return null;
 
     // Determine the active point ID to connect from
-    let prevPointId: string | undefined;
+    let finalPrevPointId = prevPointId;
 
-    if (this.props.skeletonEnabled && this.props.activePointId) {
+    if (!finalPrevPointId) {
+      if (this.props.skeletonEnabled && this.props.activePointId) {
       // In skeleton mode: always connect to the active point
-      prevPointId = this.props.activePointId;
-    } else if (this.props.skeletonEnabled && this.props.lastAddedPointId) {
-      // Fallback to lastAddedPointId for backward compatibility
-      prevPointId = this.props.lastAddedPointId;
-    } else if (this.props.initialPoints.length > 0) {
-      // Normal mode: use last point in array
-      prevPointId = this.props.initialPoints[this.props.initialPoints.length - 1].id;
+        finalPrevPointId = this.props.activePointId;
+      } else if (this.props.skeletonEnabled && this.props.lastAddedPointId) {
+        // Fallback to lastAddedPointId for backward compatibility
+        finalPrevPointId = this.props.lastAddedPointId;
+      } else if (this.props.initialPoints.length > 0) {
+        // Normal mode: use last point in array
+        finalPrevPointId = this.props.initialPoints[this.props.initialPoints.length - 1].id;
+      }
     }
 
     // Create the new point
     const newPoint = {
       x,
       y,
-      id: `point_${Date.now()}_${Math.random()}`,
-      prevPointId,
+      id: generatePointId(),
+      prevPointId: finalPrevPointId,
       isBezier: false,
     };
 
@@ -263,7 +421,7 @@ export class PointCreationManager {
     const newPoint = {
       x,
       y,
-      id: `point_${Date.now()}_${Math.random()}`,
+      id: generatePointId(),
       prevPointId,
       isBezier: true,
       controlPoint1: snappedControlPoint1,
@@ -300,6 +458,165 @@ export class PointCreationManager {
     }
 
     return newIndex;
+  }
+
+  private createBezierPointWithControls(
+    x: number,
+    y: number,
+    controlPoint1?: { x: number; y: number },
+    controlPoint2?: { x: number; y: number },
+    prevPointId?: string,
+    isDisconnected = false
+  ): number | null {
+    if (!this.props || !this.props.allowBezier) return null;
+
+    // Determine the active point ID to connect from
+    let finalPrevPointId = prevPointId;
+
+    if (!finalPrevPointId) {
+      if (this.props.skeletonEnabled && this.props.activePointId) {
+        // In skeleton mode: always connect to the active point
+        finalPrevPointId = this.props.activePointId;
+      } else if (this.props.skeletonEnabled && this.props.lastAddedPointId) {
+        // Fallback to lastAddedPointId for backward compatibility
+        finalPrevPointId = this.props.lastAddedPointId;
+      } else if (this.props.initialPoints.length > 0) {
+        // Normal mode: use last point in array
+        finalPrevPointId = this.props.initialPoints[this.props.initialPoints.length - 1].id;
+      }
+    }
+
+    // Create initial control points
+    const defaultControlPoint1 = { x: x - 20, y: y - 20 };
+    const defaultControlPoint2 = { x: x + 20, y: y + 20 };
+
+    // Use provided control points or defaults
+    const finalControlPoint1 = controlPoint1 || defaultControlPoint1;
+    const finalControlPoint2 = controlPoint2 || defaultControlPoint2;
+
+    // Snap control points to pixel grid if enabled
+    const snappedControlPoint1 = snapToPixel(finalControlPoint1, this.props.pixelSnapping);
+    const snappedControlPoint2 = snapToPixel(finalControlPoint2, this.props.pixelSnapping);
+
+    // Create the new bezier point
+    const newPoint = {
+      x,
+      y,
+      id: generatePointId(),
+      prevPointId: finalPrevPointId,
+      isBezier: true,
+      controlPoint1: snappedControlPoint1,
+      controlPoint2: snappedControlPoint2,
+      disconnected: isDisconnected,
+    };
+
+    // Add to points array
+    const newIndex = this.props.initialPoints.length;
+    const newPoints = [...this.props.initialPoints, newPoint];
+
+    // Call callbacks
+    this.props.onPointAdded?.(newPoint, newIndex);
+
+    // Set this as the last added point
+    this.props.setLastAddedPointId?.(newPoint.id);
+
+    // Active point management
+    if (this.props.skeletonEnabled && this.props.activePointId) {
+      // In skeleton mode: always maintain the manually selected point for branching
+    } else {
+      // Default behavior: set the new point as active
+      this.props.setActivePointId?.(newPoint.id);
+    }
+
+    this.props.onPointsChange?.(newPoints);
+
+    // Make control points visible for the newly created bezier point
+    if (this.props.setVisibleControlPoints) {
+      this.props.setVisibleControlPoints(new Set([newIndex]));
+    }
+
+    return newIndex;
+  }
+
+  private insertPointBetweenUtil(
+    x: number,
+    y: number,
+    prevPointId: string,
+    nextPointId: string,
+    type: "regular" | "bezier" = "regular",
+    controlPoint1?: { x: number; y: number },
+    controlPoint2?: { x: number; y: number }
+  ): { success: boolean; newPointIndex?: number } {
+    if (!this.props) return { success: false };
+
+    // Create the new point
+    const newPointOptions: Partial<BezierPoint> = {};
+
+    if (type === "bezier") {
+      newPointOptions.isBezier = true;
+
+      // Snap control points to pixel grid if enabled
+      const controlPoint1Pos = controlPoint1 || { x: x - 20, y: y - 20 };
+      const controlPoint2Pos = controlPoint2 || { x: x + 20, y: y + 20 };
+
+      const snappedControlPoint1 = snapToPixel(controlPoint1Pos, this.props.pixelSnapping);
+      const snappedControlPoint2 = snapToPixel(controlPoint2Pos, this.props.pixelSnapping);
+
+      newPointOptions.controlPoint1 = snappedControlPoint1;
+      newPointOptions.controlPoint2 = snappedControlPoint2;
+    }
+
+    const newPoint = {
+      x,
+      y,
+      id: generatePointId(),
+      prevPointId,
+      ...newPointOptions,
+    };
+
+    // Use the private helper method to insert the point
+    const newPoints = this.insertPointBetweenHelper(this.props.initialPoints, prevPointId, nextPointId, newPoint);
+
+    // Find the index of the newly inserted point
+    const newPointIndex = newPoints.findIndex(
+      (p: BezierPoint) => p.x === x && p.y === y && p.isBezier === (type === "bezier"),
+    );
+
+    // Call callbacks
+    if (newPointIndex !== -1) {
+      this.props.onPointAdded?.(newPoint, newPointIndex);
+    }
+    this.props.onPointsChange?.(newPoints);
+
+    // Set the new point as the active point so the path continues from it
+    this.props.setActivePointId?.(newPoint.id);
+
+    // Reset control points visibility
+    this.props.setVisibleControlPoints?.(new Set());
+
+    return { success: true, newPointIndex };
+  }
+
+  private insertPointBetweenHelper(points: BezierPoint[], prevPointId: string, nextPointId: string, newPoint: BezierPoint): BezierPoint[] {
+    const newPoints = [...points];
+
+    // Find the index of the next point to insert before it
+    const nextPointIndex = newPoints.findIndex((point) => point.id === nextPointId);
+    if (nextPointIndex === -1) return points;
+
+    // Set the new point's reference to the previous point
+    newPoint.prevPointId = prevPointId;
+
+    // Update the next point's reference to the new point
+    newPoints[nextPointIndex] = {
+      ...newPoints[nextPointIndex],
+      prevPointId: newPoint.id,
+    };
+
+    // Insert the new point before the next point
+    newPoints.splice(nextPointIndex, 0, newPoint);
+
+    return newPoints;
   }
 
   private updateBezierControlPoints(x: number, y: number): void {

@@ -1,10 +1,8 @@
 # KonvaVector Component
 
-## Programmatic Point Creation
+## Point Creation Management
 
-The KonvaVector component now supports programmatic point creation through a
-singleton utility that manages the click-drag behavior for creating both regular
-and bezier points.
+The KonvaVector component now uses a **PointCreationManager** as the **single source of truth** for all point creation, whether it's regular points or bezier points. This ensures consistent behavior and centralized point creation logic.
 
 ### New Ref Methods
 
@@ -99,6 +97,15 @@ function MyComponent() {
      during updatePoint
    - Resets the creation state
    - Returns `true` if successful, `false` if not creating
+
+### Single Source of Truth
+
+The PointCreationManager is now the **single source of truth** for all point creation:
+
+- **All point creation goes through the manager**: Whether it's manual mouse interactions, programmatic calls, or shift-click operations
+- **Consistent behavior**: All point creation follows the same logic and constraints
+- **Centralized validation**: All bounds checking, point limits, and bezier settings are handled in one place
+- **No conflicts**: The manager prevents duplicate point creation and ensures proper state management
 
 ### Integration with Mouse Events
 

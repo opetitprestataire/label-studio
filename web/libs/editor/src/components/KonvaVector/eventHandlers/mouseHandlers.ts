@@ -657,8 +657,7 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
           };
 
           // Insert the bezier point
-          const result = insertPointBetween(
-            props,
+          const result = props.pointCreationManager?.insertPointBetween(
             ghostPoint.x,
             ghostPoint.y,
             prevPoint.id,
@@ -666,7 +665,7 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
             "bezier",
             controlPoint1,
             controlPoint2,
-          );
+          ) || { success: false };
 
           if (result.success && result.newPointIndex !== undefined) {
             // Store the index of the newly created bezier point
