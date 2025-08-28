@@ -2015,79 +2015,54 @@
       "pointSize": {
         "name": "pointSize",
         "description": "Size of vector handle points",
-        "type": [
-          "small",
-          "medium",
-          "large"
-        ],
+        "type": ["small", "medium", "large"],
         "required": false,
         "default": "small"
       },
       "pointStyle": {
         "name": "pointStyle",
         "description": "Style of points",
-        "type": [
-          "rectangle",
-          "circle"
-        ],
+        "type": ["rectangle", "circle"],
         "required": false,
         "default": "circle"
       },
       "smart": {
         "name": "smart",
         "description": "Show smart tool for interactive pre-annotations",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false
       },
       "smartOnly": {
         "name": "smartOnly",
         "description": "Only show smart tool for interactive pre-annotations",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false
       },
       "snap": {
         "name": "snap",
         "description": "Snap vector to image pixels",
-        "type": [
-          "pixel",
-          "none"
-        ],
+        "type": ["pixel", "none"],
         "required": false,
         "default": "none"
       },
       "closable": {
         "name": "closable",
         "description": "Allow closed shapes",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false,
         "default": false
       },
       "curves": {
         "name": "curves",
         "description": "Allow Bezier curves",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false,
         "default": false
       },
       "skeleton": {
         "name": "skeleton",
         "description": "Enables skeleton mode to allow branch paths",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false,
         "default": false
       },
@@ -2106,10 +2081,7 @@
       "constrainToBounds": {
         "name": "constrainToBounds",
         "description": "Whether to keep shapes inside image bounds",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false,
         "default": false
       },
@@ -2148,10 +2120,7 @@
       "choice": {
         "name": "choice",
         "description": "Configure whether you can select one or multiple labels",
-        "type": [
-          "single",
-          "multiple"
-        ],
+        "type": ["single", "multiple"],
         "required": false,
         "default": "single"
       },
@@ -2164,10 +2133,7 @@
       "showInline": {
         "name": "showInline",
         "description": "Show labels in the same visual line",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false,
         "default": true
       },
@@ -2200,61 +2166,42 @@
       "pointSize": {
         "name": "pointSize",
         "description": "Size of vector handle points",
-        "type": [
-          "small",
-          "medium",
-          "large"
-        ],
+        "type": ["small", "medium", "large"],
         "required": false,
         "default": "medium"
       },
       "pointStyle": {
         "name": "pointStyle",
         "description": "Style of points",
-        "type": [
-          "rectangle",
-          "circle"
-        ],
+        "type": ["rectangle", "circle"],
         "required": false,
         "default": "rectangle"
       },
       "snap": {
         "name": "snap",
         "description": "Snap vector to image pixels",
-        "type": [
-          "pixel",
-          "none"
-        ],
+        "type": ["pixel", "none"],
         "required": false,
         "default": "none"
       },
       "closable": {
         "name": "closable",
         "description": "Allow closed shapes",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false,
         "default": false
       },
       "curves": {
         "name": "curves",
         "description": "Allow Bezier curves",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false,
         "default": false
       },
       "skeleton": {
         "name": "skeleton",
         "description": "Enables skeleton mode to allow branch paths",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false,
         "default": false
       },
@@ -2273,10 +2220,7 @@
       "constrainToBounds": {
         "name": "constrainToBounds",
         "description": "Whether to keep shapes inside image bounds",
-        "type": [
-          "true",
-          "false"
-        ],
+        "type": ["true", "false"],
         "required": false,
         "default": false
       },

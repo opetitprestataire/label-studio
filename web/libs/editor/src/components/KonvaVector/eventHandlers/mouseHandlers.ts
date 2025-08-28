@@ -25,6 +25,7 @@ import {
 } from "./utils";
 import { constrainPointToBounds } from "../utils/boundsChecking";
 import { VectorSelectionTracker } from "../VectorSelectionTracker";
+import { PointType } from "../types";
 
 export function createMouseDownHandler(props: EventHandlerProps, handledSelectionInMouseDown: { current: boolean }) {
   return (e: KonvaEventObject<MouseEvent>) => {
@@ -665,7 +666,7 @@ export function createMouseMoveHandler(props: EventHandlerProps, handledSelectio
             ghostPoint.y,
             prevPoint.id,
             nextPoint.id,
-            "bezier",
+            PointType.BEZIER,
             controlPoint1,
             controlPoint2,
           ) || { success: false };
@@ -761,12 +762,8 @@ export function createMouseUpHandler(props: EventHandlerProps) {
         const fromPointIndex = pointIndex;
         const toPointIndex = pointIndex === 0 ? props.initialPoints.length - 1 : 0;
         const closed = closePathBetweenFirstAndLast(props, fromPointIndex, toPointIndex);
-        if (closed) {
-          // Path was closed successfully, don't select the point
-          console.log(`🔧 Mouse up: Path closed successfully, skipping point selection`);
-        } else {
+        if (!closed) {
           // Path closing failed, fall back to point selection
-          console.log(`🔧 Mouse up: Path closing failed, falling back to point selection`);
           handlePointSelectionFromIndex(pointIndex, props);
         }
       } else {
@@ -826,18 +823,14 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
   return (e: KonvaEventObject<MouseEvent>) => {
     // Handle Shift+click functionality FIRST (before other checks)
     if (e.evt.shiftKey && !e.evt.altKey) {
-      console.log("🔍 Click handler: Shift+click detected, trying point conversion");
       // First, try to convert a point to bezier if clicking on a point
       if (handleShiftClickPointConversion(e, props)) {
-        console.log("🔍 Click handler: Point conversion successful, returning early");
         return;
       }
-      console.log("🔍 Click handler: Point conversion failed or not applicable");
     }
 
     // Handle Shift+click functionality (before other checks)
     if (e.evt.shiftKey && !e.evt.altKey) {
-      console.log("🔍 Click handler: Shift+click detected, checking for ghost point insertion");
       // First, check if we're near a ghost point to add a point
       if (
         props.cursorPosition &&
@@ -856,7 +849,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
           const clickRadius = 15 / (props.transform.zoom * props.fitScale);
 
           if (distance <= clickRadius) {
-            console.log("🔍 Click handler: Inserting point at ghost point location");
             // Insert a regular point between the two points that form the segment
             const insertResult = insertPointBetween(
               props,
@@ -866,7 +858,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
               ghostPoint.nextPointId,
             );
             if (insertResult.success) {
-              console.log("🔍 Click handler: Ghost point insertion successful");
               return; // Successfully added point
             }
           }
@@ -919,9 +910,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
 
           if (closestPathPoint && getDistance(imagePos, closestPathPoint.point) <= segmentHitRadius) {
             // We clicked on a segment, break the closed path
-            console.log(
-              `🔧 Alt+click detected on segment ${closestPathPoint.segmentIndex} at position (${closestPathPoint.point.x.toFixed(1)}, ${closestPathPoint.point.y.toFixed(1)})`,
-            );
             if (breakPathAtSegment(props, closestPathPoint.segmentIndex)) {
               return;
             }
@@ -997,7 +985,6 @@ function handlePointSelectionFromIndex(pointIndex: number, props: EventHandlerPr
 
   // Use tracker for global selection management
   const tracker = VectorSelectionTracker.getInstance();
-  console.log(`🔍 Selecting point by index in instance ${props.instanceId}:`, pointIndex);
   tracker.selectPoints(props.instanceId || "unknown", new Set([pointIndex]));
 
   // Update activePointId for skeleton mode - set the selected point as the active point
