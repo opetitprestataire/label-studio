@@ -46,6 +46,9 @@ interface VectorRegionResult {
   };
 }
 
+/**
+ * Vector region
+ */
 const Model = types
   .model({
     id: types.optional(types.identifier, guidGenerator),

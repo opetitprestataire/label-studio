@@ -8,7 +8,7 @@ import { VectorSelectionTracker } from "../VectorSelectionTracker";
 export function shouldClosePathOnPointClick(
   pointIndex: number,
   props: EventHandlerProps,
-  event: KonvaEventObject<MouseEvent>
+  event: KonvaEventObject<MouseEvent>,
 ): boolean {
   return (
     (pointIndex === 0 || pointIndex === props.initialPoints.length - 1) &&
