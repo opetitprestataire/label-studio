@@ -122,3 +122,12 @@ export const CONTROL_POINT_STYLING = {
   DIAMOND_STROKE_WIDTH: 2,
   CONTROL_POINT_2_OPACITY: 0.9,
 } as const;
+
+// Connection line styling
+export const CONNECTION_LINE_STYLING = {
+  STROKE: "#3b82f6",
+  STROKE_WIDTH: 2,
+  TENSION: 0,
+  LINE_CAP: "round" as const,
+  LINE_JOIN: "round" as const,
+} as const;

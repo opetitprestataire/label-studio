@@ -1,6 +1,7 @@
 import type React from "react";
 import { Line } from "react-konva";
 import type { BezierPoint } from "../types";
+import { CONNECTION_LINE_STYLING } from "../constants";
 
 interface ConnectionLinesProps {
   branches: Array<{
@@ -39,11 +40,11 @@ export const ConnectionLines: React.FC<ConnectionLinesProps> = ({
           <Line
             key={`connection-${branch.id}`}
             points={[startPoint.x, startPoint.y, firstBranchPoint.x, firstBranchPoint.y]}
-            stroke="#3b82f6"
-            strokeWidth={2}
-            tension={0}
-            lineCap="round"
-            lineJoin="round"
+            stroke={CONNECTION_LINE_STYLING.STROKE}
+            strokeWidth={CONNECTION_LINE_STYLING.STROKE_WIDTH}
+            tension={CONNECTION_LINE_STYLING.TENSION}
+            lineCap={CONNECTION_LINE_STYLING.LINE_CAP}
+            lineJoin={CONNECTION_LINE_STYLING.LINE_JOIN}
             strokeScaleEnabled={false}
           />
         );
@@ -59,11 +60,11 @@ export const ConnectionLines: React.FC<ConnectionLinesProps> = ({
             currentDrawingSegment[0].x,
             currentDrawingSegment[0].y,
           ]}
-          stroke="#3b82f6"
-          strokeWidth={2}
-          tension={0}
-          lineCap="round"
-          lineJoin="round"
+          stroke={CONNECTION_LINE_STYLING.STROKE}
+          strokeWidth={CONNECTION_LINE_STYLING.STROKE_WIDTH}
+          tension={CONNECTION_LINE_STYLING.TENSION}
+          lineCap={CONNECTION_LINE_STYLING.LINE_CAP}
+          lineJoin={CONNECTION_LINE_STYLING.LINE_JOIN}
           strokeScaleEnabled={false}
         />
       )}
