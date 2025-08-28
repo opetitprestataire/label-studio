@@ -104,9 +104,6 @@ const _Tool = types
         disposers.push(
           observe(currentArea, "finished", ({ newValue }) => newValue.storedValue && self.finishDrawing(), true),
         );
-        disposers.push(
-          observe(currentArea, "atMaxLength", ({ newValue }) => newValue.storedValue && self._finishDrawing(), true),
-        );
       },
 
       stopListening() {

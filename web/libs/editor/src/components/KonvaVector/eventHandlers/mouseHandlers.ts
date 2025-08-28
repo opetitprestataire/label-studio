@@ -5,9 +5,15 @@ import {
   handleShiftClickPointConversion,
   insertPointBetween,
   breakPathAtSegment,
+  closePathBetweenFirstAndLast,
 } from "./drawing";
 import { deletePoint } from "../pointManagement";
-import { handlePointDeselection, handlePointSelection } from "./pointSelection";
+import {
+  handlePointDeselection,
+  handlePointSelection,
+  shouldClosePathOnPointClick,
+  isActivePointEligibleForClosing,
+} from "./pointSelection";
 import type { EventHandlerProps } from "./types";
 import {
   continueBezierDrag,
@@ -736,8 +742,37 @@ export function createMouseUpHandler(props: EventHandlerProps) {
     // Handle point selection if we clicked but didn't drag
     // Note: cmd-clicks are handled in mousedown and return early, so draggedPointIndex is never set for them
     if (props.draggedPointIndex !== null && !props.isDragging.current) {
-      // This was a click on a point, not a drag - select the point
-      handlePointSelectionFromIndex(props.draggedPointIndex, props);
+      // Check if this point click should trigger path closing instead of selection
+      const pointIndex = props.draggedPointIndex;
+      // Create a mock event for the helper function (since mouse up doesn't have the full event)
+      const mockEvent = {
+        evt: {
+          shiftKey: false,
+          ctrlKey: false,
+          metaKey: false,
+          altKey: false,
+        },
+      } as KonvaEventObject<MouseEvent>;
+      const shouldClose =
+        shouldClosePathOnPointClick(pointIndex, props, mockEvent) && isActivePointEligibleForClosing(props);
+
+      if (shouldClose) {
+        // Try to close the path instead of selecting the point
+        const fromPointIndex = pointIndex;
+        const toPointIndex = pointIndex === 0 ? props.initialPoints.length - 1 : 0;
+        const closed = closePathBetweenFirstAndLast(props, fromPointIndex, toPointIndex);
+        if (closed) {
+          // Path was closed successfully, don't select the point
+          console.log(`🔧 Mouse up: Path closed successfully, skipping point selection`);
+        } else {
+          // Path closing failed, fall back to point selection
+          console.log(`🔧 Mouse up: Path closing failed, falling back to point selection`);
+          handlePointSelectionFromIndex(pointIndex, props);
+        }
+      } else {
+        // Normal point selection
+        handlePointSelectionFromIndex(pointIndex, props);
+      }
     }
 
     // Reset dragging state

@@ -17,6 +17,7 @@ import { findClosestPointOnPath, getDistance } from "./eventHandlers/utils";
 import { PointCreationManager } from "./pointCreationManager";
 import { VectorSelectionTracker, type VectorInstance } from "./VectorSelectionTracker";
 import { calculateShapeBoundingBox } from "./utils/bezierBoundingBox";
+import { shouldClosePathOnPointClick, isActivePointEligibleForClosing } from "./eventHandlers/pointSelection";
 import type { BezierPoint, GhostPoint as GhostPointType, KonvaVectorProps, KonvaVectorRef } from "./types";
 import { ShapeType, ExportFormat, PathType } from "./types";
 import {
@@ -1540,6 +1541,25 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             // Check if this instance can have selection
             if (!tracker.canInstanceHaveSelection(instanceId)) {
               return; // Block the selection
+            }
+
+            // Check if we're about to close the path - prevent point selection in this case
+            if (shouldClosePathOnPointClick(pointIndex, {
+              initialPoints,
+              allowClose,
+              isPathClosed: finalIsPathClosed,
+              skeletonEnabled,
+              activePointId,
+            } as any, e) && isActivePointEligibleForClosing({
+              initialPoints,
+              skeletonEnabled,
+              activePointId,
+            } as any)) {
+              // Use the bidirectional closePath function
+              const success = (ref as React.MutableRefObject<KonvaVectorRef | null>)?.current?.close();
+              if (success) {
+                return; // Path was closed, don't select the point
+              }
             }
 
             // Handle cmd-click to select all points

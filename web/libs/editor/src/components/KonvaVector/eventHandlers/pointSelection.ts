@@ -4,9 +4,42 @@ import { isPointInHitRadius, stageToImageCoordinates } from "./utils";
 import { closePathBetweenFirstAndLast } from "./drawing";
 import { VectorSelectionTracker } from "../VectorSelectionTracker";
 
+// Helper function to check if a point click should trigger path closing
+export function shouldClosePathOnPointClick(
+  pointIndex: number,
+  props: EventHandlerProps,
+  event: KonvaEventObject<MouseEvent>
+): boolean {
+  return (
+    (pointIndex === 0 || pointIndex === props.initialPoints.length - 1) &&
+    props.allowClose &&
+    !props.isPathClosed &&
+    !event.evt.shiftKey
+  );
+}
+
+// Helper function to check if the active point is eligible for path closing
+export function isActivePointEligibleForClosing(props: EventHandlerProps): boolean {
+  const activePoint =
+    props.skeletonEnabled && props.activePointId
+      ? props.initialPoints.find((p) => p.id === props.activePointId)
+      : props.initialPoints[props.initialPoints.length - 1]; // Fallback to last point
+
+  if (!activePoint) return false;
+
+  const firstPoint = props.initialPoints[0];
+  const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+
+  // Only allow closing if the active point is the first or last point
+  const isActivePointFirst = activePoint.id === firstPoint.id;
+  const isActivePointLast = activePoint.id === lastPoint.id;
+
+  return isActivePointFirst || isActivePointLast;
+}
+
 // Helper function to check if cursor is near a closing target
 function isNearClosingTarget(cursorPos: { x: number; y: number }, props: EventHandlerProps): boolean {
-  if (!props.allowClose || !props.cursorPosition || props.isPathClosed) {
+  if (!props.allowClose || props.isPathClosed) {
     return false;
   }
 
@@ -79,46 +112,27 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
     const point = props.initialPoints[i];
 
     if (isPointInHitRadius(imagePos, point, hitRadius)) {
-      // Disable point selection when near a closing target in drawing mode
-      // This prevents selection from interfering with path closure
-      if (props.isDrawingMode && !props.isPathClosed && isNearClosingTarget(imagePos, props)) {
-        // Only allow selection if Cmd/Ctrl is held (for multi-selection)
-        if (!e.evt.ctrlKey && !e.evt.metaKey) {
-          return false; // Don't select the point, let path closure handle it
-        }
-      }
       // Check if we're clicking on the first or last point to close the path
       // But only if the active point is also the first or last point
       // But don't close if Shift is held (to allow Shift+click functionality)
       // This should take priority over normal point selection
-      if (
-        (i === 0 || i === props.initialPoints.length - 1) &&
-        props.allowClose &&
-        !props.isPathClosed &&
-        !e.evt.shiftKey
-      ) {
-        // Get the active point to check if it's the first or last point
-        const activePoint =
-          props.skeletonEnabled && props.activePointId
-            ? props.initialPoints.find((p) => p.id === props.activePointId)
-            : props.initialPoints[props.initialPoints.length - 1]; // Fallback to last point
+      if (shouldClosePathOnPointClick(i, props, e) && isActivePointEligibleForClosing(props)) {
+        // Determine which point to close to
+        const fromPointIndex = i;
+        const toPointIndex = i === 0 ? props.initialPoints.length - 1 : 0;
 
-        if (activePoint) {
-          const firstPoint = props.initialPoints[0];
-          const lastPoint = props.initialPoints[props.initialPoints.length - 1];
+        // Use the bidirectional closePath function
+        return closePathBetweenFirstAndLast(props, fromPointIndex, toPointIndex);
+      }
 
-          // Only allow closing if the active point is the first or last point
-          const isActivePointFirst = activePoint.id === firstPoint.id;
-          const isActivePointLast = activePoint.id === lastPoint.id;
-
-          if (isActivePointFirst || isActivePointLast) {
-            // Determine which point to close to
-            const fromPointIndex = i;
-            const toPointIndex = i === 0 ? props.initialPoints.length - 1 : 0;
-
-            // Use the bidirectional closePath function
-            return closePathBetweenFirstAndLast(props, fromPointIndex, toPointIndex);
-          }
+      // Disable point selection when near a closing target to prevent interference with path closure
+      // This applies to both drawing mode and edit mode
+      // This ensures that when a user is about to close a path, clicking on the closing target
+      // will trigger path closure instead of point selection
+      if (!props.isPathClosed && isNearClosingTarget(imagePos, props)) {
+        // Only allow selection if Cmd/Ctrl is held (for multi-selection)
+        if (!e.evt.ctrlKey && !e.evt.metaKey) {
+          return false; // Don't select the point, let path closure handle it
         }
       }
 
