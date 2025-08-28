@@ -103,7 +103,7 @@ describe("Sync: Video Paragraphs", () => {
     cy.log("Audio, Video are starting at 0");
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
-        expect(audio.currentTime).to.equal(video.currentTime);
+        expect(audio.currentTime).to.be.closeTo(video.currentTime, 0.1);
         expect(audio.currentTime).to.equal(0);
       });
     });
@@ -141,31 +141,31 @@ describe("Sync: Video Paragraphs", () => {
 
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
-        expect(audio.currentTime).to.equal(video.currentTime);
+        expect(audio.currentTime).to.be.closeTo(video.currentTime, 0.1);
       });
     });
 
     AudioView.clickAt(100, 0);
     cy.log("Seek by clicking on some point in the audio timeline");
-    AudioView.waitForMediaSync(0.1, 5000, true); // true = check both audio and video sync
+    AudioView.waitForMediaSync(0.01, 5000, true); // 10ms precision for exact sync
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
-        expect(audio.currentTime).to.equal(video.currentTime);
+        expect(audio.currentTime).to.be.closeTo(video.currentTime, 0.1);
       });
     });
 
     AudioView.clickAt(0, 0);
     cy.log("Seek to beginning by clicking on the first point in the audio timeline");
-    AudioView.waitForMediaSync(0.1, 5000, true); // true = check both audio and video sync
+    AudioView.waitForMediaSync(0.01, 5000, true); // 10ms precision for exact sync
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
-        expect(audio.currentTime).to.equal(video.currentTime);
+        expect(audio.currentTime).to.be.closeTo(video.currentTime, 0.1);
       });
     });
 
     AudioView.clickAt(300, 0);
     cy.log("Seek by clicking on some point further in the audio timeline");
-    AudioView.waitForMediaSync(0.1, 5000, true); // true = check both audio and video sync
+    AudioView.waitForMediaSync(0.01, 5000, true); // 10ms precision for exact sync
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
         expect(audio.currentTime).to.be.closeTo(video.currentTime, 0.1);
@@ -175,10 +175,10 @@ describe("Sync: Video Paragraphs", () => {
     // Calculate the end to click on
     AudioView.clickAt(700, 0);
     cy.log("Seek to end by clicking on the last point in the audio timeline");
-    AudioView.waitForMediaSync(0.1, 5000, true); // true = check both audio and video sync
+    AudioView.waitForMediaSync(0.01, 5000, true); // 10ms precision for exact sync
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
-        expect(audio.currentTime).to.equal(video.currentTime);
+        expect(audio.currentTime).to.be.closeTo(video.currentTime, 0.1);
       });
     });
 

@@ -503,7 +503,7 @@ class AudioViewHelper extends withMedia(
      * @param timeout maximum time to wait
      * @param checkVideo whether to check video sync (default: true)
      */
-    waitForMediaSync(tolerance = 0.1, timeout = 5000, checkVideo = true) {
+    waitForMediaSync(tolerance = 0.01, timeout = 5000, checkVideo = true) {
       const startTime = Date.now();
 
       const checkSync = (): Cypress.Chainable => {
@@ -594,7 +594,7 @@ class AudioViewHelper extends withMedia(
      * @param stabilityDuration how long to be stable (ms)
      * @param timeout maximum time to wait
      */
-    waitForTimeStabilization(tolerance = 0.1, stabilityDuration = 200, timeout = 8000) {
+    waitForTimeStabilization(tolerance = 0.01, stabilityDuration = 200, timeout = 8000) {
       let lastAudioTime: number | null = null;
       let lastVideoTime: number | null = null;
       let stableStartTime: number | null = null;
