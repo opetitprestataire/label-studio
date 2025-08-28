@@ -327,6 +327,15 @@ const Model = types
        *         "x": 3.5,
        *         "y": 12.6,
        *         "prevPointId": "point-2",
+       *         "isBezier": true,
+       *         "controlPoint1": {"x": 3.2, "y": 10.8},
+       *         "controlPoint2": {"x": 3.4, "y": 11.7}
+       *       },
+       *       {
+       *         "id": "point-4",
+       *         "x": 5.2,
+       *         "y": 15.3,
+       *         "prevPointId": "point-3",
        *         "isBezier": false
        *       }
        *     ],
