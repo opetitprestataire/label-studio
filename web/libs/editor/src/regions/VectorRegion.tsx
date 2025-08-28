@@ -401,8 +401,6 @@ const HtxVectorView = observer(({ item, suggestion }: any) => {
     return null;
   }
 
-  console.log(Number.parseFloat(item.control?.opacity || "1"), item.control?.opacity);
-
   return (
     <RegionWrapper item={item}>
       <KonvaVector

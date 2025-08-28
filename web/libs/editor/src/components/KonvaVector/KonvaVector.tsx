@@ -1546,17 +1546,24 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             }
 
             // Check if we're about to close the path - prevent point selection in this case
-            if (shouldClosePathOnPointClick(pointIndex, {
-              initialPoints,
-              allowClose,
-              isPathClosed: finalIsPathClosed,
-              skeletonEnabled,
-              activePointId,
-            } as any, e) && isActivePointEligibleForClosing({
-              initialPoints,
-              skeletonEnabled,
-              activePointId,
-            } as any)) {
+            if (
+              shouldClosePathOnPointClick(
+                pointIndex,
+                {
+                  initialPoints,
+                  allowClose,
+                  isPathClosed: finalIsPathClosed,
+                  skeletonEnabled,
+                  activePointId,
+                } as any,
+                e,
+              ) &&
+              isActivePointEligibleForClosing({
+                initialPoints,
+                skeletonEnabled,
+                activePointId,
+              } as any)
+            ) {
               // Use the bidirectional closePath function
               const success = (ref as React.MutableRefObject<KonvaVectorRef | null>)?.current?.close();
               if (success) {

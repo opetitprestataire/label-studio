@@ -286,9 +286,7 @@ export const VectorShape: React.FC<VectorShapeProps> = ({
         const pathData = segmentsToPathData(pathSegments, allowClose, isPathClosed);
 
         // Apply opacity only to fill color using chroma.js
-        const fillWithOpacity = allowClose && isPathClosed && fill ?
-          chroma(fill).alpha(opacity).css() :
-          undefined;
+        const fillWithOpacity = allowClose && isPathClosed && fill ? chroma(fill).alpha(opacity).css() : undefined;
 
         return (
           <Path
