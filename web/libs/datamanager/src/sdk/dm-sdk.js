@@ -42,7 +42,7 @@
 import { inject, observer } from "mobx-react";
 import { destroy } from "mobx-state-tree";
 import { unmountComponentAtNode } from "react-dom";
-import { camelCase } from "lodash";
+import camelCase from "lodash/camelCase";
 import { instruments } from "../components/DataManager/Toolbar/instruments";
 import { APIProxy } from "../utils/api-proxy";
 import { FF_LSDV_4620_3_ML, isFF } from "../utils/feature-flags";

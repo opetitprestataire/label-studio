@@ -17,7 +17,7 @@ import { TemplatesList } from "./TemplatesList";
 import tags from "@humansignal/core/lib/utils/schema/tags.json";
 import { UnsavedChanges } from "./UnsavedChanges";
 import { Checkbox, CodeEditor, Select } from "@humansignal/ui";
-import { snakeCase } from "lodash";
+import snakeCase from "lodash/snakeCase";
 
 const wizardClass = cn("wizard");
 const configClass = cn("configure");

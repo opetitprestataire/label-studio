@@ -1,6 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { destroy, detach } from "mobx-state-tree";
-import { camelCase, snakeCase } from "lodash";
+import camelCase from "lodash/camelCase";
+import snakeCase from "lodash/snakeCase";
 
 /**
  * Internal helper to check if parameter is a string

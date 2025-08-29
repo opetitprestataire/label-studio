@@ -1,4 +1,4 @@
-import { camelCase } from "lodash";
+import camelCase from "lodash/camelCase";
 
 export const formDataToJPO = (formData: FormData) => {
   if (formData instanceof FormData) {

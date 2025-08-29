@@ -1,4 +1,4 @@
-import { camelCase } from "lodash";
+import camelCase from "lodash/camelCase";
 
 /**
  * Convert string to PascalCase (StudlyCase)
