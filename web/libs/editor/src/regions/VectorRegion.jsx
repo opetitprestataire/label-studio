@@ -335,65 +335,8 @@ const Model = types
       },
 
       /**
-       * Serializes the vector region data for storage and export in Label Studio's standard format
-       * 
-       * This method performs the critical coordinate conversion from KonvaVector's image coordinate system
-       * back to Label Studio's relative coordinate system before serialization. This ensures that
-       * annotations are stored in a format that remains valid regardless of image scaling or display size.
-       * 
-       * ### Coordinate Conversion Process:
-       * 1. Takes the current shape data in image coordinates (pixels)
-       * 2. Converts all coordinates to relative percentages using `imageToRelativeCoords()`
-       * 3. Preserves all Bezier curve information and point relationships
-       * 4. Creates the final serialized result in Label Studio format
-       * 
-       * ### Serialization Format:
-       * The method returns a complete annotation result object that includes:
-       * - **Image metadata**: Original dimensions and rotation
-       * - **Shape data**: All points with relative coordinates and Bezier information
-       * - **Path properties**: Closed state and other vector-specific properties
-       * - **Labels**: Any assigned vector labels
-       * 
-       * ### Example Output:
-       * ```javascript
-       * {
-       *   "original_width": 1920,
-       *   "original_height": 1280,
-       *   "image_rotation": 0,
-       *   "value": {
-       *     "shape": [
-       *       {
-       *         "id": "point-1",
-       *         "x": 25.0,        // Relative coordinate (25% from left)
-       *         "y": 30.0,        // Relative coordinate (30% from top)
-       *         "prevPointId": null,
-       *         "isBezier": false
-       *       },
-       *       {
-       *         "id": "point-2",
-       *         "x": 75.0,        // Relative coordinate (75% from left)
-       *         "y": 70.0,        // Relative coordinate (70% from top)
-       *         "prevPointId": "point-1",
-       *         "isBezier": true,
-       *         "controlPoint1": {"x": 50.0, "y": 40.0},  // Relative coordinates
-       *         "controlPoint2": {"x": 60.0, "y": 60.0}   // Relative coordinates
-       *       }
-       *     ],
-       *     "closed": false,
-       *     "vectorlabels": ["Road"]
-       *   }
-       * }
-       * ```
-       * 
-       * ### Coordinate Conversion Example:
-       * ```javascript
-       * // Internal state (KonvaVector format - image coordinates)
-       * // For a 1000x800 image:
-       * shape: [{ x: 250, y: 240, id: "point-1" }]
-       * 
-       * // Serialized output (Label Studio format - relative coordinates)
-       * shape: [{ x: 25.0, y: 30.0, id: "point-1" }]
-       * ```
+       * Serializes region data in Label Studio format with relative coordinates
+       * Converts from image coordinates back to relative coordinates for storage
        * 
        * @typedef {Object} VectorRegionResult
        * @property {number} original_width width of the original image (px)
