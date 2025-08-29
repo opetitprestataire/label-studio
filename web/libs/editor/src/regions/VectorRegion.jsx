@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { getRoot, isAlive, types } from "mobx-state-tree";
 import NormalizationMixin from "../mixins/Normalization";
 import RegionsMixin from "../mixins/Regions";
@@ -415,7 +414,6 @@ const HtxVectorView = observer(({ item, suggestion }) => {
   const regionStyles = useRegionStyles(item, {
     useStrokeAsFill: true,
   });
-  const konvaVectorRef = useRef < KonvaVectorRef > null;
 
   // Get stage dimensions and scaling from the parent image view
   const stage = item.parent?.stageRef;

@@ -66,7 +66,8 @@ const ModelAttrs = types.model("VectorLabelsModel", {
   children: Types.unionArray(["label", "vectorlabel", "header", "view", "hypertext"]),
 });
 
-const Composition = types.compose(
+const VectorLabelsModel = types.compose(
+  "VectorLabelsModel",
   ControlBase,
   LabelsModel,
   ModelAttrs,
@@ -75,8 +76,6 @@ const Composition = types.compose(
   LabelMixin,
   SelectedModelMixin.props({ _child: "LabelModel" }),
 );
-
-const VectorLabelsModel = types.compose("VectorLabelsModel", Composition);
 
 const HtxVectorLabels = observer(({ item }) => {
   return <HtxLabels item={item} />;

@@ -1,7 +1,4 @@
 import AppStore from "./stores/AppStore";
-import "./tags/object";
-import "./tags/control";
-import "./tags/visual";
 
 // Get environment settings
 const getEnvironment = async () => {
