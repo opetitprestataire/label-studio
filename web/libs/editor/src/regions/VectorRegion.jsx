@@ -40,7 +40,7 @@ const Model = types
     _supportsTransform: true,
     useTransformer: true,
     preferTransformer: false,
-    supportsRotate: false,
+    supportsRotate: true,
     supportsScale: true,
     isDrawing: false,
     vectorRef: null,
@@ -140,6 +140,7 @@ const Model = types
     return {
       afterCreate() {
         if (!self.shape.length) return;
+        self.shape = self.relativeToImageCoords();
         self.checkSizes();
       },
 
@@ -267,6 +268,42 @@ const Model = types
         return self.readonly || self.annotation?.isReadOnly();
       },
 
+      relativeToImageCoords() {
+        const image = self.parent.currentImageEntity;
+        const { naturalWidth: w, naturalHeight: h } = image;
+        return self.shape.map((point) => {
+          return {
+            ...point,
+            x: (point.x / 100) * w,
+            y: (point.y / 100) * h,
+            ...(point.isBezier
+              ? {
+                  controlPoint1: { x: (point.controlPoint1.x / 100) * w, y: (point.controlPoint1.y / 100) * h },
+                  controlPoint2: { x: (point.controlPoint2.x / 100) * w, y: (point.controlPoint2.y / 100) * h },
+                }
+              : {}),
+          };
+        });
+      },
+
+      imageToRelativeCoords() {
+        const image = self.parent.currentImageEntity;
+        const { naturalWidth: w, naturalHeight: h } = image;
+        return self.shape.map((point) => {
+          return {
+            ...point,
+            x: (point.x / w) * 100,
+            y: (point.y / h) * 100,
+            ...(point.isBezier
+              ? {
+                  controlPoint1: { x: (point.controlPoint1.x / w) * 100, y: (point.controlPoint1.y / h) * 100 },
+                  controlPoint2: { x: (point.controlPoint2.x / w) * 100, y: (point.controlPoint2.y / h) * 100 },
+                }
+              : {}),
+          };
+        });
+      },
+
       /**
        * @example
        * {
@@ -328,7 +365,7 @@ const Model = types
       serialize() {
         // Preserve the full KonvaVector format to maintain Bezier curves and point relationships
         const value = {
-          shape: self.shape, // Keep the full point objects with all properties
+          shape: self.imageToRelativeCoords(), // Keep the full point objects with all properties
           closed: self.closed,
         };
 
