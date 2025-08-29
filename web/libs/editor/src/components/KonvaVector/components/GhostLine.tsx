@@ -156,7 +156,6 @@ export const GhostLine: React.FC<GhostLineProps> = ({
   const closingTarget = getClosingTarget();
   const shouldRender = cursorPosition && !isPathClosed && (!drawingDisabled || closingTarget);
 
-
   if (!shouldRender) {
     return null;
   }
