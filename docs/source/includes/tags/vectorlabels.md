@@ -27,7 +27,7 @@
 | original_height | <code>number</code> | height of the original image (px) |
 | image_rotation | <code>number</code> | rotation degree of the image (deg) |
 | value | <code>Object</code> |  |
-| value.vectorPoints | <code>Array.&lt;Object&gt;</code> | array of point objects with coordinates, bezier curve information, and point relationships |
+| value.vertices | <code>Array.&lt;Object&gt;</code> | array of point objects with coordinates, bezier curve information, and point relationships |
 | value.closed | <code>boolean</code> | whether the vector is closed (polygon) or open (polyline) |
 | value.vectorlabels | <code>Array.&lt;string&gt;</code> | array of label names assigned to this vector |
 

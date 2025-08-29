@@ -51,7 +51,7 @@ const _Tool = types
 
       createRegionOptions() {
         return Super.createRegionOptions({
-          vectorPoints: [],
+          vertices: [],
           converted: true,
           closed: false,
         });
@@ -89,7 +89,7 @@ const _Tool = types
         if (self.getCurrentArea()?.isDrawing && tool.toolName !== "ZoomPanTool") {
           const shape = self.getCurrentArea()?.toJSON();
 
-          if (shape?.vectorPoints?.length > 2) self.finishDrawing();
+          if (shape?.vertices?.length > 2) self.finishDrawing();
           else self.cleanupUncloseableShape();
         }
       },

@@ -21,6 +21,7 @@ const resultTypes = [
   "rectanglelabels",
   "keypointlabels",
   "polygonlabels",
+  "vector",
   "vectorlabels",
   "brushlabels",
   "bitmasklabels",
