@@ -45,7 +45,7 @@ const Model = types
       return types.reference(ImageModel);
     }),
 
-    shape: types.array(types.frozen()), // Store whatever format KonvaVector gives us
+    vectorPoints: types.array(types.frozen()), // Store whatever format KonvaVector gives us
     closed: false, // Vectors are not closed by default
     isPolygon: false,
 
@@ -78,9 +78,9 @@ const Model = types
       return self.bboxCoords.top;
     },
     get bbox() {
-      if (!self.shape?.length || !isAlive(self)) return {};
+      if (!self.vectorPoints?.length || !isAlive(self)) return {};
 
-      // Calculate bounding box from shape points
+      // Calculate bounding box from vector points
       const bbox = self.vectorRef?.getShapeBoundingBox() ?? {};
 
       // Ensure we have valid coordinates
@@ -117,7 +117,7 @@ const Model = types
     },
     get incomplete() {
       const notClosed = self.closable === true && self.closed === false;
-      const notFinished = self.minPoints && self.shape.length < self.minPoints;
+      const notFinished = self.minPoints && self.vectorPoints.length < self.minPoints;
       return notClosed || notFinished;
     },
     get finished() {
@@ -130,7 +130,7 @@ const Model = types
       return false;
     },
     get atMaxLength() {
-      return self.maxPoints && self.shape.length === self.maxPoints;
+      return self.maxPoints && self.vectorPoints.length === self.maxPoints;
     },
 
     /// Visuals
@@ -164,10 +164,10 @@ const Model = types
        * Called when region is created from serialized data.
        */
       afterCreate() {
-        if (!self.shape.length) return;
+        if (!self.vectorPoints.length) return;
         if (self.converted) return;
 
-        self.shape = self.relativeToImageCoords();
+        self.vectorPoints = self.relativeToImageCoords();
         self.converted = true;
         self.checkSizes();
       },
@@ -182,7 +182,7 @@ const Model = types
       },
 
       addPoint() {
-        // KonvaVector managing shape internally.
+        // KonvaVector managing vector points internally.
         // This method is just a fallback for compatibility
       },
 
@@ -237,7 +237,7 @@ const Model = types
         const ys = image.internalToImageY(bbox.top);
         const ye = image.internalToImageY(bbox.bottom);
 
-        const selectedPoints = self.shape
+        const selectedPoints = self.vectorPoints
           .filter((p) => {
             const matchX = xs <= p.x && p.x <= xe;
             const matchY = ys <= p.y && p.y <= ye;
@@ -302,7 +302,7 @@ const Model = types
        */
       relativeToImageCoords() {
         const image = self.parent;
-        return self.shape.map((point) => {
+        return self.vectorPoints.map((point) => {
           return {
             ...point,
             x: image.internalToImageX(point.x),
@@ -329,7 +329,7 @@ const Model = types
        */
       imageToRelativeCoords() {
         const image = self.parent;
-        return self.shape.map((point) => {
+        return self.vectorPoints.map((point) => {
           return {
             ...point,
             x: image.imageToInternalX(point.x),
@@ -360,7 +360,7 @@ const Model = types
        *   "original_height": 1280,
        *   "image_rotation": 0,
        *   "value": {
-       *     "shape": [
+       *     "vectorPoints": [
        *       { "id": "point-1", "x": 25.0, "y": 30.0, "prevPointId": null, "isBezier": false },
        *       { "id": "point-2", "x": 75.0, "y": 70.0, "prevPointId": "point-1", "isBezier": true,
        *         "controlPoint1": {"x": 50.0, "y": 40.0}, "controlPoint2": {"x": 60.0, "y": 60.0} }
@@ -375,7 +375,7 @@ const Model = types
        * @property {number} original_height height of the original image (px)
        * @property {number} image_rotation rotation degree of the image (deg)
        * @property {Object} value
-       * @property {Array<Object>} value.shape array of point objects with coordinates, bezier curve information, and point relationships
+       * @property {Array<Object>} value.vectorPoints array of point objects with coordinates, bezier curve information, and point relationships
        * @property {boolean} value.closed whether the vector is closed (polygon) or open (polyline)
        * @property {Array<string>} value.vectorlabels array of label names assigned to this vector
        *
@@ -384,7 +384,7 @@ const Model = types
       serialize() {
         // Preserve the full KonvaVector format to maintain Bezier curves and point relationships
         const value = {
-          shape: self.imageToRelativeCoords(), // Keep the full point objects with all properties
+          vectorPoints: self.imageToRelativeCoords(), // Keep the full point objects with all properties
           closed: self.closed,
         };
 
@@ -393,7 +393,7 @@ const Model = types
 
       updateImageSize(wp, hp, sw, sh) {
         if (self.coordstype === "px") {
-          self.shape.forEach((p) => {
+          self.vectorPoints.forEach((p) => {
             const x = (sw * (p.relativeX || 0)) / RELATIVE_STAGE_WIDTH;
             const y = (sh * (p.relativeY || 0)) / RELATIVE_STAGE_HEIGHT;
 
@@ -402,7 +402,7 @@ const Model = types
         }
 
         if (!self.annotation.sentUserGenerate && self.coordstype === "perc") {
-          self.shape.forEach((p) => {
+          self.vectorPoints.forEach((p) => {
             const x = (sw * p.x) / RELATIVE_STAGE_WIDTH;
             const y = (sh * p.y) / RELATIVE_STAGE_HEIGHT;
 
@@ -413,9 +413,9 @@ const Model = types
       },
 
       // New methods for KonvaVector integration
-      updateShapeFromKonvaVector(shape) {
+      updatePointsFromKonvaVector(points) {
         // Store whatever format KonvaVector gives us
-        self.shape.replace(shape);
+        self.vectorPoints.replace(points);
       },
 
       onPathClosedChange(isClosed) {
@@ -487,9 +487,9 @@ const HtxVectorView = observer(({ item, suggestion }) => {
     <RegionWrapper item={item}>
       <KonvaVector
         ref={(kv) => item.setKonvaVectorRef(kv)}
-        initialPoints={Array.from(item.shape)}
-        onPointsChange={(shape) => {
-          item.updateShapeFromKonvaVector(shape);
+        initialPoints={Array.from(item.vectorPoints)}
+        onPointsChange={(points) => {
+          item.updatePointsFromKonvaVector(points);
         }}
         onPathClosedChange={(isClosed) => {
           item.onPathClosedChange(isClosed);
@@ -552,12 +552,14 @@ const HtxVectorView = observer(({ item, suggestion }) => {
         pointStrokeWidth={item.selected ? 2 : 1}
       />
 
-      <LabelOnRect item={item} color={regionStyles.strokeColor} strokewidth={regionStyles.strokeWidth} />
+      {item.vectorPoints.length > 0 && (
+        <LabelOnRect item={item} color={regionStyles.strokeColor} strokewidth={regionStyles.strokeWidth} />
+      )}
     </RegionWrapper>
   );
 });
 
 Registry.addTag("vectorregion", VectorRegionModel, HtxVectorView);
-Registry.addRegionType(VectorRegionModel, "image", (value) => !!value.shape);
+Registry.addRegionType(VectorRegionModel, "image", (value) => !!value.vectorPoints);
 
 export { VectorRegionModel, HtxVectorView as HtxVector };
