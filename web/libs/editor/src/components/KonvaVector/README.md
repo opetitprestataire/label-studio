@@ -2,11 +2,11 @@
 
 ## Point Creation Management
 
-The KonvaVector component now uses a **PointCreationManager** as the **single source of truth** for all point creation, whether it's regular points or bezier points. This ensures consistent behavior and centralized point creation logic.
+The KonvaVector component uses a **PointCreationManager** as the **single source of truth** for all point creation, whether it's regular points or bezier points. This ensures consistent behavior and centralized point creation logic.
 
-### New Ref Methods
+### Ref Methods
 
-The component exposes three new methods through the ref:
+The component exposes three methods through the ref:
 
 ```typescript
 interface KonvaVectorRef {
@@ -187,7 +187,7 @@ const bbox = vectorRef.current?.getShapeBoundingBox();
 
 ### Single Source of Truth
 
-The PointCreationManager is now the **single source of truth** for all point creation:
+The PointCreationManager is the **single source of truth** for all point creation:
 
 - **All point creation goes through the manager**: Whether it's manual mouse interactions, programmatic calls, or shift-click operations
 - **Consistent behavior**: All point creation follows the same logic and constraints
