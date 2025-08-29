@@ -50,6 +50,9 @@ const Model = types
     isPolygon: false,
 
     readonly: types.optional(types.boolean, false),
+
+    // Internal flag to detect if we converted data back from relative points
+    converted: false,
   })
   .volatile(() => ({
     mouseOverStartPoint: false,
@@ -162,7 +165,10 @@ const Model = types
        */
       afterCreate() {
         if (!self.shape.length) return;
+        if (self.converted) return;
+
         self.shape = self.relativeToImageCoords();
+        self.converted = true;
         self.checkSizes();
       },
 
@@ -295,17 +301,22 @@ const Model = types
        * Formula: imageCoord = (relativeCoord / 100) * imageDimension
        */
       relativeToImageCoords() {
-        const image = self.parent.currentImageEntity;
-        const { naturalWidth: w, naturalHeight: h } = image;
+        const image = self.parent;
         return self.shape.map((point) => {
           return {
             ...point,
-            x: (point.x / 100) * w,
-            y: (point.y / 100) * h,
+            x: image.internalToImageX(point.x),
+            y: image.internalToImageY(point.y),
             ...(point.isBezier
               ? {
-                  controlPoint1: { x: (point.controlPoint1.x / 100) * w, y: (point.controlPoint1.y / 100) * h },
-                  controlPoint2: { x: (point.controlPoint2.x / 100) * w, y: (point.controlPoint2.y / 100) * h },
+                  controlPoint1: {
+                    x: image.internalToImageX(point.controlPoint1.x),
+                    y: image.internalToImageY(point.controlPoint1.y),
+                  },
+                  controlPoint2: {
+                    x: image.internalToImageX(point.controlPoint2.x),
+                    y: image.internalToImageY(point.controlPoint2.y),
+                  },
                 }
               : {}),
           };
@@ -317,8 +328,7 @@ const Model = types
        * Formula: relativeCoord = (imageCoord / imageDimension) * 100
        */
       imageToRelativeCoords() {
-        const image = self.parent.currentImageEntity;
-        const { naturalWidth: w, naturalHeight: h } = image;
+        const image = self.parent;
         return self.shape.map((point) => {
           return {
             ...point,
@@ -343,6 +353,22 @@ const Model = types
       /**
        * Serializes region data in Label Studio format with relative coordinates
        * Converts from image coordinates back to relative coordinates for storage
+       *
+       * @example
+       * {
+       *   "original_width": 1920,
+       *   "original_height": 1280,
+       *   "image_rotation": 0,
+       *   "value": {
+       *     "shape": [
+       *       { "id": "point-1", "x": 25.0, "y": 30.0, "prevPointId": null, "isBezier": false },
+       *       { "id": "point-2", "x": 75.0, "y": 70.0, "prevPointId": "point-1", "isBezier": true,
+       *         "controlPoint1": {"x": 50.0, "y": 40.0}, "controlPoint2": {"x": 60.0, "y": 60.0} }
+       *     ],
+       *     "closed": false,
+       *     "vectorlabels": ["Road"]
+       *   }
+       * }
        *
        * @typedef {Object} VectorRegionResult
        * @property {number} original_width width of the original image (px)
@@ -511,9 +537,9 @@ const HtxVectorView = observer(({ item, suggestion }) => {
         minPoints={item.minPoints}
         maxPoints={item.maxPoints}
         skeletonEnabled={item.control?.skeleton ?? false}
-        stroke={item.selected ? "#ff0000" : item.control?.strokecolor}
-        fill={item.selected ? "rgba(255, 0, 0, 0.3)" : item.control?.fillcolor}
-        strokeWidth={item.control?.strokewidth ? Number.parseFloat(item.control.strokewidth) : undefined}
+        stroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
+        fill={item.selected ? "rgba(255, 0, 0, 0.3)" : regionStyles.fillColor}
+        strokeWidth={regionStyles.strokeWidth}
         opacity={Number.parseFloat(item.control?.opacity || "1")}
         pixelSnapping={item.control?.snap === "pixel"}
         constrainToBounds={item.control?.constrainToBounds ?? true}
@@ -521,16 +547,12 @@ const HtxVectorView = observer(({ item, suggestion }) => {
         // Point styling - customize point appearance based on control settings
         pointRadius={item.pointRadiusFromSize}
         pointFill={item.selected ? "#ffffff" : "#f8fafc"}
-        pointStroke={item.selected ? "#ff0000" : item.control?.strokecolor}
+        pointStroke={item.selected ? "#ff0000" : regionStyles.strokeColor}
         pointStrokeSelected="#ff6b35"
         pointStrokeWidth={item.selected ? 2 : 1}
       />
 
-      <LabelOnRect
-        item={item}
-        color={item.control?.strokecolor}
-        strokewidth={item.control?.strokewidth ? Number.parseFloat(item.control.strokewidth) : undefined}
-      />
+      <LabelOnRect item={item} color={regionStyles.strokeColor} strokewidth={regionStyles.strokeWidth} />
     </RegionWrapper>
   );
 });

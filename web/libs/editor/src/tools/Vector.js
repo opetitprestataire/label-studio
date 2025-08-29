@@ -52,7 +52,7 @@ const _Tool = types
       createRegionOptions() {
         return Super.createRegionOptions({
           shape: [],
-          // shape: [],
+          converted: true,
           closed: false,
         });
       },
