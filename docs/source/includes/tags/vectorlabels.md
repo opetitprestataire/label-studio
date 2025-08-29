@@ -38,7 +38,7 @@
   "original_height": 1280,
   "image_rotation": 0,
   "value": {
-    "vectorPoints": [
+    "vertices": [
       { "id": "point-1", "x": 25.0, "y": 30.0, "prevPointId": null, "isBezier": false },
       { "id": "point-2", "x": 75.0, "y": 70.0, "prevPointId": "point-1", "isBezier": true,
         "controlPoint1": {"x": 50.0, "y": 40.0}, "controlPoint2": {"x": 60.0, "y": 60.0} }
