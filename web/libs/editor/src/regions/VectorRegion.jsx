@@ -16,7 +16,25 @@ import { RegionWrapper } from "./RegionWrapper";
 import { LabelOnRect } from "../components/ImageView/LabelOnRegion";
 
 /**
- * Vector region
+ * VectorRegion - Vector graphics region with coordinate system conversion
+ *
+ * Handles conversion between Label Studio's relative coordinates (0-100%) and KonvaVector's image coordinates (pixels).
+ * 
+ * **Coordinate Systems:**
+ * - **Label Studio**: Relative coordinates (percentages) for storage and portability
+ * - **KonvaVector**: Image coordinates (pixels) for precise editing
+ * 
+ * **Conversion Flow:**
+ * ```
+ * Label Studio (Relative %) ←→ VectorRegion ←→ KonvaVector (Image px)
+ *     ↓ serialize()                ↓ afterCreate()
+ * Database Storage          Internal State     User Interface
+ * ```
+ * 
+ * **Key Methods:**
+ * - `relativeToImageCoords()`: Converts relative → image coordinates
+ * - `imageToRelativeCoords()`: Converts image → relative coordinates
+ * - `serialize()`: Exports in Label Studio format with relative coordinates
  */
 const Model = types
   .model({
@@ -138,6 +156,10 @@ const Model = types
   }))
   .actions((self) => {
     return {
+      /**
+       * Converts coordinates from Label Studio format (relative %) to KonvaVector format (image pixels)
+       * Called when region is created from serialized data.
+       */
       afterCreate() {
         if (!self.shape.length) return;
         self.shape = self.relativeToImageCoords();
@@ -268,6 +290,10 @@ const Model = types
         return self.readonly || self.annotation?.isReadOnly();
       },
 
+      /**
+       * Converts relative coordinates (0-100%) to image coordinates (pixels)
+       * Formula: imageCoord = (relativeCoord / 100) * imageDimension
+       */
       relativeToImageCoords() {
         const image = self.parent.currentImageEntity;
         const { naturalWidth: w, naturalHeight: h } = image;
@@ -286,6 +312,10 @@ const Model = types
         });
       },
 
+      /**
+       * Converts image coordinates (pixels) to relative coordinates (0-100%)
+       * Formula: relativeCoord = (imageCoord / imageDimension) * 100
+       */
       imageToRelativeCoords() {
         const image = self.parent.currentImageEntity;
         const { naturalWidth: w, naturalHeight: h } = image;
@@ -305,7 +335,27 @@ const Model = types
       },
 
       /**
-       * @example
+       * Serializes the vector region data for storage and export in Label Studio's standard format
+       * 
+       * This method performs the critical coordinate conversion from KonvaVector's image coordinate system
+       * back to Label Studio's relative coordinate system before serialization. This ensures that
+       * annotations are stored in a format that remains valid regardless of image scaling or display size.
+       * 
+       * ### Coordinate Conversion Process:
+       * 1. Takes the current shape data in image coordinates (pixels)
+       * 2. Converts all coordinates to relative percentages using `imageToRelativeCoords()`
+       * 3. Preserves all Bezier curve information and point relationships
+       * 4. Creates the final serialized result in Label Studio format
+       * 
+       * ### Serialization Format:
+       * The method returns a complete annotation result object that includes:
+       * - **Image metadata**: Original dimensions and rotation
+       * - **Shape data**: All points with relative coordinates and Bezier information
+       * - **Path properties**: Closed state and other vector-specific properties
+       * - **Labels**: Any assigned vector labels
+       * 
+       * ### Example Output:
+       * ```javascript
        * {
        *   "original_width": 1920,
        *   "original_height": 1280,
@@ -314,41 +364,37 @@ const Model = types
        *     "shape": [
        *       {
        *         "id": "point-1",
-       *         "x": 2,
-       *         "y": 2,
+       *         "x": 25.0,        // Relative coordinate (25% from left)
+       *         "y": 30.0,        // Relative coordinate (30% from top)
        *         "prevPointId": null,
        *         "isBezier": false
        *       },
        *       {
        *         "id": "point-2",
-       *         "x": 3.5,
-       *         "y": 8.1,
+       *         "x": 75.0,        // Relative coordinate (75% from left)
+       *         "y": 70.0,        // Relative coordinate (70% from top)
        *         "prevPointId": "point-1",
        *         "isBezier": true,
-       *         "controlPoint1": {"x": 2.5, "y": 5.0},
-       *         "controlPoint2": {"x": 3.0, "y": 6.5}
-       *       },
-       *       {
-       *         "id": "point-3",
-       *         "x": 3.5,
-       *         "y": 12.6,
-       *         "prevPointId": "point-2",
-       *         "isBezier": true,
-       *         "controlPoint1": {"x": 3.2, "y": 10.8},
-       *         "controlPoint2": {"x": 3.4, "y": 11.7}
-       *       },
-       *       {
-       *         "id": "point-4",
-       *         "x": 5.2,
-       *         "y": 15.3,
-       *         "prevPointId": "point-3",
-       *         "isBezier": false
+       *         "controlPoint1": {"x": 50.0, "y": 40.0},  // Relative coordinates
+       *         "controlPoint2": {"x": 60.0, "y": 60.0}   // Relative coordinates
        *       }
        *     ],
        *     "closed": false,
        *     "vectorlabels": ["Road"]
        *   }
        * }
+       * ```
+       * 
+       * ### Coordinate Conversion Example:
+       * ```javascript
+       * // Internal state (KonvaVector format - image coordinates)
+       * // For a 1000x800 image:
+       * shape: [{ x: 250, y: 240, id: "point-1" }]
+       * 
+       * // Serialized output (Label Studio format - relative coordinates)
+       * shape: [{ x: 25.0, y: 30.0, id: "point-1" }]
+       * ```
+       * 
        * @typedef {Object} VectorRegionResult
        * @property {number} original_width width of the original image (px)
        * @property {number} original_height height of the original image (px)
@@ -357,10 +403,8 @@ const Model = types
        * @property {Array<Object>} value.shape array of point objects with coordinates, bezier curve information, and point relationships
        * @property {boolean} value.closed whether the vector is closed (polygon) or open (polyline)
        * @property {Array<string>} value.vectorlabels array of label names assigned to this vector
-       */
-
-      /**
-       * @return {VectorRegionResult}
+       * 
+       * @return {VectorRegionResult} The serialized vector region data in Label Studio format
        */
       serialize() {
         // Preserve the full KonvaVector format to maintain Bezier curves and point relationships
