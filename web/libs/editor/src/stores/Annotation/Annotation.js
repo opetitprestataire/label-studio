@@ -1,4 +1,4 @@
-import throttle from "lodash.throttle";
+import throttle from "lodash/throttle";
 import { destroy, detach, flow, getEnv, getParent, getRoot, isAlive, onSnapshot, types } from "mobx-state-tree";
 import { ff } from "@humansignal/core";
 import { errorBuilder } from "../../core/DataValidator/ConfigValidator";
@@ -639,7 +639,7 @@ const _Annotation = types
 
       self.relationStore.deleteNodeRelation(region);
 
-      if (region.type === "polygonregion") {
+      if (region.type === "polygonregion" || region.type === "vectorregion") {
         detach(region);
       }
 
@@ -664,7 +664,7 @@ const _Annotation = types
           selectedIds[selectedIds.length - 1] ?? regionStore.regions[regionStore.regions.length - 1]?.id,
         );
 
-        if (currentRegion?.type === "polygonregion") {
+        if (currentRegion?.type === "polygonregion" || currentRegion?.type === "vectorregion") {
           const points = currentRegion?.points?.length ?? 0;
 
           stopDrawingAfterNextUndo = points <= 1;
