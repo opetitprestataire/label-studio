@@ -1,1 +1,1 @@
-../common/11-configure-custom-cabundle.sh
+deploy/docker-entrypoint.d/common/11-configure-custom-cabundle.sh
