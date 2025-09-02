@@ -210,33 +210,33 @@ describe("Sync: Video Paragraphs", () => {
     AudioView.isReady();
 
     cy.get("audio").then(([audio]) => {
-      cy.get("video").then(([video]) => {
+      cy.get("video").should(([video]) => {
         expect(audio.playbackRate).to.equal(video.playbackRate);
         expect(audio.playbackRate).to.equal(1);
       });
     });
 
-    AudioView.setPlaybackSpeedInput(1.5, true); // true = check both audio and video
+    AudioView.setPlaybackSpeedInput(0.5, true); // true = check both audio and video
     AudioView.playButton.click();
     AudioView.waitForPlayState(true, 8000, true); // true = check both audio and video
 
-    cy.log("Changing playback speed to 1.5x for audio, video and paragraph audio during playback");
+    cy.log("Changing playback speed to 0.5x for audio, video and paragraph audio during playback");
     cy.get("audio").then(([audio]) => {
-      cy.get("video").then(([video]) => {
+      cy.get("video").should(([video]) => {
         expect(audio.playbackRate).to.equal(video.playbackRate);
-        expect(audio.playbackRate).to.equal(1.5);
+        expect(audio.playbackRate).to.equal(0.5);
       });
     });
 
     // Let it play for a short time at 1.5x speed, then change back
     cy.then(() => {
-      return new Cypress.Promise((resolve) => setTimeout(resolve, 50));
+      return new Cypress.Promise((resolve) => setTimeout(resolve, 100));
     });
     AudioView.setPlaybackSpeedInput(1, true); // true = check both audio and video
 
     cy.log("Changing playback speed to 1x for audio, video and paragraph audio during playback");
     cy.get("audio").then(([audio]) => {
-      cy.get("video").then(([video]) => {
+      cy.get("video").should(([video]) => {
         expect(audio.playbackRate).to.equal(video.playbackRate);
         expect(audio.playbackRate).to.equal(1);
       });
@@ -244,7 +244,7 @@ describe("Sync: Video Paragraphs", () => {
 
     cy.log("Audio, video and paragraph audio played to the same time");
     cy.get("audio").then(([audio]) => {
-      cy.get("video").then(([video]) => {
+      cy.get("video").should(([video]) => {
         expect(audio.currentTime).to.be.closeTo(video.currentTime, 0.1);
       });
     });
