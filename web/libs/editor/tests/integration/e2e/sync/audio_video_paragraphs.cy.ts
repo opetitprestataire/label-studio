@@ -104,7 +104,11 @@ describe("Sync: Video Paragraphs", () => {
     cy.get("audio").then(([audio]) => {
       cy.get("video").then(([video]) => {
         expect(audio.currentTime).to.be.closeTo(video.currentTime, 0.1);
-        expect(audio.currentTime).to.equal(0);
+        LabelStudio.getFeatureFlag("fflag_fix_front_optic_1608_improve_video_frame_seek_precision_short").then(
+          (isFramePrecision) => {
+            expect(audio.currentTime).to.equal(isFramePrecision ? 0.002 : 0);
+          },
+        );
       });
     });
 
