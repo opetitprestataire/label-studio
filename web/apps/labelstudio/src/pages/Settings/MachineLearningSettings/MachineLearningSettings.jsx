@@ -106,7 +106,7 @@ export const MachineLearningSettings = () => {
               variant="primary"
               icon={<IconModels />}
               title="Let's connect your first model"
-              description="Connect a machine learning model to generate predictions. These predictions can be compared side by side, used for efficient pre‒labeling and, to aid in active learning, directing users to the most impactful labeling tasks."
+              description="Connect a machine learning model to generate live predictions for your project. Compare predictions side by side, accelerate labeling with automatic prelabeling, and direct your team to the most impactful tasks through active learning."
               actions={
                 <Button
                   variant="primary"

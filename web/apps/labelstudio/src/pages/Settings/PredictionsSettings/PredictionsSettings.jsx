@@ -64,8 +64,8 @@ export const PredictionsSettings = () => {
               size="medium"
               variant="primary"
               icon={<IconPredictions />}
-              title="No predictions yet uploaded"
-              description="Predictions could be used to prelabel the data, or validate the model. You can upload and select predictions from multiple model versions. You can also connect live models in the Model tab."
+              title="No predictions uploaded yet"
+              description="Upload predictions to automatically prelabel your data and speed up annotation. Import predictions from multiple model versions to compare their performance, or connect live models from the Model page to generate predictions on demand."
               footer={
                 !window.APP_SETTINGS?.whitelabel_is_active && (
                   <Typography variant="label" size="small" className="text-primary-link">
