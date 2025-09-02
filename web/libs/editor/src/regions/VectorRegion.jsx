@@ -135,11 +135,11 @@ const Model = types
 
     /// Visuals
     get pointEnabledSize() {
-      const customEnabledSize = self.control?.pointnsizeenabled;
+      const customEnabledSize = self.control?.pointsizeenabled;
       return customEnabledSize ? Number.parseInt(customEnabledSize) : 5;
     },
     get pointDisabledSize() {
-      const customDisabledSize = self.control?.pointnsizedisabled;
+      const customDisabledSize = self.control?.pointsizedisabled;
       return customDisabledSize ? Number.parseInt(customDisabledSize) : 3;
     },
     // Helper function to convert pointSize to radius values

@@ -192,8 +192,8 @@ import ControlBase from "./Base";
  * @param {number|none} [minPoints=none]           - Minimum allowed number of points
  * @param {number|none} [maxPoints=none]           - Maximum allowed number of points
  * @param {boolean} [constrainToBounds=false]      - Whether to keep shapes inside image bounds
- * @param {number} [pointnSizeEnabled=5]           - Size of a point in pixels when shape is selected
- * @param {number} [pointnSizeDisabled=5]          - Size of a point in pixels when shape is not selected
+ * @param {number} [pointsizeenabled=5]           - Size of a point in pixels when shape is selected
+ * @param {number} [pointsizedisabled=5]          - Size of a point in pixels when shape is not selected
  */
 
 const Validation = types.model({
@@ -208,8 +208,8 @@ const ModelAttrs = types.model("VectorLabelsModel", {
   maxpoints: types.optional(types.maybeNull(types.string), null),
   constraintobounds: types.optional(types.maybeNull(types.boolean), false),
   skeleton: types.optional(types.maybeNull(types.boolean), false),
-  pointnsizeenabled: types.optional(types.maybeNull(types.string), "5"),
-  pointnsizedisabled: types.optional(types.maybeNull(types.string), "3"),
+  pointsizeenabled: types.optional(types.maybeNull(types.string), "5"),
+  pointsizedisabled: types.optional(types.maybeNull(types.string), "3"),
   opacity: types.optional(types.maybeNull(types.string), "1"),
   children: Types.unionArray(["label", "vectorlabel", "header", "view", "hypertext"]),
 });

@@ -2824,15 +2824,15 @@
         "required": false,
         "default": false
       },
-      "pointnSizeEnabled": {
-        "name": "pointnSizeEnabled",
+      "pointsizeenabled": {
+        "name": "pointsizeenabled",
         "description": "Size of a point in pixels when shape is selected",
         "type": "number",
         "required": false,
         "default": 5
       },
-      "pointnSizeDisabled": {
-        "name": "pointnSizeDisabled",
+      "pointsizedisabled": {
+        "name": "pointsizedisabled",
         "description": "Size of a point in pixels when shape is not selected",
         "type": "number",
         "required": false,
