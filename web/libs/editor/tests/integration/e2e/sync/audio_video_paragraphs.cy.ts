@@ -184,6 +184,8 @@ describe("Sync: Video Paragraphs", () => {
 
     // Get more time to ckeck play/pause before the end of the file
     AudioView.clickAt(100, 0);
+    // @TODO: This wait allows "Play" click to have an effect. That's not for sure, but most probably there is a real problem with `sync` window that prevents using seek and play without a delay.
+    cy.wait(1000);
     AudioView.waitForStableState();
 
     AudioView.playButton.click();
