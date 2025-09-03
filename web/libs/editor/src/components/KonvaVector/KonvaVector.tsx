@@ -164,7 +164,7 @@ import {
  * ```
  *
  * ## Keyboard Shortcuts
- * - **Alt + Click**: Convert point between regular ↔ bezier or delete existing point
+ * - **Alt + Click**: Convert point between regular ↔ bezier
  * - **Alt + Click on segment**: Break closed path at segment (when path is closed)
  * - **Click on first/last point**: Close path bidirectionally (first→last or last→first)
  * - **Shift + Click**: Add point on path segment

@@ -34,7 +34,7 @@ import ControlBase from "./Base";
  * - **Click**: Add new point in drawing mode
  * - **Shift + Click** on a segment: Add point on path segment (insert between existing points)
  * - **Shift + Drag**: Create bezier point with control handles
- * - **Shift + Click** on a point: Convert point between regular ↔ bezier or delete existing point
+ * - **Shift + Click** on a point: Convert point between regular ↔ bezier
  * - **Alt + Click** on a segment: Break closed path at segment (when path is closed)
  *
  * ### Point Selection
