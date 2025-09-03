@@ -14,6 +14,7 @@ import { observer } from "mobx-react";
 import Constants from "../core/Constants";
 import { RegionWrapper } from "./RegionWrapper";
 import { LabelOnRect } from "../components/ImageView/LabelOnRegion";
+import ToolsManager from "../tools/Manager";
 
 /**
  * VectorRegion - Vector graphics region with coordinate system conversion
@@ -488,6 +489,12 @@ const HtxVectorView = observer(({ item, suggestion }) => {
       <KonvaVector
         ref={(kv) => item.setKonvaVectorRef(kv)}
         initialPoints={Array.from(item.vertices)}
+        onFinish={() => {
+          const tm = ToolsManager.allInstances();
+          const tools = tm.map((t) => t.findSelectedTool()).filter((t) => t.isDrawing);
+          tools.forEach((t) => t.complete?.());
+          console.log("finish");
+        }}
         onPointsChange={(points) => {
           item.updatePointsFromKonvaVector(points);
         }}

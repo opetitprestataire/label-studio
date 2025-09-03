@@ -215,6 +215,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     onPathClosedChange,
     onTransformationComplete,
     onPointSelected,
+    onFinish,
     scaleX,
     scaleY,
     x,
@@ -1407,6 +1408,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     onPointConverted,
     onPathShapeChanged,
     onPointSelected,
+    onFinish,
     onMouseDown,
     onMouseMove,
     onMouseUp,
@@ -1477,6 +1479,24 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             const allPointIndices = Array.from({ length: initialPoints.length }, (_, i) => i);
             tracker.selectPoints(instanceId, new Set(allPointIndices));
             return;
+          }
+
+          // Check if click is on the last added point by checking cursor position
+          if (cursorPosition && lastAddedPointId) {
+            const lastAddedPoint = initialPoints.find(p => p.id === lastAddedPointId);
+            if (lastAddedPoint) {
+              const scale = transform.zoom * fitScale;
+              const hitRadius = 15 / scale; // Same radius as used in event handlers
+              const distance = Math.sqrt(
+                (cursorPosition.x - lastAddedPoint.x) ** 2 +
+                (cursorPosition.y - lastAddedPoint.y) ** 2
+              );
+
+              if (distance <= hitRadius) {
+                // Trigger onFinish when clicking on the last added point
+                onFinish?.();
+              }
+            }
           }
 
           // Call the original onClick handler
@@ -1588,6 +1608,11 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             } else {
               // Select only this point
               tracker.selectPoints(instanceId, new Set([pointIndex]));
+            }
+
+            // Check if this is the last added point and trigger onFinish
+            if (lastAddedPointId && initialPoints[pointIndex]?.id === lastAddedPointId) {
+              onFinish?.();
             }
 
             // Call the original onClick handler if provided
