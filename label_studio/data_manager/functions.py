@@ -70,9 +70,7 @@ def get_all_columns(project, *_):
         task_data_children.append(column['id'])
         i += 1
 
-    remove_members_schema = flag_set(
-        'fflag_feat_fit_449_datamanager_filter_members_short', user='auto'
-    )
+    remove_members_schema = flag_set('fflag_feat_fit_449_datamanager_filter_members_short', user='auto')
 
     # --- Data root ---
     data_root = {
