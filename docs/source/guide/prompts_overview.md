@@ -32,6 +32,7 @@ With Prompts, you can:
 | **Supported data types** | Text <br>Image<br><br>**Note:** Images are only supported when uploaded through cloud storage. |
 | **Supported object tags** | `Text` <br>`HyperText` <br>`Image` |
 | **Supported control tags** | `Choices` (Text and Image)<br>`Labels` (Text)<br>`TextArea` (Text and Image)<br>`Pairwise` (Text and Image)<br>`Number` (Text and Image)<br>`Rating` (Text and Image) |
+| **Supported base models** | See [Supported base models](prompts_keys#Supported-base-models) |
 | **Class selection** | Multi-selection (the LLM can apply multiple labels per task)|
 | **Text compatibility** | Task text must be utf-8 compatible |
 | **Task size** | Total size of each task can be no more than 1MB (approximately 200-500 pages of text) |
@@ -44,8 +45,6 @@ With Prompts, you can:
 
 !!! note
     For information on installing Prompts for on-prem environments, see [Install Prompts](install_prompts).
-
-{% insertmd includes/base_models.md %} 
 
 ## Use cases
 

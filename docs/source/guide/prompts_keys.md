@@ -36,4 +36,8 @@ You can see what API keys you have and add new ones by clicking **API Keys** in 
 
 ![Screenshot of the API keys button](/images/prompts/model_keys.png)
 
+{% insertmd includes/base_models.md %} 
+
+Once you have added a key, all supported models will appear in the base model drop-down when you [draft your prompt](prompts_draft).
+
 {% insertmd includes/model_keys.md %}

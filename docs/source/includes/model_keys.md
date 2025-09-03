@@ -1,45 +1,37 @@
 
 ## OpenAI
 
-You can only have one OpenAI key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](prompts_overview#Supported-base-models). 
+You can only have one OpenAI key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](#Supported-base-models). 
 
 If you don't already have one, you can [create an OpenAI account here](https://platform.openai.com/signup).
 
 You can find your OpenAI API key on the [API key page](https://platform.openai.com/api-keys). 
 
-Once added, all supported models will appear in the base model drop-down when you [draft your prompt](prompts_draft).
-
 ## Gemini
 
-You can only have one Gemini key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](prompts_overview#Supported-base-models). 
+You can only have one Gemini key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](#Supported-base-models). 
 
 For information on getting a Gemini API key, see [Get a Gemini API key](https://ai.google.dev/gemini-api/docs/api-key).
 
-Once added, all supported models will appear in the base model drop-down when you [draft your prompt](prompts_draft).
-
 ## Vertex AI
 
-You can only have one Vertex AI key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](prompts_overview#Supported-base-models). 
+You can only have one Vertex AI key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](#Supported-base-models). 
 
 Follow the instructions here to generate a credentials file in JSON format: [Authenticate to Vertex AI Agent Builder - Client libraries or third-party tools](https://cloud.google.com/generative-ai-app-builder/docs/authentication#client-libs)
 
 The JSON credentials are required. You can also optionally provide the project ID and location associated with your Google Cloud Platform environment. 
 
-Once added, all supported models will appear in the base model drop-down when you [draft your prompt](prompts_draft).
-
 ## Anthropic
 
-You can only have one Anthropic key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](prompts_overview#Supported-base-models). 
+You can only have one Anthropic key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](#Supported-base-models). 
 
 For information on getting an Anthropic API key, see [Anthropic - Accessing the API](https://docs.anthropic.com/en/api/getting-started#accessing-the-api).
-
-Once added, all supported models will appear in the base model drop-down when you [draft your prompt](prompts_draft).
 
 ## Azure OpenAI
 
 Each Azure OpenAI key is tied to a specific deployment, and each deployment comprises a single OpenAI model. So if you want to use multiple models through Azure, you will need to create a deployment for each model and then add each key to Label Studio. 
 
-For a list of the Azure OpenAI models we support, see [Supported base models](prompts_overview#Supported-base-models). 
+For a list of the Azure OpenAI models we support, see [Supported base models](#Supported-base-models). 
 
 To use Azure OpenAI, you must first create the Azure OpenAI resource and then a model deployment:
 
