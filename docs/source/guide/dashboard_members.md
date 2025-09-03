@@ -53,7 +53,7 @@ The Annotation Summary shows annotation progress and quality metrics for each me
 
 ### Export Annotation Summary table
 
-You can use the **Export CSV** button to to export the Annotation Summary table.
+You can use the **Export CSV** button to export the Annotation Summary table.
 
 ## Annotator Agreement Matrix
 
