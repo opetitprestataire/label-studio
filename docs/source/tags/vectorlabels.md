@@ -4,7 +4,7 @@ type: tags
 hide_menu: true
 order: 433
 meta_title: Vector Label Tag for Labeling Vectors in Images
-meta_description: Customize Label Studio with the VectorLabels tag and label vectors in images for semantic segmentation machine learning and data science projects.
+meta_description: Use the VectorLabels tag and label vectors in images for semantic segmentation machine learning and data science projects.
 ---
 
 The `VectorLabels` tag is used to create labeled vectors. 
