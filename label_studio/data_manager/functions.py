@@ -71,7 +71,7 @@ def get_all_columns(project, *_):
         i += 1
 
     remove_members_schema = flag_set(
-        'fflag_all_feat_utc_204_users_performance_improvements_in_dm_for_large_orgs', user='auto'
+        'fflag_feat_fit_449_datamanager_filter_members_short', user='auto'
     )
 
     # --- Data root ---
