@@ -1,9 +1,10 @@
 ---
 title: Vector
 type: tags
-order: 419
+hide_menu: true
+order: 430
 meta_title: Vector Tag for Adding Vectors to Images
-meta_description: Customize Label Studio with the Vector tag by adding vectors to images for segmentation machine learning and data science projects.
+meta_description: Use the Vector tag by adding vectors to images for segmentation machine learning and data science projects.
 ---
 
 The `Vector` tag is used to add vectors to an image without selecting a label.
