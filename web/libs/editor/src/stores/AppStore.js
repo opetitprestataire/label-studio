@@ -469,7 +469,7 @@ export default types
         const managers = ToolsManager.allInstances();
         const tools = managers.map((m) => m.findSelectedTool()).filter((t) => t.isDrawingTool);
 
-        if (tools.some((t) => t.mode === "drawing")) {
+        if (tools.some((t) => t.isDrawing)) {
           tools.forEach((t) => t.complete?.());
         } else if (c && c.isLinkingMode) {
           c.stopLinkingMode();
