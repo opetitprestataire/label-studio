@@ -23,14 +23,9 @@ Optionally, the tag can request automatic replies from an LLM.
 
 To use an LLM, you need to do two things:
 
-1. Add a model provider API key to the Prompts feature. Once added, these API keys are available to your entire organization. 
+1. Add a model provider API key to your organization. See [Model providers](model_providers). 
 
-    See:
-
-   * [Supported base models](/guide/prompts_overview#Supported-base-mode) for a list of supported LLMs.
-   * [Model provider API keys](/guide/prompts_keys) for instructions on how to add an API key. 
-
-2.  Once you have added an API key from the Prompts page, set the `llm` attribute on the `<Chat>` tag to the model you want to use. 
+2.  Once you have added an API key for a model provider, set the `llm` attribute on the `<Chat>` tag to the model you want to use. 
 
     The `llm` attribute must use the format `<provider>/<model>`. For example, `llm="openai/gpt-5"`. 
 
