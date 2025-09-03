@@ -37,7 +37,7 @@ const resultTypes = [
   "pairwise",
   "videorectangle",
   "ranker",
-  "custominterface"
+  "custominterface",
 ];
 
 const resultValues = {

@@ -33,7 +33,7 @@ const AllRegionsType = types.union(
   TimelineRegionModel,
   ParagraphsRegionModel,
   VideoRectangleRegionModel,
-  CustomRegionModel
+  CustomRegionModel,
   ...Registry.customTags.map((t) => t.region),
 );
 
