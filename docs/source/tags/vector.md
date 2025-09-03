@@ -43,7 +43,7 @@ Use with the following data types: image.
 ### Path Management
 - **Click on first/last point**: Close path bidirectionally (first→last or last→first)  
 - **Shift + Click**: Add point on path segment without closing  
-- **Esc**: End the vector
+- **Esc** or **Click**: Exit the vector by pressing **Esc** or by clicking on the point that you added last
 
 ### Bezier Curve Control
 - **Drag control points**: Adjust curve shape  
@@ -81,9 +81,11 @@ When a path is closed, you can break it at any segment:
 3.	**Batch Operations:** Apply transformations to all selected points
 4.	**Clear:** Click outside or use programmatic methods
 
+## Tag parameters
+
 {% insertmd includes/tags/vector.md %}
 
-### Example
+## Example
 
 Basic labeling configuration for vector image segmentation
 
