@@ -62,5 +62,5 @@ export {
   TextAreaRegionModel,
   TimelineRegionModel,
   VideoRectangleRegionModel,
-  CustomRegionModel
+  CustomRegionModel,
 };
