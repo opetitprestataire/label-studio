@@ -8,6 +8,7 @@ import { RectRegionModel } from "./RectRegion";
 import { KeyPointRegionModel } from "./KeyPointRegion";
 import { AudioRegionModel } from "./AudioRegion";
 import { PolygonRegionModel } from "./PolygonRegion";
+import { VectorRegionModel } from "./VectorRegion";
 import { EllipseRegionModel } from "./EllipseRegion";
 import { RichTextRegionModel } from "./RichTextRegion";
 import { BrushRegionModel } from "./BrushRegion";
@@ -49,8 +50,14 @@ const Area = types.union(
     dispatcher(sn) {
       // for some deserializations
       if (sn.$treenode) return sn.$treenode.type;
+
+      for (const customTag of Registry.customTags) {
+        if (sn.value?.[customTag.resultName] || sn[customTag.resultName]) return customTag.region;
+      }
+
       if (
         !sn.points && // dirty hack to make it work with polygons, but may be the whole condition is not necessary at all
+        !sn.shape && // same for vector
         // `sequence` and `ranges` are used for video regions
         !sn.sequence &&
         !sn.ranges &&
@@ -86,11 +93,13 @@ const Area = types.union(
   KeyPointRegionModel,
   EllipseRegionModel,
   PolygonRegionModel,
+  VectorRegionModel,
   BrushRegionModel,
   BitmaskRegionModel,
   VideoRectangleRegionModel,
   ClassificationArea,
-  CustomRegionModel
+  CustomRegionModel,
+  ...Registry.customTags.map((t) => t.region),
 );
 
 export default Area;

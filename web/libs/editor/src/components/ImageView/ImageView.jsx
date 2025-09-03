@@ -19,7 +19,7 @@ import { useObserver } from "mobx-react";
 import ResizeObserver from "../../utils/resize-observer";
 import { debounce } from "../../utils/debounce";
 import Constants from "../../core/Constants";
-import { fixRectToFit } from "../../utils/image";
+import { fixRectToFit, mapKonvaBrightness } from "../../utils/image";
 import {
   FF_DEV_1442,
   FF_DEV_3077,
@@ -47,6 +47,7 @@ const splitRegions = (regions) => {
   const brushRegions = [];
   const shapeRegions = [];
   const bitmaskRegions = [];
+  const vectorRegions = [];
 
   for (const region of regions) {
     switch (region.type) {
@@ -65,6 +66,7 @@ const splitRegions = (regions) => {
   return {
     brushRegions,
     bitmaskRegions,
+    vectorRegions,
     shapeRegions,
   };
 };
@@ -74,7 +76,9 @@ const Region = memo(({ region, showSelected = false }) => {
 });
 
 const RegionsLayer = memo(({ regions, name, useLayers, showSelected = false, smoothing = true }) => {
-  const content = regions.map((el) => <Region key={`region-${el.id}`} region={el} showSelected={showSelected} />);
+  const content = regions.map((el) => {
+    return <Region key={`region-${el.id}`} region={el} showSelected={showSelected} />;
+  });
 
   return useLayers === false ? (
     content
@@ -460,7 +464,7 @@ const PixelGridLayer = observer(({ item }) => {
   const ZOOM_THRESHOLD = 20;
 
   const visible = item.zoomScale > ZOOM_THRESHOLD;
-  const { naturalWidth, naturalHeight } = item.currentImageEntity;
+  const { naturalWidth, naturalHeight } = item.currentImageEntity ?? {};
   const { stageWidth, stageHeight } = item;
   const imageSmallerThanStage = naturalWidth < stageWidth || naturalHeight < stageHeight;
 
@@ -507,6 +511,7 @@ const PixelGridLayer = observer(({ item }) => {
     </Layer>
   );
 });
+
 /**
  * Component that creates an overlay on top
  * of the image to support Magic Wand tool
@@ -1281,18 +1286,24 @@ const EntireStage = observer(
 
 const ImageLayer = observer(({ item }) => {
   const imageEntity = item.currentImageEntity;
-  const image = useMemo(() => {
-    const ent = item.currentImageEntity;
+  const konvaImageRef = useRef();
+  const [loadedImage, setLoadedImage] = useState(null);
 
-    if (ent && ent.downloaded) {
+  // Load image with proper CORS and load event
+  useEffect(() => {
+    if (imageEntity?.downloaded && imageEntity.currentSrc) {
       const img = new window.Image();
-      img.src = ent.currentSrc;
-      img.width = Number.parseInt(ent.naturalWidth);
-      img.height = Number.parseInt(ent.naturalHeight);
-      return img;
+      img.crossOrigin = "anonymous";
+      img.src = imageEntity.currentSrc;
+      img.width = imageEntity.naturalWidth;
+      img.height = imageEntity.naturalHeight;
+      img.onload = () => {
+        setLoadedImage(img);
+      };
+    } else {
+      setLoadedImage(null);
     }
-    return null;
-  }, [imageEntity?.downloaded]);
+  }, [imageEntity?.downloaded, imageEntity?.currentSrc]);
 
   const { width, height } = useMemo(() => {
     return {
@@ -1301,12 +1312,24 @@ const ImageLayer = observer(({ item }) => {
     };
   }, [imageEntity.naturalWidth, imageEntity.naturalHeight, item.stageWidth, item.stageHeight]);
 
-  return image ? (
-    <>
-      <Layer imageSmoothingEnabled={item.smoothing} scale={{ x: item.stageZoom, y: item.stageZoom }}>
-        <KonvaImage image={image} width={width} height={height} listening={false} />
-      </Layer>
-    </>
+  const brightness = mapKonvaBrightness(imageEntity.brightnessGrade);
+  const contrast = imageEntity.contrastGrade - 100;
+
+  useEffect(() => {
+    const node = konvaImageRef.current;
+    if (node && loadedImage) {
+      node.cache({ pixelRatio: 1 });
+      node.filters([Konva.Filters.Brighten, Konva.Filters.Contrast]);
+      node.brightness(brightness);
+      node.contrast(contrast);
+      node.getLayer()?.batchDraw();
+    }
+  }, [loadedImage, brightness, contrast]);
+
+  return loadedImage ? (
+    <Layer imageSmoothingEnabled={item.smoothing} scale={{ x: item.stageZoom, y: item.stageZoom }}>
+      <KonvaImage ref={konvaImageRef} image={loadedImage} width={width} height={height} listening={false} />
+    </Layer>
   ) : null;
 });
 
@@ -1415,7 +1438,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
       {isFF(FF_LSDV_4930) ? <TransformerBack item={item} /> : null}
 
       {renderableRegions.map(([groupName, list]) => {
-        const isBrush = groupName.match(/brush/i) !== null;
+        const useLayers = groupName.match(/brush/i) === null;
         const isSuggestion = groupName.match("suggested") !== null;
 
         return list.length > 0 ? (
@@ -1423,7 +1446,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
             key={groupName}
             name={groupName}
             regions={list}
-            useLayers={isBrush === false}
+            useLayers={useLayers}
             suggestion={isSuggestion}
             smoothing={item.smoothing}
           />
