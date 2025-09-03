@@ -9,12 +9,6 @@ meta_description: Use the VectorLabels tag and label vectors in images for seman
 
 The `VectorLabels` tag is used to create labeled vectors. 
 
-Use to apply labels to vectors in semantic segmentation tasks.
-
-Use with the following data types: image.
-
-The `VectorLabels` tag is used to create labeled vectors. Use to apply labels to vectors in semantic segmentation tasks.
-
 Use with the following data types: image.
 
 ## Key Features
@@ -49,6 +43,7 @@ Use with the following data types: image.
 ### Path Management
 - **Click on first/last point**: Close path bidirectionally (first→last or last→first)  
 - **Shift + Click**: Add point on path segment without closing  
+- **Esc**: End the vector
 
 ### Bezier Curve Control
 - **Drag control points**: Adjust curve shape  
@@ -82,8 +77,8 @@ Use with the following data types: image.
  <VectorLabels
    name="polygons"
    toName="image"
-   closable={true}
-   curves={true}
+   closable="true"
+   curves="true"
    minPoints="3"
    maxPoints="20"
  >
@@ -101,9 +96,9 @@ Use with the following data types: image.
  <VectorLabels
    name="skeleton"
    toName="image"
-   skeleton={true}
-   closable={false}
-   curves={true}
+   skeleton="true"
+   closable="false"
+   curves="true"
  >
    <Label value="Tree" />
    <Label value="Branch" />
@@ -120,8 +115,8 @@ Use with the following data types: image.
  <VectorLabels
    name="keypoints"
    toName="image"
-   closable={false}
-   curves={false}
+   closable="false"
+   curves="false"
    minPoints="1"
    maxPoints="1"
  >
@@ -140,9 +135,9 @@ Use with the following data types: image.
  <VectorLabels
    name="constrained"
    toName="image"
-   closable={true}
-   curves={true}
-   constraintoBounds={true}
+   closable="true"
+   curves="true"
+   constraintoBounds="true"
    snap="pixel"
    minPoints="4"
    maxPoints="12"
@@ -163,20 +158,20 @@ When a path is closed, you can break it at any segment:
 * The point before breaking becomes active
 
 ### Skeleton Mode
-* Purpose: Create branching paths instead of linear sequences
-* Behavior: New points connect to the active point, not the last added point
-* Use Case: Tree structures, network diagrams, anatomical features
+* **Purpose:** Create branching paths instead of linear sequences
+* **Behavior:** New points connect to the active point, not the last added point
+* **Use Case:** Tree structures, network diagrams, anatomical features
 
 ### Bezier Curve Management
-* Symmetric Control: By default, control points move symmetrically
-* Asymmetric Control: Hold Alt while dragging to disconnect handles
-* Control Point Visibility: Control points are shown when editing bezier points
+* **Symmetric Control:** By default, control points move symmetrically
+* **Asymmetric Control:** Hold Alt while dragging to disconnect handles
+* **Control Point Visibility:** Control points are shown when editing bezier points
 
 ### Multi-Selection Workflow
-1.	Build Selection: Use Cmd/Ctrl + Click to add points
-2.	Transform: Use transformer handles for rotation, scaling, translation
-3.	Batch Operations: Apply transformations to all selected points
-4.	Clear: Click outside or use programmatic methods
+1.	**Build Selection:** Use Cmd/Ctrl + Click to add points
+2.	**Transform:** Use transformer handles for rotation, scaling, translation
+3.	**Batch Operations:** Apply transformations to all selected points
+4.	**Clear:** Click outside or use programmatic methods
 
 {% insertmd includes/tags/vectorlabels.md %}
 
