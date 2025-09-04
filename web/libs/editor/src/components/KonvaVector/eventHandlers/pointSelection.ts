@@ -169,7 +169,6 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
 
       // Check if this is the last added point and trigger onFinish
       if (props.lastAddedPointId && point.id === props.lastAddedPointId) {
-        console.log('Last point clicked, triggering onFinish');
         props.onFinish?.();
       }
 
