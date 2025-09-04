@@ -3,6 +3,16 @@ type: community
 group: Natural Language Processing
 order: 2
 image: /static/templates/text-classification.png
+keywords: [
+  # Industry applications
+  "social media monitoring", "customer feedback analysis", "product reviews", "brand sentiment tracking",
+  "market research", "political sentiment", "news sentiment", "e-commerce reviews",
+  "customer satisfaction", "social listening", "reputation management", "survey analysis",
+  # Technical models
+  "BERT", "RoBERTa", "DistilBERT", "Support Vector Machine", "Naive Bayes", "XGBoost",
+  # Domain terminology
+  "sentiment analysis", "opinion mining", "brand monitoring", "emotion detection", "review analysis"
+]
 details: <h1>Classify text document</h1>
 config: |
   <View>

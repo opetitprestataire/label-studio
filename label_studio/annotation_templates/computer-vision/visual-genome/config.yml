@@ -2,6 +2,16 @@ title: Visual Genome
 type: community
 group: Computer Vision
 image: /static/templates/visual-genome.png
+keywords: [
+  # Research applications
+  "scene understanding", "visual reasoning", "computer vision research", "multimodal AI",
+  "robotics training", "autonomous systems", "visual question answering", "image captioning",
+  "visual relationship detection", "scene graph generation", "complex scene analysis",
+  # Technical approaches
+  "region detection", "attribute classification", "relationship extraction", "structured scene representation",
+  # Domain terminology
+  "scene graphs", "visual knowledge", "spatial relationships", "object interactions", "contextual understanding"
+]
 details: <h1>Label different described features</h1>
 config: |
   <View>

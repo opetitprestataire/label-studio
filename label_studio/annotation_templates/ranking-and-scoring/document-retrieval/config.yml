@@ -2,6 +2,16 @@ title: Document Retrieval
 type: community
 group: Ranking & Scoring
 image: /static/templates/document-retrieval.png
+keywords: [
+  # Industry applications
+  "legal research", "academic research", "customer support", "knowledge management",
+  "enterprise search", "medical literature", "patent search", "compliance documents",
+  "technical documentation", "regulatory research", "due diligence", "case law research",
+  # Technical approaches
+  "information retrieval", "semantic search", "vector search", "TF-IDF", "BM25", "dense retrieval",
+  # Domain terminology
+  "relevance ranking", "search quality", "precision and recall", "retrieval evaluation", "query matching"
+]
 details: <h1>Select document related to the query</h1>
 config: |
   <View>

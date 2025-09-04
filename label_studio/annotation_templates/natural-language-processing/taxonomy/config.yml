@@ -3,6 +3,16 @@ type: community
 group: Natural Language Processing
 order: 4
 image: /static/templates/taxonomy.png
+keywords: [
+  # Industry applications
+  "product categorization", "content organization", "scientific classification", "library science",
+  "e-commerce tagging", "knowledge management", "information architecture", "data governance",
+  "digital asset management", "research classification", "regulatory taxonomy", "medical coding",
+  # Technical approaches
+  "hierarchical classification", "multi-label classification", "ontology mapping", "knowledge graphs",
+  # Domain terminology
+  "category management", "structured vocabularies", "controlled vocabularies", "classification schemes"
+]
 details: <h1>Do multilabel hierarchical classification</h1>
 config: |
   <View>

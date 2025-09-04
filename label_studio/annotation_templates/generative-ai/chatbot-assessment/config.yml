@@ -3,6 +3,16 @@ type: community
 group: Generative AI
 order: 3
 image: /static/templates/generative-chatbot-assessment.png
+keywords: [
+  # Industry applications
+  "conversational AI evaluation", "customer service AI", "chatbot quality assurance", "virtual assistant evaluation",
+  "AI safety assessment", "enterprise chatbots", "healthcare AI", "educational chatbots",
+  "RLHF data collection", "red team evaluation", "AI alignment", "responsible AI development",
+  # Technical approaches
+  "human feedback collection", "constitutional AI", "safety evaluation", "bias detection",
+  # Domain terminology
+  "LLM evaluation", "response safety", "AI hallucination detection", "conversational quality", "model auditing"
+]
 details: Collecting expert assessments of LLM-generated responses for quality assurance and model evaluation. This stage involves evaluating the model's responses based on criteria like correctness, relevance, and safety, which provides valuable feedback for further model refinement and helps ensure the final LLM meets desired performance standards.
 config: |
   <View>

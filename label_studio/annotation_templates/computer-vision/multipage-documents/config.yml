@@ -2,6 +2,16 @@ title: Multi-page document annotation
 type: community
 group: Computer Vision
 image: /static/templates/multipage.png
+keywords: [
+  # Industry applications
+  "legal document processing", "contract analysis", "financial document review", "insurance claims processing",
+  "regulatory compliance", "tax document processing", "medical record analysis", "audit documentation",
+  "due diligence", "patent analysis", "academic paper processing", "government document digitization",
+  # Technical approaches
+  "document understanding", "layout analysis", "form extraction", "table detection",
+  # Domain terminology
+  "multi-page annotation", "document intelligence", "structured document extraction", "PDF processing"
+]
 details: <h1>Annotate PDF documents</h1>
 config: |
   <View>

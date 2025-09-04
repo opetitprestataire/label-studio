@@ -2,6 +2,16 @@ title: Text Summarization
 type: community
 group: Natural Language Processing
 image: /static/templates/text-summarization.png
+keywords: [
+  # Industry applications
+  "news summarization", "research paper abstracts", "meeting minutes", "legal brief summaries",
+  "medical case summaries", "financial reports", "customer feedback summaries", "document intelligence",
+  "executive summaries", "literature reviews", "patent analysis", "regulatory compliance",
+  # Technical approaches
+  "extractive summarization", "abstractive summarization", "ROUGE evaluation", "BERT summarization",
+  # Domain terminology
+  "information distillation", "key insight extraction", "content condensation", "automatic abstracting"
+]
 details: <h1>Provide one sentence summary</h1>
 config: |
   <View>

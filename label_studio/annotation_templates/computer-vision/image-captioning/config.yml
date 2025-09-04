@@ -2,6 +2,16 @@ title: Image Captioning
 type: community
 group: Computer Vision
 image: /static/templates/image-captioning.png
+keywords: [
+  # Industry applications
+  "accessibility tools", "visual search engines", "content management systems", "social media automation",
+  "e-commerce product descriptions", "news media", "digital asset management", "museum cataloging",
+  "educational content", "medical imaging reports", "surveillance systems", "autonomous systems",
+  # Technical models
+  "BLIP", "Show and Tell", "Attention-based models", "Vision Transformer", "CLIP", "GPT-4V",
+  # Domain terminology
+  "visual-to-text", "image-to-text", "visual storytelling", "scene understanding", "visual description"
+]
 details: <h1>Write text describing the image</h1>
 config: |
   <View>

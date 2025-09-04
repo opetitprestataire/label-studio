@@ -2,6 +2,16 @@ title: Sound Event Detection
 type: community
 group: Audio/Speech Processing
 image: /static/templates/sound-event-detection.png
+keywords: [
+  # Industry applications
+  "security surveillance", "smart cities", "environmental monitoring", "industrial monitoring",
+  "wildlife monitoring", "urban soundscape", "home automation", "assistive technology",
+  "automotive safety", "machine condition monitoring", "healthcare monitoring", "emergency detection",
+  # Technical approaches
+  "acoustic scene classification", "audio event classification", "environmental sound recognition", "CRNN models",
+  # Domain terminology
+  "acoustic event detection", "polyphonic sound detection", "audio tagging", "soundscape analysis"
+]
 details: <h1>Select audio span and classify sound event</h1>
 config: |
   <View>

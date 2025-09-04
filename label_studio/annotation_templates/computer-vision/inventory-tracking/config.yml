@@ -2,6 +2,16 @@ title: Inventory Tracking
 type: community
 group: Computer Vision
 image: /static/templates/inventory-tracking.png
+keywords: [
+  # Industry applications
+  "retail automation", "shelf monitoring", "stock management", "grocery stores", "convenience stores",
+  "warehouse management", "supply chain optimization", "planogram compliance", "out-of-stock detection",
+  "price compliance", "visual merchandising", "loss prevention", "store auditing",
+  # Technical approaches
+  "product recognition", "shelf detection", "automated inventory", "computer vision retail",
+  # Domain terminology
+  "SKU detection", "planogram analysis", "shelf analytics", "merchandising compliance", "retail intelligence"
+]
 details: <h1>Label exact products on the shelves</h1>
 config: |
   <View>

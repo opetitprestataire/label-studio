@@ -2,6 +2,16 @@ title: Machine Translation
 type: community
 group: Natural Language Processing
 image: /static/templates/machine-translation.png
+keywords: [
+  # Industry applications
+  "localization", "website translation", "document translation", "legal translation",
+  "medical translation", "technical documentation", "international business", "e-commerce globalization",
+  "customer support", "multilingual content", "software localization", "marketing translation",
+  # Technical models
+  "neural machine translation", "transformer models", "mT5", "MarianMT", "Google Translate API",
+  # Domain terminology
+  "post-editing", "human evaluation", "translation quality", "BLEU score", "cross-lingual"
+]
 details: <h1>Translate text from one language to another</h1>
 config: |
   <View>

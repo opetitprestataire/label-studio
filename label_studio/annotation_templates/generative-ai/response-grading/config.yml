@@ -3,6 +3,16 @@ type: community
 group: Generative AI
 order: 6
 image: /static/templates/response-grading.png
+keywords: [
+  # Industry applications
+  "model evaluation", "content quality assessment", "educational assessment", "AI tutoring systems",
+  "automated grading", "writing assessment", "customer service evaluation", "chatbot quality control",
+  "academic writing", "student response evaluation", "content moderation", "LLM benchmarking",
+  # Technical approaches
+  "human evaluation", "quality metrics", "response scoring", "rubric-based assessment",
+  # Domain terminology
+  "response quality", "content grading", "automated assessment", "AI evaluation", "performance rating"
+]
 details:  Assign a grade to LLM responses based on how well it meets your internal guidelines.
 config: |
   <View>
