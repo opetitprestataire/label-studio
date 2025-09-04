@@ -40,6 +40,7 @@ module.exports = {
     await I.executeScript(Helpers.waitForAudio);
     I.waitForInvisible(this._progressBarSelector, 30);
     I.waitForDetached("loading-progress-bar", 30);
+    await I.executeScript(Helpers.waitForAudioCanvases);
     I.waitTicks(2);
   },
   getCurrentAudio() {
