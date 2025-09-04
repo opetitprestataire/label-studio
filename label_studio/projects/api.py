@@ -803,17 +803,9 @@ class ProjectTaskListAPI(GetParentObjectMixin, generics.ListCreateAPIView, gener
 
 def read_templates_and_groups():
     annotation_templates_dir = find_dir('annotation_templates')
-    print(f"🔍 TEMPLATE DEBUG: Found annotation_templates_dir: {annotation_templates_dir}")
-    print(f"🔍 TEMPLATE DEBUG: Path exists: {os.path.exists(annotation_templates_dir)}")
     configs = []
     for config_file in pathlib.Path(annotation_templates_dir).glob('**/*.yml'):
         config = read_yaml(config_file)
-        if config.get('title') == 'Medical Image Classification with Bounding Boxes':
-            print(f"🔍 TEMPLATE DEBUG: Found medical template at: {config_file}")
-            print(f"🔍 TEMPLATE DEBUG: Raw details: {repr(config.get('details'))}")
-            print(f"🔍 TEMPLATE DEBUG: Details length: {len(config.get('details', ''))}")
-            print(f"🔍 TEMPLATE DEBUG: Contains '<dl>': {('<dl>' in config.get('details', ''))}")
-        
 
         if settings.VERSION_EDITION != 'Community':
             if config.get('group', '').lower() == 'community contributions':
@@ -835,15 +827,7 @@ def read_templates_and_groups():
         groups = [group for group in groups if group.lower() != 'community contributions']
 
     logger.debug(f'{len(configs)} templates found.')
-    
-    # Add debug info to API response for frontend visibility
-    debug_info = {
-        'annotation_templates_dir': annotation_templates_dir,
-        'path_exists': os.path.exists(annotation_templates_dir),
-        'total_configs': len(configs)
-    }
-    
-    return {'templates': configs, 'groups': groups, 'debug_info': debug_info}
+    return {'templates': configs, 'groups': groups}
 
 
 @extend_schema(exclude=True)
@@ -851,12 +835,10 @@ class TemplateListAPI(generics.ListAPIView):
     parser_classes = (JSONParser, FormParser, MultiPartParser)
     permission_required = all_permissions.projects_view
     # load this once in memory for performance
-    # templates_and_groups = read_templates_and_groups()  # COMMENTED OUT FOR DEBUGGING
+    templates_and_groups = read_templates_and_groups()
 
     def list(self, request, *args, **kwargs):
-        # TEMPORARY: Reload templates on each request for debugging
-        templates_and_groups = read_templates_and_groups()
-        return Response(templates_and_groups)
+        return Response(self.templates_and_groups)
 
 
 @extend_schema(exclude=True)
