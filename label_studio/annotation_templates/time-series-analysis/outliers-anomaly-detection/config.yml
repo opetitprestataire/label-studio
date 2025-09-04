@@ -2,17 +2,9 @@ title: Outliers & Anomaly Detection
 type: community
 group: Time Series Analysis
 image: /static/templates/outliers-anomaly-detection.png
-keywords: [
-  # Industry applications
-  "fraud detection", "cybersecurity", "network monitoring", "industrial IoT", "predictive maintenance",
-  "financial trading", "healthcare monitoring", "quality control", "equipment failure prediction",
-  "supply chain monitoring", "energy grid monitoring", "sensor fault detection", "system health monitoring",
-  # Technical models
-  "isolation forest", "one-class SVM", "LSTM autoencoders", "statistical process control",
-  # Domain terminology
-  "statistical outliers", "point anomalies", "contextual anomalies", "collective anomalies", "drift detection"
-]
-details: <h1>Select time spans identifying outliers or anomalies on time series signals</h1>
+details: |
+  <h1>Select time spans identifying outliers or anomalies on time series signals</h1>
+  <!-- keywords: ["fraud detection", "cybersecurity", "network monitoring", "industrial IoT", "predictive maintenance", "financial trading", "healthcare monitoring", "quality control", "equipment failure prediction", "supply chain monitoring", "energy grid monitoring", "sensor fault detection", "system health monitoring", "isolation forest", "one-class SVM", "LSTM autoencoders", "statistical process control", "statistical outliers", "point anomalies", "contextual anomalies", "collective anomalies", "drift detection"] -->
 config: |
   <View>
       <!-- Object tag for time series data source -->

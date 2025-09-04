@@ -2,17 +2,9 @@ title: Video Classification
 type: community
 group: Videos
 image: /static/templates/video-classification.png
-keywords: [
-  # Industry applications
-  "content moderation", "sports analysis", "medical video analysis", "surveillance footage review",
-  "entertainment industry", "educational content", "quality control", "social media filtering",
-  "broadcast media", "security monitoring", "autonomous vehicles", "drone footage analysis",
-  # Technical models
-  "3D CNN", "I3D", "SlowFast", "TSN", "TimeSformer", "Video Transformer",
-  # Domain terminology
-  "action recognition", "temporal modeling", "video understanding", "activity classification", "motion recognition"
-]
-details: <h1>Classify video</h1>
+details: |
+  <h1>Classify video</h1>
+  <!-- keywords: ["content moderation", "sports analysis", "medical video analysis", "surveillance footage review", "entertainment industry", "educational content", "quality control", "social media filtering", "broadcast media", "security monitoring", "autonomous vehicles", "drone footage analysis", "3D CNN", "I3D", "SlowFast", "TSN", "TimeSformer", "Video Transformer", "action recognition", "temporal modeling", "video understanding", "activity classification", "motion recognition"] -->
 config: |
   <View>
     <Video name="video" value="$video"/>

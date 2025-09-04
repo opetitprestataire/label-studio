@@ -2,17 +2,9 @@ title: Speech Transcription
 type: community
 group: Audio/Speech Processing
 image: /static/templates/thumbnail-audio-sentiment.png
-keywords: [
-  # Industry applications
-  "medical dictation", "legal transcription", "podcast transcription", "interview transcription",
-  "meeting minutes", "lecture notes", "courtroom reporting", "journalism",
-  "accessibility services", "broadcast media", "customer service calls", "research interviews",
-  # Technical models
-  "Whisper", "Wav2Vec2", "DeepSpeech", "Google Speech-to-Text", "Azure Speech Services",
-  # Domain terminology
-  "speech-to-text", "audio transcription", "voice recognition", "dictation", "transcription with sentiment"
-]
-details: <h1>Transcribe audio recordings with chunks</h1>
+details: |
+  <h1>Transcribe audio recordings with chunks</h1>
+  <!-- keywords: ["medical dictation", "legal transcription", "podcast transcription", "interview transcription", "meeting minutes", "lecture notes", "courtroom reporting", "journalism", "accessibility services", "broadcast media", "customer service calls", "research interviews", "Whisper", "Wav2Vec2", "DeepSpeech", "Google Speech-to-Text", "Azure Speech Services", "speech-to-text", "audio transcription", "voice recognition", "dictation", "transcription with sentiment"] -->
 config: |
   <View>
       <Audio name="audio" value="$audio" />

@@ -3,21 +3,9 @@ type: community
 group: Generative AI
 order: 4
 image: /static/templates/llm-ranker.png
-keywords: [
-  # AI model evaluation
-  "model evaluation", "A/B testing", "model comparison", "performance ranking",
-  "response quality", "model benchmarking", "AI model selection",
-  # RLHF & fine-tuning
-  "RLHF", "human feedback", "preference learning", "reward modeling",
-  "constitutional AI", "alignment", "fine-tuning", "instruction tuning",
-  # Bias & safety
-  "bias detection", "fairness evaluation", "AI safety", "red teaming",
-  "harmful content", "model auditing", "responsible AI",
-  # Enterprise applications
-  "chatbot evaluation", "conversational AI", "customer service AI",
-  "content generation", "prompt engineering"
-]
-details: Here is a demo that showcases how to construct an interface enabling users to drag, arrange, and rank responses from different Large Language Models (LLMs) and chatbot systems based on their relevance to a specified prompt and their perceived bias, thus facilitating an intuitive and visual understanding of how well these AI systems align with the topic and the degree of subjective interpretation they exhibit.
+details: |
+  Here is a demo that showcases how to construct an interface enabling users to drag, arrange, and rank responses from different Large Language Models (LLMs) and chatbot systems based on their relevance to a specified prompt and their perceived bias, thus facilitating an intuitive and visual understanding of how well these AI systems align with the topic and the degree of subjective interpretation they exhibit.
+  <!-- keywords: ["model evaluation", "A/B testing", "model comparison", "performance ranking", "response quality", "model benchmarking", "AI model selection", "RLHF", "human feedback", "preference learning", "reward modeling", "constitutional AI", "alignment", "fine-tuning", "instruction tuning", "bias detection", "fairness evaluation", "AI safety", "red teaming", "harmful content", "model auditing", "responsible AI", "chatbot evaluation", "conversational AI", "customer service AI", "content generation", "prompt engineering"] -->
 config: |
   <View>
      <View style="display: flex; align-items: center; font-size: 1em;">

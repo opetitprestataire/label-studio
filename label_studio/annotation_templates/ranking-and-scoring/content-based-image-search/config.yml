@@ -2,17 +2,9 @@ title: Content-based Image Retrieval
 type: community
 group: Ranking & Scoring
 image: /static/templates/content-based-image-search.png
-keywords: [
-  # Industry applications
-  "e-commerce search", "stock photo platforms", "medical imaging", "forensic analysis",
-  "art history research", "fashion search", "reverse image search", "copyright detection",
-  "product discovery", "visual shopping", "museum collections", "digital asset management",
-  # Technical approaches
-  "visual similarity", "feature extraction", "convolutional neural networks", "CLIP", "ResNet features",
-  # Domain terminology
-  "visual search", "image similarity", "perceptual hashing", "visual features", "image embeddings"
-]
-details: <h1>Select images related to the query image</h1>
+details: |
+  <h1>Select images related to the query image</h1>
+  <!-- keywords: ["e-commerce search", "stock photo platforms", "medical imaging", "forensic analysis", "art history research", "fashion search", "reverse image search", "copyright detection", "product discovery", "visual shopping", "museum collections", "digital asset management", "visual similarity", "feature extraction", "convolutional neural networks", "CLIP", "ResNet features", "visual search", "image similarity", "perceptual hashing", "visual features", "image embeddings"] -->
 config: |
   <View>
     <Image name="query" value="$query_image" />

@@ -2,19 +2,9 @@ title: Automatic Speech Recognition
 type: community
 group: Audio/Speech Processing
 image: /static/templates/automatic-speech-recognition.png
-keywords: [
-  # Abbreviations
-  "ASR", "STT", "speech-to-text", "voice-to-text", "transcription",
-  # Industry applications  
-  "podcast transcription", "meeting notes", "call center", "customer service",
-  "accessibility", "closed captions", "subtitles", "voice assistants",
-  "dictation", "medical dictation", "legal transcription",
-  # Technical models
-  "Whisper", "Wav2Vec", "DeepSpeech", "transformer", "CTC",
-  # Related tasks
-  "voice recognition", "speech processing", "audio transcription"
-]
-details: <h1>Provide transcript for the audio</h1>
+details: |
+  <h1>Provide transcript for the audio</h1>
+  <!-- keywords: ["ASR", "STT", "speech-to-text", "voice-to-text", "transcription", "podcast transcription", "meeting notes", "call center", "customer service", "accessibility", "closed captions", "subtitles", "voice assistants", "dictation", "medical dictation", "legal transcription", "Whisper", "Wav2Vec", "DeepSpeech", "transformer", "CTC", "voice recognition", "speech processing", "audio transcription"] -->
 config: |
   <View>
     <Audio name="audio" value="$audio" zoom="true" hotkey="ctrl+enter" />

@@ -2,17 +2,9 @@ title: Signal Quality
 type: community
 group: Time Series Analysis
 image: /static/templates/signal-quality.png
-keywords: [
-  # Industry applications
-  "IoT sensor monitoring", "industrial equipment", "medical device monitoring", "telecommunications",
-  "audio signal processing", "vibration analysis", "environmental monitoring", "power systems",
-  "automotive diagnostics", "aerospace", "manufacturing quality control", "predictive maintenance",
-  # Technical approaches
-  "signal-to-noise ratio", "data quality assessment", "sensor validation", "signal integrity",
-  # Domain terminology
-  "signal degradation", "noise detection", "data reliability", "measurement quality", "sensor calibration"
-]
-details: <h1>Rate signal quality</h1>
+details: |
+  <h1>Rate signal quality</h1>
+  <!-- keywords: ["IoT sensor monitoring", "industrial equipment", "medical device monitoring", "telecommunications", "audio signal processing", "vibration analysis", "environmental monitoring", "power systems", "automotive diagnostics", "aerospace", "manufacturing quality control", "predictive maintenance", "signal-to-noise ratio", "data quality assessment", "sensor validation", "signal integrity", "signal degradation", "noise detection", "data reliability", "measurement quality", "sensor calibration"] -->
 config: |
   <View>
       <!-- No region selected section -->

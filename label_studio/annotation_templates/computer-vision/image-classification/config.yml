@@ -2,16 +2,9 @@ title: Image Classification
 type: community
 group: Computer Vision
 image: /static/templates/image-classification.png
-keywords: [
-  # Industry applications (based on example labels)
-  "content moderation", "safety detection", "inappropriate content", "nsfw detection",
-  "social media moderation", "platform safety", "community guidelines",
-  # Technical models
-  "ResNet", "EfficientNet", "Vision Transformer", "CNN", "ConvNet",
-  # Related tasks
-  "image tagging", "visual categorization", "multi-class", "single-label"
-]
-details: <h1>Classify the image</h1>
+details: |
+  <h1>Classify the image</h1>
+  <!-- keywords: ["content moderation", "safety detection", "inappropriate content", "nsfw detection", "social media moderation", "platform safety", "community guidelines", "ResNet", "EfficientNet", "Vision Transformer", "CNN", "ConvNet", "image tagging", "visual categorization", "multi-class", "single-label"] -->
 config: |
   <View>
     <Image name="image" value="$image"/>

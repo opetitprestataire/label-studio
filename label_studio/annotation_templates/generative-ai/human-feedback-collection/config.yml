@@ -3,17 +3,9 @@ type: community
 group: Generative AI
 order: 2
 image: /static/templates/generative-pairwise-human-preference.png
-keywords: [
-  # Industry applications
-  "AI alignment", "chatbot optimization", "conversational AI improvement", "content generation fine-tuning",
-  "customer service AI", "educational AI tutoring", "creative writing AI", "code assistant optimization",
-  "AI safety research", "responsible AI development", "LLM evaluation", "human-AI collaboration",
-  # Technical approaches
-  "RLHF", "reward modeling", "preference learning", "pairwise comparison", "constitutional AI",
-  # Domain terminology
-  "human feedback", "preference elicitation", "reward signal", "alignment research", "value learning"
-]
-details:  Gathering comparison data to establish human preferences for model-generated responses. This stage involves ranking multiple responses based on quality, which are then used to train a reward model. The reward model captures human preferences and helps in reinforcement learning to optimize the LLM's performance.
+details: |
+  Gathering comparison data to establish human preferences for model-generated responses. This stage involves ranking multiple responses based on quality, which are then used to train a reward model. The reward model captures human preferences and helps in reinforcement learning to optimize the LLM's performance.
+  <!-- keywords: ["AI alignment", "chatbot optimization", "conversational AI improvement", "content generation fine-tuning", "customer service AI", "educational AI tutoring", "creative writing AI", "code assistant optimization", "AI safety research", "responsible AI development", "LLM evaluation", "human-AI collaboration", "RLHF", "reward modeling", "preference learning", "pairwise comparison", "constitutional AI", "human feedback", "preference elicitation", "reward signal", "alignment research", "value learning"] -->
 config: |
   <View className="root">
     <Style>

@@ -3,17 +3,9 @@ type: community
 group: Natural Language Processing
 order: 1
 image: /static/templates/question-answering.png
-keywords: [
-  # Industry applications
-  "customer support automation", "educational assessment", "research assistance", "legal document search",
-  "medical diagnosis support", "technical documentation", "FAQ automation", "knowledge base search",
-  "compliance queries", "scientific literature search", "patent research", "insurance claims processing",
-  # Technical models
-  "BERT-QA", "RoBERTa", "SQuAD", "reading comprehension", "extractive QA", "generative QA",
-  # Domain terminology
-  "span extraction", "machine reading", "information retrieval", "passage retrieval", "answer extraction"
-]
-details: <h1>Select an answer from text</h1>
+details: |
+  <h1>Select an answer from text</h1>
+  <!-- keywords: ["customer support automation", "educational assessment", "research assistance", "legal document search", "medical diagnosis support", "technical documentation", "FAQ automation", "knowledge base search", "compliance queries", "scientific literature search", "patent research", "insurance claims processing", "BERT-QA", "RoBERTa", "SQuAD", "reading comprehension", "extractive QA", "generative QA", "span extraction", "machine reading", "information retrieval", "passage retrieval", "answer extraction"] -->
 config: |
   <View>
     <Header value="Please read the passage" />

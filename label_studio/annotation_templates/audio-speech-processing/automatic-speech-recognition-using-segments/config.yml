@@ -2,17 +2,9 @@ title: Automatic Speech Recognition using Segments
 type: community
 group: Audio/Speech Processing
 image: /static/templates/automatic-speech-recognition-using-segments.png
-keywords: [
-  # Industry applications
-  "call center transcription", "meeting minutes", "podcast transcription", "lecture recordings",
-  "courtroom proceedings", "medical dictation", "voice assistants", "subtitling",
-  "accessibility services", "broadcast transcription", "phone banking", "voice search",
-  # Technical models
-  "Whisper", "Wav2Vec2", "DeepSpeech", "voice activity detection", "WebRTC VAD",
-  # Domain terminology
-  "VAD", "voice activity detection", "speech segmentation", "speech-to-text", "ASR with VAD"
-]
-details: <h1>Do voice activity segmentation and provide a transcript for the audio</h1>
+details: |
+  <h1>Do voice activity segmentation and provide a transcript for the audio</h1>
+  <!-- keywords: ["call center transcription", "meeting minutes", "podcast transcription", "lecture recordings", "courtroom proceedings", "medical dictation", "voice assistants", "subtitling", "accessibility services", "broadcast transcription", "phone banking", "voice search", "Whisper", "Wav2Vec2", "DeepSpeech", "voice activity detection", "WebRTC VAD", "VAD", "speech segmentation", "speech-to-text", "ASR with VAD"] -->
 config: |
   <View>
     <Labels name="labels" toName="audio">

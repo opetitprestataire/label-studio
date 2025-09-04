@@ -2,17 +2,9 @@ title: HTML Entity Recognition
 type: community
 group: Structured Data Parsing
 image: /static/templates/html-entity-recognition.png
-keywords: [
-  # Industry applications
-  "web scraping", "content extraction", "digital publishing", "news aggregation",
-  "e-commerce data mining", "social media monitoring", "academic research", "market research",
-  "competitive intelligence", "SEO analysis", "content management", "data journalism",
-  # Technical approaches
-  "DOM parsing", "web content extraction", "structured data extraction", "HTML parsing",
-  # Domain terminology
-  "web entity extraction", "HTML annotation", "web document processing", "hypertext analysis", "markup extraction"
-]
-details: <h1>Extract entities from hypertext documents</h1>
+details: |
+  <h1>Extract entities from hypertext documents</h1>
+  <!-- keywords: ["web scraping", "content extraction", "digital publishing", "news aggregation", "e-commerce data mining", "social media monitoring", "academic research", "market research", "competitive intelligence", "SEO analysis", "content management", "data journalism", "DOM parsing", "web content extraction", "structured data extraction", "HTML parsing", "web entity extraction", "HTML annotation", "web document processing", "hypertext analysis", "markup extraction"] -->
 config: |
   <View>
     <HyperTextLabels name="ner" toName="text">

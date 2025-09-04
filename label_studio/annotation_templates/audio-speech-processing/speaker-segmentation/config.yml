@@ -2,17 +2,9 @@ title: Speaker Segmentation
 type: community
 group: Audio/Speech Processing
 image: /static/templates/speaker-segmentation.png
-keywords: [
-  # Industry applications
-  "meeting transcription", "podcast production", "call center analytics", "courtroom transcription",
-  "broadcast news", "conference calls", "interview processing", "lecture recordings",
-  "multi-speaker recordings", "radio show analysis", "parliamentary proceedings", "teleconferencing",
-  # Technical models
-  "x-vectors", "PLDA", "VBx", "pyannote.audio", "speaker embedding",
-  # Domain terminology
-  "speaker diarization", "voice activity detection", "speaker identification", "speaker change detection"
-]
-details: <h1>Perform speaker segmentation / diarization task</h1>
+details: |
+  <h1>Perform speaker segmentation / diarization task</h1>
+  <!-- keywords: ["meeting transcription", "podcast production", "call center analytics", "courtroom transcription", "broadcast news", "conference calls", "interview processing", "lecture recordings", "multi-speaker recordings", "radio show analysis", "parliamentary proceedings", "teleconferencing", "x-vectors", "PLDA", "VBx", "pyannote.audio", "speaker embedding", "speaker diarization", "voice activity detection", "speaker identification", "speaker change detection"] -->
 config: |
   <View>
     <Labels name="label" toName="audio" zoom="true" hotkey="ctrl+enter">

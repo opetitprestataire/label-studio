@@ -2,17 +2,9 @@ title: Video Object Tracking
 type: community
 group: Videos
 image: /static/templates/video-object-tracking.png
-keywords: [
-  # Industry applications
-  "autonomous driving", "surveillance systems", "sports analytics", "robotics", "augmented reality",
-  "traffic monitoring", "security cameras", "wildlife tracking", "retail analytics", "medical imaging",
-  "motion analysis", "behavior analysis", "industrial automation", "drone surveillance",
-  # Technical models
-  "SORT", "DeepSORT", "ByteTrack", "FairMOT", "CenterTrack", "Kalman filter",
-  # Domain terminology
-  "multi-object tracking", "MOT", "object detection", "temporal consistency", "trajectory analysis"
-]
-details: <h1>Object tracking in video with bounding boxes</h1>
+details: |
+  <h1>Object tracking in video with bounding boxes</h1>
+  <!-- keywords: ["autonomous driving", "surveillance systems", "sports analytics", "robotics", "augmented reality", "traffic monitoring", "security cameras", "wildlife tracking", "retail analytics", "medical imaging", "motion analysis", "behavior analysis", "industrial automation", "drone surveillance", "SORT", "DeepSORT", "ByteTrack", "FairMOT", "CenterTrack", "Kalman filter", "multi-object tracking", "MOT", "object detection", "temporal consistency", "trajectory analysis"] -->
 config: |
   <View>
      <Labels name="videoLabels" toName="video" allowEmpty="true">
