@@ -393,7 +393,7 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
 
         if (area && object && object.multiImage && area.item_index !== object.currentImage) return;
 
-        self.getCurrentArea().addPoint(x, y);
+        self.getCurrentArea().addPoint(x, y, false);
         pointsCount++;
       },
       listenForClose() {
@@ -420,7 +420,7 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
         for (let i = 1; i < simplifiedPoints.length; i++) {
           var x = simplifiedPoints[i][0];
           var y = simplifiedPoints[i][1];
-          area.addPoint(x, y);
+          area.addPoint(x, y, false);
           pointsCount++;
         }
         

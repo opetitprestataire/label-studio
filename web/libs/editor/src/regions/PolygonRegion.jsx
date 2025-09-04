@@ -180,12 +180,12 @@ const Model = types
         destroy(point);
       },
 
-      addPoint(x, y) {
+      addPoint(x, y, possiblyFinishPolygon=true) {
         if (self.closed) return;
 
         const point = self.control?.getSnappedPoint({ x, y });
 
-        self._addPoint(point.x, point.y);
+        self._addPoint(point.x, point.y, possiblyFinishPolygon);
       },
 
       setPoints(points) {
@@ -231,12 +231,12 @@ const Model = types
         self.closed = bool;
       },
 
-      _addPoint(x, y) {
+      _addPoint(x, y, possiblyFinishPolygon=true) {
         const firstPoint = self.points[0];
 
         // This is mostly for "snap to pixel" mode,
         // 'cause there is also an ability to close polygon by clicking on the first point precisely
-        if (self.parent.isSamePixel(firstPoint, { x, y })) {
+        if (possiblyFinishPolygon && self.parent.isSamePixel(firstPoint, { x, y })) {
           self.closePoly();
           return;
         }
