@@ -11,7 +11,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>human feedback collection, constitutional AI, safety evaluation, bias detection</dd>
     <dt>Domain Terminology</dt>
-    <dd>response safety, AI hallucination detection, conversational quality</dd>
+    <dd>gen ai, response safety, AI hallucination detection, conversational quality</dd>
   </dl>
 config: |
   <View>

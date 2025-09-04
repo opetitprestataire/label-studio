@@ -11,7 +11,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>RLHF, reward modeling, constitutional AI, alignment, fine-tuning, instruction tuning</dd>
     <dt>Domain Terminology</dt>
-    <dd>human feedback, preference learning, prompt engineering</dd>
+    <dd>gen ai, human feedback, preference learning, prompt engineering</dd>
   </dl>
 config: |
   <View>

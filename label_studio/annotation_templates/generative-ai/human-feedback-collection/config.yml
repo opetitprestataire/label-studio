@@ -11,7 +11,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>RLHF, reward modeling, preference learning, pairwise comparison, constitutional AI</dd>
     <dt>Domain Terminology</dt>
-    <dd>human feedback, preference elicitation, reward signal, alignment research, value learning</dd>
+    <dd>gen ai, human feedback, preference elicitation, reward signal, alignment research, value learning</dd>
   </dl>
 config: |
   <View className="root">
