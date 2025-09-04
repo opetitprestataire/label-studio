@@ -207,8 +207,8 @@ include = [
 ]
 
 exclude = [
-    { path = "label_studio/frontend", format = ["sdist", "wheel"] },
-    "label_studio/core/static/**",
+    "label_studio/frontend",
+    "label_studio/core/static",
 ]
 requires-poetry = '>=2.0.0,<3.0.0'
 
