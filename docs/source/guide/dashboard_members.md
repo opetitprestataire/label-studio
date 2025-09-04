@@ -81,7 +81,7 @@ When enabled, you will see the following information in model rows of the **Anno
 * **Agreement**: Average agreement between the model and all annotators.
 * **Ground truth**: Average agreement between the model and ground-truth (GT) tasks.
 
-    If you click the link in the Predictions column of a model row, you are taken to a filter view of the Data Manager showing tasks with both a GT annotation and this model’s prediction.
+    If you click the link in the Ground Truth column of a model row, you are taken to a filter view of the Data Manager showing tasks with both a GT annotation and this model’s prediction.
 * **Predictions**: Average agreement between the model and all other models.
 
     If you click the link in the Predictions column of a model row, you are taken to a filter view of the Data Manager showing tasks with this model’s prediction plus at least one other model’s prediction.
