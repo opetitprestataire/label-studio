@@ -4,7 +4,14 @@ group: Computer Vision
 image: /static/templates/optical-character-recognition.png
 details: |
   <h1>Draw a bounding box or polygon around region and write down the text found inside</h1>
-  <!-- keywords: ["document digitization", "invoice processing", "receipt scanning", "license plate recognition", "banking automation", "insurance claims", "form processing", "passport scanning", "historical document preservation", "library digitization", "legal discovery", "medical records", "Tesseract", "PaddleOCR", "EasyOCR", "TrOCR", "CRAFT", "DBNet", "text detection", "text recognition", "handwriting recognition", "document understanding"] -->
+  <dl>
+    <dt>Industry Applications</dt>
+    <dd>document digitization, invoice processing, receipt scanning, license plate recognition, banking automation, insurance claims, form processing, passport scanning, historical document preservation, library digitization, legal discovery, medical records</dd>
+    <dt>Associated Models</dt>
+    <dd>Tesseract, PaddleOCR, EasyOCR, TrOCR, CRAFT, DBNet</dd>
+    <dt>Domain Terminology</dt>
+    <dd>text detection, text recognition, handwriting recognition, document understanding</dd>
+  </dl>
 config: |
   <View>
     <Image name="image" value="$ocr"/>

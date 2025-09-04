@@ -5,7 +5,14 @@ order: 1
 image: /static/templates/question-answering.png
 details: |
   <h1>Select an answer from text</h1>
-  <!-- keywords: ["customer support automation", "educational assessment", "research assistance", "legal document search", "medical diagnosis support", "technical documentation", "FAQ automation", "knowledge base search", "compliance queries", "scientific literature search", "patent research", "insurance claims processing", "BERT-QA", "RoBERTa", "SQuAD", "reading comprehension", "extractive QA", "generative QA", "span extraction", "machine reading", "information retrieval", "passage retrieval", "answer extraction"] -->
+  <dl>
+    <dt>Industry Applications</dt>
+    <dd>customer support automation, educational assessment, research assistance, legal document search, medical diagnosis support, technical documentation, FAQ automation, knowledge base search, compliance queries, scientific literature search, patent research, insurance claims processing</dd>
+    <dt>Associated Models</dt>
+    <dd>BERT-QA, RoBERTa, SQuAD, reading comprehension, extractive QA, generative QA</dd>
+    <dt>Domain Terminology</dt>
+    <dd>span extraction, machine reading, information retrieval, passage retrieval, answer extraction</dd>
+  </dl>
 config: |
   <View>
     <Header value="Please read the passage" />

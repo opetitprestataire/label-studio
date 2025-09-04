@@ -5,7 +5,14 @@ order: 2
 image: /static/templates/text-classification.png
 details: |
   <h1>Classify text document</h1>
-  <!-- keywords: ["social media monitoring", "customer feedback analysis", "product reviews", "brand sentiment tracking", "market research", "political sentiment", "news sentiment", "e-commerce reviews", "customer satisfaction", "social listening", "reputation management", "survey analysis", "BERT", "RoBERTa", "DistilBERT", "Support Vector Machine", "Naive Bayes", "XGBoost", "sentiment analysis", "opinion mining", "brand monitoring", "emotion detection", "review analysis"] -->
+  <dl>
+    <dt>Industry Applications</dt>
+    <dd>social media monitoring, customer feedback analysis, product reviews, brand sentiment tracking, market research, political sentiment, news sentiment, e-commerce reviews, customer satisfaction, social listening, reputation management, survey analysis</dd>
+    <dt>Associated Models</dt>
+    <dd>BERT, RoBERTa, DistilBERT, Support Vector Machine, Naive Bayes, XGBoost</dd>
+    <dt>Domain Terminology</dt>
+    <dd>sentiment analysis, opinion mining, brand monitoring, emotion detection, review analysis</dd>
+  </dl>
 config: |
   <View>
     <Text name="text" value="$text"/>

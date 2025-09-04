@@ -5,7 +5,14 @@ order: 3
 image: /static/templates/named-entity-recognition.png
 details: |
   <h1>Extract named entities from text</h1>
-  <!-- keywords: ["NER", "information extraction", "entity extraction", "entity linking", "legal documents", "contracts", "medical records", "clinical notes", "news articles", "journalism", "financial documents", "compliance", "regulatory", "due diligence", "BERT", "spaCy", "Stanford NER", "Flair", "transformer models", "document processing", "text mining", "knowledge extraction", "structured data extraction"] -->
+  <dl>
+    <dt>Industry Applications</dt>
+    <dd>legal documents, contracts, medical records, clinical notes, news articles, journalism, financial documents, compliance, regulatory, due diligence, document processing, text mining, knowledge extraction, structured data extraction</dd>
+    <dt>Associated Models</dt>
+    <dd>BERT, spaCy, Stanford NER, Flair, transformer models</dd>
+    <dt>Domain Terminology</dt>
+    <dd>NER, information extraction, entity extraction, entity linking</dd>
+  </dl>
 config: |
   <View>
     <Labels name="label" toName="text">

@@ -5,7 +5,14 @@ order: 4
 image: /static/templates/taxonomy.png
 details: |
   <h1>Do multilabel hierarchical classification</h1>
-  <!-- keywords: ["product categorization", "content organization", "scientific classification", "library science", "e-commerce tagging", "knowledge management", "information architecture", "data governance", "digital asset management", "research classification", "regulatory taxonomy", "medical coding", "hierarchical classification", "multi-label classification", "ontology mapping", "knowledge graphs", "category management", "structured vocabularies", "controlled vocabularies", "classification schemes"] -->
+  <dl>
+    <dt>Industry Applications</dt>
+    <dd>product categorization, content organization, scientific classification, library science, e-commerce tagging, knowledge management, information architecture, data governance, digital asset management, research classification, regulatory taxonomy, medical coding</dd>
+    <dt>Associated Models</dt>
+    <dd>hierarchical classification, multi-label classification, ontology mapping, knowledge graphs</dd>
+    <dt>Domain Terminology</dt>
+    <dd>category management, structured vocabularies, controlled vocabularies, classification schemes</dd>
+  </dl>
 config: |
   <View>
     <Text name="text" value="$text"/>

@@ -5,7 +5,14 @@ order: 1
 image: /static/templates/generative-supervised-llm.png
 details: |
   Collecting labeled text data for training an initial LLM, focusing on task-specific performance improvement. This stage involves gathering instructions and responses to adapt the base model to a wide range of tasks, enhancing its ability to generate more accurate and useful responses.
-  <!-- keywords: ["instruction fine-tuning", "domain adaptation", "task-specific LLM", "enterprise AI customization", "code generation models", "medical AI", "legal AI", "customer service automation", "educational AI", "technical writing assistance", "specialized chatbots", "domain expertise", "supervised fine-tuning", "instruction following", "prompt-response pairs", "few-shot learning", "SFT", "instruction tuning", "model specialization", "task adaptation", "performance optimization"] -->
+  <dl>
+    <dt>Industry Applications</dt>
+    <dd>instruction fine-tuning, domain adaptation, task-specific LLM, enterprise AI customization, code generation models, medical AI, legal AI, customer service automation, educational AI, technical writing assistance, specialized chatbots, domain expertise</dd>
+    <dt>Associated Models</dt>
+    <dd>supervised fine-tuning, instruction following, prompt-response pairs, few-shot learning</dd>
+    <dt>Domain Terminology</dt>
+    <dd>SFT, instruction tuning, model specialization, task adaptation, performance optimization</dd>
+  </dl>
 config: |
   <View className="root">
     <Style>

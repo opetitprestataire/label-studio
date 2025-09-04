@@ -4,7 +4,14 @@ group: Time Series Analysis
 image: /static/templates/signal-quality.png
 details: |
   <h1>Rate signal quality</h1>
-  <!-- keywords: ["IoT sensor monitoring", "industrial equipment", "medical device monitoring", "telecommunications", "audio signal processing", "vibration analysis", "environmental monitoring", "power systems", "automotive diagnostics", "aerospace", "manufacturing quality control", "predictive maintenance", "signal-to-noise ratio", "data quality assessment", "sensor validation", "signal integrity", "signal degradation", "noise detection", "data reliability", "measurement quality", "sensor calibration"] -->
+  <dl>
+    <dt>Industry Applications</dt>
+    <dd>IoT sensor monitoring, industrial equipment, medical device monitoring, telecommunications, audio signal processing, vibration analysis, environmental monitoring, power systems, automotive diagnostics, aerospace, manufacturing quality control, predictive maintenance</dd>
+    <dt>Associated Models</dt>
+    <dd>signal-to-noise ratio, data quality assessment, sensor validation, signal integrity</dd>
+    <dt>Domain Terminology</dt>
+    <dd>signal degradation, noise detection, data reliability, measurement quality, sensor calibration</dd>
+  </dl>
 config: |
   <View>
       <!-- No region selected section -->
