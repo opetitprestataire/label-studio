@@ -103,7 +103,9 @@ const HtxPdf = inject("store")(
       return () => {
         isCancelled = true;
         try {
-          loadingTask.destroy();
+          // @todo this seems like a correct cleanup, but most probably it's called more than once,
+          // @todo destroying properly loaded pdf
+          // loadingTask.destroy();
         } catch (e) {}
       };
     }, [item._url]);
