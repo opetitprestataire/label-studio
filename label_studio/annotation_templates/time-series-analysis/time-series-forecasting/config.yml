@@ -2,6 +2,19 @@ title: Time Series Forecasting
 type: community
 group: Time Series Analysis
 image: /static/templates/time-series-forecasting.png
+keywords: [
+  # Financial applications
+  "stock prediction", "financial markets", "trading algorithms", "price prediction",
+  "cryptocurrency", "forex", "market trends", "algorithmic trading",
+  # IoT & sensors
+  "IoT sensors", "sensor data", "predictive maintenance", "equipment monitoring",
+  "energy consumption", "smart grid", "temperature monitoring",
+  # Technical models
+  "ARIMA", "LSTM", "Prophet", "seasonal decomposition", "trend analysis",
+  # Business applications
+  "demand forecasting", "sales prediction", "inventory management", "supply chain",
+  "resource planning", "capacity planning", "budget forecasting"
+]
 details: <h1>Prepare training data for time series forecasting models</h1>
 config: |
   <View>

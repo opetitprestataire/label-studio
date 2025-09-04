@@ -3,6 +3,17 @@ type: community
 group: Natural Language Processing
 order: 3
 image: /static/templates/named-entity-recognition.png
+keywords: [
+  # Abbreviations & technical terms
+  "NER", "information extraction", "entity extraction", "entity linking",
+  # Industry applications
+  "legal documents", "contracts", "medical records", "clinical notes", "news articles", "journalism",
+  "financial documents", "compliance", "regulatory", "due diligence",
+  # Technical models & tools
+  "BERT", "spaCy", "Stanford NER", "Flair", "transformer models",
+  # Related tasks
+  "document processing", "text mining", "knowledge extraction", "structured data extraction"
+]
 details: <h1>Extract named entities from text</h1>
 config: |
   <View>
