@@ -1,5 +1,5 @@
 ---
-title: LLM Multi-Turn Chat Rating
+title: LLM Chat with Per-Message Rating
 type: templates
 category: LLM Evaluations
 cat: llm-evaluations
