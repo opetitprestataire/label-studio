@@ -3373,6 +3373,72 @@
     "@module-federation/runtime" "0.16.0"
     "@module-federation/sdk" "0.16.0"
 
+"@napi-rs/canvas-android-arm64@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-android-arm64/-/canvas-android-arm64-0.1.78.tgz#5d2e2d8f2ae3494deb65b57d90d5da10ce983a5d"
+  integrity sha512-N1ikxztjrRmh8xxlG5kYm1RuNr8ZW1EINEDQsLhhuy7t0pWI/e7SH91uFVLZKCMDyjel1tyWV93b5fdCAi7ggw==
+
+"@napi-rs/canvas-darwin-arm64@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-darwin-arm64/-/canvas-darwin-arm64-0.1.78.tgz#d83a1ce5d91ff96c5862176495d64fd78c52904d"
+  integrity sha512-FA3aCU3G5yGc74BSmnLJTObnZRV+HW+JBTrsU+0WVVaNyVKlb5nMvYAQuieQlRVemsAA2ek2c6nYtHh6u6bwFw==
+
+"@napi-rs/canvas-darwin-x64@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-darwin-x64/-/canvas-darwin-x64-0.1.78.tgz#9903a8605fe2a43bc849f9f5788cbd47394c77fd"
+  integrity sha512-xVij69o9t/frixCDEoyWoVDKgE3ksLGdmE2nvBWVGmoLu94MWUlv2y4Qzf5oozBmydG5Dcm4pRHFBM7YWa1i6g==
+
+"@napi-rs/canvas-linux-arm-gnueabihf@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-linux-arm-gnueabihf/-/canvas-linux-arm-gnueabihf-0.1.78.tgz#44171f8b0676bef4ef834b744fc5fb72e293be5a"
+  integrity sha512-aSEXrLcIpBtXpOSnLhTg4jPsjJEnK7Je9KqUdAWjc7T8O4iYlxWxrXFIF8rV8J79h5jNdScgZpAUWYnEcutR3g==
+
+"@napi-rs/canvas-linux-arm64-gnu@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-linux-arm64-gnu/-/canvas-linux-arm64-gnu-0.1.78.tgz#c8d984d9b659d129b6359f6e8739aaaae6825035"
+  integrity sha512-dlEPRX1hLGKaY3UtGa1dtkA1uGgFITn2mDnfI6YsLlYyLJQNqHx87D1YTACI4zFCUuLr/EzQDzuX+vnp9YveVg==
+
+"@napi-rs/canvas-linux-arm64-musl@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-linux-arm64-musl/-/canvas-linux-arm64-musl-0.1.78.tgz#803c5a35b44bc9ee3c40738efbe6cca3d7a46283"
+  integrity sha512-TsCfjOPZtm5Q/NO1EZHR5pwDPSPjPEttvnv44GL32Zn1uvudssjTLbvaG1jHq81Qxm16GTXEiYLmx4jOLZQYlg==
+
+"@napi-rs/canvas-linux-riscv64-gnu@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-linux-riscv64-gnu/-/canvas-linux-riscv64-gnu-0.1.78.tgz#ba2a2c90310f5b45b2abbd66282b31f7c07a89a3"
+  integrity sha512-+cpTTb0GDshEow/5Fy8TpNyzaPsYb3clQIjgWRmzRcuteLU+CHEU/vpYvAcSo7JxHYPJd8fjSr+qqh+nI5AtmA==
+
+"@napi-rs/canvas-linux-x64-gnu@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-linux-x64-gnu/-/canvas-linux-x64-gnu-0.1.78.tgz#ba82107c108a3258e2652c47178a2d0eefb18be2"
+  integrity sha512-wxRcvKfvYBgtrO0Uy8OmwvjlnTcHpY45LLwkwVNIWHPqHAsyoTyG/JBSfJ0p5tWRzMOPDCDqdhpIO4LOgXjeyg==
+
+"@napi-rs/canvas-linux-x64-musl@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-linux-x64-musl/-/canvas-linux-x64-musl-0.1.78.tgz#9bfe6f41c79f42682b3bcb76aa9177865177b639"
+  integrity sha512-vQFOGwC9QDP0kXlhb2LU1QRw/humXgcbVp8mXlyBqzc/a0eijlLF9wzyarHC1EywpymtS63TAj8PHZnhTYN6hg==
+
+"@napi-rs/canvas-win32-x64-msvc@0.1.78":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas-win32-x64-msvc/-/canvas-win32-x64-msvc-0.1.78.tgz#382151972afeaf56549273e2f4cb22e7884b76b5"
+  integrity sha512-/eKlTZBtGUgpRKalzOzRr6h7KVSuziESWXgBcBnXggZmimwIJWPJlEcbrx5Tcwj8rPuZiANXQOG9pPgy9Q4LTQ==
+
+"@napi-rs/canvas@^0.1.77":
+  version "0.1.78"
+  resolved "https://registry.yarnpkg.com/@napi-rs/canvas/-/canvas-0.1.78.tgz#08cc1889ac127e8bfb06d21ee0b418055075ebd7"
+  integrity sha512-YaBHJvT+T1DoP16puvWM6w46Lq3VhwKIJ8th5m1iEJyGh7mibk5dT7flBvMQ1EH1LYmMzXJ+OUhu+8wQ9I6u7g==
+  optionalDependencies:
+    "@napi-rs/canvas-android-arm64" "0.1.78"
+    "@napi-rs/canvas-darwin-arm64" "0.1.78"
+    "@napi-rs/canvas-darwin-x64" "0.1.78"
+    "@napi-rs/canvas-linux-arm-gnueabihf" "0.1.78"
+    "@napi-rs/canvas-linux-arm64-gnu" "0.1.78"
+    "@napi-rs/canvas-linux-arm64-musl" "0.1.78"
+    "@napi-rs/canvas-linux-riscv64-gnu" "0.1.78"
+    "@napi-rs/canvas-linux-x64-gnu" "0.1.78"
+    "@napi-rs/canvas-linux-x64-musl" "0.1.78"
+    "@napi-rs/canvas-win32-x64-msvc" "0.1.78"
+
 "@napi-rs/nice-android-arm-eabi@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@napi-rs/nice-android-arm-eabi/-/nice-android-arm-eabi-1.0.1.tgz#9a0cba12706ff56500df127d6f4caf28ddb94936"
@@ -14359,6 +14425,13 @@ pathval@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-2.0.0.tgz#7e2550b422601d4f6b8e26f1301bc8f15a741a25"
   integrity sha512-vE7JKRyES09KiunauX7nd2Q9/L7lhok4smP9RZTDeD4MVs72Dp2qNFVz39Nz5a0FVEW0BJR6C0DYrq6unoziZA==
+
+pdfjs-dist@^5.4.149:
+  version "5.4.149"
+  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-5.4.149.tgz#7ff5b8427f37cd43e16377adf509af8595938afc"
+  integrity sha512-Xe8/1FMJEQPUVSti25AlDpwpUm2QAVmNOpFP0SIahaPIOKBKICaefbzogLdwey3XGGoaP4Lb9wqiw2e9Jqp0LA==
+  optionalDependencies:
+    "@napi-rs/canvas" "^0.1.77"
 
 peek-readable@^5.3.1:
   version "5.4.2"
