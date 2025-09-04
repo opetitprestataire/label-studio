@@ -156,3 +156,12 @@ Select a rating for the full chat exchange.
 }
 ]
 ```
+
+## Related tags
+
+* [Chat](/tags/chat)
+* [Style](/tags/style)
+* [Rating](/tags/rating)
+* [Text](/tags/text)
+* [TextArea](/tags/textarea)
+* [Choices](/tags/choices)
