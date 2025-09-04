@@ -984,55 +984,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
   };
 }
 
-export function createDblClickHandler(props: EventHandlerProps) {
-  return (e: KonvaEventObject<MouseEvent>) => {
-    // Check if double-click is on empty space (not on a point or path)
-    const pos = e.target.getStage()?.getPointerPosition();
-    if (pos) {
-      const imagePos = stageToImageCoordinates(pos, props.transform, props.fitScale, props.x, props.y);
-
-      const scale = props.transform.zoom * props.fitScale;
-      const hitRadius = 15 / scale; // Slightly larger than point hit radius
-
-      // Check if we clicked on any existing point
-      let isOverPoint = false;
-      for (let i = 0; i < props.initialPoints.length; i++) {
-        const point = props.initialPoints[i];
-        const distance = Math.sqrt((imagePos.x - point.x) ** 2 + (imagePos.y - point.y) ** 2);
-
-        if (distance <= hitRadius) {
-          isOverPoint = true;
-          break;
-        }
-      }
-
-      // Check if we clicked on a path segment
-      let isOverPath = false;
-      if (props.initialPoints.length >= 2) {
-        const closestPathPoint = findClosestPointOnPath(
-          imagePos,
-          props.initialPoints,
-          props.allowClose,
-          props.isPathClosed,
-        );
-
-        if (closestPathPoint && getDistance(imagePos, closestPathPoint.point) <= hitRadius) {
-          isOverPath = true;
-        }
-      }
-
-      // If double-click is on empty space, trigger onFinish
-      if (!isOverPoint && !isOverPath) {
-        console.log('Double-click on empty space, triggering onFinish');
-        // Clear the flag so the next single click can work normally
-        if (props.lastCallbackTime?.current !== undefined) {
-          props.lastCallbackTime.current = 0; // Reset to allow next click
-        }
-        props.onFinish?.();
-      }
-    }
-  };
-}
 
 // Helper function to select a point by index
 function handlePointSelectionFromIndex(pointIndex: number, props: EventHandlerProps) {

@@ -136,5 +136,4 @@ export interface EventHandlers {
   handleLayerClick: (e: KonvaEventObject<MouseEvent>) => void;
   handleLayerMouseMove: (e: KonvaEventObject<MouseEvent>) => void;
   handleLayerMouseUp: () => void;
-  handleLayerDblClick: (e: KonvaEventObject<MouseEvent>) => void;
 }
