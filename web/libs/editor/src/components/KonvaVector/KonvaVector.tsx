@@ -1482,13 +1482,12 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
           // Check if click is on the last added point by checking cursor position
           if (cursorPosition && lastAddedPointId) {
-            const lastAddedPoint = initialPoints.find(p => p.id === lastAddedPointId);
+            const lastAddedPoint = initialPoints.find((p) => p.id === lastAddedPointId);
             if (lastAddedPoint) {
               const scale = transform.zoom * fitScale;
               const hitRadius = 15 / scale; // Same radius as used in event handlers
               const distance = Math.sqrt(
-                (cursorPosition.x - lastAddedPoint.x) ** 2 +
-                (cursorPosition.y - lastAddedPoint.y) ** 2
+                (cursorPosition.x - lastAddedPoint.x) ** 2 + (cursorPosition.y - lastAddedPoint.y) ** 2,
               );
 
               if (distance <= hitRadius) {

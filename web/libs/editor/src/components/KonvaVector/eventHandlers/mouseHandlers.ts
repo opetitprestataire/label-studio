@@ -983,7 +983,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
   };
 }
 
-
 // Helper function to select a point by index
 function handlePointSelectionFromIndex(pointIndex: number, props: EventHandlerProps) {
   // For now, just do single selection since we don't have access to modifier keys in mouse up
