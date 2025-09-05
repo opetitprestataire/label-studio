@@ -11,7 +11,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>human evaluation, quality metrics, response scoring, rubric-based assessment</dd>
     <dt>Domain Terminology</dt>
-    <dd>gen ai, response quality, content grading, automated assessment, performance rating</dd>
+    <dd>gen AI, response quality, content grading, automated assessment, performance rating</dd>
   </dl>
 config: |
   <View>
