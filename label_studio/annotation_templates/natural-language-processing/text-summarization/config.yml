@@ -3,7 +3,7 @@ type: community
 group: Natural Language Processing
 image: /static/templates/text-summarization.png
 details: |
-  <h1>Provide one sentence summary</h1>
+  <h1>Summarize in one sentence</h1>
   <dl>
     <dt>Industry Applications</dt>
     <dd>news summarization, research paper abstracts, meeting minutes, legal brief summaries, medical case summaries, financial reports, customer feedback summaries, document intelligence, executive summaries, literature reviews, patent analysis, regulatory compliance</dd>
