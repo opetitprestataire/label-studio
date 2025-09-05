@@ -3,7 +3,7 @@ type: community
 group: Audio/Speech Processing
 image: /static/templates/automatic-speech-recognition.png
 details: |
-  <h1>Provide transcript for the audio</h1>
+  <h1>Transcribe the audio</h1>
   <dl>
     <dt>Industry Applications</dt>
     <dd>podcast transcription, meeting notes, call center, customer service, accessibility, closed captions, subtitles, voice assistants, dictation, medical dictation, legal transcription</dd>
@@ -15,7 +15,7 @@ details: |
 config: |
   <View>
     <Audio name="audio" value="$audio" zoom="true" hotkey="ctrl+enter" />
-    <Header value="Provide Transcription" />
+    <Header value="Transcribe the audio" />
     <TextArea name="transcription" toName="audio"
               rows="4" editable="true" maxSubmissions="1" />
   </View>
