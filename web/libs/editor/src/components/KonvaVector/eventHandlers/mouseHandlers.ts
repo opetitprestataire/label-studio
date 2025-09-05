@@ -951,7 +951,6 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
         if (distance <= hitRadius) {
           // Check if this is the last added point and trigger onFinish
           if (props.lastAddedPointId && point.id === props.lastAddedPointId) {
-            console.log('Last point clicked in click handler, triggering onFinish');
             props.onFinish?.();
           }
 
