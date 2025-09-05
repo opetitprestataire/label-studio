@@ -4,7 +4,7 @@ group: Natural Language Processing
 order: 4
 image: /static/templates/taxonomy.png
 details: |
-  <h1>Do multilabel hierarchical classification</h1>
+  <h1>Multilabel hierarchical classification</h1>
   <dl>
     <dt>Industry Applications</dt>
     <dd>product categorization, content organization, scientific classification, library science, e-commerce tagging, knowledge management, information architecture, data governance, digital asset management, research classification, regulatory taxonomy, medical coding</dd>
