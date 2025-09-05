@@ -493,7 +493,6 @@ const HtxVectorView = observer(({ item, suggestion }) => {
           const tm = ToolsManager.allInstances();
           const tools = tm.map((t) => t.findSelectedTool()).filter((t) => t.isDrawing);
           tools.forEach((t) => t.complete?.());
-          console.log("finish");
         }}
         onPointsChange={(points) => {
           item.updatePointsFromKonvaVector(points);
