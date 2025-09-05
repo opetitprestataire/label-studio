@@ -4,7 +4,7 @@ group: Generative AI
 order: 5
 image: /static/templates/visual-ranker.png
 details: |
-  <h1>Drag, arrange, and rank responses from different Large Language Models (LLMs) and chatbot systems based on their relevance to a specified prompt</h1>
+  <h1>Rank and compare AI-generated visual content</h1>
   <dl>
     <dt>Industry Applications</dt>
     <dd>AI image generation evaluation, creative AI assessment, generative art evaluation, marketing content creation, e-commerce product imagery, advertising creative, social media content, design iteration, brand asset generation, visual content optimization, creative workflow, art direction</dd>
