@@ -6,16 +6,15 @@ meta_title: Chat Tag for Conversational Transcripts
 meta_description: Display and extend chat transcripts; optionally request assistant replies from an LLM. Supports message editing controls and min/max limits.
 ---
 
-The `Chat` tag displays a conversational transcript and lets annotators extend it by adding new messages as they label. 
-
-The initial transcript is provided from task data via the `value` attribute. [See the example below](#Example-input-data).
-
-Use with the following data types: JSON array of message objects.
-
-!!! error Enterprise
-    This tag is only available for Label Studio Enterprise users. 
+The `Chat` tag displays a conversational transcript and lets annotators extend it by adding new messages:
 
 ![Screenshot](/images/tags/chat.png)
+
+Use with the following data types: JSON array of message objects
+
+!!! error Enterprise
+    This tag is only available for Label Studio Enterprise and Starter Cloud users. 
+
 
 ### Use with an LLM
 
@@ -23,11 +22,14 @@ Optionally, the tag can request automatic replies from an LLM.
 
 To use an LLM, you need to do two things:
 
-1. Add a model provider API key to your organization. See [Model providers](model_providers). 
+1. Add a model provider API key to your organization. See [Model providers](/guide/model_providers). 
 
 2.  Once you have added an API key for a model provider, set the `llm` attribute on the `<Chat>` tag to the model you want to use. 
 
     The `llm` attribute must use the format `<provider>/<model>`. For example, `llm="openai/gpt-5"`. 
+
+!!! note
+    Starter Cloud users have limited access to the LLM feature for chats. MORE????????? 
 
 ### Editing messages
 
@@ -45,18 +47,18 @@ Annotators cannot edit messages from the imported task data.
 
 ### Example `<Chat>` tag
 
-Allow composing both user and assistant messages and allow auto-replies using an LLM model
+The following labeling configuration is the most basic implementation of the Chat tag. Adding a self-referencing `toName` paramenter allows you to use it without any other control tags. 
+
+This labeling configuration would allow an annotator to submit messages from different roles that they select in a drop down message. 
 
 ```xml
 <View>
-  <Chat
-    name="conversation" value="$messages"
-    messageroles="user,assistant" llm="openai/gpt-5"
-    minMessages="4" maxMessages="20"
-    editable="user,assistant"
-  />
+  <Chat name="chat" value="$chat" toName="chat" />
 </View>
 ```
+
+You can extend this configuration by allowing auto-replies from an LLM and adding control tags to evaluate the messages, as seen in the example below. 
+
 ### Example labeling config
 
 Evaluate assistant responses:
@@ -68,7 +70,7 @@ Evaluate assistant responses:
     .htx-chat-sidepanel{flex:300px 0 0;display:flex;flex-direction:column;border-left:2px solid #ccc;padding-left:16px}
   </Style>
   <View style="display:flex;width:100%;gap:1em">
-    <Chat name="chat" value="$messages" llm="openai/gpt-4.1-nano" minMessages="4" maxMessages="10" editable="true" />
+    <Chat name="chat" value="$chat" llm="openai/gpt-4.1-nano" minMessages="4" maxMessages="10" editable="true" />
     <View className="htx-chat-sidepanel">
       <View style="position:sticky;top:14px">
         <!-- Invitation/explanation on how to evaluate -->
@@ -93,7 +95,12 @@ Evaluate assistant responses:
 
 ### Example input data
 
-This example JSON input data is called in the `value="$messages"` parameter on the Chat tag in the examples above. 
+!!! attention
+    The chat messages that you import are not selectable. This means that you cannot edit them or apply annotations (ratings, choices, etc) to them. 
+
+    You can only select and annotate messages that are added to the chat by an annotator or that are imported as predictions. 
+
+The example JSON input data below is called in the `value="$chat"` parameter. 
 
 - `role`    — speaker identifier; supported roles: `user`, `assistant`, `system`, `tool`, `developer`
 - `content` — message text
@@ -102,12 +109,28 @@ This example JSON input data is called in the `value="$messages"` parameter on t
 ```json
 {
   "data": {
-    "messages": [
-      {
-        "role": "user",
-        "content": "Start with a kick-off message to validate the quality of it based on further conversation"
-      }
+    "chat": [
+        {
+            "role": "user",
+            "content": "Start with a kick-off message to validate the quality of it based on further conversation"
+        },
+        {
+            "role": "assistant",
+            "content": "A response from the LLM"
+        }
     ]
   }
 }
 ```
+
+To work with a blank chat and have your annotator add all messages, simply import:
+
+```json
+{
+  "data": {
+    "chat": []
+  }
+}
+```
+
+## Related templates
