@@ -21,6 +21,8 @@ const resultTypes = [
   "rectanglelabels",
   "keypointlabels",
   "polygonlabels",
+  "vector",
+  "vectorlabels",
   "brushlabels",
   "bitmasklabels",
   "ellipselabels",
@@ -35,6 +37,7 @@ const resultTypes = [
   "pairwise",
   "videorectangle",
   "ranker",
+  "custominterface",
 ];
 
 const resultValues = {
@@ -55,6 +58,7 @@ const resultValues = {
   rectanglelabels: types.maybe(types.array(types.string)),
   keypointlabels: types.maybe(types.array(types.string)),
   polygonlabels: types.maybe(types.array(types.string)),
+  vectorlabels: types.maybe(types.array(types.string)),
   ellipselabels: types.maybe(types.array(types.string)),
   brushlabels: types.maybe(types.array(types.string)),
   timeserieslabels: types.maybe(types.array(types.string)),
@@ -62,6 +66,7 @@ const resultValues = {
   bitmasklabels: types.maybe(types.array(types.string)),
   taxonomy: types.frozen(), // array of arrays of strings
   sequence: types.frozen(),
+  custom: types.maybe(types.frozen()), // for CustomInterface regions
 };
 
 const Result = types

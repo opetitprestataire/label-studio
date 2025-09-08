@@ -232,6 +232,7 @@ INSTALLED_APPS = [
     'ml_model_providers',
     'jwt_auth',
     'session_policy',
+    'fsm',
 ]
 
 MIDDLEWARE = [
@@ -368,6 +369,9 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 180,
     },
 }
+
+# How long to keep failed RQ jobs (in seconds); default is 30 days
+RQ_FAILED_JOB_TTL = int(get_env('RQ_FAILED_JOB_TTL', 30 * 24 * 60 * 60))
 
 # drf-spectacular settings for OpenAPI 3.0 schema generation
 SPECTACULAR_SETTINGS = {
@@ -596,6 +600,7 @@ CREATE_ORGANIZATION = 'organizations.functions.create_organization'
 SAVE_USER = 'users.functions.save_user'
 POST_PROCESS_REIMPORT = 'core.utils.common.empty'
 USER_SERIALIZER = 'users.serializers.BaseUserSerializer'
+WHOAMI_USER_SERIALIZER = USER_SERIALIZER
 USER_SERIALIZER_UPDATE = 'users.serializers.BaseUserSerializerUpdate'
 TASK_SERIALIZER = 'tasks.serializers.BaseTaskSerializer'
 EXPORT_DATA_SERIALIZER = 'data_export.serializers.BaseExportDataSerializer'
@@ -881,6 +886,12 @@ USER_ACTIVITY_BATCH_SIZE = int(get_env('USER_ACTIVITY_BATCH_SIZE', '100'))
 USER_ACTIVITY_SYNC_THRESHOLD = int(get_env('USER_ACTIVITY_SYNC_THRESHOLD', '500'))
 USER_ACTIVITY_REDIS_TTL = int(get_env('USER_ACTIVITY_REDIS_TTL', '86400'))  # 24 hours
 
+# QuerySet iterator settings
+QS_ITERATOR_DEFAULT_CHUNK_SIZE = int(get_env('QS_ITERATOR_DEFAULT_CHUNK_SIZE', 1000))
+
 # Data Manager
 # Max number of users to display in the Data Manager in Annotators/Reviewers/Comment Authors, etc
 DM_MAX_USERS_TO_DISPLAY = int(get_env('DM_MAX_USERS_TO_DISPLAY', 10))
+
+# Base FSM (Finite State Machine) Configuration for Label Studio
+FSM_CACHE_TTL = 300  # Cache TTL in seconds (5 minutes)

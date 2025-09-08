@@ -20,6 +20,7 @@ import rq.exceptions
 from core.feature_flags import flag_set
 from core.redis import is_job_in_queue, is_job_on_worker, redis_connected
 from core.utils.common import load_func
+from core.utils.iterators import iterate_queryset
 from data_export.serializers import ExportDataSerializer
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -583,9 +584,6 @@ class ImportStorage(Storage):
                     f'"Tasks" import method'
                 )
 
-            if not flag_set('fflag_feat_dia_2092_multitasks_per_storage_link'):
-                link_objects = link_objects[:1]
-
             for link_object in link_objects:
                 # TODO: batch this loop body with add_task -> add_tasks in a single bulk write.
                 # See DIA-2062 for prerequisites
@@ -804,7 +802,7 @@ class ExportStorage(Storage, ProjectStorageMixin):
             # Updating progress in thread requires coordinating on count and db writes, so just
             # batching to keep it simpler.
             for annotation_batch in _batched(
-                Annotation.objects.filter(project=self.project).iterator(chunk_size=chunk_size),
+                iterate_queryset(Annotation.objects.filter(project=self.project), chunk_size=chunk_size),
                 chunk_size,
             ):
                 futures = []
