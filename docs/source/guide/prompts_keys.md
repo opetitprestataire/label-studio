@@ -40,4 +40,9 @@ You can see what API keys you have and add new ones by clicking **API Keys** in 
 
 Once you have added a key, all supported models will appear in the base model drop-down when you [draft your prompt](prompts_draft).
 
+## Add a model provider
+
+!!! note
+    Models you configure here will also be available in your [organization-level providers](model_providers). 
+
 {% insertmd includes/model_keys.md %}

@@ -14,7 +14,7 @@ date: 2025-02-18 12:03:59
 
 To use certain AI features across your organization, you must first set up a model provider. 
 
-For example, if you want to interact with an LLM when using [`<Chat>`](/tags/chat), you will first need to configure access to the model. 
+For example, if you want to interact with an LLM when using the `<Chat>` tag, you will first need to configure access to the model. 
 
 
 !!! note
@@ -49,6 +49,11 @@ There are two approaches to adding a model provider API key.
     * Azure AI Foundry
     * Custom
 
-{% insertmd includes/base_models.md %}       
+{% insertmd includes/base_models.md %}
+
+## Add a model provider
+
+!!! note
+    If you have already configured model providers to use with [Prompts](prompts_overview), those will automatically be added to your organization-level providers. 
 
 {% insertmd includes/model_keys.md %}

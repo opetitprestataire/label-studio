@@ -1,5 +1,5 @@
 
-## OpenAI
+### OpenAI
 
 You can only have one OpenAI key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](#Supported-base-models). 
 
@@ -7,13 +7,13 @@ If you don't already have one, you can [create an OpenAI account here](https://p
 
 You can find your OpenAI API key on the [API key page](https://platform.openai.com/api-keys). 
 
-## Gemini
+### Gemini
 
 You can only have one Gemini key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](#Supported-base-models). 
 
 For information on getting a Gemini API key, see [Get a Gemini API key](https://ai.google.dev/gemini-api/docs/api-key).
 
-## Vertex AI
+### Vertex AI
 
 You can only have one Vertex AI key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](#Supported-base-models). 
 
@@ -21,13 +21,13 @@ Follow the instructions here to generate a credentials file in JSON format: [Aut
 
 The JSON credentials are required. You can also optionally provide the project ID and location associated with your Google Cloud Platform environment. 
 
-## Anthropic
+### Anthropic
 
 You can only have one Anthropic key per organization. This grants you access to set of whitelisted models. For a list of these models, see [Supported base models](#Supported-base-models). 
 
 For information on getting an Anthropic API key, see [Anthropic - Accessing the API](https://docs.anthropic.com/en/api/getting-started#accessing-the-api).
 
-## Azure OpenAI
+### Azure OpenAI
 
 Each Azure OpenAI key is tied to a specific deployment, and each deployment comprises a single OpenAI model. So if you want to use multiple models through Azure, you will need to create a deployment for each model and then add each key to Label Studio. 
 
@@ -52,7 +52,7 @@ You can find all this information in the **Details** section of the deployment i
 
 ![Screenshot of the Azure deployment details](/images/prompts/azure_deployment.png)
 
-## Azure AI Foundry
+### Azure AI Foundry
 
 Use the Azure AI Foundry model catalog to deploy a model: [AI Foundry docs](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/model-catalog-overview).
 
@@ -69,7 +69,7 @@ When adding the key to Label Studio, you are asked for the following information
 | **API key** | This is the **Key** provided by AI Foundry. |
 
 
-## Custom LLM
+### Custom LLM
 
 You can use your own self-hosted and fine-tuned model as long as it meets the following criteria:
 
@@ -85,7 +85,7 @@ To add a custom model, enter the following:
 * An API key to access the model. An API key is tied to a specific account, but the access is shared within the org if added. (Optional)
 * An auth token to access the model API. An auth token provides API access at the server level. (Optional)
 
-### Example with Ollama
+#### Example with Ollama
 
 1. Setup [Ollama](https://ollama.com/), e.g. `ollama run llama3.2`
 2. [Verify your local OpenAI-compatible API is working](https://ollama.com/blog/openai-compatibility), e.g. `http://localhost:11434/v1`
@@ -97,7 +97,7 @@ To add a custom model, enter the following:
     - Auth token: empty
 
 
-### Example with Hugging Face Inference Endpoints
+#### Example with Hugging Face Inference Endpoints
 1. Use [DeepSeek model](https://huggingface.co/deepseek-ai/DeepSeek-R1)
 2. In `API Keys`, add to `Custom` provider:
     - Name: `deepseek-ai/DeepSeek-R1`
