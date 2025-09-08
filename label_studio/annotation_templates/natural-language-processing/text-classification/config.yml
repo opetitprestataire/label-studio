@@ -11,7 +11,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>BERT, RoBERTa, DistilBERT, Support Vector Machine, Naive Bayes, XGBoost</dd>
     <dt>Domain Terminology</dt>
-    <dd>sentiment analysis, opinion mining, brand monitoring, emotion detection, review analysis</dd>
+    <dd>NLP, sentiment analysis, opinion mining, brand monitoring, emotion detection, review analysis</dd>
   </dl>
 config: |
   <View>

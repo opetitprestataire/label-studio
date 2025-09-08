@@ -11,7 +11,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>hierarchical classification, multi-label classification, ontology mapping, knowledge graphs</dd>
     <dt>Domain Terminology</dt>
-    <dd>category management, structured vocabularies, controlled vocabularies, classification schemes</dd>
+    <dd>NLP, category management, structured vocabularies, controlled vocabularies, classification schemes</dd>
   </dl>
 config: |
   <View>

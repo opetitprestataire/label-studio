@@ -11,7 +11,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>BERT, spaCy, Stanford NER, Flair, transformer models</dd>
     <dt>Domain Terminology</dt>
-    <dd>NER, information extraction, entity extraction, entity linking</dd>
+    <dd>NLP, NER, information extraction, entity extraction, entity linking</dd>
   </dl>
 config: |
   <View>

@@ -10,7 +10,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>neural machine translation, transformer models, mT5, MarianMT, Google Translate API</dd>
     <dt>Domain Terminology</dt>
-    <dd>post-editing, human evaluation, translation quality, BLEU score, cross-lingual</dd>
+    <dd>NLP, post-editing, human evaluation, translation quality, BLEU score, cross-lingual</dd>
   </dl>
 config: |
   <View>

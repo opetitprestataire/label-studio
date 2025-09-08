@@ -11,7 +11,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>distant supervision, joint extraction, transformer models, graph neural networks</dd>
     <dt>Domain Terminology</dt>
-    <dd>entity linking, knowledge graph construction, semantic relationships, structured information extraction</dd>
+    <dd>NLP, entity linking, knowledge graph construction, semantic relationships, structured information extraction</dd>
   </dl>
 config: |
   <View>

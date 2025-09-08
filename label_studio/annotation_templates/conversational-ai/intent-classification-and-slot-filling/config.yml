@@ -10,7 +10,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>natural language understanding, joint training, BERT-based models, multi-task learning</dd>
     <dt>Domain Terminology</dt>
-    <dd>NLU, slot extraction, intent recognition, dialogue systems, task-oriented conversation</dd>
+    <dd>NLP, NLU, slot extraction, intent recognition, dialogue systems, task-oriented conversation</dd>
   </dl>
 config: |
   <View>

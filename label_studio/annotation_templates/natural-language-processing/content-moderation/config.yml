@@ -8,7 +8,7 @@ details: |
     <dt>Industry Applications</dt>
     <dd>social media platforms, online communities, forum moderation, chat moderation, user-generated content, comment filtering, gaming chat, livestream chat, trust and safety, content policy, community guidelines, child safety, hate speech detection, harassment detection, cyberbullying, disinformation, automated moderation, human-in-the-loop</dd>
     <dt>Domain Terminology</dt>
-    <dd>toxic content detection, profanity filtering</dd>
+    <dd>NLP, toxic content detection, profanity filtering</dd>
   </dl>
 config: |
   <View>
