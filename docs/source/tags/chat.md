@@ -1,6 +1,7 @@
 ---
 title: Chat
 type: tags
+hide_menu: true
 order: 302
 meta_title: Chat Tag for Conversational Transcripts
 meta_description: Display and extend chat transcripts; optionally request assistant replies from an LLM. Supports message editing controls and min/max limits.
@@ -22,14 +23,16 @@ Optionally, the tag can request automatic replies from an LLM.
 
 To use an LLM, you need to do two things:
 
-1. Add a model provider API key to your organization. See [Model providers](/guide/model_providers). 
+1. Add a model provider API key to your organization.  
 
 2.  Once you have added an API key for a model provider, set the `llm` attribute on the `<Chat>` tag to the model you want to use. 
 
     The `llm` attribute must use the format `<provider>/<model>`. For example, `llm="openai/gpt-5"`. 
 
 !!! note
-    Starter Cloud users have limited access to the LLM feature for chats. MORE????????? 
+    Starter Cloud users have limited access to the LLM feature for chats. 
+
+    In Starter Cloud, you cannot add model providers. However, you will have access to out-of-the-box OpenAI models with $5.00 in credits for testing. If you want to add your own models and use interactive chats more extensively, you can [upgrade to Enterprise](https://humansignal.com/pricing/). 
 
 ### Editing messages
 
@@ -132,5 +135,3 @@ To work with a blank chat and have your annotator add all messages, simply impor
   }
 }
 ```
-
-## Related templates
