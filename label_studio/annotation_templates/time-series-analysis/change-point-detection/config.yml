@@ -10,7 +10,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>PELT, CUSUM, Bayesian change point detection, segmentation algorithms</dd>
     <dt>Domain Terminology</dt>
-    <dd>structural breaks, regime change, trend analysis, segmentation, temporal boundaries</dd>
+    <dd>CSV, Excel, XLS, Sheet, structural breaks, regime change, trend analysis, segmentation, temporal boundaries</dd>
   </dl>
 config: |
   <View>

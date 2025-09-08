@@ -10,7 +10,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>ARIMA, LSTM, Prophet, seasonal decomposition, trend analysis</dd>
     <dt>Domain Terminology</dt>
-    <dd>forecasting, time series analysis, trend analysis, seasonality, stationarity, autocorrelation, moving averages, regression analysis, predictive modeling, temporal patterns, data preprocessing</dd>
+    <dd>CSV, Excel, XLS, Sheet, forecasting, time series analysis, trend analysis, seasonality, stationarity, autocorrelation, moving averages, regression analysis, predictive modeling, temporal patterns, data preprocessing</dd>
   </dl>
 config: |
   <View>

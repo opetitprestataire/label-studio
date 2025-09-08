@@ -10,7 +10,7 @@ details: |
     <dt>Associated Models</dt>
     <dd>isolation forest, one-class SVM, LSTM autoencoders, statistical process control</dd>
     <dt>Domain Terminology</dt>
-    <dd>statistical outliers, point anomalies, contextual anomalies, collective anomalies, drift detection</dd>
+    <dd>CSV, Excel, XLS, Sheet, statistical outliers, point anomalies, contextual anomalies, collective anomalies, drift detection</dd>
   </dl>
 config: |
   <View>
