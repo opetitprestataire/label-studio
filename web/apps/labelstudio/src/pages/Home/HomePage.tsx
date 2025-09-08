@@ -68,7 +68,7 @@ export const HomePage: Page = () => {
         case "createProject":
           setCreationDialogOpen(true);
           break;
-        case "invitePeople":
+        case "inviteMembers":
           setInvitationOpen(true);
           break;
       }
