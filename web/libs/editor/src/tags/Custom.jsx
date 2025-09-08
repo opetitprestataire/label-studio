@@ -12,8 +12,6 @@ import { AnnotationMixin } from "../mixins/AnnotationMixin";
 import { CustomRegionModel } from "../regions/CustomRegion";
 import { errorBuilder } from "../core/DataValidator/ConfigValidator";
 import { parseValue, tryToParseJSON } from "../utils/data";
-import { POC_UI } from "./CustomCompiledCode";
-import { ManagementUI } from "./CustomManagement";
 // import * as Babel from '@babel/standalone';
 
 // Define the model for the custom tag
@@ -793,14 +791,14 @@ function({ React, data, item, annotation, store, getValue, setValue, getTagValue
       };
 
       function decodeHtmlEntities(text) {
-        const textArea = document.createElement('textarea');
+        const textArea = document.createElement("textarea");
         textArea.innerHTML = text;
         return textArea.value;
       }
 
       const transformedCode = decodeHtmlEntities(item.effectiveCode);
       // const transformedCode = POC_UI;
-      
+
       const UserComponent = () => {
         const code = `
           "use strict";
