@@ -1349,12 +1349,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       }
 
       // For polylines and polygons, check if point is close to any segment
-      const closestPathPoint = findClosestPointOnPath(
-        point,
-        initialPoints,
-        allowClose,
-        finalIsPathClosed,
-      );
+      const closestPathPoint = findClosestPointOnPath(point, initialPoints, allowClose, finalIsPathClosed);
 
       if (closestPathPoint) {
         const distance = getDistance(point, closestPathPoint.point);

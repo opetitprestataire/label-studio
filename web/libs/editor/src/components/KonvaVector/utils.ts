@@ -150,7 +150,7 @@ export const isPointInPolygon = (point: Point, polygon: BezierPoint[]): boolean 
     const xj = polygon[j].x;
     const yj = polygon[j].y;
 
-    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
       inside = !inside;
     }
   }
