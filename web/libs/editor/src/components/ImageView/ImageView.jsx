@@ -32,7 +32,6 @@ import {
 } from "../../utils/feature-flags";
 import { Pagination } from "../../common/Pagination/Pagination";
 import { Image } from "./Image";
-import { ff } from "@humansignal/core";
 
 Konva.showWarnings = false;
 
@@ -1435,7 +1434,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
 
   return (
     <>
-      {ff.isActive(ff.FF_BITMASK) && <ImageLayer item={item} />}
+      <ImageLayer item={item} />
       {item.grid && item.sizeUpdated && <ImageGrid item={item} />}
 
       {isFF(FF_LSDV_4930) ? <TransformerBack item={item} /> : null}
@@ -1459,7 +1458,7 @@ const StageContent = observer(({ item, store, state, crosshairRef }) => {
       })}
       <Selection item={item} isPanning={state.isPanning} />
       <DrawingRegion item={item} />
-      {ff.isActive(ff.FF_BITMASK) && item.smoothing === false && <PixelGridLayer item={item} />}
+      {item.smoothing === false && <PixelGridLayer item={item} />}
 
       {item.crosshair && (
         <Crosshair
