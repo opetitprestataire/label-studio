@@ -130,3 +130,30 @@ export const normalizePoints = (points: PointInput[]): BezierPoint[] => {
     throw new Error(`Invalid point format at index ${index}`);
   });
 };
+
+/**
+ * Point-in-polygon test using ray casting algorithm
+ * @param point - The point to test
+ * @param polygon - Array of polygon vertices
+ * @returns True if point is inside the polygon
+ */
+export const isPointInPolygon = (point: Point, polygon: BezierPoint[]): boolean => {
+  if (polygon.length < 3) return false;
+
+  let inside = false;
+  const x = point.x;
+  const y = point.y;
+
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i].x;
+    const yi = polygon[i].y;
+    const xj = polygon[j].x;
+    const yj = polygon[j].y;
+
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+      inside = !inside;
+    }
+  }
+
+  return inside;
+};
