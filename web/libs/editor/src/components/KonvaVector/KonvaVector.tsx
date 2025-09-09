@@ -1343,9 +1343,18 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         return false;
       }
 
-      // For single point, check if within hit radius
+      // First check if hovering over any individual point (vertices)
+      for (let i = 0; i < initialPoints.length; i++) {
+        const vertex = initialPoints[i];
+        const distance = getDistance(point, vertex);
+        if (distance <= hitRadius) {
+          return true; // Hovering over a vertex
+        }
+      }
+
+      // For single point, we already checked above, so return false if not hit
       if (initialPoints.length === 1) {
-        return getDistance(point, initialPoints[0]) <= hitRadius;
+        return false;
       }
 
       // For polylines and polygons, check if point is close to any segment
