@@ -259,13 +259,15 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   }, [
     rawInitialPoints.length,
     // Create a hash-like string for each point to detect changes efficiently
-    rawInitialPoints.map(p => {
-      if (Array.isArray(p)) {
-        return `${p[0]},${p[1]}`;
-      }
-      // For BezierPoint objects, include key properties
-      return `${p.x},${p.y},${p.isBezier ? 'b' : 'r'},${p.id || ''}`;
-    }).join('|')
+    rawInitialPoints
+      .map((p) => {
+        if (Array.isArray(p)) {
+          return `${p[0]},${p[1]}`;
+        }
+        // For BezierPoint objects, include key properties
+        return `${p.x},${p.y},${p.isBezier ? "b" : "r"},${p.id || ""}`;
+      })
+      .join("|"),
   ]);
 
   // Update initialPoints when rawInitialPoints changes
