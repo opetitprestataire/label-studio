@@ -56,7 +56,7 @@ To use Bezier curves, you must enable them using the `curves="true"` parameter i
 | **Create a curve**      | As you click to add a point, hold while dragging your cursor.               |
 | **Create a new curve point** | Press `Shift` while dragging a control point.                          |
 | **Adjust a curve**      | First exit the path and then [re-select it as a region](#region-note). Then you can click and drag control points. |
-| **Convert a point to a bezier**| Press `Shift` and click the point once. |
+| **Convert a point to a curve**| Press `Shift` and click the point once. |
 | **Asymmetric curves**   | By default, the control points move in sync. To create asymmetric curves (only move one control point), press `Alt` or `Option` before clicking the control point. |
 
 ### Closed paths
