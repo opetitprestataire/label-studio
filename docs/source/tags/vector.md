@@ -20,7 +20,7 @@ Use with the following data types: image.
 | **Add points to path segments** | Press <code>Shift</code> while clicking on a segment that is between two points. |
 | **End or exit the path**     | Press <code>Esc</code> or click on the last point you added to the path. |
 | **Move points**              | <ul><li>If you are actively creating the path, simply backtrack and click a point and drag to reposition.</li><li>If you have already exited the path, first select it again and then click an existing point to drag.</li></ul> |
-| **Delete points**            | First exit the path and then re-select it as a region. Then press <code>Alt</code> or <code>Option</code> and click on an existing point. |
+| **Delete points**            | Press <code>Alt</code> or <code>Option</code> and click on an existing point. |
 
 !!! note
     <span id="region-note">Several options require you to complete the path and then re-select it as a region.</span> 
