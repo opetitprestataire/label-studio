@@ -15,6 +15,8 @@ import { getStyle } from "../utils";
 import "./TableHead.scss";
 import { FF_DEV_3873, isFF } from "../../../../utils/feature-flags";
 import { getRoot } from "mobx-state-tree";
+import { AgreementFiltered } from "../../../CellViews/AgreementFiltered";
+import { isActive, FF_AGREEMENT_FILTERED } from "@humansignal/core/lib/utils/feature-flags";
 
 const tableHeadCN = cn("table-head");
 
@@ -57,6 +59,16 @@ const DropdownWrapper = observer(({ column, cellViews, children, onChange }) => 
         </Menu>
       }
     >
+      <Button look="string" variant="neutral" size="small">
+        {children}
+      </Button>
+    </Dropdown.Trigger>
+  );
+});
+
+const AgreementFilteredWrapper = observer(({ column, children }) => {
+  return (
+    <Dropdown.Trigger content={<AgreementFiltered.HeaderCell />}>
       <Button look="string" variant="neutral" size="small">
         {children}
       </Button>
@@ -125,6 +137,8 @@ const ColumnRenderer = observer(
             <DropdownWrapper column={column} cellViews={cellViews} onChange={onTypeChange}>
               {headContent}
             </DropdownWrapper>
+          ) : isActive(FF_AGREEMENT_FILTERED) && column.type === "AgreementFiltered" ? (
+            <AgreementFilteredWrapper column={column}>{headContent}</AgreementFilteredWrapper>
           ) : (
             headContent
           )}

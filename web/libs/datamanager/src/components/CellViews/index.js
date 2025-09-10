@@ -1,6 +1,7 @@
 import { toStudlyCaps } from "@humansignal/core";
 
 export { Agreement } from "./Agreement/Agreement";
+export { AgreementFiltered } from "./AgreementFiltered";
 export {
   Annotators,
   Annotators as Reviewers,

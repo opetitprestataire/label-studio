@@ -5,3 +5,4 @@ export { DatetimeFilter as Datetime } from "./Datetime";
 export { ListFilter as List } from "./List";
 export { NumberFilter as Number } from "./Number";
 export { StringFilter as Image, StringFilter as String } from "./String";
+export { NumberFilter as AgreementFiltered } from "./AgreementFiltered";
