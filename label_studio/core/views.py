@@ -29,7 +29,7 @@ from django.shortcuts import redirect, render, reverse
 from django.utils._os import safe_join
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from drf_spectacular.utils import extend_schema
+from drf_yasg.utils import swagger_auto_schema
 from io_storages.localfiles.models import LocalFilesImportStorage
 from ranged_fileresponse import RangedFileResponse
 from rest_framework.decorators import api_view, permission_classes
@@ -80,7 +80,8 @@ def version_page(request):
                 if not key.startswith('_') and not hasattr(getattr(settings, key), '__call__')
             }
 
-        result = json.dumps(result, indent=2, ensure_ascii=False)
+        result = json.dumps(result, indent=2)
+        result = result.replace('},', '},\n').replace('\\n', ' ').replace('\\r', '')
         return HttpResponse('<pre>' + result + '</pre>')
     else:
         return JsonResponse(result)
@@ -103,7 +104,7 @@ class TriggerAPIError(APIView):
     authentication_classes = ()
     permission_classes = ()
 
-    @extend_schema(exclude=True)
+    @swagger_auto_schema(auto_schema=None)
     def get(self, request):
         raise Exception('test')
 
@@ -192,7 +193,7 @@ def heidi_tips(request):
     return HttpResponse(response.content, content_type='application/json')
 
 
-@extend_schema(exclude=True)
+@swagger_auto_schema(methods=['GET'], auto_schema=None)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def localfiles_data(request):
@@ -233,7 +234,7 @@ def localfiles_data(request):
 
 def static_file_with_host_resolver(path_on_disk, content_type):
     """Load any file, replace {{HOSTNAME}} => settings.HOSTNAME, send it as http response"""
-    path_on_disk = os.path.join(settings.STATIC_ROOT, path_on_disk)
+    path_on_disk = os.path.join(os.path.dirname(__file__), path_on_disk)
 
     def serve_file(request):
         with open(path_on_disk, 'r') as f:
@@ -274,3 +275,142 @@ def feature_flags(request):
 def collect_metrics(request):
     """Lightweight endpoint to collect usage metrics from the frontend only when COLLECT_ANALYTICS is enabled"""
     return HttpResponse(status=204)
+
+def custom_landing(request):
+    """Custom landing page for project setup"""
+    from django.shortcuts import render, redirect
+    from django.urls import reverse
+    from django.contrib.auth import logout
+    
+    user = request.user
+    if not user.is_authenticated:
+        return redirect(reverse('user-login'))
+    
+    if user.active_organization is None:
+        logout(request)
+        return redirect(reverse('user-login'))
+    
+    return render(request, 'core/custom_landing.html', {
+        'user': user,
+        'title': 'Project Setup'
+    })
+
+def validate_folder_path(request):
+    """AJAX endpoint to validate folder paths"""
+    from django.http import JsonResponse
+    import json
+    import os
+    
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        path = data.get('path', '').strip()
+        folder_type = data.get('type', '')
+        
+        if not path:
+            return JsonResponse({'valid': False, 'message': 'Path is required'})
+        
+        if not os.path.exists(path):
+            return JsonResponse({'valid': False, 'message': 'Path does not exist'})
+        
+        if not os.path.isdir(path):
+            return JsonResponse({'valid': False, 'message': 'Path is not a directory'})
+        
+        files = os.listdir(path)
+        if folder_type == 'images':
+            valid_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp'}
+            image_files = [f for f in files if any(f.lower().endswith(ext) for ext in valid_extensions)]
+            file_count = len(image_files)
+            if file_count == 0:
+                return JsonResponse({'valid': False, 'message': 'No image files found'})
+        elif folder_type == 'json':
+            json_files = [f for f in files if f.lower().endswith('.json')]
+            file_count = len(json_files)
+            if file_count == 0:
+                return JsonResponse({'valid': False, 'message': 'No JSON files found'})
+        else:
+            file_count = len(files)
+        
+        return JsonResponse({
+            'valid': True, 
+            'message': f'Found {file_count} {folder_type} files',
+            'file_count': file_count
+        })
+        
+    except Exception as e:
+        return JsonResponse({'valid': False, 'message': f'Error: {str(e)}'})
+
+def get_sample_json(request):
+    """AJAX endpoint to get sample JSON from folder"""
+    from django.http import JsonResponse
+    import json
+    import os
+    
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        path = data.get('path', '').strip()
+        
+        if not path or not os.path.exists(path):
+            return JsonResponse({'success': False, 'message': 'Invalid path'})
+        
+        json_files = [f for f in os.listdir(path) if f.lower().endswith('.json')]
+        if not json_files:
+            return JsonResponse({'success': False, 'message': 'No JSON files found'})
+        
+        # Read first JSON file
+        sample_file = os.path.join(path, json_files[0])
+        with open(sample_file, 'r') as f:
+            sample_data = json.load(f)
+        
+        return JsonResponse({'success': True, 'sample_json': sample_data})
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error reading JSON: {str(e)}'})
+
+
+def create_project_from_config(request):
+    """Create a project with pre-configured columns from JSON keys"""
+    from django.http import JsonResponse
+    from projects.models import Project
+    from django.contrib.auth.decorators import login_required
+    import json
+    import os
+    
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        project_name = data.get('project_name', '').strip()
+        project_description = data.get('project_description', '').strip()
+        image_path = data.get('image_path', '').strip()
+        json_path = data.get('json_path', '').strip()
+        selected_keys = data.get('selected_keys', [])
+        
+        if not all([project_name, image_path, json_path, selected_keys]):
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+        
+        # Create the project
+        project = Project.objects.create(
+            title=project_name,
+            description=project_description,
+            created_by=request.user,
+            organization=request.user.active_organization
+        )
+        
+        # TODO: Import tasks from JSON files with selected keys as columns
+        # This will be implemented in the next phase
+        
+        return JsonResponse({
+            'success': True,
+            'project_id': project.id,
+            'message': f'Project "{project_name}" created successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': f'Failed to create project: {str(e)}'}, status=500)

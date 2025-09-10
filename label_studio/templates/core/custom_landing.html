@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Label Studio</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: #333; margin-bottom: 10px; font-size: 2.5rem; }
+        .header p { color: #666; font-size: 1.1rem; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
+        .progress-bar { height: 4px; background: #e9ecef; }
+        .progress-fill { height: 100%; background: #007bff; width: 33%; transition: width 0.3s; }
+        .content { padding: 40px; }
+        .step { margin-bottom: 30px; }
+        .step h2 { color: #333; margin-bottom: 15px; }
+        .step p { color: #666; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 2px rgba(0,123,255,0.25); }
+        .form-group input.success { border-color: #28a745; }
+        .form-group input.error { border-color: #dc3545; }
+        .form-group input.validating { border-color: #ffc107; }
+        .help-text { margin-top: 5px; font-size: 14px; }
+        .help-text.success { color: #28a745; }
+        .help-text.error { color: #dc3545; }
+        .help-text.validating { color: #ffc107; }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-block; cursor: pointer; margin-right: 10px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .actions { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #f8f9fa; }
+        .json-preview { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 20px; margin-top: 20px; }
+        .json-preview pre { margin: 0; white-space: pre-wrap; font-size: 14px; max-height: 300px; overflow-y: auto; }
+        .hidden { display: none; }
+        .key-selector { margin-top: 20px; }
+        .key-item { display: flex; align-items: center; padding: 10px; border: 1px solid #e9ecef; border-radius: 6px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .key-item:hover { border-color: #007bff; background: rgba(0,123,255,0.02); }
+        .key-item.selected { border-color: #007bff; background: rgba(0,123,255,0.1); }
+        .key-item input[type="checkbox"] { margin-right: 12px; width: 16px; height: 16px; }
+        .key-info { flex: 1; }
+        .key-name { font-weight: 600; color: #333; margin-bottom: 4px; }
+        .key-path { font-size: 14px; color: #666; margin-bottom: 4px; }
+        .key-sample { font-size: 13px; color: #888; background: #f8f9fa; padding: 4px 8px; border-radius: 4px; }
+        .key-type { padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-left: 8px; }
+        .key-type.string { background: #e3f2fd; color: #1976d2; }
+        .key-type.number { background: #e8f5e8; color: #2e7d32; }
+        .key-type.object { background: #fff3e0; color: #f57c00; }
+        .key-type.array { background: #f3e5f5; color: #7b1fa2; }
+        .key-type.boolean { background: #e1f5fe; color: #0277bd; }
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .selection-info { color: #666; font-weight: 500; }
+        .btn-link { background: none; border: none; color: #007bff; text-decoration: underline; cursor: pointer; padding: 0; }
+        .column-preview { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 20px; margin-top: 20px; }
+        .preview-table { background: white; border: 1px solid #e9ecef; border-radius: 4px; overflow: hidden; }
+        .table-header { display: flex; background: #f8f9fa; font-weight: 600; }
+        .table-row { display: flex; border-top: 1px solid #e9ecef; }
+        .table-cell { flex: 1; padding: 12px; border-right: 1px solid #e9ecef; font-size: 14px; }
+        .table-cell:last-child { border-right: none; }
+        .creating { text-align: center; padding: 40px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Create Your Annotation Project</h1>
+            <p>Set up your project in 3 simple steps with automatic data configuration</p>
+        </div>
+
+        <div class="card">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            
+            <div class="content">
+                <!-- Step 1: Folder Selection -->
+                <div class="step" id="step-1">
+                    <h2>Step 1: Select Data Folders</h2>
+                    <p>Choose the folders containing your images and JSON annotation data</p>
+                    
+                    <div class="form-group">
+                        <label for="image-path">Images Folder Path *</label>
+                        <input type="text" id="image-path" placeholder="/label-studio/data/images" />
+                        <div class="help-text" id="image-path-help"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="json-path">JSON Data Folder Path *</label>
+                        <input type="text" id="json-path" placeholder="/label-studio/data/json" />
+                        <div class="help-text" id="json-path-help"></div>
+                    </div>
+                    
+                    <div id="json-preview" class="json-preview hidden">
+                        <h3>Sample JSON Structure</h3>
+                        <pre id="json-preview-content"></pre>
+                    </div>
+                </div>
+
+                <!-- Step 2: Column Configuration -->
+                <div class="step hidden" id="step-2">
+                    <h2>Step 2: Configure Columns</h2>
+                    <p>Select the JSON keys you want to use as columns in your annotation project</p>
+                    
+                    <div class="controls">
+                        <div class="selection-info">
+                            <span id="selection-count">0</span> keys selected
+                        </div>
+                        <button class="btn-link" id="select-all-btn">Select All</button>
+                    </div>
+                    
+                    <div class="key-selector" id="key-selector"></div>
+                    
+                    <div id="column-preview" class="column-preview hidden">
+                        <h3>Column Preview</h3>
+                        <div class="preview-table" id="preview-table"></div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Project Setup -->
+                <div class="step hidden" id="step-3">
+                    <h2>Step 3: Project Configuration</h2>
+                    <p>Name your project and review the configuration before creation</p>
+                    
+                    <div class="form-group">
+                        <label for="project-name">Project Name *</label>
+                        <input type="text" id="project-name" placeholder="Enter a descriptive project name" />
+                        <div class="help-text">Must be 3-100 characters long</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-description">Project Description (optional)</label>
+                        <textarea id="project-description" rows="3" placeholder="Describe what this project is for..."></textarea>
+                    </div>
+                    
+                    <div id="config-summary" class="column-preview">
+                        <h3>Configuration Summary</h3>
+                        <div id="summary-content"></div>
+                    </div>
+                </div>
+
+                <!-- Creating Project -->
+                <div class="creating hidden" id="creating">
+                    <div class="spinner"></div>
+                    <h2>Creating Your Project...</h2>
+                    <p>Please wait while we set up your annotation project with the selected configuration.</p>
+                </div>
+            </div>
+
+            <div class="actions">
+                <div>
+                    <span>Progress: <span id="progress-text">33%</span> complete</span>
+                </div>
+                <div>
+                    <button class="btn btn-secondary hidden" id="prev-btn">Previous</button>
+                    <a href="/projects" class="btn btn-secondary">Skip to Projects</a>
+                    <button class="btn btn-primary" id="next-btn" disabled>Next: Configure Columns</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let validationState = {
+            imagePath: false,
+            jsonPath: false,
+            sampleJson: null,
+            selectedKeys: [],
+            projectName: false
+        };
+
+        function getCsrfToken() {
+            const token = document.querySelector('[name=csrfmiddlewaretoken]');
+            return token ? token.value : '';
+        }
+
+        function showStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => step.classList.add('hidden'));
+            document.getElementById('creating').classList.add('hidden');
+            document.getElementById(`step-${stepNumber}`).classList.remove('hidden');
+            
+            const prevBtn = document.getElementById('prev-btn');
+            prevBtn.classList.toggle('hidden', stepNumber === 1);
+            
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const nextBtn = document.getElementById('next-btn');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            
+            let progress = 33;
+            let buttonText = 'Next: Configure Columns';
+            let isEnabled = false;
+            
+            if (currentStep === 1) {
+                isEnabled = validationState.imagePath && validationState.jsonPath;
+                buttonText = 'Next: Configure Columns';
+            } else if (currentStep === 2) {
+                progress = 66;
+                isEnabled = validationState.selectedKeys.length > 0;
+                buttonText = 'Next: Project Setup';
+            } else if (currentStep === 3) {
+                progress = 100;
+                isEnabled = validationState.projectName && validationState.selectedKeys.length > 0;
+                buttonText = 'Create Project';
+            }
+            
+            nextBtn.disabled = !isEnabled;
+            nextBtn.textContent = buttonText;
+            progressFill.style.width = progress + '%';
+            progressText.textContent = progress + '%';
+        }
+
+        function validatePath(path, type, statusElement, inputElement) {
+            if (!path.trim()) {
+                statusElement.textContent = '';
+                statusElement.className = 'help-text';
+                inputElement.className = '';
+                validationState[type + 'Path'] = false;
+                updateProgress();
+                return;
+            }
+
+            statusElement.textContent = 'Validating...';
+            statusElement.className = 'help-text validating';
+            inputElement.className = 'validating';
+            
+            fetch('/api/folders/validate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({ path: path, type: type })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.valid) {
+                    statusElement.textContent = data.message;
+                    statusElement.className = 'help-text success';
+                    inputElement.className = 'success';
+                    validationState[type + 'Path'] = true;
+                    
+                    if (type === 'json') {
+                        loadSampleJson(path);
+                    }
+                } else {
+                    statusElement.textContent = data.message;
+                    statusElement.className = 'help-text error';
+                    inputElement.className = 'error';
+                    validationState[type + 'Path'] = false;
+                }
+                updateProgress();
+            })
+            .catch(error => {
+                statusElement.textContent = 'Error validating path';
+                statusElement.className = 'help-text error';
+                inputElement.className = 'error';
+                validationState[type + 'Path'] = false;
+                updateProgress();
+            });
+        }
+
+        function loadSampleJson(path) {
+            fetch('/api/folders/sample-json/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({ path: path })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    validationState.sampleJson = data.sample_json;
+                    document.getElementById('json-preview-content').textContent = 
+                        JSON.stringify(data.sample_json, null, 2);
+                    document.getElementById('json-preview').classList.remove('hidden');
+                } else {
+                    console.error('Failed to load sample JSON:', data.message);
+                }
+                updateProgress();
+            })
+            .catch(error => {
+                console.error('Error loading sample JSON:', error);
+            });
+        }
+
+        function extractKeys(obj, prefix = '') {
+            const keys = [];
+            
+            for (const [key, value] of Object.entries(obj)) {
+                const fullPath = prefix ? `${prefix}.${key}` : key;
+                let type = typeof value;
+                let sampleValue = value;
+                
+                if (Array.isArray(value)) {
+                    type = 'array';
+                    sampleValue = `[${value.length} items]`;
+                } else if (value !== null && typeof value === 'object') {
+                    type = 'object';
+                    sampleValue = `{${Object.keys(value).length} properties}`;
+                    // Add nested keys
+                    keys.push(...extractKeys(value, fullPath));
+                } else if (typeof value === 'string' && value.length > 50) {
+                    sampleValue = value.substring(0, 50) + '...';
+                }
+                
+                keys.push({
+                    name: key,
+                    path: fullPath,
+                    type: type,
+                    sample: String(sampleValue)
+                });
+            }
+            
+            return keys;
+        }
+
+        function renderKeySelector() {
+            if (!validationState.sampleJson) return;
+            
+            const keys = extractKeys(validationState.sampleJson);
+            const keySelector = document.getElementById('key-selector');
+            
+            keySelector.innerHTML = keys.map(key => `
+                <div class="key-item" data-path="${key.path}">
+                    <input type="checkbox" id="key-${key.path}" />
+                    <div class="key-info">
+                        <div class="key-name">${key.name}<span class="key-type ${key.type}">${key.type}</span></div>
+                        <div class="key-path">${key.path}</div>
+                        <div class="key-sample">${key.sample}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add event listeners
+            keySelector.querySelectorAll('.key-item').forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                item.addEventListener('click', (e) => {
+                    if (e.target.type !== 'checkbox') {
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    item.classList.toggle('selected', checkbox.checked);
+                    updateSelectedKeys();
+                });
+            });
+        }
+
+        function updateSelectedKeys() {
+            const checkboxes = document.querySelectorAll('#key-selector input[type="checkbox"]:checked');
+            validationState.selectedKeys = Array.from(checkboxes).map(cb => 
+                cb.closest('.key-item').dataset.path
+            );
+            
+            document.getElementById('selection-count').textContent = validationState.selectedKeys.length;
+            
+            if (validationState.selectedKeys.length > 0) {
+                renderColumnPreview();
+            } else {
+                document.getElementById('column-preview').classList.add('hidden');
+            }
+            
+            updateProgress();
+        }
+
+        function renderColumnPreview() {
+            if (!validationState.selectedKeys.length || !validationState.sampleJson) return;
+            
+            const previewTable = document.getElementById('preview-table');
+            const getValue = (obj, path) => {
+                return path.split('.').reduce((curr, key) => curr && curr[key], obj);
+            };
+            
+            const headerCells = validationState.selectedKeys.map(key => 
+                `<div class="table-cell">${key.split('.').pop()}</div>`
+            ).join('');
+            
+            const valueCells = validationState.selectedKeys.map(key => {
+                const value = getValue(validationState.sampleJson, key);
+                let displayValue = String(value);
+                if (displayValue.length > 30) {
+                    displayValue = displayValue.substring(0, 30) + '...';
+                }
+                return `<div class="table-cell">${displayValue}</div>`;
+            }).join('');
+            
+            previewTable.innerHTML = `
+                <div class="table-header">${headerCells}</div>
+                <div class="table-row">${valueCells}</div>
+            `;
+            
+            document.getElementById('column-preview').classList.remove('hidden');
+        }
+
+        function validateProjectName() {
+            const name = document.getElementById('project-name').value.trim();
+            validationState.projectName = name.length >= 3 && name.length <= 100;
+            updateProgress();
+        }
+
+        function renderConfigSummary() {
+            const summaryContent = document.getElementById('summary-content');
+            summaryContent.innerHTML = `
+                <div style="display: grid; gap: 15px;">
+                    <div><strong>Images Folder:</strong> ${document.getElementById('image-path').value}</div>
+                    <div><strong>JSON Data Folder:</strong> ${document.getElementById('json-path').value}</div>
+                    <div><strong>Selected Columns:</strong> ${validationState.selectedKeys.join(', ')}</div>
+                    <div><strong>Project Name:</strong> ${document.getElementById('project-name').value}</div>
+                    <div><strong>Description:</strong> ${document.getElementById('project-description').value || 'None'}</div>
+                </div>
+            `;
+        }
+
+        async function createProject() {
+            document.querySelectorAll('.step').forEach(step => step.classList.add('hidden'));
+            document.getElementById('creating').classList.remove('hidden');
+            
+            try {
+                const response = await fetch('/api/projects/create-from-config/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        project_name: document.getElementById('project-name').value,
+                        project_description: document.getElementById('project-description').value,
+                        image_path: document.getElementById('image-path').value,
+                        json_path: document.getElementById('json-path').value,
+                        selected_keys: validationState.selectedKeys
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = `/projects/${result.project_id}`;
+                } else {
+                    alert('Error: ' + result.error);
+                    showStep(3);
+                }
+            } catch (error) {
+                alert('Failed to create project: ' + error.message);
+                showStep(3);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('image-path').addEventListener('blur', function() {
+            validatePath(this.value, 'image', document.getElementById('image-path-help'), this);
+        });
+
+        document.getElementById('json-path').addEventListener('blur', function() {
+            validatePath(this.value, 'json', document.getElementById('json-path-help'), this);
+        });
+
+        document.getElementById('project-name').addEventListener('input', validateProjectName);
+
+        document.getElementById('select-all-btn').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('#key-selector input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            
+            checkboxes.forEach(cb => {
+                cb.checked = !allChecked;
+                cb.closest('.key-item').classList.toggle('selected', cb.checked);
+            });
+            
+            this.textContent = allChecked ? 'Select All' : 'Deselect All';
+            updateSelectedKeys();
+        });
+
+        document.getElementById('next-btn').addEventListener('click', function() {
+            if (currentStep === 1) {
+                currentStep = 2;
+                showStep(2);
+                renderKeySelector();
+            } else if (currentStep === 2) {
+                currentStep = 3;
+                showStep(3);
+                renderConfigSummary();
+            } else if (currentStep === 3) {
+                createProject();
+            }
+        });
+
+        document.getElementById('prev-btn').addEventListener('click', function() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+    </script>
+</body>
+</html>

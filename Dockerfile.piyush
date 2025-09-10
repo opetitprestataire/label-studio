@@ -1,0 +1,11 @@
+FROM heartexlabs/label-studio:latest
+
+# Copy your working modified files
+COPY label_studio/core/views.py /label-studio/label_studio/core/views.py
+COPY label_studio/core/urls.py /label-studio/label_studio/core/urls.py
+COPY label_studio/templates/core/custom_landing.html /label-studio/label_studio/templates/core/custom_landing.html
+
+# Ensure templates directory exists
+RUN mkdir -p /label-studio/label_studio/templates/core
+
+EXPOSE 8080
