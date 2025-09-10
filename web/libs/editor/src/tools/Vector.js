@@ -49,6 +49,10 @@ const _Tool = types
         return DEFAULT_DIMENSIONS.vector;
       },
 
+      handleToolSwitch(tool) {
+        console.log(tool);
+      },
+
       createRegionOptions() {
         return Super.createRegionOptions({
           vertices: [],
@@ -189,6 +193,8 @@ const _Tool = types
 
       _finishDrawing() {
         const { currentArea, control } = self;
+
+        if (!currentArea) return;
 
         down = false;
         self.currentArea.notifyDrawingFinished();

@@ -253,10 +253,25 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   // Normalize input points to BezierPoint format
   const [initialPoints, setInitialPoints] = useState(() => normalizePoints(rawInitialPoints));
 
+  // Create a stable reference for rawInitialPoints to prevent infinite loops
+  const stableRawPoints = useMemo(() => {
+    return rawInitialPoints;
+  }, [
+    rawInitialPoints.length,
+    // Create a hash-like string for each point to detect changes efficiently
+    rawInitialPoints.map(p => {
+      if (Array.isArray(p)) {
+        return `${p[0]},${p[1]}`;
+      }
+      // For BezierPoint objects, include key properties
+      return `${p.x},${p.y},${p.isBezier ? 'b' : 'r'},${p.id || ''}`;
+    }).join('|')
+  ]);
+
   // Update initialPoints when rawInitialPoints changes
   useEffect(() => {
-    setInitialPoints(normalizePoints(rawInitialPoints));
-  }, [rawInitialPoints]);
+    setInitialPoints(normalizePoints(stableRawPoints));
+  }, [stableRawPoints]);
 
   // Initialize lastAddedPointId and activePointId when component loads with existing points
   useEffect(() => {
