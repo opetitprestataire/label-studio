@@ -53,13 +53,13 @@ export const AgreementFiltered = (cell) => {
 
 AgreementFiltered.userSelectable = false;
 
-AgreementFiltered.HeaderCell = () => {
+AgreementFiltered.HeaderCell = ({ agreementFilters, onSave }) => {
   const sdk = useSDK();
   const [content, setContent] = useState(null);
 
   useEffect(() => {
-    sdk.invoke("agreementFilteredHeaderClick", {}, (jsx) => setContent(jsx));
+    sdk.invoke("agreementFilteredHeaderClick", { agreementFilters, onSave }, (jsx) => setContent(jsx));
   }, []);
 
-  return <div>{content}</div>;
+  return content;
 };

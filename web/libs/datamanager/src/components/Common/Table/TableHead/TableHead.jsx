@@ -67,8 +67,15 @@ const DropdownWrapper = observer(({ column, cellViews, children, onChange }) => 
 });
 
 const AgreementFilteredWrapper = observer(({ column, children }) => {
+  const root = getRoot(column.original);
+  const selectedView = root.viewsStore.selected;
+  const agreementFilters = selectedView.agreement_filters;
+  const onSave = (agreementFilters) => {
+    selectedView.setAgreementFilters(agreementFilters);
+    return selectedView.save();
+  };
   return (
-    <Dropdown.Trigger content={<AgreementFiltered.HeaderCell />}>
+    <Dropdown.Trigger content={<AgreementFiltered.HeaderCell agreementFilters={agreementFilters} onSave={onSave} />}>
       <Button look="string" variant="neutral" size="small">
         {children}
       </Button>
