@@ -545,6 +545,7 @@ export default observer(
     skipNextClick = false;
     skipNextMouseUp = false;
     mouseDownPoint = null;
+    mouseDown = false;
 
     constructor(props) {
       super(props);
@@ -638,6 +639,7 @@ export default observer(
     };
 
     handleMouseDown = (e) => {
+      this.mouseDown = true;
       const { item } = this.props;
       const isPanTool = item.getToolsManager().findSelectedTool()?.fullName === "ZoomPanTool";
       const isMoveTool = item.getToolsManager().findSelectedTool()?.fullName === "MoveTool";
@@ -772,6 +774,7 @@ export default observer(
      * Mouse up on Stage
      */
     handleMouseUp = (e) => {
+      this.mouseDown = false;
       const { item } = this.props;
 
       if (isFF(FF_DEV_1442)) {
@@ -826,7 +829,7 @@ export default observer(
       // Handle Bitmask hover
       // We can only do it here due to Bitmask implementation. See `self.handleOnClick` method
       // for a full explanation.
-      if (!e.evt.ctrlKey && !e.evt.shiftKey) {
+      if (!e.evt.ctrlKey && !e.evt.shiftKey && !this.mouseDown) {
         const allowedTypes = /bitmask|vector/;
         const tool = item.getToolsManager().findSelectedTool();
 
