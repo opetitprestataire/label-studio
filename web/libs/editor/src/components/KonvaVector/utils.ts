@@ -171,11 +171,7 @@ export const isPointInPolygon = (point: Point, polygon: BezierPoint[]): boolean 
  * Check if a horizontal ray from the test point intersects with a polygon edge
  * Handles both straight lines and Bezier curves
  */
-const checkRayIntersectionWithEdge = (
-  testPoint: Point,
-  startPoint: BezierPoint,
-  endPoint: BezierPoint,
-): boolean => {
+const checkRayIntersectionWithEdge = (testPoint: Point, startPoint: BezierPoint, endPoint: BezierPoint): boolean => {
   const x = testPoint.x;
   const y = testPoint.y;
 
@@ -207,11 +203,7 @@ const checkRayIntersectionWithEdge = (
 /**
  * Check if a horizontal ray from the test point intersects with a straight line segment
  */
-const checkRayIntersectionWithLine = (
-  testPoint: Point,
-  startPoint: Point,
-  endPoint: Point,
-): boolean => {
+const checkRayIntersectionWithLine = (testPoint: Point, startPoint: Point, endPoint: Point): boolean => {
   const x = testPoint.x;
   const y = testPoint.y;
   const x1 = startPoint.x;
@@ -232,7 +224,7 @@ const checkRayIntersectionWithLine = (
   }
 
   // Calculate the x-coordinate where the horizontal ray intersects the line
-  const intersectionX = x1 + (y - y1) * (x2 - x1) / (y2 - y1);
+  const intersectionX = x1 + ((y - y1) * (x2 - x1)) / (y2 - y1);
 
   // The ray intersects if the intersection point is to the right of the test point
   return intersectionX > x;
