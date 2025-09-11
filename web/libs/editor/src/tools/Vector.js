@@ -49,10 +49,6 @@ const _Tool = types
         return DEFAULT_DIMENSIONS.vector;
       },
 
-      handleToolSwitch(tool) {
-        console.log(tool);
-      },
-
       createRegionOptions() {
         return Super.createRegionOptions({
           vertices: [],
