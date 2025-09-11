@@ -426,7 +426,6 @@ export const Tab = types
         annotators,
         models,
       };
-      self.save();
     },
 
     reload: flow(function* ({ interaction } = {}) {
