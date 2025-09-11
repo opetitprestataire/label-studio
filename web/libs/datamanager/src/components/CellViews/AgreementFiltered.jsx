@@ -1,6 +1,6 @@
 import { useSDK } from "../../providers/SDKProvider";
 import { isDefined } from "../../utils/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Popover } from "@humansignal/ui";
 import { ff } from "@humansignal/core";
 import { FF_AVERAGE_AGREEMENT_SCORE_POPOVER } from "../../utils/feature-flags";
@@ -54,5 +54,12 @@ export const AgreementFiltered = (cell) => {
 AgreementFiltered.userSelectable = false;
 
 AgreementFiltered.HeaderCell = () => {
-  return <div>Agreement Filtered Placeholder</div>;
+  const sdk = useSDK();
+  const [content, setContent] = useState(null);
+
+  useEffect(() => {
+    sdk.invoke("agreementFilteredHeaderClick", {}, (jsx) => setContent(jsx));
+  }, []);
+
+  return <div>{content}</div>;
 };
