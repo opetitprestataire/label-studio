@@ -152,6 +152,14 @@ const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) =>
     return coreType === types.boolean;
   }, [propertyType, isPrimitive]);
 
+  const isString = useMemo(() => {
+    if (!isPrimitive) return false;
+
+    const coreType = isOptionalType(propertyType) ? propertyType.getSubTypes() : propertyType;
+
+    return coreType === types.string || coreType[0] === types.string;
+  }, [propertyType, isPrimitive]);
+
   const onChangeHandler = useCallback(
     (value) => {
       if (value !== region.getProperty(property)) {
@@ -180,6 +188,12 @@ const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) =>
           className={block?.elem("input").toClassName()}
           checked={value}
           onChange={(e) => onChangeHandler(e.target.checked)}
+        />
+      ) : isString ? (
+        <RegionInput
+          type="text"
+          value={value}
+          onChange={(v) => onChangeHandler(v)}
         />
       ) : isPrimitive ? (
         <RegionInput
