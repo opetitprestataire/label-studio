@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { CodeEditor } from "@humansignal/ui";
 import { BottomPanel } from "../BottomPanel";
 import { configAtom } from "../../atoms/configAtoms";
-import { editorExtensions, editorOptions } from "../../utils/codeEditor";
+import { editorOptions, xmlSchema } from "../../utils/codeEditor";
 
 const COLLAPSED_PANEL_HEIGHT = 33;
 const DEFAULT_PANEL_HEIGHT = 300;
@@ -85,11 +85,8 @@ export const EditorPanel = ({ editorWidth }: { editorWidth: number }) => {
           onBeforeChange={(_editor: any, _data: any, value: string) => setConfig(value)}
           border={false}
           controlled
-          // @ts-ignore
-          autoCloseTags
-          smartIndent
-          detach
-          extensions={editorExtensions}
+          mode="xml"
+          xmlSchema={xmlSchema}
           options={editorOptions}
         />
       </div>

@@ -1,38 +1,27 @@
-// @ts-ignore
-import CM from "codemirror";
+// CodeMirror v6 configuration for playground
 import tags from "@humansignal/core/lib/utils/schema/tags.json";
 
-export function completeAfter(cm: CM.Editor, pred: () => boolean) {
-  if (!pred || pred()) {
-    setTimeout(() => {
-      if (!cm.state.completionActive) cm.showHint({ completeSingle: false });
-    }, 100);
-  }
-  return CM.Pass;
+// Legacy functions - no longer needed with v6 but kept for backward compatibility
+export function completeAfter() {
+  // No-op for v6 compatibility
+  return true;
 }
 
-export function completeIfInTag(cm: CM.Editor) {
-  return completeAfter(cm, () => {
-    const token = cm.getTokenAt(cm.getCursor());
-
-    if (token.type === "string" && (!/['"]$/.test(token.string) || token.string.length === 1)) return false;
-
-    const inner = CM.innerMode(cm.getMode(), token.state).state;
-
-    return inner.tagName;
-  });
+export function completeIfInTag() {
+  // No-op for v6 compatibility
+  return true;
 }
 
-export const editorExtensions = ["hint", "xml-hint"];
+// Updated for CodeMirror v6 compatibility
+export const editorExtensions = []; // Extensions are now handled internally by the CodeEditor component
 export const editorOptions = {
   mode: "xml",
-  theme: "default",
   lineNumbers: true,
+  autocomplete: true,
   extraKeys: {
-    "'<'": completeAfter,
-    "' '": completeIfInTag,
-    "'='": completeIfInTag,
     "Ctrl-Space": "autocomplete",
   },
-  hintOptions: { schemaInfo: tags },
 };
+
+// Export the schema for use with the new CodeEditor component
+export const xmlSchema = tags;
