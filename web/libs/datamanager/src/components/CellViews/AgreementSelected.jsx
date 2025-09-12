@@ -25,7 +25,7 @@ const formatNumber = (num) => {
   return number.toFixed(2);
 };
 
-export const AgreementFiltered = (cell) => {
+export const AgreementSelected = (cell) => {
   const { value, original: task } = cell;
   const sdk = useSDK();
   const [content, setContent] = useState(null);
@@ -51,14 +51,14 @@ export const AgreementFiltered = (cell) => {
   );
 };
 
-AgreementFiltered.userSelectable = false;
+AgreementSelected.userSelectable = false;
 
-AgreementFiltered.HeaderCell = ({ agreementFilters, onSave }) => {
+AgreementSelected.HeaderCell = ({ agreementFilters, onSave }) => {
   const sdk = useSDK();
   const [content, setContent] = useState(null);
 
   useEffect(() => {
-    sdk.invoke("agreementFilteredHeaderClick", { agreementFilters, onSave }, (jsx) => setContent(jsx));
+    sdk.invoke("AgreementSelectedHeaderClick", { agreementFilters, onSave }, (jsx) => setContent(jsx));
   }, []);
 
   return content;
