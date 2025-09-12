@@ -46,7 +46,7 @@ export const Tab = types
     deletable: true,
     semantic_search: types.optional(types.array(CustomJSON), []),
     threshold: types.optional(types.maybeNull(ThresholdType), null),
-    agreement_filters: types.optional(CustomJSON, {}),
+    agreement_selected: types.optional(CustomJSON, {}),
   })
   .volatile(() => {
     const defaultWidth = getComputedStyle(document.body)
@@ -227,7 +227,7 @@ export const Tab = types
         gridFitImagesToWidth: self.gridFitImagesToWidth,
         semantic_search: self.semantic_search?.toJSON() ?? [],
         threshold: self.threshold?.toJSON(),
-        agreement_filters: self.agreement_filters,
+        agreement_selected: self.agreement_selected,
       };
 
       if (self.saved || apiVersion === 1) {
@@ -421,7 +421,7 @@ export const Tab = types
     },
 
     setAgreementFilters({ ground_truth = false, annotators = [], models = [] }) {
-      self.agreement_filters = {
+      self.agreement_selected = {
         ground_truth,
         annotators,
         models,

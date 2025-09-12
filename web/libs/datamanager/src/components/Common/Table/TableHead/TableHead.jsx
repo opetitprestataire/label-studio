@@ -71,7 +71,7 @@ const AgreementSelectedWrapper = observer(({ column, children }) => {
   // TODO: make this more generic as a LSE component table header cell
   const root = getRoot(column.original);
   const selectedView = root.viewsStore.selected;
-  const agreementFilters = selectedView.agreement_filters;
+  const agreementFilters = selectedView.agreement_selected;
   const onSave = (agreementFilters) => {
     selectedView.setAgreementFilters(agreementFilters);
     return selectedView.save();
