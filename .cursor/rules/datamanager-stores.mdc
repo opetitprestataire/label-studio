@@ -1,0 +1,72 @@
+---
+description: 
+globs: **/datamanager/**
+alwaysApply: false
+---
+# Data Manager – MobX-state-tree store rules
+
+## 1. Store structure
+```txt
+AppStore        – root, injected into <Provider/>
+  ├─ Tabs/TabStore
+  ├─ TasksStore (DataStore mixin)
+  └─ AnnotationStore (DataStore mixin)
+```
+All stores live in `src/stores/**` and **never import React**.
+
+## 2. DataStore mixin
+When you need a paginated list, extend the generic `DataStore`:
+
+```js
+export const TasksStore = DataStore("tasksStore", {
+  listItemType : TaskModel,
+  apiMethod    : "tasks",          // MUST exist in api-config
+  properties   : { target: "tasks" },
+});
+```
+
+### Built-in helper actions
+• `fetch({ page, reload, interaction })`  
+• `setSelected(id | model)` & `unset()`  
+• `focusPrev()` / `focusNext()`  
+• `updateItem(id, patch)` – merges server response into MST model
+
+### Flags
+`loading`, `loadingItem`, `loadingItems[]`, `total`, `pageSize`, `hasNextPage`
+
+## 3. Accessing the root / SDK
+```js
+import { getRoot } from "mobx-state-tree";
+
+const root = getRoot(self);          // inside any MST node
+root.apiCall("task", { taskID });    // API
+root.SDK.invoke("taskSelected");     // cross-app events
+```
+
+## 4. Async flows
+• **Use `flow(function* () { … })`** for every async action.  
+• Always wrap calls in `try / catch` or rely on `AppStore.apiCall` which never throws.  
+• Check `result.error` instead of relying on exceptions.
+
+## 5. Selection & focus
+Store `selectedId` and `highlightedId` as primitives; expose computed getters:
+```js
+get selected()   { return self.list.find(i => i.id === self.selectedId); }
+```
+
+## 6. Events
+Emit UI-level events through `root.SDK.invoke(eventName, payload)`; do not use
+window events or PubSub libs.
+
+## 7. React integration
+React components observe stores via:
+```jsx
+export const Table = inject("store")(observer(TableImpl));
+```
+• No state is duplicated in React.  
+• Components receive plain snapshots (`view.filterSnapshot`, `view.selected.snapshot`) for serialization.
+
+## 8. Do NOT  
+✗ Mutate MST nodes outside of `actions`.  
+✗ Call `fetch()` directly from React `render`; use `useEffect`.  
+✗ Import stores into each other (use `getRoot` instead).

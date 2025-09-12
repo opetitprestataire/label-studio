@@ -12,6 +12,7 @@ import { Spinner } from "../../Common/Spinner";
 import { Table } from "../../Common/Table/Table";
 import { Tag } from "../../Common/Tag/Tag";
 import { GridView } from "../GridView/GridView";
+import { ScatterView } from "../ScatterView/ScatterView";
 import "./Table.scss";
 import { Button } from "@humansignal/ui";
 import { useEffect, useState } from "react";
@@ -305,7 +306,14 @@ export const DataView = injector(
     );
 
     const content =
-      view.root.isLabeling || viewType === "list" ? (
+      viewType === "scatter" ? (
+        <ScatterView
+          view={view}
+          data={data}
+          onChange={(id) => view.toggleSelected(id)}
+          onBulkChange={(ids) => view.toggleMany(ids)}
+        />
+      ) : view.root.isLabeling || viewType === "list" ? (
         <Table
           view={view}
           data={data}
@@ -335,7 +343,7 @@ export const DataView = injector(
             col.original.resetWidth();
           }}
         />
-      ) : (
+      ) : viewType === "grid" ? (
         <GridView
           view={view}
           data={data}
@@ -345,7 +353,7 @@ export const DataView = injector(
           hiddenFields={hiddenColumns}
           stopInteractions={isLocked}
         />
-      );
+      ) : null;
 
     useShortcut("dm.focus-previous", () => {
       if (document.activeElement !== document.body) return;

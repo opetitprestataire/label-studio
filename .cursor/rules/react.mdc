@@ -1,6 +1,7 @@
 ---
 description: React coding standards and best practices for the LabelStudio clientside application
 globs: **/*.jsx,**/*.tsx
+alwaysApply: false
 ---
 
 # React Best Practices
@@ -125,4 +126,16 @@ globs: **/*.jsx,**/*.tsx
 - Keep components focused on a single responsibility
 - Document complex logic with clear comments
 - Follow the project's folder structure and naming conventions
-- Prefer controlled components over uncontrolled ones 
+- Prefer controlled components over uncontrolled ones
+
+## Readability & Formatting
+
+- Always run `make fmt-all` (Prettier/Biome/Ruff) before committing.
+- Use spaces around binary operators and after commas: `const xs = pts.map(p => p.data.x);` not `pts.map(p=>p.data.x)`.
+- Limit line length to 120 chars; break long expressions.
+
+## Documentation & Comments
+
+- Top-level JSDoc for every exported component/hook explaining props & side-effects.
+- Inline comments for non-obvious math / transforms.  
+- Avoid redundant comments; prefer expressive variable names. 

@@ -205,6 +205,21 @@ module.exports = composePlugins(
       }
     });
 
+    // --- Suppress Source Map Warnings from node_modules ---
+    // Many packages in node_modules might have incorrect or missing source maps.
+    // source-map-loader tries to process them and generates warnings if it fails.
+    // We can safely ignore these warnings for dependencies as we typically don't debug them.
+    // Note: This configuration applies globally to the build process.
+    config.ignoreWarnings = [
+      // Ignore warnings matching the pattern "Failed to parse source map"
+      // specifically when the warning originates from a file within node_modules.
+      (warning) =>
+        warning.module &&
+        warning.module.resource.includes("wgsl_reflect") &&
+        warning.message.includes("Failed to parse source map"),
+      // You could add other specific warning types to ignore here if needed.
+    ];
+
     config.module.rules.push(
       {
         test: /\.svg$/,

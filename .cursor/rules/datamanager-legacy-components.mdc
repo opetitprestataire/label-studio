@@ -1,0 +1,27 @@
+---
+description: 
+globs: **/datamanager/**
+alwaysApply: false
+---
+# Data-Manager Legacy Components
+
+Use these **only** inside `web/libs/datamanager`.
+
+| Component (path)                        | Purpose                             |
+|-----------------------------------------|-------------------------------------|
+| `Common/Modal/Modal.jsx`                | Imperative & confirm/info dialogs   |
+| `Common/Button/Button.jsx`              | BEM button + `Button.Group`         |
+| `Common/Space/Space.jsx`                | Flex/inline-flex gap helper         |
+| `Common/Spinner/Spinner.jsx`            | Inline SVG spinner                  |
+| `Common/Table/Table.jsx`                | Virtualised table                   |
+| `Common/Dropdown`                       | Custom dropdown / select            |
+| `Common/Tabs`                           | Draggable tab bar                   |
+| `Common/Pagination`                     | Pager with page-size select         |
+| `Common/Badge`, `Tag`                   | Status labels                       |
+| etc.                                    |                                     |
+
+Guidelines:
+
+* Keep styles in the same folder (`*.scss`), BEM naming.  
+* Do **not** introduce Tailwind into these components.  
+* When moving features out of Data-Manager, rewrite them with `@humansignal/ui` primitives.

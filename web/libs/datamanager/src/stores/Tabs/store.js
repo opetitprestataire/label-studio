@@ -119,6 +119,17 @@ export const TabStore = types
     },
   }))
   .actions((self) => ({
+    createScatterStateForView(viewId) {
+      const view = self.views.find((v) => v.id === viewId);
+      if (view && view.type === "scatter" && !view.scatter) {
+        console.log(`[TabStore] Ensuring ScatterState for view ID: ${viewId}`);
+        view.scatter = {
+          activePointId: null,
+          filteredIds: [],
+        };
+      }
+    },
+
     setSelected: flow(function* (view, options = {}) {
       let selected;
 

@@ -13,6 +13,32 @@ import { FF_ANNOTATION_RESULTS_FILTERING, isFF } from "../../utils/feature-flags
 const THRESHOLD_MIN = 0;
 const THRESHOLD_MIN_DIFF = 0.001;
 
+// Define state specific to Scatter view
+const ScatterState = types
+  .model("ScatterState", {
+    activePointId: types.maybeNull(types.number),
+    /** IDs of tasks matching current DM filters; updated by ScatterView hook */
+    filteredIds: types.optional(types.array(types.number), []),
+    filteredVersion: types.optional(types.number, 0),
+  })
+  .actions((self) => ({
+    setActivePointId(id) {
+      self.activePointId = id;
+    },
+
+    /** Replace the whole filteredIds array with new content */
+    setFiltered(ids) {
+      self.filteredIds.replace(ids);
+      self.filteredVersion += 1;
+    },
+
+    /** Clear filteredIds when filters are removed */
+    clearFiltered() {
+      self.filteredIds.clear();
+      self.filteredVersion += 1;
+    },
+  }));
+
 export const Tab = types
   .model("View", {
     id: StringOrNumberID,
@@ -22,7 +48,7 @@ export const Tab = types
 
     key: types.optional(types.string, guidGenerator),
 
-    type: types.optional(types.enumeration(["list", "grid"]), "list"),
+    type: types.optional(types.enumeration(["list", "grid", "scatter"]), "list"),
 
     target: types.optional(types.enumeration(["tasks", "annotations"]), "tasks"),
 
@@ -46,6 +72,12 @@ export const Tab = types
     deletable: true,
     semantic_search: types.optional(types.array(CustomJSON), []),
     threshold: types.optional(types.maybeNull(ThresholdType), null),
+
+    // Runtime state for the Scatter view related to current interaction (e.g., active point ID)
+    scatter: types.maybe(ScatterState),
+
+    // Persistent settings for ScatterView (class field)
+    scatterSettings: types.optional(CustomJSON, { classField: "class" }),
   })
   .volatile(() => {
     const defaultWidth = getComputedStyle(document.body)
@@ -226,6 +258,8 @@ export const Tab = types
         gridFitImagesToWidth: self.gridFitImagesToWidth,
         semantic_search: self.semantic_search?.toJSON() ?? [],
         threshold: self.threshold?.toJSON(),
+        scatter: self.scatter,
+        scatterSettings: self.scatterSettings,
       };
 
       if (self.saved || apiVersion === 1) {
@@ -247,6 +281,11 @@ export const Tab = types
     snapshot: {},
   }))
   .actions((self) => ({
+    setScatterSettings(settings) {
+      self.scatterSettings = settings; // store persistent settings
+      self.save(); // persist to backend
+    },
+
     lock() {
       self.locked = true;
     },
@@ -355,6 +394,10 @@ export const Tab = types
       self.selected.toggleItem(id);
     },
 
+    toggleMany(ids) {
+      self.selected.toggleMany(ids);
+    },
+
     setColumnWidth(columnID, width) {
       if (width) {
         self.columnsWidth.set(columnID, width);
@@ -449,6 +492,9 @@ export const Tab = types
 
     afterCreate() {
       self.snapshot = self.serialize();
+      if (self.type === "scatter" && !self.scatter) {
+        self.scatter = ScatterState.create({});
+      }
     },
 
     save: flow(function* ({ reload, interaction } = {}) {

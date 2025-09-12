@@ -1,6 +1,6 @@
 import { inject, observer } from "mobx-react";
 import { RadioGroup } from "../../Common/RadioGroup/RadioGroup";
-import { IconGrid, IconList } from "@humansignal/icons";
+import { IconGrid, IconList, IconEllipsisVertical } from "@humansignal/icons";
 import { Tooltip } from "@humansignal/ui";
 
 const viewInjector = inject(({ store }) => ({
@@ -28,6 +28,13 @@ export const ViewToggle = viewInjector(
           <div>
             <RadioGroup.Button value="grid" aria-label="Switch to grid view">
               <IconGrid />
+            </RadioGroup.Button>
+          </div>
+        </Tooltip>
+        <Tooltip title="Scatter view">
+          <div>
+            <RadioGroup.Button value="scatter">
+              <IconEllipsisVertical />
             </RadioGroup.Button>
           </div>
         </Tooltip>

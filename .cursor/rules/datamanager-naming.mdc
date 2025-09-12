@@ -1,0 +1,39 @@
+---
+description: 
+globs: **/datamanager/**
+alwaysApply: false
+---
+# Data Manager – Naming conventions
+
+## 1. General
+| Kind                | Convention             | Example                         |
+|---------------------|------------------------|---------------------------------|
+| React component     | `PascalCase`           | `ScatterView`, `DataManager`    |
+| Hook                | `useCamelCase` prefix  | `useShortcut`, `useScatterLayers` |
+| Function / variable | `camelCase`            | `fetchProject`, `pageSize`      |
+| Boolean             | `is/has/can` prefix    | `isLoading`, `hasError`         |
+| Constant value      | `UPPER_SNAKE_CASE`     | `DEFAULT_TOOLBAR`               |
+| MST model           | `PascalCase`           | `TaskModel`, `TabStore`         |
+| File name           | mirror exported symbol | `ScatterView.tsx`               |
+
+## 2. Abbreviations  
+• Avoid abbreviations unless they are industry-standard (`API`, `SDK`, `ID`).  
+• Do **not** mix abbreviation casing: `apiCall` (not `APICall`).
+
+## 3. React props & state  
+• Props interfaces end with `Props`: `ScatterViewProps`.  
+• Local state variables follow the `verb + Noun` pattern: `setLoading`.
+
+## 4. Enumerations / literals  
+• Prefer union string literals over `enum`.  
+```ts
+type ViewMode = "list" | "grid" | "scatter";
+```
+
+## 5. Derived values  
+Prefix with `computed` or suffix with descriptor: `computedBounds`, `totalPages`.
+
+## 6. Do NOT  
+✗ Use Hungarian notation.  
+✗ Use snake_case for JS/TS variables.  
+✗ Prefix private fields with underscores (except when mirroring existing code that already does this).

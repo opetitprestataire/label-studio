@@ -1,0 +1,75 @@
+---
+description: 
+globs: **/datamanager/**
+alwaysApply: false
+---
+# Data Manager – API usage conventions
+
+## 1. Prefer `root.apiCall(...)`
+• Always call the backend through `root.apiCall` (inside MST models) or  
+  `datamanager.apiCall` (inside plain JS/React).  
+• Never access `APIProxy` methods directly from components/stores.
+
+```js
+// inside a store action
+const data = yield root.apiCall("tasks", { page: 1, pageSize: 50 });
+```
+
+## 2. Signature  
+`apiCall(methodName, params?, body?, options?)`
+
+| Arg        | Type         | Notes                                                |
+|------------|--------------|------------------------------------------------------|
+| methodName | string       | Must exist in `src/sdk/api-config.js`                |
+| params     | object       | • Keys matching `:vars` in the endpoint path are substituted.<br>• All remaining keys become query-string params. |
+| body       | object       | POST / PATCH payload (will be JSON-stringified)      |
+| options    | object       | `{ errorHandler?, headers?, allowToCancel?, alwaysExpectJSON? }` |
+
+### 2.1 `allowToCancel`
+Adds an `AbortController`; subsequent identical requests cancel previous ones.
+```js
+yield root.apiCall("tasks", params, {}, { allowToCancel: true });
+```
+
+### 2.2 `errorHandler`
+Return `true` to mark the error as handled and suppress the default toast.
+```js
+yield root.apiCall("task", { taskID }, undefined, {
+  errorHandler: err => { log(err); return true; }
+});
+```
+
+## 3. Endpoint definitions
+Add/modify endpoints only in `api-config.js`.  
+Structure:
+
+```js
+export const APIConfig = {
+  gateway : "/api",
+  endpoints: {
+    tasks : "/tasks",                        // GET
+    task  : { path: "/tasks/:taskID", method: "get" },
+    // …
+  },
+};
+```
+
+## 4. Automatic shared params  
+`project` and `dataset` IDs are appended automatically by `APIProxy` when present.
+
+## 5. Request/response transforms  
+Pass a `apiTransform` map to `<DataManager>` to mutate params/body/headers:
+```js
+<DataManager apiTransform={{
+  tasks: {
+    params : p => ({ ...p, extra: 1 }),
+    body   : b => ({ ...b, foo: "bar" }),
+    headers: h => ({ ...h, "X-Feature": "on" }),
+  }
+}}/>
+```
+
+## 6. Do NOT  
+✗ Hard-code URLs in components.  
+✗ Mix window‐fetch logic with business logic.  
+✗ Forget to await the returned Promise (it always resolves, never throws).

@@ -1,0 +1,63 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Component System – General Rules
+
+## 1. Which library to import from?
+| Scenario                           | Import from                 | Notes                    |
+|------------------------------------|-----------------------------|--------------------------|
+| *New* front-end code (apps/libs)   | `@humansignal/ui`           | Tailwind + Radix shadcn  |
+| Data-Manager internals             | `web/libs/datamanager/...`  | Legacy BEM-SCSS          |
+| Page-level blocks shared by apps   | `@humansignal/app-common`   | may re-export UI parts   |
+
+**Never** mix DM-internal BEM components with the Tailwind ones in the same view.
+
+## 2. Dialogs
+
+1. **Radix Dialog** (`@humansignal/ui → Dialog*`):  
+   ```tsx
+   import { Dialog, DialogTrigger, DialogContent,
+            DialogHeader, DialogFooter, DialogTitle } from "@humansignal/ui";
+
+   <Dialog>
+     <DialogTrigger asChild><Button>Open</Button></DialogTrigger>
+     <DialogContent>
+       <DialogHeader><DialogTitle>Title</DialogTitle></DialogHeader>
+       …body…
+       <DialogFooter><Button variant="primary">OK</Button></DialogFooter>
+     </DialogContent>
+   </Dialog>
+   ```
+2. **DM Modal** (`Modal.confirm/info`): keep inside Data-Manager only.
+
+## 3. Buttons
+
+• Prefer `@humansignal/ui` `Button`.  
+• Use `ButtonGroup` for horizontal groups.  
+• Disable with `waiting` to show spinner.  
+• For non-button nodes use `buttonVariant({...}, className)` helper.
+
+Legacy `Common/Button` must **not** leak outside Data-Manager.
+
+## 4. File / folder organisation
+
+my-component/
+my-component.tsx
+my-component.stories.tsx # always add Storybook
+my-component.module.scss # only if Tailwind is insufficient
+index.ts # re-export
+
+## 5. Theming & Tokens
+
+• Tailwind config comes from `@humansignal/ui`.  
+• Only semantic tokens (`bg-primary-background`) – never raw palette names.  
+• Use `cn()` helper for class merges.
+
+## 6. Accessibility
+
+• Dialogs must trap focus (Radix does by default).  
+• Buttons require `aria-*` if they aren’t `<button>`.
+
+

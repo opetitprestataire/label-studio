@@ -1,16 +1,15 @@
 import { getRoot, types } from "mobx-state-tree";
-import { StringOrNumber } from "../types";
 
 export const TabSelectedItems = types
   .model("TabSelectedItems", {
     all: false,
-    list: types.optional(types.array(StringOrNumber), []),
+    map: types.map(types.boolean),
   })
   .views((self) => ({
     get snapshot() {
       return {
         all: self.all,
-        [self.listName]: Array.from(self.list),
+        [self.listName]: Array.from(self.map.keys()),
       };
     },
 
@@ -23,11 +22,15 @@ export const TabSelectedItems = types
     },
 
     get isAllSelected() {
-      return self.all && self.list.length === 0;
+      return self.all && self.map.size === 0;
     },
 
     get isIndeterminate() {
-      return self.list.length > 0;
+      return self.map.size > 0;
+    },
+
+    get list() {
+      return Array.from(self.map.keys());
     },
 
     get length() {
@@ -45,9 +48,9 @@ export const TabSelectedItems = types
 
     isSelected(id) {
       if (self.all) {
-        return !self.list.includes(id);
+        return !self.map.has(id);
       }
-      return self.list.includes(id);
+      return self.map.has(id);
     },
   }))
   .actions((self) => ({
@@ -60,38 +63,53 @@ export const TabSelectedItems = types
         self.all = !self.all;
       }
 
-      self.list = [];
+      self.map.clear();
+      self._invokeChangeEvent();
+    },
+
+    toggleMany(ids) {
+      ids.forEach((id) => {
+        if (self.map.has(id)) self.map.delete(id);
+        else self.map.set(id, true);
+      });
+      self._invokeChangeEvent();
+    },
+
+    replaceAll(ids) {
+      self.map.clear();
+      ids.forEach((id) => self.map.set(id, true));
       self._invokeChangeEvent();
     },
 
     addItem(id) {
-      self.list.push(id);
+      self.map.set(id, true);
       self._invokeChangeEvent();
     },
 
     removeItem(id) {
-      self.list.splice(self.list.indexOf(id), 1);
+      self.map.delete(id);
       self._invokeChangeEvent();
     },
 
     toggleItem(id) {
-      if (self.list.includes(id)) {
-        self.list.splice(self.list.indexOf(id), 1);
+      if (self.map.has(id)) {
+        self.map.delete(id);
       } else {
-        self.list.push(id);
+        self.map.set(id, true);
       }
       self._invokeChangeEvent();
     },
 
     update(data) {
       self.all = data?.all ?? self.all;
-      self.list = data?.[self.listName] ?? self.list;
+      self.map.clear();
+      data?.[self.listName]?.forEach((id) => self.map.set(id, true));
       self._invokeChangeEvent();
     },
 
     clear() {
       self.all = false;
-      self.list = [];
+      self.map.clear();
       self._invokeChangeEvent();
     },
 
