@@ -15,7 +15,7 @@ import { getStyle } from "../utils";
 import "./TableHead.scss";
 import { FF_DEV_3873, isFF } from "../../../../utils/feature-flags";
 import { getRoot } from "mobx-state-tree";
-import { AgreementFiltered } from "../../../CellViews/AgreementFiltered";
+import { AgreementSelected } from "../../../CellViews/AgreementSelected";
 import { IconChevronDown } from "@humansignal/icons";
 import { isActive, FF_AGREEMENT_FILTERED } from "@humansignal/core/lib/utils/feature-flags";
 
@@ -67,7 +67,7 @@ const DropdownWrapper = observer(({ column, cellViews, children, onChange }) => 
   );
 });
 
-const AgreementFilteredWrapper = observer(({ column, children }) => {
+const AgreementSelectedWrapper = observer(({ column, children }) => {
   // TODO: make this more generic as a LSE component table header cell
   const root = getRoot(column.original);
   const selectedView = root.viewsStore.selected;
@@ -78,7 +78,7 @@ const AgreementFilteredWrapper = observer(({ column, children }) => {
   };
   return (
     <Dropdown.Trigger
-      content={<AgreementFiltered.HeaderCell agreementFilters={agreementFilters} onSave={onSave} align="left" />}
+      content={<AgreementSelected.HeaderCell agreementFilters={agreementFilters} onSave={onSave} align="left" />}
     >
       <Button
         look="outlined"
@@ -141,7 +141,7 @@ const ColumnRenderer = observer(
       </>
     );
 
-    const isAgreementFiltered = isActive(FF_AGREEMENT_FILTERED) && column.type === "AgreementFiltered";
+    const isAgreementSelected = isActive(FF_AGREEMENT_FILTERED) && column.type === "AgreementSelected";
 
     return (
       <TableCell data-id={id} mix="th">
@@ -151,7 +151,7 @@ const ColumnRenderer = observer(
             display: "flex",
             alignItems: "center",
             justifyContent: style.justifyContent ?? "space-between",
-            overflow: isAgreementFiltered ? "visible" : "hidden",
+            overflow: isAgreementSelected ? "visible" : "hidden",
           }}
           initialWidth={style.width ?? 150}
           minWidth={style.minWidth ?? 30}
@@ -162,8 +162,8 @@ const ColumnRenderer = observer(
             <DropdownWrapper column={column} cellViews={cellViews} onChange={onTypeChange}>
               {headContent}
             </DropdownWrapper>
-          ) : isAgreementFiltered ? (
-            <AgreementFilteredWrapper column={column}>{headContent}</AgreementFilteredWrapper>
+          ) : isAgreementSelected ? (
+            <AgreementSelectedWrapper column={column}>{headContent}</AgreementSelectedWrapper>
           ) : (
             headContent
           )}
