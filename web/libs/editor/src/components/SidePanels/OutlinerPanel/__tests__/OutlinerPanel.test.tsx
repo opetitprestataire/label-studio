@@ -275,4 +275,31 @@ describe("OutlinerPanel", () => {
       expect(panelBase).toBeInTheDocument();
     });
   });
+
+  describe("Media time sorting", () => {
+    it("supports mediaTime sorting option", () => {
+      const regionsWithMediaTime = {
+        ...mockRegions,
+        sort: "mediaTime",
+        regions: [
+          { id: "1", type: "audioregion", start: 5.0, end: 10.0 },
+          { id: "2", type: "audioregion", start: 2.0, end: 7.0 },
+          { id: "3", type: "timelineregion", ranges: [{ start: 15, end: 20 }] },
+          { id: "4", type: "timelineregion", ranges: [{ start: 8, end: 12 }] },
+        ],
+        filter: [
+          { id: "1", type: "audioregion", start: 5.0, end: 10.0 },
+          { id: "2", type: "audioregion", start: 2.0, end: 7.0 },
+          { id: "3", type: "timelineregion", ranges: [{ start: 15, end: 20 }] },
+          { id: "4", type: "timelineregion", ranges: [{ start: 8, end: 12 }] },
+        ],
+      };
+
+      render(<OutlinerPanel {...defaultProps} regions={regionsWithMediaTime} />);
+
+      const viewControls = screen.getByTestId("view-controls");
+      expect(viewControls).toBeInTheDocument();
+      expect(viewControls).toHaveAttribute("ordering", "mediaTime");
+    });
+  });
 });
