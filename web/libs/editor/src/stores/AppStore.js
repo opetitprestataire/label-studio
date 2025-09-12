@@ -467,13 +467,10 @@ export default types
       hotkeys.addNamed("region:exit", () => {
         const c = self.annotationStore.selected;
         const managers = ToolsManager.allInstances();
-        // we need to find all tools, not only selected one
-        // this is because when switching tools mid-drawing
-        // we might end up in a situation when both tools are active
         const tools = managers
-          .flatMap((m) => Object.values(m.tools))
+          .map((m) => m.findSelectedTool())
           .filter(Boolean)
-          .filter((t) => t.isDrawing || t.mode === "drawing");
+          .filter((t) => t.isDrawing);
 
         if (tools.length > 0) {
           tools.forEach((t) => t.complete?.());
