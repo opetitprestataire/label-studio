@@ -75,6 +75,19 @@ from io_storages.s3.api import (
     S3ImportStorageSyncAPI,
     S3ImportStorageValidateAPI,
 )
+from io_storages.databricks.api import (
+    DatabricksExportStorageDetailAPI,
+    DatabricksExportStorageFormLayoutAPI,
+    DatabricksExportStorageListAPI,
+    DatabricksExportStorageSyncAPI,
+    DatabricksExportStorageValidateAPI,
+    DatabricksImportStorageDetailAPI,
+    DatabricksImportStorageFormLayoutAPI,
+    DatabricksImportStorageListAPI,
+    DatabricksImportStorageSerializer,
+    DatabricksImportStorageSyncAPI,
+    DatabricksImportStorageValidateAPI,
+)
 
 app_name = 'storages'
 
@@ -149,6 +162,22 @@ _api_urlpatterns = [
     path('export/redis/<int:pk>/sync', RedisExportStorageSyncAPI.as_view(), name='export-storage-redis-sync'),
     path('export/redis/validate', RedisExportStorageValidateAPI.as_view(), name='export-storage-redis-validate'),
     path('export/redis/form', RedisExportStorageFormLayoutAPI.as_view(), name='export-storage-redis-form'),
+    # Databricks Unity Catalog
+    path('databricks/', DatabricksImportStorageListAPI.as_view(), name='storage-databricks-list'),
+    path('databricks/<int:pk>', DatabricksImportStorageDetailAPI.as_view(), name='storage-databricks-detail'),
+    path('databricks/<int:pk>/sync', DatabricksImportStorageSyncAPI.as_view(), name='storage-databricks-sync'),
+    path('databricks/validate', DatabricksImportStorageValidateAPI.as_view(), name='storage-databricks-validate'),
+    path('databricks/form', DatabricksImportStorageFormLayoutAPI.as_view(), name='storage-databricks-form'),
+    path(
+        'databricks/files',
+        ImportStorageListFilesAPI().as_view(serializer_class=DatabricksImportStorageSerializer),
+        name='storage-databricks-list-files',
+    ),
+    path('export/databricks', DatabricksExportStorageListAPI.as_view(), name='export-storage-databricks-list'),
+    path('export/databricks/<int:pk>', DatabricksExportStorageDetailAPI.as_view(), name='export-storage-databricks-detail'),
+    path('export/databricks/<int:pk>/sync', DatabricksExportStorageSyncAPI.as_view(), name='export-storage-databricks-sync'),
+    path('export/databricks/validate', DatabricksExportStorageValidateAPI.as_view(), name='export-storage-databricks-validate'),
+    path('export/databricks/form', DatabricksExportStorageFormLayoutAPI.as_view(), name='export-storage-databricks-form'),
 ]
 if settings.ENABLE_LOCAL_FILES_STORAGE:
     _api_urlpatterns += [

@@ -8,6 +8,12 @@ from .azure_blob.models import (  # noqa: F401
     AzureBlobExportStorage,
     AzureBlobExportStorageLink,
 )
+from .databricks.models import (  # noqa: F401
+    DatabricksImportStorage,
+    DatabricksImportStorageLink,
+    DatabricksExportStorage,
+    DatabricksExportStorageLink,
+)
 from .s3.models import (  # noqa: F401
     S3ImportStorage,
     S3ImportStorageLink,

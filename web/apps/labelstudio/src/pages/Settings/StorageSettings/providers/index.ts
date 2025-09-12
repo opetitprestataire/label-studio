@@ -1,4 +1,5 @@
 import azureProvider from "./azure";
+import databricksProvider from "./databricks";
 import gcsProvider from "./gcs";
 import localFilesProvider from "./localFiles";
 import redisProvider from "./redis";
@@ -9,5 +10,6 @@ export const providers = {
   gcs: gcsProvider,
   azure: azureProvider,
   redis: redisProvider,
+  databricks: databricksProvider,
   localfiles: localFilesProvider,
 };
