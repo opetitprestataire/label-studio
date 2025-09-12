@@ -77,16 +77,18 @@ const AgreementFilteredWrapper = observer(({ column, children }) => {
     return selectedView.save();
   };
   return (
-    <Dropdown.Trigger content={<AgreementFiltered.HeaderCell agreementFilters={agreementFilters} onSave={onSave} align="left" />}>
-      <Button 
-        look="outlined" 
-        variant="neutral" 
-        size="small" 
-        trailing={<IconChevronDown />} 
-        align="left" 
-        style={{ 
-          minWidth: 200, 
-          paddingLeft: "0.5rem", 
+    <Dropdown.Trigger
+      content={<AgreementFiltered.HeaderCell agreementFilters={agreementFilters} onSave={onSave} align="left" />}
+    >
+      <Button
+        look="outlined"
+        variant="neutral"
+        size="small"
+        trailing={<IconChevronDown />}
+        align="left"
+        style={{
+          minWidth: 200,
+          paddingLeft: "0.5rem",
           flexGrow: 1,
           width: "100%",
         }}
