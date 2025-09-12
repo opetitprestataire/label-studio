@@ -469,14 +469,14 @@ export class Visualizer extends Events<VisualizerEvents> {
   }
 
   drawRequestId: number | null = null;
-  drawRequestDry = false;
+  drawRequestDry = true;
   draw(dry = false) {
     if (!isSyncedBuffering) {
       this._draw(dry);
       return;
     }
     if (this.drawRequestId) {
-      this.drawRequestDry = this.drawRequestDry || dry;
+      this.drawRequestDry = this.drawRequestDry && dry;
     } else {
       this.drawRequestDry = dry;
       this.drawRequestId = requestAnimationFrame(() => {
