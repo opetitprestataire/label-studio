@@ -534,7 +534,7 @@ export const Tab = types
   .preProcessSnapshot((snapshot) => {
     if (snapshot === null) return snapshot;
 
-    const { filters, ...sn } = snapshot ?? {};
+    const { filters, agreement_selected, ...sn } = snapshot ?? {};
 
     if (filters && !Array.isArray(filters)) {
       const { conjunction, items } = filters ?? {};
@@ -547,6 +547,11 @@ export const Tab = types
       sn.filters = filters;
     }
 
+    if (agreement_selected) {
+      Object.assign(sn, {
+        agreement_selected: typeof agreement_selected === "string" ? JSON.parse(agreement_selected) : agreement_selected,
+      });
+    }
     delete sn.selectedItems;
 
     return sn;
