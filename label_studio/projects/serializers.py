@@ -409,3 +409,10 @@ class GetFieldsSerializer(serializers.Serializer):
     def validate_filter(self, value):
         if value in ['all', 'pinned_only', 'exclude_pinned']:
             return value
+
+
+class ProjectContributorSerializer(serializers.Serializer):
+    """Serializer for project contributors with user_id, email and joined fields"""
+    user_id = serializers.IntegerField(source='id', help_text='User ID')
+    email = serializers.EmailField(help_text='User email address')
+    joined = serializers.IntegerField(help_text='Whether user is joined to the project (1) or not (0)')

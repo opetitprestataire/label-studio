@@ -15,7 +15,7 @@ from core.utils.io import find_dir, find_file, read_yaml
 from data_manager.functions import filters_ordering_selected_items_exist, get_prepared_queryset
 from django.conf import settings
 from django.db import IntegrityError
-from django.db.models import F
+from django.db.models import Case, When, IntegerField, F, Q,Value, OuterRef, Subquery, Exists
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from django_filters import CharFilter, FilterSet
@@ -27,7 +27,8 @@ from ml.serializers import MLBackendSerializer
 from projects.functions.next_task import get_next_task
 from projects.functions.stream_history import get_label_stream_history
 from projects.functions.utils import recalculate_created_annotations_and_labels_from_scratch
-from projects.models import Project, ProjectImport, ProjectManager, ProjectReimport, ProjectSummary
+from projects.models import Project, ProjectImport, ProjectManager, ProjectReimport, ProjectSummary, ProjectMember
+from users.models import User
 from projects.serializers import (
     GetFieldsSerializer,
     ProjectCountsSerializer,
@@ -37,6 +38,7 @@ from projects.serializers import (
     ProjectReimportSerializer,
     ProjectSerializer,
     ProjectSummarySerializer,
+    ProjectContributorSerializer,
 )
 from rest_framework import filters, generics, status
 from rest_framework.exceptions import NotFound
@@ -247,6 +249,15 @@ class ProjectListAPI(generics.ListCreateAPIView):
         projects = Project.objects.filter(organization=self.request.user.active_organization).order_by(
             F('pinned_at').desc(nulls_last=True), '-created_at'
         )
+        
+        # Special handling for Contributor users - only show projects they are members of
+        if self.request.user.user_type == "Contributor":
+            projects = projects.filter(
+                id__in=ProjectMember.objects.filter(
+                    user=self.request.user.id
+                ).values_list('project_id', flat=True)
+            )
+        
         if filter in ['pinned_only', 'exclude_pinned']:
             projects = projects.filter(pinned_at__isnull=filter == 'exclude_pinned')
         return ProjectManager.with_counts_annotate(projects, fields=fields).prefetch_related('members', 'created_by')
@@ -914,3 +925,209 @@ class ProjectModelVersions(generics.RetrieveAPIView):
         count = project.delete_predictions(model_version=model_version)
 
         return Response(data=count)
+
+
+@method_decorator(
+    name='get',
+    decorator=extend_schema(
+        tags=['Projects'],
+        summary='List project contributors',
+        description='Get all users with user_type "Contributor", left join with projects_projectmember table, return user_id, email and joined status with pagination',
+        parameters=[
+            OpenApiParameter(
+                name='pk',
+                type=OpenApiTypes.INT,
+                location='path',
+                description='Project ID to check if user is joined',
+                required=True,
+            ),
+            OpenApiParameter(
+                name='keyword',
+                type=OpenApiTypes.STR,
+                location='query',
+                description='Keyword to filter contributors by email (case-insensitive)',
+                required=False,
+            ),
+        ],
+        extensions={
+            'x-fern-sdk-group-name': 'projects',
+            'x-fern-sdk-method-name': 'list_contributors',
+            'x-fern-audiences': ['public'],
+        },
+    ),
+)
+@method_decorator(
+    name='post',
+    decorator=extend_schema(
+        tags=['Projects'],
+        summary='Add or remove project contributor',
+        description='Add or remove a user with user_type "Contributor" to/from a project',
+        parameters=[
+            OpenApiParameter(
+                name='pk',
+                type=OpenApiTypes.INT,
+                location='path',
+                description='Project ID',
+                required=True,
+            ),
+        ],
+        request={
+            'application/json': {
+                'type': 'object',
+                'properties': {
+                    'action': {
+                        'type': 'string',
+                        'enum': ['add', 'remove'],
+                        'description': 'Action to perform: add or remove contributor'
+                    },
+                    'email': {
+                        'type': 'string',
+                        'format': 'email',
+                        'description': 'Email address of the contributor'
+                    }
+                },
+                'required': ['action', 'email']
+            }
+        },
+        responses={
+            201: OpenApiResponse(
+                description='Contributor successfully added to project',
+                examples=[
+                    {
+                        'application/json': {
+                            'message': 'User example@email.com successfully added to project',
+                            'user_id': 123,
+                            'email': 'example@email.com'
+                        }
+                    }
+                ]
+            ),
+            200: OpenApiResponse(
+                description='Contributor successfully removed from project',
+                examples=[
+                    {
+                        'application/json': {
+                            'message': 'User example@email.com successfully removed from project',
+                            'user_id': 123,
+                            'email': 'example@email.com'
+                        }
+                    }
+                ]
+            ),
+            400: OpenApiResponse(
+                description='Bad request - validation error',
+                examples=[
+                    {
+                        'application/json': {
+                            'detail': 'Both action and email are required'
+                        }
+                    }
+                ]
+            )
+        },
+        extensions={
+            'x-fern-sdk-group-name': 'projects',
+            'x-fern-sdk-method-name': 'add_remove_contributor',
+            'x-fern-audiences': ['public'],
+        },
+    ),
+)
+class ProjectContributorListAPI(generics.ListCreateAPIView):
+    """API to get all users with user_type 'Contributor' and their project membership status with pagination"""
+    serializer_class = ProjectContributorSerializer
+    permission_required = ViewClassPermission(
+        GET=all_permissions.projects_view,
+        POST=all_permissions.projects_change,
+    )
+    pagination_class = ProjectListPagination
+
+    def get_queryset(self):
+        # Get project_id from URL path parameter (pk)
+        project_id = self.kwargs.get('pk')
+        if not project_id:
+            raise RestValidationError('Project ID is required')
+        
+        # Get keyword parameter for email filtering
+        keyword = self.request.query_params.get('keyword', '').strip()
+        
+        # Get all users with user_type "Contributor"
+        contributors = User.objects.filter(user_type='Contributor')
+        
+        # Apply keyword filter if provided
+        if keyword:
+            contributors = contributors.filter(email__icontains=keyword)
+        
+        # Left join with projects_projectmember table to check if user is joined to the project
+        joined_subquery = ProjectMember.objects.filter(
+            user=OuterRef('pk'),
+            project_id=project_id
+        )
+        
+        contributors = contributors.annotate(
+            joined=Case(
+                When(Exists(joined_subquery), then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            )
+        )
+        
+        # Order by email ascending and distinct
+        return contributors.values('id', 'email', 'joined').order_by('email').distinct()
+
+    def post(self, request, *args, **kwargs):
+        """Handle add/remove contributor operations"""
+        action = request.data.get('action')
+        email = request.data.get('email')
+        project_id = self.kwargs.get('pk')
+        
+        if not action or not email:
+            raise RestValidationError('Both action and email are required')
+        
+        if action not in ['add', 'remove']:
+            raise RestValidationError('Action must be either "add" or "remove"')
+        
+        try:
+            # Get user by email
+            try:
+                user = User.objects.get(email=email, user_type='Contributor')
+            except User.DoesNotExist:
+                raise RestValidationError(f'User with email {email} not found or is not a Contributor')
+            
+            if action == 'add':
+                # Check if user is already a member
+                if ProjectMember.objects.filter(user=user, project_id=project_id).exists():
+                    raise RestValidationError(f'User {email} is already a member of this project')
+                
+                # Add user to project
+                ProjectMember.objects.create(
+                    user=user,
+                    project_id=project_id,
+                    enabled=True
+                )
+                
+                return Response({
+                    'message': f'User {email} successfully added to project',
+                    'user_id': user.id,
+                    'email': email
+                }, status=status.HTTP_201_CREATED)
+                
+            elif action == 'remove':
+                # Check if user is a member
+                try:
+                    project_member = ProjectMember.objects.get(user=user, project_id=project_id)
+                    project_member.delete()
+                    
+                    return Response({
+                        'message': f'User {email} successfully removed from project',
+                        'user_id': user.id,
+                        'email': email
+                    }, status=status.HTTP_200_OK)
+                    
+                except ProjectMember.DoesNotExist:
+                    raise RestValidationError(f'User {email} is not a member of this project')
+                    
+        except RestValidationError:
+            raise
+        except Exception as e:
+            logger.error(f'Error in ProjectContributorListAPI.post: {str(e)}')
+            raise RestValidationError(f'An error occurred while processing the request: {str(e)}')
