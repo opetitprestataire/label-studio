@@ -8,6 +8,7 @@ import {
   IconPredictions,
   IconSortDown,
   IconSortUp,
+  IconTimelineRegion,
 } from "@humansignal/icons";
 import { Button } from "@humansignal/ui";
 import { type FC, useCallback, useContext, useMemo } from "react";
@@ -106,11 +107,11 @@ export const ViewControls: FC<ViewControlsProps> = observer(
           return {
             label: (
               <>
-                <IconClockTimeFourOutline /> Order by Media Time
+                <IconTimelineRegion /> Order by Media Start Time
               </>
             ),
-            selectedLabel: "By Media Time",
-            icon: <IconClockTimeFourOutline width={16} height={16} />,
+            selectedLabel: "By Media Start Time",
+            icon: <IconTimelineRegion width={16} height={16} />,
           };
       }
     }, []);
@@ -135,6 +136,7 @@ export const ViewControls: FC<ViewControlsProps> = observer(
               readableValueForKey={getOrderingLabels}
               allowClickSelected
               extraIcon={renderOrderingDirectionIcon}
+              width={230}
             />
           </Elem>
         )}
@@ -159,6 +161,7 @@ interface GroupingProps<T extends string> {
   onChange: (value: T) => void;
   readableValueForKey: (value: T) => LabelInfo;
   extraIcon?: JSX.Element;
+  width?: number;
 }
 
 const Grouping = <T extends string>({
@@ -169,6 +172,7 @@ const Grouping = <T extends string>({
   onChange,
   readableValueForKey,
   extraIcon,
+  width = 200,
 }: GroupingProps<T>) => {
   const readableValue = useMemo(() => {
     return readableValueForKey(value);
@@ -183,8 +187,8 @@ const Grouping = <T extends string>({
       <Menu
         size="medium"
         style={{
-          width: 200,
-          minWidth: 200,
+          width,
+          minWidth: width,
           borderRadius: isFF(FF_DEV_3873) && 4,
         }}
         selectedKeys={[value]}
@@ -205,7 +209,7 @@ const Grouping = <T extends string>({
   }, [value, optionsList, readableValue, direction, onChange]);
 
   return (
-    <Dropdown.Trigger content={dropdownContent} style={{ width: 200 }}>
+    <Dropdown.Trigger content={dropdownContent} style={{ width }}>
       <Button
         variant="neutral"
         size="smaller"
