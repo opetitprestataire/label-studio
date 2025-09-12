@@ -135,7 +135,7 @@ const SelectionMap = types
 export default types
   .model("RegionStore", {
     sort: types.optional(
-      types.enumeration(["date", "score", "mediaTime"]),
+      types.enumeration(["date", "score", "mediaStartTime"]),
       window.localStorage.getItem(localStorageKeys.sort) ?? "date",
     ),
 
@@ -238,7 +238,7 @@ export default types
             [...self.filteredRegions].sort(isDesc ? (a, b) => b.ouid - a.ouid : (a, b) => a.ouid - b.ouid),
           score: (isDesc) =>
             [...self.filteredRegions].sort(isDesc ? (a, b) => b.score - a.score : (a, b) => a.score - b.score),
-          mediaTime: (isDesc) =>
+          mediaStartTime: (isDesc) =>
             [...self.filteredRegions].sort((a, b) => {
               const aTime = self.getRegionMediaTime(a);
               const bTime = self.getRegionMediaTime(b);

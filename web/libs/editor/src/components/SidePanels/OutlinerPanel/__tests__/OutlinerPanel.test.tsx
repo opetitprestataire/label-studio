@@ -277,10 +277,10 @@ describe("OutlinerPanel", () => {
   });
 
   describe("Media time sorting", () => {
-    it("supports mediaTime sorting option", () => {
+    it("supports mediaStartTime sorting option", () => {
       const regionsWithMediaTime = {
         ...mockRegions,
-        sort: "mediaTime",
+        sort: "mediaStartTime",
         regions: [
           { id: "1", type: "audioregion", start: 5.0, end: 10.0 },
           { id: "2", type: "audioregion", start: 2.0, end: 7.0 },
@@ -299,7 +299,7 @@ describe("OutlinerPanel", () => {
 
       const viewControls = screen.getByTestId("view-controls");
       expect(viewControls).toBeInTheDocument();
-      expect(viewControls).toHaveAttribute("ordering", "mediaTime");
+      expect(viewControls).toHaveAttribute("ordering", "mediaStartTime");
     });
   });
 });

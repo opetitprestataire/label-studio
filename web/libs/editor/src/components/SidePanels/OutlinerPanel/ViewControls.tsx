@@ -26,7 +26,7 @@ const { Block, Elem } = BemWithSpecifiContext();
 
 export type GroupingOptions = "manual" | "label" | "type";
 
-export type OrderingOptions = "score" | "date" | "mediaTime";
+export type OrderingOptions = "score" | "date" | "mediaStartTime";
 
 export type OrderingDirection = "asc" | "desc";
 
@@ -103,7 +103,7 @@ export const ViewControls: FC<ViewControlsProps> = observer(
             selectedLabel: "By Score",
             icon: <IconPredictions width={16} height={16} />,
           };
-        case "mediaTime":
+        case "mediaStartTime":
           return {
             label: (
               <>
@@ -131,7 +131,7 @@ export const ViewControls: FC<ViewControlsProps> = observer(
             <Grouping
               value={ordering}
               direction={orderingDirection}
-              options={["score", "date", "mediaTime"]}
+              options={["score", "date", "mediaStartTime"]}
               onChange={(value) => onOrderingChange(value)}
               readableValueForKey={getOrderingLabels}
               allowClickSelected
