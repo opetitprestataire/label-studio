@@ -1,9 +1,6 @@
 import { useSDK } from "../../providers/SDKProvider";
 import { isDefined } from "../../utils/utils";
 import { useState, useEffect } from "react";
-import { Popover } from "@humansignal/ui";
-import { ff } from "@humansignal/core";
-import { FF_AVERAGE_AGREEMENT_SCORE_POPOVER } from "../../utils/feature-flags";
 
 const LOW_AGREEMENT_SCORE = 33;
 const MEDIUM_AGREEMENT_SCORE = 66;
@@ -27,26 +24,14 @@ const formatNumber = (num) => {
 
 export const AgreementSelected = (cell) => {
   const { value, original: task } = cell;
-  const sdk = useSDK();
-  const [content, setContent] = useState(null);
-  const isAgreementPopoverEnabled =
-    window.APP_SETTINGS.billing?.enterprise && ff.isActive(FF_AVERAGE_AGREEMENT_SCORE_POPOVER);
-
-  const handleClick = isAgreementPopoverEnabled
-    ? (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        sdk.invoke("agreementCellClick", { task }, (jsx) => setContent(jsx));
-      }
-    : undefined;
 
   const score = (
     <span className={agreementScoreTextColor(value)}>{isDefined(value) ? `${formatNumber(value)}%` : ""}</span>
   );
 
   return (
-    <div className="flex items-center" onClick={handleClick}>
-      {isAgreementPopoverEnabled ? <Popover trigger={score}>{content}</Popover> : score}
+    <div className="flex items-center">
+      {score}
     </div>
   );
 };
