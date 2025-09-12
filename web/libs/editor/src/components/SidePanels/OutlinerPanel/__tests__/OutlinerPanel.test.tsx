@@ -277,7 +277,7 @@ describe("OutlinerPanel", () => {
   });
 
   describe("Media time sorting", () => {
-    it("supports mediaStartTime sorting option", () => {
+    it("supports mediaStartTime sorting option when media regions are present", () => {
       const regionsWithMediaTime = {
         ...mockRegions,
         sort: "mediaStartTime",
@@ -300,6 +300,29 @@ describe("OutlinerPanel", () => {
       const viewControls = screen.getByTestId("view-controls");
       expect(viewControls).toBeInTheDocument();
       expect(viewControls).toHaveAttribute("ordering", "mediaStartTime");
+    });
+
+    it("hides mediaStartTime sorting option when no media regions are present", () => {
+      const regionsWithoutMediaTime = {
+        ...mockRegions,
+        sort: "date",
+        regions: [
+          { id: "1", type: "rectangle" },
+          { id: "2", type: "polygon" },
+          { id: "3", type: "ellipse" },
+        ],
+        filter: [
+          { id: "1", type: "rectangle" },
+          { id: "2", type: "polygon" },
+          { id: "3", type: "ellipse" },
+        ],
+      };
+
+      render(<OutlinerPanel {...defaultProps} regions={regionsWithoutMediaTime} />);
+
+      const viewControls = screen.getByTestId("view-controls");
+      expect(viewControls).toBeInTheDocument();
+      expect(viewControls).toHaveAttribute("ordering", "date");
     });
   });
 });
