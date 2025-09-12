@@ -549,7 +549,8 @@ export const Tab = types
 
     if (agreement_selected) {
       Object.assign(sn, {
-        agreement_selected: typeof agreement_selected === "string" ? JSON.parse(agreement_selected) : agreement_selected,
+        agreement_selected:
+          typeof agreement_selected === "string" ? JSON.parse(agreement_selected) : agreement_selected,
       });
     }
     delete sn.selectedItems;

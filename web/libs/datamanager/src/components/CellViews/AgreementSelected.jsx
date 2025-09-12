@@ -29,11 +29,7 @@ export const AgreementSelected = (cell) => {
     <span className={agreementScoreTextColor(value)}>{isDefined(value) ? `${formatNumber(value)}%` : ""}</span>
   );
 
-  return (
-    <div className="flex items-center">
-      {score}
-    </div>
-  );
+  return <div className="flex items-center">{score}</div>;
 };
 
 AgreementSelected.userSelectable = false;
