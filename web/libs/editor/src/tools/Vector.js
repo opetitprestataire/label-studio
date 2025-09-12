@@ -128,7 +128,6 @@ const _Tool = types
       },
 
       startDrawing(x, y) {
-        console.log(self.disabled);
         if (self.mode === "drawing") return;
         if (!self.canStartDrawing()) return;
 
