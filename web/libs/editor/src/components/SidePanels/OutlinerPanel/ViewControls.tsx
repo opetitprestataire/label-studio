@@ -49,7 +49,6 @@ export const ViewControls: FC<ViewControlsProps> = observer(
       return (
         regions.filteredRegions?.some((region) => {
           // Check for audio regions
-          console.log("region", region.type);
           if (
             (region.type === "audioregion" || region.type === "timeseriesregion") &&
             typeof region.start === "number"
