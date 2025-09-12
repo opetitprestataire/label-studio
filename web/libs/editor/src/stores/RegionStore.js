@@ -267,7 +267,7 @@ export default types
 
       getRegionMediaTime(region) {
         // Handle audio regions - they have start time in seconds
-        if (region.type === "audioregion" && typeof region.start === "number") {
+        if ((region.type === "audioregion" || region.type === "timeseriesregion") && typeof region.start === "number") {
           return region.start;
         }
 
@@ -278,11 +278,6 @@ export default types
           if (firstRange && typeof firstRange.start === "number") {
             return firstRange.start;
           }
-        }
-
-        // Handle other region types that might have start time properties
-        if (typeof region.start === "number") {
-          return region.start;
         }
 
         // Return null for regions without media time information
