@@ -1525,13 +1525,27 @@ References:
 3. Set an Export Prefix (e.g., `exports/${project_id}`).
 4. Click **Save** and then **Sync** to push annotations as JSON files to your volume.
 
-!!! warning "Proxy and security"
-    This connector streams data **through the Label Studio backend** with HTTP Range support. Databricks does not support presigned URLs, so this option is also not available in Label Studio.
+!!! note "URI schema"
+    To reference Databricks files directly in task JSON (without using an Import Storage), use Label Studio’s Databricks URI scheme:
+    
+    `dbx://Volumes/<catalog>/<schema>/<volume>/<path>`
+    
+    Example:
+    
+    ```
+    { "image": "dbx://Volumes/main/default/dataset/images/1.jpg" }
+    ```
 
-!!! note
+
+!!! note "Troubleshooting"
     - If listing returns zero files, verify the path under `/Volumes/<catalog>/<schema>/<volume>/<prefix?>` and your PAT permissions.
     - Ensure the Workspace Host has no trailing slash and matches your workspace domain.
     - If previews work but media fails to load, confirm proxy mode is allowed for your organization in Label Studio and network egress allows Label Studio to reach Databricks.
+
+
+!!! warning "Proxy and security"
+    This connector streams data **through the Label Studio backend** with HTTP Range support. Databricks does not support presigned URLs, so this option is also not available in Label Studio.
+
 
 </div>
 
