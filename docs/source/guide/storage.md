@@ -19,7 +19,7 @@ Set up the following cloud and other storage systems with Label Studio:
 - [Microsoft Azure Blob storage](#Microsoft-Azure-Blob-storage)
 - [Redis database](#Redis-database)
 - [Local storage](#Local-storage) <div class="enterprise-only">(for On-prem only)</div>
-- [Databricks Files (UC Volumes)](#Databricks-Files-UC-Volumes) <div class="enterprise-only">(for Enterprise only)</div>
+- [Databricks Files (UC Volumes)](#Databricks-Files-UC-Volumes)
 
 
 ## Troubleshooting
@@ -1525,15 +1525,13 @@ References:
 3. Set an Export Prefix (e.g., `exports/${project_id}`).
 4. Click **Save** and then **Sync** to push annotations as JSON files to your volume.
 
-### Security and proxy streaming
-- This connector streams data through the Label Studio backend with HTTP Range support; no presigned URLs are generated.
-- Credentials are stored server-side; tokens are write-only in the API and never returned to the client.
-- Path traversal and catalog/schema/volume mismatches are rejected.
+!!! warning "Proxy and security"
+    This connector streams data **through the Label Studio backend** with HTTP Range support. Databricks does not support presigned URLs, so this option is also not available in Label Studio.
 
-### Troubleshooting
-- If listing returns zero files, verify the path under `/Volumes/<catalog>/<schema>/<volume>/<prefix?>` and your PAT permissions.
-- Ensure the Workspace Host has no trailing slash and matches your workspace domain.
-- If previews work but media fails to load, confirm proxy mode is allowed for your organization and network egress allows Label Studio to reach Databricks.
+!!! note
+    - If listing returns zero files, verify the path under `/Volumes/<catalog>/<schema>/<volume>/<prefix?>` and your PAT permissions.
+    - Ensure the Workspace Host has no trailing slash and matches your workspace domain.
+    - If previews work but media fails to load, confirm proxy mode is allowed for your organization in Label Studio and network egress allows Label Studio to reach Databricks.
 
 </div>
 
