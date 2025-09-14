@@ -1559,9 +1559,7 @@ Databricks Unity Catalog (UC) Volumes integration is available in Label Studio E
 - Stream media securely via the platform proxy (no presigned URLs)
 - Export annotations back to your Databricks Volume as JSON
 
-Learn more and see the full setup guide in the Enterprise documentation: [Databricks Files (UC Volumes)](https://docs.humansignal.com/guide/storage#Databricks-Files-UC-Volumes).
-
-If your organization needs governed access to Databricks data with Unity Catalog and proxy streaming, consider [Label Studio Enterprise](https://humansignal.com/label-studio-enterprise/).
+Learn more and see the full setup guide in the Enterprise documentation: [Databricks Files (UC Volumes)](https://docs.humansignal.com/guide/storage#Databricks-Files-UC-Volumes). If your organization needs governed access to Databricks data with Unity Catalog, consider [Label Studio Enterprise](https://humansignal.com/).
 
 </div>
 

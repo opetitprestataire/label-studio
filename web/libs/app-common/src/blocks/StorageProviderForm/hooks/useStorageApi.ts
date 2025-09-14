@@ -191,7 +191,7 @@ export const useStorageApi = ({ target, storage, project, onSubmit, onClose }: U
 
       return api.callApi<{ files: any[] }>("storageFiles", {
         params: {
-          limit: 10,
+          limit: 30,
           target,
           type: previewData.provider,
         },
