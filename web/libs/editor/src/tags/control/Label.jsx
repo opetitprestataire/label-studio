@@ -72,7 +72,7 @@ const Model = types
     type: "label",
     visible: types.optional(types.boolean, true),
     _value: types.optional(types.string, ""),
-    parentTypes: Types.tagsTypes([
+    parentTypes: types.late(() => Types.tagsTypes([
       "Labels",
       "EllipseLabels",
       "RectangleLabels",
@@ -85,7 +85,8 @@ const Model = types
       "ParagraphLabels",
       "BitmaskLabels",
       "VectorLabels",
-    ]),
+      ...Registry.customTags.map((t) => t.tag).filter((tag) => tag.endsWith("Labels")),
+    ])),
   })
   .volatile((self) => {
     return {
