@@ -190,11 +190,7 @@ const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) =>
           onChange={(e) => onChangeHandler(e.target.checked)}
         />
       ) : isString ? (
-        <RegionInput
-          type="text"
-          value={value}
-          onChange={(v) => onChangeHandler(v)}
-        />
+        <RegionInput type="text" value={value} onChange={(v) => onChangeHandler(v)} />
       ) : isPrimitive ? (
         <RegionInput
           type={getInputType(propertyType)}
