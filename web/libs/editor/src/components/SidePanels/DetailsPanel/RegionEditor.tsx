@@ -292,6 +292,7 @@ const RegionInput: FC<RegionInputProps> = ({ onChange: onChangeValue, type, valu
       onChange={onChangeHandler}
       onKeyDown={onKeyDown}
       value={currentValue}
+      rows={type === "text" ? 3 : undefined}
     />
   );
 };
