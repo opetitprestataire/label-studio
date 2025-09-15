@@ -99,7 +99,7 @@ const Area = types.union(
   VideoRectangleRegionModel,
   ClassificationArea,
   CustomRegionModel,
-  ...Registry.customTags.map((t) => t.region),
+  ...Registry.customTags.map((t) => t.region).filter(Boolean),
 );
 
 export default Area;
