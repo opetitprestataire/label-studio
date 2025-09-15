@@ -827,7 +827,7 @@ export default observer(
         item.event("mousemove", e, e.evt.offsetX, e.evt.offsetY);
       }
 
-      if (!e.evt.ctrlKey && !e.evt.shiftKey && !e.evt.button === LEFT_BUTTON) {
+      if (!e.evt.ctrlKey && !e.evt.shiftKey && e.evt.button !== LEFT_BUTTON) {
         const allowedTypes = /bitmask|vector/;
         const tool = item.getToolsManager().findSelectedTool();
 
