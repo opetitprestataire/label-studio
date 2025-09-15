@@ -309,32 +309,3 @@ def _get_choice_enum(filter_field: Any) -> List[str]:
             enum_values.append(str(choice))
 
     return enum_values
-
-
-# Example usage and testing
-if __name__ == '__main__':
-    # Example with ProjectFilterSet
-    from label_studio.projects.api import ProjectFilterSet
-
-    print('=== FilterSet to OpenAPI Parameters ===')
-    parameters = filterset_to_openapi_params(ProjectFilterSet)
-    print('Basic parameters:')
-    for param in parameters:
-        print(f'  {param.name}: {param.type} (required={param.required})')
-        if hasattr(param, 'description') and param.description:
-            print(f'    description: {param.description}')
-
-    # With custom overrides
-    parameters_with_overrides = filterset_to_openapi_params(
-        ProjectFilterSet,
-        field_overrides={
-            'title': {'description': 'Filter projects by title (case-insensitive contains)'},
-            'ids': {'description': 'Filter projects by IDs (comma-separated list)'},
-        },
-    )
-
-    print('\nWith overrides:')
-    for param in parameters_with_overrides:
-        print(f'  {param.name}: {param.type} (required={param.required})')
-        if hasattr(param, 'description') and param.description:
-            print(f'    description: {param.description}')
