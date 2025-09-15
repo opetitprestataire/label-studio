@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ title }} - Label Studio</title>
     <style>
+        /* Base styles */
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; background: #f5f5f5; }
         .container { max-width: 1200px; margin: 40px auto; padding: 20px; }
         .header { text-align: center; margin-bottom: 40px; }
@@ -12,15 +13,15 @@
         .header p { color: #666; font-size: 1.1rem; }
         .card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
         .progress-bar { height: 4px; background: #e9ecef; }
-        .progress-fill { height: 100%; background: #007bff; width: 33%; transition: width 0.3s; }
+        .progress-fill { height: 100%; background: #007bff; width: 25%; transition: width 0.3s; }
         .content { padding: 40px; }
         .step { margin-bottom: 30px; }
         .step h2 { color: #333; margin-bottom: 15px; }
         .step p { color: #666; margin-bottom: 20px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 2px rgba(0,123,255,0.25); }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 2px rgba(0,123,255,0.25); }
         .form-group input.success { border-color: #28a745; }
         .form-group input.error { border-color: #dc3545; }
         .form-group input.validating { border-color: #ffc107; }
@@ -31,6 +32,8 @@
         .btn { padding: 12px 24px; border: none; border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-block; cursor: pointer; margin-right: 10px; }
         .btn-primary { background: #007bff; color: white; }
         .btn-secondary { background: #6c757d; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .actions { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #f8f9fa; }
         .json-preview { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 20px; margin-top: 20px; }
@@ -63,13 +66,315 @@
         .creating { text-align: center; padding: 40px; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Template Browser Styles */
+        .template-browser-container {
+            display: flex;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            min-height: 400px;
+        }
+
+        .template-sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            padding: 20px 0;
+        }
+
+        .template-folder {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .template-folder:hover {
+            background: #e9ecef;
+        }
+
+        .template-folder.active {
+            background: #007bff;
+            color: white;
+            border-left-color: #0056b3;
+        }
+
+        .folder-icon {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .folder-name {
+            flex-grow: 1;
+            font-weight: 500;
+        }
+
+        .folder-count {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .template-folder.active .folder-count {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .template-list {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .template-list-header {
+            padding: 20px 25px 15px;
+            border-bottom: 1px solid #e9ecef;
+            background: white;
+        }
+
+        .template-list-header h4 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .template-items {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .template-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .template-item:hover {
+            border-color: #007bff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .template-item.selected {
+            border-color: #007bff;
+            background: rgba(0,123,255,0.05);
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+        }
+
+        .template-icon {
+            margin-right: 15px;
+            font-size: 24px;
+        }
+
+        .template-info {
+            flex-grow: 1;
+        }
+
+        .template-item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .template-item-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .template-item-preview {
+            font-size: 12px;
+            color: #888;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .template-actions-dropdown {
+            position: relative;
+        }
+
+        .template-actions-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .template-actions-btn:hover {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .template-actions-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10;
+            min-width: 120px;
+            display: none;
+        }
+
+        .template-actions-menu.show {
+            display: block;
+        }
+
+        .template-action-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            color: #333;
+        }
+
+        .template-action-item:hover {
+            background: #f8f9fa;
+        }
+
+        .template-action-item.danger:hover {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .custom-template-form { 
+            margin-top: 20px; 
+            padding: 25px; 
+            background: #f8f9fa; 
+            border-radius: 8px; 
+            border: 1px solid #e9ecef;
+        }
+
+        .template-actions { 
+            display: flex; 
+            gap: 12px; 
+            margin-top: 20px; 
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .save-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .editing-indicator {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            color: #856404;
+            font-size: 14px;
+        }
+
+        .editing-indicator strong {
+            color: #533501;
+        }
+
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            z-index: 1000; 
+        }
+
+        .modal-content { 
+            background: white; 
+            margin: 8% auto; 
+            padding: 30px; 
+            border-radius: 12px; 
+            max-width: 500px; 
+            max-height: 80vh; 
+            overflow-y: auto; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 25px; 
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .close-modal { 
+            background: none; 
+            border: none; 
+            font-size: 28px; 
+            cursor: pointer; 
+            color: #6c757d;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        .template-name-status {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .template-name-status.available {
+            color: #28a745;
+        }
+
+        .template-name-status.taken {
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Create Your Annotation Project</h1>
-            <p>Set up your project in 3 simple steps with automatic data configuration</p>
+            <p>Set up your project in 4 simple steps with automatic data configuration</p>
         </div>
 
         <div class="card">
@@ -121,9 +426,69 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Project Setup -->
+                <!-- Step 3: Template Selection -->
                 <div class="step hidden" id="step-3">
-                    <h2>Step 3: Project Configuration</h2>
+                    <h2>Step 3: Choose Labeling Template</h2>
+                    <p>Select a saved template or create your own custom labeling interface</p>
+                    
+                    <div class="form-group">
+                        <label>Template Options</label>
+                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                            <label>
+                                <input type="radio" name="template-option" value="browse" checked> Browse Templates
+                            </label>
+                            <label>
+                                <input type="radio" name="template-option" value="custom"> Create Custom Template
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Template Browser -->
+                    <div id="template-browser">
+                        <div class="template-browser-container">
+                            <!-- Template Categories -->
+                            <div class="template-sidebar">
+                                <div class="template-folder active" data-folder="custom">
+                                    <span class="folder-icon">📁</span>
+                                    <span class="folder-name">My Templates</span>
+                                    <span class="folder-count" id="custom-count">0</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Template List -->
+                            <div class="template-list">
+                                <div class="template-list-header">
+                                    <h4 id="current-folder-title">My Templates</h4>
+                                </div>
+                                <div class="template-items" id="template-items">
+                                    <!-- Templates will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Template Form -->
+                    <div id="custom-template-form" class="custom-template-form hidden">
+                        <h4>Custom Template Configuration</h4>
+                        <div class="form-group">
+                            <label for="custom-config">Label Configuration XML *</label>
+                            <textarea id="custom-config" rows="10" placeholder="Enter your Label Studio XML configuration..."></textarea>
+                            <div class="help-text">Use {text_displays} placeholder where you want JSON field displays</div>
+                        </div>
+                        
+                        <div class="template-actions">
+                            <button class="btn btn-primary" id="preview-custom-btn">Preview Template</button>
+                            <div class="save-actions">
+                                <button class="btn btn-success" id="save-custom-btn">Save as New Template</button>
+                                <button class="btn btn-warning hidden" id="update-template-btn">Update Existing Template</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Project Setup -->
+                <div class="step hidden" id="step-4">
+                    <h2>Step 4: Project Configuration</h2>
                     <p>Name your project and review the configuration before creation</p>
                     
                     <div class="form-group">
@@ -135,6 +500,13 @@
                     <div class="form-group">
                         <label for="project-description">Project Description (optional)</label>
                         <textarea id="project-description" rows="3" placeholder="Describe what this project is for..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary" id="generate-mapping-btn" type="button">
+                            Generate Mapping File
+                        </button>
+                        <span id="mapping-status" style="margin-left:10px;color:#666;font-size:14px;"></span>
                     </div>
                     
                     <div id="config-summary" class="column-preview">
@@ -153,7 +525,7 @@
 
             <div class="actions">
                 <div>
-                    <span>Progress: <span id="progress-text">33%</span> complete</span>
+                    <span>Progress: <span id="progress-text">25%</span> complete</span>
                 </div>
                 <div>
                     <button class="btn btn-secondary hidden" id="prev-btn">Previous</button>
@@ -162,16 +534,49 @@
                 </div>
             </div>
         </div>
+
+        <!-- Enhanced Save/Edit Template Modal -->
+        <div id="save-template-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Save Custom Template</h3>
+                    <button class="close-modal" onclick="closeSaveTemplateModal()">&times;</button>
+                </div>
+                <div class="form-group">
+                    <label for="template-name">Template Name *</label>
+                    <input type="text" id="template-name" placeholder="My Custom Template" />
+                    <div class="help-text" id="template-name-help"></div>
+                </div>
+                <div class="form-group">
+                    <label for="template-desc">Description</label>
+                    <textarea id="template-desc" rows="3" placeholder="Describe what this template is for..."></textarea>
+                </div>
+                <div class="template-actions">
+                    <button class="btn btn-secondary" onclick="closeSaveTemplateModal()">Cancel</button>
+                    <button class="btn btn-success" id="modal-save-btn">Save Template</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         let currentStep = 1;
+        let availableTemplates = { custom: {} };
+        let selectedTemplate = null;
+        let currentEditingTemplate = null;
+        let currentFolder = 'custom';
+        let templateSaveState = {
+            lastSavedConfig: '',
+            hasUnsavedChanges: false
+        };
         let validationState = {
             imagePath: false,
             jsonPath: false,
             sampleJson: null,
+            rawSample: null,
             selectedKeys: [],
-            projectName: false
+            projectName: false,
+            templateSelected: false
         };
 
         function getCsrfToken() {
@@ -195,20 +600,25 @@
             const progressFill = document.getElementById('progress-fill');
             const progressText = document.getElementById('progress-text');
             
-            let progress = 33;
+            let progress = 25;
             let buttonText = 'Next: Configure Columns';
             let isEnabled = false;
             
             if (currentStep === 1) {
+                progress = 25;
                 isEnabled = validationState.imagePath && validationState.jsonPath;
                 buttonText = 'Next: Configure Columns';
             } else if (currentStep === 2) {
-                progress = 66;
+                progress = 50;
                 isEnabled = validationState.selectedKeys.length > 0;
-                buttonText = 'Next: Project Setup';
+                buttonText = 'Next: Choose Template';
             } else if (currentStep === 3) {
+                progress = 75;
+                isEnabled = validationState.templateSelected;
+                buttonText = 'Next: Project Setup';
+            } else if (currentStep === 4) {
                 progress = 100;
-                isEnabled = validationState.projectName && validationState.selectedKeys.length > 0;
+                isEnabled = validationState.projectName;
                 buttonText = 'Create Project';
             }
             
@@ -216,6 +626,522 @@
             nextBtn.textContent = buttonText;
             progressFill.style.width = progress + '%';
             progressText.textContent = progress + '%';
+        }
+
+        async function loadTemplates() {
+            try {
+                const response = await fetch('/api/templates/list/', {
+                    method: 'GET',
+                    headers: { 'X-CSRFToken': getCsrfToken() }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Only load custom templates now
+                    availableTemplates = { custom: data.custom || {} };
+                    renderTemplateBrowser();
+                } else {
+                    console.error('Failed to load templates:', data.error);
+                }
+            } catch (error) {
+                console.error('Error loading templates:', error);
+            }
+        }
+
+        function renderTemplateBrowser() {
+            const customCount = Object.keys(availableTemplates.custom || {}).length;
+            
+            document.getElementById('custom-count').textContent = customCount;
+            
+            renderTemplateList();
+        }
+
+        function switchFolder(folderName) {
+            // Only 'custom' folder exists now
+            currentFolder = 'custom';
+            
+            // Update folder selection
+            document.querySelectorAll('.template-folder').forEach(folder => {
+                folder.classList.remove('active');
+            });
+            document.querySelector(`[data-folder="custom"]`).classList.add('active');
+            
+            // Update header
+            document.getElementById('current-folder-title').textContent = 'My Templates';
+            
+            renderTemplateList();
+        }
+
+        function renderTemplateList() {
+            const container = document.getElementById('template-items');
+            const templates = availableTemplates.custom || {};
+            let html = '';
+            
+            if (Object.keys(templates).length === 0) {
+                html = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">📄</div>
+                        <p>No templates found</p>
+                        <p style="font-size: 14px;">Create your first custom template!</p>
+                    </div>
+                `;
+            } else {
+                Object.entries(templates).forEach(([id, template]) => {
+                    const preview = template.config.length > 60 ? template.config.substring(0, 60) + '...' : template.config;
+                    
+                    html += `
+                        <div class="template-item" data-template="${id}" onclick="selectBrowserTemplate('${id}')">
+                            <div class="template-icon">📝</div>
+                            <div class="template-info">
+                                <div class="template-item-name">${template.name}</div>
+                                <div class="template-item-desc">${template.description || 'No description'}</div>
+                                <div class="template-item-preview">${preview}</div>
+                            </div>
+                            <div class="template-actions-dropdown">
+                                <button class="template-actions-btn" onclick="showTemplateActions(event, '${id}')">⋮</button>
+                                <div class="template-actions-menu" id="menu-${id}">
+                                    <button class="template-action-item" onclick="viewTemplate('${id}')">View</button>
+                                    <button class="template-action-item" onclick="editTemplate('${id}')">Edit</button>
+                                    <button class="template-action-item" onclick="duplicateTemplate('${id}')">Duplicate</button>
+                                    <button class="template-action-item danger" onclick="deleteTemplate('${id}')">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function selectBrowserTemplate(templateId) {
+            // Remove selection from all items
+            document.querySelectorAll('.template-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Select the clicked item
+            const item = document.querySelector(`[data-template="${templateId}"]`);
+            if (item) {
+                item.classList.add('selected');
+                selectedTemplate = templateId;
+                validationState.templateSelected = true;
+                updateProgress();
+            }
+        }
+
+        function showTemplateActions(event, templateId) {
+            event.stopPropagation();
+            
+            // Close all other menus
+            document.querySelectorAll('.template-actions-menu').forEach(menu => {
+                menu.classList.remove('show');
+            });
+            
+            // Show this menu
+            const menu = document.getElementById(`menu-${templateId}`);
+            menu.classList.add('show');
+            
+            // Close menu when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', function closeMenu() {
+                    menu.classList.remove('show');
+                    document.removeEventListener('click', closeMenu);
+                });
+            }, 10);
+        }
+
+        function viewTemplate(templateId) {
+            const template = availableTemplates.custom[templateId];
+            if (!template) return;
+            
+            // Debug: Log the template object to console
+            // console.log('Template object:', template);
+            // console.log('Template config:', template.config);
+            
+            // Create a modal to show the template details
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Template: ${template.name}</h3>
+                        <button class="close-modal" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Created by:</strong> ${template.created_by || 'Unknown'}
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Description:</strong> ${template.description || 'No description provided'}
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Label Configuration XML:</strong>
+                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 15px; margin-top: 10px;">
+                            <pre style="margin: 0; white-space: pre-wrap; font-size: 14px; max-height: 400px; overflow-y: auto;"></pre>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">Close</button>
+                        <button class="btn btn-primary" onclick="editTemplate('${templateId}'); this.closest('.modal').remove();">Edit Template</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            const preElement = modal.querySelector('pre');
+            preElement.textContent = template.config || 'No configuration found';
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        function editTemplate(templateId) {
+            const template = availableTemplates.custom[templateId];
+            if (!template) return;
+            
+            currentEditingTemplate = templateId;
+            
+            // Switch to custom template form
+            document.querySelector('input[name="template-option"][value="custom"]').checked = true;
+            handleTemplateOptionChange({ target: { name: 'template-option', value: 'custom' }});
+            
+            // Load template data
+            document.getElementById('custom-config').value = template.config;
+            
+            // Update save state
+            templateSaveState.lastSavedConfig = template.config;
+            templateSaveState.hasUnsavedChanges = false;
+            
+            // Show editing indicator
+            showEditingIndicator(template.name);
+            
+            // Update buttons
+            updateSaveButtons();
+            
+            validationState.templateSelected = true;
+            updateProgress();
+        }
+
+        function showEditingIndicator(templateName) {
+            let indicator = document.getElementById('editing-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'editing-indicator';
+                indicator.className = 'editing-indicator';
+                document.getElementById('custom-template-form').insertBefore(
+                    indicator, 
+                    document.querySelector('#custom-template-form h4')
+                );
+            }
+            indicator.innerHTML = `
+                <strong>Editing:</strong> ${templateName} 
+                <button onclick="stopEditing()" style="float: right; background: none; border: none; color: #856404; cursor: pointer;">✕</button>
+            `;
+            indicator.style.display = 'block';
+        }
+
+        function hideEditingIndicator() {
+            const indicator = document.getElementById('editing-indicator');
+            if (indicator) {
+                indicator.style.display = 'none';
+            }
+        }
+
+        function stopEditing() {
+            currentEditingTemplate = null;
+            hideEditingIndicator();
+            document.getElementById('custom-config').value = '';
+            templateSaveState.lastSavedConfig = '';
+            templateSaveState.hasUnsavedChanges = false;
+            updateSaveButtons();
+        }
+
+        function updateSaveButtons() {
+            const saveNewBtn = document.getElementById('save-custom-btn');
+            const updateBtn = document.getElementById('update-template-btn');
+            
+            if (currentEditingTemplate) {
+                saveNewBtn.textContent = 'Save as New Template';
+                updateBtn.classList.remove('hidden');
+                updateBtn.textContent = templateSaveState.hasUnsavedChanges ? 'Update Template' : 'Template Updated';
+                updateBtn.classList.toggle('disabled', !templateSaveState.hasUnsavedChanges);
+            } else {
+                saveNewBtn.textContent = templateSaveState.hasUnsavedChanges ? 'Save as Template' : 'Template Saved';
+                saveNewBtn.classList.toggle('disabled', !templateSaveState.hasUnsavedChanges && templateSaveState.lastSavedConfig);
+                updateBtn.classList.add('hidden');
+            }
+        }
+
+        function duplicateTemplate(templateId) {
+            const template = availableTemplates.custom[templateId];
+            if (!template) return;
+            
+            // Switch to custom form and load template
+            document.querySelector('input[name="template-option"][value="custom"]').checked = true;
+            handleTemplateOptionChange({ target: { name: 'template-option', value: 'custom' }});
+            
+            document.getElementById('custom-config').value = template.config;
+            templateSaveState.lastSavedConfig = '';
+            templateSaveState.hasUnsavedChanges = true;
+            updateSaveButtons();
+            
+            // Show save modal with prefilled name
+            showSaveTemplateModal();
+            document.getElementById('template-name').value = template.name + ' Copy';
+            document.getElementById('template-desc').value = template.description;
+            checkTemplateName();
+        }
+
+        async function deleteTemplate(templateId) {
+            const template = availableTemplates.custom[templateId];
+            if (!template) return;
+            
+            if (!confirm(`Are you sure you want to delete "${template.name}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/templates/delete/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify({ template_id: templateId })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    await loadTemplates();
+                    
+                    // If we were editing this template, stop editing
+                    if (currentEditingTemplate === templateId) {
+                        stopEditing();
+                    }
+                    
+                    // Clear selection if this was selected
+                    if (selectedTemplate === templateId) {
+                        selectedTemplate = null;
+                        validationState.templateSelected = false;
+                        updateProgress();
+                    }
+                } else {
+                    alert('Error deleting template: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error deleting template: ' + error.message);
+            }
+        }
+
+        async function updateExistingTemplate() {
+            if (!currentEditingTemplate) return;
+            
+            const config = document.getElementById('custom-config').value.trim();
+            if (!config) {
+                alert('Please enter a template configuration');
+                return;
+            }
+            
+            const updateBtn = document.getElementById('update-template-btn');
+            updateBtn.disabled = true;
+            updateBtn.textContent = 'Updating...';
+            
+            try {
+                const template = availableTemplates.custom[currentEditingTemplate];
+                const response = await fetch('/api/templates/save/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        template_id: currentEditingTemplate,
+                        name: template.name,
+                        description: template.description,
+                        config: config
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    templateSaveState.lastSavedConfig = config;
+                    templateSaveState.hasUnsavedChanges = false;
+                    updateSaveButtons();
+                    
+                    await loadTemplates();
+                    alert('Template updated successfully!');
+                } else {
+                    alert('Error updating template: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error updating template: ' + error.message);
+            } finally {
+                updateBtn.disabled = false;
+            }
+        }
+
+        function generateTemplateId(name) {
+            return name
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '') // Remove special characters
+                .replace(/\s+/g, '_') // Replace spaces with underscores
+                .substring(0, 50); // Limit length
+        }
+
+        function checkTemplateName() {
+            const nameInput = document.getElementById('template-name');
+            const helpText = document.getElementById('template-name-help');
+            const saveBtn = document.getElementById('modal-save-btn');
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                helpText.textContent = '';
+                helpText.className = 'help-text';
+                saveBtn.disabled = true;
+                return;
+            }
+            
+            const generatedId = generateTemplateId(name);
+            const exists = availableTemplates.custom && availableTemplates.custom[generatedId];
+            
+            if (exists) {
+                helpText.textContent = 'A template with this name already exists';
+                helpText.className = 'help-text template-name-status taken';
+                saveBtn.disabled = true;
+            } else {
+                helpText.textContent = `Template ID will be: ${generatedId}`;
+                helpText.className = 'help-text template-name-status available';
+                saveBtn.disabled = false;
+            }
+        }
+
+        function trackTemplateChanges() {
+            const config = document.getElementById('custom-config').value.trim();
+            
+            templateSaveState.hasUnsavedChanges = config !== templateSaveState.lastSavedConfig && config.length > 0;
+            
+            updateSaveButtons();
+            
+            // Update template selection validation
+            const isCustomSelected = document.querySelector('input[name="template-option"]:checked').value === 'custom';
+            if (isCustomSelected) {
+                validationState.templateSelected = config.length > 0;
+                updateProgress();
+            }
+        }
+
+        function showSaveTemplateModal() {
+            const config = document.getElementById('custom-config').value.trim();
+            if (!config) {
+                alert('Please enter a template configuration first');
+                return;
+            }
+            
+            // Clear previous values
+            document.getElementById('template-name').value = '';
+            document.getElementById('template-desc').value = '';
+            document.getElementById('template-name-help').textContent = '';
+            document.getElementById('modal-save-btn').disabled = true;
+            
+            document.getElementById('save-template-modal').style.display = 'block';
+        }
+
+        function closeSaveTemplateModal() {
+            document.getElementById('save-template-modal').style.display = 'none';
+        }
+
+        async function saveTemplate() {
+            const templateName = document.getElementById('template-name').value.trim();
+            const templateDesc = document.getElementById('template-desc').value.trim();
+            const config = document.getElementById('custom-config').value.trim();
+            
+            if (!templateName || !config) {
+                alert('Please provide a template name and configuration');
+                return;
+            }
+            
+            const templateId = generateTemplateId(templateName);
+            const saveBtn = document.getElementById('modal-save-btn');
+            
+            // Check one more time before saving
+            if (availableTemplates.custom && availableTemplates.custom[templateId]) {
+                alert('A template with this name already exists. Please choose a different name.');
+                return;
+            }
+            
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            
+            try {
+                const response = await fetch('/api/templates/save/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        template_id: templateId,
+                        name: templateName,
+                        description: templateDesc,
+                        config: config
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    // Update save state
+                    templateSaveState.lastSavedConfig = config;
+                    templateSaveState.hasUnsavedChanges = false;
+                    
+                    // Update UI
+                    alert('Template saved successfully!');
+                    closeSaveTemplateModal();
+                    
+                    // Refresh templates and auto-select the saved one
+                    await loadTemplates();
+                    
+                    // Auto-select the new template
+                    selectBrowserTemplate(templateId);
+                    
+                    // Update save button state
+                    const mainSaveBtn = document.getElementById('save-custom-btn');
+                    mainSaveBtn.classList.add('disabled');
+                    mainSaveBtn.textContent = 'Template Saved';
+                    
+                } else {
+                    alert('Error saving template: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error saving template: ' + error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Template';
+            }
+        }
+
+        // Template option radio button handling
+        function handleTemplateOptionChange(e) {
+            if (e.target.name === 'template-option') {
+                const isBrowse = e.target.value === 'browse';
+                const isCustom = e.target.value === 'custom';
+                
+                document.getElementById('template-browser').classList.toggle('hidden', !isBrowse);
+                document.getElementById('custom-template-form').classList.toggle('hidden', !isCustom);
+                
+                if (isBrowse) {
+                    validationState.templateSelected = selectedTemplate !== null;
+                } else if (isCustom) {
+                    validationState.templateSelected = document.getElementById('custom-config').value.trim().length > 0;
+                    trackTemplateChanges();
+                }
+                
+                updateProgress();
+            }
         }
 
         function validatePath(path, type, statusElement, inputElement) {
@@ -280,10 +1206,21 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    validationState.sampleJson = data.sample_json;
+                    const rawSample = data.sample_json;
+                    const sampleForKeys = Array.isArray(rawSample) ? (rawSample.length ? rawSample[0] : {}) : rawSample;
+
+                    validationState.rawSample = rawSample;
+                    validationState.sampleJson = sampleForKeys;
+
                     document.getElementById('json-preview-content').textContent = 
-                        JSON.stringify(data.sample_json, null, 2);
+                        JSON.stringify(rawSample, null, 2);
                     document.getElementById('json-preview').classList.remove('hidden');
+
+                    const keys = extractKeys(validationState.sampleJson);
+                    validationState.selectedKeys = keys.map(k => k.path);
+
+                    renderKeySelector();
+                    updateSelectedKeys();
                 } else {
                     console.error('Failed to load sample JSON:', data.message);
                 }
@@ -297,6 +1234,8 @@
         function extractKeys(obj, prefix = '') {
             const keys = [];
             
+            if (!obj || typeof obj !== 'object') return keys;
+
             for (const [key, value] of Object.entries(obj)) {
                 const fullPath = prefix ? `${prefix}.${key}` : key;
                 let type = typeof value;
@@ -308,7 +1247,6 @@
                 } else if (value !== null && typeof value === 'object') {
                     type = 'object';
                     sampleValue = `{${Object.keys(value).length} properties}`;
-                    // Add nested keys
                     keys.push(...extractKeys(value, fullPath));
                 } else if (typeof value === 'string' && value.length > 50) {
                     sampleValue = value.substring(0, 50) + '...';
@@ -333,7 +1271,7 @@
             
             keySelector.innerHTML = keys.map(key => `
                 <div class="key-item" data-path="${key.path}">
-                    <input type="checkbox" id="key-${key.path}" />
+                    <input type="checkbox" />
                     <div class="key-info">
                         <div class="key-name">${key.name}<span class="key-type ${key.type}">${key.type}</span></div>
                         <div class="key-path">${key.path}</div>
@@ -341,10 +1279,16 @@
                     </div>
                 </div>
             `).join('');
-            
-            // Add event listeners
+
             keySelector.querySelectorAll('.key-item').forEach(item => {
                 const checkbox = item.querySelector('input[type="checkbox"]');
+                const path = item.dataset.path;
+
+                if (validationState.selectedKeys && validationState.selectedKeys.includes(path)) {
+                    checkbox.checked = true;
+                    item.classList.add('selected');
+                }
+
                 item.addEventListener('click', (e) => {
                     if (e.target.type !== 'checkbox') {
                         checkbox.checked = !checkbox.checked;
@@ -377,7 +1321,11 @@
             
             const previewTable = document.getElementById('preview-table');
             const getValue = (obj, path) => {
-                return path.split('.').reduce((curr, key) => curr && curr[key], obj);
+                try {
+                    return path.split('.').reduce((curr, key) => (curr === undefined || curr === null) ? curr : curr[key], obj);
+                } catch (e) {
+                    return undefined;
+                }
             };
             
             const headerCells = validationState.selectedKeys.map(key => 
@@ -386,7 +1334,7 @@
             
             const valueCells = validationState.selectedKeys.map(key => {
                 const value = getValue(validationState.sampleJson, key);
-                let displayValue = String(value);
+                let displayValue = value === undefined || value === null ? '' : String(value);
                 if (displayValue.length > 30) {
                     displayValue = displayValue.substring(0, 30) + '...';
                 }
@@ -409,11 +1357,20 @@
 
         function renderConfigSummary() {
             const summaryContent = document.getElementById('summary-content');
+            let templateInfo = 'Default Template';
+            
+            if (selectedTemplate) {
+                templateInfo = availableTemplates.custom[selectedTemplate]?.name || 'Custom Template';
+            } else if (currentEditingTemplate || document.getElementById('custom-config').value.trim()) {
+                templateInfo = 'Custom Configuration';
+            }
+                
             summaryContent.innerHTML = `
                 <div style="display: grid; gap: 15px;">
                     <div><strong>Images Folder:</strong> ${document.getElementById('image-path').value}</div>
                     <div><strong>JSON Data Folder:</strong> ${document.getElementById('json-path').value}</div>
                     <div><strong>Selected Columns:</strong> ${validationState.selectedKeys.join(', ')}</div>
+                    <div><strong>Template:</strong> ${templateInfo}</div>
                     <div><strong>Project Name:</strong> ${document.getElementById('project-name').value}</div>
                     <div><strong>Description:</strong> ${document.getElementById('project-description').value || 'None'}</div>
                 </div>
@@ -425,19 +1382,29 @@
             document.getElementById('creating').classList.remove('hidden');
             
             try {
+                const isCustomTemplate = document.querySelector('input[name="template-option"]:checked').value === 'custom';
+                
+                const payload = {
+                    project_name: document.getElementById('project-name').value,
+                    project_description: document.getElementById('project-description').value,
+                    image_path: document.getElementById('image-path').value,
+                    json_path: document.getElementById('json-path').value,
+                    selected_keys: validationState.selectedKeys
+                };
+                
+                if (isCustomTemplate) {
+                    payload.custom_config = document.getElementById('custom-config').value;
+                } else {
+                    payload.selected_template = selectedTemplate;
+                }
+                
                 const response = await fetch('/api/projects/create-from-config/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': getCsrfToken()
                     },
-                    body: JSON.stringify({
-                        project_name: document.getElementById('project-name').value,
-                        project_description: document.getElementById('project-description').value,
-                        image_path: document.getElementById('image-path').value,
-                        json_path: document.getElementById('json-path').value,
-                        selected_keys: validationState.selectedKeys
-                    })
+                    body: JSON.stringify(payload)
                 });
                 
                 const result = await response.json();
@@ -445,59 +1412,145 @@
                 if (result.success) {
                     window.location.href = `/projects/${result.project_id}`;
                 } else {
-                    alert('Error: ' + result.error);
-                    showStep(3);
+                    alert('Error: ' + (result.error || 'Unknown error'));
+                    showStep(4);
                 }
             } catch (error) {
                 alert('Failed to create project: ' + error.message);
-                showStep(3);
+                showStep(4);
             }
         }
 
-        // Event listeners
-        document.getElementById('image-path').addEventListener('blur', function() {
-            validatePath(this.value, 'image', document.getElementById('image-path-help'), this);
-        });
-
-        document.getElementById('json-path').addEventListener('blur', function() {
-            validatePath(this.value, 'json', document.getElementById('json-path-help'), this);
-        });
-
-        document.getElementById('project-name').addEventListener('input', validateProjectName);
-
-        document.getElementById('select-all-btn').addEventListener('click', function() {
-            const checkboxes = document.querySelectorAll('#key-selector input[type="checkbox"]');
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            
-            checkboxes.forEach(cb => {
-                cb.checked = !allChecked;
-                cb.closest('.key-item').classList.toggle('selected', cb.checked);
+        // Event listeners setup
+        function setupEventListeners() {
+            // Path validation
+            document.getElementById('image-path').addEventListener('blur', function() {
+                validatePath(this.value, 'image', document.getElementById('image-path-help'), this);
             });
-            
-            this.textContent = allChecked ? 'Select All' : 'Deselect All';
-            updateSelectedKeys();
-        });
 
-        document.getElementById('next-btn').addEventListener('click', function() {
-            if (currentStep === 1) {
-                currentStep = 2;
-                showStep(2);
-                renderKeySelector();
-            } else if (currentStep === 2) {
-                currentStep = 3;
-                showStep(3);
-                renderConfigSummary();
-            } else if (currentStep === 3) {
-                createProject();
-            }
-        });
+            document.getElementById('json-path').addEventListener('blur', function() {
+                validatePath(this.value, 'json', document.getElementById('json-path-help'), this);
+            });
 
-        document.getElementById('prev-btn').addEventListener('click', function() {
-            if (currentStep > 1) {
-                currentStep--;
-                showStep(currentStep);
-            }
-        });
+            // Project name validation
+            document.getElementById('project-name').addEventListener('input', validateProjectName);
+
+            // Select all button
+            document.getElementById('select-all-btn').addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('#key-selector input[type="checkbox"]');
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                
+                checkboxes.forEach(cb => {
+                    cb.checked = !allChecked;
+                    cb.closest('.key-item').classList.toggle('selected', cb.checked);
+                });
+                
+                this.textContent = allChecked ? 'Select All' : 'Deselect All';
+                updateSelectedKeys();
+            });
+
+            // Template management
+            document.getElementById('save-custom-btn').addEventListener('click', showSaveTemplateModal);
+            document.getElementById('template-name').addEventListener('input', checkTemplateName);
+            document.getElementById('custom-config').addEventListener('input', trackTemplateChanges);
+            document.getElementById('modal-save-btn').addEventListener('click', saveTemplate);
+            document.getElementById('update-template-btn').addEventListener('click', updateExistingTemplate);
+
+            // Template option radio buttons
+            document.addEventListener('change', handleTemplateOptionChange);
+
+            // Folder switching - only custom folder exists now
+            document.querySelectorAll('.template-folder').forEach(folder => {
+                folder.addEventListener('click', () => {
+                    // No need to switch folders, just ensure custom is active
+                    switchFolder('custom');
+                });
+            });
+
+            // Navigation buttons
+            document.getElementById('next-btn').addEventListener('click', function() {
+                if (currentStep === 1) {
+                    currentStep = 2;
+                    showStep(2);
+                    renderKeySelector();
+                } else if (currentStep === 2) {
+                    currentStep = 3;
+                    showStep(3);
+                    loadTemplates();
+                } else if (currentStep === 3) {
+                    currentStep = 4;
+                    showStep(4);
+                    renderConfigSummary();
+                } else if (currentStep === 4) {
+                    createProject();
+                }
+            });
+
+            document.getElementById('prev-btn').addEventListener('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+
+            // Generate mapping
+            document.getElementById('generate-mapping-btn').addEventListener('click', async function () {
+                const btn = this;
+                btn.disabled = true;
+                const statusEl = document.getElementById('mapping-status');
+                statusEl.textContent = 'Generating mapping...';
+
+                if (!validationState.rawSample) {
+                    statusEl.textContent = 'Error: sample JSON not loaded. Please provide valid json path and load sample.';
+                    btn.disabled = false;
+                    return;
+                }
+                if (!validationState.selectedKeys || validationState.selectedKeys.length === 0) {
+                    statusEl.textContent = 'Error: no keys selected.';
+                    btn.disabled = false;
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/mapping/generate/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCsrfToken()
+                        },
+                        body: JSON.stringify({
+                            json_path: document.getElementById('json-path').value,
+                            selected_keys: validationState.selectedKeys,
+                            sample_json: validationState.rawSample
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        statusEl.textContent = 'Mapping saved at: ' + (result.mapping_file || result.mapping_file_path || result.mapping_file);
+                    } else {
+                        statusEl.textContent = 'Error: ' + (result.error || 'Unknown error from server');
+                    }
+                } catch (err) {
+                    statusEl.textContent = 'Request failed: ' + err.message;
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+        }
+
+        // Initialize the application
+        function init() {
+            setupEventListeners();
+            showStep(currentStep);
+        }
+
+        // Start when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     </script>
 </body>
 </html>

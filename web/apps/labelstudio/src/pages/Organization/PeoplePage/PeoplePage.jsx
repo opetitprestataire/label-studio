@@ -71,7 +71,7 @@ export const PeoplePage = () => {
               onClick={() => setInvitationOpen(true)}
               aria-label="Invite new member"
             >
-              Add Members
+              Add People
             </Button>
           </Space>
         </Space>

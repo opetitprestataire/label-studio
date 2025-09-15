@@ -1,7 +1,7 @@
 ---
 title: PDF
 type: tags
-order: 307
+order: 302
 meta_title: PDF tag for loading PDF documents
 meta_description: Label Studio PDF tag for loading PDF documents for machine learning and data science projects.
 ---

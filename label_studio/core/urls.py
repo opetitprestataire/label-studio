@@ -94,9 +94,7 @@ urlpatterns = [
     re_path(r'trigger500/', views.TriggerAPIError.as_view(), name='metrics'),
     re_path(r'samples/time-series.csv', views.samples_time_series, name='static_time_series'),
     re_path(r'samples/paragraphs.json', views.samples_paragraphs, name='samples_paragraphs'),
-    re_path(
-        r'^swagger(?P<format>\.json|\.yaml)$', private_schema_view.without_ui(cache_timeout=0), name='schema-json'
-    ),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', private_schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', private_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('docs/api/', public_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path(
@@ -116,6 +114,12 @@ urlpatterns = [
     re_path(r'^api/folders/validate/?$', views.validate_folder_path, name='validate-folder-path'),
     re_path(r'^api/folders/sample-json/?$', views.get_sample_json, name='get-sample-json'),
     re_path(r'^api/projects/create-from-config/?$', views.create_project_from_config, name='create-project-from-config'),
+    re_path(r'^api/projects/(?P<project_id>\d+)/discover-mapping/?$',views.discover_mapping,name='discover-mapping'),
+    re_path(r'^api/projects/(?P<project_id>\d+)/upload/?$',views.upload_with_mapping,name='upload-with-mapping'),
+    re_path(r'^api/mapping/generate/$', views.generate_mapping, name='generate_mapping'),
+    re_path(r'^api/templates/list/?$', views.get_label_templates, name='get-label-templates'),
+    re_path(r'^api/templates/save/?$', views.save_label_template, name='save-label-template'),
+    re_path(r'^api/templates/delete/?$', views.delete_label_template, name='delete-label-template'),
 ]
 
     # Custom landing page URL

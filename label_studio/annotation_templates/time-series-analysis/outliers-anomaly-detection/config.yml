@@ -2,16 +2,7 @@ title: Outliers & Anomaly Detection
 type: community
 group: Time Series Analysis
 image: /static/templates/outliers-anomaly-detection.png
-details: |
-  <h1>Select time spans identifying outliers or anomalies on time series signals</h1>
-  <dl>
-    <dt>Industry Applications</dt>
-    <dd>fraud detection, cybersecurity, network monitoring, industrial IoT, predictive maintenance, financial trading, healthcare monitoring, quality control, equipment failure prediction, supply chain monitoring, energy grid monitoring, sensor fault detection, system health monitoring</dd>
-    <dt>Associated Models</dt>
-    <dd>isolation forest, one-class SVM, LSTM autoencoders, statistical process control</dd>
-    <dt>Domain Terminology</dt>
-    <dd>CSV, Excel, XLS, Sheet, statistical outliers, point anomalies, contextual anomalies, collective anomalies, drift detection</dd>
-  </dl>
+details: <h1>Select time spans identifying outliers or anomalies on time series signals</h1>
 config: |
   <View>
       <!-- Object tag for time series data source -->

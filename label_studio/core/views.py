@@ -1,5 +1,3 @@
-"""This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
-"""
 import io
 import json
 import logging
@@ -36,11 +34,52 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
+
+from django.conf import settings
+mapping_dir = getattr(settings, "MAPPING_DIR", "/label-studio/data/mappings")
+
+# from django.conf import settings
+# mapping_dir = settings.MAPPING_DIR
+
+import json, os
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
+from core.utils.mapping_utils import build_mapping, save_mapping_csv
+
+
 logger = logging.getLogger(__name__)
 
 
 _PARAGRAPH_SAMPLE = None
 
+
+
+from django.http import JsonResponse
+import json
+import os
+from datetime import datetime
+from django.conf import settings
+
+# Template storage directory
+TEMPLATE_DIR = getattr(settings, 'LABEL_TEMPLATES_DIR', os.path.join(settings.BASE_DIR, 'label_templates'))
+
+def ensure_template_dir():
+    """Ensure the template directory exists"""
+    os.makedirs(TEMPLATE_DIR, exist_ok=True)
+
+
+def get_nested_value(obj, path):
+    """Fetch nested value from dict using dot notation keys."""
+    for key in path.split('.'):
+        if isinstance(obj, dict):
+            obj = obj.get(key)
+        else:
+            return None
+        if obj is None:
+            return None
+    return obj
 
 def main(request):
     user = request.user
@@ -193,43 +232,47 @@ def heidi_tips(request):
     return HttpResponse(response.content, content_type='application/json')
 
 
-@swagger_auto_schema(methods=['GET'], auto_schema=None)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def localfiles_data(request):
-    """Serving files for LocalFilesImportStorage"""
-    user = request.user
+    """Serve user-provided local files dynamically"""
+    import posixpath
+    import mimetypes
+    from pathlib import Path
+    from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound
+
     path = request.GET.get('d')
-    if settings.LOCAL_FILES_SERVING_ENABLED is False:
-        return HttpResponseForbidden(
-            "Serving local files can be dangerous, so it's disabled by default. "
-            'You can enable it with LOCAL_FILES_SERVING_ENABLED environment variable, '
-            'please check docs: https://labelstud.io/guide/storage.html#Local-storage'
-        )
+    if not path:
+        return HttpResponseForbidden("Missing file path")
 
-    local_serving_document_root = settings.LOCAL_FILES_DOCUMENT_ROOT
-    if path and request.user.is_authenticated:
-        path = posixpath.normpath(path).lstrip('/')
-        full_path = Path(safe_join(local_serving_document_root, path))
-        user_has_permissions = False
+    # Security check - ensure file exists and is accessible
+    if not os.path.exists(path):
+        return HttpResponseNotFound("File not found")
+    
+    # Additional security - ensure it's actually a file
+    if not os.path.isfile(path):
+        return HttpResponseForbidden("Path is not a file")
 
-        # Try to find Local File Storage connection based prefix:
-        # storage.path=/home/user, full_path=/home/user/a/b/c/1.jpg =>
-        # full_path.startswith(path) => True
-        localfiles_storage = LocalFilesImportStorage.objects.annotate(
-            _full_path=Value(os.path.dirname(full_path), output_field=CharField())
-        ).filter(_full_path__startswith=F('path'))
-        if localfiles_storage.exists():
-            user_has_permissions = any(storage.project.has_permission(user) for storage in localfiles_storage)
+    try:
+        # Determine content type
+        content_type, encoding = mimetypes.guess_type(path)
+        content_type = content_type or 'application/octet-stream'
 
-        if user_has_permissions and os.path.exists(full_path):
-            content_type, encoding = mimetypes.guess_type(str(full_path))
-            content_type = content_type or 'application/octet-stream'
-            return RangedFileResponse(request, open(full_path, mode='rb'), content_type)
-        else:
-            return HttpResponseNotFound()
+        # Read and serve the file
+        with open(path, 'rb') as f:
+            response = HttpResponse(f.read(), content_type=content_type)
+            
+        # Add headers for better browser handling
+        if content_type.startswith('image/'):
+            response['Cache-Control'] = 'public, max-age=3600'
+            
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error serving file {path}: {str(e)}")
+        return HttpResponseNotFound("Error reading file")
 
-    return HttpResponseForbidden()
+
 
 
 def static_file_with_host_resolver(path_on_disk, content_type):
@@ -372,18 +415,125 @@ def get_sample_json(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Error reading JSON: {str(e)}'})
 
+def get_label_templates(request):
+    """API endpoint to get all available templates - only custom now"""
+    try:
+        ensure_template_dir()
+        
+        # Get saved custom templates only
+        custom_templates = {}
+        try:
+            for filename in os.listdir(TEMPLATE_DIR):
+                if filename.endswith('.json'):
+                    template_id = filename[:-5]  # Remove .json extension
+                    with open(os.path.join(TEMPLATE_DIR, filename), 'r') as f:
+                        template_data = json.load(f)
+                        custom_templates[template_id] = template_data
+        except OSError:
+            pass  # Directory doesn't exist or is empty
+        
+        return JsonResponse({
+            'success': True,
+            'custom': custom_templates
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
 
+
+
+def save_label_template(request):
+    """API endpoint to save a custom template"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Only POST allowed'})
+    
+    try:
+        data = json.loads(request.body)
+        template_id = data.get('template_id', '').strip()
+        name = data.get('name', '').strip()
+        description = data.get('description', '').strip()
+        config = data.get('config', '').strip()
+        
+        if not all([template_id, name, config]):
+            return JsonResponse({
+                'success': False, 
+                'error': 'Template ID, name, and config are required'
+            })
+        
+        # Validate template_id (alphanumeric + underscores only)
+        import re
+        if not re.match(r'^[a-zA-Z0-9_]+$', template_id):
+            return JsonResponse({
+                'success': False,
+                'error': 'Template ID must contain only letters, numbers, and underscores'
+            })
+        
+        ensure_template_dir()
+        
+        template_data = {
+            'name': name,
+            'description': description,
+            'config': config,
+            'supports_text_fields': True,
+            'created_by': request.user.username if request.user.is_authenticated else 'unknown',
+            'created_at': json.dumps(datetime.now(), default=str)
+        }
+        
+        # Save template
+        template_path = os.path.join(TEMPLATE_DIR, f'{template_id}.json')
+        with open(template_path, 'w') as f:
+            json.dump(template_data, f, indent=2)
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Template "{name}" saved successfully',
+            'template_id': template_id
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+# ----------------------------
+# At the top of views.py
+# ----------------------------
+def generate_label_config_from_template(template_config, selected_keys):
+    """Generate Label Studio config from template and selected JSON keys"""
+    
+    # Generate text displays for selected JSON keys
+    text_displays = []
+    for key in selected_keys:
+        field_name = key.split('.')[-1]
+        display_name = field_name.replace('_', ' ').title()
+        text_displays.append(f'  <Text name="{field_name}_display" value="${field_name}" />')
+    
+    text_displays_str = '\n'.join(text_displays)
+    if text_displays_str:
+        text_displays_str = f'\n{text_displays_str}\n'
+    
+    # Replace placeholder in template
+    final_config = template_config.replace('{text_displays}', text_displays_str)
+    
+    return final_config
+
+# ----------------------------
+# Updated create_project_from_config
+# ----------------------------
 def create_project_from_config(request):
-    """Create a project with pre-configured columns from JSON keys"""
+    """Create a project with pre-configured columns from JSON keys and import tasks"""
     from django.http import JsonResponse
-    from projects.models import Project
-    from django.contrib.auth.decorators import login_required
+    from projects.models import Project, Task
     import json
     import os
-    
+    from django.db import transaction
+
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
+
     try:
         data = json.loads(request.body)
         project_name = data.get('project_name', '').strip()
@@ -392,9 +542,13 @@ def create_project_from_config(request):
         json_path = data.get('json_path', '').strip()
         selected_keys = data.get('selected_keys', [])
         
+        # Template selection - only custom templates now
+        selected_template = data.get('selected_template', '')
+        custom_config = data.get('custom_config', '')
+
         if not all([project_name, image_path, json_path, selected_keys]):
             return JsonResponse({'error': 'Missing required fields'}, status=400)
-        
+
         # Create the project
         project = Project.objects.create(
             title=project_name,
@@ -402,15 +556,279 @@ def create_project_from_config(request):
             created_by=request.user,
             organization=request.user.active_organization
         )
+
+        # Generate label configuration
+        if custom_config:
+            # Use custom configuration provided by user
+            label_config = generate_label_config_from_template(custom_config, selected_keys)
+        elif selected_template:
+            # Load custom template
+            template_path = os.path.join(TEMPLATE_DIR, f'{selected_template}.json')
+            if os.path.exists(template_path):
+                with open(template_path, 'r') as f:
+                    template_data = json.load(f)
+                label_config = generate_label_config_from_template(template_data['config'], selected_keys)
+            else:
+                return JsonResponse({'error': 'Template not found'}, status=400)
+        else:
+            # Default basic image classification template
+            default_config = '''<View>
+  <Image name="image" value="$image" zoom="true" zoomBy="1.5" zoomControl="true"/>
+  {text_displays}
+  
+  <Choices name="label" toName="image" choice="single">
+    <Choice value="positive" background="green"/>
+    <Choice value="negative" background="red"/>
+    <Choice value="neutral" background="gray"/>
+  </Choices>
+</View>'''
+            label_config = generate_label_config_from_template(default_config, selected_keys)
+
+        project.label_config = label_config
+        project.save()
+
+        # Rest of the function remains the same...
+        # Get all image files
+        image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp'}
+        image_files = []
         
-        # TODO: Import tasks from JSON files with selected keys as columns
-        # This will be implemented in the next phase
-        
+        try:
+            all_files = os.listdir(image_path)
+            image_files = [f for f in all_files if any(f.lower().endswith(ext) for ext in image_extensions)]
+        except OSError:
+            return JsonResponse({'error': 'Cannot read image directory'}, status=400)
+
+        if not image_files:
+            return JsonResponse({'error': 'No image files found in the specified directory'}, status=400)
+
+        # Get all JSON files
+        json_files = []
+        try:
+            all_files = os.listdir(json_path)
+            json_files = [f for f in all_files if f.lower().endswith('.json')]
+        except OSError:
+            return JsonResponse({'error': 'Cannot read JSON directory'}, status=400)
+
+        if not json_files:
+            return JsonResponse({'error': 'No JSON files found in the specified directory'}, status=400)
+
+        # Create mapping from base filename to image files
+        image_map = {}
+        for img_file in image_files:
+            base_name = os.path.splitext(img_file)[0]
+            image_map[base_name] = img_file
+
+        imported_count = 0
+
+        with transaction.atomic():
+            for json_file in json_files:
+                file_path = os.path.join(json_path, json_file)
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        data_content = json.load(f)
+                    
+                    # Ensure data_content is always a list
+                    if isinstance(data_content, dict):
+                        data_list = [data_content]
+                    else:
+                        data_list = data_content if isinstance(data_content, list) else [data_content]
+                    
+                    # Base name for matching with images
+                    json_base_name = os.path.splitext(json_file)[0]
+                    
+                    for idx, data_obj in enumerate(data_list):
+                        # Build task data with selected keys
+                        task_data = {}
+                        
+                        # Add image if available
+                        image_filename = image_map.get(json_base_name)
+                        if image_filename:
+                            # Create the URL that Label Studio can access
+                            full_image_path = os.path.join(image_path, image_filename)
+                            task_data["image"] = f"/data/local-files/?d={full_image_path}"
+                        
+                        # Add selected JSON keys
+                        for key in selected_keys:
+                            value = get_nested_value(data_obj, key)
+                            if value is not None:
+                                # Use the leaf name of the key as the field name
+                                field_name = key.split('.')[-1]
+                                task_data[field_name] = value
+
+                        # Only create task if we have some data
+                        if task_data:
+                            Task.objects.create(
+                                project=project,
+                                data=task_data
+                            )
+                            imported_count += 1
+                            
+                except Exception as file_err:
+                    logger.error(f"Error importing {json_file}: {file_err}")
+                    continue
+
+        if imported_count == 0:
+            # Delete project if no tasks were created
+            project.delete()
+            return JsonResponse({'error': 'No tasks were created successfully'}, status=400)
+
         return JsonResponse({
             'success': True,
             'project_id': project.id,
-            'message': f'Project "{project_name}" created successfully'
+            'message': f'Project "{project_name}" created successfully with {imported_count} tasks imported'
+        })
+
+    except Exception as e:
+        logger.error(f"Failed to create project: {str(e)}")
+        return JsonResponse({'error': f'Failed to create project: {str(e)}'}, status=500)
+
+
+
+
+def discover_mapping(request, project_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST allowed"}, status=405)
+    body = json.loads(request.body)
+    json_sample = body.get("json")
+    expected_keys = body.get("expected_keys", [])
+
+    if not json_sample or not expected_keys:
+        return JsonResponse({"error": "json + expected_keys required"}, status=400)
+
+    mapping = infer_mapping_from_json(json_sample, expected_keys)
+
+    # Save mapping for this project (db or file)
+    with open(f"/label-studio/data/mappings/{project_id}.json", "w") as f:
+        json.dump(mapping, f)
+
+    return JsonResponse({"mapping": mapping})
+
+
+@csrf_exempt
+def upload_with_mapping(request, project_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST allowed"}, status=405)
+
+    body = json.loads(request.body)
+    json_list = body.get("json")
+
+    if isinstance(json_list, dict):
+        json_list = [json_list]
+
+    # Load mapping
+    with open(f"/label-studio/data/mappings/{project_id}.json", "r") as f:
+        mapping = json.load(f)
+
+    flat_data = process_json_list(json_list, mapping)
+
+    return JsonResponse({
+        "mapping_used": mapping,
+        "data": flat_data
+    })
+
+@csrf_exempt
+def generate_mapping(request):
+    """Accepts JSON with json_path and selected_keys and saves mapping.json"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Only POST allowed'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    json_path = data.get('json_path')
+    selected_keys = data.get('selected_keys', [])
+
+    if not json_path or not selected_keys:
+        return JsonResponse(
+            {'success': False, 'error': 'json_path and selected_keys are required'},
+            status=400
+        )
+
+    # create a "mappings" directory under BASE_DIR automatically
+    mapping_dir = os.path.join(settings.BASE_DIR, 'mappings')
+    os.makedirs(mapping_dir, exist_ok=True)
+
+    # save mapping file
+    mapping_file = os.path.join(mapping_dir, 'mapping.json')
+    with open(mapping_file, 'w') as f:
+        json.dump({'json_path': json_path, 'selected_keys': selected_keys}, f)
+
+    return JsonResponse({'success': True, 'mapping_file': mapping_file})
+
+
+
+
+def delete_label_template(request):
+    """API endpoint to delete a custom template"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Only POST allowed'})
+    
+    try:
+        data = json.loads(request.body)
+        template_id = data.get('template_id', '').strip()
+        
+        if not template_id:
+            return JsonResponse({
+                'success': False, 
+                'error': 'Template ID is required'
+            })
+        
+        ensure_template_dir()
+        
+        # Check if template exists
+        template_path = os.path.join(TEMPLATE_DIR, f'{template_id}.json')
+        if not os.path.exists(template_path):
+            return JsonResponse({
+                'success': False,
+                'error': 'Template not found'
+            })
+        
+        # Delete the template file
+        os.remove(template_path)
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Template deleted successfully'
         })
         
     except Exception as e:
-        return JsonResponse({'error': f'Failed to create project: {str(e)}'}, status=500)
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+
+        
+def generate_label_config_with_images(selected_keys):
+    """Generate Label Studio XML configuration that includes images and selected JSON keys"""
+    
+    config_parts = ['<View>']
+    
+    # Add image display
+    config_parts.append('  <Image name="image" value="$image" zoom="true" zoomBy="1.5" zoomControl="true"/>')
+    
+    # Add text displays for each selected key
+    for key in selected_keys:
+        # Clean key name for display (use leaf name)
+        field_name = key.split('.')[-1]
+        display_name = field_name.replace('_', ' ').title()
+        
+        # Add text display for this field
+        config_parts.append(f'  <Text name="{field_name}_display" value="${field_name}" />')
+    
+    # Add classification interface (you can customize this based on your needs)
+    config_parts.extend([
+        '',
+        '  <!-- Classification Interface -->',
+        '  <Choices name="label" toName="image" choice="single">',
+        '    <Choice value="positive" background="green"/>',
+        '    <Choice value="negative" background="red"/>',
+        '    <Choice value="neutral" background="gray"/>',
+        '  </Choices>',
+        '',
+        '</View>'
+    ])
+    
+    return '\n'.join(config_parts)

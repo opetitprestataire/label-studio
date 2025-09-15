@@ -4,7 +4,7 @@ import json
 
 from core.settings.base import *  # noqa
 from core.utils.secret_key import generate_secret_key_if_missing
-
+from .base import * 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = generate_secret_key_if_missing(BASE_DATA_DIR)
 

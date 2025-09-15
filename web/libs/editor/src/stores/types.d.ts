@@ -113,7 +113,6 @@ type MSTAnnotation = {
     draft?: RawResult[];
     result?: RawResult[];
   };
-  areas: Map<string, MSTRegion>;
   regions: MSTRegion[];
   results: MSTResult[];
   type: "annotation" | "prediction";

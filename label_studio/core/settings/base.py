@@ -895,3 +895,17 @@ DM_MAX_USERS_TO_DISPLAY = int(get_env('DM_MAX_USERS_TO_DISPLAY', 10))
 
 # Base FSM (Finite State Machine) Configuration for Label Studio
 FSM_CACHE_TTL = 300  # Cache TTL in seconds (5 minutes)
+b
+
+
+
+import os
+
+# Directory where mapping files will be saved
+MAPPING_DIR = os.path.join(BASE_DIR, 'mappings')
+
+# Create the folder if it doesn’t exist
+os.makedirs(MAPPING_DIR, exist_ok=True)
+
+# Root directory for all images you’ll serve via Label Studio
+LOCAL_FILES_DOCUMENT_ROOT = os.path.abspath("/label-studio/data")

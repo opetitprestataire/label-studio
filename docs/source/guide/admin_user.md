@@ -52,7 +52,7 @@ Once the initial organization account is created, you can begin inviting users:
 2. Select **Organization**. 
 
     If you do not see the **Organization** option, you do not have access to the Organization page. Only users in the Owner or Administrator role can access this page. 
-3. From the Organization page, click **Invite Members**. 
+3. From the Organization page, click **Invite People**. 
 
 From here you have two options:
 

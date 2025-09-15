@@ -1,7 +1,7 @@
 ---
 title: List
 type: tags
-order: 305
+order: 304
 meta_title: List Tag displays items of the same type, like articles, search results, etc.
 meta_description: Customize Label Studio by displaying similar items from task data for machine learning and data science projects.
 ---

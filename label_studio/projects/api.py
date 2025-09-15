@@ -736,7 +736,9 @@ class ProjectReimportAPI(generics.RetrieveAPIView):
                 description='A unique integer value identifying this project.',
             ),
         ]
-        + paginator_help('tasks', 'Projects')['parameters'],
+        # + paginator_help('tasks', 'Projects')['parameters'],
+        + paginator_help('tasks', 'Projects').get('parameters', []),
+
         extensions={
             'x-fern-audiences': ['internal'],  # TODO: deprecate this endpoint in favor of tasks:tasks-list
         },

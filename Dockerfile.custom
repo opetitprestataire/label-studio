@@ -1,11 +1,16 @@
+# Start from a base Label Studio image
 FROM heartexlabs/label-studio:latest
 
-# Copy your working modified files
+# Create directories in case they don't exist
+RUN mkdir -p /label-studio/label_studio/core
+RUN mkdir -p /label-studio/label_studio/templates/core
+RUN mkdir -p /label-studio/label_studio/core/utils
+
+# Copy your local modified files into the container
 COPY label_studio/core/views.py /label-studio/label_studio/core/views.py
 COPY label_studio/core/urls.py /label-studio/label_studio/core/urls.py
+COPY label_studio/core/utils/mapping_utils.py /label-studio/label_studio/core/utils/mapping_utils.py
 COPY label_studio/templates/core/custom_landing.html /label-studio/label_studio/templates/core/custom_landing.html
 
-# Ensure templates directory exists
-RUN mkdir -p /label-studio/label_studio/templates/core
-
+# Expose the port
 EXPOSE 8080
