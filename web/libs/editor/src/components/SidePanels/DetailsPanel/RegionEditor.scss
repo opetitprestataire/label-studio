@@ -33,6 +33,12 @@
     justify-self: stretch;
   }
 
+  &__property_text {
+    // text input should be a textarea and occupy 3 columns
+    grid-column: span 3;
+    height: auto;
+  }
+
   &__text {
     top: 0;
     left: 0;

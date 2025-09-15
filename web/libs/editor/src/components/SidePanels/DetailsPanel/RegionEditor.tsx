@@ -182,7 +182,7 @@ const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) =>
   }, [region]);
 
   return (
-    <Elem name="property" tag="label">
+    <Elem name="property" mod={{ text: isString }} tag="label">
       {isBoolean ? (
         <Checkbox
           className={block?.elem("input").toClassName()}
@@ -215,7 +215,7 @@ const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) =>
   );
 };
 
-interface RegionInputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface RegionInputProps extends InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   type: HTMLInputTypeAttribute;
   onChange?: (newValue: any) => void;
 }
@@ -235,7 +235,7 @@ const RegionInput: FC<RegionInputProps> = ({ onChange: onChangeValue, type, valu
   );
 
   const onChangeHandler = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       let value: number | string = e.target.value;
       let safeValue = true;
 
@@ -260,7 +260,7 @@ const RegionInput: FC<RegionInputProps> = ({ onChange: onChangeValue, type, valu
   );
 
   const onKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
+    (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       if (type !== "number") return;
 
       if (e.key === "ArrowUp" || e.key === "ArrowDown") {
@@ -285,8 +285,10 @@ const RegionInput: FC<RegionInputProps> = ({ onChange: onChangeValue, type, valu
     updateValue(value);
   }, [value]);
 
+  const Tag = type === "text" ? "textarea" : "input";
+
   return (
-    <input
+    <Tag
       {...props}
       className={block?.elem("input").toClassName()}
       type="text"
