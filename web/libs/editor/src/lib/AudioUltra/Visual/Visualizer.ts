@@ -133,9 +133,10 @@ export class Visualizer extends Events<VisualizerEvents> {
     this.autoCenter = options.autoCenter ?? this.autoCenter;
     this.splitChannels = options.splitChannels ?? this.splitChannels;
     this.waveformHeight = options.waveformHeight ?? options.height ?? options.waveHeight ?? 32;
-    this.initialWaveformHeight = this.waveformHeight;
     this.spectrogramHeight = options.spectrogramHeight ?? options.height ?? options.waveHeight ?? 32;
-    this.initialSpectrogramHeight = this.spectrogramHeight = options.spectrogramHeight ?? options.waveHeight ?? 32;
+    // Save initial height for computing adaptive max height during resize
+    this.initialWaveformHeight = this.waveformHeight;
+    this.initialSpectrogramHeight = this.spectrogramHeight;
     this.timelineHeight = options.timelineHeight ?? options.timeline?.height ?? 20;
     this.timelinePlacement = options?.timeline?.placement ?? this.timelinePlacement;
     this.gridColor = options.gridColor ? rgba(options.gridColor) : this.gridColor;
