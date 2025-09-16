@@ -362,9 +362,8 @@ const Model = types
         const pointer = stage.getPointerPosition();
 
         // Convert to pixel coords in the canvas backing the image
-        const x = Math.floor(pointer.x / self.parent.stageZoom);
-        const y = Math.floor(pointer.y / self.parent.stageZoom);
-        return self.vectorRef.isPointOverShape(x, y);
+        const { x, y } = self.parent?.layerZoomScalePosition ?? { x: 0, y: 0 };
+        return self.vectorRef.isPointOverShape(pointer.x, pointer.y);
       },
 
       segGroupRef(ref) {

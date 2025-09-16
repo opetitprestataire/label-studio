@@ -1344,8 +1344,16 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       return calculateShapeBoundingBox(initialPoints);
     },
     // Hit testing method
-    isPointOverShape: (x: number, y: number, hitRadius = 20) => {
+    isPointOverShape: (x: number, y: number, hitRadius = 10) => {
       const point = { x, y };
+      const scaledPoints = initialPoints.map((initialPoint) => {
+        const { x, y } = initialPoint;
+        return {
+          ...initialPoint,
+          x: x * fitScale * transform.zoom + transform.offsetX,
+          y: y * fitScale * transform.zoom + transform.offsetY,
+        };
+      });
 
       // If no points, return false
       if (initialPoints.length === 0) {
@@ -1353,8 +1361,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       }
 
       // First check if hovering over any individual point (vertices)
-      for (let i = 0; i < initialPoints.length; i++) {
-        const vertex = initialPoints[i];
+      for (const vertex of scaledPoints) {
         const distance = getDistance(point, vertex);
         if (distance <= hitRadius) {
           return true; // Hovering over a vertex
@@ -1362,12 +1369,12 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       }
 
       // For single point, we already checked above, so return false if not hit
-      if (initialPoints.length === 1) {
+      if (scaledPoints.length === 1) {
         return false;
       }
 
       // For polylines and polygons, check if point is close to any segment
-      const closestPathPoint = findClosestPointOnPath(point, initialPoints, allowClose, finalIsPathClosed);
+      const closestPathPoint = findClosestPointOnPath(point, scaledPoints, allowClose, finalIsPathClosed);
 
       if (closestPathPoint) {
         const distance = getDistance(point, closestPathPoint.point);
@@ -1375,8 +1382,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       }
 
       // For closed polygons, also check if point is inside the polygon
-      if (finalIsPathClosed && initialPoints.length >= 3) {
-        return isPointInPolygon(point, initialPoints);
+      if (finalIsPathClosed && scaledPoints.length >= 3) {
+        return isPointInPolygon(point, scaledPoints);
       }
 
       return false;
