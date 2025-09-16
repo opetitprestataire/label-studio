@@ -21,15 +21,6 @@ Simulate multi‑turn chats by playing both user and assistant (or pair with a t
 ```xml
 <View>
   <Style>
-
-    [data-role="assistant"]::before {
-      content:"Helpful Agent";
-    }
-
-    [data-role="user"]::before {
-      content:"Curious Customer";
-    }
-    
     .lsf-richtext__container.lsf-htx-richtext {
       font-size: 16px !important;
       line-height: 1.6;
@@ -65,7 +56,6 @@ You can apply styling using inline styles directly on `View` tags or by defining
 This labeling configuration uses built-in classes and attributes to apply styles. 
 
 * `.lsf-richtext__container.lsf-htx-richtext` are built-in classes targeting text, in this case allowing you to apply styling to the instruction text. 
-* `[data-role="user"]` and `[data-role="assistant"]` targets chat blocks from the specified role. 
 * `.htx-chat` targets the height of the chat window. 
 
 For more information, see the [Style tag](/tags/style).
