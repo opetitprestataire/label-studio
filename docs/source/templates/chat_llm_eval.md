@@ -11,7 +11,7 @@ meta_description: Template for conversation-level evaluation when chatting with 
 
 Run live, interactive chats with any OpenAI‑compatible LLM (including your own). Use this template to capture realistic, multi‑turn conversations for fine‑tuning. Help your agent specialize on key tasks, handle context shifts smoothly, and perform better under real‑world behavior.
 
-While this template focuses on conversation-level evaluation, you can modify it to perform per-message evaluations. For examples, see [Chatbot Evaluation](chatbot), [Evaluate Production Conversations](chat_rlhf), . 
+While this template focuses on conversation-level evaluation, you can modify it to perform per-message evaluations. For examples, see our [other chat templates](gallery_chat). 
 
 !!! error Enterprise
     This template requires Label Studio Enterprise. 

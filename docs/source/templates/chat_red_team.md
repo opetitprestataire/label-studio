@@ -11,6 +11,13 @@ meta_description: Template for monitoring and evaluating chat conversations.
 
 Stress‑test your GenAI agent with structured red‑teaming. Use this template to run adversarial, multi‑turn chats that probe for safety and privacy gaps—then label each turn to pinpoint weaknesses.
 
+!!! error Enterprise
+    This template requires Label Studio Enterprise. 
+
+    Starter Cloud users can use the `Chat` tag, but have limited access to LLM integration. Instead, you can conduct a manual chat or import messages as predictions. See the [Chat tag documentation](/tags/chat#Prediction-format). 
+
+    For Community users, see our [Conversation AI templates](gallery_conversational_ai) or the [Multi-Turn Chat Evaluation template](multi_turn_chat).
+
 ## Labeling configuration
 
 ```xml
