@@ -49,7 +49,7 @@ Simulate multi‑turn chats by playing both user and assistant (or pair with a t
   
   <Chat name="chat" value="$chat" toName="chat"
         minMessages="4" 
-        messageroles="user,developer,assistant"
+        messageroles="user,assistant"
         editable="true" />
 </View>
 ```
