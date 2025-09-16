@@ -74,7 +74,7 @@ Stress‑test your GenAI agent with structured red‑teaming. Use this template 
             editable="false" />
     </View>
 
-    <!-- Right: conversation-level evaluation -->
+    <!-- Right: message-level evaluation -->
     <View style="flex: 1;" className="evaluation">
       <View style="position:sticky;top:14px">
         
@@ -205,30 +205,10 @@ For more information, see the [View tag](/tags/view).
 Since your chat will likely have multiple messages from each role, use `perRegion="true"` to ensure that users will be able to annotate multiple messages within a conversation. 
 
 ```xml
-### Per-message evaluation
-
-This configuration only allows per-message evaluation. An annotator must click on a message in the chat interface, and then options specific to that role appear on the right. For an example of using conversation-level evaluation, see [Fine-tune an agent with an LLM](chat_llm_eval).
-
-For example:
-
-```xml
-<View visibleWhen="region-selected" whenRole="user">
-```
-
-* `visibleWhen` - The controls within this section are only visible when a region (in this case a chat message) is selected. 
-* `whenRole` - Further refines `visibleWhen` so that the controls within the section are only visible when the selected region (message) is from the specified role. 
-
-For more information, see the [View tag](/tags/view).
-
-### Choices
-
-Since your chat will likely have multiple messages from each role, use `perRegion="true"` to ensure that users will be able to annotate multiple messages within a conversation. 
-
-```xml
 <Choices name="assistant_refusal_quality" toName="chat" choice="single" showInline="true" perRegion="true">
 ```
 
-Use `visibleWhen`, `whenTagName`, and `whenChoiceValue` to restrict certain sections from appearing unless specific choices are selected. 
+You can also use `visibleWhen`, `whenTagName`, and `whenChoiceValue` to restrict certain sections from appearing unless specific choices are selected. 
 
 You can see an example of that here:
 
