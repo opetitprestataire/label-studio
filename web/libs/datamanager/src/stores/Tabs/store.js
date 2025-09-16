@@ -156,9 +156,9 @@ export const TabStore = types
     }),
 
     deleteView: flow(function* (view, { autoselect = true } = {}) {
-      if (autoselect && self.selected === view) {
-        let newView;
+      let newView;
 
+      if (autoselect && self.selected === view) {
         if (self.selected.opener) {
           newView = self.opener.referrer;
         } else {
@@ -174,7 +174,14 @@ export const TabStore = types
         yield getRoot(self).apiCall("deleteTab", { tabID: view.id });
       }
 
-      destroy(view);
+      if (view.virtual && newView) {
+        // this helps resolve the race condition between the view being deleted and the new view being selected
+        setTimeout(() => {
+          self.deleteView(view, { autoselect: false });
+        }, 0);
+      } else {
+        destroy(view);
+      }
     }),
 
     createSnapshot(viewSnapshot = {}) {
