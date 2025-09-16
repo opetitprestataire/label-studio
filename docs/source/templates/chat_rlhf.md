@@ -296,8 +296,7 @@ You can also import demo chat messages as follows:
 
 ### Predictions
 
-If you want to be able to select messages and evaluate them, then you can use predictions. For example:
-
+If you want to be able to select messages and evaluate them, then you can use [predictions](/tags/chat#Prediction-format). For example:
 
 ```json
 [
@@ -318,7 +317,8 @@ If you want to be able to select messages and evaluate them, then you can use pr
             "value": {
               "chatmessage": {
                 "role": "user",
-                "content": "I'm onboarding a new annotator. What are the first steps to ensure quality and speed?"
+                "content": "I'm onboarding a new annotator. What are the first steps to ensure quality and speed?",
+                "createdAt": 1757612212681
               }
             },
             "to_name": "chat",
@@ -329,7 +329,8 @@ If you want to be able to select messages and evaluate them, then you can use pr
             "value": {
               "chatmessage": {
                 "role": "assistant",
-                "content": "Start by creating their account and assigning the Annotator role so permissions are scoped correctly. Add concise labeling instructions that appear before labeling. Use a small ground-truth set and require overlap (e.g., 2 annotators per task) with a reviewer to resolve disagreements. Enable comments so reviewers can leave precise, in-task feedback."
+                "content": "Start by creating their account and assigning the Annotator role so permissions are scoped correctly. Add concise labeling instructions that appear before labeling. Use a small ground-truth set and require overlap (e.g., 2 annotators per task) with a reviewer to resolve disagreements. Enable comments so reviewers can leave precise, in-task feedback.",
+                "createdAt": 1757612363718
               }
             },
             "to_name": "chat",
@@ -341,6 +342,7 @@ If you want to be able to select messages and evaluate them, then you can use pr
   }
 ]
 ```
+
 
 ## Related tags
 

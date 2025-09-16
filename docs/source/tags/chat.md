@@ -166,6 +166,9 @@ To work with a blank chat and have your annotator add all messages, simply impor
 
 Because users cannot select or evaluate chat messages that are imported as data, you can use predictions when you want to allow users to evaluate conversations that have been generated elsewhere. 
 
+!!! note
+    You should include a timestamp field (`createdAt`) in milliseconds. This ensures your messages maintain the correct order when you modify them (edit them, resend them, etc.)
+
 See the following example:
 
 ```json
@@ -187,7 +190,8 @@ See the following example:
             "value": {
               "chatmessage": {
                 "role": "user",
-                "content": "I'm onboarding a new annotator. What are the first steps to ensure quality and speed?"
+                "content": "I'm onboarding a new annotator. What are the first steps to ensure quality and speed?",
+                "createdAt": 1757612212681
               }
             },
             "to_name": "chat",
@@ -198,7 +202,8 @@ See the following example:
             "value": {
               "chatmessage": {
                 "role": "assistant",
-                "content": "Start by creating their account and assigning the Annotator role so permissions are scoped correctly. Add concise labeling instructions that appear before labeling. Use a small ground-truth set and require overlap (e.g., 2 annotators per task) with a reviewer to resolve disagreements. Enable comments so reviewers can leave precise, in-task feedback."
+                "content": "Start by creating their account and assigning the Annotator role so permissions are scoped correctly. Add concise labeling instructions that appear before labeling. Use a small ground-truth set and require overlap (e.g., 2 annotators per task) with a reviewer to resolve disagreements. Enable comments so reviewers can leave precise, in-task feedback.",
+                "createdAt": 1757612363718
               }
             },
             "to_name": "chat",
