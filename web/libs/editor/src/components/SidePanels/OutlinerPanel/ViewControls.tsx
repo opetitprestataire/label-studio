@@ -45,9 +45,9 @@ export const ViewControls: FC<ViewControlsProps> = observer(
     const context = useContext(SidePanelsContext);
 
     // Check labeling configuration for media-time-capable object tags
-    const hasMediaTimeSupport = useMemo(() => {
+    const mediaTimeSupport: boolean | null = useMemo(() => {
       const names = regions.annotation?.names;
-      if (!names) return false;
+      if (!names || names.size === 0) return null;
       // Any object tag of type audio, video, or timeseries enables the option
       return Array.from(names.values()).some(
         (tag: any) => tag?.isObjectTag && ["audio", "video", "timeseries"].includes(tag.type),
@@ -56,10 +56,10 @@ export const ViewControls: FC<ViewControlsProps> = observer(
 
     // Auto-fallback to "date" if current ordering is "mediaStartTime" but no media-time support in config
     useEffect(() => {
-      if (ordering === "mediaStartTime" && !hasMediaTimeSupport) {
+      if (ordering === "mediaStartTime" && mediaTimeSupport === false) {
         onOrderingChange("date");
       }
-    }, [ordering, hasMediaTimeSupport, onOrderingChange]);
+    }, [ordering, mediaTimeSupport, onOrderingChange]);
 
     const getGroupingLabels = useCallback((value: GroupingOptions): LabelInfo => {
       switch (value) {
@@ -149,7 +149,7 @@ export const ViewControls: FC<ViewControlsProps> = observer(
             <Grouping
               value={ordering}
               direction={orderingDirection}
-              options={hasMediaTimeSupport ? ["score", "date", "mediaStartTime"] : ["score", "date"]}
+              options={mediaTimeSupport ? ["score", "date", "mediaStartTime"] : ["score", "date"]}
               onChange={(value) => onOrderingChange(value)}
               readableValueForKey={getOrderingLabels}
               allowClickSelected
