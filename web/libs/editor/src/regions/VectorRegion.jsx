@@ -13,7 +13,7 @@ import { KonvaVector } from "../components/KonvaVector/KonvaVector";
 import { observer } from "mobx-react";
 import Constants from "../core/Constants";
 import { RegionWrapper } from "./RegionWrapper";
-import { LabelOnRect } from "../components/ImageView/LabelOnRegion";
+import { LabelOnPolygon } from "../components/ImageView/LabelOnRegion";
 import ToolsManager from "../tools/Manager";
 import { Group } from "react-konva";
 
@@ -579,7 +579,7 @@ const HtxVectorView = observer(({ item, suggestion }) => {
         />
 
         {item.vertices.length > 0 && (
-          <LabelOnRect item={item} color={regionStyles.strokeColor} strokewidth={regionStyles.strokeWidth} />
+          <LabelOnPolygon item={item} color={regionStyles.strokeColor} strokewidth={regionStyles.strokeWidth} />
         )}
       </Group>
     </RegionWrapper>
