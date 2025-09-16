@@ -18,7 +18,7 @@ Use with the following data types: JSON array of message objects
 
 ### Use with an LLM
 
-Optionally, the tag can send request to an LLM and then post the replies. 
+Optionally, the tag can send requests to an LLM and then post the replies. 
 
 To use an LLM, you need to do two things:
 
@@ -213,6 +213,8 @@ See the following example:
 
 ## Related templates
 
-- [Fine-tune an Agent with an LLM](/templates/chat_llm_eval)
-- [Fine-tune an Agent without an LLM](/templates/chat_eval)
+- [Fine-Tune an Agent with an LLM](/templates/chat_llm_eval)
+- [Fine-Tune an Agent without an LLM](/templates/chat_eval)
 - [Chatbot Evaluation](/templates/chatbot)
+- [Red-Teaming in Chat](/templates/chat_red_team)
+- [Evaluate Production Conversations](/templates/chat_rlhf)
