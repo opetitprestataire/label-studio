@@ -280,7 +280,7 @@ class ProjectListAPI(generics.ListCreateAPIView):
     name='get',
     decorator=extend_schema(
         tags=['Projects'],
-        summary="List project's counts",
+        summary="List projects' counts",
         parameters=[
             *serializer_to_openapi_params(GetFieldsSerializer),
             *filterset_to_openapi_params(ProjectFilterSet),
