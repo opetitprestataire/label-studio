@@ -605,7 +605,7 @@ export default observer(
         return reg.isHovered?.() ?? false;
       });
 
-      if (hoveredRegion) {
+      if (hoveredRegion && !evt.defaultPrevented) {
         hoveredRegion.onClickRegion(e);
         return;
       }

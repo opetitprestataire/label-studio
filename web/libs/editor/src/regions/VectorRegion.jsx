@@ -14,7 +14,6 @@ import { observer } from "mobx-react";
 import Constants from "../core/Constants";
 import { RegionWrapper } from "./RegionWrapper";
 import { LabelOnPolygon } from "../components/ImageView/LabelOnRegion";
-import ToolsManager from "../tools/Manager";
 import { Group } from "react-konva";
 
 /**
@@ -473,6 +472,19 @@ const Model = types
       commitPoint(x, y) {
         self.vectorRef.commitPoint(x, y);
       },
+
+      handleFinish() {
+        console.log("finish");
+        const tm = self.parent.getToolsManager();
+        const tool = tm.findSelectedTool();
+        if (tool.currentArea) {
+          tool?.commitDrawingRegion();
+          tool?.complete();
+        } else {
+          const annotation = self.parent?.annotation;
+          annotation?.toggleRegionSelection(self);
+        }
+      },
     };
   });
 
@@ -509,10 +521,11 @@ const HtxVectorView = observer(({ item, suggestion }) => {
         <KonvaVector
           ref={(kv) => item.setKonvaVectorRef(kv)}
           initialPoints={Array.from(item.vertices)}
-          onFinish={() => {
-            const tm = ToolsManager.allInstances();
-            const tools = tm.map((t) => t.findSelectedTool()).filter((t) => t.isDrawing);
-            tools.forEach((t) => t.complete?.());
+          onFinish={(e) => {
+            console.trace("finish", e);
+            e.evt.stopPropagation();
+            e.evt.preventDefault();
+            item.handleFinish();
           }}
           onPointsChange={(points) => {
             item.updatePointsFromKonvaVector(points);
@@ -521,6 +534,10 @@ const HtxVectorView = observer(({ item, suggestion }) => {
             item.onPathClosedChange(isClosed);
           }}
           onClick={(e) => {
+            if (e.evt.defaultPrevented) {
+              return;
+            }
+            console.trace("onclick");
             // Handle region selection
             if (item.parent.getSkipInteractions()) return;
             if (item.isDrawing) return;

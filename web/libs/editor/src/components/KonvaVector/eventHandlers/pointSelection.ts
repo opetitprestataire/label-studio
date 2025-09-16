@@ -140,7 +140,7 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       if (e.evt.ctrlKey || e.evt.metaKey) {
         // Check if this is the last added point and trigger onFinish
         if (props.lastAddedPointId && point.id === props.lastAddedPointId) {
-          props.onFinish?.();
+          props.onFinish?.(e);
         }
 
         const currentSelection = props.selectedPoints;
@@ -156,7 +156,7 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       if (props.skeletonEnabled) {
         // Check if this is the last added point and trigger onFinish
         if (props.lastAddedPointId && point.id === props.lastAddedPointId) {
-          props.onFinish?.();
+          props.onFinish?.(e);
         }
 
         // Use tracker for global selection management
@@ -169,7 +169,7 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
 
       // Check if this is the last added point and trigger onFinish
       if (props.lastAddedPointId && point.id === props.lastAddedPointId) {
-        props.onFinish?.();
+        props.onFinish?.(e);
       }
 
       // If no Cmd/Ctrl and not skeleton mode, clear multi-selection and select only this point

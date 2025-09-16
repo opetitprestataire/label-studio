@@ -1537,7 +1537,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
               if (distance <= hitRadius) {
                 // Trigger onFinish when clicking on the last added point
-                onFinish?.();
+                onFinish?.(e);
               }
             }
           }
@@ -1655,7 +1655,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
             // Check if this is the last added point and trigger onFinish
             if (lastAddedPointId && initialPoints[pointIndex]?.id === lastAddedPointId) {
-              onFinish?.();
+              onFinish?.(e);
             }
 
             // Call the original onClick handler if provided

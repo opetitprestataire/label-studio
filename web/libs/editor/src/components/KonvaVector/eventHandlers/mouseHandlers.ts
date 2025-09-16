@@ -951,7 +951,7 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
         if (distance <= hitRadius) {
           // Check if this is the last added point and trigger onFinish
           if (props.lastAddedPointId && point.id === props.lastAddedPointId) {
-            props.onFinish?.();
+            props.onFinish?.(e);
           }
 
           // We clicked on an existing point, don't create new points
