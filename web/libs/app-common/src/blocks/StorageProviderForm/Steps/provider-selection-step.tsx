@@ -26,7 +26,11 @@ export const ProviderSelectionStep = ({
   // Set default provider if none is selected and we have options
   useEffect(() => {
     if (!formData.provider && Object.entries(providers).length > 0) {
-      handleSelectChange("provider", providers[0].name);
+      // Find the first non-disabled provider
+      const enabledProviders = Object.values(providers).filter((provider) => !provider.disabled);
+      if (enabledProviders.length > 0) {
+        handleSelectChange("provider", enabledProviders[0].name);
+      }
     }
   }, [providers, formData.provider, handleSelectChange]);
 
@@ -38,9 +42,7 @@ export const ProviderSelectionStep = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="provider" required>
-          Storage Provider
-        </Label>
+        <Label text="Storage Provider" required />
         <ProviderGrid
           providers={providers}
           selectedProvider={formData.provider}
