@@ -49,8 +49,6 @@ Simulate multi‑turn chats by playing both user and assistant (or pair with a t
 
 ### Style
 
-The styling is applied through `<View>` tags, which are rendered as HTML `<div>` tags. 
-
 You can apply styling using inline styles directly on `View` tags or by defining CSS rules for classes in a `<Style>` block. Those classes are then applied within the labeling configuration using the `className` parameter. 
 
 This labeling configuration uses built-in classes and attributes to apply styles. 
