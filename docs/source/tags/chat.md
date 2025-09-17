@@ -22,7 +22,7 @@ Optionally, the tag can send requests to an LLM and then post the replies.
 
 To use an LLM, you need to do two things:
 
-1. Add a model provider API key to your organization. See [Model provider API keys for organizations](/guide/model_providers). 
+1. Add a model provider API key to your organization. See [Model provider API keys for organizations](https://docs.humansignal.com/guide/model_providers). 
 
 2.  Once you have added an API key for a model provider, set the `llm` attribute on the `<Chat>` tag to the model you want to use. 
 
@@ -145,7 +145,7 @@ The example JSON input data below is called in the `value="$chat"` parameter.
 ```
 
 !!! note Privacy note
-    Messages that are part of imported data or predictions follow the same privacy rules as any other data you import, and are accessible via pre-signed URLs when using cloud storage. Messages added during the labeling process are treated as annotations. See our [security documentation](guide/security#Secure-access-to-data-in-Label-Studio). 
+    Messages that are part of imported data or predictions follow the same privacy rules as any other data you import, and are accessible via pre-signed URLs when using cloud storage. Messages added during the labeling process are treated as annotations. See our [security documentation](/guide/security#Secure-access-to-data-in-Label-Studio). 
 
 !!! attention
     The chat messages that you import are not selectable. This means that you cannot edit them or apply annotations (ratings, choices, etc) to them. 
@@ -222,4 +222,4 @@ See the following example:
 - [Fine-Tune an Agent without an LLM](/templates/chat_eval)
 - [Chatbot Evaluation](/templates/chatbot)
 - [Red-Teaming in Chat](/templates/chat_red_team)
-- [Evaluate Production Conversations](/templates/chat_rlhf)
+- [Evaluate Production Conversations for RLHF](/templates/chat_rlhf)
