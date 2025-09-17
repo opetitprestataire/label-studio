@@ -474,7 +474,6 @@ const Model = types
       },
 
       handleFinish() {
-        console.log("finish");
         const tm = self.parent.getToolsManager();
         const tool = tm.findSelectedTool();
         if (tool.currentArea) {
@@ -522,7 +521,6 @@ const HtxVectorView = observer(({ item, suggestion }) => {
           ref={(kv) => item.setKonvaVectorRef(kv)}
           initialPoints={Array.from(item.vertices)}
           onFinish={(e) => {
-            console.trace("finish", e);
             e.evt.stopPropagation();
             e.evt.preventDefault();
             item.handleFinish();
@@ -537,7 +535,6 @@ const HtxVectorView = observer(({ item, suggestion }) => {
             if (e.evt.defaultPrevented) {
               return;
             }
-            console.trace("onclick");
             // Handle region selection
             if (item.parent.getSkipInteractions()) return;
             if (item.isDrawing) return;

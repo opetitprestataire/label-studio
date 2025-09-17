@@ -138,11 +138,6 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
 
       // If Cmd/Ctrl is held, add to selection (multi-selection) - this takes priority
       if (e.evt.ctrlKey || e.evt.metaKey) {
-        // Check if this is the last added point and trigger onFinish
-        if (props.lastAddedPointId && point.id === props.lastAddedPointId) {
-          props.onFinish?.(e);
-        }
-
         const currentSelection = props.selectedPoints;
         const newSelection = new Set(currentSelection);
         newSelection.add(i);
@@ -154,22 +149,12 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
 
       // Handle skeleton mode point selection (when not multi-selecting)
       if (props.skeletonEnabled) {
-        // Check if this is the last added point and trigger onFinish
-        if (props.lastAddedPointId && point.id === props.lastAddedPointId) {
-          props.onFinish?.(e);
-        }
-
         // Use tracker for global selection management
         tracker.selectPoints(props.instanceId || "unknown", new Set([i]));
         // Don't set lastAddedPointId when selecting a point - it should remain the last physically added point
         // Set the selected point as the active point for drawing
         props.setActivePointId?.(point.id);
         return true;
-      }
-
-      // Check if this is the last added point and trigger onFinish
-      if (props.lastAddedPointId && point.id === props.lastAddedPointId) {
-        props.onFinish?.(e);
       }
 
       // If no Cmd/Ctrl and not skeleton mode, clear multi-selection and select only this point

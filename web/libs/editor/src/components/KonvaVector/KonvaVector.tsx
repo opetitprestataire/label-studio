@@ -338,6 +338,9 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   const [activePointId, setActivePointId] = useState<string | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
 
+  // Flag to track if point selection was handled in VectorPoints onClick
+  const pointSelectionHandled = useRef(false);
+
   // Initialize PointCreationManager instance
   const pointCreationManager = useMemo(() => new PointCreationManager(), []);
 
@@ -1486,7 +1489,18 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       onMouseDown={disabled ? undefined : eventHandlers.handleLayerMouseDown}
       onMouseMove={disabled ? undefined : eventHandlers.handleLayerMouseMove}
       onMouseUp={disabled ? undefined : eventHandlers.handleLayerMouseUp}
-      onClick={disabled ? undefined : eventHandlers.handleLayerClick}
+      onClick={
+        disabled
+          ? undefined
+          : (e) => {
+            // Skip if point selection was already handled by VectorPoints onClick
+            if (pointSelectionHandled.current) {
+              pointSelectionHandled.current = false;
+              return;
+            }
+            eventHandlers.handleLayerClick(e);
+          }
+      }
     >
       {/* Invisible rectangle - always render to capture mouse events for cursor position updates */}
       {!disabled && (
@@ -1536,8 +1550,15 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
               );
 
               if (distance <= hitRadius) {
-                // Trigger onFinish when clicking on the last added point
-                onFinish?.(e);
+                // Find the index of the last added point
+                const lastAddedPointIndex = initialPoints.findIndex((p) => p.id === lastAddedPointId);
+
+                // Only trigger onFinish if the last added point is already selected (second click)
+                if (lastAddedPointIndex !== -1 && selectedPoints.has(lastAddedPointIndex)) {
+                  e.evt.preventDefault();
+                  onFinish?.(e);
+                  return;
+                }
               }
             }
           }
@@ -1639,6 +1660,20 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
               // Select all points in the path
               const allPointIndices = Array.from({ length: initialPoints.length }, (_, i) => i);
               tracker.selectPoints(instanceId, new Set(allPointIndices));
+              pointSelectionHandled.current = true; // Mark that we handled selection
+              e.evt.stopImmediatePropagation(); // Prevent all other handlers from running
+              return;
+            }
+
+            // Check if this is the last added point and already selected (second click)
+            const isLastAddedPoint = lastAddedPointId && initialPoints[pointIndex]?.id === lastAddedPointId;
+            const isAlreadySelected = selectedPoints.has(pointIndex);
+
+            // Only fire onFinish if this is the last added point AND it was already selected (second click)
+            if (isLastAddedPoint && isAlreadySelected) {
+              onFinish?.(e);
+              pointSelectionHandled.current = true; // Mark that we handled selection
+              e.evt.stopImmediatePropagation(); // Prevent all other handlers from running
               return;
             }
 
@@ -1653,13 +1688,12 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
               tracker.selectPoints(instanceId, new Set([pointIndex]));
             }
 
-            // Check if this is the last added point and trigger onFinish
-            if (lastAddedPointId && initialPoints[pointIndex]?.id === lastAddedPointId) {
-              onFinish?.(e);
-            }
-
             // Call the original onClick handler if provided
             onClick?.(e);
+
+            // Mark that we handled selection and prevent all other handlers from running
+            pointSelectionHandled.current = true;
+            e.evt.stopImmediatePropagation();
             return;
           }
 
