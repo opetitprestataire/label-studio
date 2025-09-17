@@ -1573,7 +1573,7 @@ Repeat the steps from the previous section but using **Add Target Storage**. Use
 
 For your **Bucket Prefix**, set an export folder to use (e.g., `exports/${project_id}`) and determine whether you want to allow files to be deleted from target storage. 
 
-When enabled, if you delete an annotation in Label Studio (via UI or API), Label Studio will also delete the corresponding exported file from your target storage for this storage connection. 
+When file deletion is enabled, if you delete an annotation in Label Studio (via UI or API), Label Studio will also delete the corresponding exported JSON file from your target storage for this storage connection. 
 
 Note that this only affects files that were exported by that target storage, not your source media or tasks. Your PAT permissions must also allow deletion.
 
