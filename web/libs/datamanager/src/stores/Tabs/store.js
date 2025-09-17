@@ -229,7 +229,7 @@ export const TabStore = types
       if (autoselect) {
         const selectedView = self.views[self.views.length - 1];
 
-        self.setSelected(selectedView);
+        yield self.setSelected(selectedView);
       }
 
       return newView;
@@ -320,7 +320,7 @@ export const TabStore = types
         const newView = self.views[self.views.length - 1];
 
         root.SDK.hasInterface("tabs") && newView.reload();
-        self.setSelected(newView);
+        yield self.setSelected(newView);
         destroy(view);
 
         return newView;
