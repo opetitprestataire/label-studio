@@ -34,6 +34,20 @@ export const ProviderSelectionStep = ({
     }
   }, [providers, formData.provider, handleSelectChange]);
 
+  // Get the selected provider config
+  const selectedProvider = formData.provider ? providers[formData.provider] : null;
+  const isSelectedProviderDisabled = selectedProvider?.disabled || false;
+
+  // Get the message content from the provider config
+  const getMessageContent = () => {
+    if (!selectedProvider?.fields) return null;
+
+    const messageField = selectedProvider.fields.find((field) => field.type === "message");
+    return messageField?.content || null;
+  };
+
+  const messageContent = getMessageContent();
+
   return (
     <div className="space-y-6">
       <div>
@@ -41,14 +55,21 @@ export const ProviderSelectionStep = ({
         <p className="text-muted-foreground">Select the cloud storage service where your data is stored</p>
       </div>
 
-      <div className="space-y-2">
-        <Label text="Storage Provider" required />
-        <ProviderGrid
-          providers={providers}
-          selectedProvider={formData.provider}
-          onProviderSelect={(providerName) => handleSelectChange("provider", providerName)}
-          error={errors.provider}
-        />
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label text="Storage Provider" required />
+          <ProviderGrid
+            providers={providers}
+            selectedProvider={formData.provider}
+            onProviderSelect={(providerName) => handleSelectChange("provider", providerName)}
+            error={errors.provider}
+          />
+        </div>
+
+        {/* Show alert message when disabled provider is selected */}
+        {isSelectedProviderDisabled && messageContent && (
+          <div>{typeof messageContent === "function" ? messageContent({}) : messageContent}</div>
+        )}
       </div>
     </div>
   );

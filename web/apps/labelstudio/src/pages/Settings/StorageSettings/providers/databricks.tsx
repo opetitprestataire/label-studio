@@ -1,5 +1,5 @@
 import { EnterpriseBadge } from "@humansignal/ui";
-import { Alert, AlertTitle, AlertDescription } from "@humansignal/shad/components/ui/alert";
+import { Alert, AlertDescription } from "@humansignal/shad/components/ui/alert";
 import { IconCloudProviderDatabricks } from "@humansignal/icons";
 import type { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
 
@@ -16,16 +16,10 @@ const databricksProvider: ProviderConfig = {
       type: "message",
       content: (
         <Alert variant="destructive">
-          <AlertTitle>
-            <div className="flex items-center gap-2">
-              Databricks Files (UC Volumes)
-              <EnterpriseBadge />
-            </div>
-          </AlertTitle>
-          <AlertDescription>
-            Databricks connectivity is available in Label Studio Enterprise.{" "}
+          <AlertDescription className="text-neutral-content">
+            Databricks Files (UC Volumes) is available in Label Studio Enterprise.{" "}
             <a
-              href="https://humansignal.com/pricing"
+              href="https://docs.humansignal.com/guide/storage.html#Databricks-Files-UC-Volumes"
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:no-underline"

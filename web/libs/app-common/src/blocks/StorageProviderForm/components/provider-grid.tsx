@@ -21,21 +21,16 @@ export const ProviderGrid = ({ providers, selectedProvider, onProviderSelect, er
             <button
               key={provider.name}
               type="button"
-              onClick={() => !isDisabled && onProviderSelect(provider.name)}
-              disabled={isDisabled}
+              onClick={() => onProviderSelect(provider.name)}
               data-testid={`storage-provider-${provider.name}`}
               className={cn(
                 "relative p-base border-2 rounded-lg transition-all duration-200 text-center",
                 "flex flex-col items-center gap-tight relative text-neutral-content",
-                isDisabled
-                  ? "border-neutral-border-subtle cursor-not-allowed bg-neutral-surface text-neutral-content-subtler"
-                  : [
-                      "hover:border-primary-border-subtle hover:bg-primary-emphasis-subtle",
-                      "hover:-translate-y-tightest focus:outline-none focus:ring-2 focus:ring-primary-focus-outline focus:ring-offset-2",
-                      isSelected
-                        ? "border-primary-border-subtle bg-primary-emphasis-subtle shadow-sm"
-                        : "border-neutral-border hover:border-primary-border-subtle",
-                    ],
+                "hover:border-primary-border-subtle hover:bg-primary-emphasis-subtle",
+                "hover:-translate-y-tightest focus:outline-none focus:ring-2 focus:ring-primary-focus-outline focus:ring-offset-2",
+                isSelected
+                  ? "border-primary-border-subtle bg-primary-emphasis-subtle shadow-sm"
+                  : "border-neutral-border hover:border-primary-border-subtle",
               )}
               aria-pressed={isSelected}
               aria-disabled={isDisabled}
