@@ -106,7 +106,7 @@ class TestTaskAPI(APITestCase):
 
         assert response.status_code == 400
         response_data = response.json()
-        assert response_data['validation_errors']['non_field_errors'] == ['Project is required for task creation']
+        assert response_data['validation_errors']['project'] == ['This field is required.']
 
     def test_create_task_with_project_id_succeeds(self):
         """Test that creating a task with valid project ID succeeds"""

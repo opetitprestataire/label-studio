@@ -217,7 +217,15 @@ class BaseTaskSerializer(FlexFieldsModelSerializer):
 
         current_request = get_current_request()
         if current_request and current_request.method == 'POST' and not project:
-            raise ValidationError('Project is required for task creation')
+            # raise ValidationError for the project field with standard DRF message
+            try:
+                self.fields['project'].fail('required')
+            except ValidationError as exc:
+                raise ValidationError(
+                    {
+                        'project': exc.detail,
+                    }
+                )
 
         validator = TaskValidator(
             project,
