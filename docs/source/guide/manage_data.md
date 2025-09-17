@@ -217,14 +217,12 @@ Score displayed in column for this task: `33.33%`
 #### `All Annotators` and `All Model Versions` selected, `Ground Truth` unselected
 This will average all annoations pair's scores, as well as all annotation <> model version pair's scores
 1. Annotation 1 <> Annotation 2 - agreement score is `0`
-2. Annotation 1 <> Annotation 3 - agreement score is `1`
-3. Annotation 2 <> Annotation 3 - agreement score is `0`
 4. Annotation 1 <> Prediction 1 - agreement score is `0`
 5. Annotation 1 <> Prediction 2 - agreement score is `1`
 6. Annotation 2 <> Prediction 1 - agreement score is `1`
 7. Annotation 2 <> Prediction 2 - agreement score is `0`
 
-Score displayed in column for this task: `42.85%` 
+Score displayed in column for this task: `40%` 
 
 #### `Ground Truth` and `model version 2` selected
 This will compare all ground truth annotations with all predictions from `model version 2`
