@@ -157,8 +157,8 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       if (props.skeletonEnabled) {
         // Use tracker for global selection management
         tracker.selectPoints(props.instanceId || "unknown", new Set([i]));
-        // Don't set lastAddedPointId when selecting a point - it should remain the last physically added point
-        // Set the selected point as the active point for drawing
+        // In skeleton mode, update the active point when selecting a different point
+        // This ensures onFinish only fires for the currently selected point
         props.setActivePointId?.(point.id);
         return true;
       }

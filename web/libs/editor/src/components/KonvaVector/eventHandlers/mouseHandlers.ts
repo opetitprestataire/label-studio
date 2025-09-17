@@ -994,6 +994,10 @@ function handlePointSelectionFromIndex(
   // Update activePointId for skeleton mode - set the selected point as the active point
   if (pointIndex >= 0 && pointIndex < props.initialPoints.length) {
     const selectedPoint = props.initialPoints[pointIndex];
-    props.setActivePointId?.(selectedPoint.id);
+    // In skeleton mode, always update the active point when selecting a point
+    // This ensures onFinish only fires for the currently selected point
+    if (props.skeletonEnabled) {
+      props.setActivePointId?.(selectedPoint.id);
+    }
   }
 }
