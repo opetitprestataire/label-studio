@@ -135,6 +135,8 @@ If you have duplicate tasks, or want to remove annotations, you can delete tasks
 
 If you want to make changes to the labeling interface or perform a different type of data labeling, first select all the annotations for your dataset and delete the annotations.
 
+<div class="enterprise-only">
+
 ## Agreement and Agreement (Selected) columns
 
 These two columns allow you to see agreement scores at a task level. 
@@ -228,3 +230,4 @@ Annotation 1 is marked as ground truth and Prediction 2 is from `model version 2
 1. Annotation 1 <> Prediction 2 - agreement score is `1`
 
 Score displayed in column for this task: `100%` 
+</div>
