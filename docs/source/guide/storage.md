@@ -1571,7 +1571,11 @@ If everything looks correct, click **Save & Sync** to sync immediately, or click
 
 Repeat the steps from the previous section but using **Add Target Storage**. Use the same workspace host, token, and volume path (UC coordinates). 
 
-For your **Bucket Prefix**, set an export folder to use (e.g., `exports/${project_id}`) and determine w
+For your **Bucket Prefix**, set an export folder to use (e.g., `exports/${project_id}`) and determine whether you want to allow files to be deleted from target storage. 
+
+When enabled, if you delete an annotation in Label Studio (via UI or API), Label Studio will also delete the corresponding exported file from your target storage for this storage connection. 
+
+Note that this only affects files that were exported by that target storage, not your source media or tasks. Your PAT permissions must also allow deletion.
 
 After adding, click **Sync** to export annotations as JSON files to your target volume.
 
