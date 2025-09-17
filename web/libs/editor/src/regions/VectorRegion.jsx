@@ -478,11 +478,11 @@ const Model = types
         const tool = tm.findSelectedTool();
         if (tool.currentArea) {
           tool?.commitDrawingRegion();
-          tool?.complete();
         } else {
           const annotation = self.parent?.annotation;
           annotation?.toggleRegionSelection(self);
         }
+        tool?.complete();
       },
     };
   });

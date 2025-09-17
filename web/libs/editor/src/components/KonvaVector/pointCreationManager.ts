@@ -403,6 +403,8 @@ export class PointCreationManager {
     // Set this as the last added point
     this.props.setLastAddedPointId?.(newPoint.id);
 
+    // Note: We don't need to select the point here since we're using activePointId for onFinish logic
+
     // Active point management
     if (this.props.skeletonEnabled && this.props.activePointId) {
       // In skeleton mode: always maintain the manually selected point for branching
@@ -543,6 +545,8 @@ export class PointCreationManager {
 
     // Set this as the last added point
     this.props.setLastAddedPointId?.(newPoint.id);
+
+    // Note: We don't need to select the point here since we're using activePointId for onFinish logic
 
     // Active point management
     if (this.props.skeletonEnabled && this.props.activePointId) {

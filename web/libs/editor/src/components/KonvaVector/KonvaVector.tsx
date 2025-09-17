@@ -1493,13 +1493,13 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
         disabled
           ? undefined
           : (e) => {
-            // Skip if point selection was already handled by VectorPoints onClick
-            if (pointSelectionHandled.current) {
-              pointSelectionHandled.current = false;
-              return;
+              // Skip if point selection was already handled by VectorPoints onClick
+              if (pointSelectionHandled.current) {
+                pointSelectionHandled.current = false;
+                return;
+              }
+              eventHandlers.handleLayerClick(e);
             }
-            eventHandlers.handleLayerClick(e);
-          }
       }
     >
       {/* Invisible rectangle - always render to capture mouse events for cursor position updates */}
