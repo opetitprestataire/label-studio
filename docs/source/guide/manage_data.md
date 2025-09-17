@@ -206,7 +206,7 @@ Lets say for one task we have the following:
 
 Here is how the score would be calculated for various selections in the dropdown
 
-- `All Annotators` selected, `Ground Truth` and `All Model Versions` unselected
+#### `All Annotators` selected, `Ground Truth` and `All Model Versions` unselected
 This will match the behavior of the `Agreement` column - all annotator pair's scores will be averaged
 1. Annotation 1 <> Annotation 2 - agreement score is `0`
 2. Annotation 1 <> Annotation 3 - agreement score is `1`
@@ -214,7 +214,7 @@ This will match the behavior of the `Agreement` column - all annotator pair's sc
 
 Score displayed in column for this task: `33.33%`
 
-- `All Annotators` and `All Model Versions` selected, `Ground Truth` unselected
+#### `All Annotators` and `All Model Versions` selected, `Ground Truth` unselected
 This will average all annoations pair's scores, as well as all annotation <> model version pair's scores
 1. Annotation 1 <> Annotation 2 - agreement score is `0`
 2. Annotation 1 <> Annotation 3 - agreement score is `1`
@@ -226,7 +226,7 @@ This will average all annoations pair's scores, as well as all annotation <> mod
 
 Score displayed in column for this task: `42.85%` 
 
-- `Ground Truth` and `model version 2` selected
+#### `Ground Truth` and `model version 2` selected
 This will compare all ground truth annotations with all predictions from `model version 2`
 Annotation 1 is marked as ground truth and Prediction 2 is from `model version 2`
 1. Annotation 1 <> Prediction 2 - agreement score is `1`
