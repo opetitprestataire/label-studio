@@ -55,7 +55,7 @@ For example, the annotator will only see the following choices when they select 
 
 ```xml
 <View visibleWhen="region-selected" whenRole="user">
-  <Choices>
+  <Choices name="choices" toName="chat" perRegion="true">
     <Choice value="User choice 1"/>
     <Choice value="User choice 2"/>
   </Choices>
