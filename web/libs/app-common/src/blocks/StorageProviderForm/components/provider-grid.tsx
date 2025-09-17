@@ -26,9 +26,9 @@ export const ProviderGrid = ({ providers, selectedProvider, onProviderSelect, er
               data-testid={`storage-provider-${provider.name}`}
               className={cn(
                 "relative p-base border-2 rounded-lg transition-all duration-200 text-center",
-                "flex flex-col items-center gap-tight relative text-center",
+                "flex flex-col items-center gap-tight relative text-neutral-content",
                 isDisabled
-                  ? "border-neutral-border-subtle cursor-not-allowed bg-neutral-surface"
+                  ? "border-neutral-border-subtle cursor-not-allowed bg-neutral-surface text-neutral-content-subtler"
                   : [
                       "hover:border-primary-border-subtle hover:bg-primary-emphasis-subtle",
                       "hover:-translate-y-tightest focus:outline-none focus:ring-2 focus:ring-primary-focus-outline focus:ring-offset-2",
@@ -42,14 +42,7 @@ export const ProviderGrid = ({ providers, selectedProvider, onProviderSelect, er
             >
               {Icon && <Icon className="w-8 h-8" />}
               <div className="flex-1 min-w-0 text-center">
-                <h3
-                  className={cn(
-                    "text-body-medium truncate whitespace-pre",
-                    isDisabled ? "text-neutral-content-subtler" : "text-neutral-content",
-                  )}
-                >
-                  {provider.title}
-                </h3>
+                <h3 className="text-body-medium truncate whitespace-pre">{provider.title}</h3>
                 {provider.badge && (
                   <div className="mt-1 flex justify-center whitespace-pre absolute -bottom-tight left-1/2 -translate-x-[40px]">
                     {provider.badge}
