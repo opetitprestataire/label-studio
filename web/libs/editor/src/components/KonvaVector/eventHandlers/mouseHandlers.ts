@@ -973,33 +973,13 @@ export function createClickHandler(props: EventHandlerProps, handledSelectionInM
 function handlePointSelectionFromIndex(
   pointIndex: number,
   props: EventHandlerProps,
-  event?: KonvaEventObject<MouseEvent>,
+  event: KonvaEventObject<MouseEvent>,
 ) {
   // Check if this is the active point (the one user is currently drawing from)
   if (props.activePointId && pointIndex < props.initialPoints.length) {
     const point = props.initialPoints[pointIndex];
-    console.log(
-      "Mouse up: Checking onFinish for point",
-      pointIndex,
-      "point.id:",
-      point.id,
-      "activePointId:",
-      props.activePointId,
-    );
     if (point.id === props.activePointId) {
-      console.log("Mouse up: onFinish fired!");
-      // Use the real event if available, otherwise create a minimal one
-      const onFinishEvent =
-        event ||
-        ({
-          evt: {
-            shiftKey: false,
-            ctrlKey: false,
-            metaKey: false,
-            altKey: false,
-          },
-        } as KonvaEventObject<MouseEvent>);
-      props.onFinish?.(onFinishEvent);
+      props.onFinish?.(event!);
       return; // Don't proceed with selection
     }
   }

@@ -138,14 +138,6 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
 
       // Check if this is the active point (the one user is currently drawing from)
       if (props.activePointId && point.id === props.activePointId) {
-        console.log(
-          "Click handler: onFinish fired for point",
-          i,
-          "point.id:",
-          point.id,
-          "activePointId:",
-          props.activePointId,
-        );
         props.onFinish?.(e);
         return true; // Don't proceed with selection
       }
