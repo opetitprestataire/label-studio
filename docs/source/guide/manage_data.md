@@ -143,7 +143,7 @@ These two columns allow you to see agreement scores at a task level.
 
 This is the average agreement score between all annotators for a particular task. Each annotation pair's agreement score will be calculated as new annotations are submitted. For example if there are three annotations for a task, there will be three unique annotation pairs, and the agreement column will show the average agreement score of those three pairs. 
 
-Here is an example with a simple label config. Let's assume we are using ["Exact matching choices" agreement calculation](stats.md#Exact-matching-choices-example)
+Here is an example with a simple label config. Let's assume we are using ["Exact matching choices" agreement calculation](stats#Exact-matching-choices-example)
 ```xml
 <View>
   <Image name="image_object" value="$image_url"/>
