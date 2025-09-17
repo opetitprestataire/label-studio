@@ -21,7 +21,7 @@
 
 .label {
   margin: 1px;
-  background: var(--color-accent-persimmon-subtlest);
+  background: linear-gradient(135deg, var(--color-accent-canteloupe-subtlest) 0%, var(--color-accent-persimmon-subtlest) 50%, var(--color-accent-plum-subtlest) 100%);
   color: var(--color-accent-persimmon-base);
   border-radius: 3px;
   font-size: 11px;
