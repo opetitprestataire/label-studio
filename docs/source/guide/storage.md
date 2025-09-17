@@ -1520,7 +1520,7 @@ Complete the following fields and then click **Test connection**:
 | | |
 | --- | --- |
 | Storage Title | Enter a name for the storage connection to appear in Label Studio. | 
-| Workspace Host | Enter your workspace URL, for example `https://<workspace-identifier>.cloud.databricks.com/` |
+| Workspace Host | Enter your workspace URL, for example `https://<workspace-identifier>.cloud.databricks.com` |
 | Access Token | Enter your personal access token that you generated in Databricks. |
 | Catalog <br> Schema <br> Volume | Specify your volume path (UC coordinates). You can find this from the **Catalog Explorer** in Databricks (see screenshot below). |
 
@@ -1561,7 +1561,7 @@ If everything looks correct, click **Save & Sync** to sync immediately, or click
 !!! note "Troubleshooting"
     - If your file preview returns zero files, verify the path under `/Volumes/<catalog>/<schema>/<volume>/<prefix?>` and your PAT permissions.
     - Ensure the Workspace Host has no trailing slash and matches your workspace domain.
-    - If previews work but media fails to load, confirm proxy mode is allowed for your organization in Label Studio and network egress allows Label Studio to reach Databricks.
+    - If previews work but media fails to load, confirm proxy mode is allowed for your organization in Label Studio (**Organization > Usage & License > Features**) and network egress allows Label Studio to reach Databricks.
 
 
 !!! warning "Proxy and security"
