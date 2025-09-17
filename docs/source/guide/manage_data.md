@@ -207,12 +207,10 @@ Lets say for one task we have the following:
 Here is how the score would be calculated for various selections in the dropdown
 
 #### `All Annotators` selected, `Ground Truth` and `All Model Versions` unselected
-This will match the behavior of the `Agreement` column - all annotator pair's scores will be averaged
+This will match the behavior of the `Agreement` column - all annotation pair's scores will be averaged
 1. Annotation 1 <> Annotation 2 - agreement score is `0`
-2. Annotation 1 <> Annotation 3 - agreement score is `1`
-3. Annotation 2 <> Annotation 3 - agreement score is `0`
 
-Score displayed in column for this task: `33.33%`
+Score displayed in column for this task: `0%`
 
 #### `All Annotators` and `All Model Versions` selected, `Ground Truth` unselected
 This will average all annoations pair's scores, as well as all annotation <> model version pair's scores
