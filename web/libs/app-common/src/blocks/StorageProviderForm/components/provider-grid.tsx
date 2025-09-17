@@ -10,8 +10,8 @@ interface ProviderGridProps {
 
 export const ProviderGrid = ({ providers, selectedProvider, onProviderSelect, error }: ProviderGridProps) => {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-tight">
+    <div className="flex flex-col gap-tight">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-base">
         {Object.entries(providers).map(([_, provider]) => {
           const isSelected = selectedProvider === provider.name;
           const isDisabled = provider.disabled;
@@ -24,7 +24,7 @@ export const ProviderGrid = ({ providers, selectedProvider, onProviderSelect, er
               onClick={() => onProviderSelect(provider.name)}
               data-testid={`storage-provider-${provider.name}`}
               className={cn(
-                "relative p-base border-2 rounded-lg transition-all duration-200 text-center",
+                "relative p-base border-2 rounded-lg transition-all duration-200 text-center min-h-[120px]",
                 "flex flex-col items-center gap-tight relative text-neutral-content",
                 "hover:border-primary-border-subtle hover:bg-primary-emphasis-subtle",
                 "hover:-translate-y-tightest focus:outline-none focus:ring-2 focus:ring-primary-focus-outline focus:ring-offset-2",

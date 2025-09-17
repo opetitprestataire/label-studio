@@ -1,13 +1,14 @@
 import { EnterpriseBadge, IconSpark } from "@humansignal/ui";
 import { Alert, AlertTitle, AlertDescription } from "@humansignal/shad/components/ui/alert";
-import { IconCloudProviderDatabricks } from "@humansignal/icons";
+import { IconCloudProviderAzure } from "@humansignal/icons";
 import type { ProviderConfig } from "@humansignal/app-common/blocks/StorageProviderForm/types/provider";
 
-const databricksProvider: ProviderConfig = {
-  name: "databricks",
-  title: "Databricks Files\n(UC Volumes)",
-  description: "Configure your Databricks Unity Catalog Volumes connection with all required settings (proxy only)",
-  icon: IconCloudProviderDatabricks,
+const azureSpiProvider: ProviderConfig = {
+  name: "azure_spi",
+  title: "Azure Blob Storage\nwith Service Principal",
+  description:
+    "Configure your Azure Blob Storage connection using Service Principal authentication for enhanced security (proxy only)",
+  icon: IconCloudProviderAzure,
   disabled: true,
   badge: <EnterpriseBadge />,
   fields: [
@@ -19,9 +20,9 @@ const databricksProvider: ProviderConfig = {
           <IconSpark />
           <AlertTitle>Enterprise Feature</AlertTitle>
           <AlertDescription>
-            Databricks Files (UC Volumes) is available in Label Studio Enterprise.{" "}
+            Azure Blob Storage with Service Principal is available in Label Studio Enterprise.{" "}
             <a
-              href="https://docs.humansignal.com/guide/storage.html#Databricks-Files-UC-Volumes"
+              href="https://docs.humansignal.com/guide/storage.html#Azure-Blob-Storage-with-Service-Principal-authentication"
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:no-underline"
@@ -36,4 +37,4 @@ const databricksProvider: ProviderConfig = {
   layout: [{ fields: ["enterprise_info"] }],
 };
 
-export default databricksProvider;
+export default azureSpiProvider;
