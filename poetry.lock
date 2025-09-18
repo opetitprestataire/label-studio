@@ -4266,14 +4266,14 @@ files = [
 
 [[package]]
 name = "rq"
-version = "2.5.0"
+version = "2.6.0"
 description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "rq-2.5.0-py3-none-any.whl", hash = "sha256:90c74eb5b5793ff08e6c3391fd6deb7151f308ac8f04b6831580b38e90688155"},
-    {file = "rq-2.5.0.tar.gz", hash = "sha256:b55d328fcaeaf25823b8b8450283225f8048bd1c52abaaca192c99201ab5c687"},
+    {file = "rq-2.6.0-py3-none-any.whl", hash = "sha256:be5ccc0f0fc5f32da0999648340e31476368f08067f0c3fce6768d00064edbb5"},
+    {file = "rq-2.6.0.tar.gz", hash = "sha256:92ad55676cda14512c4eea5782f398a102dc3af108bea197c868c4c50c5d3e81"},
 ]
 
 [package.dependencies]
@@ -5126,4 +5126,4 @@ uwsgi = ["pyuwsgi", "uwsgitop"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4"
-content-hash = "0433b9ed739a33e73d879c58e8e718811c7a43a117032bc5594d50b58f66571f"
+content-hash = "69e73a798b2bcd05bdc5f584398ed59c906afdd0d7e206a84da48ad976fbac53"
