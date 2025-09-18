@@ -8,7 +8,6 @@ import Types from "../../core/Types";
 import { AnnotationMixin } from "../../mixins/AnnotationMixin";
 import SeparatedControlMixin from "../../mixins/SeparatedControlMixin";
 import { ToolManagerMixin } from "../../mixins/ToolManagerMixin";
-import ToolsManager from "../../tools/Manager";
 
 const hotkeys = Hotkey("Vectors");
 
@@ -87,14 +86,7 @@ const Model = types
     return {
       initializeHotkeys() {
         hotkeys.addNamed("vector:undo", () => {
-          if (self.annotation?.selected && self.annotation.isDrawing) {
-            self.annotation.undo();
-            const tms = ToolsManager.allInstances();
-            const tool = tms.flatMap((tm) => tm.findSelectedTool())[0];
-
-            const area = tool?.commitDrawingRegion();
-            area && self.annotation.selectArea(area);
-          }
+          if (self.annotation?.selected && self.annotation.isDrawing) self.annotation.undo();
         });
         hotkeys.addNamed("vector:redo", () => {
           if (self.annotation?.selected && self.annotation.isDrawing) self.annotation.redo();
