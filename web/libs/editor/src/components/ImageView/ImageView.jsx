@@ -40,8 +40,6 @@ const imgDefaultProps = {};
 
 if (isFF(FF_LSDV_4711)) imgDefaultProps.crossOrigin = "anonymous";
 
-const LEFT_BUTTON = 1;
-
 const splitRegions = (regions) => {
   const brushRegions = [];
   const shapeRegions = [];
@@ -590,14 +588,8 @@ export default observer(
       // of the mask to detect cursor-region collision.
       const allowedHoverTypes = /bitmask|vector/i;
       const hasSelected = item.selectedRegions.some((r) => r.type.match(allowedHoverTypes) !== null);
-      const isAllowedTool =
-        item.getToolsManager().findSelectedTool()?.toolName?.match?.(allowedHoverTypes) !== null ?? false;
-
-      // We want to avoid weird behavior here with drawing while selecting another region
-      // so we just do nothing when clicked outside AND we have a tool selected
-      if (hasSelected && isAllowedTool) {
-        return;
-      }
+      const tool = item.getToolsManager().findSelectedTool();
+      const isAllowedTool = tool?.toolName?.match?.(allowedHoverTypes) !== null ?? false;
 
       const hoveredRegion = item.regs.find((reg) => {
         if (reg.selected) return false;
@@ -606,7 +598,9 @@ export default observer(
       });
 
       if (hoveredRegion && !evt.defaultPrevented) {
+        tool?.disable();
         hoveredRegion.onClickRegion(e);
+        tool?.enable();
         return;
       }
       return item.event("click", evt, x, y);
@@ -827,7 +821,7 @@ export default observer(
         item.event("mousemove", e, e.evt.offsetX, e.evt.offsetY);
       }
 
-      if (!e.evt.ctrlKey && !e.evt.shiftKey && e.evt.button !== LEFT_BUTTON) {
+      if (!e.evt.ctrlKey && !e.evt.shiftKey) {
         const allowedTypes = /bitmask|vector/;
         const tool = item.getToolsManager().findSelectedTool();
 
@@ -835,8 +829,6 @@ export default observer(
         if (!item.regs.some((r) => r.type.match(allowedTypes) !== null)) return;
 
         requestAnimationFrame(() => {
-          tool?.enable();
-
           for (const region of item.regs) {
             region.setHighlight(false);
             region.updateCursor(false);
@@ -849,8 +841,6 @@ export default observer(
             const hovered = (checkHover && region.isHovered?.()) ?? false;
 
             if (hovered) {
-              // region.setHighlight(true);
-              tool?.disable();
               region.updateCursor(true);
               break;
             }
