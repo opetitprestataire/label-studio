@@ -170,7 +170,7 @@ The agreement column for this task would show the average of all annotation pair
 
 The agreement (selected) column builds on top of the agreement column, allowing you to get agreement scores between annotators, ground truth, and model versions. The column header is a dropdown where you can make your selection of what to include in the calculation. 
 
--------------- INCLUDE SCREENSHOT HERE --------------
+<img src="/images/project/agreement-selected.png" class="gif-border" style="max-width:679px">
 
 At least two selections need to be made before clicking Apply, which will calculate scores based on your selection and update the column with the appropriate scores. 
 
