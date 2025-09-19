@@ -151,7 +151,7 @@ const _Tool = types
         // to make sure KonvaVector was fully initialized
         setTimeout(() => {
           self.currentArea.startPoint(rx, ry);
-        }, 50);
+        }, 10);
       },
 
       mousedownEv(e, [x, y]) {
@@ -173,13 +173,13 @@ const _Tool = types
       mouseupEv(_, [x, y]) {
         if (!self.isDrawing) return;
         const { x: rx, y: ry } = self.realCoordsFromCursor(x, y);
-        self.currentArea?.commitPoint?.(rx, ry);
         down = false;
 
         // skipping a frame to let KonvaVector render and update properly
         setTimeout(() => {
+          self.currentArea?.commitPoint?.(rx, ry);
           self.finishDrawing();
-        }, 120);
+        }, 10);
       },
 
       checkDistance(x, y) {
