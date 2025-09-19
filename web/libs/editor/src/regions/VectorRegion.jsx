@@ -470,7 +470,7 @@ const Model = types
       //
       // Will create a new point if it was started but never updated (regular click)
       commitPoint(x, y) {
-        self.vectorRef.commitPoint(x, y);
+        self.vectorRef?.commitPoint(x, y);
       },
 
       handleFinish() {

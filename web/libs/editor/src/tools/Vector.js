@@ -150,9 +150,8 @@ const _Tool = types
         // we must skip one frame before starting a line
         // to make sure KonvaVector was fully initialized
         setTimeout(() => {
-          self.annotation.history.freeze();
           self.currentArea.startPoint(rx, ry);
-        });
+        }, 50);
       },
 
       mousedownEv(e, [x, y]) {
@@ -180,8 +179,7 @@ const _Tool = types
         // skipping a frame to let KonvaVector render and update properly
         setTimeout(() => {
           self.finishDrawing();
-          self.annotation.history.unfreeze();
-        });
+        }, 120);
       },
 
       checkDistance(x, y) {
