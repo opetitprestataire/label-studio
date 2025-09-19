@@ -592,7 +592,7 @@ export default observer(
       const isAllowedTool = tool?.toolName?.match?.(allowedHoverTypes) !== null ?? false;
 
       const hoveredRegion = item.regs.find((reg) => {
-        if (reg.selected) return false;
+        if (reg.selected || tool?.isDrawing) return false;
 
         return reg.isHovered?.() ?? false;
       });
