@@ -29,19 +29,21 @@ This can be useful in a number of ways:
 
 | User role             | Access restrictions                                                                                  |
 |-----------------------|------------------------------------------------------------------------------------------------------|
-| Owner <br><br> Admin      | Can access from the Organization and the Home page. <br> Can filter for all users. <br> Can filter for all workspaces. |
-| Manager               | Can access from the Home page. <br> Can filter for all users. <br> Can only filter for workspaces or projects in which they are a member. |
+| Owner <br><br> Admin      | Can access from the Organization page, the Home page, and the Members dashboard. <br> Can filter for all users. <br> Can filter for all workspaces. |
+| Manager               | Can access from the Home page and the Members dashboard. <br> Can filter for all users. <br> Can only filter for workspaces or projects in which they are a member. |
 | Reviewer <br><br> Annotator | Can access from the Home page. <br> Can only see their own annotation history. <br> Can only filter for workspaces or projects in which they are a member. |
 
-There are two ways to access the dashboard: 
+There are three ways to access the dashboard. The options available to you depend on your user role (see the table above).
 
 * From the **Organization** page, select a user on the **Members** page. Then select **Annotator Performance Report** on the right. 
-* From the Home page, click **Annotator Dashboard**. 
 
-![Screenshot of Performance Report button](/images/project/user_report.png)
+    ![Screenshot of Performance Report button](/images/project/user_report.png)
+* From the **Home** page, click **Annotator Dashboard**. This will pre-select your own annotator performance dashboard. 
 
-![Screenshot of Performance link on Home page](/images/project/apd-home.png)
+    ![Screenshot of link on Home page](/images/project/apd-home.png)
+* From the **Members** dashboard on a project, click the overflow menu next to a username in the **Annotation Summary** table. This will pre-select that user's annotator performance dashboard for that specific project.  
 
+    ![Screenshot of link on Members page](/images/project/apd-members.png)
 
 
 ## Export data
