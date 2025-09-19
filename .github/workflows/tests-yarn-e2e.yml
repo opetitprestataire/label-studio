@@ -31,7 +31,7 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
 
-      - name: Setup frontend environment
+      - name: Setup frontend environment No DOCKER
         uses: ./.github/actions/setup-frontend-environment
         with:
           node-version: "${{ env.NODE }}"
