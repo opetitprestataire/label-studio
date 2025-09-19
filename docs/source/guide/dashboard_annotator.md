@@ -16,6 +16,9 @@ date: 2024-04-04 11:50:41
 
 The annotator performance dashboard provides metrics about a user's annotation activities over a period of time, including how many tasks an annotator has completed and how quickly. 
 
+![Screenshot of Performance dashboard](/images/project/apd.png)
+
+
 This can be useful in a number of ways: 
 
 - **Resource management optimization**: If you have a project that is on a rigid timeline, you can determine which annotators have the quickest turnaround and assign them as necessary. 
@@ -24,13 +27,22 @@ This can be useful in a number of ways:
 
 ## Access the dashboard
 
-The dashboard is available from the Organization page, meaning that your user role must be an Owner or Administrator to have the necessary permissions to view it. 
+| User role             | Access restrictions                                                                                  |
+|-----------------------|------------------------------------------------------------------------------------------------------|
+| Owner <br><br> Admin      | Can access from the Organization and the Home page. <br> Can filter for all users. <br> Can filter for all workspaces. |
+| Manager               | Can access from the Home page. <br> Can filter for all users. <br> Can only filter for workspaces or projects in which they are a member. |
+| Reviewer <br><br> Annotator | Can access from the Home page. <br> Can only see their own annotation history. <br> Can only filter for workspaces or projects in which they are a member. |
 
-From the organization members list, select the user you want to view. Annotator performance reports are available for users in all roles, not just the Annotator role. 
+There are two ways to access the dashboard: 
 
-With the user selected, click **Annotator Performance Report** on the right. 
+* From the **Organization** page, select a user on the **Members** page. Then select **Annotator Performance Report** on the right. 
+* From the Home page, click **Annotator Dashboard**. 
 
 ![Screenshot of Performance Report button](/images/project/user_report.png)
+
+![Screenshot of Performance link on Home page](/images/project/apd-home.png)
+
+
 
 ## Export data
 
