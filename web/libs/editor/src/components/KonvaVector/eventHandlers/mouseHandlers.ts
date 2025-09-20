@@ -976,7 +976,11 @@ function handlePointSelectionFromIndex(
   event: KonvaEventObject<MouseEvent>,
 ) {
   // Check if this is the active point (the one user is currently drawing from)
-  if (props.activePointId && pointIndex < props.initialPoints.length) {
+  if (
+    props.activePointId &&
+    pointIndex < props.initialPoints.length &&
+    !(event.evt.ctrlKey || event.evt.shiftKey || event.evt.metaKey || event.evt.altKey)
+  ) {
     const point = props.initialPoints[pointIndex];
     if (point.id === props.activePointId) {
       props.onFinish?.(event!);

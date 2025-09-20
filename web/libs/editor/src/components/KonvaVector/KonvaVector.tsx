@@ -1554,9 +1554,15 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
                 const lastAddedPointIndex = initialPoints.findIndex((p) => p.id === lastAddedPointId);
 
                 // Only trigger onFinish if the last added point is already selected (second click)
+                // and no modifiers are pressed (ctrl, meta, shift, alt)
                 if (lastAddedPointIndex !== -1 && selectedPoints.has(lastAddedPointIndex)) {
-                  e.evt.preventDefault();
-                  onFinish?.(e);
+                  const hasModifiers = e.evt.ctrlKey || e.evt.metaKey || e.evt.shiftKey || e.evt.altKey;
+                  if (!hasModifiers) {
+                    e.evt.preventDefault();
+                    onFinish?.(e);
+                    return;
+                  }
+                  // If modifiers are held, skip onFinish entirely and let normal modifier handling take over
                   return;
                 }
               }
@@ -1670,10 +1676,16 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             const isAlreadySelected = selectedPoints.has(pointIndex);
 
             // Only fire onFinish if this is the last added point AND it was already selected (second click)
+            // and no modifiers are pressed (ctrl, meta, shift, alt)
             if (isLastAddedPoint && isAlreadySelected) {
-              onFinish?.(e);
-              pointSelectionHandled.current = true; // Mark that we handled selection
-              e.evt.stopImmediatePropagation(); // Prevent all other handlers from running
+              const hasModifiers = e.evt.ctrlKey || e.evt.metaKey || e.evt.shiftKey || e.evt.altKey;
+              if (!hasModifiers) {
+                onFinish?.(e);
+                pointSelectionHandled.current = true; // Mark that we handled selection
+                e.evt.stopImmediatePropagation(); // Prevent all other handlers from running
+                return;
+              }
+              // If modifiers are held, skip onFinish entirely and let normal modifier handling take over
               return;
             }
 
@@ -1699,6 +1711,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
 
           // When not disabled, let the normal event handlers handle it
           // The point click will be detected by the layer-level handlers
+          //
         }}
       />
 

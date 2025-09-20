@@ -137,9 +137,15 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       }
 
       // Check if this is the active point (the one user is currently drawing from)
+      // Only trigger onFinish if no modifiers are pressed (ctrl, meta, shift, alt)
       if (props.activePointId && point.id === props.activePointId) {
-        props.onFinish?.(e);
-        return true; // Don't proceed with selection
+        const hasModifiers = e.evt.ctrlKey || e.evt.metaKey || e.evt.shiftKey || e.evt.altKey;
+        if (!hasModifiers) {
+          props.onFinish?.(e);
+          return true; // Don't proceed with selection
+        }
+        // If modifiers are held, skip onFinish entirely and let normal modifier handling take over
+        return false;
       }
 
       // If Cmd/Ctrl is held, add to selection (multi-selection) - this takes priority

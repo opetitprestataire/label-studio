@@ -521,6 +521,7 @@ const HtxVectorView = observer(({ item, suggestion }) => {
           ref={(kv) => item.setKonvaVectorRef(kv)}
           initialPoints={Array.from(item.vertices)}
           onFinish={(e) => {
+            console.trace("finishing drawing");
             e.evt.stopPropagation();
             e.evt.preventDefault();
             item.handleFinish();
