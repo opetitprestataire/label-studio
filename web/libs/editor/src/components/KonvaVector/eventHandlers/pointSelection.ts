@@ -137,8 +137,8 @@ export function handlePointSelection(e: KonvaEventObject<MouseEvent>, props: Eve
       }
 
       // Check if this is the active point (the one user is currently drawing from)
-      // Only trigger onFinish if no modifiers are pressed (ctrl, meta, shift, alt)
-      if (props.activePointId && point.id === props.activePointId) {
+      // Only trigger onFinish if no modifiers are pressed (ctrl, meta, shift, alt) and component is not disabled
+      if (props.activePointId && point.id === props.activePointId && !props.disabled) {
         const hasModifiers = e.evt.ctrlKey || e.evt.metaKey || e.evt.shiftKey || e.evt.altKey;
         if (!hasModifiers) {
           props.onFinish?.(e);

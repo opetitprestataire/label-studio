@@ -1475,6 +1475,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     setActivePointId,
     isTransforming,
     constrainToBounds,
+    disabled,
     pointCreationManager,
   });
 
@@ -1554,8 +1555,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
                 const lastAddedPointIndex = initialPoints.findIndex((p) => p.id === lastAddedPointId);
 
                 // Only trigger onFinish if the last added point is already selected (second click)
-                // and no modifiers are pressed (ctrl, meta, shift, alt)
-                if (lastAddedPointIndex !== -1 && selectedPoints.has(lastAddedPointIndex)) {
+                // and no modifiers are pressed (ctrl, meta, shift, alt) and component is not disabled
+                if (lastAddedPointIndex !== -1 && selectedPoints.has(lastAddedPointIndex) && !disabled) {
                   const hasModifiers = e.evt.ctrlKey || e.evt.metaKey || e.evt.shiftKey || e.evt.altKey;
                   if (!hasModifiers) {
                     e.evt.preventDefault();
@@ -1676,8 +1677,8 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             const isAlreadySelected = selectedPoints.has(pointIndex);
 
             // Only fire onFinish if this is the last added point AND it was already selected (second click)
-            // and no modifiers are pressed (ctrl, meta, shift, alt)
-            if (isLastAddedPoint && isAlreadySelected) {
+            // and no modifiers are pressed (ctrl, meta, shift, alt) and component is not disabled
+            if (isLastAddedPoint && isAlreadySelected && !disabled) {
               const hasModifiers = e.evt.ctrlKey || e.evt.metaKey || e.evt.shiftKey || e.evt.altKey;
               if (!hasModifiers) {
                 onFinish?.(e);
