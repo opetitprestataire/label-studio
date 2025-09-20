@@ -151,7 +151,7 @@ const _Tool = types
         // to make sure KonvaVector was fully initialized
         setTimeout(() => {
           self.currentArea.startPoint(rx, ry);
-        }, 10);
+        });
       },
 
       mousedownEv(e, [x, y]) {
@@ -179,7 +179,7 @@ const _Tool = types
         setTimeout(() => {
           self.currentArea?.commitPoint?.(rx, ry);
           self.finishDrawing();
-        }, 10);
+        });
       },
 
       checkDistance(x, y) {

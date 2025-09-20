@@ -131,42 +131,13 @@ export function applyTransformationToPoints(
         const cp2VectorX = originalCP2.x - originalAnchorX;
         const cp2VectorY = originalCP2.y - originalAnchorY;
 
-        // Apply rotation to the control point vectors if there's rotation
-        let finalCP1X = cp1VectorX;
-        let finalCP1Y = cp1VectorY;
-        let finalCP2X = cp2VectorX;
-        let finalCP2Y = cp2VectorY;
-
         // Apply scaling to the control point vectors
-        if (Math.abs(scaleX - 1) > 0.01 || Math.abs(scaleY - 1) > 0.01) {
-          // Scale control points relative to transformer center, not anchor point
-          if (transformerCenter) {
-            // Calculate control points relative to transformer center
-            const cp1FromCenterX = originalCP1.x - transformerCenter.x;
-            const cp1FromCenterY = originalCP1.y - transformerCenter.y;
-            const cp2FromCenterX = originalCP2.x - transformerCenter.x;
-            const cp2FromCenterY = originalCP2.y - transformerCenter.y;
+        let finalCP1X = cp1VectorX * scaleX;
+        let finalCP1Y = cp1VectorY * scaleY;
+        let finalCP2X = cp2VectorX * scaleX;
+        let finalCP2Y = cp2VectorY * scaleY;
 
-            // Scale relative to transformer center
-            const scaledCP1FromCenterX = cp1FromCenterX * scaleX;
-            const scaledCP1FromCenterY = cp1FromCenterY * scaleY;
-            const scaledCP2FromCenterX = cp2FromCenterX * scaleX;
-            const scaledCP2FromCenterY = cp2FromCenterY * scaleY;
-
-            // Calculate final control point positions
-            finalCP1X = scaledCP1FromCenterX + transformerCenter.x - point.x;
-            finalCP1Y = scaledCP1FromCenterY + transformerCenter.y - point.y;
-            finalCP2X = scaledCP2FromCenterX + transformerCenter.x - point.x;
-            finalCP2Y = scaledCP2FromCenterY + transformerCenter.y - point.y;
-          } else {
-            // Fallback to anchor-relative scaling
-            finalCP1X = cp1VectorX * scaleX;
-            finalCP1Y = cp1VectorY * scaleY;
-            finalCP2X = cp2VectorX * scaleX;
-            finalCP2Y = cp2VectorY * scaleY;
-          }
-        }
-
+        // Apply rotation to the control point vectors if there's rotation
         if (Math.abs(currentRotation) > 0.1) {
           const cos = Math.cos(rotationRadians);
           const sin = Math.sin(rotationRadians);
@@ -183,7 +154,7 @@ export function applyTransformationToPoints(
           finalCP2Y = rotatedCP2Y;
         }
 
-        // Apply the vectors to the new anchor point position (this includes both translation and rotation)
+        // Apply the vectors to the new anchor point position
         const finalCP1PosX = point.x + finalCP1X;
         const finalCP1PosY = point.y + finalCP1Y;
         const finalCP2PosX = point.x + finalCP2X;
