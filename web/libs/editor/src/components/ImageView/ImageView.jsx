@@ -830,6 +830,9 @@ export default observer(
         if (item.regs.some((r) => r.isDrawing)) return;
         if (!item.regs.some((r) => r.type.match(allowedTypes) !== null)) return;
 
+        // Exclusive to Vector but can be leveraged by other region types
+        if (item.regs.some((r) => r.isTransforming?.())) return;
+
         requestAnimationFrame(() => {
           tool?.enable();
           for (const region of item.regs) {

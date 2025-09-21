@@ -365,6 +365,13 @@ const Model = types
         return self.vectorRef.isPointOverShape(pointer.x, pointer.y);
       },
 
+      // Checks is the region is being transformed or at least in
+      // transformable state (has at least 2 points selected)
+      isTransforming() {
+        const selection = self.vectorRef.getSelectedPointIds();
+        return selection.length > 1;
+      },
+
       segGroupRef(ref) {
         self.groupRef = ref;
       },
