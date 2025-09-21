@@ -1724,7 +1724,12 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
           transformerRef={transformerRef}
           proxyRefs={proxyRefs}
           constrainToBounds={constrainToBounds}
-          bounds={{ width, height }}
+          bounds={{
+            x: 0,
+            y: 0,
+            width: width,
+            height: height
+          }}
           onPointsChange={(newPoints) => {
             // Update main path points
             onPointsChange?.(newPoints);

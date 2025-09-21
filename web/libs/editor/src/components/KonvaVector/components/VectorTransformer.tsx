@@ -20,7 +20,7 @@ interface VectorTransformerProps {
   onTransformationStart?: () => void;
   onTransformationEnd?: () => void;
   constrainToBounds?: boolean;
-  bounds?: { width: number; height: number };
+  bounds?: { x: number; y: number; width: number; height: number };
 }
 
 export const VectorTransformer: React.FC<VectorTransformerProps> = ({
@@ -78,34 +78,24 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
       draggable={true}
       keepRatio={false}
       shouldOverdrawWholeArea={true}
-      boundBoxFunc={(_oldBox: any, newBox: any) => {
-        // Reject transformation if it would violate bounds instead of adjusting position
-        if (constrainToBounds && bounds) {
-          // Check if the new bounding box would extend beyond bounds
-          if (newBox.x < 0 ||
-            newBox.y < 0 ||
-            newBox.x + newBox.width > bounds.width ||
-            newBox.y + newBox.height > bounds.height) {
-            // Return the old box to prevent the transformation
-            return _oldBox;
-          }
-        }
-
-        return newBox;
-      }}
+      // boundBoxFunc={(_oldBox: any, newBox: any) => {
+      //   // Temporarily disable bounds checking for rotation/resize
+      //   // Only apply bounds checking to drag operations
+      //   return newBox;
+      // }}
       dragBoundFunc={(pos: any) => {
-        // Reject drag if it would violate bounds instead of adjusting position
+        // Reject drag if it would go outside image bounds
         if (constrainToBounds && bounds) {
           const transformer = transformerRef.current;
           if (transformer) {
             const width = transformer.width();
             const height = transformer.height();
 
-            // Check if the new position would extend beyond bounds
-            if (pos.x < 0 ||
-              pos.y < 0 ||
-              pos.x + width > bounds.width ||
-              pos.y + height > bounds.height) {
+            // Check if the new position would extend beyond image bounds
+            if (pos.x < bounds.x ||
+              pos.y < bounds.y ||
+              pos.x + width > bounds.x + bounds.width ||
+              pos.y + height > bounds.y + bounds.height) {
               // Return the current position to prevent the drag
               return { x: transformer.x(), y: transformer.y() };
             }
@@ -115,13 +105,13 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
         return pos;
       }}
       resizeBoundFunc={(oldBox: any, newBox: any) => {
-        // Reject resize if it would violate bounds instead of adjusting size
+        // Reject resize if it would go outside image bounds
         if (constrainToBounds && bounds) {
-          // Check if the new bounding box would extend beyond bounds
-          if (newBox.x < 0 ||
-            newBox.y < 0 ||
-            newBox.x + newBox.width > bounds.width ||
-            newBox.y + newBox.height > bounds.height) {
+          // Check if the new bounding box would extend beyond image bounds
+          if (newBox.x < bounds.x ||
+            newBox.y < bounds.y ||
+            newBox.x + newBox.width > bounds.x + bounds.width ||
+            newBox.y + newBox.height > bounds.y + bounds.height) {
             // Return the old box to prevent the resize
             return oldBox;
           }

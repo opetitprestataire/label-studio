@@ -1,6 +1,5 @@
 import type Konva from "konva";
 import type { BezierPoint } from "../types";
-import { constrainPointToBounds } from "./boundsChecking";
 
 export interface TransformResult {
   newPoints: BezierPoint[];
@@ -40,32 +39,6 @@ export function applyTransformationToPoints(
     return { newPoints, transformer };
   }
 
-  // If bounds checking is enabled and we have multiple selected points,
-  // we need to check if ALL anchor points can fit within bounds before applying any transformation
-  if (constrainToBounds && bounds && nodes.length > 1) {
-    // For collective bounds checking, we only check anchor points (main points)
-    // Control points are allowed to extend outside bounds
-    for (const node of nodes) {
-      if (!node || !node.name()) continue;
-
-      const pointIndex = Number.parseInt(node.name().split("-")[1]);
-      const point = initialPoints[pointIndex];
-
-      if (point) {
-        const transformedX = node.x();
-        const transformedY = node.y();
-
-        // Check if this anchor point would be outside bounds
-        if (transformedX < 0 || transformedX > bounds.width || transformedY < 0 || transformedY > bounds.height) {
-          // If any anchor point would be outside bounds, reject the entire transformation
-          return { newPoints: initialPoints, transformer };
-        }
-      }
-    }
-
-    // If we get here, all anchor points can fit within bounds
-    // so proceed with the actual transformation
-  }
 
   // Calculate incremental rotation change
   const currentRotation = transformer.rotation();
@@ -93,18 +66,8 @@ export function applyTransformationToPoints(
       const originalPos = originalPositions?.[pointIndex] || originalPoint;
 
       // Update the point position - trust what the transformer says
-      let finalX = transformedX;
-      let finalY = transformedY;
-
-      // Apply bounds checking if enabled
-      if (constrainToBounds && bounds) {
-        const constrainedPos = constrainPointToBounds({ x: finalX, y: finalY }, bounds);
-        finalX = constrainedPos.x;
-        finalY = constrainedPos.y;
-      }
-
-      point.x = finalX;
-      point.y = finalY;
+      point.x = transformedX;
+      point.y = transformedY;
 
       // Don't update proxy node position - let transformer manage it
       // This prevents the update loop
