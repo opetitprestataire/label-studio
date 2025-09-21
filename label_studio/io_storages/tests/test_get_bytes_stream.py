@@ -394,34 +394,45 @@ class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):
         mock_chunk_iterator.__iter__.return_value = iter([b'initial byte'])  # Just a small header byte
         mock_download_stream.chunks.return_value = mock_chunk_iterator
 
-        # Test both header probe formats: "bytes=0-0" and "bytes=0-"
-        for range_value in ['bytes=0-0', 'bytes=0-']:
-            # Reset mocks for each iteration
-            mock_blob_client.reset_mock()
-            mock_download_stream.reset_mock()
+        # Test header probe: "bytes=0-0" should return 1 byte
+        mock_chunk_iterator = MagicMock()
+        mock_chunk_iterator.__iter__.return_value = iter([b'H'])  # 1 byte
+        mock_download_stream.chunks.return_value = mock_chunk_iterator
 
-            # Call method with header probe range
-            uri = 'azure-blob://test-container/test-video.mp4'
-            result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri, range_header=range_value)
+        uri = 'azure-blob://test-container/test-video.mp4'
+        result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri, range_header='bytes=0-0')
 
-            # Verify the browser probe optimization is triggered:
-            # 1. max_single_get_size should be set to 1KB for optimal header response
-            self.assertEqual(mock_blob_client._config.max_single_get_size, 1024)
+        # Verify 1-byte header probe
+        self.assertEqual(mock_blob_client._config.max_single_get_size, 1024)
+        mock_blob_client.download_blob.assert_called_once()
+        call_args = mock_blob_client.download_blob.call_args[1]
+        self.assertEqual(call_args['offset'], 0)
+        self.assertEqual(call_args['length'], 1)
+        self.assertEqual(metadata['StatusCode'], 206)
+        self.assertEqual(metadata['ContentRange'], f'bytes 0-0/{file_size}')
+        self.assertEqual(metadata['ContentLength'], 1)
 
-            # 2. download_blob should be called with offset=0 and length=1
-            mock_blob_client.download_blob.assert_called_once()
-            call_args = mock_blob_client.download_blob.call_args[1]
-            self.assertEqual(call_args['offset'], 0)
-            self.assertEqual(call_args['length'], 1)
+        # Reset mocks for second test
+        mock_blob_client.reset_mock()
+        mock_download_stream.reset_mock()
 
-            # 3. Status code should be 206 (Partial Content) for streaming
-            self.assertEqual(metadata['StatusCode'], 206)
+        # Test open-ended initial request: "bytes=0-" should return large chunk
+        large_chunk_data = b'X' * (self.mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE)
+        mock_chunk_iterator = MagicMock()
+        mock_chunk_iterator.__iter__.return_value = iter([large_chunk_data])
+        mock_download_stream.chunks.return_value = mock_chunk_iterator
 
-            # 4. ContentRange should be adjusted to "bytes 0-0/<total>" format
-            self.assertEqual(metadata['ContentRange'], f'bytes 0-0/{file_size}')
+        result_stream, result_content_type, metadata = self.storage.get_bytes_stream(uri, range_header='bytes=0-')
 
-            # 5. ContentLength should be 1 (just the initial byte)
-            self.assertEqual(metadata['ContentLength'], 1)
+        # Verify large chunk request
+        mock_blob_client.download_blob.assert_called_once()
+        call_args = mock_blob_client.download_blob.call_args[1]
+        self.assertEqual(call_args['offset'], 0)
+        self.assertEqual(call_args['length'], self.mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE)
+        self.assertEqual(metadata['StatusCode'], 206)
+        expected_end = self.mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE - 1
+        self.assertEqual(metadata['ContentRange'], f'bytes 0-{expected_end}/{file_size}')
+        self.assertEqual(metadata['ContentLength'], self.mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE)
 
     def test_get_bytes_stream_range_handling_fix(self):
         """Test the fix for video streaming: bytes=0-0 vs bytes=0- should behave differently.

@@ -132,73 +132,14 @@ class AzureBlobStorageMixin(models.Model):
             total_size = properties.size
             content_type = properties.content_settings.content_type or 'application/octet-stream'
 
-            # Parse range header
-            streaming = True
-            start, end = parse_range(range_header)
-            # Browser requesting full file without streaming
-            if start is None and end is None:
-                streaming = False
-                start, end = 0, total_size
-            # Browser requesting just headers for streaming (probe): exactly one byte
-            elif start == 0 and end == 0:
-                start, end = 0, 1
-            # Open-ended initial request: serve a capped large chunk
-            elif start == 0 and (end == '' or end is None):
-                end = start + settings.RESOLVER_PROXY_MAX_RANGE_SIZE
-
-            # if streaming, we need to load blob consequently for smooth browser experience
-            if streaming:
-                # Limit initial download_blob() call size to 1Kb to avoid long delay
-                blob_client._config.max_single_get_size = 1024  # 1Kb
-                # Calculate length for Azure download_blob
-                length = (end - start) if end else None
-                # Seek & stream using StorageStreamDownloader
-                downloader = blob_client.download_blob(offset=start, length=length)
-            else:
-                length = total_size
-                # Prepare for downloading entire blob at once
-                downloader = blob_client.download_blob()
-
-            def _iter_chunks(self_downloader, chunk_size=1024 * 1024):
-                """Iterate over chunks of blob data"""
-                self_downloader._config.max_chunk_get_size = chunk_size
-                total = 0
-                for chunk in self_downloader.chunks():
-                    yield chunk
-                    total += len(chunk)
-                    if total >= length:
-                        return
-
-            # Add iter_chunks method to StorageStreamDownloader instance
-            # for compatibility with proxy_storage_data() in proxy_api.py
-            downloader.iter_chunks = types.MethodType(_iter_chunks, downloader)
-            downloader.close = types.MethodType(lambda self: None, downloader)
-
-            # Calculate content length and set appropriate status code
-            # For streaming: actual bytes we can deliver from start position
-            if streaming and length is not None:
-                # Don't exceed file boundary
-                actual_length = min(length, total_size - start)
-                content_length = actual_length
-            else:
-                content_length = length if length is not None else (total_size - start)
-            status_code = 206 if streaming else 200
-
-            # Build metadata dictionary matching S3/GCS format
-            # Calculate the actual end position for Content-Range
-            if length is not None:
-                # Don't exceed file boundary
-                actual_end = min(start + length - 1, total_size - 1)
-            else:
-                actual_end = total_size - 1 if total_size else 0
-            
-            metadata = {
-                'ETag': properties.etag,
-                'ContentLength': content_length,
-                'ContentRange': f'bytes {start}-{actual_end}/{total_size or 0}',
-                'LastModified': properties.last_modified,
-                'StatusCode': status_code,
-            }
+            downloader, content_type, metadata = AZURE.download_stream_response(
+                blob_client,
+                total_size,
+                content_type,
+                range_header,
+                properties,
+                max_range_size=settings.RESOLVER_PROXY_MAX_RANGE_SIZE,
+            )
             return downloader, content_type, metadata
 
         except Exception as e:
