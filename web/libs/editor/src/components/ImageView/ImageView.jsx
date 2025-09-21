@@ -636,6 +636,7 @@ export default observer(
     };
 
     handleMouseDown = (e) => {
+      this.mouseDown = true;
       const { item } = this.props;
       const isPanTool = item.getToolsManager().findSelectedTool()?.fullName === "ZoomPanTool";
       const isMoveTool = item.getToolsManager().findSelectedTool()?.fullName === "MoveTool";
@@ -770,6 +771,7 @@ export default observer(
      * Mouse up on Stage
      */
     handleMouseUp = (e) => {
+      this.mouseDown = false;
       const { item } = this.props;
 
       if (isFF(FF_DEV_1442)) {
@@ -821,7 +823,7 @@ export default observer(
         item.event("mousemove", e, e.evt.offsetX, e.evt.offsetY);
       }
 
-      if (!e.evt.ctrlKey && !e.evt.shiftKey) {
+      if (!e.evt.ctrlKey && !e.evt.shiftKey && !this.mouseDown) {
         const allowedTypes = /bitmask|vector/;
         const tool = item.getToolsManager().findSelectedTool();
 
@@ -829,6 +831,7 @@ export default observer(
         if (!item.regs.some((r) => r.type.match(allowedTypes) !== null)) return;
 
         requestAnimationFrame(() => {
+          tool?.enable();
           for (const region of item.regs) {
             region.setHighlight(false);
             region.updateCursor(false);
@@ -841,6 +844,7 @@ export default observer(
             const hovered = (checkHover && region.isHovered?.()) ?? false;
 
             if (hovered) {
+              tool?.disable();
               region.updateCursor(true);
               break;
             }
