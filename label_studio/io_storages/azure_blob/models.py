@@ -3,7 +3,6 @@
 import json
 import logging
 import re
-import types
 from datetime import timedelta
 from typing import Union
 from urllib.parse import urlparse
@@ -28,7 +27,6 @@ from io_storages.base_models import (
 from io_storages.utils import (
     StorageObject,
     load_tasks_json,
-    parse_range,
     storage_can_resolve_bucket_url,
 )
 from tasks.models import Annotation

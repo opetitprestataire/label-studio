@@ -436,11 +436,11 @@ class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):
 
     def test_get_bytes_stream_range_handling_fix(self):
         """Test the fix for video streaming: bytes=0-0 vs bytes=0- should behave differently.
-        
+
         This test validates the critical fix for video streaming issues:
         - bytes=0-0 should return exactly 1 byte (header probe)
         - bytes=0- should return a large chunk up to MAX_RANGE_SIZE (initial data)
-        
+
         This prevents the bug where both requests returned only 1 byte, causing
         video players to make excessive requests before starting playback.
         """
@@ -480,7 +480,7 @@ class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):
         # Test 2: bytes=0- should return large chunk (MAX_RANGE_SIZE)
         mock_blob_client.reset_mock()
         mock_download_stream.reset_mock()
-        
+
         # Mock large chunk response
         large_chunk_data = b'X' * (8 * 1024 * 1024)  # 8 MB of data
         mock_chunk_iterator = MagicMock()
