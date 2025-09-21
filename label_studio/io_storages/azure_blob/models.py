@@ -139,9 +139,12 @@ class AzureBlobStorageMixin(models.Model):
             if start is None and end is None:
                 streaming = False
                 start, end = 0, total_size
-            # Browser requesting just headers for streaming
-            elif start == 0 and (end == 0 or end == ''):
+            # Browser requesting just headers for streaming (probe): exactly one byte
+            elif start == 0 and end == 0:
                 start, end = 0, 1
+            # Open-ended initial request: serve a capped large chunk
+            elif start == 0 and (end == '' or end is None):
+                end = start + settings.RESOLVER_PROXY_MAX_RANGE_SIZE
 
             # if streaming, we need to load blob consequently for smooth browser experience
             if streaming:
@@ -172,14 +175,27 @@ class AzureBlobStorageMixin(models.Model):
             downloader.close = types.MethodType(lambda self: None, downloader)
 
             # Calculate content length and set appropriate status code
-            content_length = length if length is not None else (total_size - start)
+            # For streaming: actual bytes we can deliver from start position
+            if streaming and length is not None:
+                # Don't exceed file boundary
+                actual_length = min(length, total_size - start)
+                content_length = actual_length
+            else:
+                content_length = length if length is not None else (total_size - start)
             status_code = 206 if streaming else 200
 
             # Build metadata dictionary matching S3/GCS format
+            # Calculate the actual end position for Content-Range
+            if length is not None:
+                # Don't exceed file boundary
+                actual_end = min(start + length - 1, total_size - 1)
+            else:
+                actual_end = total_size - 1 if total_size else 0
+            
             metadata = {
                 'ETag': properties.etag,
                 'ContentLength': content_length,
-                'ContentRange': f'bytes {start}-{start + length-1}/{total_size or 0}',
+                'ContentRange': f'bytes {start}-{actual_end}/{total_size or 0}',
                 'LastModified': properties.last_modified,
                 'StatusCode': status_code,
             }

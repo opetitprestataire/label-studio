@@ -423,6 +423,73 @@ class TestAzureBlobStorageMixinGetBytesStream(unittest.TestCase):
             # 5. ContentLength should be 1 (just the initial byte)
             self.assertEqual(metadata['ContentLength'], 1)
 
+    def test_get_bytes_stream_range_handling_fix(self):
+        """Test the fix for video streaming: bytes=0-0 vs bytes=0- should behave differently.
+        
+        This test validates the critical fix for video streaming issues:
+        - bytes=0-0 should return exactly 1 byte (header probe)
+        - bytes=0- should return a large chunk up to MAX_RANGE_SIZE (initial data)
+        
+        This prevents the bug where both requests returned only 1 byte, causing
+        video players to make excessive requests before starting playback.
+        """
+        # Mock the blob client
+        mock_blob_client = MagicMock()
+        self.mock_client.get_blob_client.return_value = mock_blob_client
+
+        # Mock properties for a video file
+        mock_properties = MagicMock()
+        file_size = 85 * 1024 * 1024  # 85 MB video file (like the user's example)
+        mock_properties.size = file_size
+        mock_properties.etag = 'video-etag'
+        mock_properties.last_modified = '2025-09-20T12:00:00Z'
+        mock_properties.content_settings.content_type = 'video/mp4'
+        mock_blob_client.get_blob_properties.return_value = mock_properties
+
+        # Mock download streams
+        mock_blob_client._config = MagicMock()
+        mock_download_stream = MagicMock()
+        mock_blob_client.download_blob.return_value = mock_download_stream
+
+        uri = 'azure-blob://test-container/video.mp4'
+
+        # Test 1: bytes=0-0 should return 1 byte
+        mock_chunk_iterator = MagicMock()
+        mock_chunk_iterator.__iter__.return_value = iter([b'H'])  # 1 byte
+        mock_download_stream.chunks.return_value = mock_chunk_iterator
+
+        result_stream, content_type, metadata = self.storage.get_bytes_stream(uri, range_header='bytes=0-0')
+
+        # Verify 1-byte request
+        mock_blob_client.download_blob.assert_called_with(offset=0, length=1)
+        self.assertEqual(metadata['ContentLength'], 1)
+        self.assertEqual(metadata['ContentRange'], f'bytes 0-0/{file_size}')
+        self.assertEqual(metadata['StatusCode'], 206)
+
+        # Test 2: bytes=0- should return large chunk (MAX_RANGE_SIZE)
+        mock_blob_client.reset_mock()
+        mock_download_stream.reset_mock()
+        
+        # Mock large chunk response
+        large_chunk_data = b'X' * (8 * 1024 * 1024)  # 8 MB of data
+        mock_chunk_iterator = MagicMock()
+        mock_chunk_iterator.__iter__.return_value = iter([large_chunk_data])
+        mock_download_stream.chunks.return_value = mock_chunk_iterator
+
+        result_stream, content_type, metadata = self.storage.get_bytes_stream(uri, range_header='bytes=0-')
+
+        # Verify large chunk request (should be MAX_RANGE_SIZE = 8MB)
+        expected_max_range = self.mock_settings.RESOLVER_PROXY_MAX_RANGE_SIZE
+        mock_blob_client.download_blob.assert_called_with(offset=0, length=expected_max_range)
+        self.assertEqual(metadata['ContentLength'], expected_max_range)
+        self.assertEqual(metadata['ContentRange'], f'bytes 0-{expected_max_range-1}/{file_size}')
+        self.assertEqual(metadata['StatusCode'], 206)
+
+        # Verify the chunks can be streamed
+        chunks = list(result_stream.iter_chunks())
+        self.assertEqual(len(chunks), 1)
+        self.assertEqual(len(chunks[0]), 8 * 1024 * 1024)
+
 
 class TestGCSStorageMixinGetBytesStream(unittest.TestCase):
     """Test the get_bytes_stream method in GCSStorageMixin"""
