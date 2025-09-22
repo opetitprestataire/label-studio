@@ -75,7 +75,7 @@ JWT claims required:
 **Notes:**
 
 * You can find your organization ID from the **Organization** page in Label Studio.   
-* The example below uses RS256 as a verification algorithm, but you can find a full list of supported algorithms from **Organization > License & Usage > Embedding**.   
+* The example below uses RS256 as a verification algorithm, but you can find a full list of supported algorithms from **Organization > Usage & License > Embedding**.   
 * The public key must be stored in Label Studio in base64-url encoded format.
 
 ![Screenshot of org id](/images/org-id.png)
