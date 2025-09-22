@@ -29,9 +29,9 @@ This can be useful in a number of ways:
 
 | User role             | Access restrictions                                                                                  |
 |-----------------------|------------------------------------------------------------------------------------------------------|
-| Owner <br><br> Admin      | Can access from the Organization page, the Home page, and the Members dashboard. <br> Can filter for all users. <br> Can filter for all workspaces. |
-| Manager               | Can access from the Home page and the Members dashboard. <br> Can filter for all users. <br> Can only filter for workspaces or projects in which they are a member. |
-| Reviewer <br><br> Annotator | Can access from the Home page. <br> Can only see their own annotation history. <br> Can only filter for workspaces or projects in which they are a member. |
+| **Owner** <br>and<br> **Admin**      | Can access from the Organization page, the Home page, and the Members dashboard. <br> Can filter for all users. <br> Can filter for all workspaces. |
+| **Manager**               | Can access from the Home page and the Members dashboard. <br> Can filter for all users. <br> Can only filter for workspaces or projects in which they are a member. |
+| **Reviewer** <br>and<br> **Annotator** | Can access from the Home page. <br> Can only see their own annotation history. <br> Can only filter for workspaces or projects in which they are a member. |
 
 There are three ways to access the dashboard. The options available to you depend on your user role (see the table above).
 
