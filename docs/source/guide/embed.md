@@ -102,7 +102,7 @@ console.log(token);
 
 ## Configure embedding in Label Studio
 
-From Label Studio, go to **Organization > License & Usage > Embedding** and complete the following fields:
+From Label Studio, go to **Organization > Usage & License > Embedding** and complete the following fields:
 
 | Field | Description  |
 | :---- | :---- |
