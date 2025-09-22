@@ -98,17 +98,17 @@ For information on how to assign users to roles, see [Manage user accounts](admi
   </tr>
   <tr>
     <td>Workspace access</td>
-    <td style="text-align:center">R[^1]</td>
-    <td style="text-align:center">R[^1]</td>
-    <td style="text-align:center">CRUD[^2]</td>
+    <td style="text-align:center">R</td>
+    <td style="text-align:center">R</td>
+    <td style="text-align:center">CRUD[^1]</td>
     <td style="text-align:center">CRUD</td>
     <td style="text-align:center">CRUD</td>
   </tr>
   <tr>
     <td>Project access</td>
-    <td style="text-align:center">R[^1]</td>
-    <td style="text-align:center">R[^1]</td>
-    <td style="text-align:center">CRUD[^2]</td>
+    <td style="text-align:center">R</td>
+    <td style="text-align:center">R</td>
+    <td style="text-align:center">CRUD[^1]</td>
     <td style="text-align:center">CRUD</td>
     <td style="text-align:center">CRUD</td>
   </tr>
@@ -132,7 +132,7 @@ For information on how to assign users to roles, see [Manage user accounts](admi
     <td>View and configure project plugins</td>
     <td></td>
     <td></td>
-    <td style="text-align:center">✅[^3]</td>
+    <td style="text-align:center">✅[^2]</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
   </tr>
@@ -217,7 +217,7 @@ For information on how to assign users to roles, see [Manage user accounts](admi
   </tr>
   <tr>
     <td>Perform bulk labeling</td>
-    <td style="text-align:center">✅[^2]</td>
+    <td style="text-align:center">✅[^3]</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
@@ -247,8 +247,8 @@ For information on how to assign users to roles, see [Manage user accounts](admi
   </tr>
   <tr>
     <td>View annotator dashboard</td>
-    <td style="text-align:center">✅[^3]</td>
-    <td style="text-align:center">✅[^3]</td>
+    <td style="text-align:center">✅[^4]</td>
+    <td style="text-align:center">✅[^4]</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
     <td style="text-align:center">✅</td>
@@ -275,6 +275,7 @@ For information on how to assign users to roles, see [Manage user accounts](admi
 </table>
 
 
-[^1]: For their own workspaces and invited projects
-[^2]: The project must be using manual distribution and the annotator must be granted Data Manager access
-[^3]: For their own work/history
+[^1]: For workspaces or projects they created or were invited to
+[^2]: Owners can restrict this in the org settings
+[^3]: The project must be using manual distribution and the annotator must be granted Data Manager access
+[^4]: For their own work/history
