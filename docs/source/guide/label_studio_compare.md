@@ -87,6 +87,12 @@ Label Studio is available to everyone as open source software (Label Studio Comm
     <td style="text-align:center">✅</td>
   </tr>
   <tr>
+    <td><b>Chat</b><br/><a href="/tags/chat.html">Generate and label conversation data. Interact live with an LLM of your choice.</a></td>
+    <td style="text-align:center">❌</td>
+    <td style="text-align:center">Limited</td>
+    <td style="text-align:center">✅</td>
+  </tr>
+  <tr>
     <td colspan="4" style="text-align:center"><b>Project Management</b></td>
   </tr>
   <tr>
@@ -196,21 +202,21 @@ Label Studio is available to everyone as open source software (Label Studio Comm
     <td colspan="4" style="text-align:center"><b>Prompts</b></td>
   </tr>
    <tr>
-    <td><b>Automated labeling</b><br/><a href="https://docs.humansignal.com/guide/prompts_overview">Fully automated data labeling using GenAI.</a></td>
+    <td><b>Automated pre-labeling</b><br/><a href="https://docs.humansignal.com/guide/prompts_overview">Rapidly pre-label tasks using LLMs.</a></td>
     <td style="text-align:center">❌</td>
-    <td style="text-align:center">✅</td>
+    <td style="text-align:center">❌</td>
     <td style="text-align:center">✅</td>
   </tr>
   <tr>
     <td><b>LLM fine-tuning and evaluation</b><br/><a href="https://docs.humansignal.com/guide/prompts_draft">Evaluate and fine-tune LLM prompts against a ground truth dataset.</a></td>
     <td style="text-align:center">❌</td>
-    <td style="text-align:center">✅</td>
+    <td style="text-align:center">❌</td>
     <td style="text-align:center">✅</td>
   </tr>
   <tr>
-    <td><b>Bootstrap projects</b><br/><a href="https://docs.humansignal.com/guide/prompts_predictions">Bootstrap your labeling project using auto-generated predictions.</a></td>
+    <td><b>Run benchmarks</b><br/><a href="https://docs.humansignal.com/guide/prompts_draft#Evaluation-results">Compare model outputs against ground truth or rubric criteria.</a></td>
     <td style="text-align:center">❌</td>
-    <td style="text-align:center">✅</td>
+    <td style="text-align:center">❌</td>
     <td style="text-align:center">✅</td>
   </tr>
   <tr>

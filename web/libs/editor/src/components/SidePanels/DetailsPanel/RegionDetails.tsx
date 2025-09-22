@@ -95,10 +95,15 @@ export const RegionDetailsMain: FC<{ region: any }> = observer(({ region }) => {
   return (
     <>
       <Elem name="result">
-        {(region?.results as any[]).map((res) => (
-          <ResultItem key={res.pid} result={res} />
-        ))}
-        {region?.text ? (
+        {(region?.results as any[])
+          // hide per-regions stored only in this session just for a better UX
+          .filter((res) => res.canBeSubmitted)
+          .map((res) => (
+            <ResultItem key={res.pid} result={res} />
+          ))}
+        {/* @todo dirty hack to not duplicate text for OCR regions */}
+        {/* @todo should be converted into universal solution */}
+        {region?.text && !region?.ocrtext ? (
           <Block name="region-meta">
             <Elem name="item">
               <Elem name="content" mod={{ type: "text" }}>

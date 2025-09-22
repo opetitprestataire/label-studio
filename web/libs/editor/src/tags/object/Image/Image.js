@@ -11,6 +11,7 @@ import { BrushRegionModel } from "../../../regions/BrushRegion";
 import { EllipseRegionModel } from "../../../regions/EllipseRegion";
 import { KeyPointRegionModel } from "../../../regions/KeyPointRegion";
 import { PolygonRegionModel } from "../../../regions/PolygonRegion";
+import { VectorRegionModel } from "../../../regions/VectorRegion";
 import { RectRegionModel } from "../../../regions/RectRegion";
 import * as Tools from "../../../tools";
 import ToolsManager from "../../../tools/Manager";
@@ -33,7 +34,6 @@ import { ImageEntityMixin } from "./ImageEntityMixin";
 import { ImageSelection } from "./ImageSelection";
 import { RELATIVE_STAGE_HEIGHT, RELATIVE_STAGE_WIDTH, SNAP_TO_PIXEL_MODE } from "../../../components/ImageView/Image";
 import MultiItemObjectBase from "../MultiItemObjectBase";
-import { FF_BITMASK } from "@humansignal/core/lib/utils/feature-flags";
 
 const IMAGE_PRELOAD_COUNT = 3;
 const ZOOM_INTENSITY = 0.009;
@@ -142,6 +142,7 @@ const IMAGE_CONSTANTS = {
   rectanglelabels: "rectanglelabels",
   keypointlabels: "keypointlabels",
   polygonlabels: "polygonlabels",
+  vectorlabels: "vectorlabels",
   brushlabels: "brushlabels",
   bitmaskModel: "BitmaskModel",
   bitmasklabels: "bitmasklabels",
@@ -175,7 +176,14 @@ const Model = types
     mode: types.optional(types.enumeration(["drawing", "viewing", "brush", "eraser"]), "viewing"),
 
     regions: types.array(
-      types.union(BrushRegionModel, RectRegionModel, EllipseRegionModel, PolygonRegionModel, KeyPointRegionModel),
+      types.union(
+        BrushRegionModel,
+        RectRegionModel,
+        EllipseRegionModel,
+        PolygonRegionModel,
+        VectorRegionModel,
+        KeyPointRegionModel,
+      ),
       [],
     ),
 
@@ -597,6 +605,9 @@ const Model = types
     function createImageEntities() {
       if (!self.store.task) return;
 
+      // Clear existing entities to prevent duplicates from React StrictMode double mounting
+      self.imageEntities.clear();
+
       const parsedValue = self.multiImage ? self.parsedValueList : self.parsedValue;
       const idPostfix = self.annotation ? `@${self.annotation.id}` : "";
 
@@ -678,6 +689,17 @@ const Model = types
           const isPanning = manager.findSelectedTool()?.toolName === "ZoomPanTool";
 
           return skipInteractions || isPanning;
+        },
+        get smoothingEnabled() {
+          const names = self.annotation?.names;
+
+          if (!names) return self.smoothing;
+
+          const hasBitmask = Array.from(names.values()).some(({ type }) => {
+            return type.includes("bitmask");
+          });
+          if (hasBitmask) return false;
+          return self.smoothing;
         },
       },
       actions: {
@@ -967,12 +989,8 @@ const Model = types
       isEvent = false,
     ) {
       if (val) {
-        const zoomScale = ff.isActive(FF_BITMASK)
-          ? isEvent
-            ? self.getInertialZoom(val)
-            : val > 0
-              ? self.currentZoom * self.zoomBy
-              : self.currentZoom / self.zoomBy
+        const zoomScale = isEvent
+          ? self.getInertialZoom(val)
           : val > 0
             ? self.currentZoom * self.zoomBy
             : self.currentZoom / self.zoomBy;
@@ -1135,10 +1153,10 @@ const Model = types
       self.annotation.history.freeze();
 
       self.regions.forEach((shape) => {
-        shape.updateImageSize(width / naturalWidth, height / naturalHeight, width, height, userResize);
+        shape.updateImageSize?.(width / naturalWidth, height / naturalHeight, width, height, userResize);
       });
       self.regs.forEach((shape) => {
-        shape.updateImageSize(width / naturalWidth, height / naturalHeight, width, height, userResize);
+        shape.updateImageSize?.(width / naturalWidth, height / naturalHeight, width, height, userResize);
       });
       self.drawingRegion?.updateImageSize(width / naturalWidth, height / naturalHeight, width, height, userResize);
 
@@ -1283,6 +1301,26 @@ const CoordsCalculations = types
 
     internalToCanvasY(n) {
       return (n / RELATIVE_STAGE_HEIGHT) * self.stageHeight;
+    },
+
+    internalToImageX(n) {
+      const { naturalWidth } = self.currentImageEntity;
+      return (n / RELATIVE_STAGE_WIDTH) * naturalWidth;
+    },
+
+    internalToImageY(n) {
+      const { naturalHeight } = self.currentImageEntity;
+      return (n / RELATIVE_STAGE_HEIGHT) * naturalHeight;
+    },
+
+    imageToInternalX(n) {
+      const { naturalWidth } = self.currentImageEntity;
+      return (n / naturalWidth) * RELATIVE_STAGE_WIDTH;
+    },
+
+    imageToInternalY(n) {
+      const { naturalHeight } = self.currentImageEntity;
+      return (n / naturalHeight) * RELATIVE_STAGE_HEIGHT;
     },
   }));
 

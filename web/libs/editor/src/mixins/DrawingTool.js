@@ -1,7 +1,7 @@
 import { types } from "mobx-state-tree";
 
 import Utils from "../utils";
-import throttle from "lodash.throttle";
+import throttle from "lodash/throttle";
 import { MIN_SIZE } from "../tools/Base";
 import { FF_DEV_3391, FF_DEV_3793, isFF } from "../utils/feature-flags";
 import { ff } from "@humansignal/core";
@@ -141,6 +141,9 @@ const DrawingTool = types
         self.annotation.setIsDrawing(true);
         self.annotation.regionStore.selection.drawingSelect(self.currentArea);
         self.listenForClose?.();
+        if (self.manager.findSelectedTool() !== self) {
+          self.manager.selectTool(self, true);
+        }
       },
       commitDrawingRegion() {
         const { currentArea, control, obj } = self;
@@ -205,7 +208,13 @@ const DrawingTool = types
       },
 
       canStartDrawing() {
-        return !self.isIncorrectControl() && !self.isIncorrectLabel() && self.canStart() && !self.annotation.isDrawing;
+        return (
+          !self.disabled &&
+          !self.isIncorrectControl() &&
+          !self.isIncorrectLabel() &&
+          self.canStart() &&
+          !self.annotation.isDrawing
+        );
       },
 
       startDrawing(x, y) {

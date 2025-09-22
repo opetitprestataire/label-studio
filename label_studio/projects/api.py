@@ -11,7 +11,9 @@ from core.permissions import ViewClassPermission, all_permissions
 from core.redis import start_job_async_or_sync
 from core.utils.common import paginator, paginator_help, temporary_disconnect_all_signals
 from core.utils.exceptions import LabelStudioDatabaseException, ProjectExistException
+from core.utils.filterset_to_openapi_params import filterset_to_openapi_params
 from core.utils.io import find_dir, find_file, read_yaml
+from core.utils.serializer_to_openapi_params import serializer_to_openapi_params
 from data_manager.functions import filters_ordering_selected_items_exist, get_prepared_queryset
 from django.conf import settings
 from django.db import IntegrityError
@@ -278,7 +280,11 @@ class ProjectListAPI(generics.ListCreateAPIView):
     name='get',
     decorator=extend_schema(
         tags=['Projects'],
-        summary="List project's counts",
+        summary="List projects' counts",
+        parameters=[
+            *serializer_to_openapi_params(GetFieldsSerializer),
+            *filterset_to_openapi_params(ProjectFilterSet),
+        ],
         description='Returns a list of projects with their counts. For example, task_number which is the total task number in project',
         extensions={
             'x-fern-sdk-group-name': 'projects',
@@ -806,9 +812,15 @@ def read_templates_and_groups():
     configs = []
     for config_file in pathlib.Path(annotation_templates_dir).glob('**/*.yml'):
         config = read_yaml(config_file)
-        if settings.VERSION_EDITION == 'Community':
-            if settings.VERSION_EDITION.lower() != config.get('type', 'community'):
+
+        if settings.VERSION_EDITION != 'Community':
+            if config.get('group', '').lower() == 'community contributions':
                 continue
+
+        if settings.VERSION_EDITION == 'Community':
+            if config.get('type', 'community').lower() != 'community':
+                continue
+
         if config.get('image', '').startswith('/static') and settings.HOSTNAME:
             # if hostname set manually, create full image urls
             config['image'] = settings.HOSTNAME + config['image']
@@ -816,6 +828,10 @@ def read_templates_and_groups():
     template_groups_file = find_file(os.path.join('annotation_templates', 'groups.txt'))
     with open(template_groups_file, encoding='utf-8') as f:
         groups = f.read().splitlines()
+
+    if settings.VERSION_EDITION != 'Community':
+        groups = [group for group in groups if group.lower() != 'community contributions']
+
     logger.debug(f'{len(configs)} templates found.')
     return {'templates': configs, 'groups': groups}
 

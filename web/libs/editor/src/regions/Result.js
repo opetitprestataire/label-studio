@@ -21,6 +21,8 @@ const resultTypes = [
   "rectanglelabels",
   "keypointlabels",
   "polygonlabels",
+  "vector",
+  "vectorlabels",
   "brushlabels",
   "bitmasklabels",
   "ellipselabels",
@@ -35,6 +37,7 @@ const resultTypes = [
   "pairwise",
   "videorectangle",
   "ranker",
+  "custominterface",
 ];
 
 const resultValues = {
@@ -55,6 +58,7 @@ const resultValues = {
   rectanglelabels: types.maybe(types.array(types.string)),
   keypointlabels: types.maybe(types.array(types.string)),
   polygonlabels: types.maybe(types.array(types.string)),
+  vectorlabels: types.maybe(types.array(types.string)),
   ellipselabels: types.maybe(types.array(types.string)),
   brushlabels: types.maybe(types.array(types.string)),
   timeserieslabels: types.maybe(types.array(types.string)),
@@ -62,6 +66,7 @@ const resultValues = {
   bitmasklabels: types.maybe(types.array(types.string)),
   taxonomy: types.frozen(), // array of arrays of strings
   sequence: types.frozen(),
+  custom: types.maybe(types.frozen()), // for CustomInterface regions
 };
 
 const Result = types
@@ -91,14 +96,21 @@ const Result = types
     to_name: types.late(() => types.reference(types.union(...Registry.objectTypes()))),
     // @todo some general type, maybe just a `string`
     type: ff.isActive(ff.FF_CUSTOM_TAGS)
-      ? types.late(() => types.enumeration([...resultTypes, ...Registry.customTags.map((t) => t.resultName)]))
+      ? types.late(() =>
+          types.enumeration([
+            ...resultTypes,
+            ...Registry.customTags.filter((t) => t.resultName).map((t) => t.resultName),
+          ]),
+        )
       : types.enumeration([...resultTypes]),
     // @todo much better to have just a value, not a hash with empty fields
     value: ff.isActive(ff.FF_CUSTOM_TAGS)
       ? types.late(() =>
           types.model({
             ...resultValues,
-            ...Object.fromEntries(Registry.customTags.map((t) => [t.resultName, types.maybe(t.result)])),
+            ...Object.fromEntries(
+              Registry.customTags.filter((t) => t.resultName).map((t) => [t.resultName, types.maybe(t.result)]),
+            ),
           }),
         )
       : types.model({
