@@ -1728,7 +1728,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             x: 0,
             y: 0,
             width: width,
-            height: height
+            height: height,
           }}
           onPointsChange={(newPoints) => {
             // Update main path points

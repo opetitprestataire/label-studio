@@ -39,7 +39,6 @@ export function applyTransformationToPoints(
     return { newPoints, transformer };
   }
 
-
   // Calculate incremental rotation change
   const currentRotation = transformer.rotation();
 

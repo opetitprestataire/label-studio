@@ -35,7 +35,6 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
   constrainToBounds,
   bounds,
 }) => {
-
   const transformerStateRef = React.useRef<{
     rotation: number;
     scaleX: number;
@@ -92,10 +91,12 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
             const height = transformer.height();
 
             // Check if the new position would extend beyond image bounds
-            if (pos.x < bounds.x ||
+            if (
+              pos.x < bounds.x ||
               pos.y < bounds.y ||
               pos.x + width > bounds.x + bounds.width ||
-              pos.y + height > bounds.y + bounds.height) {
+              pos.y + height > bounds.y + bounds.height
+            ) {
               // Return the current position to prevent the drag
               return { x: transformer.x(), y: transformer.y() };
             }
@@ -108,10 +109,12 @@ export const VectorTransformer: React.FC<VectorTransformerProps> = ({
         // Reject resize if it would go outside image bounds
         if (constrainToBounds && bounds) {
           // Check if the new bounding box would extend beyond image bounds
-          if (newBox.x < bounds.x ||
+          if (
+            newBox.x < bounds.x ||
             newBox.y < bounds.y ||
             newBox.x + newBox.width > bounds.x + bounds.width ||
-            newBox.y + newBox.height > bounds.y + bounds.height) {
+            newBox.y + newBox.height > bounds.y + bounds.height
+          ) {
             // Return the old box to prevent the resize
             return oldBox;
           }
