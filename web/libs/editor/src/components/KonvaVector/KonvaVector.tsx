@@ -12,7 +12,7 @@ import {
 } from "./components";
 import { createEventHandlers } from "./eventHandlers";
 import { convertPoint } from "./pointManagement";
-import { normalizePoints, convertBezierToSimplePoints } from "./utils";
+import { normalizePoints, convertBezierToSimplePoints, isPointInPolygon } from "./utils";
 import { findClosestPointOnPath, getDistance } from "./eventHandlers/utils";
 import { PointCreationManager } from "./pointCreationManager";
 import { VectorSelectionTracker, type VectorInstance } from "./VectorSelectionTracker";
@@ -164,7 +164,7 @@ import {
  * ```
  *
  * ## Keyboard Shortcuts
- * - **Alt + Click**: Convert point between regular ↔ bezier or delete existing point
+ * - **Alt + Click**: Convert point between regular ↔ bezier
  * - **Alt + Click on segment**: Break closed path at segment (when path is closed)
  * - **Click on first/last point**: Close path bidirectionally (first→last or last→first)
  * - **Shift + Click**: Add point on path segment
@@ -215,6 +215,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     onPathClosedChange,
     onTransformationComplete,
     onPointSelected,
+    onFinish,
     scaleX,
     scaleY,
     x,
@@ -252,10 +253,19 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
   // Normalize input points to BezierPoint format
   const [initialPoints, setInitialPoints] = useState(() => normalizePoints(rawInitialPoints));
 
+  const stablePointsHash = useMemo(() => {
+    return JSON.stringify(rawInitialPoints);
+  }, [rawInitialPoints.length, rawInitialPoints]);
+
+  // Create a stable reference for rawInitialPoints to prevent infinite loops
+  const stableRawPoints = useMemo(() => {
+    return rawInitialPoints;
+  }, [stablePointsHash]);
+
   // Update initialPoints when rawInitialPoints changes
   useEffect(() => {
-    setInitialPoints(normalizePoints(rawInitialPoints));
-  }, [rawInitialPoints]);
+    setInitialPoints(normalizePoints(stableRawPoints));
+  }, [stableRawPoints]);
 
   // Initialize lastAddedPointId and activePointId when component loads with existing points
   useEffect(() => {
@@ -1333,6 +1343,44 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     getShapeBoundingBox: () => {
       return calculateShapeBoundingBox(initialPoints);
     },
+    // Hit testing method
+    isPointOverShape: (x: number, y: number, hitRadius = 20) => {
+      const point = { x, y };
+
+      // If no points, return false
+      if (initialPoints.length === 0) {
+        return false;
+      }
+
+      // First check if hovering over any individual point (vertices)
+      for (let i = 0; i < initialPoints.length; i++) {
+        const vertex = initialPoints[i];
+        const distance = getDistance(point, vertex);
+        if (distance <= hitRadius) {
+          return true; // Hovering over a vertex
+        }
+      }
+
+      // For single point, we already checked above, so return false if not hit
+      if (initialPoints.length === 1) {
+        return false;
+      }
+
+      // For polylines and polygons, check if point is close to any segment
+      const closestPathPoint = findClosestPointOnPath(point, initialPoints, allowClose, finalIsPathClosed);
+
+      if (closestPathPoint) {
+        const distance = getDistance(point, closestPathPoint.point);
+        return distance <= hitRadius;
+      }
+
+      // For closed polygons, also check if point is inside the polygon
+      if (finalIsPathClosed && initialPoints.length >= 3) {
+        return isPointInPolygon(point, initialPoints);
+      }
+
+      return false;
+    },
   }));
 
   // Handle Shift key for disconnected mode
@@ -1407,6 +1455,7 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
     onPointConverted,
     onPathShapeChanged,
     onPointSelected,
+    onFinish,
     onMouseDown,
     onMouseMove,
     onMouseUp,
@@ -1440,7 +1489,6 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
       onMouseMove={disabled ? undefined : eventHandlers.handleLayerMouseMove}
       onMouseUp={disabled ? undefined : eventHandlers.handleLayerMouseUp}
       onClick={disabled ? undefined : eventHandlers.handleLayerClick}
-      onDblClick={disabled ? undefined : eventHandlers.handleLayerDblClick}
     >
       {/* Invisible rectangle - always render to capture mouse events for cursor position updates */}
       {!disabled && (
@@ -1477,6 +1525,23 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             const allPointIndices = Array.from({ length: initialPoints.length }, (_, i) => i);
             tracker.selectPoints(instanceId, new Set(allPointIndices));
             return;
+          }
+
+          // Check if click is on the last added point by checking cursor position
+          if (cursorPosition && lastAddedPointId) {
+            const lastAddedPoint = initialPoints.find((p) => p.id === lastAddedPointId);
+            if (lastAddedPoint) {
+              const scale = transform.zoom * fitScale;
+              const hitRadius = 15 / scale; // Same radius as used in event handlers
+              const distance = Math.sqrt(
+                (cursorPosition.x - lastAddedPoint.x) ** 2 + (cursorPosition.y - lastAddedPoint.y) ** 2,
+              );
+
+              if (distance <= hitRadius) {
+                // Trigger onFinish when clicking on the last added point
+                onFinish?.();
+              }
+            }
           }
 
           // Call the original onClick handler
@@ -1588,6 +1653,11 @@ export const KonvaVector = forwardRef<KonvaVectorRef, KonvaVectorProps>((props, 
             } else {
               // Select only this point
               tracker.selectPoints(instanceId, new Set([pointIndex]));
+            }
+
+            // Check if this is the last added point and trigger onFinish
+            if (lastAddedPointId && initialPoints[pointIndex]?.id === lastAddedPointId) {
+              onFinish?.();
             }
 
             // Call the original onClick handler if provided
