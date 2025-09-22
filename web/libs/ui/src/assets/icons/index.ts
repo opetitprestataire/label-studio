@@ -224,6 +224,7 @@ export { ReactComponent as IconStar } from "./star.svg";
 export { ReactComponent as IconStarOutline } from "./star-outline.svg";
 export { ReactComponent as IconStarRectangle } from "./star-rectangle.svg";
 export { ReactComponent as IconStarSquare } from "./star-square.svg";
+export { ReactComponent as IconSupport } from "./support.svg";
 export { ReactComponent as IconSync } from "./sync.svg";
 export { ReactComponent as IconSyncDisabled } from "./sync-disabled.svg";
 export { ReactComponent as IconTerminal } from "./terminal.svg";
