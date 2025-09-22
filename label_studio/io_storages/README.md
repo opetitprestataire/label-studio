@@ -210,4 +210,3 @@ There are use cases where multiple storages can/must be used in a single project
 * Add storage 2 for bucket-B with credentials 2
 * Sync both storages
 * The appropriate storage will be used to resolve urls/generate presigned URLs
-
