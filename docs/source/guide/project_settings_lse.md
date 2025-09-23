@@ -65,8 +65,8 @@ Select how you want to distribute tasks to annotators for labeling.
 
 | Field          | Description    |
 | ------------- | ------------ |
-| **Automatic**         | Annotators are automatically assigned to tasks, and the option to manually assign annotators is disabled. Automatic assignments are distributed to all users with the Annotator role who are project [members](#Members) <br /><br />You can further define the automatic assignment workflow in the [**Quality** settings](#Quality).  |
-| **Manual** | You must [manually assign](manage_data#Assign-annotators-to-tasks) annotators to tasks. Annotators are not be able to view any labeling tasks until they have those tasks manually assigned to them. |
+| **Automatic**         | Annotators are automatically assigned to tasks, and the option to manually assign annotators is disabled. Automatic assignments are distributed to all users with the Annotator role who are project [members](#Members) <br /><br />You can further define the automatic assignment workflow in the [**Quality** settings](#Quality). <br /><br />When Automatic distribution is used, you will also have additional configuration options throughout the project settings, such as task ordering, task reservation, and many settings under **Quality**. |
+| **Manual** | [Manually assign](manage_data#Assign-annotators-to-tasks) tasks to annotators and manage their workload directly. Annotators will be able to start on tasks once you've assigned them. |
 
 </dd>
 
@@ -166,7 +166,7 @@ Configure settings related to the **Skip** action in the labeling stream.
 
 <dd>
 
-Select how you want to handle skipped tasks. To disallow skipped tasks, you can hide the **Skip** action under the **Task Skipping** section above.
+Select how you want to handle skipped tasks. To disallow skipping tasks, you can hide the **Skip** action under the **Task Skipping** section above.
 
 <table>
 <thead>
@@ -200,7 +200,7 @@ Skipped tasks are not marked as completed, and affect the Overall Project Progre
 </td>
 <td>
 
-*Only available when using Automatic task distribution.*
+*Only applies when using Automatic task distribution.*
 
 If an annotator skips a task, the task is removed from their queue and automatically assigned to a different annotator.
 
@@ -209,6 +209,8 @@ After skipping the task and completing their labeling queue, the annotator canno
 If there are no other annotators assigned to the task, or if all annotators skip the task, then the task remains unfinished. 
 
 Skipped tasks are not marked as completed, and affect the Overall Project Progress calculation visible from the project Dashboard. (Meaning that the progress for a project that has skipped tasks will be less than 100%.) 
+
+Note that if you select this option before switching to Manual mode, this option stays selected and behaves the same as **Ignore skipped**.
 
 </td>
 </tr>
@@ -221,15 +223,15 @@ Skipped tasks are not marked as completed, and affect the Overall Project Progre
 
 How this setting works depends on your labeling distribution method. 
 
-* Automatic distribution: If an annotator skips a task, the task is marked as completed and removed from the annotator's queue. 
+* Automatic distribution: If an annotator skips a task, the task is removed from the annotator's queue. 
 
-    If task overlap (as defined in [**Annotations per task minimum**](#overlap)) is set to 1, then the skipped task is not seen again by an annotator. However, if the overlap is greater than 1, then the task is shown to other annotators until the minimum annotations are reached. 
+    If task overlap (as defined in [**Annotations per task minimum**](#overlap)) is set to 1, then the skipped task is marked as Completed and is not seen again by an annotator. However, if the overlap is greater than 1, then the task is shown to other annotators until the minimum annotations are reached. 
 
 * Manual distribution: If the annotator skips a task, it is removed from their queue. But other annotators assigned to the task will still see it in their queue.  
 
 For both distribution methods, **Ignore skipped** treats skipped tasks differently when it comes to calculating progress. 
 
-Unlike the other skip queue options, in this case skipped tasks are marked as Completed and do not adversely affect the Overall Project Progress calculation visible from the project Dashboard. (Meaning that the progress for a project that has skipped tasks can still be 100%, assuming all tasks are otherwise completed.)
+Unlike the other skip queue options, in this case skipped tasks do not adversely affect the Overall Project Progress calculation visible from the project Dashboard. (Meaning that the progress for a project that has skipped tasks can still be 100%, assuming all tasks are otherwise completed.)
 
 </td>
 </tr>
