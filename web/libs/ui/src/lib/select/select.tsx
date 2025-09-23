@@ -94,6 +94,7 @@ export const Select = forwardRef(
     const ref = _ref ?? useRef<HTMLSelectElement>();
     const triggerRef = useRef<HTMLDivElement>();
     const [query, setQuery] = useState<string>("");
+    const rawOptions = useRef<any>();
     const valueRef = useRef<any>();
     let initialValue = defaultValue?.value ?? defaultValue ?? externalValue?.value ?? externalValue;
     if (selectFirstIfEmpty && !initialValue) {
@@ -108,6 +109,7 @@ export const Select = forwardRef(
     const [value, setValue] = useState<any>(initialValue);
 
     valueRef.current = value;
+    rawOptions.current = options;
     useEffect(() => {
       if (!isDefined(externalValue)) return;
       let val = externalValue?.value ?? externalValue;
@@ -119,6 +121,10 @@ export const Select = forwardRef(
       valueRef.current = val;
       setValue(val);
     }, [externalValue, multiple]);
+
+    useEffect(() => {
+      rawOptions.current = options;
+    }, [options]);
 
     useEffect(() => {
       if (valueRef.current || !selectFirstIfEmpty || !options?.[0]) return;
@@ -162,7 +168,7 @@ export const Select = forwardRef(
     }, [options]);
 
     const _options = useMemo(() => {
-      if (!searchable || !query.trim()) return options;
+      if (!searchable || !query.trim()) return rawOptions.current;
 
       const filterHandler = (option: any, queryString: string) => {
         const value = option?.value ?? option;
@@ -173,7 +179,7 @@ export const Select = forwardRef(
         );
       };
       return flatOptions.filter((option) => (searchFilter ?? filterHandler)(option, query));
-    }, [options, flatOptions, searchable, query, searchFilter]);
+    }, [flatOptions, searchable, query, searchFilter]);
 
     const isSelected = useCallback(
       (val: any) => {
