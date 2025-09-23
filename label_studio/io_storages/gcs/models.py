@@ -179,6 +179,8 @@ class GCSImportStorageBase(GCSStorageMixin, ImportStorage):
     recursive_scan = models.BooleanField(
         _('recursive scan'),
         default=False,
+        db_default=False,
+        null=True,
         help_text=_('Perform recursive scan over the bucket content'),
     )
 
