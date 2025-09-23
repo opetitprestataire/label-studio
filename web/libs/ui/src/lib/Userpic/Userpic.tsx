@@ -135,7 +135,7 @@ export const Userpic = forwardRef(
         className={clsx(styles.userpic, { [styles.faded]: faded, ...classNameList })}
         style={stylesheet}
         {...rest}
-      > 
+      >
         {children ? (
           children
         ) : (
