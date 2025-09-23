@@ -116,7 +116,9 @@ class FileUpload(models.Model):
             with self.file.open('rb') as file_handle:
                 try:
                     # If JSON is an array, use ijson.items to stream array elements
-                    parser = ijson.items(file_handle, 'item')
+                    # use_float=True prevents Decimal objects which cause "Object of type Decimal is not JSON serializable"
+                    # error when saving annotations to PostgreSQL
+                    parser = ijson.items(file_handle, 'item', use_float=True)
                     is_array = True
                 except (ijson.JSONError, ValueError):
                     # If it's not an array, reopen file and try to parse as single object
