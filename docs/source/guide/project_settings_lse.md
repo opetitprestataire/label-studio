@@ -133,7 +133,7 @@ When setting a reservation time, you should aim to allow a little above the max 
 
 </dd>
 
-<dt id="annotating-options">Annotating Options</dt>
+<dt id="annotating-options">Annotation Options</dt>
 
 <dd>
 
