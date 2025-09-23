@@ -44,9 +44,16 @@ Use these settings to configure what options annotators will see and how their l
 
 <dd>
 
-Specify instructions to show the annotators. This field accepts HTML formatting (click **Preview** to check your formatting).
+Specify instructions to show the annotators. 
+
+This field accepts HTML formatting, including iframes (click **Preview** to check your formatting).
+
+!!! note
+    If you are using HTML formatting and want to include CSS styles, use a `<Style>` block as inline styles will be removed when saving. 
 
 Enable **Show before labeling** to display a pop-up message to annotators when they enter the label stream. If disabled, users will need to click the **Show instructions** action at the bottom of the labeling interface. 
+
+The instructions do not pop-up when opening tasks individually from the Data Manager (Quick View). 
 
 </dd>
 
