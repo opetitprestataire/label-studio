@@ -380,6 +380,8 @@ const _Annotation = types
     submissionStarted: 0,
     versions: {},
     resultSnapshot: "",
+    // Flag to prevent concurrent validation calls
+    _isValidating: false,
   }))
   .volatile(() =>
     isFF(FF_DEV_3391)
@@ -589,17 +591,30 @@ const _Annotation = types
     },
 
     validate() {
-      let ok = true;
+      // Prevent concurrent validation calls
+      if (self._isValidating) {
+        console.warn('Validation already in progress');
+        return false;
+      }
 
-      self.traverseTree((node) => {
-        ok = node.validate?.();
-        if (ok === false) {
-          return TRAVERSE_STOP;
-        }
-      });
+      self._isValidating = true;
+      
+      try {
+        let ok = true;
 
-      // should be true or false
-      return ok ?? true;
+        self.traverseTree((node) => {
+          ok = node.validate?.();
+          if (ok === false) {
+            return TRAVERSE_STOP;
+          }
+        });
+
+        // should be true or false
+        return ok ?? true;
+      } finally {
+        // Always reset the flag, even if an error occurs
+        self._isValidating = false;
+      }
     },
 
     traverseTree(cb) {

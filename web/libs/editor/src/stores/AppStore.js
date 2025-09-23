@@ -121,6 +121,10 @@ export default types
      */
     isSubmitting: false,
     /**
+     * Validating task; used to prevent concurrent validation calls during submission
+     */
+    isValidating: false,
+    /**
      * Flag for disable task in Label Studio
      */
     noTask: types.optional(types.boolean, false),
@@ -599,63 +603,101 @@ export default types
     }
 
     function submitAnnotation() {
-      if (self.isSubmitting) return;
+      if (self.isSubmitting || self.isValidating) return;
 
       const entity = self.annotationStore.selected;
       const event = entity.exists ? "updateAnnotation" : "submitAnnotation";
 
-      entity.beforeSend();
+      // Set validation flag immediately to prevent concurrent validation calls
+      self.setFlags({ isValidating: true });
 
-      if (!entity.validate()) return;
+      try {
+        entity.beforeSend();
 
-      if (!isFF(FF_CUSTOM_SCRIPT)) {
-        entity.sendUserGenerate();
-      }
-      handleSubmittingFlag(async () => {
-        if (isFF(FF_CUSTOM_SCRIPT)) {
-          await self.waitForDraftSubmission();
-          const allowedToSave = await getEnv(self).events.invoke("beforeSaveAnnotation", self, entity, { event });
-          if (allowedToSave && allowedToSave.some((x) => x === false)) return;
+        const isValid = entity.validate();
+        
+        if (!isValid) {
+          // Reset validation flag on failure
+          self.setFlags({ isValidating: false });
+          return;
+        }
 
+        // Transition from validation to submission atomically
+        self.setFlags({ isValidating: false });
+
+        if (!isFF(FF_CUSTOM_SCRIPT)) {
           entity.sendUserGenerate();
         }
-        await getEnv(self).events.invoke(event, self, entity);
-        self.incrementQueuePosition();
-        if (isFF(FF_CUSTOM_SCRIPT)) {
+        handleSubmittingFlag(async () => {
+          if (isFF(FF_CUSTOM_SCRIPT)) {
+            await self.waitForDraftSubmission();
+            const allowedToSave = await getEnv(self).events.invoke("beforeSaveAnnotation", self, entity, { event });
+            if (allowedToSave && allowedToSave.some((x) => x === false)) return;
+
+            entity.sendUserGenerate();
+          }
+          await getEnv(self).events.invoke(event, self, entity);
+          self.incrementQueuePosition();
+          if (isFF(FF_CUSTOM_SCRIPT)) {
+            entity.dropDraft();
+          }
+        });
+        if (!isFF(FF_CUSTOM_SCRIPT)) {
           entity.dropDraft();
         }
-      });
-      if (!isFF(FF_CUSTOM_SCRIPT)) {
-        entity.dropDraft();
+      } catch (error) {
+        // Reset validation flag on any error
+        self.setFlags({ isValidating: false });
+        console.error('Submission error:', error);
+        throw error;
       }
     }
 
     function updateAnnotation(extraData) {
-      if (self.isSubmitting) return;
+      if (self.isSubmitting || self.isValidating) return;
 
       const entity = self.annotationStore.selected;
 
-      entity.beforeSend();
+      // Set validation flag immediately to prevent concurrent validation calls
+      self.setFlags({ isValidating: true });
 
-      if (!entity.validate()) return;
+      try {
+        entity.beforeSend();
 
-      handleSubmittingFlag(async () => {
-        if (isFF(FF_CUSTOM_SCRIPT)) {
-          const allowedToSave = await getEnv(self).events.invoke("beforeSaveAnnotation", self, entity, {
-            event: "updateAnnotation",
-          });
-          if (allowedToSave && allowedToSave.some((x) => x === false)) return;
+        const isValid = entity.validate();
+        
+        if (!isValid) {
+          // Reset validation flag on failure
+          self.setFlags({ isValidating: false });
+          return;
         }
-        await getEnv(self).events.invoke("updateAnnotation", self, entity, extraData);
-        self.incrementQueuePosition();
-        if (isFF(FF_CUSTOM_SCRIPT)) {
+
+        // Transition from validation to submission atomically
+        self.setFlags({ isValidating: false });
+
+        handleSubmittingFlag(async () => {
+          if (isFF(FF_CUSTOM_SCRIPT)) {
+            const allowedToSave = await getEnv(self).events.invoke("beforeSaveAnnotation", self, entity, {
+              event: "updateAnnotation",
+            });
+            if (allowedToSave && allowedToSave.some((x) => x === false)) return;
+          }
+          await getEnv(self).events.invoke("updateAnnotation", self, entity, extraData);
+          self.incrementQueuePosition();
+          if (isFF(FF_CUSTOM_SCRIPT)) {
+            entity.dropDraft();
+            !entity.sentUserGenerate && entity.sendUserGenerate();
+          }
+        });
+        if (!isFF(FF_CUSTOM_SCRIPT)) {
           entity.dropDraft();
           !entity.sentUserGenerate && entity.sendUserGenerate();
         }
-      });
-      if (!isFF(FF_CUSTOM_SCRIPT)) {
-        entity.dropDraft();
-        !entity.sentUserGenerate && entity.sendUserGenerate();
+      } catch (error) {
+        // Reset validation flag on any error
+        self.setFlags({ isValidating: false });
+        console.error('Update annotation error:', error);
+        throw error;
       }
     }
 

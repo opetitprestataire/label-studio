@@ -215,6 +215,7 @@ const Model = types
     return {
       validate() {
         if (!Super.validate() || (self.choice !== "multiple" && self.checkResultLength() > 1)) return false;
+        return true;
       },
 
       checkResultLength() {
