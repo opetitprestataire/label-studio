@@ -563,6 +563,12 @@ export class LSFWrapper {
    * @param {string} url http/https are not proxied and returned as is
    */
   onPresignUrlForProject = (_, url) => {
+    // return same url if already a presigned url (url matches /tasks/:id/resolve/?fileuri=.*)
+    const presignedUrlPattern = /^\/(?:tasks|projects)\/\d+\/resolve\//;
+    if (presignedUrlPattern.test(url)) {
+      return url;
+    }
+
     const parsedUrl = new URL(url);
 
     // return same url if http(s)

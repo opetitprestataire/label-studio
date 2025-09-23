@@ -44,6 +44,12 @@ export const Preview = ({ config, data, error, loading, project }) => {
    * @param {string} url http/https are not proxied and returned as is
    */
   const onPresignUrlForProject = async (_, url) => {
+    // return same url if already a presigned url (url matches /tasks|projects/:id/resolve/.*)
+    const presignedUrlPattern = /^\/(?:tasks|projects)\/\d+\/resolve\//;
+    if (presignedUrlPattern.test(url)) {
+      return url;
+    }
+
     const parsedUrl = new URL(url);
 
     // return same url if http(s)
