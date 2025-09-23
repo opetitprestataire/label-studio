@@ -38,7 +38,8 @@ class TestStreamingImport:
             def mock_streaming1(files_as_tasks_list=True, batch_size=100):
                 tasks = [{'data': {'text': f'Task {i}'}} for i in range(10)]
                 for i in range(0, len(tasks), 5):  # Always use batch size 5 for this test
-                    yield tasks[i:i+5]
+                    yield tasks[i : i + 5]
+
             mock_file_upload1.read_tasks_streaming = mock_streaming1
 
             mock_file_upload2 = MagicMock()
@@ -48,7 +49,8 @@ class TestStreamingImport:
             def mock_streaming2(files_as_tasks_list=True, batch_size=100):
                 tasks = [{'data': {'text': f'Task {i+10}'}} for i in range(10)]
                 for i in range(0, len(tasks), 5):  # Always use batch size 5 for this test
-                    yield tasks[i:i+5]
+                    yield tasks[i : i + 5]
+
             mock_file_upload2.read_tasks_streaming = mock_streaming2
 
             mock_filter.return_value = [mock_file_upload1, mock_file_upload2]

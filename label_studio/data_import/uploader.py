@@ -316,7 +316,7 @@ def load_tasks_for_async_import_streaming(project_import, user, batch_size=1000)
         all_data_keys = data_keys.copy()
 
         for i in range(0, len(tasks), batch_size):
-            batch_tasks = tasks[i:i + batch_size]
+            batch_tasks = tasks[i : i + batch_size]
             yield batch_tasks, file_upload_ids, found_formats, list(data_keys)
 
     elif project_import.tasks:
@@ -330,7 +330,7 @@ def load_tasks_for_async_import_streaming(project_import, user, batch_size=1000)
         check_max_task_number(tasks)
 
         for i in range(0, len(tasks), batch_size):
-            batch_tasks = tasks[i:i + batch_size]
+            batch_tasks = tasks[i : i + batch_size]
             yield batch_tasks, [], {}, []
 
     else:

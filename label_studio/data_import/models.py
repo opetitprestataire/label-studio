@@ -2,10 +2,10 @@
 """
 import logging
 import os
-import ijson
 import uuid
 from collections import Counter
 
+import ijson
 import pandas as pd
 
 try:
@@ -240,7 +240,7 @@ class FileUpload(models.Model):
 
                 # Yield tasks in batches
                 for i in range(0, len(tasks), batch_size):
-                    batch = tasks[i:i + batch_size]
+                    batch = tasks[i : i + batch_size]
                     yield batch
 
         except Exception as exc:

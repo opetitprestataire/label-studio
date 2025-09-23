@@ -5,6 +5,7 @@ from typing import Callable, Optional
 
 from core.feature_flags import flag_set
 from core.utils.common import load_func
+from data_import.uploader import load_tasks_for_async_import_streaming
 from django.conf import settings
 from django.db import transaction
 from label_studio_sdk.label_interface import LabelInterface
@@ -12,7 +13,6 @@ from projects.models import ProjectImport, ProjectReimport, ProjectSummary
 from rest_framework.exceptions import ValidationError
 from tasks.models import Task
 from users.models import User
-from data_import.uploader import load_tasks_for_async_import_streaming
 from webhooks.models import WebhookAction
 from webhooks.utils import emit_webhooks_for_instance
 
@@ -423,7 +423,9 @@ def _async_import_background_streaming(project_import, user):
                 continue
 
             batch_number += 1
-            logger.info(f'Processing batch {batch_number} with {len(batch_tasks)} tasks for import {project_import.id}')
+            logger.info(
+                f'Processing batch {batch_number} with {len(batch_tasks)} tasks for import {project_import.id}'
+            )
 
             if file_upload_ids and file_upload_ids not in final_file_upload_ids:
                 final_file_upload_ids = file_upload_ids
@@ -435,7 +437,9 @@ def _async_import_background_streaming(project_import, user):
                     'fflag_feat_utc_210_prediction_validation_15082025', user=project.organization.created_by
                 )
                 logger.info(f'Reformatting predictions with raise_errors: {raise_errors}')
-                batch_tasks = reformat_predictions(batch_tasks, project_import.preannotated_from_fields, project, raise_errors)
+                batch_tasks = reformat_predictions(
+                    batch_tasks, project_import.preannotated_from_fields, project, raise_errors
+                )
 
             if project.label_config_is_not_default and flag_set(
                 'fflag_feat_utc_210_prediction_validation_15082025', user=project.organization.created_by
@@ -450,7 +454,9 @@ def _async_import_background_streaming(project_import, user):
                                 validation_errors_list = li.validate_prediction(prediction, return_errors=True)
                                 if validation_errors_list:
                                     for error in validation_errors_list:
-                                        validation_errors.append(f'Task {total_task_count + i}, prediction {j}: {error}')
+                                        validation_errors.append(
+                                            f'Task {total_task_count + i}, prediction {j}: {error}'
+                                        )
                             except Exception as e:
                                 error_msg = f'Task {total_task_count + i}, prediction {j}: Error validating prediction - {str(e)}'
                                 validation_errors.append(error_msg)
@@ -461,7 +467,9 @@ def _async_import_background_streaming(project_import, user):
                     for error in validation_errors:
                         error_message += f'- {error}\n'
 
-                    if flag_set('fflag_feat_utc_210_prediction_validation_15082025', user=project.organization.created_by):
+                    if flag_set(
+                        'fflag_feat_utc_210_prediction_validation_15082025', user=project.organization.created_by
+                    ):
                         project_import.error = error_message
                         project_import.status = ProjectImport.Status.FAILED
                         project_import.save(update_fields=['error', 'status'])
@@ -494,9 +502,7 @@ def _async_import_background_streaming(project_import, user):
             else:
                 total_task_count += len(batch_tasks)
 
-            logger.info(
-                f'Batch {batch_number} processed successfully: {len(batch_tasks)} tasks'
-            )
+            logger.info(f'Batch {batch_number} processed successfully: {len(batch_tasks)} tasks')
 
         final_data_columns = list(final_data_columns)
 
@@ -505,7 +511,9 @@ def _async_import_background_streaming(project_import, user):
                 f'Finalizing import: emitting webhooks and updating task states for {len(all_created_task_ids)} tasks'
             )
 
-            emit_webhooks_for_instance(user.active_organization, project, WebhookAction.TASKS_CREATED, all_created_task_ids)
+            emit_webhooks_for_instance(
+                user.active_organization, project, WebhookAction.TASKS_CREATED, all_created_task_ids
+            )
 
             recalculate_stats_counts = {
                 'task_count': total_task_count,
