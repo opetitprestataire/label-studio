@@ -26,4 +26,4 @@ export class LabelStudio extends Component {
   render() {
     return this.state.initialized ? <App store={this.store} /> : null;
   }
-} 
+}
