@@ -34,12 +34,22 @@ class TestStreamingImport:
             mock_file_upload1 = MagicMock()
             mock_file_upload1.format = '.json'
             mock_file_upload1.id = 1
-            mock_file_upload1.read_tasks.return_value = [{'data': {'text': f'Task {i}'}} for i in range(10)]
+            # Mock the streaming method to return tasks in batches of 5
+            def mock_streaming1(files_as_tasks_list=True, batch_size=100):
+                tasks = [{'data': {'text': f'Task {i}'}} for i in range(10)]
+                for i in range(0, len(tasks), 5):  # Always use batch size 5 for this test
+                    yield tasks[i:i+5]
+            mock_file_upload1.read_tasks_streaming = mock_streaming1
 
             mock_file_upload2 = MagicMock()
             mock_file_upload2.format = '.json'
             mock_file_upload2.id = 2
-            mock_file_upload2.read_tasks.return_value = [{'data': {'text': f'Task {i+10}'}} for i in range(10)]
+            # Mock the streaming method to return tasks in batches of 5
+            def mock_streaming2(files_as_tasks_list=True, batch_size=100):
+                tasks = [{'data': {'text': f'Task {i+10}'}} for i in range(10)]
+                for i in range(0, len(tasks), 5):  # Always use batch size 5 for this test
+                    yield tasks[i:i+5]
+            mock_file_upload2.read_tasks_streaming = mock_streaming2
 
             mock_filter.return_value = [mock_file_upload1, mock_file_upload2]
 
