@@ -45,7 +45,7 @@ export const Preview = ({ config, data, error, loading, project }) => {
    */
   const onPresignUrlForProject = async (_, url) => {
     // return same url if already a presigned url (url matches /tasks|projects/:id/resolve/.*)
-    const presignedUrlPattern = /^\/(?:tasks|projects)\/\d+\/resolve\//;
+    const presignedUrlPattern = /^\/(?:tasks|projects)\/\d+\/resolve\/?/;
     if (presignedUrlPattern.test(url)) {
       return url;
     }
