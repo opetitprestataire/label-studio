@@ -138,8 +138,8 @@ class GCS(object):
         prefix = normalized_prefix
         regex = re.compile(str(regex_filter)) if regex_filter else None
         for blob in blob_iter:
-            # skip dir level
-            if blob.name == (prefix.rstrip('/') + '/'):
+            # skip directory entries at any level (directories end with '/')
+            if blob.name.endswith('/'):
                 continue
             # check regex pattern filter
             if regex and not regex.match(blob.name):
