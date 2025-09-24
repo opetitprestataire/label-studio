@@ -44,8 +44,7 @@ export const Preview = ({ config, data, error, loading, project }) => {
    * @param {string} url http/https are not proxied and returned as is
    */
   const onPresignUrlForProject = async (_, url) => {
-    // if URL is a relative, presigned url (url matches /tasks|projects/:id/resolve/.*)
-    // make it absolute
+    // if URL is a relative, presigned url (url matches /tasks|projects/:id/resolve/.*) make it absolute
     const presignedUrlPattern = /^\/(?:tasks|projects)\/\d+\/resolve\/?/;
     if (presignedUrlPattern.test(url)) {
       url = new URL(url, document.location.origin).toString();
