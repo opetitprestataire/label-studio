@@ -787,3 +787,22 @@ class PreparedTaskManager(models.Manager):
 class TaskManager(models.Manager):
     def for_user(self, user):
         return self.filter(project__organization=user.active_organization)
+
+    # FSM Context methods
+    def create_with_context(self, context=None, **kwargs):
+        """Create task with explicit context for FSM signals."""
+        from fsm.managers import FSMManagerMixin
+
+        return FSMManagerMixin.create_with_context(self, context=context, **kwargs)
+
+    def bulk_create_with_context(self, objs, context=None, **kwargs):
+        """Bulk create tasks with explicit context for FSM signals."""
+        from fsm.managers import FSMManagerMixin
+
+        return FSMManagerMixin.bulk_create_with_context(self, objs, context=context, **kwargs)
+
+    def bulk_update_with_context(self, objs, fields, context=None, **kwargs):
+        """Bulk update tasks with explicit context for FSM signals."""
+        from fsm.managers import FSMManagerMixin
+
+        return FSMManagerMixin.bulk_update_with_context(self, objs, fields, context=context, **kwargs)

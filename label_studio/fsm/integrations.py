@@ -17,7 +17,6 @@ from typing import Optional
 
 from core.feature_flags import flag_set
 from django.contrib.auth.models import User
-from fsm.context_cache import get_context_cache
 from fsm.state_manager import get_state_manager
 
 logger = logging.getLogger(__name__)
@@ -25,23 +24,20 @@ logger = logging.getLogger(__name__)
 
 def _resolve_organization_id(entity=None, user=None):
     """
-    Resolve organization_id using the same logic as StateManager without additional queries.
-
-    This mirrors the organization_id resolution logic from StateManager.transition_state()
-    to provide consistent organization_id for logging without duplicating database queries.
+    Resolve organization_id using entity attributes or signal context.
 
     Args:
         entity: The entity to resolve organization_id for
         user: Optional user for fallback organization resolution
-        cache: Optional simple dict-like cache to avoid repeated lookups
 
     Returns:
         organization_id or None
     """
-
-    context_cache = get_context_cache()
-    if context_cache is not None and 'organization_id' in context_cache:
-        return context_cache['organization_id']
+    # Check for organization_id in signal context first
+    if entity and hasattr(entity, '_fsm_context'):
+        context = entity._fsm_context
+        if context and 'organization_id' in context:
+            return context['organization_id']
 
     # Allow for function calls without entity like error logging
     # If there is no entity, return None instead of causing more calls to be made just for logging
@@ -63,10 +59,6 @@ def _resolve_organization_id(entity=None, user=None):
     # Fallback to user's active organization
     if not organization_id and user and hasattr(user, 'active_organization') and user.active_organization:
         organization_id = user.active_organization.id
-
-    # Cache the result in context cache if available and we found an organization_id
-    if context_cache is not None and organization_id is not None:
-        context_cache['organization_id'] = organization_id
 
     return organization_id
 

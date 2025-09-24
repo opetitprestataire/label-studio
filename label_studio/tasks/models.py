@@ -571,6 +571,27 @@ class AnnotationManager(models.Manager):
         post_bulk_create.send(sender=self.model, objs=objs, batch_size=batch_size)
         return res
 
+    # FSM Context methods
+    def create_with_context(self, context=None, **kwargs):
+        """Create annotation with explicit context for FSM signals."""
+        from fsm.managers import FSMManagerMixin
+
+        return FSMManagerMixin.create_with_context(self, context=context, **kwargs)
+
+    def bulk_create_with_context(self, objs, context=None, **kwargs):
+        """Bulk create annotations with explicit context for FSM signals."""
+        # Call our custom bulk_create to trigger signals
+        context = context or {}
+        for obj in objs:
+            obj._fsm_context = context
+        return self.bulk_create(objs, **kwargs)
+
+    def bulk_update_with_context(self, objs, fields, context=None, **kwargs):
+        """Bulk update annotations with explicit context for FSM signals."""
+        from fsm.managers import FSMManagerMixin
+
+        return FSMManagerMixin.bulk_update_with_context(self, objs, fields, context=context, **kwargs)
+
 
 GET_UNIQUE_IDS = """
 with tt as (
