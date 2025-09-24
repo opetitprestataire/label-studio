@@ -152,27 +152,15 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
     presign_ttl = models.PositiveSmallIntegerField(
         _('presign_ttl'), default=1, help_text='Presigned URLs TTL (in minutes)'
     )
-    recursive_scan = models.BooleanField(
-        _('recursive scan'),
-        default=False,
-        db_default=False,
-        null=True,
-        help_text=_('Perform recursive scan over the container content'),
-    )
 
     def iter_objects(self):
         container = self.get_container()
-        prefix = (str(self.prefix).rstrip('/') + '/') if self.prefix else ''
-        # Non-recursive listing via walk_blobs with delimiter '/'
-        if self.recursive_scan:
-            files_iter = container.list_blobs(name_starts_with=prefix)
-        else:
-            files_iter = container.walk_blobs(name_starts_with=prefix, delimiter='/')
-
+        prefix = str(self.prefix) if self.prefix else ''
+        files = container.list_blobs(name_starts_with=prefix)
         regex = re.compile(str(self.regex_filter)) if self.regex_filter else None
 
-        for file in files_iter:
-            # skip folder placeholders
+        for file in files:
+            # skip folder
             if file.name == (prefix.rstrip('/') + '/'):
                 continue
             # check regex pattern filter

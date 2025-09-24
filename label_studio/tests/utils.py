@@ -147,7 +147,7 @@ def gcs_client_mock():
             is_multitask = bucket_name.startswith('multitask_')
             return DummyGCSBucket(bucket_name, is_json, is_multitask)
 
-        def list_blobs(self, bucket_name, prefix):
+        def list_blobs(self, bucket_name, prefix, delimiter=None):
             is_json = bucket_name.endswith('_JSON')
             is_multitask = bucket_name.startswith('multitask_')
             sample_blob_names = ['test.json'] if is_multitask else ['abc', 'def', 'ghi']
