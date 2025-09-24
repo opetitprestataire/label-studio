@@ -114,39 +114,46 @@ class FileUpload(models.Model):
 
         try:
             with self.file.open('rb') as file_handle:
-                try:
-                    # If JSON is an array, use ijson.items to stream array elements
-                    # use_float=True prevents Decimal objects which cause "Object of type Decimal is not JSON serializable"
-                    # error when saving annotations to PostgreSQL
-                    parser = ijson.items(file_handle, 'item', use_float=True)
-                    is_array = True
-                except (ijson.JSONError, ValueError):
-                    # If it's not an array, reopen file and try to parse as single object
-                    file_handle.seek(0)
-                    is_array = False
+                # Peek a small prefix to detect top-level container ('[' array or '{' object)
+                sniff = file_handle.read(4096) or b''
+                # Strip UTF-8 BOM if present
+                if sniff.startswith(b'\xef\xbb\xbf'):
+                    sniff = sniff[3:]
+                # Find first non-whitespace byte
+                first_byte = None
+                for b in sniff:
+                    if b not in (0x20, 0x09, 0x0A, 0x0D):  # space, tab, lf, cr
+                        first_byte = b
+                        break
+
+                # Rewind after sniffing
+                file_handle.seek(0)
 
                 batch = []
 
-                if is_array:
-                    for task in parser:
+                if first_byte == ord('['):
+                    # Stream array items one-by-one
+                    # use_float=True prevents Decimal objects which cause JSON serialization issues downstream
+                    for task in ijson.items(file_handle, 'item', use_float=True):
                         formatted_task = self._format_task_for_json_streaming(task)
                         batch.append(formatted_task)
-
                         if len(batch) >= batch_size:
                             yield batch
                             batch = []
-                else:
-                    file_handle.seek(0)
-                    # For single objects, we still need to load the whole thing
-                    # but we can yield it as a single-item batch
+
+                elif first_byte == ord('{'):
+                    # Single JSON object: parse once and yield a single-item batch
                     raw_data = file_handle.read()
                     try:
                         task_data = json.loads(raw_data)
                     except TypeError:
                         task_data = json.loads(raw_data.decode('utf8'))
-
                     formatted_task = self._format_task_for_json_streaming(task_data)
                     batch.append(formatted_task)
+
+                else:
+                    # Unknown/invalid JSON structure
+                    raise ValidationError('Unsupported or invalid JSON structure')
 
                 # Yield remaining tasks if any
                 if batch:
@@ -157,8 +164,14 @@ class FileUpload(models.Model):
 
     def _format_task_for_json_streaming(self, task):
         """Format task data for JSON streaming consistency with read_tasks_list_from_json"""
-        if not task.get('data'):
+        # Handle different task types as in the original read_tasks_list_from_json method
+        if isinstance(task, dict):
+            if not task.get('data'):
+                task = {'data': task}
+        else:
+            # If task is not a dict (e.g., list), wrap it in {'data': task}
             task = {'data': task}
+
         if not isinstance(task['data'], dict):
             raise ValidationError('Task item should be dict')
         return task
