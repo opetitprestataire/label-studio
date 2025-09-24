@@ -1,17 +1,15 @@
-import pytest
 from unittest.mock import patch
 
-from django.core.files.base import ContentFile
-from rest_framework.exceptions import ValidationError
-
+import pytest
+from data_import.functions import _async_import_background_streaming
 from data_import.models import FileUpload
 from data_import.uploader import load_tasks_for_async_import_streaming
-from data_import.functions import _async_import_background_streaming
-from projects.models import ProjectImport
+from django.core.files.base import ContentFile
 from organizations.tests.factories import OrganizationFactory
+from projects.models import ProjectImport
 from projects.tests.factories import ProjectFactory
+from rest_framework.exceptions import ValidationError
 from users.tests.factories import UserFactory
-
 
 pytestmark = pytest.mark.django_db
 
@@ -104,8 +102,8 @@ class TestEndToEndStreamingFromUploads:
     def test_load_tasks_from_uploaded_files_streaming_real_files(self, user, project):
         content1 = b'[{"text":"A1"},{"text":"A2"},{"text":"A3"},{"text":"A4"}]'
         content2 = b'[{"text":"B1"},{"text":"B2"},{"text":"B3"},{"text":"B4"}]'
-        fu1 = FileUpload.objects.create(user=user, project=project, file=ContentFile(content1, name='a.json'))
-        fu2 = FileUpload.objects.create(user=user, project=project, file=ContentFile(content2, name='b.json'))
+        FileUpload.objects.create(user=user, project=project, file=ContentFile(content1, name='a.json'))
+        FileUpload.objects.create(user=user, project=project, file=ContentFile(content2, name='b.json'))
 
         gen = FileUpload.load_tasks_from_uploaded_files_streaming(project, batch_size=3)
         batches = list(gen)
@@ -160,7 +158,7 @@ class TestLoadTasksForAsyncImportStreaming:
 
     def test_from_tasks_inline(self, user, project, settings):
         settings.IMPORT_BATCH_SIZE = 2
-        tasks = [{"data": {"text": "T1"}}, {"data": {"text": "T2"}}, {"data": {"text": "T3"}}]
+        tasks = [{'data': {'text': 'T1'}}, {'data': {'text': 'T2'}}, {'data': {'text': 'T3'}}]
         pimport = ProjectImport.objects.create(project=project, tasks=tasks)
 
         gen = load_tasks_for_async_import_streaming(pimport, user, batch_size=2)
@@ -193,4 +191,3 @@ class TestAsyncImportBackgroundStreaming:
         assert isinstance(pimport.found_formats, dict)
         assert pimport.found_formats.get('.json')
         assert isinstance(pimport.data_columns, (list, set))
-
