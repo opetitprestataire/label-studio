@@ -3,9 +3,10 @@ from core.utils.common import load_func
 from django.conf import settings
 from faker import Faker
 from tasks.models import Annotation, AnnotationDraft, Prediction, Task
+from tests.base_factories import BaseModelFactory
 
 
-class TaskFactory(factory.django.DjangoModelFactory):
+class TaskFactory(BaseModelFactory):
     data = factory.LazyFunction(
         lambda: {
             'text': Faker().sentence(),
@@ -17,7 +18,7 @@ class TaskFactory(factory.django.DjangoModelFactory):
         model = Task
 
 
-class AnnotationFactory(factory.django.DjangoModelFactory):
+class AnnotationFactory(BaseModelFactory):
     task = factory.SubFactory(TaskFactory)
     project = factory.SelfAttribute('task.project')
     completed_by = factory.SubFactory(load_func(settings.USER_FACTORY))
@@ -48,7 +49,7 @@ class AnnotationFactory(factory.django.DjangoModelFactory):
         )
 
 
-class AnnotationDraftFactory(factory.django.DjangoModelFactory):
+class AnnotationDraftFactory(BaseModelFactory):
     task = factory.SubFactory(TaskFactory)
     user = factory.SubFactory(load_func(settings.USER_FACTORY))
     result = [
@@ -65,7 +66,7 @@ class AnnotationDraftFactory(factory.django.DjangoModelFactory):
         model = AnnotationDraft
 
 
-class PredictionFactory(factory.django.DjangoModelFactory):
+class PredictionFactory(BaseModelFactory):
     task = factory.SubFactory(TaskFactory)
     project = factory.SelfAttribute('task.project')
 

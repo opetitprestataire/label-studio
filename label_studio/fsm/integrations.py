@@ -36,7 +36,7 @@ def _resolve_organization_id(entity=None, user=None):
     # Check for organization_id in signal context first
     if entity and hasattr(entity, '_fsm_context'):
         context = entity._fsm_context
-        if context and 'organization_id' in context:
+        if context and isinstance(context, dict) and 'organization_id' in context:
             return context['organization_id']
 
     # Allow for function calls without entity like error logging

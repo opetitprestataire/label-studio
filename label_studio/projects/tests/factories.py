@@ -2,9 +2,10 @@ import factory
 from core.utils.common import load_func
 from django.conf import settings
 from projects.models import Project
+from tests.base_factories import BaseModelFactory
 
 
-class ProjectFactory(factory.django.DjangoModelFactory):
+class ProjectFactory(BaseModelFactory):
     title = factory.Faker('bs')
     description = factory.Faker('paragraph')
     organization = factory.SubFactory(load_func(settings.ORGANIZATION_FACTORY))
