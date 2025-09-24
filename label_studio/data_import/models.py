@@ -116,9 +116,6 @@ class FileUpload(models.Model):
             with self.file.open('rb') as file_handle:
                 # Peek a small prefix to detect top-level container ('[' array or '{' object)
                 sniff = file_handle.read(4096) or b''
-                # Strip UTF-8 BOM if present
-                if sniff.startswith(b'\xef\xbb\xbf'):
-                    sniff = sniff[3:]
                 # Find first non-whitespace byte
                 first_byte = None
                 for b in sniff:
