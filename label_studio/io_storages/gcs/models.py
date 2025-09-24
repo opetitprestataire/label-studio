@@ -3,7 +3,6 @@
 
 import json
 import logging
-import re
 import types
 import urllib.parse
 from typing import Union

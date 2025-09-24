@@ -182,7 +182,7 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
             def _iter_hierarchical(current_prefix=''):
                 search_prefix = prefix + current_prefix if current_prefix else (prefix or None)
                 files_iter = container.walk_blobs(name_starts_with=search_prefix, delimiter='/')
-                
+
                 for item in files_iter:
                     if hasattr(item, 'name') and hasattr(item, 'size'):
                         # This is a blob (file)
@@ -198,7 +198,7 @@ class AzureBlobImportStorageBase(AzureBlobStorageMixin, ImportStorage):
                         # This is a BlobPrefix (directory) - skip it in non-recursive mode
                         logger.debug(f'Skipping directory prefix: {item.name}')
                         continue
-            
+
             yield from _iter_hierarchical()
 
     def iter_keys(self):
