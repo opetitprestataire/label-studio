@@ -194,6 +194,7 @@ def create_api_context(user, request_id=None, **extra):
     context = {
         'source': 'api',
         'user_id': user.id if user else None,
+        'user': user,  # Include user object to avoid repeated queries
         'request_id': request_id,
     }
     if hasattr(user, 'active_organization') and user.active_organization:
@@ -202,12 +203,13 @@ def create_api_context(user, request_id=None, **extra):
     return context
 
 
-def create_worker_context(user_id=None, organization_id=None, operation='worker_task', **extra):
+def create_worker_context(user_id=None, user=None, organization_id=None, operation='worker_task', **extra):
     """Create context for worker operations."""
     context = {
         'source': 'worker',
         'operation': operation,
-        'user_id': user_id,
+        'user_id': user_id or (user.id if user else None),
+        'user': user,  # Include user object when available to avoid queries
         'organization_id': organization_id,
     }
     context.update(extra)
@@ -220,8 +222,39 @@ def create_admin_context(user, operation='admin_action', **extra):
         'source': 'admin',
         'operation': operation,
         'user_id': user.id if user else None,
+        'user': user,  # Include user object to avoid repeated queries
     }
     if hasattr(user, 'active_organization') and user.active_organization:
         context['organization_id'] = user.active_organization.id
     context.update(extra)
     return context
+
+
+def get_user_from_fsm_context(fsm_context):
+    """
+    Get user from FSM context efficiently.
+    First tries to get user object from context, falls back to user_id lookup.
+
+    Returns:
+        User object or None
+    """
+    if not fsm_context:
+        return None
+
+    # First try to get user object directly from context
+    user = fsm_context.get('user')
+    if user:
+        return user
+
+    # Fallback to user_id lookup
+    user_id = fsm_context.get('user_id')
+    if user_id:
+        try:
+            from django.contrib.auth import get_user_model
+
+            User = get_user_model()
+            return User.objects.get(id=user_id)
+        except (ValueError, TypeError, User.DoesNotExist):
+            pass
+
+    return None

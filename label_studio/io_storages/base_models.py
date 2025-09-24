@@ -30,6 +30,7 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_rq import job
+from fsm.managers import create_worker_context
 from io_storages.utils import StorageObject, get_uri_via_regex, parse_bucket_uri
 from rest_framework.exceptions import ValidationError
 from rq.job import Job
@@ -445,7 +446,9 @@ class ImportStorage(Storage):
         raise NotImplementedError
 
     @classmethod
-    def add_task(cls, project, maximum_annotations, max_inner_id, storage, link_object: StorageObject, link_class):
+    def add_task(
+        cls, project, maximum_annotations, max_inner_id, storage, link_object: StorageObject, link_class, user=None
+    ):
         link_kwargs = asdict(link_object)
         data = link_kwargs.pop('task_data', None)
 
@@ -474,16 +477,36 @@ class ImportStorage(Storage):
                 data.pop('data')
 
         with transaction.atomic():
-            task = Task.objects.create(
-                data=data,
-                project=project,
-                overlap=maximum_annotations,
-                is_labeled=len(annotations) >= maximum_annotations,
-                total_predictions=len(predictions),
-                total_annotations=len(annotations) - cancelled_annotations,
-                cancelled_annotations=cancelled_annotations,
-                inner_id=max_inner_id,
-            )
+            # Feature-flagged FSM context support
+            # For storage sync operations, we need to determine if we have user context
+            # or use organization owner as fallback
+            fsm_user = user or project.organization.created_by
+            if fsm_user and flag_set('fflag_feat_fit_568_finite_state_management', user=fsm_user):
+                context = create_worker_context(
+                    user_id=fsm_user.id, organization_id=project.organization_id, operation='storage_sync_task_import'
+                )
+                task = Task.objects.create_with_context(
+                    context=context,
+                    data=data,
+                    project=project,
+                    overlap=maximum_annotations,
+                    is_labeled=len(annotations) >= maximum_annotations,
+                    total_predictions=len(predictions),
+                    total_annotations=len(annotations) - cancelled_annotations,
+                    cancelled_annotations=cancelled_annotations,
+                    inner_id=max_inner_id,
+                )
+            else:
+                task = Task.objects.create(
+                    data=data,
+                    project=project,
+                    overlap=maximum_annotations,
+                    is_labeled=len(annotations) >= maximum_annotations,
+                    total_predictions=len(predictions),
+                    total_annotations=len(annotations) - cancelled_annotations,
+                    cancelled_annotations=cancelled_annotations,
+                    inner_id=max_inner_id,
+                )
 
             link_class.create(task, storage=storage, **link_kwargs)
             logger.debug(f'Create {storage.__class__.__name__} link with {link_kwargs} for {task=}')
@@ -497,7 +520,14 @@ class ImportStorage(Storage):
             for prediction in predictions:
                 prediction['task'] = task.id
                 prediction['project'] = project.id
-            prediction_ser = PredictionSerializer(data=predictions, many=True)
+
+            # Pass FSM context to prediction serializer if available
+            prediction_context = {}
+            if fsm_user and flag_set('fflag_feat_fit_568_finite_state_management', user=fsm_user):
+                prediction_context['fsm_context'] = context
+                prediction_context['user'] = fsm_user
+
+            prediction_ser = PredictionSerializer(data=predictions, many=True, context=prediction_context)
 
             # Always validate predictions and raise exception if invalid
             raise_prediction_exception = (
@@ -512,7 +542,14 @@ class ImportStorage(Storage):
             for annotation in annotations:
                 annotation['task'] = task.id
                 annotation['project'] = project.id
-            annotation_ser = AnnotationSerializer(data=annotations, many=True)
+
+            # Pass FSM context to annotation serializer if available
+            annotation_context = {}
+            if fsm_user and flag_set('fflag_feat_fit_568_finite_state_management', user=fsm_user):
+                annotation_context['fsm_context'] = context
+                annotation_context['user'] = fsm_user
+
+            annotation_ser = AnnotationSerializer(data=annotations, many=True, context=annotation_context)
 
             # Always validate annotations, but control error handling based on FF
             if annotation_ser.is_valid():

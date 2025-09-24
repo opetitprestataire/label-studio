@@ -54,7 +54,7 @@ def should_process_fsm_signal(instance, user='auto'):
 
             User = get_user_model()
             context_user = User.objects.get(id=context_user_id)
-        except:
+        except (ValueError, TypeError, User.DoesNotExist):
             context_user = user
     else:
         context_user = user
@@ -83,7 +83,7 @@ def get_user_from_context(instance, fallback_user=None):
 
             User = get_user_model()
             return User.objects.get(id=user_id)
-        except:
+        except (ValueError, TypeError, User.DoesNotExist):
             pass
 
     # Fallback to provided user or instance attributes

@@ -5,10 +5,12 @@ import logging
 import random
 
 import ujson as json
+from core.feature_flags import flag_set
 from core.permissions import AllPermissions
 from core.utils.db import fast_first
 from data_manager.functions import DataManagerException
 from django.conf import settings
+from fsm.managers import create_api_context
 from tasks.models import Annotation, Task
 from tasks.serializers import TaskSerializerBulk
 
@@ -45,7 +47,16 @@ def propagate_annotations(project, queryset, **kwargs):
         body = TaskSerializerBulk.add_annotation_fields(body, user, 'propagated_annotation')
         db_annotations.append(Annotation(**body))
 
-    db_annotations = Annotation.objects.bulk_create(db_annotations, batch_size=settings.BATCH_SIZE)
+    # Feature-flagged FSM context support
+    if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+        context = create_api_context(
+            user=user, request_id=request.META.get('HTTP_X_REQUEST_ID'), operation='bulk_propagate_annotations'
+        )
+        db_annotations = Annotation.objects.bulk_create_with_context(
+            db_annotations, context=context, batch_size=settings.BATCH_SIZE
+        )
+    else:
+        db_annotations = Annotation.objects.bulk_create(db_annotations, batch_size=settings.BATCH_SIZE)
     TaskSerializerBulk.post_process_annotations(user, db_annotations, 'propagated_annotation')
     # Update counters for tasks and is_labeled. It should be a single operation as counters affect bulk is_labeled update
     project.update_tasks_counters_and_is_labeled(tasks_queryset=Task.objects.filter(id__in=tasks))
@@ -168,7 +179,7 @@ def add_data_field(project, queryset, **kwargs):
     value = cast[value_type](value)
 
     if value_type == 'Expression':
-        add_expression(queryset, size, value, value_name)
+        add_expression(queryset, size, value, value_name, user=request.user, request=request)
 
     else:
 
@@ -177,7 +188,15 @@ def add_data_field(project, queryset, **kwargs):
             tasks = list(queryset.only('data'))
             for task in tasks:
                 task.data[value_name] = value
-            Task.objects.bulk_update(tasks, fields=['data'], batch_size=1000)
+            # Feature-flagged FSM context support
+            user = request.user
+            if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+                context = create_api_context(
+                    user=user, request_id=request.META.get('HTTP_X_REQUEST_ID'), operation='bulk_add_data_field'
+                )
+                Task.objects.bulk_update_with_context(tasks, fields=['data'], context=context, batch_size=1000)
+            else:
+                Task.objects.bulk_update(tasks, fields=['data'], batch_size=1000)
 
         # postgres and other DB
         else:
@@ -212,7 +231,7 @@ add_data_field_examples = (
 )
 
 
-def add_expression(queryset, size, value, value_name):
+def add_expression(queryset, size, value, value_name, user=None, request=None):
     # simple parsing
     command, args = value.split('(')
     args = process_arrays(args)
@@ -267,7 +286,16 @@ def add_expression(queryset, size, value, value_name):
     else:
         raise Exception('Undefined expression, you can use: ' + add_data_field_examples)
 
-    Task.objects.bulk_update(tasks, fields=['data'], batch_size=1000)
+    # Feature-flagged FSM context support
+    if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+        context = create_api_context(
+            user=user,
+            request_id=request.META.get('HTTP_X_REQUEST_ID') if request else None,
+            operation='bulk_add_expression_data',
+        )
+        Task.objects.bulk_update_with_context(tasks, fields=['data'], context=context, batch_size=1000)
+    else:
+        Task.objects.bulk_update(tasks, fields=['data'], batch_size=1000)
 
 
 def add_data_field_form(user, project):

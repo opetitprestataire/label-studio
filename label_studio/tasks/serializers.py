@@ -11,6 +11,9 @@ from core.utils.db import fast_first
 from django.conf import settings
 from django.db import IntegrityError, transaction
 from drf_spectacular.utils import extend_schema_field
+
+# FSM context support
+from fsm.managers import create_worker_context
 from label_studio_sdk.label_interface import LabelInterface
 from projects.models import Project
 from rest_flex_fields import FlexFieldsModelSerializer
@@ -129,17 +132,41 @@ class AnnotationSerializer(FlexFieldsModelSerializer):
     completed_by = serializers.PrimaryKeyRelatedField(required=False, queryset=User.objects.all())
     unique_id = serializers.CharField(required=False, write_only=True)
 
-    def create(self, *args, **kwargs):
-        try:
-            return super().create(*args, **kwargs)
-        except IntegrityError as e:
-            errors = [
-                'UNIQUE constraint failed: task_completion.unique_id',
-                'duplicate key value violates unique constraint "task_completion_unique_id_key"',
-            ]
-            if any([error in str(e) for error in errors]):
-                raise AnnotationDuplicateError()
-            raise
+    def create(self, validated_data):
+        # Use manager approach for FSM context - if context is provided in serializer context
+        fsm_context = self.context.get('fsm_context')
+        user = self.context.get('user')
+
+        if fsm_context and user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            # Use FSM-aware manager create
+            return Annotation.objects.create_with_context(context=fsm_context, **validated_data)
+        else:
+            # Fallback to standard creation
+            try:
+                return super().create(validated_data)
+            except IntegrityError as e:
+                errors = [
+                    'UNIQUE constraint failed: task_completion.unique_id',
+                    'duplicate key value violates unique constraint "task_completion_unique_id_key"',
+                ]
+                if any([error in str(e) for error in errors]):
+                    raise AnnotationDuplicateError()
+                raise
+
+    def update(self, instance, validated_data):
+        # Use model mixin approach for FSM context - if context is provided in serializer context
+        fsm_context = self.context.get('fsm_context')
+        user = self.context.get('user')
+
+        if fsm_context and user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            # Use FSM-aware save method
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            instance.save_with_context(context=fsm_context)
+            return instance
+        else:
+            # Fallback to standard update
+            return super().update(instance, validated_data)
 
     def validate_result(self, value):
         data = value
@@ -463,7 +490,7 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
                 annotation_mapping = {v.import_id: v.id for v in db_annotations}
                 annotation_mapping[None] = None
                 # the sequence of add_ functions is very important because of references to ids
-                self.add_drafts(task_drafts, db_tasks, annotation_mapping, self.project)
+                self.add_drafts(task_drafts, db_tasks, annotation_mapping, self.project, user)
                 self.add_reviews(task_reviews, annotation_mapping, self.project)
 
         return db_tasks
@@ -547,7 +574,7 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
         """Save task reviews to DB"""
         return []
 
-    def add_drafts(self, task_drafts, db_tasks, annotation_mapping, project):
+    def add_drafts(self, task_drafts, db_tasks, annotation_mapping, project, user=None):
         """Save task drafts to DB"""
         db_drafts = []
 
@@ -572,7 +599,16 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
                 ]
                 db_drafts.append(AnnotationDraft(**draft))
 
-        self.db_drafts = AnnotationDraft.objects.bulk_create(db_drafts, batch_size=settings.BATCH_SIZE)
+        # Feature-flagged FSM context support
+        if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            context = create_worker_context(
+                user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_drafts'
+            )
+            self.db_drafts = AnnotationDraft.objects.bulk_create_with_context(
+                db_drafts, context=context, batch_size=settings.BATCH_SIZE
+            )
+        else:
+            self.db_drafts = AnnotationDraft.objects.bulk_create(db_drafts, batch_size=settings.BATCH_SIZE)
         logging.info(f'drafts serialization success, len = {len(self.db_drafts)}')
 
         return self.db_drafts
@@ -615,9 +651,28 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
             for annotation in db_annotations:
                 annotation.id = current_id
                 current_id += 1
-            self.db_annotations = Annotation.objects.bulk_create(db_annotations, batch_size=settings.BATCH_SIZE)
+
+            # Feature-flagged FSM context support
+            if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+                context = create_worker_context(
+                    user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_annotations'
+                )
+                self.db_annotations = Annotation.objects.bulk_create_with_context(
+                    db_annotations, context=context, batch_size=settings.BATCH_SIZE
+                )
+            else:
+                self.db_annotations = Annotation.objects.bulk_create(db_annotations, batch_size=settings.BATCH_SIZE)
         else:
-            self.db_annotations = Annotation.objects.bulk_create(db_annotations, batch_size=settings.BATCH_SIZE)
+            # Feature-flagged FSM context support
+            if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+                context = create_worker_context(
+                    user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_annotations'
+                )
+                self.db_annotations = Annotation.objects.bulk_create_with_context(
+                    db_annotations, context=context, batch_size=settings.BATCH_SIZE
+                )
+            else:
+                self.db_annotations = Annotation.objects.bulk_create(db_annotations, batch_size=settings.BATCH_SIZE)
         logging.info(f'Annotations serialization success, len = {len(self.db_annotations)}')
 
         return self.db_annotations
@@ -663,9 +718,30 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
             for task in db_tasks:
                 task.id = current_id
                 current_id += 1
-            self.db_tasks = Task.objects.bulk_create(db_tasks, batch_size=settings.BATCH_SIZE)
+
+            # Feature-flagged FSM context support
+            user = self.context.get('user')
+            if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+                context = create_worker_context(
+                    user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_tasks'
+                )
+                self.db_tasks = Task.objects.bulk_create_with_context(
+                    db_tasks, context=context, batch_size=settings.BATCH_SIZE
+                )
+            else:
+                self.db_tasks = Task.objects.bulk_create(db_tasks, batch_size=settings.BATCH_SIZE)
         else:
-            self.db_tasks = Task.objects.bulk_create(db_tasks, batch_size=settings.BATCH_SIZE)
+            # Feature-flagged FSM context support
+            user = self.context.get('user')
+            if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+                context = create_worker_context(
+                    user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_tasks'
+                )
+                self.db_tasks = Task.objects.bulk_create_with_context(
+                    db_tasks, context=context, batch_size=settings.BATCH_SIZE
+                )
+            else:
+                self.db_tasks = Task.objects.bulk_create(db_tasks, batch_size=settings.BATCH_SIZE)
 
         logging.info(f'Tasks serialization success, len = {len(self.db_tasks)}')
 

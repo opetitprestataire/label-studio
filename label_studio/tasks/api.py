@@ -18,6 +18,7 @@ from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse, extend_schema
+from fsm.managers import create_api_context
 from projects.functions.stream_history import fill_history_annotation
 from projects.models import Project
 from rest_framework import generics, viewsets
@@ -198,6 +199,15 @@ class TaskListAPI(DMTaskListAPI):
     def perform_create(self, serializer):
         project_id = self.request.data.get('project')
         project = generics.get_object_or_404(Project, pk=project_id)
+
+        # Feature-flagged FSM context support
+        user = self.request.user
+        if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            context = create_api_context(
+                user=user, request_id=self.request.META.get('HTTP_X_REQUEST_ID'), operation='create_task'
+            )
+            serializer.context['fsm_context'] = context
+
         instance = serializer.save(project=project)
         emit_webhooks_for_instance(
             self.request.user.active_organization, project, WebhookAction.TASKS_CREATED, [instance]
@@ -467,12 +477,32 @@ class AnnotationAPI(generics.RetrieveUpdateDestroyAPIView):
         if self.request.data.get('ground_truth'):
             task.ensure_unique_groundtruth(annotation_id=annotation.id)
         task.update_is_labeled()
-        task.save()  # refresh task metrics
+
+        # Feature-flagged FSM context support for task updates
+        user = self.request.user
+        if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            context = create_api_context(
+                user=user,
+                request_id=self.request.META.get('HTTP_X_REQUEST_ID'),
+                operation='annotation_update_task_metrics',
+            )
+            task.save_with_context(context=context)  # refresh task metrics
+        else:
+            task.save()  # refresh task metrics
 
         result = super(AnnotationAPI, self).update(request, *args, **kwargs)
 
         task.update_is_labeled()
-        task.save(update_fields=['updated_at'])  # refresh task metrics
+        # Feature-flagged FSM context support for task updates
+        if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            context = create_api_context(
+                user=user,
+                request_id=self.request.META.get('HTTP_X_REQUEST_ID'),
+                operation='annotation_update_task_final',
+            )
+            task.save_with_context(context=context, update_fields=['updated_at'])  # refresh task metrics
+        else:
+            task.save(update_fields=['updated_at'])  # refresh task metrics
         return result
 
     def get(self, request, *args, **kwargs):
@@ -598,6 +628,13 @@ class AnnotationsListAPI(GetParentObjectMixin, generics.ListCreateAPIView):
         # annotator has write access only to annotations and it can't be checked it after serializer.save()
         user = self.request.user
 
+        # Feature-flagged FSM context support
+        if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            context = create_api_context(
+                user=user, request_id=self.request.META.get('HTTP_X_REQUEST_ID'), operation='create_annotation'
+            )
+            ser.context['fsm_context'] = context
+
         # updates history
         result = ser.validated_data.get('result')
         extra_args = {'task_id': self.kwargs['pk'], 'project_id': task.project_id}
@@ -676,6 +713,14 @@ class AnnotationDraftListAPI(generics.ListCreateAPIView):
         annotation_id = self.kwargs.get('annotation_id')
         user = self.request.user
         logger.debug(f'User {user} is going to create draft for task={task_id}, annotation={annotation_id}')
+
+        # Feature-flagged FSM context support
+        if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            context = create_api_context(
+                user=user, request_id=self.request.META.get('HTTP_X_REQUEST_ID'), operation='create_annotation_draft'
+            )
+            serializer.context['fsm_context'] = context
+
         serializer.save(task_id=self.kwargs['pk'], annotation_id=annotation_id, user=self.request.user)
 
 

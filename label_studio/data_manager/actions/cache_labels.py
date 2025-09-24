@@ -3,8 +3,10 @@
 
 import logging
 
+from core.feature_flags import flag_set
 from core.permissions import AllPermissions
 from core.redis import start_job_async_or_sync
+from fsm.managers import create_worker_context
 from label_studio_sdk.label_interface import LabelInterface
 from tasks.models import Annotation, Prediction, Task
 
@@ -54,7 +56,15 @@ def cache_labels_job(project, queryset, **kwargs):
         else:
             task.data[column_name] = ', '.join(sorted(list(set(task_labels))))
 
-    Task.objects.bulk_update(tasks, fields=['data'], batch_size=1000)
+    # Feature-flagged FSM context support
+    user = kwargs.get('user')
+    if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+        context = create_worker_context(
+            user_id=user.id, organization_id=project.organization_id, operation='bulk_cache_labels'
+        )
+        Task.objects.bulk_update_with_context(tasks, fields=['data'], context=context, batch_size=1000)
+    else:
+        Task.objects.bulk_update(tasks, fields=['data'], batch_size=1000)
     first_task = Task.objects.get(id=queryset.first().id)
     project.summary.update_data_columns([first_task])
     return {'response_code': 200, 'detail': f'Updated {len(tasks)} tasks'}

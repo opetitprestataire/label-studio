@@ -19,6 +19,7 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
+from fsm.managers import create_api_context
 from label_studio_sdk.label_interface import LabelInterface
 from projects.models import Project, ProjectImport, ProjectReimport
 from ranged_fileresponse import RangedFileResponse
@@ -535,7 +536,19 @@ class ImportPredictionsAPI(generics.CreateAPIView):
                 all_task_ids.add(task_id)
 
             # Bulk create this batch with the configured batch size
-            batch_created = Prediction.objects.bulk_create(batch_predictions, batch_size=settings.BATCH_SIZE)
+            # Feature-flagged FSM context support
+            user = self.request.user
+            if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+                context = create_api_context(
+                    user=user,
+                    request_id=self.request.META.get('HTTP_X_REQUEST_ID'),
+                    operation='bulk_import_predictions',
+                )
+                batch_created = Prediction.objects.bulk_create_with_context(
+                    batch_predictions, context=context, batch_size=settings.BATCH_SIZE
+                )
+            else:
+                batch_created = Prediction.objects.bulk_create(batch_predictions, batch_size=settings.BATCH_SIZE)
             total_created += len(batch_created)
 
             logger.debug(
@@ -616,7 +629,19 @@ class ImportPredictionsAPI(generics.CreateAPIView):
             else:
                 logger.error(f'Prediction validation failed ({len(validation_errors)} errors):\n{validation_errors}')
 
-        predictions_obj = Prediction.objects.bulk_create(predictions, batch_size=settings.BATCH_SIZE)
+        # Feature-flagged FSM context support
+        user = self.request.user
+        if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            context = create_api_context(
+                user=user,
+                request_id=self.request.META.get('HTTP_X_REQUEST_ID'),
+                operation='bulk_import_predictions_legacy',
+            )
+            predictions_obj = Prediction.objects.bulk_create_with_context(
+                predictions, context=context, batch_size=settings.BATCH_SIZE
+            )
+        else:
+            predictions_obj = Prediction.objects.bulk_create(predictions, batch_size=settings.BATCH_SIZE)
         start_job_async_or_sync(update_tasks_counters, Task.objects.filter(id__in=tasks_ids))
         return Response({'created': len(predictions_obj)}, status=status.HTTP_201_CREATED)
 

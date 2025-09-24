@@ -2,8 +2,10 @@
 """
 import logging
 
+from core.feature_flags import flag_set
 from core.permissions import AllPermissions
 from django.utils.timezone import now
+from fsm.managers import create_api_context
 from tasks.models import Annotation, Prediction, Task
 from tasks.serializers import TaskSerializerBulk
 from webhooks.models import WebhookAction
@@ -47,8 +49,31 @@ def predictions_to_annotations(project, queryset, **kwargs):
     count = len(annotations)
     logger.debug(f'{count} predictions will be converter to annotations')
     db_annotations = [Annotation(**annotation) for annotation in annotations]
-    db_annotations = Annotation.objects.bulk_create(db_annotations)
-    Task.objects.filter(id__in=tasks_ids).update(updated_at=now(), updated_by=request.user)
+    # Feature-flagged FSM context support
+    if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+        context = create_api_context(
+            user=user, request_id=request.META.get('HTTP_X_REQUEST_ID'), operation='bulk_predictions_to_annotations'
+        )
+        db_annotations = Annotation.objects.bulk_create_with_context(db_annotations, context=context)
+    else:
+        db_annotations = Annotation.objects.bulk_create(db_annotations)
+    # Feature-flagged FSM context support for task updates
+    if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+        # Fetch tasks and update with context individually to trigger FSM signals
+        tasks_to_update = Task.objects.filter(id__in=tasks_ids)
+        for task in tasks_to_update:
+            task.updated_at = now()
+            task.updated_by = request.user
+            task.save_with_context(
+                context=create_api_context(
+                    user=user,
+                    request_id=request.META.get('HTTP_X_REQUEST_ID'),
+                    operation='predictions_to_annotations_task_update',
+                ),
+                update_fields=['updated_at', 'updated_by'],
+            )
+    else:
+        Task.objects.filter(id__in=tasks_ids).update(updated_at=now(), updated_by=request.user)
 
     if db_annotations:
         TaskSerializerBulk.post_process_annotations(user, db_annotations, 'prediction')

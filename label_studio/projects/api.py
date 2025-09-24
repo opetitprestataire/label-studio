@@ -4,6 +4,8 @@ import logging
 import os
 import pathlib
 
+# FSM context support
+from core.feature_flags import flag_set
 from core.filters import ListFilter
 from core.label_config import config_essential_data_has_changed
 from core.mixins import GetParentObjectMixin
@@ -24,6 +26,7 @@ from django_filters import CharFilter, FilterSet
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse, extend_schema
+from fsm.managers import create_api_context
 from label_studio_sdk.label_interface.interface import LabelInterface
 from ml.serializers import MLBackendSerializer
 from projects.functions.next_task import get_next_task
@@ -259,8 +262,17 @@ class ProjectListAPI(generics.ListCreateAPIView):
         return context
 
     def perform_create(self, ser):
+        user = self.request.user
+
+        # Feature-flagged FSM context support
+        if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+            context = create_api_context(
+                user=user, request_id=self.request.META.get('HTTP_X_REQUEST_ID'), operation='create_project'
+            )
+            ser.context['fsm_context'] = context
+
         try:
-            ser.save(organization=self.request.user.active_organization)
+            ser.save(organization=user.active_organization)
         except IntegrityError as e:
             if str(e) == 'UNIQUE constraint failed: project.title, project.created_by_id':
                 raise ProjectExistException(
