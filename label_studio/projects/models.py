@@ -960,21 +960,15 @@ class Project(ProjectMixin, models.Model):
         """
         predictions = Prediction.objects.filter(project=self)
 
+        model_versions = (
+            predictions.values('model_version')
+            .annotate(count=Count('model_version'), latest=Max('created_at'))
+            .order_by('-latest')
+        )
+
         if extended:
-            model_versions = list(
-                predictions.values('model_version').annotate(count=Count('model_version'), latest=Max('created_at'))
-            )
-
-            # remove the load from the DB side and sort in here
-            model_versions.sort(key=lambda x: x['latest'], reverse=True)
-
-            return model_versions
+            return list(model_versions)
         else:
-            model_versions = (
-                predictions.values('model_version')
-                .annotate(count=Count('model_version'), latest=Max('created_at'))
-                .order_by('-latest')
-            )
             if limit:
                 model_versions = model_versions[:limit]
             output = {r['model_version']: r['count'] for r in model_versions}

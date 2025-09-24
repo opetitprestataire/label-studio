@@ -888,7 +888,9 @@ class ProjectSampleTask(generics.RetrieveAPIView):
 class ProjectModelVersions(generics.RetrieveAPIView):
     parser_classes = (JSONParser,)
     permission_required = all_permissions.projects_view
-    queryset = Project.objects.all()
+
+    def get_queryset(self):
+        return Project.objects.filter(organization=self.request.user.active_organization)
 
     def get(self, request, *args, **kwargs):
         project = self.get_object()
