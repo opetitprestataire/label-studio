@@ -1,5 +1,5 @@
 """
-FSM-aware managers for explicit context handling in Label Studio Open Source.
+FSM-aware managers for explicit context handling.
 
 This module provides manager mixins that add FSM context to model operations,
 allowing explicit control over when and how FSM transitions are triggered.
@@ -197,8 +197,8 @@ def create_api_context(user, request_id=None, **extra):
         'user': user,  # Include user object to avoid repeated queries
         'request_id': request_id,
     }
-    if hasattr(user, 'active_organization') and user.active_organization:
-        context['organization_id'] = user.active_organization.id
+    if hasattr(user, 'active_organization_id') and user.active_organization_id:
+        context['organization_id'] = user.active_organization_id
     context.update(extra)
     return context
 
@@ -212,6 +212,8 @@ def create_worker_context(user_id=None, user=None, organization_id=None, operati
         'user': user,  # Include user object when available to avoid queries
         'organization_id': organization_id,
     }
+    if hasattr(user, 'active_organization_id') and user.active_organization_id and organization_id is None:
+        context['organization_id'] = user.active_organization_id
     context.update(extra)
     return context
 
@@ -224,8 +226,8 @@ def create_admin_context(user, operation='admin_action', **extra):
         'user_id': user.id if user else None,
         'user': user,  # Include user object to avoid repeated queries
     }
-    if hasattr(user, 'active_organization') and user.active_organization:
-        context['organization_id'] = user.active_organization.id
+    if hasattr(user, 'active_organization_id') and user.active_organization_id:
+        context['organization_id'] = user.active_organization_id
     context.update(extra)
     return context
 

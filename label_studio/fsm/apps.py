@@ -15,7 +15,11 @@ class FsmConfig(AppConfig):
     def ready(self):
         """Initialize FSM integration when the app is ready"""
         # Check if this is Community edition - only register signals for Community
+        from core.feature_flags import flag_set
         from django.conf import settings
+
+        if not flag_set('fflag_feat_fit_568_finite_state_management'):
+            return
 
         version_edition = getattr(settings, 'VERSION_EDITION', 'Community')
 
@@ -36,17 +40,9 @@ class FsmConfig(AppConfig):
 
         logger.info('Label Studio FSM app ready, initializing core integrations for Community edition')
 
-        # Import signal handlers to register them (only for Community edition)
-        try:
-            from . import signals  # noqa: F401
+        from .model_extensions import register_fsm_for_core_models
 
-            logger.info('Label Studio FSM signal handlers registered successfully')
-        except Exception as e:
-            logger.error(
-                'FSM: Failed to register Label Studio FSM signal handlers',
-                extra={
-                    'event': 'fsm.signal_registration_error',
-                    'error': str(e),
-                },
-                exc_info=True,
-            )
+        register_fsm_for_core_models()
+
+        # Import signal handlers to register them (only for Community edition)
+        from . import signals  # noqa: F401
