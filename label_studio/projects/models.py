@@ -951,7 +951,7 @@ class Project(ProjectMixin, models.Model):
                 result[field] = value
         return result
 
-    def get_model_versions(self, with_counters=False, extended=False):
+    def get_model_versions(self, with_counters=False, extended=False, limit=None):
         """
         Get model_versions from project predictions.
         :param with_counters: Boolean, if True, counts predictions for each version. Default is False.
@@ -970,12 +970,17 @@ class Project(ProjectMixin, models.Model):
 
             return model_versions
         else:
-            # TODO this needs to be removed at some point
-            model_versions = predictions.values('model_version').annotate(count=Count('model_version'))
+            model_versions = (
+                predictions.values('model_version')
+                .annotate(count=Count('model_version'), latest=Max('created_at'))
+                .order_by('-latest')
+            )
+            if limit:
+                model_versions = model_versions[:limit]
             output = {r['model_version']: r['count'] for r in model_versions}
 
             # Ensure that self.model_version exists in output
-            if self.model_version and self.model_version not in output:
+            if self.model_version and self.model_version not in output and len(output) < limit:
                 output[self.model_version] = 0
 
             # Return as per requirement

@@ -36,6 +36,7 @@ from projects.serializers import (
     ProjectImportSerializer,
     ProjectLabelConfigSerializer,
     ProjectModelVersionExtendedSerializer,
+    ProjectModelVersionParamsSerializer,
     ProjectReimportSerializer,
     ProjectSerializer,
     ProjectSummarySerializer,
@@ -890,12 +891,13 @@ class ProjectModelVersions(generics.RetrieveAPIView):
     queryset = Project.objects.all()
 
     def get(self, request, *args, **kwargs):
-        # TODO make sure "extended" is the right word and is
-        # consistent with other APIs we've got
-        extended = self.request.query_params.get('extended', False)
-        include_live_models = self.request.query_params.get('include_live_models', False)
         project = self.get_object()
-        data = project.get_model_versions(with_counters=True, extended=extended)
+        serializer = ProjectModelVersionParamsSerializer(data=self.request.query_params)
+        serializer.is_valid(raise_exception=True)
+        extended = serializer.validated_data.get('extended', False)
+        include_live_models = serializer.validated_data.get('include_live_models', False)
+        limit = serializer.validated_data.get('limit', None)
+        data = project.get_model_versions(with_counters=True, extended=extended, limit=limit)
 
         if extended:
             serializer_models = None
@@ -905,7 +907,6 @@ class ProjectModelVersions(generics.RetrieveAPIView):
                 ml_models = project.get_ml_backends()
                 serializer_models = MLBackendSerializer(ml_models, many=True)
 
-            # serializer.is_valid(raise_exception=True)
             return Response({'static': serializer.data, 'live': serializer_models and serializer_models.data})
         else:
             return Response(data=data)
