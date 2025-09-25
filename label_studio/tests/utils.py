@@ -95,7 +95,8 @@ def gcs_client_mock(sample_blob_names=None):
         def __init__(self, bucket_name, key, is_json, is_multitask):
             self.key = key
             self.bucket_name = bucket_name
-            self.name = f'{bucket_name}/{key}'
+            # Align with google-cloud-storage: Blob.name is the object key within the bucket
+            self.name = key
             self.is_json = is_json
             self.sample_json_contents = (
                 [
@@ -130,6 +131,8 @@ def gcs_client_mock(sample_blob_names=None):
             self.name = bucket_name
             self.is_json = is_json
             self.is_multitask = is_multitask
+            # Share the outer sample names for bucket-scoped listing
+            self.sample_blob_names = sample_blob_names
 
         def list_blobs(self, prefix, **kwargs):
             if 'fake' in prefix:
@@ -138,20 +141,18 @@ def gcs_client_mock(sample_blob_names=None):
             # Handle delimiter for non-recursive listing (only direct children)
             if 'delimiter' in kwargs and kwargs['delimiter']:
                 delimiter = kwargs['delimiter']
-                # If prefix doesn't end with delimiter, add it for proper directory matching
-                search_prefix = prefix if prefix.endswith(delimiter) else prefix + delimiter
-
-                # Filter to only include files directly under the prefix (no subdirectories)
-                filtered_names = []
-                for name in sample_blob_names:
-                    # Check if the blob name starts with our search prefix
-                    if name.startswith(search_prefix):
-                        # Get the part after the prefix
-                        remaining_path = name[len(search_prefix) :]
-                        # If there's no delimiter in the remaining path, it's a direct child
-                        if delimiter not in remaining_path:
-                            filtered_names.append(name)
-
+                pref = prefix or ''
+                if pref:
+                    search_prefix = pref if pref.endswith(delimiter) else pref + delimiter
+                    filtered_names = []
+                    for name in self.sample_blob_names:
+                        if name.startswith(search_prefix):
+                            remaining_path = name[len(search_prefix) :]
+                            if delimiter not in remaining_path:
+                                filtered_names.append(name)
+                else:
+                    # Root-level: only keys without delimiter are direct children
+                    filtered_names = [name for name in self.sample_blob_names if delimiter not in name]
                 return [File(name) for name in filtered_names]
             return [File(name) for name in self.sample_blob_names if prefix is None or name.startswith(prefix)]
 
@@ -174,21 +175,18 @@ def gcs_client_mock(sample_blob_names=None):
 
             # Handle delimiter for non-recursive listing (only direct children)
             if delimiter:
-                # If prefix doesn't end with delimiter, add it for proper directory matching
-                prefix = prefix or ''
-                search_prefix = prefix if prefix.endswith(delimiter) else prefix + delimiter
-
-                # Filter to only include files directly under the prefix (no subdirectories)
-                filtered_names = []
-                for name in sample_blob_names:
-                    # Check if the blob name starts with our search prefix
-                    if name.startswith(search_prefix):
-                        # Get the part after the prefix
-                        remaining_path = name[len(search_prefix) :]
-                        # If there's no delimiter in the remaining path, it's a direct child
-                        if delimiter not in remaining_path:
-                            filtered_names.append(name)
-
+                pref = prefix or ''
+                if pref:
+                    search_prefix = pref if pref.endswith(delimiter) else pref + delimiter
+                    filtered_names = []
+                    for name in sample_blob_names:
+                        if name.startswith(search_prefix):
+                            remaining_path = name[len(search_prefix) :]
+                            if delimiter not in remaining_path:
+                                filtered_names.append(name)
+                else:
+                    # Root-level: only keys without delimiter are direct children
+                    filtered_names = [name for name in sample_blob_names if delimiter not in name]
                 return [DummyGCSBlob(bucket_name, name, is_json, is_multitask) for name in filtered_names]
 
             return [
