@@ -70,8 +70,8 @@ Label Studio is available to everyone as open source software (Label Studio Comm
   </tr>
     <tr>
     <td><b>Advanced cloud storage integrations</b><br/><a href="storage.html">Databricks Unity Catalog, IAM for AWS S3, Azure Blob Storage with Service Principal, and WIF for Google Cloud Storage connections.</a></td>
-    <td style="text-align:center">✅</td>
-    <td style="text-align:center">✅</td>
+    <td style="text-align:center">❌</td>
+    <td style="text-align:center">❌</td>
     <td style="text-align:center">✅</td>
   </tr>
   <tr>
