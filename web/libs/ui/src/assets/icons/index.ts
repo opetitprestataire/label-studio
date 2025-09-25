@@ -28,6 +28,7 @@ export { ReactComponent as IconBell } from "./bell.svg";
 export { ReactComponent as IconBlueCheckmark } from "./blue-checkmark.svg";
 export { ReactComponent as IconBlog } from "./blog.svg";
 export { ReactComponent as IconBook } from "./book.svg";
+export { ReactComponent as IconClosedBook } from "./closed-book.svg";
 export { ReactComponent as IconBouncing3Dots } from "./bouncing-3-dots.svg";
 export { ReactComponent as IconBoundingBox } from "./bounding-box.svg";
 export { ReactComponent as IconBrightnessTool } from "./brightness-tool.svg";
