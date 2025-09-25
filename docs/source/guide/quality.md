@@ -57,7 +57,7 @@ For Label Studio Enterprise projects, you can configure the review stream orderi
 - Task Ordering: Choose between By Task ID (sequential) and Random. Random preserves the order of annotations within each task but randomizes task order.
 - Task Limit (%): When Random is selected, optionally limit the percentage of project tasks available for review. The limit is applied after any filters such as “Show only finished tasks.” When reviewers start a review session from a Data Manager selection (selected items), the limit is bypassed for that session.
 
-See Project settings → Review → Task Ordering and Task Limit for configuration details.
+See **Settings > Review > Task Ordering** and **Task Limit** for configuration details.
 
 ### Navigate between tasks or annotations
 
