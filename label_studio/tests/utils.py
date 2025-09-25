@@ -134,6 +134,7 @@ def gcs_client_mock(sample_blob_names=None):
         def list_blobs(self, prefix, **kwargs):
             if 'fake' in prefix:
                 return []
+
             # Handle delimiter for non-recursive listing (only direct children)
             if 'delimiter' in kwargs and kwargs['delimiter']:
                 delimiter = kwargs['delimiter']
