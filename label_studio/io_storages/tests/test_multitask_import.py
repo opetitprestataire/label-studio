@@ -125,7 +125,7 @@ def test_import_multiple_tasks_gcs(project, common_task_data):
             # magic bucket name to set correct data in gcs_client_mock
             bucket='multitask_JSON',
             use_blob_urls=False,
-            recursive_scan=False,
+            recursive_scan=True,
         )
 
 
