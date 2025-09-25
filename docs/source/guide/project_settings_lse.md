@@ -333,17 +333,15 @@ Enable **Show before reviewing** to display a pop-up message to reviewers when t
 
 <dd>
 
-Configure what is required for a task to be considered reviewed.
+Configure what is required for a task to be considered "reviewed."
 
-<div class="callout">
-<p><strong>Where this is used</strong></p>
-<ul>
-<li><strong>Review stream</strong>: Determines when a task is removed from the review queue.</li>
-<li><strong>Data Manager</strong>: Controls the value shown in the <em>Reviewed</em> column.</li>
-<li><strong>Export</strong>: Affects which tasks are marked as reviewed in exported datasets.</li>
-<li><strong>Dashboards</strong>: Impacts reviewed counts and related metrics.</li>
-</ul>
-</div>
+!!! note
+    This metric determines:
+
+    * **Review stream**: When a task is removed from the review queue.
+    * **Data Manager**: The value shown in the **Reviewed** column. 
+    * **Export**: Which tasks are included when you want to only include reviewed tasks in your export snapshot.
+    * **Dashboards**: Reviewed counts and related metrics. 
 
 <table>
 <thead>
@@ -371,6 +369,34 @@ In a task where multiple annotators submitted labels, the reviewer only needs to
 <td>
 
 In a task where multiple annotators submitted labels, the reviewer needs to accept or reject annotations submitted by all annotators. 
+
+</td>
+</tr>
+<tr>
+<td>
+
+**Review only manually assigned tasks**
+</td>
+<td>
+
+If enabled, a reviewer can only see tasks to which they've been assigned. Otherwise, they can view all tasks that are ready for review.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**Show only finished tasks in the review stream**
+</td>
+<td>
+
+When enabled, a reviewer only sees tasks that have been completed by all required annotators. 
+
+If your project is using auto distribution, then this means a reviewer only sees tasks that have met the **Annotations per task minimum** threshold. 
+
+If your project is using manual distribution, then this means a reviewer only sees tasks in which all assigned annotators have submitted an annotation. 
+
+Note that in most cases, skipped tasks do not contribute towards meeting the minimum.  
 
 </td>
 </tr>
@@ -421,16 +447,19 @@ Tasks are shown in randomized task order while preserving the stable order of an
 
 <dd>
 
-Limit the portion of project tasks that are available to reviewers when <strong>Task Ordering</strong> is set to <strong>Random</strong>.
+Limit the portion of project tasks that are available to reviewers when **Task Ordering** is set to **Random**.
 
-<ul>
-<li><strong>Scope</strong>: Applies only when sampling is <em>Random</em>. Hidden/disabled for <em>By Task ID</em>.</li>
-<li><strong>Value</strong>: Percentage (0–100). Values ≤0 or ≥100 effectively disable limiting.</li>
-<li><strong>Selection</strong>: The limit is applied over the eligible task set after filters (for example, <em>Show only finished tasks</em>).</li>
-<li><strong>Data Manager selection</strong>: If reviewers open the review stream with <code>selectedItems</code> from the Data Manager, the limit is bypassed for that session.</li>
-</ul>
+Set this to a percentage from `0` to `100`. 
 
-<p><strong>Example</strong>: If a project has 1,000 tasks and the limit is set to 60%, at most ~600 tasks will be served for review under Random sampling. When the limit is reached, the API returns “no more annotations to review,” and the UI displays <em>Review finished</em>.</p>
+!!! note
+    Note the following:
+
+    * This only applies only when sampling is **Random**. 
+    * If you enter a percentage of `≤0` or `≥100`, you will effectively disable limiting. 
+    * This limit is applied over the eligible task set after filters (for example, **Show only finished tasks**) are applied.
+    * If reviewers open the review stream by selecting tasks and then clicking **Label *n* Tasks** from the Data Manager, they will bypass the limit. 
+
+    For example, if a project has 1,000 tasks and the limit is set to 60%, at most ~600 tasks will be served for review under Random sampling. When the limit is reached, the API returns “no more annotations to review,” and the UI displays **Review finished**.
 
 </dd>
 
@@ -450,7 +479,7 @@ Configure what rejection options are available to reviewers.
 <tr>
 <td>
 
-**Requeue rejected tasks back to annotators**
+**Requeue rejected annotations back to annotators**
 </td>
 <td>
 
@@ -460,7 +489,7 @@ When a reviewer clicks **Reject**, the annotation is reassigned back to the anno
 </tr>
 <td>
 
-**Remove rejected tasks from labeling queue**
+**Remove rejected annotations from labeling queue**
 </td>
 <td>
 
@@ -522,7 +551,11 @@ When disabled, reviewers can only enter the review stream. When enabled, reviewe
 </td>
 <td>
 
-Controls whether reviewers can see task data fields that are not referenced by the labeling interface. Disable to reduce noise and focus on fields used in labeling.
+If reviewers can view the Data Manager, this setting will hide unused columns from them.
+
+Unused Data Manager columns are columns that contain data that is not being used in the labeling configuration.
+
+For example, you may include meta or system data that you want to view as part of a project, but you don’t necessarily want to expose that data to reviewers.
 
 </td>
 </tr>
@@ -533,7 +566,7 @@ Controls whether reviewers can see task data fields that are not referenced by t
 </td>
 <td>
 
-If reviewers can view the Data Manager, this setting controls whether they can access the Agreement column.
+If reviewers can view the Data Manager, this setting controls whether they can access the **Agreement** column.
 
 </td>
 </tr>
