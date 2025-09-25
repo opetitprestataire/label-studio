@@ -6,9 +6,8 @@ changing their inheritance structure.
 """
 
 import logging
-from typing import Any, Dict
 
-from fsm.managers import FSMModelMixin, FSMManagerMixin
+from fsm.managers import FSMManagerMixin, FSMModelMixin
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +32,8 @@ def add_fsm_methods_to_model(model_class):
 def register_fsm_for_core_models():
     """Register FSM methods for core Label Studio models."""
     try:
-        from tasks.models import Annotation, AnnotationDraft, Task
         from projects.models import Project
+        from tasks.models import Annotation, AnnotationDraft, Task
 
         add_fsm_methods_to_model(Project)
         add_fsm_methods_to_model(Task)
