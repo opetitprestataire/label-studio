@@ -602,7 +602,7 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
         # Feature-flagged FSM context support
         if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
             context = create_worker_context(
-                user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_drafts'
+                user=user, organization_id=self.project.organization_id, operation='bulk_import_drafts'
             )
             self.db_drafts = AnnotationDraft.objects.bulk_create_with_context(
                 db_drafts, context=context, batch_size=settings.BATCH_SIZE
@@ -655,7 +655,7 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
             # Feature-flagged FSM context support
             if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
                 context = create_worker_context(
-                    user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_annotations'
+                    user=user, organization_id=self.project.organization_id, operation='bulk_import_annotations'
                 )
                 self.db_annotations = Annotation.objects.bulk_create_with_context(
                     db_annotations, context=context, batch_size=settings.BATCH_SIZE
@@ -666,7 +666,7 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
             # Feature-flagged FSM context support
             if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
                 context = create_worker_context(
-                    user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_annotations'
+                    user=user, organization_id=self.project.organization_id, operation='bulk_import_annotations'
                 )
                 self.db_annotations = Annotation.objects.bulk_create_with_context(
                     db_annotations, context=context, batch_size=settings.BATCH_SIZE
@@ -723,7 +723,7 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
             user = self.context.get('user')
             if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
                 context = create_worker_context(
-                    user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_tasks'
+                    user=user, organization_id=self.project.organization_id, operation='bulk_import_tasks'
                 )
                 self.db_tasks = Task.objects.bulk_create_with_context(
                     db_tasks, context=context, batch_size=settings.BATCH_SIZE
@@ -735,7 +735,7 @@ class BaseTaskSerializerBulk(serializers.ListSerializer):
             user = self.context.get('user')
             if user and flag_set('fflag_feat_fit_568_finite_state_management', user=user):
                 context = create_worker_context(
-                    user_id=user.id, organization_id=self.project.organization_id, operation='bulk_import_tasks'
+                    user=user, organization_id=self.project.organization_id, operation='bulk_import_tasks'
                 )
                 self.db_tasks = Task.objects.bulk_create_with_context(
                     db_tasks, context=context, batch_size=settings.BATCH_SIZE

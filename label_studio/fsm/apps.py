@@ -15,28 +15,10 @@ class FsmConfig(AppConfig):
     def ready(self):
         """Initialize FSM integration when the app is ready"""
         # Check if this is Community edition - only register signals for Community
-        from core.feature_flags import flag_set
-        from django.conf import settings
+        from fsm.integrations import is_fsm_enabled
 
-        if not flag_set('fflag_feat_fit_568_finite_state_management'):
+        if not is_fsm_enabled():
             return
-
-        version_edition = getattr(settings, 'VERSION_EDITION', 'Community')
-
-        if version_edition != 'Community':
-            logger.info(f'Label Studio FSM: Skipping initialization for {version_edition} edition')
-            return
-
-        # Additional safety check: if LSE FSM apps are present, don't initialize
-        try:
-            from django.apps import apps
-
-            if apps.is_installed('lse_fsm'):
-                logger.info('Label Studio FSM: LSE FSM detected, skipping LSO FSM initialization to avoid conflicts')
-                return
-        except Exception as e:
-            # Log but continue - this shouldn't prevent initialization in pure LSO environments
-            logger.debug(f'Label Studio FSM: Error checking for LSE apps: {e}')
 
         logger.info('Label Studio FSM app ready, initializing core integrations for Community edition')
 

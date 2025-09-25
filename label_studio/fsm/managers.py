@@ -189,74 +189,28 @@ class FSMManager(FSMManagerMixin, models.Manager):
 # Helper functions to create context dictionaries
 
 
-def create_api_context(user, request_id=None, **extra):
-    """Create context for API operations."""
+def create_context(user, **extra):
     context = {
-        'source': 'api',
         'user_id': user.id if user else None,
         'user': user,  # Include user object to avoid repeated queries
-        'request_id': request_id,
+        'organization_id': getattr(extra, 'organization_id', None),
     }
-    if hasattr(user, 'active_organization_id') and user.active_organization_id:
+    if hasattr(user, 'active_organization_id') and user.active_organization_id and context['organization_id'] is None:
         context['organization_id'] = user.active_organization_id
     context.update(extra)
     return context
 
 
-def create_worker_context(user_id=None, user=None, organization_id=None, operation='worker_task', **extra):
+def create_api_context(user, request_id=None, **extra):
+    """Create context for API operations."""
+    return create_context(user, request_id=request_id, source='api', **extra)
+
+
+def create_worker_context(user, operation='worker_task', **extra):
     """Create context for worker operations."""
-    context = {
-        'source': 'worker',
-        'operation': operation,
-        'user_id': user_id or (user.id if user else None),
-        'user': user,  # Include user object when available to avoid queries
-        'organization_id': organization_id,
-    }
-    if hasattr(user, 'active_organization_id') and user.active_organization_id and organization_id is None:
-        context['organization_id'] = user.active_organization_id
-    context.update(extra)
-    return context
+    return create_context(user, source='worker', operation=operation, **extra)
 
 
 def create_admin_context(user, operation='admin_action', **extra):
     """Create context for admin operations."""
-    context = {
-        'source': 'admin',
-        'operation': operation,
-        'user_id': user.id if user else None,
-        'user': user,  # Include user object to avoid repeated queries
-    }
-    if hasattr(user, 'active_organization_id') and user.active_organization_id:
-        context['organization_id'] = user.active_organization_id
-    context.update(extra)
-    return context
-
-
-def get_user_from_fsm_context(fsm_context):
-    """
-    Get user from FSM context efficiently.
-    First tries to get user object from context, falls back to user_id lookup.
-
-    Returns:
-        User object or None
-    """
-    if not fsm_context:
-        return None
-
-    # First try to get user object directly from context
-    user = fsm_context.get('user')
-    if user:
-        return user
-
-    # Fallback to user_id lookup
-    user_id = fsm_context.get('user_id')
-    if user_id:
-        try:
-            from django.contrib.auth import get_user_model
-
-            User = get_user_model()
-            return User.objects.get(id=user_id)
-        except (ValueError, TypeError, User.DoesNotExist):
-            pass
-
-    return None
+    return create_context(user, source='admin', operation=operation, **extra)

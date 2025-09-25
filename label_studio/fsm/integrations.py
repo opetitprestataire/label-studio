@@ -162,7 +162,7 @@ def project_created(project, user: Optional[User] = None) -> bool:
 
     state_manager = get_state_manager()
     return state_manager.transition_state(
-        entity=project, new_state=ProjectStateChoices.CREATED, user=user, reason='Project created in Label Studio core'
+        entity=project, new_state=ProjectStateChoices.CREATED, user=user, reason='Project created'
     )
 
 
@@ -232,7 +232,7 @@ def task_created(task, user: Optional[User] = None) -> bool:
 
     state_manager = get_state_manager()
     return state_manager.transition_state(
-        entity=task, new_state=TaskStateChoices.CREATED, user=user, reason='Task created in Label Studio core'
+        entity=task, new_state=TaskStateChoices.CREATED, user=user, reason='Task created'
     )
 
 
@@ -305,30 +305,7 @@ def annotation_submitted(annotation, user: Optional[User] = None) -> bool:
         entity=annotation,
         new_state=AnnotationStateChoices.SUBMITTED,
         user=user,
-        reason='Annotation submitted in Label Studio core',
-    )
-
-
-@safe_state_transition
-def annotation_completed(annotation, user: Optional[User] = None) -> bool:
-    """
-    Handle annotation completion.
-
-    Args:
-        annotation: Annotation instance
-        user: User who completed the annotation
-
-    Returns:
-        True if transition was successful, False otherwise
-    """
-    if not is_fsm_enabled(user):
-        return False
-
-    from fsm.state_choices import AnnotationStateChoices
-
-    state_manager = get_state_manager()
-    return state_manager.transition_state(
-        entity=annotation, new_state=AnnotationStateChoices.COMPLETED, user=user, reason='Annotation completed'
+        reason='Annotation submitted',
     )
 
 

@@ -12,7 +12,6 @@ from django.test import TestCase, override_settings
 
 User = get_user_model()
 from fsm.integrations import (
-    annotation_completed,
     annotation_submitted,
     get_current_state_safe,
     is_enterprise_enabled,
@@ -98,10 +97,16 @@ class TestStateTransitions(TestCase):
         self.user = User.objects.create_user(username='testuser', email='test@example.com')
         self.mock_project = Mock()
         self.mock_project.id = 1
+        self.mock_project._meta = Mock()
+        self.mock_project._meta.model_name = 'project'
         self.mock_task = Mock()
         self.mock_task.id = 1
+        self.mock_task._meta = Mock()
+        self.mock_task._meta.model_name = 'task'
         self.mock_annotation = Mock()
         self.mock_annotation.id = 1
+        self.mock_annotation._meta = Mock()
+        self.mock_annotation._meta.model_name = 'annotation'
 
     @patch('fsm.integrations.is_fsm_enabled')
     @patch('fsm.integrations.get_state_manager')
@@ -119,7 +124,7 @@ class TestStateTransitions(TestCase):
             entity=self.mock_project,
             new_state=ProjectStateChoices.CREATED,
             user=self.user,
-            reason='Project created in Label Studio core',
+            reason='Project created',
         )
 
     @patch('fsm.integrations.is_fsm_enabled')
@@ -147,7 +152,7 @@ class TestStateTransitions(TestCase):
             entity=self.mock_task,
             new_state=TaskStateChoices.CREATED,
             user=self.user,
-            reason='Task created in Label Studio core',
+            reason='Task created',
         )
 
     @patch('fsm.integrations.is_fsm_enabled')
@@ -166,7 +171,7 @@ class TestStateTransitions(TestCase):
             entity=self.mock_annotation,
             new_state=AnnotationStateChoices.SUBMITTED,
             user=self.user,
-            reason='Annotation submitted in Label Studio core',
+            reason='Annotation submitted',
         )
 
     @patch('fsm.integrations.is_fsm_enabled')
@@ -332,31 +337,6 @@ class TestAdditionalIntegrations(TestCase):
             new_state=TaskStateChoices.COMPLETED,
             user=self.user,
             reason='Task completed',
-        )
-
-    @patch('fsm.integrations.flag_set')
-    def test_annotation_completed_when_disabled(self, mock_flag):
-        """Test annotation_completed when FSM is disabled."""
-        mock_flag.return_value = False
-        result = annotation_completed(self.annotation, self.user)
-        assert result is False
-
-    @patch('fsm.integrations.flag_set')
-    @patch('fsm.integrations.get_state_manager')
-    def test_annotation_completed_when_enabled(self, mock_get_manager, mock_flag):
-        """Test annotation_completed when FSM is enabled."""
-        mock_flag.return_value = True
-        mock_state_manager = Mock()
-        mock_state_manager.transition_state.return_value = True
-        mock_get_manager.return_value = mock_state_manager
-
-        result = annotation_completed(self.annotation, self.user)
-        assert result is True
-        mock_state_manager.transition_state.assert_called_once_with(
-            entity=self.annotation,
-            new_state=AnnotationStateChoices.COMPLETED,
-            user=self.user,
-            reason='Annotation completed',
         )
 
     @patch('fsm.integrations.flag_set')

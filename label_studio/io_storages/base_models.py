@@ -483,7 +483,7 @@ class ImportStorage(Storage):
             fsm_user = user or project.organization.created_by
             if fsm_user and flag_set('fflag_feat_fit_568_finite_state_management', user=fsm_user):
                 context = create_worker_context(
-                    user_id=fsm_user.id, organization_id=project.organization_id, operation='storage_sync_task_import'
+                    user=fsm_user, organization_id=project.organization_id, operation='storage_sync_task_import'
                 )
                 task = Task.objects.create_with_context(
                     context=context,

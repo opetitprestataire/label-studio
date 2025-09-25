@@ -10,32 +10,12 @@ workflows. They are designed to:
 """
 
 import logging
-from typing import Optional
 
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from fsm.signals_utils import get_user_from_fsm_context, should_process_fsm_signal
 
 logger = logging.getLogger(__name__)
-
-
-def get_user_from_instance(instance) -> Optional[User]:
-    """
-    Extract user from model instance using common field patterns.
-
-    Args:
-        instance: Django model instance
-
-    Returns:
-        User instance if found, None otherwise
-    """
-    # Try common user field patterns
-    for field in ['created_by', 'updated_by', 'completed_by', 'user']:
-        if hasattr(instance, field):
-            user = getattr(instance, field)
-            if isinstance(user, User):
-                return user
-    return None
 
 
 @receiver(post_save)
@@ -53,32 +33,11 @@ def handle_model_state_transitions(sender, instance, created, **kwargs):
         created: True if this is a new instance
         **kwargs: Additional signal arguments
     """
-    # Check VERSION_EDITION first - only work in Community edition
-    from django.conf import settings
-
-    version_edition = getattr(settings, 'VERSION_EDITION', 'Community')
-
-    if version_edition != 'Community':
-        return
-
-    # Additional safety check: if LSE FSM apps are present, don't interfere
-    try:
-        from django.apps import apps
-
-        if apps.is_installed('lse_fsm'):
-            logger.debug('FSM: LSE FSM detected, skipping LSO signal handler')
-            return
-    except Exception:
-        # If there's any issue checking for LSE apps, continue safely
-        pass
-
-    from fsm.integrations import is_fsm_enabled
-
     # Early exit if FSM is not enabled
-    if not is_fsm_enabled():
+    if not should_process_fsm_signal(instance):
         return
 
-    user = get_user_from_instance(instance)
+    user = get_user_from_fsm_context(instance)
     model_name = sender.__name__.lower()
 
     try:
@@ -140,28 +99,14 @@ def handle_model_state_transitions(sender, instance, created, **kwargs):
                     },
                 )
 
-            # Handle annotation completion (when is_completed flag is set)
-            elif hasattr(instance, 'is_completed') and instance.is_completed:
-                from fsm.integrations import annotation_completed, task_completed
-
-                annotation_completed(instance, user=user)
-
                 # Check if task should be marked completed
                 if hasattr(instance, 'task'):
+                    from fsm.integrations import task_completed
+
                     task = instance.task
                     # Simple heuristic: if task has is_labeled=True, mark as completed
                     if getattr(task, 'is_labeled', False):
                         task_completed(task, user=user)
-
-                logger.debug(
-                    'FSM: Annotation completed',
-                    extra={
-                        'event': 'fsm.annotation_completed',
-                        'entity_type': 'annotation',
-                        'entity_id': instance.id,
-                        'user_id': user.id if user else None,
-                    },
-                )
 
     except Exception as e:
         # Log error but don't raise - FSM errors should never break core functionality

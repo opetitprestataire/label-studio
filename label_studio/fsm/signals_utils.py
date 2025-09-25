@@ -13,6 +13,44 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
+def get_user_from_fsm_context(instance, fallback_user=None):
+    """
+    Get user from signal context or fallback to provided user.
+
+    Args:
+        instance: Model instance with potential _fsm_context
+        fallback_user: User to use if no context user found
+
+    Returns:
+        User instance or None
+    """
+    # Try to get user from context
+    context = getattr(instance, '_fsm_context', {})
+
+    if not context:
+        return fallback_user
+
+    user = context.get('user')
+
+    if user:
+        return user
+
+    user_id = context.get('user_id')
+
+    if user_id:
+        try:
+            from django.contrib.auth import get_user_model
+
+            User = get_user_model()
+            user = User.objects.get(id=user_id)
+            instance._fsm_context['user'] = user
+        except (ValueError, TypeError, User.DoesNotExist):
+            pass
+
+    # Fallback to provided user or instance attributes
+    return fallback_user
+
+
 def should_process_fsm_signal(instance, user='auto'):
     """
     Check if FSM signal processing should occur for an instance.
@@ -46,48 +84,9 @@ def should_process_fsm_signal(instance, user='auto'):
         return False
 
     # Check the FSM flag with context user
-    context = instance._fsm_context
-    context_user_id = context.get('user_id')
-    if context_user_id:
-        try:
-            from django.contrib.auth import get_user_model
-
-            User = get_user_model()
-            context_user = User.objects.get(id=context_user_id)
-        except (ValueError, TypeError, User.DoesNotExist):
-            context_user = user
-    else:
-        context_user = user
+    context_user = get_user_from_fsm_context(instance, user)
 
     return flag_set('fflag_feat_fit_568_finite_state_management', user=context_user)
-
-
-def get_user_from_context(instance, fallback_user=None):
-    """
-    Get user from signal context or fallback to provided user.
-
-    Args:
-        instance: Model instance with potential _fsm_context
-        fallback_user: User to use if no context user found
-
-    Returns:
-        User instance or None
-    """
-    # Try to get user from context
-    context = getattr(instance, '_fsm_context', {})
-    user_id = context.get('user_id')
-
-    if user_id:
-        try:
-            from django.contrib.auth import get_user_model
-
-            User = get_user_model()
-            return User.objects.get(id=user_id)
-        except (ValueError, TypeError, User.DoesNotExist):
-            pass
-
-    # Fallback to provided user or instance attributes
-    return fallback_user
 
 
 def get_organization_from_context(instance):
