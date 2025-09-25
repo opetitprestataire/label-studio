@@ -400,7 +400,7 @@ stages:
 test_name: test_import_from_gcs_storage
 strict: false
 marks:
-- skip: True # TODO: @niklub (fails on CI, but passes locally)
+- skip: 'TODO: @niklub (fails on CI, but passes locally)'
 - usefixtures:
   - django_live_url
 
@@ -524,7 +524,7 @@ stages:
 test_name: test_import_from_gcs_storage_json
 strict: false
 marks:
-- skip: True # TODO: @niklub (fails on CI, but passes locally)
+- skip: 'TODO: @niklub (fails on CI, but passes locally)'
 - usefixtures:
   - django_live_url
 
