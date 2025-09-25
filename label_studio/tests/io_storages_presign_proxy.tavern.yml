@@ -301,7 +301,7 @@ stages:
     response:
       json:
         data:
-          image_url: !re_match "/tasks/\\d+/resolve/\\?fileuri=Z3M6Ly90ZXN0LWdzLWJ1Y2tldC90ZXN0LWdzLWJ1Y2tldC9hYmM="
+          image_url: !re_match "/tasks/\\d+/resolve/\\?fileuri=Z3M6Ly90ZXN0LWdzLWJ1Y2tldC9hYmM="
       status_code: 200
 ---
 test_name: test_invalidate_gcs_storage
