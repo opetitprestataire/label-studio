@@ -92,6 +92,7 @@ stages:
       title: Testing S3 storage (bucket from conftest.py)
       use_blob_urls: true
       presign_ttl: 3600
+      recursive_scan: true
     method: POST
     url: '{django_live_url}/api/storages/s3'
   response:
@@ -426,6 +427,7 @@ stages:
       project: '{project_pk}'
       title: Test GCS storage import (mocked GCS client from conftest.py)
       use_blob_urls: true
+      recursive_scan: true
     method: POST
     url: '{django_live_url}/api/storages/gcs'
   response:
@@ -548,6 +550,7 @@ stages:
       project: '{project_pk}'
       title: Test GCS storage import (mocked GCS client from conftest.py)
       use_blob_urls: false
+      recursive_scan: true
     method: POST
     url: '{django_live_url}/api/storages/gcs'
   response:
@@ -1229,6 +1232,7 @@ stages:
       project: '{project_pk}'
       title: Testing Azure storage (bucket from conftest.py)
       use_blob_urls: true
+      recursive_scan: true
     method: POST
     url: '{django_live_url}/api/storages/azure'
   response:
