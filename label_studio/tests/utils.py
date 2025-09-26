@@ -4,6 +4,7 @@ import os.path
 import re
 import tempfile
 from contextlib import contextmanager
+from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 from types import SimpleNamespace
@@ -88,7 +89,6 @@ def gcs_client_mock(sample_blob_names=None):
 
     from google.cloud import storage as google_storage
 
-    File = namedtuple('File', ['name'])
     sample_blob_names = sample_blob_names or ['abc', 'def', 'ghi']
 
     class DummyGCSBlob:
@@ -132,9 +132,11 @@ def gcs_client_mock(sample_blob_names=None):
             self.is_json = is_json
             self.is_multitask = is_multitask
             # Share the outer sample names for bucket-scoped listing
-            self.sample_blob_names = sample_blob_names
+            self.sample_blob_names = deepcopy(sample_blob_names)
 
         def list_blobs(self, prefix, **kwargs):
+            File = namedtuple('File', ['name'])
+
             if 'fake' in prefix:
                 return []
 
@@ -161,7 +163,7 @@ def gcs_client_mock(sample_blob_names=None):
 
     class DummyGCSClient:
         def __init__(self, sample_json_contents=None):
-            self.sample_blob_names = sample_blob_names
+            self.sample_blob_names = deepcopy(sample_blob_names)
 
         def get_bucket(self, bucket_name):
             is_json = bucket_name.endswith('_JSON')
@@ -237,12 +239,13 @@ def azure_client_mock(sample_json_contents=None, sample_blob_names=None):
     class DummyAzureContainer:
         def __init__(self, container_name, **kwargs):
             self.name = container_name
+            self.sample_blob_names = deepcopy(sample_blob_names)
 
         def list_blobs(self, name_starts_with):
-            return [File(name) for name in sample_blob_names]
+            return [File(name) for name in self.sample_blob_names]
 
         def walk_blobs(self, name_starts_with, delimiter):
-            return [File(name) for name in sample_blob_names]
+            return [File(name) for name in self.sample_blob_names]
 
         def get_blob_client(self, key):
             return DummyAzureBlob(self.name, key)
