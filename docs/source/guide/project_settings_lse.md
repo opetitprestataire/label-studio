@@ -16,6 +16,12 @@ date: 2024-02-06 22:28:14
 !!! error Enterprise
     Many settings are only available in Label Studio Enterprise Edition. If you're using Label Studio Community Edition, see [Label Studio Features](label_studio_compare) to learn more.
 
+!!! error Starter Cloud
+    If you see an Enterprise badge: <span class="badge"></span>.
+    
+    This means the setting is not available in Label Studio Starter Cloud. 
+
+
 ## General
 
 Use these settings to specify some basic information about the project. 
