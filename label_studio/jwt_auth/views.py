@@ -84,9 +84,6 @@ class JWTSettingsAPI(CreateAPIView):
 
 
 class DecoratedTokenRefreshView(TokenRefreshView):
-    permission_required = all_permissions.users_token_any
-    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES
-
     @extend_schema(
         tags=['JWT'],
         summary='Refresh JWT token',
@@ -194,8 +191,6 @@ class LSAPITokenView(generics.ListCreateAPIView):
 
 class LSTokenBlacklistView(TokenViewBase):
     _serializer_class = 'jwt_auth.serializers.LSAPITokenBlacklistSerializer'
-    permission_required = all_permissions.users_token_any
-    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES
 
     @extend_schema(
         tags=['JWT'],
@@ -250,11 +245,6 @@ class LSAPITokenRotateView(TokenViewBase):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        # Ensure the user is authenticated
-        if not request.user or not request.user.is_authenticated:
-            return Response({'detail': 'Authentication credentials were not provided or are invalid.'}, status=401)
-
         current_token = serializer.validated_data['refresh']
 
         # Blacklist the current token
