@@ -317,7 +317,7 @@ def gcs_client():
     # be careful, this is a global fixture and will affect all tests
     # because it will be applied to all tests that use gcs_client
     # and it may lead to flaky tests if the sample blob names are not deterministic
-    with gcs_client_mock(sample_blob_names=['abc', 'def', 'ghi']):
+    with gcs_client_mock():
         yield
 
 

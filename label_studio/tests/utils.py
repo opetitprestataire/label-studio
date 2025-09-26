@@ -86,7 +86,7 @@ def email_mock():
 
 
 @contextmanager
-def gcs_client_mock(sample_blob_names=None):
+def gcs_client_mock():
     # be careful, this is a global contextmanager (sample_blob_names)
     # and will affect all tests because it will be applied to all tests that use gcs_client
     # it may lead to flaky tests if the sample blob names are not deterministic
@@ -95,8 +95,25 @@ def gcs_client_mock(sample_blob_names=None):
 
     from google.cloud import storage as google_storage
 
-    def get_sample_blob_names():
-        return sample_blob_names or ['abc', 'def', 'ghi']
+    def get_sample_blob_names_for_bucket(bucket_name):
+        # Bucket-specific logic to avoid test bleed
+        if bucket_name in ['pytest-recursive-scan-bucket']:
+            result = ['dataset/', 'dataset/a.json', 'dataset/sub/b.json', 'other/c.json']
+            logger.info(f'get_sample_blob_names_for_bucket({bucket_name}) -> {result} (recursive scan bucket)')
+            return result
+        elif bucket_name.startswith('multitask_'):
+            result = ['test.json']
+            logger.info(f'get_sample_blob_names_for_bucket({bucket_name}) -> {result} (multitask)')
+            return result
+        elif bucket_name.startswith('test-gs-bucket'):
+            # Force deterministic samples for standard GCS test buckets - never use closure variable
+            result = ['abc', 'def', 'ghi']
+            logger.info(f'get_sample_blob_names_for_bucket({bucket_name}) -> {result} (test-gs-bucket prefix)')
+            return result
+        else:
+            result = ['abc', 'def', 'ghi']
+            logger.info(f'get_sample_blob_names_for_bucket({bucket_name}) -> {result} (default)')
+            return result
 
     class DummyGCSBlob:
         def __init__(self, bucket_name, key, is_json, is_multitask):
@@ -147,8 +164,8 @@ def gcs_client_mock(sample_blob_names=None):
             self.name = bucket_name
             self.is_json = is_json
             self.is_multitask = is_multitask
-            # Share the outer sample names for bucket-scoped listing
-            self.sample_blob_names = get_sample_blob_names()
+            # Use bucket-specific sample names
+            self.sample_blob_names = get_sample_blob_names_for_bucket(bucket_name)
 
         def list_blobs(self, prefix, **kwargs):
             File = namedtuple('File', ['name'])
@@ -185,9 +202,6 @@ def gcs_client_mock(sample_blob_names=None):
             return DummyGCSBlob(self.name, key, self.is_json, self.is_multitask)
 
     class DummyGCSClient:
-        def __init__(self, sample_json_contents=None):
-            self.sample_blob_names = get_sample_blob_names()
-
         def get_bucket(self, bucket_name):
             is_json = bucket_name.endswith('_JSON')
             is_multitask = bucket_name.startswith('multitask_')
@@ -199,7 +213,7 @@ def gcs_client_mock(sample_blob_names=None):
         def list_blobs(self, bucket_name, prefix, delimiter=None):
             is_json = bucket_name.endswith('_JSON')
             is_multitask = bucket_name.startswith('multitask_')
-            sample_blob_names = ['test.json'] if is_multitask else self.sample_blob_names
+            sample_blob_names = get_sample_blob_names_for_bucket(bucket_name)
 
             # Handle delimiter for non-recursive listing (only direct children)
             if delimiter:
@@ -229,7 +243,7 @@ def gcs_client_mock(sample_blob_names=None):
             ]
 
     with mock.patch.object(google_storage, 'Client', return_value=DummyGCSClient()):
-        logger.info(f'gcs_client_mock installed with sample_blob_names={get_sample_blob_names()}')
+        logger.info(f'gcs_client_mock installed')
         yield google_storage
 
 
