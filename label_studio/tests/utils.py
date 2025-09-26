@@ -243,7 +243,7 @@ def gcs_client_mock():
             ]
 
     with mock.patch.object(google_storage, 'Client', return_value=DummyGCSClient()):
-        logger.info(f'gcs_client_mock installed')
+        logger.info('gcs_client_mock installed')
         yield google_storage
 
 
