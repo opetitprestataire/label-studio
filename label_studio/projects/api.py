@@ -425,7 +425,7 @@ class ProjectNextTaskAPI(generics.RetrieveAPIView):
         next_task, queue_info = get_next_task(request.user, prepared_tasks, project, dm_queue)
 
         if next_task is None:
-            raise NotFound(f'There are not tasks for {request.user}')
+            raise NotFound(f'There are no tasks for {request.user}')
 
         # serialize task
         context = {'request': request, 'project': project, 'resolve_uri': True, 'annotations': False}

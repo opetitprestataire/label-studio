@@ -1,5 +1,6 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
+import logging
 import os.path
 import re
 import tempfile
@@ -30,6 +31,7 @@ try:
     from businesses.models import BillingPlan, Business
 except ImportError:
     BillingPlan = Business = None
+logger = logging.getLogger(__name__)
 
 
 @contextmanager
@@ -114,17 +116,26 @@ def gcs_client_mock(sample_blob_names=None):
         def download_as_string(self):
             data = f'test_blob_{self.key}'
             if self.is_json:
-                return json.dumps(self.sample_json_contents)
+                payload = json.dumps(self.sample_json_contents)
+                logger.info(
+                    f'DummyGCSBlob.download_as_string bucket={self.bucket_name} key={self.key} json=True bytes={len(payload)}'
+                )
+                return payload
+            logger.info(f'DummyGCSBlob.download_as_string bucket={self.bucket_name} key={self.key} json=False')
             return data
 
         def upload_from_string(self, string):
             print(f'String {string} uploaded to bucket {self.bucket_name}')
 
         def generate_signed_url(self, **kwargs):
-            return f'https://storage.googleapis.com/{self.bucket_name}/{self.key}'
+            url = f'https://storage.googleapis.com/{self.bucket_name}/{self.key}'
+            logger.info(f'DummyGCSBlob.generate_signed_url url={url}')
+            return url
 
         def download_as_bytes(self):
-            return self.download_as_string().encode('utf-8')
+            b = self.download_as_string().encode('utf-8')
+            logger.info(f'DummyGCSBlob.download_as_bytes bucket={self.bucket_name} key={self.key} size={len(b)}')
+            return b
 
     class DummyGCSBucket:
         def __init__(self, bucket_name, is_json, is_multitask):
@@ -138,6 +149,7 @@ def gcs_client_mock(sample_blob_names=None):
             File = namedtuple('File', ['name'])
 
             if 'fake' in prefix:
+                logger.info(f'DummyGCSBucket.list_blobs bucket={self.name} prefix={prefix} -> [] (fake)')
                 return []
 
             # Handle delimiter for non-recursive listing (only direct children)
@@ -155,10 +167,16 @@ def gcs_client_mock(sample_blob_names=None):
                 else:
                     # Root-level: only keys without delimiter are direct children
                     filtered_names = [name for name in self.sample_blob_names if delimiter not in name]
+                logger.info(
+                    f'DummyGCSBucket.list_blobs bucket={self.name} prefix={prefix} delimiter={delimiter} -> {filtered_names}'
+                )
                 return [File(name) for name in filtered_names]
-            return [File(name) for name in self.sample_blob_names if prefix is None or name.startswith(prefix)]
+            result = [name for name in self.sample_blob_names if prefix is None or name.startswith(prefix)]
+            logger.info(f'DummyGCSBucket.list_blobs bucket={self.name} prefix={prefix} -> {result}')
+            return [File(name) for name in result]
 
         def blob(self, key):
+            logger.info(f'DummyGCSBucket.blob bucket={self.name} key={key}')
             return DummyGCSBlob(self.name, key, self.is_json, self.is_multitask)
 
     class DummyGCSClient:
@@ -168,6 +186,9 @@ def gcs_client_mock(sample_blob_names=None):
         def get_bucket(self, bucket_name):
             is_json = bucket_name.endswith('_JSON')
             is_multitask = bucket_name.startswith('multitask_')
+            logger.info(
+                f'DummyGCSClient.get_bucket bucket={bucket_name} is_json={is_json} is_multitask={is_multitask}'
+            )
             return DummyGCSBucket(bucket_name, is_json, is_multitask)
 
         def list_blobs(self, bucket_name, prefix, delimiter=None):
@@ -189,8 +210,13 @@ def gcs_client_mock(sample_blob_names=None):
                 else:
                     # Root-level: only keys without delimiter are direct children
                     filtered_names = [name for name in sample_blob_names if delimiter not in name]
+                logger.info(
+                    f'DummyGCSClient.list_blobs bucket={bucket_name} prefix={prefix} delimiter={delimiter} -> {filtered_names}'
+                )
                 return [DummyGCSBlob(bucket_name, name, is_json, is_multitask) for name in filtered_names]
 
+            result = [name for name in sample_blob_names if prefix is None or name.startswith(prefix)]
+            logger.info(f'DummyGCSClient.list_blobs bucket={bucket_name} prefix={prefix} -> {result}')
             return [
                 DummyGCSBlob(bucket_name, name, is_json, is_multitask)
                 for name in sample_blob_names
@@ -198,6 +224,7 @@ def gcs_client_mock(sample_blob_names=None):
             ]
 
     with mock.patch.object(google_storage, 'Client', return_value=DummyGCSClient()):
+        logger.info(f'gcs_client_mock installed with sample_blob_names={sample_blob_names}')
         yield google_storage
 
 
