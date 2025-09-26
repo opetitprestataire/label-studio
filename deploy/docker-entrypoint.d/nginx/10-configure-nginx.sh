@@ -1,1 +1,1 @@
-../common/10-configure-nginx.sh
+deploy/docker-entrypoint.d/common/10-configure-nginx.sh
