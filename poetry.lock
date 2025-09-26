@@ -5117,4 +5117,4 @@ uwsgi = ["pyuwsgi", "uwsgitop"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4"
-content-hash = "e0297603aa06b822bc5fa0c584fa444624daadb5d8639f3f6da461eed41d842d"
+content-hash = "2c89b5f8b1bfbb5b9881ad53f9326a560058e66d29be5742bfaf6d23088fc1fd"
