@@ -87,11 +87,12 @@ def email_mock():
 
 @contextmanager
 def gcs_client_mock(sample_blob_names=None):
-    # be careful, this is a global contextmanager (sample_blob_names) 
+    # be careful, this is a global contextmanager (sample_blob_names)
     # and will affect all tests because it will be applied to all tests that use gcs_client
     # it may lead to flaky tests if the sample blob names are not deterministic
 
     from collections import namedtuple
+
     from google.cloud import storage as google_storage
 
     def get_sample_blob_names():
@@ -234,11 +235,12 @@ def gcs_client_mock(sample_blob_names=None):
 
 @contextmanager
 def azure_client_mock(sample_json_contents=None, sample_blob_names=None):
-    # be careful, this is a global contextmanager (sample_json_contents, sample_blob_names) 
+    # be careful, this is a global contextmanager (sample_json_contents, sample_blob_names)
     # and will affect all tests because it will be applied to all tests that use azure_client
     # and it may lead to flaky tests if the sample blob names are not deterministic
 
     from collections import namedtuple
+
     from io_storages.azure_blob import models
 
     File = namedtuple('File', ['name'])
