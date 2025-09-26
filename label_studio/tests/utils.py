@@ -88,10 +88,10 @@ def email_mock():
 @contextmanager
 def gcs_client_mock(sample_blob_names=None):
     from collections import namedtuple
-
     from google.cloud import storage as google_storage
 
-    sample_blob_names = sample_blob_names or ['abc', 'def', 'ghi']
+    def get_sample_blob_names():
+        return sample_blob_names or ['abc', 'def', 'ghi']
 
     class DummyGCSBlob:
         def __init__(self, bucket_name, key, is_json, is_multitask):
@@ -143,7 +143,7 @@ def gcs_client_mock(sample_blob_names=None):
             self.is_json = is_json
             self.is_multitask = is_multitask
             # Share the outer sample names for bucket-scoped listing
-            self.sample_blob_names = deepcopy(sample_blob_names)
+            self.sample_blob_names = get_sample_blob_names()
 
         def list_blobs(self, prefix, **kwargs):
             File = namedtuple('File', ['name'])
@@ -181,7 +181,7 @@ def gcs_client_mock(sample_blob_names=None):
 
     class DummyGCSClient:
         def __init__(self, sample_json_contents=None):
-            self.sample_blob_names = deepcopy(sample_blob_names)
+            self.sample_blob_names = get_sample_blob_names()
 
         def get_bucket(self, bucket_name):
             is_json = bucket_name.endswith('_JSON')
@@ -224,7 +224,7 @@ def gcs_client_mock(sample_blob_names=None):
             ]
 
     with mock.patch.object(google_storage, 'Client', return_value=DummyGCSClient()):
-        logger.info(f'gcs_client_mock installed with sample_blob_names={sample_blob_names}')
+        logger.info(f'gcs_client_mock installed with sample_blob_names={get_sample_blob_names()}')
         yield google_storage
 
 
