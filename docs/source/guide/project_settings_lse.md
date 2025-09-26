@@ -445,14 +445,14 @@ Choose the order in which reviewers see tasks in the review stream.
 <table>
 <thead>
     <tr>
-      <th>Field</th>
+      <th style="width: 20%;">Field</th>
       <th>Description</th>
     </tr>
 </thead>
 <tr>
 <td>
 
-<strong>By Task ID</strong>
+**By Task ID**
 </td>
 <td>
 
@@ -463,11 +463,12 @@ Tasks are ordered by their numeric ID (ascending). Annotation order within a tas
 <tr>
 <td>
 
-<strong>Random</strong>
+**Random**
+<span class="badge"></span>
 </td>
 <td>
 
-Tasks are shown in randomized task order while preserving the stable order of annotations within each task. This mode enables <strong>Task limit (%)</strong> (see below).
+Tasks are shown in randomized task order while preserving the stable order of annotations within each task. This mode enables **Task limit (%)** (see below).
 
 </td>
 </tr>
@@ -475,7 +476,7 @@ Tasks are shown in randomized task order while preserving the stable order of an
 
 </dd>
 
-<dt id="task-limit">Task Limit (%)</dt>
+<dt id="task-limit">Task Limit (%) <span class="badge"></span></dt>
 
 <dd>
 
