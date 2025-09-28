@@ -18,7 +18,7 @@ import { TreeValidation } from "../TreeValidation/TreeValidation";
 import "../../tags/object";
 import "../../tags/control";
 import "../../tags/visual";
-import "../../tags/Custom";
+import "../../tags/custom";
 
 /**
  * Utils and common components

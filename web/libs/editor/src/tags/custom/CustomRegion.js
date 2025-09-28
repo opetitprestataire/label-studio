@@ -1,20 +1,21 @@
 import { observer } from "mobx-react";
 import { types, getParent } from "mobx-state-tree";
 
-import NormalizationMixin from "../mixins/Normalization";
-import RegionsMixin from "../mixins/Regions";
-import Registry from "../core/Registry";
-// import { CustomTagModel } from "../tags/Custom";
-import { guidGenerator } from "../core/Helpers";
+import NormalizationMixin from "../../mixins/Normalization";
+import RegionsMixin from "../../mixins/Regions";
+import { guidGenerator } from "../../core/Helpers";
 
-import { HtxTextBox } from "../components/HtxTextBox/HtxTextBox";
-import { cn } from "../utils/bem";
+import { HtxTextBox } from "../../components/HtxTextBox/HtxTextBox";
+import { cn } from "../../utils/bem";
 
 const Model = types
   .model("CustomRegionModel", {
     id: types.optional(types.identifier, guidGenerator),
     pid: types.optional(types.string, guidGenerator),
     type: "customregion",
+
+    // Main payload for this region; matches result type name
+    custominterface: types.frozen(),
 
     _value: types.frozen(),
     // states: types.array(types.union(ChoicesModel)),
@@ -27,8 +28,6 @@ const Model = types
   }))
   .views((self) => ({
     get parent() {
-      // Since getParentOfType might not work, we'll use getParent which should work
-      // for any MobX parent-child relationship
       return getParent(self);
     },
     getRegionElement() {
@@ -47,13 +46,13 @@ const Model = types
     },
 
     updateValue(newValue) {
-      // This is the sanctioned way to update the region's value
-      // from an external component like the POC UI.
       self._value = newValue;
-      // Also notify the parent about the change so it can update results
-      if (self.parent.updateResult) {
-        self.parent.updateResult();
+      self.custominterface = newValue;
+      const customResult = self.results.find((r) => r.type === "custominterface");
+      if (customResult && customResult.setValue) {
+        customResult.setValue(self.custominterface);
       }
+      if (self.parent.updateResult) self.parent.updateResult();
     },
 
     deleteRegion() {
@@ -111,7 +110,6 @@ const HtxCustomRegionView = ({ item, onFocus }) => {
         }
       },
       onMouseOut: () => {
-        /* range.setHighlight(false); */
         if (relationMode) {
           item.setHighlight(false);
         }
@@ -141,7 +139,6 @@ const HtxCustomRegionView = ({ item, onFocus }) => {
 
 const HtxCustomRegion = observer(HtxCustomRegionView);
 
-Registry.addTag("customregion", CustomRegionModel, HtxCustomRegion);
-Registry.addRegionType(CustomRegionModel, "custominterface");
-
 export { CustomRegionModel, HtxCustomRegion };
+
+
