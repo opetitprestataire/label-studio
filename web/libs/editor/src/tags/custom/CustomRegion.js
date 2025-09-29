@@ -2,17 +2,19 @@ import { observer } from "mobx-react";
 import { types, getParent } from "mobx-state-tree";
 
 import NormalizationMixin from "../../mixins/Normalization";
+import { AreaMixin } from "../../mixins/AreaMixin";
 import RegionsMixin from "../../mixins/Regions";
 import { guidGenerator } from "../../core/Helpers";
 
 import { HtxTextBox } from "../../components/HtxTextBox/HtxTextBox";
 import { cn } from "../../utils/bem";
+import { CustomInterfaceModel } from "./Custom";
+import { IconGrid } from "@humansignal/icons";
 
 const Model = types
   .model("CustomRegionModel", {
-    id: types.optional(types.identifier, guidGenerator),
-    pid: types.optional(types.string, guidGenerator),
-    type: "customregion",
+    type: "custominterface",
+    object: types.late(() => types.reference(CustomInterfaceModel)),
 
     // Main payload for this region; matches result type name
     custominterface: types.frozen(),
@@ -20,16 +22,15 @@ const Model = types
     _value: types.frozen(),
     // states: types.array(types.union(ChoicesModel)),
   })
-  .volatile(() => ({
-    classification: true,
-    perRegionTags: [],
-    results: [],
-    selected: false,
-  }))
   .views((self) => ({
     get parent() {
       return getParent(self);
     },
+
+    get noLabelView() {
+      return "Custom region";
+    },
+
     getRegionElement() {
       return document.querySelector(`#CustomRegion-${self.id}`);
     },
@@ -58,17 +59,9 @@ const Model = types
     deleteRegion() {
       self.parent.remove(self);
     },
-
-    selectRegion() {
-      self.selected = true;
-    },
-
-    afterUnselectRegion() {
-      self.selected = false;
-    },
   }));
 
-const CustomRegionModel = types.compose("CustomRegionModel", RegionsMixin, NormalizationMixin, Model);
+const CustomRegionModel = types.compose("CustomRegionModel", RegionsMixin, AreaMixin, NormalizationMixin, Model);
 
 const HtxCustomRegionView = ({ item, onFocus }) => {
   const classes = [styles.mark];
@@ -138,6 +131,17 @@ const HtxCustomRegionView = ({ item, onFocus }) => {
 };
 
 const HtxCustomRegion = observer(HtxCustomRegionView);
+
+// required for NodeViews
+CustomRegionModel.nodeView = {
+  name: "CustomRegion",
+  icon: IconGrid,
+  fullContent: (node) => (
+    <span style={{ color: "#5a5a5a" }}>
+      {JSON.stringify(node.custominterface)}
+    </span>
+  ),
+};
 
 export { CustomRegionModel, HtxCustomRegion };
 

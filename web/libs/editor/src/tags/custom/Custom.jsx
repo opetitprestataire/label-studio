@@ -7,7 +7,6 @@ import ControlBase from "../control/Base";
 import ClassificationBase from "../control/ClassificationBase";
 
 import { AnnotationMixin } from "../../mixins/AnnotationMixin";
-import { CustomRegionModel } from "./CustomRegion";
 import { errorBuilder } from "../../core/DataValidator/ConfigValidator";
 import { parseValue, tryToParseJSON } from "../../utils/data";
 
@@ -26,7 +25,6 @@ const TagAttrs = types.model("CustomIntrefaceAttrs", {
 const Model = types
   .model({
     type: "custominterface",
-    regions: types.array(CustomRegionModel),
     globalState: types.optional(types.frozen(), {}),
     globalMetadata: types.optional(types.array(types.frozen()), []),
   })
@@ -124,7 +122,8 @@ const Model = types
       }
     },
     createRegion(value, pid) {
-      const r = CustomRegionModel.create({ pid, _value: value });
+      return;
+      // const r = CustomRegionModel.create({ pid, _value: value });
       self.regions.push(r);
       // create a simple area/result in the annotation to integrate with store
       try {
