@@ -9,9 +9,9 @@ export enum ABILITY {
 export type Ability = ABILITY;
 
 export type AuthPermissions = {
-  can: (a: Ability) => boolean;
-  canAny: (as: Ability[]) => boolean;
-  canAll: (as: Ability[]) => boolean;
+  can: (a: string) => boolean;
+  canAny: (as: string[]) => boolean;
+  canAll: (as: string[]) => boolean;
 };
 
 type AuthState = {
@@ -43,9 +43,9 @@ export const AuthProvider = memo<{ children: React.ReactNode }>(({ children }) =
   const checker = useMemo(() => makePermissionChecker(user?.permissions), [user?.permissions]);
   const permissionHelpers = useMemo<AuthPermissions>(() => {
     return {
-      can: (a: Ability) => checker.can(String(a)),
-      canAny: (abilities: Ability[]) => checker.canAny(abilities.map((a) => String(a))),
-      canAll: (abilities: Ability[]) => checker.canAll(abilities.map((a) => String(a))),
+      can: (a: string) => checker.can(String(a)),
+      canAny: (abilities: string[]) => checker.canAny(abilities.map((a) => String(a))),
+      canAll: (abilities: string[]) => checker.canAll(abilities.map((a) => String(a))),
     };
   }, [checker]);
 
