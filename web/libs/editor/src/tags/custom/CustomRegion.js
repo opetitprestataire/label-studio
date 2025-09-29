@@ -72,6 +72,6 @@ CustomRegionModel.nodeView = {
   ),
 };
 
-export { CustomRegionModel, HtxCustomRegion };
+export { CustomRegionModel };
 
 
