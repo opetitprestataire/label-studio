@@ -240,22 +240,6 @@ const Model = types
           const resultData = { [self.resultType]: self.selectedValues() };
           self.annotation.createResult({}, resultData, self, self.toname);
         }
-        self.annotation.history.freeze();
-        self.annotation.history.unfreeze();
-        if (!self.annotation.sentUserGenerate) {
-          self.annotation.sendUserGenerate();
-        }
-        const store = getRoot(self);
-        const annotation = self.annotation;
-        if (annotation.pk && annotation.exists) {
-          if (store && store.events) {
-            store.events.invoke("updateAnnotation", store, annotation).catch(() => {});
-          }
-        } else {
-          if (store && store.events) {
-            store.events.invoke("submitAnnotation", store, annotation).catch(() => {});
-          }
-        }
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Error in updateResult:", error);
