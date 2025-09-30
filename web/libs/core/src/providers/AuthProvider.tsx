@@ -17,7 +17,7 @@ export type AuthPermissions = {
 type AuthState = {
   user?: APIUser;
   refetch: () => Promise<void> | void;
-  permissions?: AuthPermissions;
+  permissions: AuthPermissions;
 };
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -50,11 +50,10 @@ export const AuthProvider = memo<{ children: React.ReactNode }>(({ children }) =
   }, [checker]);
 
   const contextValue: AuthState = useMemo(() => {
-    const currentUser = (user ?? undefined) as APIUser | undefined;
     return {
-      user: currentUser,
+      user: user ?? undefined,
       refetch: fetch,
-      permissions: currentUser ? permissionHelpers : undefined,
+      permissions: permissionHelpers,
     };
   }, [user, fetch, permissionHelpers]);
 
@@ -63,9 +62,10 @@ export const AuthProvider = memo<{ children: React.ReactNode }>(({ children }) =
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext)!;
+
   return {
     user: ctx?.user,
-    permissions: ctx?.permissions,
+    permissions: ctx.permissions,
     refetch: ctx?.refetch,
   };
 };
