@@ -26,6 +26,11 @@ FOUND_US_OPTIONS = (
     ('Ot', FOUND_US_ELABORATE),
 )
 
+USER_TYPE_OPTIONS = (
+    ('Owner', 'Owner'),
+    ('Contributor', 'Contributor'),
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -64,6 +69,7 @@ class UserSignupForm(forms.Form):
     allow_newsletters = forms.BooleanField(required=False)
     how_find_us = forms.CharField(required=False)
     elaborate = forms.CharField(required=False)
+    user_type = forms.CharField(required=True, strip=True, error_messages={'required': 'Please select a user type'})
 
     def clean_password(self):
         password = self.cleaned_data.get('password')
@@ -95,14 +101,17 @@ class UserSignupForm(forms.Form):
         email = cleaned['email'].lower()
         allow_newsletters = None
         how_find_us = None
+        user_type = None
         if 'allow_newsletters' in cleaned:
             allow_newsletters = cleaned['allow_newsletters']
         if 'how_find_us' in cleaned:
             how_find_us = cleaned['how_find_us']
         if 'elaborate' in cleaned and how_find_us == FOUND_US_ELABORATE:
             cleaned['elaborate']
+        if 'user_type' in cleaned:
+            user_type = cleaned['user_type']
 
-        user = User.objects.create_user(email, password, allow_newsletters=allow_newsletters)
+        user = User.objects.create_user(email, password, user_type=user_type, allow_newsletters=allow_newsletters)
         return user
 
 

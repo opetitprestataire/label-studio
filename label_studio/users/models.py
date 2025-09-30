@@ -150,6 +150,8 @@ class User(UserMixin, AbstractBaseUser, PermissionsMixin, UserLastActivityMixin)
         _('allow newsletters'), null=True, default=None, help_text=_('Allow sending newsletters to user')
     )
 
+    user_type = models.CharField(max_length=256, blank=True, null=True)
+
     objects = UserManager()
 
     EMAIL_FIELD = 'email'
