@@ -65,13 +65,13 @@ const App = ({ content }) => {
           providers={[
             <QueryClientProvider client={queryClient} key="query" />,
             <JotaiProvider key="jotai" store={JotaiStore} />,
+            <AuthProvider key="auth" />,
             <AppStoreProvider key="app-store" />,
             <ToastProvider key="toast" />,
             <ApiProvider key="api" />,
             <ConfigProvider key="config" />,
             <RoutesProvider key="rotes" />,
             <ProjectProvider key="project" />,
-            <AuthProvider key="auth" />,
             <CurrentUserProvider key="current-user" />,
             ff.isActive(ff.FF_PRODUCT_TOUR) && <TourProvider useAPI={useAPI} />,
           ].filter(Boolean)}
