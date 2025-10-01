@@ -342,7 +342,7 @@ const CustomInterfaceComponent = observer(({ item }) => {
         return textArea.value;
       }
 
-      const transformedCode = decodeHtmlEntities(item.effectiveCode);
+      const transformedCode = decodeHtmlEntities(item.effectiveCode).replace(/^\s*<!\[CDATA\[|]]>\s*$/g, "");
 
       const UserComponent = () => {
         const code = `
