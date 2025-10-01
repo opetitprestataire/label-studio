@@ -50,6 +50,9 @@ const Model = types
 
     update(value) {
       self.custominterface = value;
+
+      const result = self.results.find((r) => r.type === "custominterface");
+      result?.setValue(self.custominterface);
     },
 
     updateValue(newValue) {
