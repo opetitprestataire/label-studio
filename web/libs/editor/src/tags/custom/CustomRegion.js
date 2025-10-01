@@ -29,6 +29,10 @@ const Model = types
       return "Custom region";
     },
 
+    get value() {
+      return self.custominterface;
+    },
+
     getRegionElement() {
       return document.querySelector(`#CustomRegion-${self.id}`);
     },
@@ -38,10 +42,14 @@ const Model = types
   }))
   .actions((self) => ({
     setValue(val) {
-      if (self._value === val || !self.parent.validateText(val)) return;
+      if (self._value === val) return;
 
       self._value = val;
       self.parent.onChange();
+    },
+
+    update(value) {
+      self.custominterface = value;
     },
 
     updateValue(newValue) {
@@ -56,6 +64,14 @@ const Model = types
 
     deleteRegion() {
       self.parent.remove(self);
+    },
+
+    serialize() {
+      return {
+        value: {
+          custominterface: self.custominterface,
+        },
+      };
     },
   }));
 

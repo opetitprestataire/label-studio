@@ -3,8 +3,8 @@ import React from "react";
 import { destroy, types, getRoot } from "mobx-state-tree";
 import { observer } from "mobx-react";
 import Registry from "../../core/Registry";
-import ControlBase from "../control/Base";
-import ClassificationBase from "../control/ClassificationBase";
+import ObjectBase from "../object/Base";
+// import ClassificationBase from "../control/ClassificationBase";
 
 import { AnnotationMixin } from "../../mixins/AnnotationMixin";
 import { errorBuilder } from "../../core/DataValidator/ConfigValidator";
@@ -37,6 +37,13 @@ const Model = types
     get store() {
       return getRoot(self);
     },
+
+    // get regions() {
+    //   return self.annotation?.regions?.filter((r) => r.object === self);
+    // },
+
+
+
     get annStore() {
       return self.annotationStore;
     },
@@ -122,43 +129,27 @@ const Model = types
       }
     },
     createRegion(value, pid) {
-      return;
-      // const r = CustomRegionModel.create({ pid, _value: value });
-      self.regions.push(r);
-      // create a simple area/result in the annotation to integrate with store
-      try {
-        const areaValue = { custominterface: value };
-        const resultValue = { custominterface: value };
-        self.annotation.createResult(areaValue, resultValue, self, self.toname);
-      } catch (e) {
-        // non-fatal; regions can still exist without backing area
-        // eslint-disable-next-line no-console
-        console.warn("CustomInterface createRegion createResult failed:", e);
-      }
-      return r;
+
     },
     addRegion(value) {
-      const region = self.createRegion(value);
-      try {
-        self.updateResult();
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Error calling updateResult in addRegion:", error);
-      }
+      const areaValue = { custominterface: value };
+      const resultValue = { custominterface: value };
+      const region = self.annotation.createResult(areaValue, resultValue, self, self.toname);
+
       return region;
     },
     remove(region) {
-      const index = self.regions.indexOf(region);
-      if (index < 0) return;
-      self.regions.splice(index, 1);
-      destroy(region);
-      self.updateResult();
+      // const index = self.regions.indexOf(region);
+      // if (index < 0) return;
+      // self.regions.splice(index, 1);
+      // destroy(region);
+      // self.updateResult();
     },
     deleteResult() {
-      const result = self.annotation.results.find((r) => r.from_name === self);
-      if (result) {
-        self.annotation.deleteResult(result);
-      }
+      // const result = self.annotation.results.find((r) => r.from_name === self);
+      // if (result) {
+      //   self.annotation.deleteResult(result);
+      // }
     },
     triggerEvent(eventType, data) {
       // eslint-disable-next-line no-console
@@ -216,41 +207,12 @@ const Model = types
       self.globalState = newState;
       self.updateResult();
     },
-    addMetadata(action, data) {
-      const entry = { timestamp: new Date().toISOString(), action, data };
-      self.globalMetadata.push(entry);
-      self.updateResult();
-    },
-    removeMetadata(index) {
-      if (index >= 0 && index < self.globalMetadata.length) {
-        self.globalMetadata.splice(index, 1);
-        self.updateResult();
-      }
-    },
-    clearAllMetadata() {
-      self.globalMetadata = [];
-      self.updateResult();
-    },
-    updateResult() {
-      try {
-        if (self.result) {
-          self.result.area.updateOriginOnEdit();
-          self.result.area.setValue(self);
-        } else {
-          const resultData = { [self.resultType]: self.selectedValues() };
-          self.annotation.createResult({}, resultData, self, self.toname);
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Error in updateResult:", error);
-      }
-    },
   }));
 
 const CustomInterfaceModel = types.compose(
   "CustomInterfaceModel",
-  ControlBase,
-  ClassificationBase,
+  ObjectBase,
+  // ClassificationBase,
   TagAttrs,
   AnnotationMixin,
   Model,
@@ -313,7 +275,7 @@ const CustomInterfaceComponent = observer(({ item }) => {
         useReducer: React.useReducer,
         useContext: React.useContext,
         data: item.loadedData,
-        regions: item.regions,
+        regions: item.regs,
         addRegion: item.addRegion?.bind(item),
         deleteRegion: item.remove?.bind(item),
         clearAllRegions: item.perRegionCleanup?.bind(item),
@@ -400,11 +362,11 @@ const CustomInterfaceComponent = observer(({ item }) => {
         return componentFunction(context);
       };
 
-      setDynamicComponent(() => UserComponent);
+      setDynamicComponent(observer(UserComponent));
     } catch (err) {
-      setDynamicComponent(() => () => <div>Component Compilation Error</div>);
+      setDynamicComponent(() => <div>Component Compilation Error</div>);
     }
-  }, [item.effectiveCode, item.dataLoaded, item.dataError]);
+  }, [item.effectiveCode, item.dataLoaded, item.dataError, item.regs]);
 
   if (!item.dataLoaded) {
     return <div style={{ padding: "20px", textAlign: "center", color: "#888" }}>Loading data...</div>;
