@@ -305,7 +305,12 @@ class Task(TaskMixin, models.Model):
             if self.is_labeled is False:
                 self.update_is_labeled()
                 if self.is_labeled is True:
-                    self.save(update_fields=['is_labeled'])
+                    # FSM context support
+                    if hasattr(self, '_fsm_context') and self._fsm_context:
+                        self.save_with_context(context=self._fsm_context, update_fields=['is_labeled'])
+                    else:
+                        # No FSM context available, use regular save
+                        self.save(update_fields=['is_labeled'])
 
         result = bool(num >= self.overlap_with_agreement_threshold(num, num_locks))
         logger.log(
@@ -571,6 +576,27 @@ class AnnotationManager(models.Manager):
         post_bulk_create.send(sender=self.model, objs=objs, batch_size=batch_size)
         return res
 
+    # FSM Context methods
+    def create_with_context(self, context=None, **kwargs):
+        """Create annotation with explicit context for FSM signals."""
+        from fsm.managers import FSMManagerMixin
+
+        return FSMManagerMixin.create_with_context(self, context=context, **kwargs)
+
+    def bulk_create_with_context(self, objs, context=None, **kwargs):
+        """Bulk create annotations with explicit context for FSM signals."""
+        # Call our custom bulk_create to trigger signals
+        context = context or {}
+        for obj in objs:
+            obj._fsm_context = context
+        return self.bulk_create(objs, **kwargs)
+
+    def bulk_update_with_context(self, objs, fields, context=None, **kwargs):
+        """Bulk update annotations with explicit context for FSM signals."""
+        from fsm.managers import FSMManagerMixin
+
+        return FSMManagerMixin.bulk_update_with_context(self, objs, fields, context=context, **kwargs)
+
 
 GET_UNIQUE_IDS = """
 with tt as (
@@ -750,6 +776,13 @@ class Annotation(AnnotationMixin, models.Model):
             self.task.updated_by = request.user
             update_fields.append('updated_by')
 
+        # FSM context support for task updates
+        fsm_context = getattr(self, '_fsm_context', None)
+        if fsm_context:
+            self.task.save_with_context(context=fsm_context, update_fields=update_fields)
+            return
+
+        # Fallback to non-FSM approach
         self.task.save(update_fields=update_fields)
 
     def save(self, *args, update_fields=None, **kwargs):
@@ -778,6 +811,40 @@ class Annotation(AnnotationMixin, models.Model):
     def on_delete_update_counters(self):
         task = self.task
         logger.debug(f'Start updating counters for task {task.id}.')
+
+        # Try to get FSM context from this annotation instance
+        fsm_context = getattr(self, '_fsm_context', None)
+        if fsm_context:
+            user_id = fsm_context.get('user_id')
+            if user_id:
+                try:
+                    from django.contrib.auth import get_user_model
+
+                    User = get_user_model()
+                    user = User.objects.get(id=user_id)
+
+                    if flag_set('fflag_feat_fit_568_finite_state_management', user=user):
+                        # Use FSM-aware update methods for task counter changes
+                        if self.was_cancelled:
+                            cancelled = task.annotations.all().filter(was_cancelled=True).count()
+                            task.cancelled_annotations = cancelled
+                            task.save_with_context(context=fsm_context, update_fields=['cancelled_annotations'])
+                            logger.debug(f'On delete updated cancelled_annotations for task {task.id}')
+                        else:
+                            total = task.annotations.all().filter(was_cancelled=False).count()
+                            task.total_annotations = total
+                            task.save_with_context(context=fsm_context, update_fields=['total_annotations'])
+                            logger.debug(f'On delete updated total_annotations for task {task.id}')
+
+                        logger.debug(f'Update task stats for task={task}')
+                        task.update_is_labeled()
+                        task.is_labeled = task.is_labeled  # Ensure field is set
+                        task.save_with_context(context=fsm_context, update_fields=['is_labeled'])
+                        return
+                except Exception:
+                    pass  # Fall through to non-FSM approach
+
+        # Fallback to non-FSM approach
         if self.was_cancelled:
             cancelled = task.annotations.all().filter(was_cancelled=True).count()
             Task.objects.filter(id=task.id).update(cancelled_annotations=cancelled)
@@ -994,6 +1061,13 @@ class Prediction(models.Model):
             self.task.updated_by = request.user
             update_fields.append('updated_by')
 
+        # FSM context support for task updates
+        fsm_context = getattr(self, '_fsm_context', None)
+        if fsm_context:
+            self.task.save_with_context(context=fsm_context, update_fields=update_fields)
+            return
+
+        # Fallback to non-FSM approach
         self.task.save(update_fields=update_fields)
 
     def save(self, *args, update_fields=None, **kwargs):
@@ -1285,6 +1359,18 @@ def delete_project_summary_annotations_before_updating_annotation(sender, instan
             task.total_annotations = task.total_annotations + 1
         task.update_is_labeled()
 
+        # FSM context support for task counter updates
+        fsm_context = getattr(instance, '_fsm_context', None)
+        if fsm_context:
+            try:
+                task.save_with_context(
+                    context=fsm_context, update_fields=['is_labeled', 'total_annotations', 'cancelled_annotations']
+                )
+                return
+            except Exception:
+                pass  # Fall through to non-FSM approach
+
+        # Fallback to non-FSM approach
         Task.objects.filter(id=instance.task.id).update(
             is_labeled=task.is_labeled,
             total_annotations=task.total_annotations,
@@ -1304,6 +1390,20 @@ def update_project_summary_annotations_and_is_labeled(sender, instance, created,
     else:
         instance.task.total_annotations = instance.task.annotations.all().filter(was_cancelled=False).count()
     instance.task.update_is_labeled()
+
+    # FSM context support for task updates
+    fsm_context = getattr(instance, '_fsm_context', None)
+    if fsm_context:
+        try:
+            instance.task.save_with_context(
+                context=fsm_context, update_fields=['is_labeled', 'total_annotations', 'cancelled_annotations']
+            )
+            logger.debug(f'Updated total_annotations and cancelled_annotations for {instance.task.id}.')
+            return
+        except Exception:
+            pass  # Fall through to non-FSM approach
+
+    # Fallback to non-FSM approach
     instance.task.save(update_fields=['is_labeled', 'total_annotations', 'cancelled_annotations'])
     logger.debug(f'Updated total_annotations and cancelled_annotations for {instance.task.id}.')
 
@@ -1312,6 +1412,18 @@ def update_project_summary_annotations_and_is_labeled(sender, instance, created,
 def remove_predictions_from_project(sender, instance, **kwargs):
     """Remove predictions counters"""
     instance.task.total_predictions = instance.task.predictions.all().count() - 1
+
+    # FSM context support for task updates
+    fsm_context = getattr(instance, '_fsm_context', None)
+    if fsm_context:
+        try:
+            instance.task.save_with_context(context=fsm_context, update_fields=['total_predictions'])
+            logger.debug(f'Updated total_predictions for {instance.task.id}.')
+            return
+        except Exception:
+            pass  # Fall through to non-FSM approach
+
+    # Fallback to non-FSM approach
     instance.task.save(update_fields=['total_predictions'])
     logger.debug(f'Updated total_predictions for {instance.task.id}.')
 
@@ -1320,6 +1432,18 @@ def remove_predictions_from_project(sender, instance, **kwargs):
 def save_predictions_to_project(sender, instance, **kwargs):
     """Add predictions counters"""
     instance.task.total_predictions = instance.task.predictions.all().count()
+
+    # FSM context support for task updates
+    fsm_context = getattr(instance, '_fsm_context', None)
+    if fsm_context:
+        try:
+            instance.task.save_with_context(context=fsm_context, update_fields=['total_predictions'])
+            logger.debug(f'Updated total_predictions for {instance.task.id}.')
+            return
+        except Exception:
+            pass  # Fall through to non-FSM approach
+
+    # Fallback to non-FSM approach
     instance.task.save(update_fields=['total_predictions'])
     logger.debug(f'Updated total_predictions for {instance.task.id}.')
 
@@ -1360,19 +1484,29 @@ def update_ml_backend(sender, instance, **kwargs):
                 ml_backend.train()
 
 
-def update_task_stats(task, stats=('is_labeled',), save=True):
+def update_task_stats(task, stats=('is_labeled',), save=True, fsm_context=None):
     """Update single task statistics:
         accuracy
         is_labeled
     :param task: Task to update
     :param stats: to update separate stats
     :param save: to skip saving in some cases
+    :param fsm_context: FSM context for state management
     :return:
     """
     logger.debug(f'Update stats {stats} for task {task}')
     if 'is_labeled' in stats:
         task.update_is_labeled(save=save)
     if save:
+        # FSM context support for task updates
+        if fsm_context:
+            try:
+                task.save_with_context(context=fsm_context)
+                return
+            except Exception:
+                pass  # Fall through to non-FSM approach
+
+        # Fallback to non-FSM approach
         task.save()
 
 
@@ -1426,7 +1560,7 @@ def deprecated_bulk_update_stats_project_tasks(tasks, project=None):
                 )
 
 
-def bulk_update_stats_project_tasks(tasks, project=None):
+def bulk_update_stats_project_tasks(tasks, project=None, fsm_context=None):
     # Avoid circular import
     from projects.functions.utils import get_unique_ids_list
 
@@ -1442,7 +1576,7 @@ def bulk_update_stats_project_tasks(tasks, project=None):
             first_task = Task.objects.get(id=task_ids[0])
             project = first_task.project
 
-        bulk_update_is_labeled(task_ids, project)
+        bulk_update_is_labeled(task_ids, project, fsm_context)
     else:
         return deprecated_bulk_update_stats_project_tasks(tasks, project)
 

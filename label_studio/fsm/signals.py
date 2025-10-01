@@ -1,0 +1,122 @@
+"""
+Django signal handlers for Label Studio core FSM integrations.
+
+These signal handlers provide automatic state transitions for core Label Studio
+workflows. They are designed to:
+1. Work only when enterprise is not present
+2. Respect the same feature flags as enterprise
+3. Provide basic state tracking without interfering with enterprise functionality
+4. Be resilient to errors (never break core functionality)
+"""
+
+import logging
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from fsm.signals_utils import get_user_from_fsm_context, should_process_fsm_signal
+
+logger = logging.getLogger(__name__)
+
+
+@receiver(post_save)
+def handle_model_state_transitions(sender, instance, created, **kwargs):
+    """
+    Universal signal handler for model state transitions.
+
+    This handler automatically detects model types and triggers
+    appropriate state transitions based on the model type and
+    creation/update context.
+
+    Args:
+        sender: Model class that sent the signal
+        instance: Model instance that was saved
+        created: True if this is a new instance
+        **kwargs: Additional signal arguments
+    """
+    # Early exit if FSM is not enabled
+    if not should_process_fsm_signal(instance):
+        return
+
+    user = get_user_from_fsm_context(instance)
+    model_name = sender.__name__.lower()
+
+    try:
+        # Handle Project state transitions
+        if model_name == 'project':
+            if created:
+                from fsm.integrations import project_created
+
+                project_created(instance, user=user)
+                logger.debug(
+                    'FSM: Project created',
+                    extra={
+                        'event': 'fsm.project_created',
+                        'entity_type': 'project',
+                        'entity_id': instance.id,
+                        'user_id': user.id if user else None,
+                    },
+                )
+
+        # Handle Task state transitions
+        elif model_name == 'task':
+            if created:
+                from fsm.integrations import project_started, task_created
+
+                task_created(instance, user=user)
+
+                # Also trigger project started if this is the first task
+                if hasattr(instance, 'project'):
+                    project_started(instance.project, user=user)
+
+                logger.debug(
+                    'FSM: Task created',
+                    extra={
+                        'event': 'fsm.task_created',
+                        'entity_type': 'task',
+                        'entity_id': instance.id,
+                        'user_id': user.id if user else None,
+                    },
+                )
+
+        # Handle Annotation state transitions
+        elif model_name == 'annotation':
+            if created:
+                from fsm.integrations import annotation_submitted, task_started
+
+                annotation_submitted(instance, user=user)
+
+                # Also trigger task started if this is the first annotation
+                if hasattr(instance, 'task'):
+                    task_started(instance.task, user=user)
+
+                logger.debug(
+                    'FSM: Annotation submitted',
+                    extra={
+                        'event': 'fsm.annotation_submitted',
+                        'entity_type': 'annotation',
+                        'entity_id': instance.id,
+                        'user_id': user.id if user else None,
+                    },
+                )
+
+                # Check if task should be marked completed
+                if hasattr(instance, 'task'):
+                    from fsm.integrations import task_completed
+
+                    task = instance.task
+                    # Simple heuristic: if task has is_labeled=True, mark as completed
+                    if getattr(task, 'is_labeled', False):
+                        task_completed(task, user=user)
+
+    except Exception as e:
+        # Log error but don't raise - FSM errors should never break core functionality
+        logger.error(
+            'FSM: Error in signal handler',
+            extra={
+                'event': 'fsm.signal_handler_error',
+                'model_name': model_name,
+                'entity_id': getattr(instance, 'id', None),
+                'error': str(e),
+            },
+            exc_info=True,
+        )

@@ -1,4 +1,6 @@
+from core.feature_flags import flag_set
 from django.db import transaction
+from fsm.managers import create_admin_context
 from tasks.models import Annotation
 
 
@@ -30,5 +32,14 @@ def bulk_update_label(old_label, new_label, organization, project=None):
                 update_annotations.append(annotation)
 
         if update_annotations:
-            Annotation.objects.bulk_update(update_annotations, ['result'])
+            # Feature-flagged FSM context support
+            # Use organization owner as fallback since this is an admin operation
+            org_owner = organization.created_by
+            if org_owner and flag_set('fflag_feat_fit_568_finite_state_management', user=org_owner):
+                context = create_admin_context(
+                    user_id=org_owner.id, organization_id=organization.id, operation='bulk_update_label_admin'
+                )
+                Annotation.objects.bulk_update_with_context(update_annotations, fields=['result'], context=context)
+            else:
+                Annotation.objects.bulk_update(update_annotations, ['result'])
     return updated_count

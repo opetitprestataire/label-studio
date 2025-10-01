@@ -9,9 +9,10 @@ from io_storages.models import (
     RedisImportStorage,
     S3ImportStorage,
 )
+from tests.base_factories import BaseModelFactory
 
 
-class StorageFactory(factory.django.DjangoModelFactory):
+class StorageFactory(BaseModelFactory):
     title = factory.Faker('bs')
     description = factory.Faker('paragraph')
 
@@ -26,7 +27,7 @@ class ImportStorageFactory(StorageFactory):
         abstract = True
 
 
-class ProjectStorageMixinFactory(factory.django.DjangoModelFactory):
+class ProjectStorageMixinFactory(BaseModelFactory):
     project = factory.SubFactory(load_func(settings.PROJECT_FACTORY))
 
     class Meta:
@@ -34,7 +35,7 @@ class ProjectStorageMixinFactory(factory.django.DjangoModelFactory):
         abstract = True
 
 
-class AzureBlobStorageMixinFactory(factory.django.DjangoModelFactory):
+class AzureBlobStorageMixinFactory(BaseModelFactory):
     account_name = factory.Faker('word')
     account_key = factory.Faker('word')
 
@@ -53,7 +54,7 @@ class AzureBlobImportStorageFactory(AzureBlobImportStorageBaseFactory, ProjectSt
         model = AzureBlobImportStorage
 
 
-class S3StorageMixinFactory(factory.django.DjangoModelFactory):
+class S3StorageMixinFactory(BaseModelFactory):
     class Meta:
         abstract = True
 
@@ -69,7 +70,7 @@ class S3ImportStorageFactory(S3ImportStorageBaseFactory, ProjectStorageMixinFact
         model = S3ImportStorage
 
 
-class GCSStorageMixinFactory(factory.django.DjangoModelFactory):
+class GCSStorageMixinFactory(BaseModelFactory):
     class Meta:
         abstract = True
 
@@ -85,7 +86,7 @@ class GCSImportStorageFactory(GCSImportStorageBaseFactory, ProjectStorageMixinFa
         model = GCSImportStorage
 
 
-class RedisStorageMixinFactory(factory.django.DjangoModelFactory):
+class RedisStorageMixinFactory(BaseModelFactory):
     class Meta:
         abstract = True
 
@@ -101,6 +102,6 @@ class RedisImportStorageFactory(RedisImportStorageBaseFactory, ProjectStorageMix
         model = RedisImportStorage
 
 
-class AzureBlobExportStorageFactory(factory.django.DjangoModelFactory):
+class AzureBlobExportStorageFactory(BaseModelFactory):
     class Meta:
         model = AzureBlobExportStorage

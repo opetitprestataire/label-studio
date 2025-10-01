@@ -235,7 +235,7 @@ def update_tasks_counters(queryset, from_scratch=True):
     return updated_count
 
 
-def bulk_update_is_labeled_by_overlap(tasks_ids, project):
+def bulk_update_is_labeled_by_overlap(tasks_ids, project, fsm_context=None):
     if not tasks_ids:
         return
 
@@ -248,5 +248,18 @@ def bulk_update_is_labeled_by_overlap(tasks_ids, project):
     for i in range(0, len(tasks_ids), batch_size):
         batch_ids = tasks_ids[i : i + batch_size]
 
-        Task.objects.filter(id__in=batch_ids, project=project).filter(finished_q).update(is_labeled=True)
-        Task.objects.filter(id__in=batch_ids, project=project).exclude(finished_q).update(is_labeled=False)
+        if fsm_context:
+            # When FSM context is provided, use individual saves to trigger signals
+            finished_tasks = Task.objects.filter(id__in=batch_ids, project=project).filter(finished_q)
+            for task in finished_tasks:
+                task.is_labeled = True
+                task.save_with_context(context=fsm_context, update_fields=['is_labeled'])
+
+            unfinished_tasks = Task.objects.filter(id__in=batch_ids, project=project).exclude(finished_q)
+            for task in unfinished_tasks:
+                task.is_labeled = False
+                task.save_with_context(context=fsm_context, update_fields=['is_labeled'])
+        else:
+            # When no FSM context, use bulk update (original behavior)
+            Task.objects.filter(id__in=batch_ids, project=project).filter(finished_q).update(is_labeled=True)
+            Task.objects.filter(id__in=batch_ids, project=project).exclude(finished_q).update(is_labeled=False)

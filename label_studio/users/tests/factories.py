@@ -1,9 +1,10 @@
 import factory
 from organizations.models import OrganizationMember
+from tests.base_factories import BaseModelFactory
 from users.models import User
 
 
-class UserFactory(factory.django.DjangoModelFactory):
+class UserFactory(BaseModelFactory):
     email = factory.Faker('email')
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')

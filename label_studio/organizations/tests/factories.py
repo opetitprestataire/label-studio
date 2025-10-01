@@ -2,9 +2,10 @@ import factory
 from core.utils.common import load_func
 from django.conf import settings
 from organizations.models import Organization
+from tests.base_factories import BaseModelFactory
 
 
-class OrganizationFactory(factory.django.DjangoModelFactory):
+class OrganizationFactory(BaseModelFactory):
     title = factory.Faker('company')
     created_by = factory.SubFactory(load_func(settings.USER_FACTORY), active_organization=None)
 
