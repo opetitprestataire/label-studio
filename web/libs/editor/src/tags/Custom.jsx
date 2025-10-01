@@ -1074,7 +1074,7 @@ function({ React, data, item, annotation, store, getValue, setValue, getTagValue
 });
 
 const CustomComponentWrapper = observer(({ item }) => {
-  if (APP_SETTINGS?.billing?.enterprise) {
+  if (!APP_SETTINGS?.billing?.enterprise) {
     return (
       <div className="flex items-center gap-2">
         <EnterpriseBadge />
