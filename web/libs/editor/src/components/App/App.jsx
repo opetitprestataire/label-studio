@@ -15,10 +15,12 @@ import { TreeValidation } from "../TreeValidation/TreeValidation";
 /**
  * Tags
  */
+// Custom tags should be registered first so all MST models will use their parts like regions and results
+import "../../tags/custom";
+
 import "../../tags/object";
 import "../../tags/control";
 import "../../tags/visual";
-import "../../tags/Custom";
 
 /**
  * Utils and common components
