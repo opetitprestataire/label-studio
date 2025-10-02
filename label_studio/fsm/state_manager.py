@@ -9,6 +9,8 @@ import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Type
 
+from core.current_request import CurrentContext
+from core.feature_flags import flag_set
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
@@ -54,6 +56,13 @@ class StateManager:
     CACHE_PREFIX = 'fsm:current'
 
     @classmethod
+    def _is_fsm_enabled(cls, user='auto') -> bool:
+        if user == 'auto':
+            user = CurrentContext.get_user()
+        """Check if FSM feature is enabled via feature flag."""
+        return flag_set('fflag_feat_fit_568_finite_state_management', user=user)
+
+    @classmethod
     def get_cache_key(cls, entity: Model) -> str:
         """Generate cache key for entity's current state"""
         return f'{cls.CACHE_PREFIX}:{entity._meta.label_lower}:{entity.pk}'
@@ -78,17 +87,21 @@ class StateManager:
                 # Task is finished
                 pass
         """
+        if not cls._is_fsm_enabled():
+            return None  # Feature disabled, return no state
+
         cache_key = cls.get_cache_key(entity)
 
         # Try cache first
         cached_state = cache.get(cache_key)
         if cached_state is not None:
             logger.info(
-                'FSM cache hit',
+                'FSM: Cache hit',
                 extra={
                     'event': 'fsm.cache_hit',
                     'entity_type': entity._meta.label_lower,
                     'entity_id': entity.pk,
+                    'organization_id': CurrentContext.get_organization_id(),
                     'state': cached_state,
                 },
             )
@@ -106,11 +119,12 @@ class StateManager:
             if current_state is not None:
                 cache.set(cache_key, current_state, cls.CACHE_TTL)
                 logger.info(
-                    'FSM cache miss',
+                    'FSM: Cache miss',
                     extra={
                         'event': 'fsm.cache_miss',
                         'entity_type': entity._meta.label_lower,
                         'entity_id': entity.pk,
+                        'organization_id': CurrentContext.get_organization_id(),
                     },
                 )
 
@@ -118,11 +132,12 @@ class StateManager:
 
         except Exception as e:
             logger.error(
-                'Error getting current state',
+                'FSM: Error getting current state',
                 extra={
                     'event': 'fsm.get_state_error',
                     'entity_type': entity._meta.label_lower,
                     'entity_id': entity.pk,
+                    'organization_id': CurrentContext.get_organization_id(),
                     'error': str(e),
                 },
                 exc_info=True,
@@ -158,6 +173,7 @@ class StateManager:
         new_state: str,
         transition_name: str = None,
         user=None,
+        organization_id=None,
         context: Dict[str, Any] = None,
         reason: str = '',
     ) -> bool:
@@ -174,6 +190,7 @@ class StateManager:
             new_state: Target state
             transition_name: Name of transition method (for audit)
             user: User triggering the transition
+            organization_id: Organization ID
             context: Additional context data
             reason: Human-readable reason for transition
 
@@ -190,100 +207,155 @@ class StateManager:
                 new_state='IN_PROGRESS',
                 transition_name='start_annotation',
                 user=request.user,
+                organization_id=request.user.active_organization_id,
                 context={'assignment_id': assignment.id},
                 reason='User started annotation work'
             )
         """
+        if not cls._is_fsm_enabled(user=user):
+            return True  # Feature disabled, silently succeed
+
         state_model = get_state_model_for_entity(entity)
         if not state_model:
             raise StateManagerError(f'No state model found for {entity._meta.model_name} when transitioning state')
 
         current_state = cls.get_current_state_value(entity)
 
+        # Prevent same-state transitions - only create state records for actual changes
+        if current_state == new_state:
+            return True
+
+        # Optimistic concurrency control using cache-based locking
+        cache_key = cls.get_cache_key(entity)
+        lock_key = f'{cache_key}:lock'
+
+        if organization_id is None:
+            organization_id = CurrentContext.get_organization_id()
+
         try:
-            with transaction.atomic():
-                # INSERT-only approach - no UPDATE operations needed
-                # Get denormalized fields from the state model class
-                denormalized_fields = state_model.get_denormalized_fields(entity)
+            # Try to acquire an optimistic lock using cache add (atomic operation)
+            # add() only succeeds if the key doesn't exist
+            lock_acquired = cache.add(lock_key, 'locked', timeout=5)  # 5 second timeout
 
-                # Get organization from entity or denormalized fields, or user's active organization
-                organization_id = getattr(
-                    entity, 'organization_id', getattr(denormalized_fields, 'organization_id', None)
-                )
-
-                if not organization_id and user and hasattr(user, 'active_organization') and user.active_organization:
-                    organization_id = user.active_organization.id
-
+            if not lock_acquired:
+                # Another process is currently transitioning this entity
                 logger.info(
-                    'State transition starting',
+                    'FSM: Concurrent transition detected, skipping',
                     extra={
-                        'event': 'fsm.transition_state_start',
+                        'event': 'fsm.concurrent_transition_skipped',
                         'entity_type': entity._meta.label_lower,
                         'entity_id': entity.pk,
-                        'from_state': current_state,
-                        'to_state': new_state,
-                        'transition_name': transition_name,
-                        **{
-                            'user_id': user.id if user else None,
-                            'organization_id': organization_id if organization_id else None,
-                        },
-                    },
-                )
-
-                new_state_record = state_model.objects.create(
-                    **{entity._meta.model_name: entity},
-                    state=new_state,
-                    previous_state=current_state,
-                    transition_name=transition_name,
-                    triggered_by=user,
-                    context_data=context or {},
-                    reason=reason,
-                    organization_id=organization_id,
-                    **denormalized_fields,
-                )
-
-                # Update cache with new state after transaction commits
-                cache_key = cls.get_cache_key(entity)
-
-                def update_cache(key, state, user_id, org_id):
-                    cache.set(key, state, cls.CACHE_TTL)
-                    logger.info(
-                        'Cache updated for transition state',
-                        extra={
-                            'event': 'fsm.transition_state_cache_updated',
-                            'entity_type': entity._meta.label_lower,
-                            'entity_id': entity.pk,
-                            'state': state,
-                            **{'user_id': user_id if user_id else None, 'organization_id': org_id if org_id else None},
-                        },
-                    )
-
-                transaction.on_commit(
-                    lambda: update_cache(cache_key, new_state, user.id if user else None, organization_id)
-                )
-
-                logger.info(
-                    'State transition successful',
-                    extra={
-                        'event': 'fsm.transition_state_success',
-                        'entity_type': entity._meta.label_lower,
-                        'entity_id': entity.pk,
-                        'state': new_state,
-                        'state_record_id': str(new_state_record.id),
-                        **{
-                            'user_id': user.id if user else None,
-                            'organization_id': organization_id if organization_id else None,
-                        },
+                        'target_state': new_state,
+                        'organization_id': organization_id,
                     },
                 )
                 return True
 
+            try:
+                with transaction.atomic():
+                    # INSERT-only approach - no UPDATE operations needed
+                    # Get denormalized fields from the state model class
+                    denormalized_fields = state_model.get_denormalized_fields(entity)
+
+                    # Get organization from entity or denormalized fields, or user's active organization
+                    if organization_id is None:
+                        organization_id = getattr(
+                            entity, 'organization_id', getattr(denormalized_fields, 'organization_id', None)
+                        )
+                        if organization_id is not None:
+                            CurrentContext.set_organization_id(organization_id)
+
+                    if (
+                        not organization_id
+                        and user
+                        and hasattr(user, 'active_organization')
+                        and user.active_organization
+                    ):
+                        organization_id = user.active_organization.id
+                        if organization_id is not None:
+                            CurrentContext.set_organization_id(organization_id)
+
+                    logger.info(
+                        'FSM: State transition starting',
+                        extra={
+                            'event': 'fsm.transition_state_start',
+                            'entity_type': entity._meta.label_lower,
+                            'entity_id': entity.pk,
+                            'from_state': current_state,
+                            'to_state': new_state,
+                            'transition_name': transition_name,
+                            **{
+                                'user_id': user.id if user else None,
+                                'organization_id': organization_id if organization_id else None,
+                            },
+                        },
+                    )
+
+                    # CRITICAL FIX: Use state model's correct field name instead of entity._meta.model_name
+                    # This fixes the architectural entity field mapping issue where entity._meta.model_name
+                    # doesn't always match the actual field name defined in FSM state models
+                    entity_field_name = state_model._get_entity_field_name()
+
+                    new_state_record = state_model.objects.create(
+                        **{entity_field_name: entity},
+                        state=new_state,
+                        previous_state=current_state,
+                        transition_name=transition_name,
+                        triggered_by=user,
+                        context_data=context or {},
+                        reason=reason,
+                        organization_id=organization_id,
+                        **denormalized_fields,
+                    )
+
+                    # Write-through cache: Update immediately within transaction
+                    # This ensures the cache is updated atomically with the database
+                    cache.set(cache_key, new_state, cls.CACHE_TTL)
+
+                    logger.info(
+                        'FSM: Cache updated for transition state',
+                        extra={
+                            'event': 'fsm.transition_state_cache_updated',
+                            'entity_type': entity._meta.label_lower,
+                            'entity_id': entity.pk,
+                            'state': new_state,
+                            **{
+                                'user_id': user.id if user else None,
+                                'organization_id': organization_id if organization_id else None,
+                            },
+                        },
+                    )
+
+                    logger.info(
+                        'FSM: State transition successful',
+                        extra={
+                            'event': 'fsm.transition_state_success',
+                            'entity_type': entity._meta.label_lower,
+                            'entity_id': entity.pk,
+                            'state': new_state,
+                            'state_record_id': str(new_state_record.id),
+                            **{
+                                'user_id': user.id if user else None,
+                                'organization_id': organization_id if organization_id else None,
+                            },
+                        },
+                    )
+                    return True
+
+            finally:
+                # Always release the lock, regardless of success or failure
+                cache.delete(lock_key)
+
         except Exception as e:
-            # On failure, invalidate potentially stale cache
-            cache_key = cls.get_cache_key(entity)
+            # On failure, clean up lock and invalidate potentially stale cache
+            cache.delete(lock_key)
             cache.delete(cache_key)
+
+            # Get organization_id for error logging if it wasn't set earlier
+            organization_id = CurrentContext.get_organization_id()
+
             logger.error(
-                'State transition failed',
+                'FSM: State transition failed',
                 extra={
                     'event': 'fsm.transition_state_failed',
                     'entity_type': entity._meta.label_lower,
@@ -348,9 +420,9 @@ class StateManager:
         """Invalidate cached state for an entity"""
         cache_key = cls.get_cache_key(entity)
         cache.delete(cache_key)
-        organization_id = getattr(entity, 'organization_id', None)
+        organization_id = CurrentContext.get_organization_id()
         logger.info(
-            'Cache invalidated',
+            'FSM: Cache invalidated',
             extra={
                 'event': 'fsm.cache_invalidated',
                 'entity_type': entity._meta.label_lower,
@@ -368,11 +440,8 @@ class StateManager:
         bulk queries and advanced caching strategies.
         """
         cache_updates = {}
-        organization_id = None
+        organization_id = CurrentContext.get_organization_id()
         for entity in entities:
-            if organization_id is None:
-                if hasattr(entity, 'organization_id'):
-                    organization_id = entity.organization_id
             current_state = cls.get_current_state_value(entity)
             if current_state:
                 cache_key = cls.get_cache_key(entity)
@@ -381,7 +450,7 @@ class StateManager:
         if cache_updates:
             cache.set_many(cache_updates, cls.CACHE_TTL)
             logger.info(
-                'Cache warmed',
+                'FSM: Cache warmed',
                 extra={
                     'event': 'fsm.cache_warmed',
                     'entity_count': len(cache_updates),
