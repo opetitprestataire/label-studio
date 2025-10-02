@@ -1,3 +1,4 @@
+import { ff } from "@humansignal/core";
 import chroma from "chroma-js";
 import clamp from "lodash/clamp";
 import { observer } from "mobx-react";
@@ -83,6 +84,13 @@ const VideoRegionsPure = ({
     }),
     [workinAreaCoordinates, zoom],
   );
+
+  if (ff.isActive(ff.FF_VIDEO_RELATIONS)) {
+    // Update working area coordinates in the model for bbox calculations
+    useEffect(() => {
+      item.setWorkingAreaCoords(workinAreaCoordinates);
+    }, [workinAreaCoordinates, item]);
+  }
 
   const normalizeMouseOffsets = useCallback(
     (x, y) => {
@@ -258,14 +266,13 @@ const RegionsLayer = observer(({ regions, item, locked, isDrawing, workinAreaCoo
   );
 });
 
-const Shape = observer(({ id, reg, frame, stageRef, ...props }) => {
+const Shape = observer(({ reg, frame, stageRef, ...props }) => {
   const box = reg.getShape(frame);
 
   return (
     reg.isInLifespan(frame) &&
     box && (
       <Rectangle
-        id={id}
         reg={reg}
         box={box}
         frame={frame}
