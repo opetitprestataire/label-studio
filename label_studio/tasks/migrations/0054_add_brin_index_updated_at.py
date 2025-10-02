@@ -10,6 +10,15 @@ logger = logging.getLogger(__name__)
 
 migration_name = '0054_add_brin_index_updated_at'
 
+def index_exists_mysql(cursor, index_name, table_name):
+    """MySQL only, check if index exists"""
+    cursor.execute(
+        "SELECT COUNT(*) FROM information_schema.statistics "
+        "WHERE table_schema = DATABASE() AND table_name = %s AND index_name = %s",
+        [table_name, index_name],
+    )
+    return cursor.fetchone()[0] > 0
+
 def forward_migration(migration_name):
     migration = AsyncMigrationStatus.objects.create(
         name=migration_name,
@@ -18,20 +27,27 @@ def forward_migration(migration_name):
     logger.debug(f'Start async migration {migration_name}')
     
     # Check database backend and use appropriate SQL
-    if connection.vendor == 'postgresql':
-        # Create BRIN index concurrently to avoid blocking writes
-        sql = '''
-        CREATE INDEX CONCURRENTLY IF NOT EXISTS "task_updated_at_brin_idx" 
-        ON "task" USING BRIN ("updated_at");
-        '''
-    else:
-        # SQLite fallback - regular B-tree index
-        sql = '''
-        CREATE INDEX IF NOT EXISTS "task_updated_at_brin_idx" 
-        ON "task" ("updated_at");
-        '''
-    
     with connection.cursor() as cursor:
+        if connection.vendor == 'postgresql':
+            # Create BRIN index concurrently to avoid blocking writes
+            sql = '''
+            CREATE INDEX CONCURRENTLY IF NOT EXISTS "task_updated_at_brin_idx" 
+            ON "task" USING BRIN ("updated_at");
+            '''
+        elif connection.vendor == 'mysql':
+            idx_name = 'task_updated_at_brin_idx'
+            if not index_exists_mysql(cursor, idx_name, 'task'):
+                sql = f'''
+                CREATE INDEX `{idx_name}`
+                ON `task` (`updated_at`) ALGORITHM=INPLACE LOCK=NONE;
+                '''
+        else:
+            # SQLite fallback - regular B-tree index
+            sql = '''
+            CREATE INDEX IF NOT EXISTS "task_updated_at_brin_idx" 
+            ON "task" ("updated_at");
+            '''
+
         cursor.execute(sql)
     
     migration.status = AsyncMigrationStatus.STATUS_FINISHED
@@ -48,6 +64,8 @@ def reverse_migration(migration_name):
     # Drop index (works for both PostgreSQL and SQLite)
     if connection.vendor == 'postgresql':
         sql = 'DROP INDEX CONCURRENTLY IF EXISTS "task_updated_at_brin_idx";'
+    elif connection.vendor == 'mysql':
+        sql = 'DROP INDEX IF EXISTS `task_updated_at_brin_idx` ON `task`;'
     else:
         sql = 'DROP INDEX IF EXISTS "task_updated_at_brin_idx";'
     

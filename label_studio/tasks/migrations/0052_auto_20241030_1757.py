@@ -17,6 +17,12 @@ if connection.vendor == 'sqlite':
     SET created_at = datetime(expire_at, %s);
     """
     sql_params = (f'-{settings.TASK_LOCK_TTL} seconds',)
+elif settings.DJANGO_DB == settings.DJANGO_DB_MYSQL:
+    sql_update_created_at = """
+        UPDATE tasks_tasklock
+        SET created_at = expire_at - INTERVAL %s SECOND;
+        """
+    sql_params = (settings.TASK_LOCK_TTL,)
 else:
     sql_update_created_at = """
     UPDATE tasks_tasklock

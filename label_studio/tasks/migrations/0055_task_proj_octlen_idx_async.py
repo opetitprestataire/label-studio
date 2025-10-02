@@ -7,7 +7,7 @@ from core.redis import start_job_async_or_sync
 import logging
 logger = logging.getLogger(__name__)
 
-IS_SQLITE = settings.DJANGO_DB == settings.DJANGO_DB_SQLITE
+IS_SQLITE = settings.DJANGO_DB == settings.DJANGO_DB_SQLITE or settings.DJANGO_DB == settings.DJANGO_DB_MYSQL
 
 migration_name = '0055_task_proj_octlen_idx_async'
 
