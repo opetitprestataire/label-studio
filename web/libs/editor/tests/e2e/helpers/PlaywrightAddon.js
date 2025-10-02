@@ -45,7 +45,8 @@ class PlaywrightAddon extends Helper {
    * @returns {Promise<string[]>} CSS value
    */
   async grabCssPropertyFromAllPseudo(locator, cssProperty, pseudoElement) {
-    const els = await this.helpers.Playwright._locate(locator);
+    const matcher = await this.helpers.Playwright._locate(locator);
+    const els = await matcher.all();
 
     this.helpers.Playwright.debug(`Matched ${els.length} elements`);
     return await Promise.all(
@@ -67,7 +68,9 @@ class PlaywrightAddon extends Helper {
 
     while (Date.now() - startTime < timeout) {
       try {
-        const els = await this.helpers.Playwright._locate(selector);
+        // Use the page.locator method directly for better compatibility
+        const matcher = this.helpers.Playwright.page.locator(selector);
+        const els = await matcher.all();
         const areFocused = await Promise.all(els.map((el) => el.evaluate((el) => el === document.activeElement)));
         if (areFocused.some((el) => el)) {
           isFocused = true;
