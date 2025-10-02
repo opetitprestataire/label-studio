@@ -856,6 +856,135 @@ export default observer(
       }
     };
 
+    handleTouchStart = (e) => {
+      const { item } = this.props;
+      const isPanTool = item.getToolsManager().findSelectedTool()?.fullName === "ZoomPanTool";
+      const isMoveTool = item.getToolsManager().findSelectedTool()?.fullName === "MoveTool";
+
+      item.freezeHistory();
+      e.evt.preventDefault();
+
+      this.skipNextMouseDown = this.skipNextMouseUp = this.skipNextClick = false;
+      // if (isFF(FF_LSDV_4930)) {
+      //   this.mouseDownPoint = { x: e.evt.offsetX, y: e.evt.offsetY };
+      // }
+
+      item.updateSkipInteractions(e);
+
+      const p = e.target.getParent();
+
+      if (item.annotation.isReadOnly() && !isPanTool) return;
+      if (p && p.className === "Transformer") return;
+
+      const handleTouchStart = () => {
+        if (e.evt.button === 1) {
+          // prevent middle click from scrolling page
+          e.evt.preventDefault();
+        }
+
+        const isRightElementToCatchToolInteractions = (el) => {
+          // It could be ruler ot segmentation
+          if (el.nodeType === "Group") {
+            if ("ruler" === el?.attrs?.name) {
+              return true;
+            }
+            // segmentation is specific for Brushes
+            // but click interaction on the region covers the case of the same MoveTool interaction here,
+            // so it should ignore move tool interaction to prevent conflicts
+            if ((!isFF(FF_DBLCLICK_DELAY) || !isMoveTool) && "segmentation" === el?.attrs?.name) {
+              return true;
+            }
+          }
+          return false;
+        };
+
+        if (
+          // create regions over another regions with Cmd/Ctrl pressed
+          item.getSkipInteractions() ||
+          e.target === item.stageRef ||
+          findClosestParent(e.target, isRightElementToCatchToolInteractions)
+        ) {
+          window.addEventListener("touchmove", this.handleGlobalMouseMove);
+          window.addEventListener("touchend", this.handleGlobalMouseUp);
+          // const { offsetX: x, offsetY: y } = e.evt;
+          // store the canvas coords for calculations in further events
+          const { left, top } = item.containerRef.getBoundingClientRect();
+          const x = e.evt.changedTouches[0].clientX - left;
+          const y = e.evt.changedTouches[0].clientY - top;
+
+          this.canvasX = left;
+          this.canvasY = top;
+          if (this.skipNextMouseDown) {
+            this.skipNextMouseDown = false;
+            return true;
+          }
+          item.event("touchstart", e, x, y);
+
+          return true;
+        }
+      }
+
+      const selectedTool = item.getToolsManager().findSelectedTool();
+      const eligibleToolForDeselect = [
+        undefined,
+        "EllipseTool",
+        "EllipseTool-dynamic",
+        "RectangleTool",
+        "RectangleTool-dynamic",
+        "PolygonTool",
+        "PolygonTool-dynamic",
+        "Rectangle3PointTool",
+        "Rectangle3PointTool-dynamic",
+      ].includes(selectedTool?.fullName);
+
+      if (isFF(FF_DEV_1442) && eligibleToolForDeselect) {
+        const targetIsCanvas = e.target === item.stageRef;
+        const annotationHasSelectedRegions = item.annotation.selectedRegions.length > 0;
+        const eligibleToDeselect = targetIsCanvas && annotationHasSelectedRegions;
+
+        const handleDeselection = () => {
+          item.annotation.unselectAll();
+          this.skipNextMouseDown = true;
+          this.skipNextMouseUp = true;
+          this.skipNextClick = true;
+        };
+
+        this.handleDeferredClick(handleMouseDown, handleDeselection, eligibleToDeselect);
+        return;
+      }
+
+      const result = handleTouchStart();
+
+      if (result) return result;
+
+      return true;
+    }
+
+    handleTouchMove = (e) => {
+      const { item } = this.props;
+      item.freezeHistory();
+      e.evt.preventDefault();
+      this.updateCrosshair(e);
+      item.event("touchmove", e, e.currentTarget.pointerPos.x, e.currentTarget.pointerPos.y)
+    }
+
+    handleTouchEnd = (e) => {
+      const { item } = this.props;
+
+      if (isFF(FF_DEV_1442)) {
+        this.resetDeferredClickTimeout();
+      }
+
+      item.freezeHistory();
+      e.evt.preventDefault();
+
+      if (this.skipNextMouseUp) {
+        this.skipNextMouseUp = false;
+        return;
+      }
+      return item.event("touchend", e, e.currentTarget.pointerPos.x, e.currentTarget.pointerPos.y)
+    }
+
     updateCrosshair = (e) => {
       if (this.crosshairRef.current) {
         const { x, y } = e.currentTarget.getPointerPosition();
@@ -1192,6 +1321,9 @@ export default observer(
                 onMouseMove={this.handleMouseMove}
                 onMouseUp={this.handleMouseUp}
                 onWheel={item.zoom ? this.handleZoom : () => {}}
+                onTouchStart={this.handleTouchStart}
+                onTouchMove={this.handleTouchMove}
+                onTouchEnd={this.handleTouchEnd}
               />
             ) : null}
           </div>
@@ -1232,6 +1364,9 @@ const EntireStage = observer(
     onMouseUp,
     onWheel,
     crosshairRef,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
   }) => {
     const { store } = item;
     let size;
@@ -1277,6 +1412,9 @@ const EntireStage = observer(
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onWheel={onWheel}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
         <StageContent item={item} store={store} state={state} crosshairRef={crosshairRef} />
       </Stage>

@@ -7,6 +7,8 @@ import { FF_DEV_3391, FF_DEV_3793, isFF } from "../utils/feature-flags";
 import { ff } from "@humansignal/core";
 import { RELATIVE_STAGE_HEIGHT, RELATIVE_STAGE_WIDTH } from "../components/ImageView/Image";
 
+var simplify = require('simplify-geometry');
+
 const DrawingTool = types
   .model("DrawingTool", {
     default: true,
@@ -398,7 +400,9 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
     const MOUSE_DOWN_EVENT = 1;
     const MOUSE_UP_EVENT = 2;
     const CLICK_EVENT = 3;
+    const MOUSE_MOVE_EVENT = 4;
     let lastClickTs = 0;
+    let lastPointTs = 0;
     const Super = {
       canStartDrawing: self.canStartDrawing,
     };
@@ -413,7 +417,7 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
 
         if (area && object && object.multiImage && area.item_index !== object.currentImage) return;
 
-        self.getCurrentArea().addPoint(x, y);
+        self.getCurrentArea().addPoint(x, y, false);
         pointsCount++;
       },
       listenForClose() {
@@ -425,8 +429,27 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
       finishDrawing() {
         if (!self.isDrawing) return;
 
+        // Simplify drawn polygon
+        var oldPoints = [];
+        var area = self.getCurrentArea()
+        for (var point in area.points) {
+          oldPoints.push([area.points[point].x, area.points[point].y])
+        }
+        var simplifiedPoints = simplify(oldPoints, 0.5);
+        
+        // Replace existing polygon with simplified polygon
+        area.splicePoints(1)
+        area.setClosed(false);
+        pointsCount = 1;
+        for (let i = 1; i < simplifiedPoints.length; i++) {
+          var x = simplifiedPoints[i][0];
+          var y = simplifiedPoints[i][1];
+          area.addPoint(x, y, false);
+          pointsCount++;
+        }
+        
+        // Commit polygon
         self.annotation.regionStore.selection.drawingUnselect();
-
         pointsCount = 0;
         self.closeCurrent();
         setTimeout(() => {
@@ -440,18 +463,66 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
       },
       mousedownEv(ev, [x, y]) {
         if (!self.isAllowedInteraction(ev)) return;
+        self._clickEv(ev, [x, y]);
         lastPoint = { x, y };
         lastEvent = MOUSE_DOWN_EVENT;
       },
       mouseupEv(ev, [x, y]) {
         if (lastEvent === MOUSE_DOWN_EVENT && self.comparePointsWithThreshold(lastPoint, { x, y })) {
-          self._clickEv(ev, [x, y]);
           lastEvent = MOUSE_UP_EVENT;
+        }
+        else if (lastEvent === MOUSE_MOVE_EVENT) { 
+          if (self.comparePointsWithThreshold(lastPoint, startPoint, 5) && pointsCount > 2) {
+            lastEvent = CLICK_EVENT;
+            self.finishDrawing();
+          }
+          else {
+            lastEvent = MOUSE_UP_EVENT;
+          }
+        }
+        lastPoint = { x: -1, y: -1 };
+      },
+      mousemoveEv(ev, [x, y]) {
+        if ((lastEvent === MOUSE_DOWN_EVENT || lastEvent === MOUSE_MOVE_EVENT) 
+          && ev.timeStamp - lastPointTs > 20 && !self.comparePointsWithThreshold(lastPoint, { x, y })
+          && x > 0 && y > 0 && x < RELATIVE_STAGE_WIDTH && y < RELATIVE_STAGE_HEIGHT) {
+          self._clickEv(ev, [x, y]);
+          lastPoint = { x, y };
+          lastEvent = MOUSE_MOVE_EVENT;
+        }
+      },
+      touchstartEv(ev, [x, y]) {
+        self._clickEv(ev, [x, y]);
+        lastPoint = { x, y };
+        lastEvent = MOUSE_DOWN_EVENT;
+      },
+      touchmoveEv(ev, [x, y]) {
+        if ((lastEvent === MOUSE_DOWN_EVENT || lastEvent === MOUSE_MOVE_EVENT) 
+          && ev.timeStamp - lastPointTs > 20 && !self.comparePointsWithThreshold(lastPoint, { x, y })
+          && x > 0 && y > 0 && x < RELATIVE_STAGE_WIDTH && y < RELATIVE_STAGE_HEIGHT) {
+          self._clickEv(ev, [x, y]);
+          lastPoint = { x, y };
+          lastEvent = MOUSE_MOVE_EVENT;
+        }
+      },
+      touchendEv(ev, [x, y]) {
+        if (lastEvent === MOUSE_DOWN_EVENT && self.comparePointsWithThreshold(lastPoint, { x, y })) {
+          lastEvent = MOUSE_UP_EVENT;
+        }
+        else if (lastEvent === MOUSE_MOVE_EVENT) { 
+          if (self.comparePointsWithThreshold(lastPoint, startPoint, 5) && pointsCount > 2
+              && x > 0 && y > 0 && x < RELATIVE_STAGE_WIDTH && y < RELATIVE_STAGE_HEIGHT) {
+            lastEvent = CLICK_EVENT;
+            self.finishDrawing();
+          }
+          else {
+            lastEvent = MOUSE_UP_EVENT;
+          }
         }
         lastPoint = { x: -1, y: -1 };
       },
       clickEv(ev, [x, y]) {
-        if (lastEvent !== MOUSE_UP_EVENT) {
+        if (lastEvent !== MOUSE_DOWN_EVENT) {
           self._clickEv(ev, [x, y]);
         }
         lastEvent = CLICK_EVENT;
@@ -469,11 +540,13 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
             self.drawDefault();
           } else {
             if (self.comparePointsWithThreshold(startPoint, { x, y })) {
-              if (pointsCount > 2) {
+              if (pointsCount > 2 && lastEvent !== MOUSE_MOVE_EVENT) {
+                lastEvent = CLICK_EVENT;
                 self.finishDrawing();
               }
             } else {
               self.nextPoint(x, y);
+              lastPointTs = ev.timeStamp;
             }
           }
         } else {
@@ -481,6 +554,7 @@ const MultipleClicksDrawingTool = DrawingTool.named("MultipleClicksMixin")
           startPoint = { x, y };
           pointsCount = 1;
           lastClickTs = ev.timeStamp;
+          lastPointTs = ev.timeStamp;
           self.startDrawing(x, y);
           self.listenForClose();
         }

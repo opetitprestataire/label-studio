@@ -180,12 +180,12 @@ const Model = types
         destroy(point);
       },
 
-      addPoint(x, y) {
+      addPoint(x, y, possiblyFinishPolygon=true) {
         if (self.closed) return;
 
         const point = self.control?.getSnappedPoint({ x, y });
 
-        self._addPoint(point.x, point.y);
+        self._addPoint(point.x, point.y, possiblyFinishPolygon);
       },
 
       setPoints(points) {
@@ -223,12 +223,20 @@ const Model = types
         return self.points[insertIdx];
       },
 
-      _addPoint(x, y) {
+      splicePoints(start) {
+        self.points.splice(start);
+      },
+
+      setClosed(bool) {
+        self.closed = bool;
+      },
+
+      _addPoint(x, y, possiblyFinishPolygon=true) {
         const firstPoint = self.points[0];
 
         // This is mostly for "snap to pixel" mode,
         // 'cause there is also an ability to close polygon by clicking on the first point precisely
-        if (self.parent.isSamePixel(firstPoint, { x, y })) {
+        if (possiblyFinishPolygon && self.parent.isSamePixel(firstPoint, { x, y })) {
           self.closePoly();
           return;
         }
@@ -542,6 +550,10 @@ const HtxPolygonView = ({ item, setShapeRef }) => {
     useStrokeAsFill: true,
   });
 
+  var lastEvent = 0;
+  const TOUCH_DOWN_EVENT = 1;
+  const TOUCH_MOVE_EVENT = 2;
+
   function renderCircle({ points, idx }) {
     const name = `anchor_${points.length}_${idx}`;
     const point = points[idx];
@@ -648,6 +660,33 @@ const HtxPolygonView = ({ item, setShapeRef }) => {
         item.setHighlight(false);
         item.onClickRegion(e);
       }}
+      onTouchStart={(e) => {
+        e.evt.preventDefault()
+        lastEvent = TOUCH_DOWN_EVENT;
+      }}
+      onTouchEnd={(e) => {
+
+        // create regions over another regions with Cmd/Ctrl pressed
+        if (item.parent.getSkipInteractions()) return;
+        if (item.isDrawing) return;
+
+        e.cancelBubble = true;
+
+        if (!item.closed) return;
+
+        if (lastEvent !== TOUCH_DOWN_EVENT) return;
+
+        if (store.annotationStore.selected.isLinkingMode) {
+          stage.container().style.cursor = Constants.DEFAULT_CURSOR;
+        }
+
+        item.setHighlight(false);
+        item.onClickRegion(e);
+      }}
+      onTouchMove={(e) => {
+        lastEvent = TOUCH_MOVE_EVENT;
+      }}
+      
       {...dragProps}
       draggable={!item.isReadOnly() && (!item.inSelection || item.parent?.selectedRegions?.length === 1)}
       listening={!suggestion}
