@@ -13,15 +13,18 @@ const Input = ({
   skip,
   labelProps,
   ghost,
+  error,
   tooltip,
   tooltipIcon,
   ...props
 }) => {
-  const classList = [cn("input-ls").mod({ ghost }), className].join(" ").trim();
-
   const input = (
     <FormField label={label} name={props.name} validate={validate} required={required} skip={skip} {...props}>
-      {(ref) => <input {...props} ref={ref} className={classList} />}
+      {(ref, _dependencyField, _context, fieldProps) => {
+        const hasError = error || fieldProps?.error;
+        const finalClassList = [cn("input-ls").mod({ ghost, error: hasError }), className].join(" ").trim();
+        return <input {...props} ref={ref} className={finalClassList} />;
+      }}
     </FormField>
   );
 

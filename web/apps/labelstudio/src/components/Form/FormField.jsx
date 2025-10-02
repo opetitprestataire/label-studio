@@ -25,6 +25,7 @@ export const FormField = forwardRef(
     /**@type {Form} */
     const context = useContext(FormContext);
     const [dependencyField, setDependencyField] = useState(null);
+    const [error, setError] = useState(null);
 
     const field = ref ?? useRef();
 
@@ -64,7 +65,7 @@ export const FormField = forwardRef(
 
       setDependencyField(field);
       return () => dep.field.removeEventListener("change", handler);
-    }, [context, field, dependency]);
+    }, [context, dependency, props.onDependencyChanged]);
 
     const setValueCallback = useCallback(
       (value) => {
@@ -105,10 +106,13 @@ export const FormField = forwardRef(
         protectedValue,
         field: field.current,
         setValue: setValueCallback,
+        setError,
       });
       return () => context?.unregisterField(name);
     }, [field, setValueCallback]);
 
-    return children(field, dependencyField, context);
+    return children(field, dependencyField, context, {
+      error: (error?.length ?? 0) > 0,
+    });
   },
 );

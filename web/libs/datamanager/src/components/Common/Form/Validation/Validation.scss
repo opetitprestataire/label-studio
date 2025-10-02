@@ -1,13 +1,11 @@
 .form-validation {
-  margin-top: 32px;
-
   &__group {
     padding: 7px 14px;
     border-radius: 5px;
     color: var(--color-negative-content);
 
     &+& {
-      margin-top: 5px;
+      margin-top: var(--spacing-tight);
     }
   }
 

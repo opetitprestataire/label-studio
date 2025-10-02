@@ -38,13 +38,13 @@ export const RadioGroup = ({
       setValue={(value) => setCurrentValue(value)}
       {...props}
     >
-      {(ref, dep, form) => (
+      {(ref, _dependencyField, context, _fieldProps) => (
         <RadioContext.Provider
           value={{
             value: currentValue,
             onChange: (value) => {
               onRadioChange(value);
-              form.autosubmit();
+              context.autosubmit();
             },
             setValue: setCurrentValue,
             isSimple: simple === true,

@@ -1,6 +1,11 @@
 .form {
   width: 100%;
-  display: block;
+  display: flex;
+  flex-direction: column;
+
+  & * {
+    order: 2;
+  }
 
   &__row {
     display: grid;
@@ -23,6 +28,7 @@
     margin-top: 32px;
     align-items: center;
     justify-content: space-between;
+    order: 3;
 
     & + .inline-error {
       margin-top: 32px;
@@ -33,6 +39,11 @@
         margin-top: 16px;
       }
     }
+  }
+
+  &-validation {
+    order: 1;
+    margin: 0 0 var(--spacing-base);
   }
 
   &__info {
@@ -78,6 +89,16 @@
   &:read-only:focus {
     box-shadow: none;
     border-color: var(--border-color);
+  }
+
+
+  &_error {
+    border: 1px solid var(--color-negative-border);
+    color: var(--color-negative-content);
+
+    &:focus {
+      border-color: var(--color-negative-border-bold) !important;
+    }
   }
 }
 

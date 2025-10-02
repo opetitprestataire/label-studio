@@ -30,7 +30,12 @@ export const GeneralSettings = () => {
         <Block name="settings-wrapper">
           <Form action="updateProject" formData={{ ...project }} params={{ pk: project.id }} onSubmit={updateProject}>
             <Form.Row columnCount={1} rowGap="16px">
-              <Input name="title" label="Project Name" />
+              <Input
+                name="title"
+                label="Project Name"
+                required
+                validate={[Form.Validator.minLength(3), Form.Validator.maxLength(50)]}
+              />
 
               <TextArea name="description" label="Description" style={{ minHeight: 128 }} />
               {isFF(FF_LSDV_E_297) && (

@@ -28,6 +28,23 @@
     outline: none;
   }
 
+  &_error {
+    border: 1px solid var(--color-negative-border);
+    color: var(--color-negative-content);
+
+    &:focus {
+      border-color: var(--color-negative-border-bold) !important;
+    }
+
+    &:not([disabled]):hover {
+      border-color: var(--color-negative-border-bold);
+    }
+    
+    &:not([disabled]):active {
+      border-color: var(--color-negative-border-bolder);
+    }
+  }
+
   &:read-only {
     background-color: var(--color-neutral-surface);
     color: var(--color-neutral-content-subtler);
@@ -38,11 +55,18 @@
 .textarea-ls {
   &:not([disabled]):hover {
     border-color: var(--color-neutral-border-bold);
+
+    &.input-ls_error {
+      border-color: var(--color-negative-border-bold);
+    }
   }
-  
 
   &:not([disabled]):active {
     border-color: var(--color-neutral-border-bolder);
+
+    &.input-ls_error {
+      border-color: var(--color-negative-border-bold);
+    }
   }
 }
 

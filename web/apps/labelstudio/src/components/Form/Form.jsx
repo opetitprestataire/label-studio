@@ -1,3 +1,4 @@
+import { Button } from "@humansignal/ui";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { shallowEqualObjects } from "shallow-equal";
 import { ApiProvider } from "../../providers/ApiProvider";
@@ -5,11 +6,11 @@ import { MultiProvider } from "../../providers/MultiProvider";
 import { Block, cn, Elem } from "../../utils/bem";
 import { debounce } from "../../utils/debounce";
 import { isDefined, objectClean } from "../../utils/helpers";
-import { Button } from "@humansignal/ui";
 import { Oneof } from "../Oneof/Oneof";
 import { Space } from "../Space/Space";
 import { Counter, Input, Select, Toggle } from "./Elements";
 import "./Form.scss";
+import { ToastProvider, ToastViewport } from "@humansignal/ui";
 import {
   FormContext,
   FormResponseContext,
@@ -18,7 +19,6 @@ import {
   FormValidationContext,
 } from "./FormContext";
 import * as Validators from "./Validation/Validators";
-import { ToastProvider, ToastViewport } from "@humansignal/ui";
 
 const PASSWORD_PROTECTED_VALUE = "got ya, suspicious hacker!";
 
@@ -296,11 +296,16 @@ export default class Form extends React.Component {
       const result = this.validateField(field);
 
       if (result.length) {
-        this.validation.set(field.name, {
+        const validationResult = {
           label: field.label,
           messages: result,
           field: field.field,
-        });
+        };
+
+        field.setError?.(result);
+        this.validation.set(field.name, validationResult);
+      } else {
+        field.setError?.([]);
       }
     }
 
