@@ -45,13 +45,13 @@ export const ListFilter = [
     key: "contains",
     label: "contains",
     valueType: "single",
-    input: (props) => <VariantSelect {...props} multiple={props.schema?.multiple} />,
+    input: (props) => <VariantSelect {...props} multiple />,
   },
   {
     key: "not_contains",
     label: "not contains",
     valueType: "single",
-    input: (props) => <VariantSelect {...props} multiple={props.schema?.multiple} />,
+    input: (props) => <VariantSelect {...props} multiple />,
   },
   // ... Common,
 ];
